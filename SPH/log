@@ -1,0 +1,24 @@
+make libsph.a
+make[1]: Entering directory `/home/kjhan/BACKUP/AdvancedEunha/Eunha.A1/SPH'
+make[1]: Warning: File `sph.com.c' has modification time 18 s in the future
+mpicc -O2  -openmp   -DXYZDBL   -I. -I../ -I../fftw/include/ -I../MpiAux -I../RMS -I./CosmosIC -I../Timer -I../OST -I../Cosmos/ -c sph.com.c
+sph.com.c(547): warning #167: argument of type "PosType={double} *" is incompatible with parameter of type "float *"
+  								&maxdistofneigh, threadbpneighbor);
+  								^
+
+sph.com.c(548): warning #592: variable "neardist" is used before its value is set
+  						Complete_DetermineSph(simpar, threadpos+i, neardist, threadbpneighbor, numnear);
+  						                                           ^
+
+sph.com.c(616): warning #167: argument of type "PosType={double} *" is incompatible with parameter of type "float *"
+  									&maxdistofneigh, threadbpneighbor);
+  									^
+
+sph.com.c(640): error: identifier "maintreetime" is undefined
+  	return maintreetime;
+  	       ^
+
+compilation aborted for sph.com.c (code 2)
+make[1]: *** [sph.com.o] Error 2
+make[1]: Leaving directory `/home/kjhan/BACKUP/AdvancedEunha/Eunha.A1/SPH'
+make: *** [default] Error 2

@@ -1,0 +1,25 @@
+#Start of the Ascii Header of the GOTPM Simulation
+##################################################
+# <<SIM_MODEL value>> 0(Cosmos), 1(Galaxy) 3(KH:2D), 4(Blast:3D),
+#    5(Bow Shock:3D), 6(RT:2D), 7(Keplyer:2D), 30(MkGlass2D)
+define SIM_MODEL           = 30 # SIMULATION MODEL 
+define flag for Hydro      = V # N: no hydro, S: SPH hydro, V: Voro hydro
+define Self Gravity        = N # Whether to include the self gravity
+define MkGL2D xmax (box)   = 6.000000 # Maximum X in makding 2D glass
+define MkGL2D ymax (box)   = 6.000000 # Maximum Y in making 2D glass
+define MkGL2D Grid Size = 0.093750 # Grid size for Linked List
+define MkGL2D Order of Accuracy = 0.000000 # Order of Accuracy in Voro mode. 0<=w<0.5
+##################################################
+### Nx, Ny, and Nz should be same & nspace should be int.
+define Nx                  = 256 # Number of grids along x axis
+define Ny                  = 256 # Number of grids along y axis
+define Nz                  = 1 # Number of grids along z axis
+##################################################
+# INFORMATION ON THE VORONOI VISCOSITY (AV:artificial viscosity)
+define Alpha parameter in Voro  = 0.200000 # Alpha factor of Voronoi AV
+define Beta parameter in Voro  = 0.100000 # Beta factor of Voronoi AV
+define Eta parameter in Voro  = 1.000000 # Eta factor of Voronoi AV
+define Eps parameter in Voro  = 0.010000 # Eps factor of Voronoi AV
+define Re parameter in Voro   = 0.000000 # Reynolds number of Voronoi
+##################################################
+#End of Ascii Header

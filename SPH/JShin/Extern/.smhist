@@ -1,0 +1,38 @@
+data list.dat
+read { x 1 y 2 z 3}
+limits x y
+box
+ptype  0 0
+points x y
+read{x 1 y 2 z 3}
+erase
+limits x y
+box
+points x y
+erase
+limits x z
+box
+points x z
+limits 46 54 46 54
+erase
+box
+points x z
+data list.dat
+read { x 1 y 2 z 3}
+limits x y
+ptype 0 0
+box
+points x y
+data list.dat
+read { x 1 y 2 z 3}
+limits x y
+box
+points x y
+erase
+limits x z
+box
+points x z
+limits 100 400 100 400
+erase
+box
+points x z

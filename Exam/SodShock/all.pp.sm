@@ -1,0 +1,177 @@
+erase
+
+ctype white
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+
+
+location 5000 17000 5000 13000
+limits -0.05 1.05 0 1.05
+#limits x r
+expand 1.01
+lweight 3
+box
+
+expand 1.2
+xlabel x
+ylabel \rho
+
+
+ctype white
+connect x r
+
+
+ptype 4 0
+
+ctype green
+data sod.out
+read { x 1 d 3}
+points x d
+
+
+ctype white
+location 5000 17000 13000 21000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 0 1.05
+#limits x p
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel Pressure
+
+
+ctype white
+connect x p
+
+
+
+ctype green
+data sod.out
+read { x 1 p 4}
+points x p
+
+
+
+ctype white
+location 5000 17000 21000 29000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 -0.1 1.1
+#limits x v
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel velocity
+
+
+ctype white
+connect x v
+
+
+
+ctype green
+data sod.out
+read { x 1 v 2}
+points x v
+
+ctype white
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+
+
+limits 0 10 0 10
+relocate 1 8 label pVPH
+expand 1.
+lweight 1
+relocate 1 7 label N_p=100
+relocate 1 6 label \gamma=1.4
+relocate 1 5 label time=0.2
+
+location 17000 29000 5000 13000
+limits -0.05 1.05 0 1.05
+#limits x r
+expand 1.01
+lweight 3
+box 1 0 0 0
+
+expand 1.2
+xlabel x
+#ylabel \rho
+
+
+ctype white
+connect x r
+
+
+ptype 4 0
+
+ctype green
+data sph.out
+read { x 1 d 3}
+points x d
+
+
+ctype white
+location 17000 29000 13000 21000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 0 1.05
+#limits x p
+expand 1.01
+lweight 3
+box 0 0  0 0
+
+expand 1.2
+#xlabel x
+#ylabel Pressure
+
+
+ctype white
+connect x p
+
+
+
+ctype green
+data sph.out
+read { x 1 p 4}
+points x p
+
+
+
+ctype white
+location 17000 29000 21000 29000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 -0.1 1.1
+#limits x v
+expand 1.01
+lweight 3
+box 0 0  0 0
+
+expand 1.2
+#xlabel x
+#ylabel velocity
+
+
+ctype white
+connect x v
+
+
+
+ctype green
+data sph.out
+read { x 1 v 2}
+points x v
+
+ctype white
+limits 0 10 0 10
+relocate 1 8 label SPH

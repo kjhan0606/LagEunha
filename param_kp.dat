@@ -1,0 +1,23 @@
+#Start of the Ascii Header of the GOTPM Simulation
+##################################################
+# <<SIM_MODEL value>> 0:Cosmos, 1:Galaxy, 3: KH(2D), 4: Blast(3D),
+#    5: Bow Shock(3D), 6: RT(2D), 7: Keplyer(2D)
+define SIM_MODEL           = 7 # SIMULATION MODEL 
+define flag for Hydro      = V # N: no hydro, S: SPH hydro, V: Voro hydro
+define Self Gravity        = N # Whether to include the self gravity
+define Kepler xmax (box)   = 6.000000 # Maximum X in the Kepler Test
+define Kepler ymax (box)   = 6.000000 # Maximum Y in the Kepler Test
+define Keplyer EPS of g    = 0.100000 # g-epsilon
+define Kepler Grid Size = 0.093750 # Grid size for Linked List
+define Kepler Order of Accuracy = 0.000000 # Order of Accuracy in Voro mode. 0<=w<0.5
+##################################################
+### Nx, Ny, and Nz should be same & nspace should be int.
+define Nx                  = 256 # Number of grids along x axis
+define Ny                  = 256 # Number of grids along y axis
+define Nz                  = 1 # Number of grids along z axis
+##################################################
+##################################################
+define Alpha Viscosity in Voro  = 0.200000 # Alpha factor of Voronoi Viscosity
+define Beta Viscosity in Voro  = 0.000000 # Beta factor of Voronoi Viscosity
+##################################################
+#End of Ascii Header

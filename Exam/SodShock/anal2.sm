@@ -1,0 +1,115 @@
+erase
+
+ctype default
+
+
+location 5000 17000 5000 17000
+limits -0.05 1.05 0 1.05
+#limits x r
+expand 1.01
+lweight 3
+box
+
+expand 1.2
+xlabel x
+#ylabel \rho
+
+
+data anal.dat2
+read { x 1 r 2 p 3 v 4}
+ctype default
+connect x r
+
+
+ptype 4 0
+
+ctype green
+data sod.out2
+read { x 1 d 3}
+points x d
+
+ctype default limits 0 10 0 10 relocate 7 8 label \rho
+
+
+ctype default
+location 5000 17000 17000 29000
+data anal.dat2
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 0 1.05
+#limits x p
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+#ylabel Pressure
+
+
+ctype default
+connect x p
+
+
+
+ctype green
+data sod.out2
+read { x 1 p 4}
+points x p
+
+
+ctype default limits 0 10 0 10 relocate 5 8 label Pressure
+
+ctype default
+location 17000 29000 5000 17000
+data anal.dat2
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 -0.1 1.1
+#limits x v
+expand 1.01
+lweight 3
+box 1 4  0 2
+
+expand 1.2
+xlabel x
+#ylabel velocity
+
+
+ctype default
+connect x v
+
+
+
+ctype green
+data sod.out2
+read { x 1 v 2}
+points x v
+#
+ctype default limits 0 10 0 10 relocate 1 8 label Velocity
+#
+#
+#
+
+
+ctype default
+location 17000 29000 17000 29000
+data anal.dat2
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 0.90 2.2
+#limits x v
+expand 1.01
+lweight 3
+box 0 4  0 2
+
+expand 1.2
+
+ctype default
+set y = p/r**(1.4)
+connect x y
+
+
+ctype green
+data sod.out2
+read { x 1 d 3 p 4 y 9}
+points x y
+
+ctype default limits 0 10 0 10 relocate 2 8 label P/\rho^\gamma

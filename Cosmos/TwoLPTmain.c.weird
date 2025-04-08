@@ -1,0 +1,96 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stddef.h>
+#include<string.h>
+#include<math.h>
+#include<mpi.h>
+#include "eunha.h"
+#include "mpirms.h"
+#include "flrw.h"
+
+
+#define MAX(a,b) ( (a)>(b)? (a):(b) )
+
+
+
+static SimParameters lsimpar;
+
+void getpowerparams_(int *nspace, float *boxsize, float *amax,
+		float *npow, float *hubble, float *bias8,
+		long *iseed, float *omepb, int *powreadflag, char *powfilename,
+		char *asciipkfile){
+	SimParameters *simpar = &lsimpar;
+	*nspace = NSPACE(simpar);
+	*boxsize = COSBOXSIZE(simpar);
+	*amax = AMAX(simpar);
+	*npow = NPOW(simpar);
+	*hubble = HUBBLE(simpar);
+	*bias8 = BIAS8(simpar);
+	*iseed = ISEED(simpar);
+	*omepb = OMEPB(simpar);
+	*powreadflag = POWREADFLAG(simpar);
+	sprintf(powfilename, "%s", POWFILENAME(simpar));
+	sprintf(asciipkfile, "%s", INPAPKFILENAME(simpar));
+}
+
+void TwoLPTmain(SimParameters *simpar){
+	size_t i,j,k;
+	enum mtype itype;
+
+
+	float zheight, zstart, zfinal;
+
+
+	zheight = NZ(simpar)/NID(simpar);
+	zstart = zheight * MYID(simpar);
+	zfinal = zheight + zstart;
+
+
+	int izstart = zstart;
+	int izwidth = ceil(zfinal) - izstart;
+
+	int nzparticlewidth = 0;
+
+	float zstartpos = 2*NZ(simpar);
+
+
+	lsimpar = *simpar;
+
+	for(itype=totm;itype<sph;itype++){
+		if(itype ==0 && DM_TNP(simpar) ==0) continue;
+		else if(itype ==1 && SPH_TNP(simpar) ==0) continue;
+
+		size_t densize = 2*(NX(simpar)/2+1) * NY(simpar) * LOCAL_NZ(simpar);
+		size_t fftwsize = 2*(NX(simpar)/2+1) * NY(simpar) * (LOCAL_NZ(simpar) + 5);
+		densize = MAX(10, densize);
+		DenType *d1 = (DenType*)malloc(sizeof(DenType)*densize);
+		DenType *d2 = (DenType*)malloc(sizeof(DenType)*densize);
+		DenType *denpad = (DenType*)malloc(sizeof(DenType)*2*NY(simpar)*NZ(simpar));
+		DenType *fx = (DenType*)malloc(sizeof(DenType)*densize);
+		DenType *fy = (DenType*)malloc(sizeof(DenType)*densize);
+
+		int iitype = itype;
+
+		if(GAS_SPHFLAG(simpar) == 'N') iitype = 0;
+
+		int nx = NX(simpar);
+		int ny = NY(simpar);
+		int local_nz = LOCAL_NZ(simpar);
+		int local_z_start = LOCAL_Z_START(simpar);
+		float damp1, vamp1, damp2, vamp2;
+
+		twolptpmseedforce_(d1, &nx, &ny, &local_nz, &local_z_start, denpad, &damp1, &vamp1, &damp2,
+				&vamp2, &OMEI(simpar), fx, fy, d2, &itype, &OMEP(simpar), &OMEPLAM(simpar), 
+				&W(simpar), &FNL(simpar), &GNL(simpar));
+
+
+		free(fy); free(fx);
+		free(denpad);
+
+
+		GridInfo *ffx, *ffy, *ffz;
+
+
+	}
+}
+

@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------
+Open RTE was unable to open the hostfile:
+    machines
+Check to make sure the path and filename are correct.
+--------------------------------------------------------------------------
+[annapurna.kias.re.kr:30462] [[14854,0],0] ORTE_ERROR_LOG: Not found in file base/ras_base_allocate.c at line 236
+[annapurna.kias.re.kr:30462] [[14854,0],0] ORTE_ERROR_LOG: Not found in file base/plm_base_launch_support.c at line 72
+[annapurna.kias.re.kr:30462] [[14854,0],0] ORTE_ERROR_LOG: Not found in file plm_rsh_module.c at line 990
+--------------------------------------------------------------------------
+A daemon (pid unknown) died unexpectedly on signal 1  while attempting to
+launch so we are aborting.
+
+There may be more information reported by the environment (see above).
+
+This may be because the daemon was unable to find all the needed shared
+libraries on the remote node. You may set your LD_LIBRARY_PATH to have the
+location of the shared libraries on the remote nodes and this will
+automatically be forwarded to the remote nodes.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun noticed that the job aborted, but has no info as to the process
+that caused that situation.
+--------------------------------------------------------------------------
+mpirun: clean termination accomplished
+

@@ -1,0 +1,118 @@
+./ramfofpic.exe 3 1 -2 <<L
+
+L
+\mv tmp.dat smetal.dat
+./ramfofpic.exe 3 1 2 <<L
+
+L
+\mv tmp.dat star.dat
+./hr5col 2 star.dat smetal.dat
+\mv tmp.ppm star.ppm
+
+#
+#
+#
+
+
+
+./ramfofpic.exe 3 1 1 <<L
+
+L
+\mv tmp.dat dm.dat
+./hr5col 1 dm.dat
+\mv tmp.ppm dm.ppm
+
+#
+#
+#
+./ramfofpic.exe 3 1 3 <<L
+
+L
+\mv tmp.dat gas.dat
+
+./ramfofpic.exe 3 1 -3 <<L
+
+L
+\mv tmp.dat temp.dat
+./hr5col 3 gas.dat temp.dat
+\mv tmp.ppm gas.ppm
+
+
+
+
+# this is for the FoF results
+
+
+convert sink.ps sink.eps
+convert -density 266 sink.eps sink.jpg
+montage dm.ppm star.ppm gas.ppm sink.jpg -tile 2x2 -geometry +10+10 all.png
+convert -font Times-Bold -pointsize 50 -fill yellow  -draw 'text 200,200 "dark matter"' -draw 'text 2030,200 "star"' -draw 'text 200,2030 "gas"' -fill black -draw 'text 2030,2030 "SMBH"' all.png all.pdf
+
+
+# this is for the PGalF results
+
+
+./hr5cont 2 star.dat smetal.dat star.contour.dat
+\mv tmp.ppm star.contour.ppm
+./hr5cont 3 gas.dat temp.dat gas.contour.dat
+\mv tmp.ppm gas.contour.ppm
+./hr5cont 1 dm.dat dm.contour.dat
+\mv tmp.ppm  dm.contour.ppm
+
+montage dm.contour.ppm star.contour.ppm gas.contour.ppm -tile 2x2 -geometry +10+10 all.contour.png
+convert -font Times-Bold -pointsize 50 -fill yellow  -draw 'text 200,200 "dark matter"' -draw 'text 2030,200 "star"' -draw 'text 200,2030 "gas"' all.contour.png all.contour.pdf
+
+
+
+
+# this is to plot the background star/dm/gas/sink 
+# for stars
+./ramdclpic.exe 3 1 2 <<L
+
+L
+\mv tmp.dat bstar.dat
+./ramdclpic.exe 3 1 -2 <<L
+
+L
+\mv tmp.dat bsmetal.dat
+./hr5col 2 bstar.dat bsmetal.dat
+\mv tmp.ppm bstar.ppm
+
+
+./ramdclpic.exe 3 1 1 <<L
+
+L
+\mv tmp.dat bdm.dat
+./hr5col 1 bdm.dat 
+\mv tmp.ppm bdm.ppm
+
+
+# for gas
+./ramdclpic.exe 3 1 3 <<L
+
+L
+\mv tmp.dat bgas.dat
+./ramdclpic.exe 3 1 -3 <<L
+
+L
+\mv tmp.dat btemp.dat
+./hr5col 3 bgas.dat btemp.dat
+\mv tmp.ppm bgas.ppm
+
+
+./ramdclpic.exe 3 1 1 <<L
+
+L
+\mv tmp.dat bdm.dat
+./hr5col 1 bdm.dat 
+\mv tmp.ppm bdm.ppm
+
+# for dm
+./ramdclpic.exe 3 1 1 <<L
+
+L
+\mv tmp.dat bdm.dat
+./hr5col 1 bdm.dat 
+\mv tmp.ppm bdm.ppm
+
+

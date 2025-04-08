@@ -1,0 +1,45 @@
+erase
+ltype 0
+ctype default
+
+
+
+
+location 5000 30000 5000 30000
+limits 0.2 2.5 0.3 2.5
+ticksize -1 2 -1 2
+expand 1.05
+lweight 3
+box
+expand 1.3
+xlabel N_{cores}
+ylabel WClock(sec.)
+
+
+expand 1.5
+
+data perf.dat
+read { x 1 y 6}
+set lx = lg(x)
+set ly = lg(y)
+ltype 0
+ptype 30 3
+connect lx ly
+points lx ly
+
+ctype magenta
+ltype 2
+relocate 0.2 2.5 
+draw 2.2 0.5
+relocate 0.2 3.0 
+draw 2.2 1.0
+relocate 0.2 2.7
+draw 2.2 0.7
+
+expand 0.9
+limits 0 10 0 10
+ctype default
+relocate 2 2 
+label 2LPT512p512s
+relocate 2 3 
+label measured at N_{step}=20

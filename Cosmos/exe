@@ -1,0 +1,3 @@
+mpicc -g   -DINTEL  -DXYZDBL    -I. -I../ -I/home/kjhan/local/include/ -I../MpiAux -I../RMS -I./CosmosIC -I../Timer -I../OST -c test.c
+mpicc -g -L. -lcosmology -I. -I../ -I/home/kjhan/local/include/ -I../MpiAux -I../RMS -I./CosmosIC -I../Timer -I../OST -o test.exe test.o   -L. -L../RMS -lcosmology -L../MpiAux -lmpiaux -lrms  -L../OST -lost 
+

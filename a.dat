@@ -1,0 +1,62 @@
+#Start of the Ascii Header of the GOTPM Simulation
+##################################################
+# <<SIM_MODEL value>> 0:Cosmos, 1:Galaxy, 3: KH, 4: 3D Blast, 5: 3D Bow Shock, 6: 3D RT
+define SIM_MODEL           = 0 # SIMULATION MODEL 
+define flag for Hydro      = N # N: no hydro, S: SPH hydro, V: Voro hydro
+define Self Gravity        = Y # Whether to include the self gravity
+define flagIC              = 0 #0:self generate, 1:grafic1 read
+define grafic1 dir. name   =  
+define INITIAL CONDITION   = 2 # How to generate initial condtion, 1: Zeldovich, 2: 2nd order LPT
+### Hubble parameter is in 100km/sec/Mpc.
+define Hubble              = 0.720000 # Hubble expansion parameter
+define OmegaMatter0        = 0.260000 # Current Omega Matter
+define OmegaBaryon0        = 0.044000 # Current Omega Baryon
+define OmegaLambda0        = 0.740000 # Current Omega Lambda
+define w0(eos of DE)       = -1.000000 # w0 of Lambda
+define wa(eos of DE)       = 0.000000 # w1 of Lambda
+define fNL                 = 0.000000
+define gNL                 = 0.000000
+##################################################
+### nPS is the power spectral index.
+### Bias factor is inverse of sigma_8.
+define nPS                 = 0.960000 # Spectral index
+define Bias                = 1.260000 # Bias factor, inverse of sigma_8
+define Iseed               = -56
+define Powerflag           = 1 #0: self generate, 1: read oCAMB, 2: read nCAMB
+define Boxsize(Mpc/h)      = 512.000000 # Simulation Box size in Mpc/h
+##################################################
+define Amax                = 48.000000 # Maximum expansion factor/ final time
+define Anow                = 1 # Current expansion factor/ current time
+define Astep               = 0.25
+define Theta               = 0.300000 # Current cell opening angle in Tree correction
+define EPSILON             = 0.100000 # Force Smoothing Length
+##################################################
+### Nx, Ny, and Nz should be same & nspace should be int.
+define Nx                  = 512 # Number of grids along x axis
+define Ny                  = 512 # Number of grids along y axis
+define Nz                  = 512 # Number of grids along z axis
+##################################################
+define Nstep               = 940 # Number of time steps
+define Stepcount           = 1 # Current time step number
+define Stepnum             = 1
+define Powerfile           = camb.z=47.dat # 0: No input 1: CAMB 2: Ascii
+##################################################
+define rvfilename          = INITIAL
+define rvprefix            = INITIAL
+define PM_PreFoF_flag      = Y
+##################################################
+define GlacialFileName     = 
+define Np                  = 0
+define DNp                 = 0
+define BNp                 = 0
+define SNp                 = 0
+define ANp                 = 0
+define Particle Type       = 0
+define Ind Time Flag       = N
+define DDINFO SIZE         = 328
+##################################################
+################    GAS FLAGS   ##################
+define Flag for SPH        = N # flag for basic SPH (Y/N)
+define FILE I/O Group Size = 1150398920 # FILE I/O Group Size
+##################################################
+#End of Ascii Header
