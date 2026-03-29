@@ -1,0 +1,39 @@
+#Start of the Ascii Header of the GOTPM Simulation (AutoGen)
+##################################################
+# <<SIM_MODEL value>> 0(Cosmos), 1(Galaxy) 3(KH:RK4,2D), 4(Blast:3D),
+#    5(Bow Shock:3D), 6(RT:2D), 7(Keplyer:2D), 30(MkGlass2D) 60(RT:2D:LF)
+#    130(MkGlass2D:LF)
+define SIM_MODEL           = 6 # SIMULATION MODEL 
+define flag for Hydro      = V # N: no hydro, S: SPH hydro, V: Voro hydro
+define Self Gravity        = N # Whether to include the self gravity
+define Hydro time-stepping way = 0 # 0: leap-frog, 1: RK4
+define Voro centroid shift factor = 0.000000 # 0: no, >0: fshift
+define Gamma_hydro         = 1.400000 # Polytropic index (hydro)
+define RT maximum x (box)  = 0.5 # Maximum X in the RT Test
+define RT maximum y (box)  = 1 # Maximum Y in the RT Test
+define RT Lower density     = 1.000000 # Low Density in the RT Test
+define RT Higher density         = 2.000000 # High Density in the RT Test
+define RT External Force   = -0.5 # External Gravity in ydirection in the RT Test
+define RT Grid Size        = 0.0078125 # Grid size for Linked List
+define RT Order of Accuracy= 0.333333 # Order of Accuracy in Voro mode. 0<=w<0.5
+define RT Transition size  = 0.025000 # Initial Transition region of the RT Test
+define RT Vel Perturb Amp  = 0.025000 # Initial Perturbation ampl. of Vel. in Y-direction
+define RT Pressure at Ly/2  = 1.428571 # Hydrostatic pressure at Ly/2
+define RT Kappa            = 0.000000 # coefficient to determine w2 in the 2d RT
+define GAS w2 factor       = 0.000000 # a factor to w2 increment
+define GAS w2 power       = 0.000000 # a power to w2 
+##################################################
+### Nx, Ny, and Nz should be same & nspace should be int.
+define Nx                  = 128 # Number of grids along x axis
+define Ny                  = 256 # Number of grids along y axis
+define Nz                  = 1 # Number of grids along z axis
+##################################################
+define Courant_hydro       = 0.100000 # Courant number in hydro
+# INFORMATION ON THE VORONOI VISCOSITY (AV:artificial viscosity)
+define Alpha parameter in Voro  = 1.000000 # Alpha factor of Voronoi AV
+define Beta parameter in Voro  = 2.000000 # Beta factor of Voronoi AV
+define Eta parameter in Voro  = 0.001953 # Eta factor of Voronoi AV ~ mean separation
+define Eps parameter in Voro  = 0.010000 # Eps factor of Voronoi AV
+define Re parameter in Voro   = 0.000000 # Reynolds number of Voronoi
+##################################################
+#End of Ascii Header
