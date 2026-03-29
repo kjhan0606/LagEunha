@@ -1,0 +1,18 @@
+#!/bin/bash
+export OPT='-qopenmp -O3'
+#export OPT=-g
+icc -c sedov.c  -I./  -I../ $OPT
+icc -c vch_hydro.c -I./ -I../   $OPT
+ar rcv libsedov.a sedov.o vch_hydro.o
+ranlib libsedov.a
+
+mpiicc -o sedov.exe vch.c -L./ -lsedov -L../  -lmyvoro -lm -I./ -I../ -L./Colorize/ -lcolor   $OPT
+
+#mpiicc -o mkinit.exe mkinit.c test.c vch_reverse.c vch_centroid.c -L../  -lmyvoro -lm -I./ -I../ -L../Colorize/ -lcolor   $OPT
+
+
+icc -o drawvoro3d.exe drawvoro3d.c -I. -I../KH/ -I../ -L../  -L./ -L./ -lmyvoro -lm -L./Colorize -lcolor $OPT
+#icc -o movie.exe movie.c -I. -I./ -I./../ -L./../ -L./ -lsedov -L./ -lmyvoro -lm -L../Colorize -lcolor $OPT
+
+icc -o dprofile.exe dprofile.c -I. -I../KH/ -I../ -L../  -L./ -L./ -lmyvoro -lm -L./Colorize -lcolor $OPT
+icc -o dprofile.sph.exe dprofile.sph.c sedov.o -I. -I../KH/ -I../ -L../  -L./ -L./ -lmyvoro -lm -L./Colorize -lcolor $OPT

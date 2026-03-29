@@ -1,0 +1,20 @@
+erase
+ctype default
+
+
+
+expand 1.
+location 5000 30000 5000 30000
+limits 0 0.2 0 4.5
+box
+expand 1.1
+xlabel x 
+ylabel \rho
+expand 0.5
+
+ptype 4 0
+data dprofile.out
+#data dprofile.sph.out
+read { x 1 y 2}
+points x y
+

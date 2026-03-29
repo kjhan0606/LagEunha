@@ -1,0 +1,237 @@
+erase
+ctype = CTYPE() concat 150+256*(150+256*50)
+ctype = CTYPE(STRING) concat 'brown'
+
+ctype default
+
+
+
+location 5000 17000 3000 10000
+limits -0.05 1.05 0 1.15
+#limits x r
+expand 1.01
+lweight 3
+box
+
+expand 1.2
+xlabel x
+ylabel \rho
+
+
+
+
+ptype 4 1
+
+ctype brown
+data vph.out
+read { x 1 d 3}
+points x d
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+ctype default
+connect x r
+
+ctype default
+location 5000 17000 10000 17000
+limits -0.05 1.05 0.05 1.15
+#limits x p
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel Pressure
+
+
+
+
+
+ctype brown
+data vph.out
+read { x 1 p 4}
+points x p
+
+
+
+data anal.dat
+read { x 1 r 2 p 3 v 4 }
+ctype default
+connect x p
+
+
+ctype default
+location 5000 17000 17000 24000
+limits -0.05 1.05 0.86 2.19
+#limits x v
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel P/\rho^\gamma
+
+
+ctype brown
+data vph.out
+read { x 1 v 2 e 9}
+points x e
+
+data anal.dat
+read { x 1 r 2 p 3 v 4 e 5}
+ctype default
+connect x e
+ctype default
+
+
+location 5000 17000 24000 31000
+limits -0.05 1.05 -0.1 1.1
+#limits x v
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel velocity
+
+
+ctype brown
+data vph.out
+read { x 1 v 2}
+points x v
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+ctype default
+connect x v
+ctype default
+
+
+
+limits 0 10 0 10
+relocate 1 8 label VCH
+expand 1.
+lweight 1
+relocate 1 7 label N_p=100
+relocate 1 6 label \gamma=1.4
+relocate 1 5 label t=0.2
+
+location 17000 29000 3000 10000
+limits -0.05 1.05 0 1.15
+#limits x r
+expand 1.01
+lweight 3
+box 1 0 0 0
+
+expand 1.2
+xlabel x
+#ylabel \rho
+
+
+
+
+ptype 4 1
+
+ctype brown
+data sph.out
+read { x 1 d 3}
+points x d
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+ctype default
+connect x r
+
+ctype default
+location 17000 29000 10000 17000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 0.05 1.15
+#limits x p
+expand 1.01
+lweight 3
+box 0 0  0 0
+
+expand 1.2
+#xlabel x
+#ylabel Pressure
+
+
+
+
+
+ctype brown
+data sph.out
+read { x 1 p 4}
+points x p
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+ctype default
+connect x p
+
+ctype default
+location 17000 29000 17000 24000
+data anal.dat
+read { x 1 r 2 p 3 v 4 e 5}
+limits -0.05 1.05 0.86 2.19
+#limits x v
+expand 1.01
+lweight 3
+box 0 0  0 0
+
+expand 1.2
+#xlabel x
+#ylabel velocity
+
+
+
+
+
+ctype brown
+data sph.out
+read { x 1 v 2 e 9}
+points x e
+
+
+data anal.dat
+read { x 1 r 2 p 3 v 4 e 5}
+ctype default
+connect x e
+
+
+ctype default
+location 17000 29000 24000 31000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 -0.1 1.1
+#limits x v
+expand 1.01
+lweight 3
+box 0 0  0 0
+
+expand 1.2
+#xlabel x
+#ylabel velocity
+
+
+
+
+
+ctype brown
+data sph.out
+read { x 1 v 2}
+points x v
+
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+ctype default
+connect x v
+
+ctype default
+limits 0 10 0 10
+relocate 1 8 label SPH

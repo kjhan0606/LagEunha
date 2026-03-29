@@ -1,0 +1,132 @@
+drawvoro2d.c:#include "voro.h"
+drawvoro2d.c:void MkLinkedListSerial(treevorork4particletype *bp, int np){
+drawvoro2d.c:Voro2D_point *Voro2D_FindNeighborSerial(int ix, int iy, int *nneigh, treevorork4particletype *bp){
+drawvoro2d.c:				treevorork4particletype *tt = (treevorork4particletype*)tmp;
+drawvoro2d.c:treevorork4particletype *Voro2D_FindCellBPSerial(int ix, int iy, int *mp, treevorork4particletype *bp){
+drawvoro2d.c:    treevorork4particletype *res;
+drawvoro2d.c:    res = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*np);
+drawvoro2d.c:		treevorork4particletype *tt = (treevorork4particletype*)tmp;
+drawvoro2d.c:	treevorork4particletype *bp = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*(np));
+drawvoro2d.c:    fread(bp,sizeof(treevorork4particletype), np,fp);
+drawvoro2d.c:        Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+drawvoro2d.c:            treevorork4particletype *p = Voro2D_FindCellBPSerial(ix,iy,&np,bp);
+drawvoro2d.c:				int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize); 
+drawvoro2d.c:				treevorork4particletype *ibp = p[i].bp;
+drawvoro2d.c:				ibp->volume = Area2DPolygon(vorocorner, mp); 
+drawvoro2d.c:				fprintf(wp,"set x = %g\n", p[i].x+vorocorner->x);
+drawvoro2d.c:				Voro2D_Corner *tmp = vorocorner->upperlink;
+drawvoro2d.c:				} while(tmp != vorocorner);
+drawvoro2d.c: 				fprintf(wp,"set y = %g\n", p[i].y+vorocorner->y);
+drawvoro2d.c:				tmp = vorocorner->upperlink;
+drawvoro2d.c:				} while(tmp != vorocorner);
+drawvoro2d.c:		free(vorocorner);
+kepler.c:#include "voro.h"
+kepler.c:	treevorork4particletype *bp = VORORK4_TBP(simpar);
+kepler.c:			fwrite(bp, sizeof(treevorork4particletype), np, wp);
+kepler.c:		VORORK4_TBP(simpar) = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*np);
+kepler.c:		fread(VORORK4_TBP(simpar),sizeof(treevorork4particletype), np,fp);
+kepler.c:		VORORK4_TBP(simpar) = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*100);;
+kepler.c:	treevorork4particletype *bp;
+kepler.c:			SIM_LXMIN(simpar,vorork4), SIM_LYMIN(simpar,vorork4),
+kepler.c:			SIM_LXMAX(simpar,vorork4), SIM_LYMAX(simpar,vorork4));
+kepler.c:	KP_XMIN(simpar) = SIM_LXMIN(simpar,vorork4);
+kepler.c:	KP_YMIN(simpar) = SIM_LYMIN(simpar,vorork4);
+kepler.c:	KP_XMAX(simpar) = SIM_LXMAX(simpar,vorork4);
+kepler.c:	KP_YMAX(simpar) = SIM_LYMAX(simpar,vorork4);
+kepler.c:			treevoroparticletype *bp = VORO_TBP(simpar);
+movie.c:#include "voro.h"
+movie.c:			Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp); 
+movie.c:					int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize); 
+movie.c:					bp[id].volume = Area2DPolygon(vorocorner, mp); 
+movie.c:					fprintf(wp,"set x = %g\n", p[i].x+vorocorner->x); 
+movie.c:					Voro2D_Corner *tmp = vorocorner->upperlink; 
+movie.c:					} while(tmp != vorocorner); 
+movie.c:					fprintf(wp,"set y = %g\n", p[i].y+vorocorner->y); 
+movie.c:					tmp = vorocorner->upperlink; 
+movie.c:					} while(tmp != vorocorner); 
+movie.c:			free(vorocorner);
+mpirks.kp2d.c:#include "voro.h"
+mpirks.kp2d.c:MakeAllDDFuncDDinfo2D(vorork4);
+mpirks.kp2d.c:DefineProtoTypeFunctions2D(vorork4);
+mpirks.kp2d.c:DefineProtoTypeFunctions2D(treevorork4);
+mpirks.kp2d.c:    MakeDoDeInfo2D(NID(simpar), prime, vorork4particletype, x,y,
+mpirks.kp2d.c:    MakeDoDeInfo2D(NID(simpar), prime, treevorork4particletype, x,y,
+mpirks.kp2d.c:    MakeDoDeFunc2D(vorork4particletype, VORORK4_DDFUNC(simpar), xcompare2D_kp,ycompare2D_kp, 
+mpirks.kp2d.c:    MakeDoDeFunc2D(treevorork4particletype, TVORORK4_DDFUNC(simpar), xcompare2D_kp,ycompare2D_kp, 
+mpirks.kp2d.c:            vorork4particletype  *bp = (vorork4particletype*)(ddinfo[i].pivot)+ddinfo[i].subgroupid;
+mpirks.kp2d.c:            vorork4particletype  *bp1 = (vorork4particletype*)(ddinfo[i].pivot)+ddinfo[i].subgroupid;
+mpirks.kp2d.c:            vorork4particletype  *bp2 = (vorork4particletype*)(ddinfo[i].pivot)+ddinfo[i].subgroupid-1;
+mpirks.kp2d.c:            vorork4particletype  *bp = (vorork4particletype*)(ddinfo[i].pivot)+ddinfo[i].subgroupid-1;
+mpirks.kp2d.c:    vorork4particletype pivot[npivot];
+mpirks.kp2d.c:    KP_BuildSimpleRMS(simpar, KP_SIMBOX(simpar), sizeof(vorork4particletype), &VORORK4_DDFUNC(simpar),
+mpirks.kp2d.c:	CopyDDFuncDDInfoFromTYPE1(simpar, VORORK4, vorork4, TVORORK4, treevorork4);
+mpirks.kp2d.c:    mpirks( (void**)(&VORORK4_BP(simpar)),&VORO_NP(simpar), sizeof(vorork4particletype), &VORORK4_DDFUNC(simpar), VORORK4_DDINFO(simpar),COM(simpar),
+mpirks.kp2d.c:    DEBUGPRINT("P%d has %ld voronoi particles\n",MYID(simpar), VORO_NP(simpar));
+util.c:#include "voro.h"
+util.c:	treevorork4particletype *bp = VORORK4_TBP(simpar);
+util.c:						treevorork4particletype *tt = (treevorork4particletype*)tmp;
+util.c:	treevorork4particletype *bp = VORORK4_TBP(simpar);
+util.c:treevorork4particletype *kp_mkinitial(SimParameters *simpar, int *mp){
+util.c:	treevorork4particletype *res;
+util.c:		treevoroparticletype *bp  = (treevoroparticletype*)malloc(sizeof(treevoroparticletype)*np);
+util.c:        fread(bp,sizeof(treevoroparticletype), np,fp);
+util.c:        VORORK4_TBP(simpar) = (treevorork4particletype*)
+util.c:			malloc(sizeof(treevorork4particletype)*np);
+util.c:		treevorork4particletype *pp = VORORK4_TBP(simpar);
+util.c:        VORORK4_TBP(simpar) = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*100);;
+util.c:treevorork4particletype *old_kp_mkinitial(SimParameters *simpar, int *mp){
+util.c:	treevorork4particletype *res;
+util.c:	res = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*nx*ny);
+util.c:	res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
+util.c:	VORORK4_BP(simpar) = (vorork4particletype*)res;
+util.c:	treevorork4particletype *bp = VORORK4_TBP(simpar);
+util.c:		int ix, int iy, int *nneigh, treevorork4particletype *bp){
+util.c:				treevorork4particletype *tt = (treevorork4particletype*)tmp;
+util.c:treevorork4particletype *kp_Voro2D_FindCellBP(SimParameters *simpar,
+util.c:		int ix, int iy, int *mp, treevorork4particletype *bp){
+util.c:	treevorork4particletype *res;
+util.c:	res = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*np);
+util.c:			treevorork4particletype *tt = (treevorork4particletype*)tmp;
+voro2d.c:#include "voro.h"
+voro2d.c:	pkm = ((treevorork4particletype*) (neighwork[(tmp->upperlink)->upperrelated].bp))->pressure;
+voro2d.c:	pkp = ((treevorork4particletype*) (neighwork[(tmp           )->lowerrelated].bp))->pressure;
+voro2d.c:	treevorork4particletype *bp = VORORK4_TBP(simpar);
+voro2d.c:        Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+voro2d.c:            treevorork4particletype *p = kp_Voro2D_FindCellBP(simpar,ix,iy,&np,bp);
+voro2d.c:                int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize);
+voro2d.c:				treevorork4particletype *ibp = p[i].bp;
+voro2d.c:				ibp->volume = Area2DPolygon(vorocorner,mp);
+voro2d.c:		free(vorocorner);
+voro2d.c:    treevorork4particletype *bp = VORORK4_TBP(simpar);
+voro2d.c:    	Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+voro2d.c:            treevorork4particletype *p = kp_Voro2D_FindCellBP(simpar,ix,iy,&np,bp);
+voro2d.c:				treevorork4particletype *ibp = p[i].bp;
+voro2d.c:                int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize);
+voro2d.c:                ibp->volume = Area2DPolygon(vorocorner, mp);
+voro2d.c:				tmp = vorocorner;
+voro2d.c:						treevorork4particletype *jbp =  (treevorork4particletype*)(neighwork[tmp->upperrelated].bp);
+voro2d.c:	                    Voro2D_point dS = voro2D_norm(&line); 
+voro2d.c:				} while( tmp != vorocorner);
+voro2d.c:    	free(vorocorner);
+voro2d.c:    treevorork4particletype *bp = VORORK4_TBP(simpar);
+voro2d.c:	treevorork4particletype *bp = VORORK4_TBP(simpar);
+voro2d.c:    	Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+voro2d.c:            treevorork4particletype *p = kp_Voro2D_FindCellBP(simpar,ix,iy,&np,bp);
+voro2d.c:				treevorork4particletype *ibp = p[i].bp;
+voro2d.c:                int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize);
+voro2d.c:                ibp->volume = Area2DPolygon(vorocorner, mp);
+voro2d.c:				tmp = vorocorner;
+voro2d.c:						treevorork4particletype *jbp =  (treevorork4particletype*)(neighwork[tmp->upperrelated].bp);
+voro2d.c:	                    Voro2D_point dS = voro2D_norm(&line); 
+voro2d.c:				} while( tmp != vorocorner);
+voro2d.c:    	free(vorocorner);
+voro2d.c:    	Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+voro2d.c:            treevorork4particletype *p = kp_Voro2D_FindCellBP(simpar,ix,iy,&np,bp);
+voro2d.c:				treevorork4particletype *ibp = p[i].bp;
+voro2d.c:                int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize);
+voro2d.c:                ibp->volume = Area2DPolygon(vorocorner, mp);
+voro2d.c:				tmp = vorocorner;
+voro2d.c:						treevorork4particletype *jbp =  (treevorork4particletype*)(neighwork[tmp->upperrelated].bp);
+voro2d.c:	                    Voro2D_point dS = voro2D_norm(&line); 
+voro2d.c:				} while( tmp != vorocorner);
+voro2d.c:    	free(vorocorner);

@@ -1,0 +1,29 @@
+erase
+
+define rho2 (2)
+define rho1 (1)
+define deltay (0.025)
+define Phalf (10./7.)
+
+define Const ($Phalf +0.5*($rho2/2+($rho2-$rho1)*$deltay*lg(2.)))
+
+set y = 0, 1, 0.01
+set p = -0.5*($rho2*y+($rho2-$rho1)*$deltay * lg(1+exp(-(y-0.5)/$deltay))) + $Const
+
+
+limits 0 1 0.7 2
+expand 1.0
+lweight 4
+box
+
+lweight 3
+expand 1.2
+connect y p
+
+expand 1.4
+lweight 4
+relocate 0.5 1.42857
+ptype 30 3
+dot
+
+
