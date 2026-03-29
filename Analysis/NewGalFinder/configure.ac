@@ -1,0 +1,12 @@
+AC_INIT([lagGALFINDER], [1.0])
+AM_INIT_AUTOMAKE([foreign])
+AC_PROG_CC([mpiicc mpicc] )
+AC_PROG_FC([mpiifort mpifort mpif77])
+AC_CHECK_LIB([m], [main])
+AC_CHECK_LIB([sfftw], [main], [], [AC_MSG_ERROR([sfftw not found])])
+AC_CHECK_LIB([srfftw], [main], [], [AC_MSG_ERROR([srfftw not found])])
+AC_ARG_WITH([fftw], [  --with-fftw=DIR   FFTW prefix], [FFTW=$withval], [FFTW=/home/kjhan/local])
+AC_ARG_WITH([fftw], [  --with-fftw=DIR   FFTW prefix], [FFTW=$withval], [FFTW=/home/kjhan/local])
+AC_SUBST([FFTW])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

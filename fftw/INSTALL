@@ -1,0 +1,8 @@
+./configure CC=icc CXX=icpc CPP=cpp F77=ifort --enable-openmp --enable-float --enable-avx --enable-mpi --enable-threads --prefix=/home/kjhan/local/ MPICC=mpiicc 
+./configure CC=icc CXX=icpc CPP=cpp F77=ifort --enable-float --enable-avx --enable-mpi --prefix=/home/kjhan/local/ MPICC=mpiicc  -cc=icx
+
+./configure CC=icc CXX=icpc CPP=cpp F77=ifort --enable-openmp --enable-avx --enable-mpi --enable-threads --prefix=/home/kjhan/local/ MPICC=mpiicc -cc=icx
+
+
+# 2025/11/13 for grammar
+./configure CC=icx CXX=icpc CPP=cpp F77=ifx --enable-openmp --enable-float --enable-avx --enable-mpi --enable-threads --prefix=/home/kjhan/local/ MPICC=mpiicx 

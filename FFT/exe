@@ -1,0 +1,2 @@
+#mpicc  -DDEBUG -g -o test.exe test.c fft.c -I./ -I../fftw/include -L../fftw/lib -lfftw3f_mpi  -lfftw3f_threads -lfftw3f 
+mpiicc  -o test.exe test.c -L./ -lfft  -I../ -I../RMS/ -I./ -I/home/kjhan/local/include -L/home/kjhan/local/lib -lfftw3f_mpi  -lfftw3f   -DDEBUG -g  -lfftw3f_threads

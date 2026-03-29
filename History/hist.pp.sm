@@ -1,0 +1,197 @@
+#device postencap hist.eps
+ctype = CTYPE() concat 129+256*(213+256*83)
+ctype = CTYPE(STRING) concat 'brown'
+
+ctype = CTYPE() concat 236+256*(110+256*87)
+ctype = CTYPE(STRING) concat 'midblue'
+
+ctype = CTYPE() concat 73+256*(160+256*248)
+ctype = CTYPE(STRING) concat 'tancolor'
+
+ctype = CTYPE() concat 247+256*(205+256*75)
+ctype = CTYPE(STRING) concat 'jblue'
+
+erase
+
+ctype white
+ltype 0
+
+location 5000 30000 5000 30000
+
+limits 1993 2025 4 12
+ticksize 1 5 -1 10
+lweight 3
+expand 1
+box
+lweight 2
+expand 1.01
+xlabel year
+ylabel resolution elements
+#
+#
+#
+
+# growth line: order of two for every 10 years
+ctype white
+set x = 1990, 2030, 0.1
+set y = (x-1995)*(2./10.)+5.5
+ltype 0 lweight 3 connect x y
+
+lweight 3
+relocate 2013 5 draw 2015 5 relocate 2016 4.96 lweight 1 expand 0.6 label 100\times  for every decade
+
+lweight 1
+ctype white
+
+
+#
+
+data data.txt
+
+#### for TreeSPH
+lines 1 6
+read { y 1 m 2 p 3}
+set x = y +(m-1)/12.
+set y = lg(p)
+expand 2.5
+ptype 30 0
+points x y
+
+#### for Gadget2/3
+lines 9 21
+read { y 1 m 2 p 3}
+set x = y +(m-1)/12.
+set y = lg(p)
+expand 2.5
+ptype 30 3
+ctype tancolor
+points x y
+
+#### for AREPO
+lines 24 27
+read { y 1 m 2 p 3}
+set x = y +(m-1)/12.
+set y = lg(p)
+expand 2.5
+ptype 4 3 
+ctype midblue
+points x y
+
+#### for Ramses
+lines 29 30
+read { y 1 m 2 p 3}
+set x = y +(m-1)/12.
+set y = lg(p)
+expand 3.5
+ptype 6 3
+ctype jblue
+points x y
+
+#### for GIZMO
+lines 37 37
+read { y 1 m 2 p 3}
+set x = y +(m-1)/12.
+set y = lg(p)
+expand 2.5
+ptype 5 3
+ctype brown
+points x y
+
+
+ctype white expand 1 lweight 1 relocate 1994.75 4.74 expand 0.6 label 1
+ctype white expand 1 lweight 1 relocate 1995.95 5.67 expand 0.6 label 2
+ctype white expand 1 lweight 1 relocate 1999.4 6.27 expand 0.6 label 3
+ctype white expand 1 lweight 1 relocate 2001.2 7.15 expand 0.6 label 4
+ctype white expand 1 lweight 1 relocate 2001.9 6.43 expand 0.6 label 5
+
+ctype white expand 1 lweight 1 relocate 2002.95 7.8 expand 0.6 label 6
+ctype white expand 1 lweight 1 relocate 2008.28 7.48 expand 0.6 label 7
+ctype white expand 1 lweight 1 relocate 2008.05 8.32 expand 0.6 label 8
+ctype white expand 1 lweight 1 relocate 2009.79 8.4 expand 0.6 label  9
+ctype white expand 1 lweight 1 relocate 2010.85 8.02 expand 0.6 label  10
+ctype white expand 1 lweight 1 relocate 2011.89 9.3 expand 0.6 label  11 # Cui+12
+ctype white expand 1 lweight 1 relocate 2012.40 8.4 expand 0.6 label  12
+ctype white expand 1 lweight 1 relocate 2012.80 9.3 expand 0.6 label  13
+ctype white expand 1 lweight 1 relocate 2013.03 8.4 expand 0.6 label  14
+ctype white expand 1 lweight 1 relocate 2013.8 9.3 expand 0.6 label  15
+ctype white expand 1 lweight 1 relocate 2014.1 10.05 expand 0.6 label  20
+ctype white expand 1 lweight 1 relocate 2014.4 9.78 expand 0.6 label  16
+ctype white expand 1 lweight 1 relocate 2014.6 9.85 expand 0.6 label  17
+ctype white expand 1 lweight 1 relocate 2014.8 10.03 expand 0.6 label  18
+
+ctype white expand 1 lweight 1 relocate 2011.15 8.40 expand 0.6 label  19
+ctype white expand 1 lweight 1 relocate 2017.75 10.45 expand 0.6 label  21
+
+ctype white expand 1 lweight 1 relocate 2018.7 9.3 expand 0.6 label  22
+
+ctype white expand 1 lweight 1 relocate 2014.1 9.95 expand 0.6 label  23
+ctype white expand 1 lweight 1 relocate 2020.5 10.66 expand 0.6 label  24
+ctype white expand 1 lweight 1 relocate 2022.9 10.84 expand 0.6 label  25
+
+
+
+
+
+
+limits 0 10 -2 10
+expand 1.6 ptype 30 0 ctype white relocate 1 9.5 dot relocate 0.88 9.45 expand 1 expand 0.5 label  1  Metzler+94
+expand 1.6 ptype 30 0 ctype white relocate 1 9.2 dot relocate 0.88 9.15 expand 1 expand 0.5 label  2  Katz+95
+expand 1.6 ptype 30 0 ctype white relocate 1 8.9 dot relocate 0.88 8.85 expand 1 expand 0.5 label  3  Pearce+99
+expand 1.6 ptype 30 0 ctype white relocate 1 8.6 dot relocate 0.88 8.55 expand 1 expand 0.5 label  4  Dave+01
+expand 1.6 ptype 30 0 ctype white relocate 1 8.3 dot relocate 0.88 8.25 expand 1 expand 0.5 label  5  Murali+02
+
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 8.0 dot ctype white relocate 0.88 7.96 expand 1 expand 0.5 label  6  
+ctype white relocate 1.2 7.97 label Springel+03
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 7.7 dot ctype white relocate 0.88 7.66 expand 1 expand 0.5 label  7  
+ctype white relocate 1.2 7.67 label Oppenheimer+08
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 7.4 dot ctype white relocate 0.88 7.36 expand 1 expand 0.5 label  8  
+ctype white relocate 1.2 7.37 label Di Matteo+08
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 7.1 dot ctype white relocate 0.88 7.06 expand 1 expand 0.5 label  9  
+ctype white relocate 1.2 7.07 label Schaye+10
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 6.8 dot ctype white relocate 0.84 6.76 expand 1 expand 0.5 label  10 
+ctype white relocate 1.2 6.77 label Dave+11
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 6.5 dot ctype white relocate 0.84 6.46 expand 1 expand 0.5 label  11 
+ctype white relocate 1.2 6.47 label Cui+12
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 6.2 dot ctype white relocate 0.84 6.16 expand 1 expand 0.5 label  12 
+ctype white relocate 1.2 6.17 label Puchwein+13
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 5.9 dot ctype white relocate 0.84 5.86 expand 1 expand 0.5 label  13 
+ctype white relocate 1.2 5.87 label van Daalen+13
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 5.6 dot ctype white relocate 0.84 5.56 expand 1 expand 0.5 label  14 
+ctype white relocate 1.2 5.57 label Dave+13
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 5.3 dot ctype white relocate 0.84 5.26 expand 1 expand 0.5 label  15 
+ctype white relocate 1.2 5.27 label Le Brun+14
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 5.0 dot ctype white relocate 0.84 4.96 expand 1 expand 0.5 label  16 
+ctype white relocate 1.2 4.97 label Steinborn+15 (Magnetcum Pathfinder)
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 4.7 dot ctype white relocate 0.84 4.66 expand 1 expand 0.5 label  17 
+ctype white relocate 1.2 4.67 label Khandai+15 (MassiveBlack-II)
+expand 1.8 ptype 30 3 ctype tancolor relocate 1 4.4 dot ctype white relocate 0.84 4.36 expand 1 expand 0.5 label  18 
+ctype white relocate 1.2 4.37 label Schaye+15 (EAGLE)
+
+
+limits 0 10 -2 8
+expand 2.5 ptype 4 3 ctype midblue relocate 7 1.4 dot ctype white relocate 6.85 1.37 ctype white expand 1 expand 0.5 label  19 
+ctype white relocate 7.2 1.37 label Vogelsberger+12
+expand 2.5 ptype 4 3 ctype midblue relocate 7 1.1 dot ctype white relocate 6.85 1.07 ctype white expand 1 expand 0.5 label  20 
+ctype white relocate 7.2 1.07 label Vogelsberger+14 (Illustris)
+expand 2.5 ptype 4 3 ctype midblue relocate 7 0.8 dot ctype white relocate 6.85 0.77 ctype white expand 1 expand 0.5 label  21   
+ctype white relocate 7.2 0.77 label Nelson+18 (Illustris TNG300)
+
+expand 2.5 ptype 5 3 ctype brown relocate 7 0.5 dot ctype white relocate 6.85 0.47 ctype white expand 1 expand 0.5 label  22   
+ctype white relocate 7.2 0.47 label Dave+19 (SAMBA)
+
+expand 2.5 ptype 6 3 ctype jblue relocate 7 0.2 dot ctype yellow relocate 6.85 0.17 expand 1 expand 0.5 label  23 
+ctype white relocate 7.2 0.17 label Dubois+14(Horizon-AGN)
+
+expand 2.5 ptype 6 3 ctype jblue relocate 7 -0.1 dot ctype yellow relocate 6.85 -0.13 expand 1 expand 0.5 label  24
+ctype white relocate 7.2 -0.13 label Lee&Shin+21(HR5)
+
+expand 2.5 ptype 4 3 ctype midblue relocate 7 -0.4 dot ctype white relocate 6.85 -0.43 expand 1 expand 0.5 label  25
+ctype white relocate 7.2 -0.43 label Pakmor+23(MTNG)
+
+limits -1 9 -2 8
+expand 2.5 ptype 30 0 ctype white relocate 2 -1.1 dot relocate 2.25 -1.13 ctype white expand 0.5 label SPH+PM(Tree)
+expand 2.5 ptype 30 3 ctype tancolor     relocate 3.5 -1.1 dot relocate 3.75 -1.13 ctype white expand 0.5 label Gadget-2/3
+expand 2.5 ptype 4 3  ctype midblue    relocate 5 -1.1 dot relocate 5.25 -1.13 ctype white expand 0.5 label AREPO
+expand 2.5 ptype 5 3  ctype brown    relocate 6.5  -1.1 dot relocate 6.75 -1.13 ctype white expand 0.5 label GIZMO
+expand 2.5 ptype 6 3  ctype jblue relocate 8.0 -1.1 dot relocate 8.25 -1.13 ctype white expand 0.5 label Ramses
+#hardcopy

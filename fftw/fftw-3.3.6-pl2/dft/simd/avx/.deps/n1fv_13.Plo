@@ -1,0 +1,391 @@
+n1fv_13.lo: n1fv_13.c ../common/n1fv_13.c ../../../dft/codelet-dft.h \
+  ../../../kernel/ifftw.h ../../../config.h /usr/include/stdlib.h \
+  /usr/include/bits/libc-header-start.h /usr/include/features.h \
+  /usr/include/features-time64.h /usr/include/bits/wordsize.h \
+  /usr/include/bits/timesize.h /usr/include/stdc-predef.h \
+  /usr/include/sys/cdefs.h /usr/include/bits/long-double.h \
+  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/stddef.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_size_t.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_wchar_t.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_null.h \
+  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
+  /usr/include/bits/floatn.h /usr/include/bits/floatn-common.h \
+  /usr/include/sys/types.h /usr/include/bits/types.h \
+  /usr/include/bits/typesizes.h /usr/include/bits/time64.h \
+  /usr/include/bits/types/clock_t.h /usr/include/bits/types/clockid_t.h \
+  /usr/include/bits/types/time_t.h /usr/include/bits/types/timer_t.h \
+  /usr/include/bits/stdint-intn.h /usr/include/endian.h \
+  /usr/include/bits/endian.h /usr/include/bits/endianness.h \
+  /usr/include/bits/byteswap.h /usr/include/bits/uintn-identity.h \
+  /usr/include/sys/select.h /usr/include/bits/select.h \
+  /usr/include/bits/types/sigset_t.h \
+  /usr/include/bits/types/__sigset_t.h \
+  /usr/include/bits/types/struct_timeval.h \
+  /usr/include/bits/types/struct_timespec.h \
+  /usr/include/bits/pthreadtypes.h \
+  /usr/include/bits/thread-shared-types.h \
+  /usr/include/bits/pthreadtypes-arch.h /usr/include/bits/struct_mutex.h \
+  /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
+  /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/stdarg.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_header_macro.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg___gnuc_va_list.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_va_list.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_va_arg.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg___va_copy.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_va_copy.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_header_macro.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_ptrdiff_t.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_max_align_t.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_offsetof.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/bin/compiler/../../opt/compiler/include/limits.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/limits.h \
+  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+  /usr/include/bits/pthread_stack_min-dynamic.h \
+  /usr/include/bits/pthread_stack_min.h /usr/include/bits/posix2_lim.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/stdint.h \
+  /usr/include/stdint.h /usr/include/bits/wchar.h \
+  /usr/include/bits/stdint-uintn.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/inttypes.h \
+  /usr/include/inttypes.h /usr/include/sys/time.h /usr/include/time.h \
+  /usr/include/bits/time.h /usr/include/bits/types/struct_tm.h \
+  /usr/include/bits/types/struct_itimerspec.h \
+  /usr/include/bits/types/locale_t.h \
+  /usr/include/bits/types/__locale_t.h ../../../dft/simd/n1f.h \
+  ../../../simd-support/simd-avx.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/immintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/x86gprintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/hresetintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/uintrintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/usermsrintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/crc32intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/prfchiintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/raointintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/cmpccxaddintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/ia32intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/mmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xmmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/mm_malloc.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/emmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/pmmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/tmmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/smmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/popcntintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/wmmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__wmmintrin_aes.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__wmmintrin_pclmul.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/clflushoptintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/clwbintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx2intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/f16cintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/bmiintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/bmi2intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/lzcntintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/fmaintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512fintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512bwintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512bitalgintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512cdintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vpopcntdqintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vpopcntdqvlintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vnniintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlvnniintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxvnniintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512dqintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlbitalgintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlbwintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlcdintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vldqintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512ifmaintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512ifmavlintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxifmaintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vbmiintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vbmivlintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vbmi2intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlvbmi2intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512fp16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlfp16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512bf16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlbf16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/pkuintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/vpclmulqdqintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/vaesintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/gfniintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxvnniint8intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxneconvertintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sha512intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sm3intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sm4intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxvnniint16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/rtmintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xtestintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/shaintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/fxsrintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsaveintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsaveoptintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsavecintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsavesintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/cetintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/adcintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/adxintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/rdseedintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/wbnoinvdintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/cldemoteintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/waitpkgintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movdirintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movrsintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movrs_avx10_2intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movrs_avx10_2_512intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/pconfigintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sgxintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/ptwriteintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/invpcidintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/keylockerintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxfp16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxcomplexintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxfp8intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxtransposeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxmovrsintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxmovrstransposeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxavx512intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxtf32intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxtf32transposeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxbf16transposeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxfp16transposeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxcomplextransposeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vp2intersectintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlvp2intersectintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2bf16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2convertintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2copyintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2minmaxintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2niintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2satcvtdsintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2satcvtintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512bf16intrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512convertintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512minmaxintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512niintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512satcvtdsintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512satcvtintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sm4evexintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/enqcmdintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/serializeintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/tsxldtrkintrin.h \
+  /opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/svmlintrin.h \
+  ../../../simd-support/simd-common.h
+../common/n1fv_13.c:
+../../../dft/codelet-dft.h:
+../../../kernel/ifftw.h:
+../../../config.h:
+/usr/include/stdlib.h:
+/usr/include/bits/libc-header-start.h:
+/usr/include/features.h:
+/usr/include/features-time64.h:
+/usr/include/bits/wordsize.h:
+/usr/include/bits/timesize.h:
+/usr/include/stdc-predef.h:
+/usr/include/sys/cdefs.h:
+/usr/include/bits/long-double.h:
+/usr/include/gnu/stubs.h:
+/usr/include/gnu/stubs-64.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/stddef.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_size_t.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_wchar_t.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_null.h:
+/usr/include/bits/waitflags.h:
+/usr/include/bits/waitstatus.h:
+/usr/include/bits/floatn.h:
+/usr/include/bits/floatn-common.h:
+/usr/include/sys/types.h:
+/usr/include/bits/types.h:
+/usr/include/bits/typesizes.h:
+/usr/include/bits/time64.h:
+/usr/include/bits/types/clock_t.h:
+/usr/include/bits/types/clockid_t.h:
+/usr/include/bits/types/time_t.h:
+/usr/include/bits/types/timer_t.h:
+/usr/include/bits/stdint-intn.h:
+/usr/include/endian.h:
+/usr/include/bits/endian.h:
+/usr/include/bits/endianness.h:
+/usr/include/bits/byteswap.h:
+/usr/include/bits/uintn-identity.h:
+/usr/include/sys/select.h:
+/usr/include/bits/select.h:
+/usr/include/bits/types/sigset_t.h:
+/usr/include/bits/types/__sigset_t.h:
+/usr/include/bits/types/struct_timeval.h:
+/usr/include/bits/types/struct_timespec.h:
+/usr/include/bits/pthreadtypes.h:
+/usr/include/bits/thread-shared-types.h:
+/usr/include/bits/pthreadtypes-arch.h:
+/usr/include/bits/struct_mutex.h:
+/usr/include/bits/struct_rwlock.h:
+/usr/include/alloca.h:
+/usr/include/bits/stdlib-bsearch.h:
+/usr/include/bits/stdlib-float.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/stdarg.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_header_macro.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg___gnuc_va_list.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_va_list.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_va_arg.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg___va_copy.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stdarg_va_copy.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_header_macro.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_ptrdiff_t.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_max_align_t.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__stddef_offsetof.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/bin/compiler/../../opt/compiler/include/limits.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/limits.h:
+/usr/include/limits.h:
+/usr/include/bits/posix1_lim.h:
+/usr/include/bits/local_lim.h:
+/usr/include/linux/limits.h:
+/usr/include/bits/pthread_stack_min-dynamic.h:
+/usr/include/bits/pthread_stack_min.h:
+/usr/include/bits/posix2_lim.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/stdint.h:
+/usr/include/stdint.h:
+/usr/include/bits/wchar.h:
+/usr/include/bits/stdint-uintn.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/inttypes.h:
+/usr/include/inttypes.h:
+/usr/include/sys/time.h:
+/usr/include/time.h:
+/usr/include/bits/time.h:
+/usr/include/bits/types/struct_tm.h:
+/usr/include/bits/types/struct_itimerspec.h:
+/usr/include/bits/types/locale_t.h:
+/usr/include/bits/types/__locale_t.h:
+../../../dft/simd/n1f.h:
+../../../simd-support/simd-avx.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/immintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/x86gprintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/hresetintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/uintrintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/usermsrintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/crc32intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/prfchiintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/raointintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/cmpccxaddintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/ia32intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/mmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xmmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/mm_malloc.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/emmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/pmmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/tmmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/smmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/popcntintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/wmmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__wmmintrin_aes.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/__wmmintrin_pclmul.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/clflushoptintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/clwbintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx2intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/f16cintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/bmiintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/bmi2intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/lzcntintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/fmaintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512fintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512bwintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512bitalgintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512cdintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vpopcntdqintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vpopcntdqvlintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vnniintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlvnniintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxvnniintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512dqintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlbitalgintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlbwintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlcdintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vldqintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512ifmaintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512ifmavlintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxifmaintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vbmiintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vbmivlintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vbmi2intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlvbmi2intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512fp16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlfp16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512bf16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlbf16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/pkuintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/vpclmulqdqintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/vaesintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/gfniintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxvnniint8intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxneconvertintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sha512intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sm3intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sm4intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avxvnniint16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/rtmintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xtestintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/shaintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/fxsrintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsaveintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsaveoptintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsavecintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/xsavesintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/cetintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/adcintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/adxintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/rdseedintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/wbnoinvdintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/cldemoteintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/waitpkgintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movdirintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movrsintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movrs_avx10_2intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/movrs_avx10_2_512intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/pconfigintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sgxintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/ptwriteintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/invpcidintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/keylockerintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxfp16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxcomplexintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxfp8intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxtransposeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxmovrsintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxmovrstransposeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxavx512intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxtf32intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxtf32transposeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxbf16transposeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxfp16transposeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/amxcomplextransposeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vp2intersectintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx512vlvp2intersectintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2bf16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2convertintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2copyintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2minmaxintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2niintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2satcvtdsintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2satcvtintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512bf16intrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512convertintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512minmaxintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512niintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512satcvtdsintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/avx10_2_512satcvtintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/sm4evexintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/enqcmdintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/serializeintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/tsxldtrkintrin.h:
+/opt/ohpc/pub/intel/oneapi-2025.03/compiler/2025.3/lib/clang/21/include/svmlintrin.h:
+../../../simd-support/simd-common.h:

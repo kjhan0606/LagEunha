@@ -1,0 +1,22 @@
+# how to use
+typedef struct {
+    /* ... */
+    SWL_ElementYields element_yields;  /* NET yields (Ejected - Initial) */
+    SWL_ElementYields ejected_mass;    /* ACTUAL mass ejected to ISM */
+    SWL_ElementYields yield_rate;      /* NET yield rate */
+    SWL_ElementYields ejection_rate;   /* Ejection rate to ISM */
+    /* ... */
+} SWL_ClusterWindYield;
+
+// snippet of an example code
+SWL_ClusterWindYield result;
+swl_calculate_cluster_wind_yield(SWL_IMF_CHABRIER, 0.02, 1e6, 1e7, &result);
+
+// For chemical evolution (can be negative):
+double H_net = result.element_yields.yields[SWL_EL_H];   // -6.28e4 M_sun
+
+// For ISM enrichment simulations (always positive):
+double H_ejected = result.ejected_mass.yields[SWL_EL_H]; // +3.73e4 M_sun
+
+// Current ejection rates:
+double H_rate = result.ejection_rate.yields[SWL_EL_H];   // M_sun/yr
