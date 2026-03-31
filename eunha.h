@@ -29,8 +29,13 @@ typedef float DenType;
 #define WHERESTR  "[file %s, line %d]: "
 #define WHEREARG  __FILE__, __LINE__
 #define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__);
-#define DEBUGPRINT(_fmt, ...)  do{if(DEBUG) DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)}while(0)
-#define DEBUGPRINT0(_fmt) do{if(DEBUG) DEBUGPRINT2(WHERESTR _fmt, WHEREARG)} while(0)
+#ifdef DEBUG
+#define DEBUGPRINT(_fmt, ...)  do{DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)}while(0)
+#define DEBUGPRINT0(_fmt) do{DEBUGPRINT2(WHERESTR _fmt, WHEREARG)} while(0)
+#else
+#define DEBUGPRINT(_fmt, ...)  do{}while(0)
+#define DEBUGPRINT0(_fmt) do{}while(0)
+#endif
 
 
 #ifndef EUNHA_H
@@ -59,7 +64,7 @@ enum dimension {X=1, Y=2, Z=3, VX = 1, VY = 2, VZ = 3};
 
 #include <sys/types.h>
 enum SimulationModels {Cosmos=0, Static=1,ZoomedCosmos=2,KH=3,Blast=4,
-	BowShock=5, RT=6,RT_LF=60,Kepler=7,MkGlass2D=30};
+	BowShock=5, RT=6,RT_LF=60,Kepler=7,Cylinder=8,MkGlass2D=30};
 /*
 #define Cosmos 0
 #define Static 1
@@ -284,6 +289,12 @@ typedef struct KeplyerI{
 #define KP_OA(simpar) VoroAccuracyOrder(simpar)
 #define KP_EPS(simpar) ((simpar)->simmodel.kp.eps)
 
+typedef struct CylinderInfo{
+    float rho_inf, u_inf, p_inf;
+    float OrderofAccuracy;
+    double cx, cy, radius;
+}CylinderInfo;
+
 typedef struct Glass2D{
     float eps;
     float xmin,ymin,xmax,ymax;
@@ -334,6 +345,7 @@ typedef struct GasInfo{
 	int use_muscl;      // 0=piecewise constant, 1=MUSCL reconstruction
 	float cd_amax, cd_ell, cd_amin;   // CD10 switch parameters
 	float blend_theta;                 // two-tier blending threshold θ₀
+	float prandtl;                     // Prandtl number Pr=nu/chi (default 1.0, 0=no heat conduction)
 }GasInfo;
 #define GAS_MEANRHO(simpar) ((simpar)->physics.gasinfo.meanrho)
 #define GAS_RHOS2RHOR(simpar) ((simpar)->physics.gasinfo.rhos2rhor)
@@ -541,10 +553,10 @@ typedef struct treevorostressparticletype{
 typedef struct vorostressrk4particletype{
     indxflag u4if;
     char indt[4];
-    float x,y,z;
-    float mass;
-    float vx,vy,vz;
-    float ax,ay,az;
+    PosType x,y,z;
+    PosType mass;
+    PosType vx,vy,vz;
+    PosType ax,ay,az;
     VoroQ;
     RK4 rk4;
 	Stress stress;
@@ -555,10 +567,10 @@ typedef struct treevorostressrk4particletype{
     struct linkedlisttype *next;
     indxflag u4if;
     char indt[4];
-    float x,y,z;
-    float mass;
-    float vx,vy,vz;
-    float ax,ay,az;
+    PosType x,y,z;
+    PosType mass;
+    PosType vx,vy,vz;
+    PosType ax,ay,az;
     VoroQ;
     RK4 rk4;
 	Stress stress;
@@ -731,6 +743,7 @@ typedef struct SimModels{
 	RTInfo rtinfo;
 	KPI kp;
 	Glass2D gl2d;
+	CylinderInfo cyl;
 	Simbox simbox;
 }SimModels;
 
@@ -920,6 +933,7 @@ typedef struct SimParameters{
 #define GAS_CDELL(simpar) ((simpar)->physics.gasinfo.cd_ell)
 #define GAS_CDAMIN(simpar) ((simpar)->physics.gasinfo.cd_amin)
 #define GAS_BLENDTHETA(simpar) ((simpar)->physics.gasinfo.blend_theta)
+#define GAS_PRANDTL(simpar) ((simpar)->physics.gasinfo.prandtl)
 
 #define SPH_NUMNEAR(simpar) ((simpar)->bp.sph.NumNear)
 #define SPH_INITFLAG(simpar) ((simpar)->bp.sph.init_flag)
@@ -1021,6 +1035,20 @@ typedef struct SimParameters{
 #define GL2D_GridSize(simpar) HydroGridSize(simpar)
 #define GL2D_Phalf(simpar) ((simpar)->simmodel.gl2d.Phalf)
 #define GL2D_Kappa(simpar) ((simpar)->physics.gasinfo.Kappa)
+/* Cylinder test */
+#define CYL_XMAX(simpar) Xmax_HydroExam(simpar)
+#define CYL_YMAX(simpar) Ymax_HydroExam(simpar)
+#define CYL_XMIN(simpar) Xmin_HydroExam(simpar)
+#define CYL_YMIN(simpar) Ymin_HydroExam(simpar)
+#define CYL_GridSize(simpar) HydroGridSize(simpar)
+#define CYL_Kappa(simpar) ((simpar)->physics.gasinfo.Kappa)
+#define CYL_CX(simpar) ((simpar)->simmodel.cyl.cx)
+#define CYL_CY(simpar) ((simpar)->simmodel.cyl.cy)
+#define CYL_R(simpar) ((simpar)->simmodel.cyl.radius)
+#define CYL_UINF(simpar) ((simpar)->simmodel.cyl.u_inf)
+#define CYL_RHO(simpar) ((simpar)->simmodel.cyl.rho_inf)
+#define CYL_P(simpar) ((simpar)->simmodel.cyl.p_inf)
+#define CYL_OA(simpar) VoroAccuracyOrder(simpar)
 
 #define GAS_Kappa(simpar) ((simpar)->physics.gasinfo.Kappa)
 #define GAS_w2Power(simpar) ((simpar)->physics.gasinfo.w2Power)
@@ -1253,6 +1281,7 @@ typedef struct SimParameters{
 #define RT_SIMBOX(simpar) ((simpar)->simmodel.simbox.simbox)
 #define KP_SIMBOX(simpar) ((simpar)->simmodel.simbox.simbox)
 #define GL2D_SIMBOX(simpar) ((simpar)->simmodel.simbox.simbox)
+#define CYL_SIMBOX(simpar) ((simpar)->simmodel.simbox.simbox)
 #define SIMBOX(simpar) ((simpar)->simmodel.simbox.simbox)
 #define STAT_SIMBOX(simpar) ((simpar)->simmodel.simbox.simbox)
 

@@ -19,7 +19,6 @@ static Voro2D_point neigh[Nneigh];
 extern int  malloc_calls;
 
 void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
-	treevorork4particletype *bp = VORORK4_TBP(simpar);
 	int np = VORO_NP(simpar);
 	int myid, nid;
 	myid = MYID(simpar);
@@ -27,6 +26,9 @@ void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	int nx,ny;
 	nx = NX(simpar);
 	ny = NY(simpar);
+	/* Actual byte stride per particle (stress-sized when av_mode >= 1) */
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *bp_raw = (char*)VORORK4_TBP(simpar);
 
 	char outfile[190];
 	sprintf(outfile,"rtout.%.6d.dat",nstep);
@@ -36,11 +38,16 @@ void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	for(i=0;i<nid;i++){
 		if(myid ==i){
 			if(myid==0){
-				wp = fopen(outfile,"w"); 
+				wp = fopen(outfile,"w");
 				fwrite(&tnp, sizeof(int),1,wp);
 			}
 			else wp = fopen(outfile,"a");
-			fwrite(bp, sizeof(treevorork4particletype), np, wp);
+			/* Write common-prefix per particle using correct stride.
+			   Always writes sizeof(treevorork4particletype) bytes per particle
+			   for backward-compatible checkpoint format. */
+			int j;
+			for(j=0;j<np;j++)
+				fwrite(bp_raw + j*p_size, sizeof(treevorork4particletype), 1, wp);
 			fflush(wp);
 			fclose(wp);
 		}
@@ -68,13 +75,32 @@ void rt_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	char infile[190];
 	sprintf(infile,"rtout.%.6d.dat", nstep);
 	int myid = MYID(simpar);
+	int av_mode = GAS_AVMODE(simpar);
+	size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype) : sizeof(treevorork4particletype);
 	if(myid ==0){
 		FILE *fp = fopen(infile,"r");
 		int np;
 		fread(&np, sizeof(int), 1, fp);
 		VORO_TNP(simpar) = VORO_NP(simpar) = np;
-		VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*np);
-		fread(VORORK4_TBP(simpar),sizeof(treevorork4particletype), np,fp);
+		if(av_mode >= 1){
+			/* Checkpoint uses treevorork4particletype layout; expand to stress-sized.
+			   Copy only the common prefix (up to the bp pointer field) to avoid
+			   overwriting the stress region with stale pointer bytes. */
+			size_t common_size = offsetof(treevorork4particletype, bp);
+			treevorork4particletype *tmp_buf = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*np);
+			fread(tmp_buf, sizeof(treevorork4particletype), np, fp);
+			VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*np);
+			treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+			int ii;
+			for(ii=0;ii<np;ii++){
+				memset(&sbp[ii], 0, sizeof(treevorostressrk4particletype));
+				memcpy(&sbp[ii], &tmp_buf[ii], common_size);
+			}
+			my_free(tmp_buf);
+		} else {
+			VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*np);
+			fread(VORORK4_TBP(simpar), sizeof(treevorork4particletype), np, fp);
+		}
 		fread(t,sizeof(postype), 1,fp);
 		fread(dt,sizeof(postype), 1,fp);
 		fread(&GAS_dtold(simpar),sizeof(float), 1,fp);
@@ -82,7 +108,7 @@ void rt_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	}
 	else {
 		VORO_NP(simpar) = 0;
-		VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*100);;
+		VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*100);
 
 	}
 	migrateTreeVorork4Particles(simpar);
@@ -110,6 +136,7 @@ int RunRT(SimParameters *simpar, int icont){
 	treevorork4particletype *bp;
 	int icount = 0;;
 	int iflag,jflag;
+	int av_mode = GAS_AVMODE(simpar);
 
 
 	{
@@ -120,6 +147,18 @@ int RunRT(SimParameters *simpar, int icont){
 		PosNXNY(grid) = NX(simpar)* NY(simpar);
 	}
 	startRkSDD2D(simpar,RT); /* This makes all the ddinfo including pivot */
+
+	/* Override n_size for stress particles when using NS-stress/blend */
+	if(av_mode >= 1){
+		int ndd = NDDINFO(simpar);
+		int k;
+		for(k=0;k<=ndd;k++){
+			TVORORK4_DDINFO(simpar)[k].n_size = sizeof(treevorostressrk4particletype);
+		}
+		if(MYID(simpar)==0)
+			DEBUGPRINT("RT: using treevorostressrk4particletype for av_mode=%d\n", av_mode);
+	}
+
 	KH_XMIN(simpar) = SIM_LXMIN(simpar,vorork4);
 	KH_YMIN(simpar) = SIM_LYMIN(simpar,vorork4);
 	KH_XMAX(simpar) = SIM_LXMAX(simpar,vorork4);
@@ -153,13 +192,21 @@ int RunRT(SimParameters *simpar, int icont){
 
 	do {
 
-		if(GAS_EVOLMETHOD(simpar) == 1) dt = exam2d_vph_rk4_int_rt(simpar,
+		if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 1)
+			dt = exam2d_vph_rk4_int_blend(simpar,
 				paddingTreeVorork4Particles,rt_w2Measure2D,
 				searchCellRk4Neighbors2D,findCellRk4BP2D,
 				rt_evolBP,
 				mkLinkedList2D_rt
 				);
-		else dt = exam2d_vph_int_rt(simpar, 
+		else if(GAS_EVOLMETHOD(simpar) == 1)
+			dt = exam2d_vph_rk4_int_rt(simpar,
+				paddingTreeVorork4Particles,rt_w2Measure2D,
+				searchCellRk4Neighbors2D,findCellRk4BP2D,
+				rt_evolBP,
+				mkLinkedList2D_rt
+				);
+		else dt = exam2d_vph_int_rt(simpar,
 				paddingTreeVorork4Particles,rt_w2Measure2D,
 				searchCellRk4Neighbors2D,findCellRk4BP2D,
 				rt_evolBP,
@@ -183,7 +230,7 @@ int RunRT(SimParameters *simpar, int icont){
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 		if(MYID(simpar)==0){
-            DEBUGPRINT("Time= %g & icount= %d with dTime= %g malloc count= %d\n", 
+            DEBUGPRINT("Time= %g & icount= %d with dTime= %g malloc count= %d\n",
 					t,icount, dt, get_malloc_call_count()); fflush(stdout);
         }
 	} while(t<10.);

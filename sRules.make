@@ -15,11 +15,11 @@ AR = ar rcv
 #OPT = -g -O0 -qopenmp #-xavx #-E
 
 # 2025/11/13 grammar version
-FC = mpiifx -nofor-main 
-CC = mpiicx   -debug 
+FC = mpiifx -nofor-main
+CC = mpiicx   -debug
 CPP = icx -debug
-F90C = ifx -nofor-main 
-OPT = -g -O0 -qopenmp #-xavx #-E
+F90C = ifx -nofor-main
+OPT = -g -O2 -qopenmp #-xavx #-E
 
 ### openmpi compilers
 
@@ -53,7 +53,7 @@ S_TYPE = -DGOTPM
 #specialrules = -DINTEL   -DGOTPM   -DXYZDBL -DDEBUG
 #specialrules = -DINTEL   -DGOTPM   -DDEBUG
 
-specialrules = -DINTEL   -DXYZDBL  $(S_TYPE)    -DDEBUG   #  -Wmissing-prototypes #-DGOTPM # -DDEBUG
+specialrules = -DINTEL   -DXYZDBL  $(S_TYPE)      #  -Wmissing-prototypes #-DGOTPM # -DDEBUG
 
 FFTW = /home/kjhan/local
 

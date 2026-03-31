@@ -18,7 +18,6 @@ static Voro2D_point neigh[Nneigh];
 
 
 void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
-	treevorork4particletype *bp = VORORK4_TBP(simpar);
 	int np = VORO_NP(simpar);
 	int myid, nid;
 	myid = MYID(simpar);
@@ -26,25 +25,28 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	int nx,ny;
 	nx = NX(simpar);
 	ny = NY(simpar);
-
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *bp_raw = (char*)VORORK4_TBP(simpar);
 
 	char outfile[190];
 	sprintf(outfile,"khout.%.6d.dat",nstep);
 	int i;
-	int snp=0;
 	FILE *wp;
 	int tnp = VORO_TNP(simpar);
 	for(i=0;i<nid;i++){
 		if(myid ==i){
 			if(myid==0){
-				wp = fopen(outfile,"w"); 
+				wp = fopen(outfile,"w");
 				fwrite(&tnp, sizeof(int),1,wp);
 			}
 			else wp = fopen(outfile,"a");
-			fwrite(bp, sizeof(treevorork4particletype), np, wp);
+			int j;
+			for(j=0;j<np;j++)
+				fwrite(bp_raw + j*p_size, sizeof(treevorork4particletype), 1, wp);
+			fflush(wp);
 			fclose(wp);
 		}
-		MPI_Barrier(MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM(simpar));
 	}
 	if(myid==0){
 		wp = fopen(outfile,"a");
@@ -70,58 +72,45 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	char infile[190];
 	sprintf(infile,"khout.%.6d.dat", nstep);
 	int myid = MYID(simpar);
-	float dtold;
+	int av_mode = GAS_AVMODE(simpar);
+	size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype) : sizeof(treevorork4particletype);
 	if(myid ==0){
 		printf("P0: is now reading starting file: %s\n", infile);
 		FILE *fp = fopen(infile,"r");
 		int np;
 		fread(&np, sizeof(int), 1, fp);
 		VORO_TNP(simpar) = VORO_NP(simpar) = np;
-		VORORK4_TBP(simpar) = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*np);
-
-		if(0){
-			treevoroparticletype *bb = (treevoroparticletype *)malloc(sizeof(treevoroparticletype)*np);
-			treevorork4particletype *aa = VORORK4_TBP(simpar);
-			fread(bb, sizeof(treevoroparticletype), np, fp);
-			int i;
-			for(i=0;i<np;i++){
-				aa[i].u4if = bb[i].u4if;
-				aa[i].x = bb[i].x;
-				aa[i].y = bb[i].y;
-				aa[i].vx = bb[i].vx;
-				aa[i].vy = bb[i].vy;
-				aa[i].mass = bb[i].mass;
-				aa[i].den = bb[i].den;
-				aa[i].pressure = bb[i].pressure;
-				aa[i].ie = bb[i].ie;
-				aa[i].csound = bb[i].csound;
-				aa[i].volume = bb[i].volume;
-				aa[i].w2 = bb[i].w2;
-				aa[i].w2old = bb[i].w2old;
-				aa[i].w2ceil = bb[i].w2ceil;
+		if(av_mode >= 1){
+			size_t common_size = offsetof(treevorork4particletype, bp);
+			treevorork4particletype *tmp_buf = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*np);
+			fread(tmp_buf, sizeof(treevorork4particletype), np, fp);
+			VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*np);
+			treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+			int ii;
+			for(ii=0;ii<np;ii++){
+				memset(&sbp[ii], 0, sizeof(treevorostressrk4particletype));
+				memcpy(&sbp[ii], &tmp_buf[ii], common_size);
 			}
-		}
-		else {
-			fread(VORORK4_TBP(simpar),sizeof(treevorork4particletype), np,fp);
+			my_free(tmp_buf);
+		} else {
+			VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*np);
+			fread(VORORK4_TBP(simpar), sizeof(treevorork4particletype), np, fp);
 		}
 		fread(t,sizeof(postype), 1,fp);
 		fread(dt,sizeof(postype), 1,fp);
-		fread(&dtold,sizeof(float), 1,fp);
-
+		fread(&GAS_dtold(simpar),sizeof(float), 1,fp);
 		fclose(fp);
 	}
 	else {
 		VORO_NP(simpar) = 0;
-		VORORK4_TBP(simpar) = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*100);;
-
+		VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*100);
 	}
 
 	DEBUGPRINT("P%d: after reading iput data\n", myid);
 	migrateTreeVorork4Particles(simpar);
 	MPI_Bcast(t, 1, MPI_POSTYPE,0, MPI_COMM(simpar));
 	MPI_Bcast(dt, 1, MPI_POSTYPE,0, MPI_COMM(simpar));
-	MPI_Bcast(&dtold, 1, MPI_FLOAT,0, MPI_COMM(simpar));
-	GAS_dtold(simpar) = dtold;
+	MPI_Bcast(&GAS_dtold(simpar), 1, MPI_FLOAT,0, MPI_COMM(simpar));
 	MPI_Barrier(MPI_COMM(simpar));
 	BASICCELL_CELLWIDTH(simpar) = HydroGridSize(simpar);
 }
@@ -148,6 +137,16 @@ int RunKH(SimParameters *simpar, int icont){
 	}
 	startRkSDD2D(simpar,KH);
 
+	int av_mode = GAS_AVMODE(simpar);
+	if(av_mode >= 1){
+		int ndd = NDDINFO(simpar);
+		int k;
+		for(k=0;k<=ndd;k++){
+			TVORORK4_DDINFO(simpar)[k].n_size = sizeof(treevorostressrk4particletype);
+		}
+		if(MYID(simpar)==0)
+			DEBUGPRINT("KH: using treevorostressrk4particletype for av_mode=%d\n", av_mode);
+	}
 
 	DEBUGPRINT("P%d has volume: rmin= %g %g rmax= %g %g\n", MYID(simpar),
 			SIM_LXMIN(simpar,vorork4), SIM_LYMIN(simpar,vorork4),
@@ -183,12 +182,25 @@ int RunKH(SimParameters *simpar, int icont){
 				searchCellRk4Neighbors2D, findCellRk4BP2D);
 		else dt = exam2d_vph(simpar, kh_w2Measure2D);
 		*/
-		if(GAS_EVOLMETHOD(simpar) == 1) dt = exam2d_vph_rk4_int(simpar,
-                paddingTreeVorork4Particles,kh_w2Measure2D,
-                searchCellRk4Neighbors2D,findCellRk4BP2D,
-                kh_evolBP,
+		if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 1)
+			dt = exam2d_vph_rk4_int_blend(simpar,
+				paddingTreeVorork4Particles,kh_w2Measure2D,
+				searchCellRk4Neighbors2D,findCellRk4BP2D,
+				kh_evolBP,
 				mkLinkedList2D_oExam
-                );
+				);
+		else if(GAS_EVOLMETHOD(simpar) == 2)
+			dt = exam2d_vph_rk4_int_kNN(simpar,
+				paddingTreeVorork4Particles,kh_w2Measure2D,
+				kh_evolBP
+				);
+		else if(GAS_EVOLMETHOD(simpar) == 1)
+			dt = exam2d_vph_rk4_int(simpar,
+				paddingTreeVorork4Particles,kh_w2Measure2D,
+				searchCellRk4Neighbors2D,findCellRk4BP2D,
+				kh_evolBP,
+				mkLinkedList2D_oExam
+				);
         else dt = exam2d_vph_int(simpar,
                 paddingTreeVorork4Particles,kh_w2Measure2D,
                 searchCellRk4Neighbors2D,findCellRk4BP2D,
@@ -214,8 +226,7 @@ int RunKH(SimParameters *simpar, int icont){
 		}
 
 		if(MYID(simpar)==0){
-			DEBUGPRINT("P%d is now at Time= %g & icount= %d with dTime= %g\n", 
-					MYID(simpar), t,icount, dt);
+			printf("Time= %g  step= %d  dt= %g\n", t, icount, dt);
 			fflush(stdout);
 		}
 

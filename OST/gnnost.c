@@ -253,12 +253,15 @@ int near_open(particle *point, TStruct *tree, int npneigh, PosType maxdist , int
 
 
 
-int insGnear(void *ptr, PosType dist2, PosType *maxdist2,  
-		int npneigh, Neighbor *neighbor, int Num_neighbor) 
+int insGnear(void *ptr, PosType dist2, PosType *maxdist2,
+		int npneigh, Neighbor *neighbor, int Num_neighbor)
 {
 	int i,j;
 	for(i=0;i<npneigh;i++) if(neighbor[i].dist2>dist2) break;
-	for(j=npneigh-1;j>=i;j--) neighbor[j+1] = neighbor[j];
+	/* When array is full, discard the worst (last) entry by shifting
+	   only up to Num_neighbor-2; otherwise shift up to npneigh-1. */
+	int jstart = (npneigh >= Num_neighbor) ? Num_neighbor-2 : npneigh-1;
+	for(j=jstart;j>=i;j--) neighbor[j+1] = neighbor[j];
 	neighbor[i].dist2 = dist2;
 	neighbor[i].bp = ptr;
 	npneigh ++;
@@ -356,7 +359,8 @@ PosType find_GNearest(
 
 #define DIRECT_INSERT(dist2,maxdist,maxdist2,npneigh,neighbor,grv) do{\
 	for(i=0;i<npneigh;i++) if(neighbor[i].dist2>dist2) break;\
-	for(j=npneigh-1;j>=i;j--) neighbor[j+1] = neighbor[j];\
+	{int _js = (npneigh >= Num_neighbor) ? Num_neighbor-2 : npneigh-1;\
+	for(j=_js;j>=i;j--) neighbor[j+1] = neighbor[j];}\
 	neighbor[i].dist2 = dist2;\
 	neighbor[i].bp = grv;\
 	npneigh ++;\

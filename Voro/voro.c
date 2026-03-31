@@ -1149,9 +1149,11 @@ postype get2Dw2pCeil(Voro2D_Corner *c, Voro2D_point *neighbors){
 	postype w2pceil = 1.e20;
 	Voro2D_Corner *tmp = c;
 	do {
-		Voro2D_point *aa = (neighbors+(tmp->upperrelated));
-		postype val = aa->dist2 + aa->w2;
-		w2pceil = MIN(w2pceil, val);
+		if(tmp->upperrelated >= 0){
+			Voro2D_point *aa = (neighbors+(tmp->upperrelated));
+			postype val = aa->dist2 + aa->w2;
+			w2pceil = MIN(w2pceil, val);
+		}
 		tmp = tmp->upperlink;
 	} while( tmp != c);
 	return w2pceil;

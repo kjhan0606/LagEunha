@@ -77,7 +77,7 @@ INCLUDES = -I$(FFTW)/include -I$(FFT) -I$(MPIAUX) -I./ \
 	-I$(RkS) -I$(Cosmos) -I$(CosmosIC) -I$(SPH) -I$(OSTDIR) \
 	-I$(PARAMS) -I$(VORO) -I$(ParallelIO) -I$(KH) \
 	-I$(COLORLIB)  \
-	-I$(RT) -I$(KEPLER) -I$(GLASS2D)
+	-I$(RT) -I$(KEPLER) -I$(GLASS2D) -I$(CYLINDER)
 
 #####
 #####
@@ -129,6 +129,7 @@ LIBS = $(MPIAUXLIB) \
 	-L$(RTOLD) -lrtold \
 	-L$(KEPLER) -lkp \
 	-L$(GLASS2D) -lglass2d \
+	-L$(CYLINDER) -lcyl \
 	-L$(EXAM) -lexam \
     -L$(OSTDIR) -lost \
 	-L$(COLORLIB) -lcolor\

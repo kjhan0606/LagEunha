@@ -44,10 +44,10 @@ void migrateVorork4Particles(SimParameters *simpar){
 
 
 void migrateTreeVorork4Particles(SimParameters *simpar){
-    MPI_Allreduce(&VORO_NP(simpar), &VORO_TNP(simpar), 1, MPI_PTRDIFF_T, 
+    MPI_Allreduce(&VORO_NP(simpar), &VORO_TNP(simpar), 1, MPI_PTRDIFF_T,
 			MPI_SUM, MPI_COMM(simpar));
-    if(VORO_TNP(simpar)>0){
-        pmigrate((void**)(&VORORK4_TBP(simpar)), &VORO_NP(simpar), 
+    if(VORO_TNP(simpar)>0 && NDDINFO(simpar)>0){
+        pmigrate((void**)(&VORORK4_TBP(simpar)), &VORO_NP(simpar),
 				TVORORK4_DDINFO(simpar), &GRIDINFO(simpar));
     }
 
@@ -100,21 +100,28 @@ void paddingVorork4Particles(SimParameters *simpar, postype width){
 void paddingTreeVorork4Particles(SimParameters *simpar, postype width){
 	int ndim = 2;
 	int i;
+/*	DEBUGPRINT("P%d paddingTreeVoro: ENTER np=%d width=%g NDDINFO=%d\n",
+		MYID(simpar), VORO_NP(simpar), width, NDDINFO(simpar)); fflush(stderr); */
 	VORORK4_TBPP(simpar) = NULL;
 	VORO_NPAD(simpar) = 0;
 	MPI_Barrier(MPI_COMM(simpar));
+//	DEBUGPRINT("P%d paddingTreeVoro: after barrier, calling ppadding\n", MYID(simpar)); fflush(stderr);
     ppadding(VORORK4_TBP(simpar), VORO_NP(simpar), (void**)(&VORORK4_TBPP(simpar)), &VORO_NPAD(simpar),
             TVORORK4_DDINFO(simpar), NDDINFO(simpar), SIMBOX(simpar), width, &GRIDINFO(simpar),
 			ndim);
+//	DEBUGPRINT("P%d paddingTreeVoro: ppadding done npad=%d\n", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);
 
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *bpp_raw = (char*)VORORK4_TBPP(simpar);
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for(i=0;i<VORO_NPAD(simpar);i++) { 
-		CLEAR_FLAG(VORORK4_TBPP(simpar)+i); 
-		SET_FLAG(VORORK4_TBPP(simpar)+i, BoundaryGhostflag); 
-		SET_FLAG(VORORK4_TBPP(simpar)+i, VOROflag);
-	} 
+	for(i=0;i<VORO_NPAD(simpar);i++) {
+		treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);
+		CLEAR_FLAG(bppi);
+		SET_FLAG(bppi, BoundaryGhostflag);
+		SET_FLAG(bppi, VOROflag);
+	}
 }
 
 void paddingVoroParticles(SimParameters *simpar, postype width){
@@ -161,6 +168,7 @@ void paddingTreeVoroParticles(SimParameters *simpar, postype width){
 
 void extractLocalDomainVolume(SimParameters *simpar){
     DoDeInfo *ddinfo = VORORK4_DDINFO(simpar);
+    DoDeInfo *tddinfo = TVORORK4_DDINFO(simpar);
     int i,nddinfo = NDDINFO(simpar);
     SimBoxRange box = SIMBOX(simpar);
 
@@ -173,6 +181,10 @@ void extractLocalDomainVolume(SimParameters *simpar){
     ddinfo->lgroup.xyz.ymax = box.y.max;
     ddinfo->lgroup.xyz.zmax = box.z.max;
     ddinfo->lgroup.xyz.wmax = box.w.max;
+
+    /* Also set tree-variant ddinfo[0] for np=1 (NDDINFO=0) where
+       copyDDFuncDDInfoFromTYPE1 loop doesn't execute */
+    tddinfo->lgroup.xyz = ddinfo->lgroup.xyz;
 
 
 	DEBUGPRINT("box range:, %lg %lg %lg : %lg %lg %lg\n", box.x.min, box.y.min, box.z.min,

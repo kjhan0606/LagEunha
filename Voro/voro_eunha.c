@@ -43,21 +43,26 @@ void get2dAreaAvgNeighorPressure(
         Voro2D_point *neigh,
         treevorork4particletype *bp
         ){
-    int mp=1; 
+    int mp=1;
     ibp->volume = Area2DPolygon(vorocorner, mp); // mp is obsolete here.
     postype avgNeighboringPressure = 0;
     postype Length = 0;
     Voro2D_Corner *tmp = vorocorner;
     do {
-        postype dx = tmp->x-(tmp->upperlink)->x;
-        postype dy = tmp->y-(tmp->upperlink)->y;
-        postype ds = sqrt(dx*dx+dy*dy);
-        Length += ds;
-        treevorork4particletype *jbp = neigh[tmp->upperrelated].bp;
-        avgNeighboringPressure += ds*jbp->pressure;
+        if(tmp->upperrelated >= 0){
+            postype dx = tmp->x-(tmp->upperlink)->x;
+            postype dy = tmp->y-(tmp->upperlink)->y;
+            postype ds = sqrt(dx*dx+dy*dy);
+            Length += ds;
+            treevorork4particletype *jbp = neigh[tmp->upperrelated].bp;
+            avgNeighboringPressure += ds*jbp->pressure;
+        }
 		tmp = tmp->upperlink;
     } while(vorocorner != tmp);
-    ibp->avgNeighboringPressure = avgNeighboringPressure/Length;
+    if(Length > 0)
+        ibp->avgNeighboringPressure = avgNeighboringPressure/Length;
+    else
+        ibp->avgNeighboringPressure = ibp->pressure;
 }
 
 

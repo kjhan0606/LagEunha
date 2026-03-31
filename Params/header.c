@@ -223,6 +223,13 @@ void ReadSimulationParameters(FILE *simfile, int *icont, SimParameters *simpar){
 			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
 			GL2D_XMIN(simpar) = GL2D_YMIN(simpar) = 0;
 		}
+		else if(SIMMODEL(simpar) == Cylinder){
+			printf("Cylinder Flow Test is set\n");
+			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
+			printf("Cylinder: center=(%g,%g), R=%g, U_inf=%g\n",
+				CYL_CX(simpar), CYL_CY(simpar), CYL_R(simpar), CYL_UINF(simpar));
+			CYL_XMIN(simpar) = CYL_YMIN(simpar) = 0;
+		}
 		MPI_COMM(simpar) = com;
 	}
 	MPI_Bcast(simpar, sizeof(SimParameters), MPI_BYTE, 0, COM(simpar));
@@ -318,12 +325,11 @@ SimParameters  read_sim_parameter_file(SimParameters presimpar,FILE *fp){
 	return rsimpar;
 }
 void mk_default_kh_param(SimParameters *defsim){
-	GAS_EVOLMETHOD(defsim) = 0;
 	GAS_FCENTROID(defsim) = 0.1;
 		NDIM(defsim) = 2;
 		BGEXPAND(defsim) = 'N';
 		GAS_TYPE(defsim) = 'V';
-		GAS_VISCOSITY(defsim) = 0;
+		GAS_VISCOSITY(defsim) = 2e-5;  // nu = L*Delta_u/Re = 1*2/1e5
 		SIMMODEL(defsim) = KH;
 		GAS_CONSTMU(defsim) = 'Y';
 		HUBBLE(defsim) = 1;
@@ -341,30 +347,40 @@ void mk_default_kh_param(SimParameters *defsim){
 
 		KH_Rho1(defsim) = 1;
 		KH_Rho2(defsim) = 2;
-		KH_Vel1(defsim) = 0.5;
-		KH_Vel2(defsim) = -0.5;
-		KH_Deltay(defsim) = 0.025;
-		KH_Pressure(defsim) = 5./2.;
+		KH_Vel1(defsim) = -1.0;     // outer velocity (Lecoanet+2016)
+		KH_Vel2(defsim) = 1.0;      // inner velocity
+		KH_Deltay(defsim) = 0.05;   // tanh width 'a'
+		KH_Pressure(defsim) = 10.0;
 		KH_Vperturb(defsim) = 0.01;
 		KH_XMIN(defsim) = 0;
 		KH_XMAX(defsim) = 1;
 		KH_YMIN(defsim) = 0;
-		KH_YMAX(defsim) = 1;
+		KH_YMAX(defsim) = 2.0;      // domain [0,1]x[0,2]
+		NY(defsim) = 256;            // 2:1 aspect ratio
 		HydroGridSize(defsim) = (KH_XMAX(defsim)-KH_XMIN(defsim))/NX(defsim)*4;
 		GAS_ETAVIS(defsim) = HydroGridSize(defsim)/4.;
 		KH_OA(defsim) = 0.33333333;
 		KH_Kappa(defsim) = 0.4;
+
+		GAS_EVOLMETHOD(defsim) = 1;
+		GAS_AVMODE(defsim) = 1;       // NS stress only (no HLLC blend)
+		GAS_USEMUSCL(defsim) = 0;    // no MUSCL
+		GAS_CDAMAX(defsim) = 1.0;
+		GAS_CDELL(defsim) = 0.05;
+		GAS_CDAMIN(defsim) = 0.0;
+		GAS_BLENDTHETA(defsim) = 0.0;
+		GAS_PRANDTL(defsim) = 1.0;
 
 		GRAVITY(defsim) = 'N';
 		GAS_SFFLAG(defsim) = 'N';
 		GAS_COOLFLAG(defsim) = 'N';
 		GAS_SNFBFLAG(defsim) = 'N';
 		GAS_BGHEATFLAG(defsim) = 'N';
-		GAS_GAMMA(defsim) = 1.66666;
+		GAS_GAMMA(defsim) = 5.0/3.0;
 	}
 void mk_default_rt_param(SimParameters *defsim, int iflag){
 		NDIM(defsim) = 2;
-		GAS_EVOLMETHOD(defsim) = 0;
+		GAS_EVOLMETHOD(defsim) = 1;
 		GAS_FCENTROID(defsim) = 0.0;
 		BGEXPAND(defsim) = 'N';
 		GAS_TYPE(defsim) = 'V';
@@ -391,7 +407,15 @@ void mk_default_rt_param(SimParameters *defsim, int iflag){
 		RT_OA(defsim) = 0.33333333;
     	RT_Kappa(defsim) = 0.0;
 		GAS_GAMMA(defsim) = 1.4;
-		GAS_COURANT(defsim) = 0.1;
+		GAS_COURANT(defsim) = 0.3;
+		/* NS stress + HLLC + CD10 two-tier blending defaults */
+		GAS_AVMODE(defsim) = 2;
+		GAS_USEMUSCL(defsim) = 1;
+		GAS_CDAMAX(defsim) = 1.0;
+		GAS_CDELL(defsim) = 0.05;
+		GAS_CDAMIN(defsim) = 0.0;
+		GAS_BLENDTHETA(defsim) = 0.0;
+		GAS_PRANDTL(defsim) = 1.0;
 }
 void mk_default_kepler_param(SimParameters *defsim){
 		NDIM(defsim) = 2;
@@ -420,6 +444,62 @@ void mk_default_kepler_param(SimParameters *defsim){
 	GAS_ETAVIS(defsim) = HydroGridSize(defsim)/4.;
 	GAS_EPSVIS(defsim) = 0.01;
 	GAS_VISCOSITY(defsim) = 0;
+}
+void mk_default_cylinder_param(SimParameters *defsim){
+	NDIM(defsim) = 2;
+	GAS_EVOLMETHOD(defsim) = 2;
+	GAS_FCENTROID(defsim) = 0.0;
+	BGEXPAND(defsim) = 'N';
+	GAS_TYPE(defsim) = 'V';
+	GAS_VISCOSITY(defsim) = 0;
+	SIMMODEL(defsim) = Cylinder;
+	GAS_CONSTMU(defsim) = 'Y';
+	HUBBLE(defsim) = 1;
+	STATBOXSIZE(defsim) = NX(defsim);
+
+	AMAX(defsim) = 100;
+	ANOW(defsim) = 1.;
+	ASTEP(defsim) = 0.005;
+	NSTEP(defsim) = 100000;
+	NX(defsim) = 250;
+	NY(defsim) = 100;
+	NZ(defsim) = 1;
+	NXNY(defsim) = NX(defsim)*NY(defsim);
+
+	CYL_XMIN(defsim) = 0;
+	CYL_XMAX(defsim) = 10.0;
+	CYL_YMIN(defsim) = 0;
+	CYL_YMAX(defsim) = 4.0;
+	CYL_CX(defsim) = 2.5;
+	CYL_CY(defsim) = 2.0;
+	CYL_R(defsim) = 0.5;
+	CYL_UINF(defsim) = 1.0;
+	CYL_RHO(defsim) = 1.0;
+	CYL_P(defsim) = 71.42857;
+	HydroGridSize(defsim) = 0.16;
+	GAS_ETAVIS(defsim) = HydroGridSize(defsim)/4.;
+	CYL_OA(defsim) = 0.0;
+	CYL_Kappa(defsim) = -0.01;
+
+	GAS_AlphaVis(defsim) = 1;
+	GAS_BetaVis(defsim) = 2;
+	GAS_EPSVIS(defsim) = 0.01;
+	GAS_COURANT(defsim) = 0.3;
+
+	GAS_AVMODE(defsim) = 0;
+	GAS_USEMUSCL(defsim) = 0;
+	GAS_CDAMAX(defsim) = 1.0;
+	GAS_CDELL(defsim) = 0.05;
+	GAS_CDAMIN(defsim) = 0.0;
+	GAS_BLENDTHETA(defsim) = 0.0;
+	GAS_PRANDTL(defsim) = 1.0;
+
+	GRAVITY(defsim) = 'N';
+	GAS_SFFLAG(defsim) = 'N';
+	GAS_COOLFLAG(defsim) = 'N';
+	GAS_SNFBFLAG(defsim) = 'N';
+	GAS_BGHEATFLAG(defsim) = 'N';
+	GAS_GAMMA(defsim) = 1.4;
 }
 void mk_default_2dglass_param(SimParameters *defsim, int flag){
 		NDIM(defsim) = 2;
@@ -679,6 +759,9 @@ void mk_default_param(SimParameters *defsim, char *cosmology){
 	}
 	else if(strcmp(cosmology,"MkGlass2D")==0){
 		mk_default_2dglass_param(defsim,0);
+	}
+	else if(strcmp(cosmology,"Cylinder")==0){
+		mk_default_cylinder_param(defsim);
 	}
 	else {
 		exit(999);

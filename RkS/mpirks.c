@@ -1087,9 +1087,10 @@ void DeleteInsideLocalBox(void **padbase, ptrdiff_t *npad, ptrdiff_t n_size, Box
 	*padbase = (void *) realloc( *padbase, *npad * n_size);
 }
 
-void ppadding(void *base,ptrdiff_t nmem, void **padbase, ptrdiff_t *npad, 
+void ppadding(void *base,ptrdiff_t nmem, void **padbase, ptrdiff_t *npad,
 		DoDeInfo *ddinfo, int nddinfo, SimBoxRange simbox, PosType width, GridInfo *gridinfo, int ndim){
-	BoxMinMax mybox = ddinfo[nddinfo-1].lgroup.xyz;
+	/* For single-process (nddinfo=0), use ddinfo[0] which holds the full box */
+	BoxMinMax mybox = ddinfo[(nddinfo > 0) ? nddinfo-1 : 0].lgroup.xyz;
 	BoxMinMax mycorebox = mybox;
 	mycorebox.xmin += width;
 	mycorebox.ymin += width;

@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
+#include<string.h>
 #include<math.h>
 #include<mpi.h>
 #include "eunha.h"
@@ -46,16 +47,20 @@ int rt_makemap(SimParameters *simpar, int icount){
 		cells[i].link = NULL;
 		cells[i].nmem = 0;
 	}
-	treevorork4particletype *bp = VORORK4_TBP(simpar);
+	/* Stride-aware: p_size may differ from sizeof(treevorork4particletype)
+	   when stress particles are active (av_mode >= 1). */
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *bp_raw = (char*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
 		int ix,iy;
-		ix = ((bp[i].x-xmin)/cellsize);
-		iy = ((bp[i].y-ymin)/cellsize);
+		ix = ((bpi->x-xmin)/cellsize);
+		iy = ((bpi->y-ymin)/cellsize);
 		int index = ix+mx*iy;
 		struct linkedlisttype *tmp = cells[index].link;
-		cells[index].link = (struct linkedlisttype*)(bp+i);
+		cells[index].link = (struct linkedlisttype*)bpi;
 		cells[index].nmem ++;
-		bp[i].next = tmp;
+		bpi->next = tmp;
 	}
 
 	for(j=0;j<nyimg;j++){
@@ -201,6 +206,7 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	float Ly = SIMBOX(simpar).y.max;
 	postype dmean = Lx/nx;
 	postype ycen = 0.5*Ly;
+	int av_mode = GAS_AVMODE(simpar);
 
 	GAS_dMean(simpar) = dmean;
 
@@ -209,10 +215,14 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 
 	DEBUGPRINT("P%d has initial set nx/y= %d %d Lx/y= %g %g rmin= %g %g rmax= %g %g\n",
 			MYID(simpar), nx,ny,Lx,Ly,xmin,ymin,xmax,ymax);
-	DEBUGPRINT("P%d has initial set den1/2 = %g %g ycen= %g\n", 
-			MYID(simpar), rho1, rho2, ycen);
+	DEBUGPRINT("P%d has initial set den1/2 = %g %g ycen= %g av_mode= %d\n",
+			MYID(simpar), rho1, rho2, ycen, av_mode);
 
-	res = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*nx*ny);
+	/* Allocate stress-sized particles when av_mode >= 1 */
+	if(av_mode >= 1)
+		res = (treevorork4particletype*)my_malloc(sizeof(treevorostressrk4particletype)*nx*ny);
+	else
+		res = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*nx*ny);
 	postype meanvol = Lx*Ly/(postype)nx/(postype)ny;
 	postype Pressure[ny+1];
 	postype dy = Ly/ny;
@@ -300,27 +310,41 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	}
 	DEBUGPRINT("P%d has pixels with mean volume = %g\n", MYID(simpar), meanvol);
 	DEBUGPRINT("P%d has p%ld pressure = %g\n", MYID(simpar),PINDX(res),res[0].pressure);
-	res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
+	if(av_mode >= 1){
+		/* Realloc to stress-sized layout and rearrange particles from old
+		   (treevorork4particletype) stride to new (treevorostressrk4particletype)
+		   stride.  Process back-to-front so no overlap issues (S' > S). */
+		res = (treevorork4particletype*)realloc(res, sizeof(treevorostressrk4particletype)*np);
+		treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)res;
+		char *old_base = (char*)res;
+		size_t old_size = sizeof(treevorork4particletype);
+		int ii;
+		for(ii=np-1; ii>=0; ii--){
+			memmove(&sbp[ii], old_base + ii*old_size, old_size);
+			memset(&sbp[ii].stress, 0, sizeof(Stress));
+			sbp[ii].bp = NULL;
+		}
+	} else {
+		res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
+	}
 	int nbp = np;
 	*mp = nbp;
 	VORORK4_TBP(simpar) = res;
 	VORORK4_BP(simpar) = (vorork4particletype*)res;
 	VORO_NP(simpar) = nbp;
-	for(i=0;i<np;i++) UNSET_P_FLAG(simpar, VORORK4, i, BoundaryGhostflag);
+	/* Stride-aware flag clear (UNSET_P_FLAG macro uses treevorork4particletype stride) */
+	{
+		size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype)
+		                               : sizeof(treevorork4particletype);
+		char *bp_raw = (char*)res;
+		for(i=0;i<np;i++){
+			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			bpi->u4if.Flag[ENDIAN_OFFSET] &= (~BoundaryGhostflag);
+		}
+	}
 	DEBUGPRINT("P%d has np = %ld in box %g %g : %g %g\n", MYID(simpar), np, xmin,ymin,xmax,ymax);
 
 	migrateTreeVorork4Particles(simpar);
-
-	if(0){
-		treevorork4particletype *bp = VORORK4_TBP(simpar);
-		for(i=0;i<NID(simpar);i++){
-			if(MYID(simpar) == i){
-				for(j=0;j<np;j++) printf("P%d has p%d %g %g\n", MYID(simpar), j,bp[j].x,bp[j].y);
-			}
-			MPI_Barrier(MPI_COMM_WORLD);
-		}
-		exit(9);
-	}
 
 	/*
 	rt_MkLinkedList(simpar);
@@ -334,27 +358,26 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	*/
 	exam2dUpdateVol(simpar,paddingTreeVorork4Particles,searchCellRk4Neighbors2D,findCellRk4BP2D,
 			mkLinkedList2D_rt);
-    DEBUGPRINT("P%d has volume vol(0) %g\n", MYID(simpar), res[0].volume);
 
     res = VORORK4_TBP(simpar);
     nbp = VORO_NP(simpar);
 
-	for(i=0;i<nbp;i++){
-		res[i].mass = res[i].den * res[i].volume;
-		res[i].ie = res[i].pressure*res[i].volume/(Gamma-1);
-		/*
-		res[i].ke = Half*res[i].mass*( res[i].vx*res[i].vx + res[i].vy*res[i].vy);
-		res[i].te = res[i].ie + res[i].ke;
-		*/
-		res[i].csound = sqrt(Gamma*res[i].pressure/res[i].den);
+	/* Stride-aware update of mass, ie, csound after volume measurement */
+	{
+		size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+		char *bp_raw = (char*)res;
+		for(i=0;i<nbp;i++){
+			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			bpi->mass = bpi->den * bpi->volume;
+			bpi->ie = bpi->pressure*bpi->volume/(Gamma-1);
+			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
+		}
 	}
 //	my_free(VORORK4_TBPP(simpar));
 	VORO_NPAD(simpar) = 0;
 
 	// update w2ceil and w2
     if(GAS_Kappa(simpar)>0) det2d_dpqRK4(simpar,paddingTreeVorork4Particles);
-//    DEBUGPRINT("P%d passed det2d_dpqRK4\n", MYID(simpar));
-
 
 	return res;
 }

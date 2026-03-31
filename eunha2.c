@@ -171,6 +171,11 @@ int FUNC(MAIN)(int argc, char **argv)
 		int Make2DGlass(SimParameters *, int, int);
 		Make2DGlass(&simpar, icont,1);
 	}
+	else if(SIMMODEL( (&simpar) ) == Cylinder) {
+		if(argc ==3) icont = atoi(argv[2]);
+		int RunCylinder(SimParameters *, int);
+		RunCylinder(&simpar, icont);
+	}
 
 	MPI_Finalize();
 

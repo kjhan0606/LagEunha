@@ -141,6 +141,26 @@ double exam2d_vph_rk4_int_blend(
 			postype , postype , postype , postype, void (*)(SimParameters *, postype))
 		);
 
+/* k-NN based functions */
+int near2dOpen_kNN(void *, TStruct *, int, PosType, int);
+void buildTree2D(SimParameters *,
+		void (*)(SimParameters *, postype),
+		TStruct **, TPtlStruct **, int *);
+int searchKNN2D(TPtlStruct *, int, TStruct *,
+		Voro2D_point *, PosType *);
+void updateDenW2Pressure2D_kNN(SimParameters *,
+		postype, postype, postype, postype, postype,
+		TStruct *, TPtlStruct *, int, postype);
+double getAccVoro2D_kNN(SimParameters *,
+		postype, postype, postype, postype,
+		postype, postype, postype,
+		TStruct *, TPtlStruct *, int);
+double exam2d_vph_rk4_int_kNN(
+		SimParameters *,
+		void (*)(SimParameters *, postype),
+		double (*)(SimParameters *, postype, postype, postype),
+		int (*)(treevorork4particletype*, postype, postype));
+
 void dumpRk4Data2D(SimParameters *, int , postype , postype );
 void readRk4Data2D(SimParameters *, postype *, postype *,int );
 

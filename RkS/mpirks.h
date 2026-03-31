@@ -290,7 +290,9 @@ int getdirection2d(SimBoxRange );
     int _i,_j,_k;\
     _j=0;\
     for(_i=0;_i<nprime;_i++) _j += prime[_i].factor;\
-    Info = (DoDeInfo*)malloc(sizeof(DoDeInfo)*_j);\
+    {int _alloc = (_j > 0) ? _j : 1;\
+    Info = (DoDeInfo*)calloc(_alloc, sizeof(DoDeInfo));\
+    Info[0].n_size = sizeof(ptype);}\
     _k=0;\
     for(_i=0;_i<nprime;_i++) for(_j=0;_j<prime[_i].factor;_j++){\
         Info[_k].pivot = (char *)malloc(sizeof(ptype)*(prime[_i].prime-1));\

@@ -59,6 +59,7 @@ RTOLD = ./Exam/RT_LF
 RT = ./Exam/RT
 KEPLER = ./Exam/Kepler
 GLASS2D = ./Exam/MkGlass2D
+CYLINDER = ./Exam/Cylinder
 #UTILS = ./Utils
 
 
@@ -66,7 +67,7 @@ SUBDIRS = $(MPIAUX) $(CAMBDIR) $(PARAMS) $(Cosmos) $(CosmosIC) \
 		$(SPH) $(VORO) $(RkS) $(OSTDIR) $(REC) $(COOLINGDIR) \
 		$(SNFEEDBACKDIR) $(EXTERNDIR) $(RTOLD) $(CosmosRW) \
 		$(TIMER) $(FFT) $(DENRW) $(ParallelIO) $(KH) $(VORO)\
-		$(COLORLIB)  $(RT) $(KEPLER) $(GLASS2D) $(EXAM) $(UTILS)
+		$(COLORLIB)  $(RT) $(KEPLER) $(GLASS2D) $(CYLINDER) $(EXAM) $(UTILS)
 
 all: 
 	for subdir in $(SUBDIRS); do \

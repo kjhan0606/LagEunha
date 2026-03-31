@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
+#include<string.h>
 #include<math.h>
 #include<mpi.h>
 #include "eunha.h"
@@ -34,7 +35,7 @@ int kh_makemap(SimParameters *simpar, int icount){
 //	float *ndist = (float*)malloc(sizeof(float)*nximg*nyimg);
 	int i,j;
 	int ii,jj;
-	for(i=0;i<nximg*nyimg;i++) map[i] = 0;
+	for(i=0;i<nximg*nyimg;i++) map[i] = KH_Rho1(simpar);
 //	for(i=0;i<nximg*nyimg;i++) ndist[i] = 1.e20;
 	postype pixsize = Lx/nximg;
 	postype xmin,ymin,xmax,ymax;
@@ -50,16 +51,18 @@ int kh_makemap(SimParameters *simpar, int icount){
 		cells[i].link = NULL;
 		cells[i].nmem = 0;
 	}
-	treevorork4particletype *bp = VORORK4_TBP(simpar);
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *bp_raw = (char*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
 		int ix,iy;
-		ix = ((bp[i].x-xmin)/cellsize);
-		iy = ((bp[i].y-ymin)/cellsize);
+		ix = ((bpi->x-xmin)/cellsize);
+		iy = ((bpi->y-ymin)/cellsize);
 		int index = ix+mx*iy;
 		struct linkedlisttype *tmp = cells[index].link;
-		cells[index].link = (struct linkedlisttype*)(bp+i);
+		cells[index].link = (struct linkedlisttype*)bpi;
 		cells[index].nmem ++;
-		bp[i].next = tmp;
+		bpi->next = tmp;
 	}
 
 	for(j=0;j<nyimg;j++){
@@ -147,7 +150,7 @@ int kh_makemap(SimParameters *simpar, int icount){
     if(MYID(simpar)==0){
         char outfile[189];
         sprintf(outfile,"khmap.%.6d.ppm", icount);
-        colorizeit(5, img, nximg,nyimg,"kh.sao", outfile);
+        colorizeit(7, img, nximg,nyimg,"kh.sao", outfile, (double)KH_Rho1(simpar), (double)KH_Rho2(simpar));
     }
     free(cells);
     free(map); free(img);
@@ -160,7 +163,8 @@ int kh_maketscmap(SimParameters *simpar, int icount){
 	int nximg, nyimg;
 	nximg = nx;
 	nyimg = ny;
-	treevorork4particletype *bp = VORORK4_TBP(simpar);
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *bp_raw = (char*)VORORK4_TBP(simpar);
 	float Lx = SIMBOX(simpar).x.max - SIMBOX(simpar).x.min;
 	float Ly = SIMBOX(simpar).y.max - SIMBOX(simpar).y.min;
 	float cellsize = Lx/nximg;
@@ -172,9 +176,10 @@ int kh_maketscmap(SimParameters *simpar, int icount){
 	postype mscale = (nximg/Lx)*(nyimg/Ly);
 
 	for(i=0;i<np;i++){
-		postype pmass = mscale*bp[i].mass;
-		postype xp = bp[i].x/cellsize;
-		postype yp = bp[i].y/cellsize;
+		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+		postype pmass = mscale*bpi->mass;
+		postype xp = bpi->x/cellsize;
+		postype yp = bpi->y/cellsize;
 		int nearx = rint(xp);
 		int neary = rint(yp);
 		int ic = (nearx + nximg) %nximg;
@@ -221,12 +226,10 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	int i,j,k;
 	treevorork4particletype *res;
 	postype rho1 = KH_Rho1(simpar), rho2 = KH_Rho2(simpar);
-    postype deltarho = 0.5*(rho1-rho2);
-    postype deltay = KH_Deltay(simpar);
+    postype deltay = KH_Deltay(simpar);  // tanh width 'a'
     postype dvy0 = KH_Vperturb(simpar);
-    postype U1 = KH_Vel1(simpar);
-    postype U2 = KH_Vel2(simpar);
-    postype Um = 0.5*(U1-U2);
+    postype U1 = KH_Vel1(simpar);       // outer velocity
+    postype U2 = KH_Vel2(simpar);       // inner velocity
     postype xmin,ymin,xmax,ymax;
     xmin = KH_XMIN(simpar);
     ymin = KH_YMIN(simpar);
@@ -238,39 +241,33 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
     float Ly = KH_SIMBOX(simpar).y.max - KH_SIMBOX(simpar).y.min;
 	postype dmean = Lx/nx;
 	GAS_dMean(simpar) = dmean;
+	int av_mode = GAS_AVMODE(simpar);
 
 	postype Gamma = GAS_GAMMA(simpar);
 
-    res = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*nx*ny);
+    if(av_mode >= 1)
+        res = (treevorork4particletype*)my_malloc(sizeof(treevorostressrk4particletype)*nx*ny);
+    else
+        res = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*nx*ny);
     postype meanvol = Lx*Ly/nx/ny;
     size_t np = 0;
+	// Lecoanet et al. (2016) Section 3.2 IC
+	postype z1 = 0.5, z2 = 1.5;      // interface positions (fixed for [0,2] domain)
+	postype sigma = 0.2;              // Gaussian envelope width for vy perturbation
 	for(j=0;j<ny;j++){
         postype rho,vx;
         postype y = (postype)(j+0.5)*Ly/(postype)ny;
-        char iregion;
-        if(y>=0 && y < Ly*0.25) {
-            rho = rho1-deltarho*exp((y-Ly*0.25)/deltay);
-            vx = U1 - Um*exp((y-Ly*0.25)/deltay);
-            iregion = 0;
-        }
-        else if(y>=Ly*0.25 && y < Ly*0.5) {
-            rho = rho2+deltarho*exp((Ly*0.25-y)/deltay);
-            vx = U2 + Um*exp((Ly*0.25-y)/deltay);
-            iregion = 1;
-        }
-        else if(y>=Ly*0.5 && y < Ly*0.75) {
-            rho = rho2+deltarho*exp((y-Ly*0.75)/deltay);
-            vx =  U2 + Um*exp((y-Ly*0.75)/deltay);
-            iregion = 1;
-        }
-        else if(y>=Ly*0.75 && y < Ly*1) {
-            rho = rho1-deltarho*exp((Ly*0.75-y)/deltay);
-            vx = U1 - Um*exp((Ly*0.75-y)/deltay);
-            iregion = 2;
-        }
+        // tanh profile: 0.5*(tanh((y-z1)/a) - tanh((y-z2)/a))
+        // ranges from 0 (outer) to 1 (inner)
+        postype profile = 0.5*(tanh((y-z1)/deltay) - tanh((y-z2)/deltay));
+        rho = 0.5*(rho1+rho2) + 0.5*(rho2-rho1)*profile;
+        vx  = 0.5*(U1+U2)    + 0.5*(U2-U1)*profile;
+        char iregion = (profile > 0.5) ? 1 : 0;
         for(i=0;i<nx;i++){
             postype x = (postype)(i+0.5)*Lx/(postype)nx;
-            postype vy = dvy0*sin(4.*M_PI*x );
+            postype vy = dvy0*sin(2.0*M_PI*x)
+                        *(exp(-(y-z1)*(y-z1)/(sigma*sigma))
+                         +exp(-(y-z2)*(y-z2)/(sigma*sigma)));
             size_t indx = i+nx*j;
             if(x>=xmin && x < xmax && y>=ymin && y < ymax){
                 res[np].u4if.indx  = indx;
@@ -304,7 +301,20 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             }
         }
     }
-	res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
+	if(av_mode >= 1){
+		res = (treevorork4particletype*)realloc(res, sizeof(treevorostressrk4particletype)*np);
+		treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)res;
+		char *old_base = (char*)res;
+		size_t old_size = sizeof(treevorork4particletype);
+		int ii;
+		for(ii=np-1; ii>=0; ii--){
+			memmove(&sbp[ii], old_base + ii*old_size, old_size);
+			memset(&sbp[ii].stress, 0, sizeof(Stress));
+			sbp[ii].bp = NULL;
+		}
+	} else {
+		res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
+	}
 
 	GAS_invw2Scale(simpar) = 1.L/( KH_Pressure(simpar)*meanvol/(Gamma-1));
 
@@ -317,7 +327,15 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	// voro-rk4 type base particle.
 	VORO_NP(simpar) = nbp;
 	// declare the particles as not being boundary ghost particle
-	for(i=0;i<np;i++) UNSET_P_FLAG(simpar, VORORK4, i, BoundaryGhostflag);
+	{
+		size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype)
+		                               : sizeof(treevorork4particletype);
+		char *bp_raw = (char*)res;
+		for(i=0;i<np;i++){
+			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			bpi->u4if.Flag[ENDIAN_OFFSET] &= (~BoundaryGhostflag);
+		}
+	}
 	DEBUGPRINT("P%d has np = %ld in box %g %g : %g %g\n", MYID(simpar), np, xmin,ymin,xmax,ymax);
 
     migrateTreeVorork4Particles(simpar);
@@ -330,14 +348,15 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	res = VORORK4_TBP(simpar);
 	nbp = VORO_NP(simpar);
 
-
-	for(i=0;i<nbp;i++){
-		res[i].ie = res[i].pressure*res[i].volume/(Gamma-1);
-		/*
-		res[i].ke = Half*res[i].mass*( res[i].vx*res[i].vx + res[i].vy*res[i].vy);
-		res[i].te = res[i].ie + res[i].ke;
-		*/
-		res[i].csound = sqrt(Gamma*res[i].pressure/res[i].den);
+	{
+		size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype)
+		                               : sizeof(treevorork4particletype);
+		char *bp_raw = (char*)res;
+		for(i=0;i<nbp;i++){
+			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			bpi->ie = bpi->pressure*bpi->volume/(Gamma-1);
+			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
+		}
 	}
 	VORO_NPAD(simpar) = 0;
 
@@ -351,12 +370,12 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 
 
 void kh_MkLinkedList(SimParameters *simpar){
-	treevorork4particletype *bp = VORORK4_TBP(simpar);
 	int np = VORO_NP(simpar);
 	int i,j,k;
 	postype xmin,ymin,xmax,ymax;
 	int mx,my;
 	postype pwidth = KH_GridSize(simpar);
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
 
 	BASICCELL_CELLWIDTH(simpar) = pwidth;
 	BASICCELL_INVCELLWIDTH(simpar) = 1./pwidth;
@@ -386,41 +405,44 @@ void kh_MkLinkedList(SimParameters *simpar){
 	DEBUGPRINT("P%d has np= %ld: %d %d: %g : %g %g\n", MYID(simpar), VORO_NP(simpar),
 			mx,my, cellsize, xmin,ymin);
 
+	char *bp_raw = (char*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
 		int ix,iy;
-		ix = ((bp[i].x-xmin)/cellsize);
-		iy = ((bp[i].y-ymin)/cellsize);
+		ix = ((bpi->x-xmin)/cellsize);
+		iy = ((bpi->y-ymin)/cellsize);
 		size_t index = ix+mx*iy;
 		if(index >=mx*my){
-			printf("error detected: %ld : %d %d : %g %g < %g %g : %g %g >\n", 
-					index, mx,my, bp[i].x, bp[i].y, xmin,ymin, xmax,ymax);
+			printf("error detected: %ld : %d %d : %g %g < %g %g : %g %g >\n",
+					index, mx,my, bpi->x, bpi->y, xmin,ymin, xmax,ymax);
 			exit(0);
 		}
 		struct linkedlisttype *tmp = cells[index].link;
-		cells[index].link = (struct linkedlisttype*)(bp+i);
+		cells[index].link = (struct linkedlisttype*)bpi;
 		cells[index].nmem ++;
-		bp[i].next = tmp;
+		bpi->next = tmp;
 	}
 	DEBUGPRINT("P%d has %g %g : %g %g\n", MYID(simpar), KH_XMIN(simpar), KH_YMIN(simpar),
 			KH_XMAX(simpar), KH_YMAX(simpar));
 	paddingTreeVorork4Particles(simpar, pwidth);
-	bp = VORORK4_TBPP(simpar);
+	char *bpp_raw = (char*)VORORK4_TBPP(simpar);
 	postype Xmin,Ymin,Xmax,Ymax;
 	Xmin = Ymin = 1.e10;
 	Xmax = Ymax = -1.e10;
 	for(i=0;i<VORO_NPAD(simpar);i++){
+		treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);
 		int ix,iy;
-		ix = ((bp[i].x-xmin)/cellsize);
-		iy = ((bp[i].y-ymin)/cellsize);
-		Xmin = MIN(Xmin,bp[i].x);
-		Ymin = MIN(Ymin,bp[i].y);
-		Xmax = MAX(Xmax,bp[i].x);
-		Ymax = MAX(Ymax,bp[i].y);
+		ix = ((bppi->x-xmin)/cellsize);
+		iy = ((bppi->y-ymin)/cellsize);
+		Xmin = MIN(Xmin,bppi->x);
+		Ymin = MIN(Ymin,bppi->y);
+		Xmax = MAX(Xmax,bppi->x);
+		Ymax = MAX(Ymax,bppi->y);
 		size_t index = ix+mx*iy;
 		struct linkedlisttype *tmp = cells[index].link;
-		cells[index].link = (struct linkedlisttype*)(bp+i);
+		cells[index].link = (struct linkedlisttype*)bppi;
 		cells[index].nmem ++;
-		bp[i].next = tmp;
+		bppi->next = tmp;
 	}
 #ifdef DEBUG
 	DEBUGPRINT("P%d now after padding: %g %g : %g %g\n", MYID(simpar),Xmin,Ymin,Xmax,Ymax);

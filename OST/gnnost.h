@@ -19,7 +19,12 @@ void Make_GNN_Tree( TStruct *, size_t ,
 		void (*)(TStruct *, TStruct *), 
 		void (*)(TStruct *), void (*)(TStruct *), int 
 		);
-PosType find_GNearest( void *, TStruct *, 
+PosType find_GNearest( void *, TStruct *,
 		int (*)(void *, TStruct *, PosType ),
 		PosType (*)(void *, void *)
 		);
+int find_GNear(void *, int, TStruct *, PosType *, void **,
+		int (*)(void *, TStruct *, int, PosType, int),
+		PosType (*)(void *, void *),
+		int (*)(void *, PosType, PosType *, int, Neighbor *, int));
+int insGnear(void *, PosType, PosType *, int, Neighbor *, int);
