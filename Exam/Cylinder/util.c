@@ -100,7 +100,7 @@ int cyl_makemap(SimParameters *simpar, int icount){
 			map[i+nximg*(nyimg-j-1)] = nearden;
 		}
 	}
-	MPI_Reduce(map, img, nximg*nyimg, MPI_FLOAT, MPI_MAX, 0, MPI_COMM_WORLD);
+	MPI_Reduce(map, img, nximg*nyimg, MPI_FLOAT, MPI_MAX, 0, MPI_COMM(simpar));
 
     if(MYID(simpar)==0){
         char outfile[189];
@@ -129,8 +129,8 @@ treevorork4particletype *cyl_mkinitial(SimParameters *simpar, int *mp){
 	ymax = CYL_YMAX(simpar);
 	int nx = NX(simpar);
 	int ny = NY(simpar);
-	float Lx = CYL_SIMBOX(simpar).x.max - CYL_SIMBOX(simpar).x.min;
-	float Ly = CYL_SIMBOX(simpar).y.max - CYL_SIMBOX(simpar).y.min;
+	postype Lx = CYL_SIMBOX(simpar).x.max - CYL_SIMBOX(simpar).x.min;
+	postype Ly = CYL_SIMBOX(simpar).y.max - CYL_SIMBOX(simpar).y.min;
 	postype dmean = Lx/nx;
 	GAS_dMean(simpar) = dmean;
 	int av_mode = GAS_AVMODE(simpar);
@@ -357,10 +357,16 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 
 	int nghost_total = ncyl_ghost + ntop_ghost + nbot_ghost + nleft_ghost + nright_ghost + ncorner_ghost;
 
-	/* 3. Reallocate padding buffer */
-	bpp_raw = (char*)realloc(bpp_raw, p_size*(npad_mpi + nghost_total + 100));
-	VORORK4_TBPP(simpar) = (treevorork4particletype*)bpp_raw;
-	/* Refresh bp_raw: realloc may have moved the padding buffer but TBP is unchanged */
+	/* 3. Reallocate padding buffer (use my_malloc to avoid heap corruption with -O2) */
+	{
+		size_t new_total = npad_mpi + nghost_total + 100;
+		char *new_raw = (char*)my_malloc(p_size * new_total);
+		if(npad_mpi > 0 && bpp_raw)
+			memcpy(new_raw, bpp_raw, p_size * npad_mpi);
+		if(bpp_raw) my_free(bpp_raw);
+		bpp_raw = new_raw;
+		VORORK4_TBPP(simpar) = (treevorork4particletype*)bpp_raw;
+	}
 	bp_raw = (char*)VORORK4_TBP(simpar);
 
 	int gidx = npad_mpi;
@@ -397,8 +403,8 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 			treevorork4particletype *ghost = (treevorork4particletype*)(bpp_raw + gidx*p_size);
 			memcpy(ghost, bpi, p_size);
 			ghost->y = bpi->y + Ly;
-			ghost->u4if.indx = MAX_INDEX;
-			ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+			/* Periodic ghost: keep original PINDX so force loop
+			   treats it as a normal neighbor (AV on, no CFL floor) */
 			gidx++;
 		}
 	}
@@ -410,15 +416,14 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 			treevorork4particletype *ghost = (treevorork4particletype*)(bpp_raw + gidx*p_size);
 			memcpy(ghost, bpi, p_size);
 			ghost->y = bpi->y - Ly;
-			ghost->u4if.indx = MAX_INDEX;
-			ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+			/* Periodic ghost: keep original PINDX */
 			gidx++;
 		}
 	}
 
 	/* 7. Left inflow ghost (x < width, x >= 0) — fixed freestream state */
 	{
-		postype ie_inf = p_inf / (Gamma-1) / rho_inf;
+		postype ie_per_vol = p_inf / (Gamma-1);  /* P/(γ-1): ie per unit volume */
 		for(i=0;i<nsrc;i++){
 			treevorork4particletype *bpi = SRC_PTL(i);
 			if(bpi->x < width && bpi->x >= 0){
@@ -430,7 +435,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				ghost->den = rho_inf;
 				ghost->pressure = p_inf;
 				ghost->csound = cs_inf;
-				ghost->ie = ie_inf * ghost->volume;
+				ghost->ie = ie_per_vol * ghost->volume;
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
 				gidx++;
@@ -453,7 +458,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 
 	/* 9. Corner ghosts (double reflections for particles near two boundaries) */
 	{
-		postype ie_inf = p_inf / (Gamma-1) / rho_inf;
+		postype ie_per_vol = p_inf / (Gamma-1);
 		for(i=0;i<nsrc;i++){
 			treevorork4particletype *bpi = SRC_PTL(i);
 			int near_bot = (bpi->y < width && bpi->y >= 0);
@@ -470,7 +475,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				ghost->den = rho_inf;
 				ghost->pressure = p_inf;
 				ghost->csound = cs_inf;
-				ghost->ie = ie_inf * ghost->volume;
+				ghost->ie = ie_per_vol * ghost->volume;
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
 				gidx++;
@@ -494,7 +499,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				ghost->den = rho_inf;
 				ghost->pressure = p_inf;
 				ghost->csound = cs_inf;
-				ghost->ie = ie_inf * ghost->volume;
+				ghost->ie = ie_per_vol * ghost->volume;
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
 				gidx++;

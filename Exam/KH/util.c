@@ -260,8 +260,8 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
         // tanh profile: 0.5*(tanh((y-z1)/a) - tanh((y-z2)/a))
         // ranges from 0 (outer) to 1 (inner)
         postype profile = 0.5*(tanh((y-z1)/deltay) - tanh((y-z2)/deltay));
-        rho = 0.5*(rho1+rho2) + 0.5*(rho2-rho1)*profile;
-        vx  = 0.5*(U1+U2)    + 0.5*(U2-U1)*profile;
+        rho = rho1 + (rho2-rho1)*profile;
+        vx  = U1   + (U2-U1)*profile;
         char iregion = (profile > 0.5) ? 1 : 0;
         for(i=0;i<nx;i++){
             postype x = (postype)(i+0.5)*Lx/(postype)nx;

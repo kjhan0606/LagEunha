@@ -207,21 +207,25 @@ void ReadSimulationParameters(FILE *simfile, int *icont, SimParameters *simpar){
 			printf("Kelvin Helmholtz Instability Test is set\n");
 			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
 			KH_XMIN(simpar) = KH_YMIN(simpar) = 0;
+			HydroGridSize(simpar) = (KH_XMAX(simpar)-KH_XMIN(simpar))/NX(simpar)*4;
 		}
 		else if(SIMMODEL(simpar) == RT || SIMMODEL(simpar) == RT_LF){
 			printf("Rayleigh Taylor Instability Test is set\n");
 			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
 			RT_XMIN(simpar) = RT_YMIN(simpar) = 0;
+			HydroGridSize(simpar) = (RT_XMAX(simpar)-RT_XMIN(simpar))/NY(simpar)*4;
 		}
 		else if(SIMMODEL(simpar) == Kepler){
 			printf("Kepler L-mom. Test is set\n");
 			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
 			KP_XMIN(simpar) = KP_YMIN(simpar) = 0;
+			HydroGridSize(simpar) = (KP_XMAX(simpar)-KP_XMIN(simpar))/NX(simpar)*4;
 		}
 		else if(SIMMODEL(simpar) == MkGlass2D){
 			printf("Making 2D Glass IC is set\n");
 			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
 			GL2D_XMIN(simpar) = GL2D_YMIN(simpar) = 0;
+			HydroGridSize(simpar) = (GL2D_XMAX(simpar)-GL2D_XMIN(simpar))/NX(simpar)*4;
 		}
 		else if(SIMMODEL(simpar) == Cylinder){
 			printf("Cylinder Flow Test is set\n");
@@ -229,6 +233,7 @@ void ReadSimulationParameters(FILE *simfile, int *icont, SimParameters *simpar){
 			printf("Cylinder: center=(%g,%g), R=%g, U_inf=%g\n",
 				CYL_CX(simpar), CYL_CY(simpar), CYL_R(simpar), CYL_UINF(simpar));
 			CYL_XMIN(simpar) = CYL_YMIN(simpar) = 0;
+			HydroGridSize(simpar) = (CYL_XMAX(simpar)-CYL_XMIN(simpar))/NX(simpar)*4;
 		}
 		MPI_COMM(simpar) = com;
 	}

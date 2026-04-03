@@ -494,6 +494,7 @@ void det2d_dpqRK4(
    Caller is responsible for freeing tree_out, ptl_out, and VORORK4_TBPP. */
 void buildTree2D(SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
+		int (*skipBP)(treevorork4particletype *),
 		TStruct **tree_out, TPtlStruct **ptl_out, int *nptl_out){
 	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
 	char *bp_raw = (char*)VORORK4_TBP(simpar);
@@ -544,31 +545,8 @@ void buildTree2D(SimParameters *simpar,
 	tree->daughter = ptl;
 	tree->Nparticle = np+mp;
 
-	DEBUGPRINT("P%d buildTree: np=%d mp=%d total=%d ptl[0]=(%g,%g) ptl[np]=(%g,%g)\n",
-		MYID(simpar), np, mp, np+mp, ptl[0].x, ptl[0].y,
-		mp>0 ? ptl[np].x : 0, mp>0 ? ptl[np].y : 0);
-
 	Make_GNN_Tree(tree, nnode, ex2d_idivision, ex2d_findCentroid,
 			ex2d_findCellSize, RECURSIVE);
-
-	/* Verify tree structure: count particles reachable from root */
-	{
-		int nvisited = 0;
-		void *ptr = (void*)tree;
-		while(ptr != NULL){
-			if(((TYPE*)ptr)->type == TYPE_TREE){
-				ptr = (void*)(((TStruct*)ptr)->daughter);
-			} else {
-				nvisited++;
-				if(nvisited > np+mp+10) {
-					DEBUGPRINT("P%d TREE CYCLE at nvisited=%d\n", MYID(simpar), nvisited);
-					break;
-				}
-				ptr = (void*)(((TPtlStruct*)ptr)->sibling);
-			}
-		}
-		DEBUGPRINT("P%d tree verify: expected=%d visited=%d\n", MYID(simpar), np+mp, nvisited);
-	}
 
 	/* Compute w2ceil for local particles */
 	bp_raw = (char*)VORORK4_TBP(simpar);
@@ -577,11 +555,7 @@ void buildTree2D(SimParameters *simpar,
 #endif
 	for(i=0;i<np;i++){
 		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
-		/* Skip out-of-bounds particles for Cylinder (outflow boundary) */
-		if(SIMMODEL(simpar) == Cylinder){
-			postype Lx_d = SIMBOX(simpar).x.max;
-			if(bpi->x < 0 || bpi->x >= Lx_d) continue;
-		}
+		if(skipBP && skipBP(bpi)) continue;
 		bpi->w2ceil = find_GNearest(ptl+i, tree, nearest2dOpen, ex2d_dist);
 		if(GAS_Kappa(simpar) >= 0)
 			bpi->w2 = MIN(bpi->w2, bpi->w2ceil);
@@ -1321,7 +1295,8 @@ void updateDenW2Pressure2D(
  * ================================================================ */
 void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 		postype xmin, postype ymin, postype xmax, postype ymax, postype Gamma,
-		TStruct *tree, TPtlStruct *ptl, int nptl, postype Dtime){
+		TStruct *tree, TPtlStruct *ptl, int nptl, postype Dtime,
+		int (*skipBP)(treevorork4particletype *)){
 	postype boxsize = BOXSIZE(simpar)/NX(simpar)*5;
 	int nbp = VORO_NP(simpar);
 	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
@@ -1346,72 +1321,43 @@ void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 	/* Debug: ie after w2 loop (disabled for performance) */
 
 	int K_START = 32;
-	postype Lx_cyl = SIMBOX(simpar).x.max;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 	for(i=0;i<nbp;i++){
-		/* Skip out-of-bounds particles for Cylinder (outflow boundary) */
-		if(SIMMODEL(simpar) == Cylinder){
+		int skip_this = 0;
+		if(skipBP){
 			treevorork4particletype *bpi_chk = (treevorork4particletype*)(bp_raw + i*p_size);
-			if(bpi_chk->x < 0 || bpi_chk->x >= Lx_cyl) continue;
+			if(skipBP(bpi_chk)) skip_this = 1;
 		}
+		if(!skip_this){
 
 		int mp = 1000;
 		Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
 		Voro2D_point neighbors[MAX_NUM_NEAR];
 		Voro2D_point neighwork[MAX_NUM_NEAR];
+		memset(neighwork, 0, sizeof(neighwork));
 		PosType maxr;
 		int K = K_START;
 		int nfound, ip;
 
-		/* Adaptive K: retry with larger K if Voronoi cell might be incomplete */
-		retry_knn:
-		nfound = searchKNN2D(ptl+i, K, tree, neighbors, &maxr);
+		/* Adaptive kNN with retry (no goto/continue — Intel OpenMP safe) */
+		int knn_ok = 0;
+		while(!knn_ok){
+			nfound = searchKNN2D(ptl+i, K, tree, neighbors, &maxr);
+			if(nfound < 3 || maxr < 1e-20) break;
 
-		if(nfound < 3 || maxr < 1e-20){
-			/* Not enough neighbors or degenerate kNN (all at same point), skip */
-			free(vorocorner);
-			continue;
-		}
+			Voro2D_point center;
+			treevorork4particletype *ibp_tmp = (treevorork4particletype*)(ptl[i].bp);
+			center.x = ibp_tmp->x;
+			center.y = ibp_tmp->y;
+			center.indx = PINDX(ibp_tmp);
+			center.csound = ibp_tmp->csound;
+			center.w2 = ibp_tmp->w2;
 
-		Voro2D_point center;
-		treevorork4particletype *ibp = (treevorork4particletype*)(ptl[i].bp);
-		center.x = ibp->x;
-		center.y = ibp->y;
-		center.indx = PINDX(ibp);
-		center.csound = ibp->csound;
-		center.w2 = ibp->w2;
+			ip = Voro2D_FindVC(&center, neighbors, neighwork, nfound, vorocorner, mp, boxsize);
 
-		ip = Voro2D_FindVC(&center, neighbors, neighwork, nfound, vorocorner, mp, boxsize);
-
-		/* Debug: dump neighbors for first big cell */
-		{
-			postype tmpvol = Area2DPolygon(vorocorner, 1);
-			static int dbg_count = 0;
-			if(tmpvol > 0.01 && dbg_count < 1){
-				dbg_count++;
-				DEBUGPRINT("P%d kNN DEBUG: PINDX=%ld center=(%g,%g) w2=%g nfound=%d ip=%d vol=%g boxsize=%g\n",
-					MYID(simpar), PINDX(ibp), center.x, center.y, center.w2,
-					nfound, ip, tmpvol, boxsize);
-				int di;
-				for(di=0;di<5 && di<nfound;di++){
-					DEBUGPRINT("  neigh[%d]: abs=(%g,%g) PINDX=%ld dist2=%g w2=%g\n",
-						di, ((treevorork4particletype*)neighbors[di].bp)->x,
-						((treevorork4particletype*)neighbors[di].bp)->y,
-						neighbors[di].indx, neighbors[di].x*neighbors[di].x+neighbors[di].y*neighbors[di].y,
-						neighbors[di].w2);
-				}
-				/* Also print neighwork (relative coords from Voro2D_FindVC) */
-				for(di=0;di<5 && di<ip;di++){
-/*					DEBUGPRINT("  neighwork[%d]: rel=(%g,%g) dist2=%g\n",
-						di, neighwork[di].x, neighwork[di].y, neighwork[di].dist2); */
-				}
-			}
-		}
-
-		/* Completeness check: if farthest vertex > 0.95*maxr, retry with more neighbors */
-		{
+			/* Completeness check */
 			Voro2D_Corner *vtmp = vorocorner;
 			postype maxvert2 = 0;
 			do {
@@ -1423,9 +1369,13 @@ void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 			} while(vtmp != vorocorner);
 			if(sqrt(maxvert2) > 0.95*maxr && K < MAX_NUM_NEAR){
 				K = MIN(K*2, MAX_NUM_NEAR);
-				goto retry_knn;
+			} else {
+				knn_ok = 1;
 			}
 		}
+
+		if(knn_ok){
+		treevorork4particletype *ibp = (treevorork4particletype*)(ptl[i].bp);
 
 		get2dAreaAvgNeighorPressure(ibp, vorocorner, neighwork, bp);
 		ibp->den = ibp->mass / ibp->volume;
@@ -1444,8 +1394,10 @@ void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 				MYID(simpar), PINDX(ibp), ibp->x, ibp->y, ibp->volume,
 				nfound, K, maxr, ncorners, nbigbox, ip); */
 		}
+		} /* if(knn_ok) */
 
 		free(vorocorner);
+		} /* if(!skip_this) */
 	}
 
 	/* Debug: check ie after kNN Voronoi loop */
@@ -1463,49 +1415,45 @@ void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 		if(bad > 0) DEBUGPRINT("P%d kNN POST-VORO: %d particles with negative ie\n", MYID(simpar), bad);
 	}
 
-	/* Global pressure/csound update */
+	/* Global pressure/csound update (stride-aware for av_mode >= 1) */
 	{
 		int neg_ie = 0, neg_vol = 0, has_wall = 0;
 		for(i=0;i<nbp;i++){
-			if(bp[i].ie < 0 && neg_ie < 3){
+			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			if(bpi->ie < 0 && neg_ie < 3){
 				DEBUGPRINT("P%d kNN pre-update: i=%d PINDX=%ld ie=%g vol=%g mass=%g pos=(%g,%g)\n",
-						MYID(simpar), i, PINDX(bp+i), bp[i].ie, bp[i].volume, bp[i].mass,
-						bp[i].x, bp[i].y);
+						MYID(simpar), i, PINDX(bpi), bpi->ie, bpi->volume, bpi->mass,
+						bpi->x, bpi->y);
 				neg_ie++;
 			}
-			if(bp[i].volume <= 0 && neg_vol < 3){
+			if(bpi->volume <= 0 && neg_vol < 3){
 				DEBUGPRINT("P%d kNN bad vol: i=%d PINDX=%ld vol=%g\n",
-						MYID(simpar), i, PINDX(bp+i), bp[i].volume);
+						MYID(simpar), i, PINDX(bpi), bpi->volume);
 				neg_vol++;
 			}
 		}
 	}
 	for(i=0;i<nbp;i++){
-		bp[i].pressure = bp[i].ie/bp[i].volume*(Gamma-1);
-		/* Floor negative pressure to prevent NaN csound; reset ie consistently.
-		   Use a floor based on the old sound speed to prevent extreme pressure
-		   gradients (near-vacuum next to high-P regions causes blowup). */
-		if(bp[i].pressure <= 0){
+		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+		bpi->pressure = bpi->ie/bpi->volume*(Gamma-1);
+		if(bpi->pressure <= 0){
 			static int pfloor_warn = 0;
 			if(pfloor_warn < 10)
 				DEBUGPRINT("P%d P-floor: i=%d PINDX=%ld ie=%g vol=%g P=%g pos=(%g,%g)\n",
-					MYID(simpar), i, PINDX(bp+i), bp[i].ie, bp[i].volume, bp[i].pressure,
-					bp[i].x, bp[i].y);
+					MYID(simpar), i, PINDX(bpi), bpi->ie, bpi->volume, bpi->pressure,
+					bpi->x, bpi->y);
 			pfloor_warn++;
-			/* csound retains the value from the previous step (not yet
-			   recomputed), so cs^2*rho/Gamma gives the old pressure.
-			   Floor at 1% of that to avoid near-vacuum gradients. */
-			postype p_old = bp[i].csound * bp[i].csound * bp[i].den / Gamma;
+			postype p_old = bpi->csound * bpi->csound * bpi->den / Gamma;
 			postype p_floor = (p_old > 0) ? 0.01 * p_old : 1e-6;
 			if(p_floor < 1e-6) p_floor = 1e-6;
-			bp[i].pressure = p_floor;
-			bp[i].ie = p_floor * bp[i].volume / (Gamma-1);
+			bpi->pressure = p_floor;
+			bpi->ie = p_floor * bpi->volume / (Gamma-1);
 		}
-		bp[i].csound = sqrt(Gamma*bp[i].pressure/bp[i].den);
-		if(isnan(bp[i].csound)){
+		bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
+		if(isnan(bpi->csound)){
 			DEBUGPRINT("P%d kNN_den NaN at i=%d PINDX=%ld: ie=%g vol=%g den=%g P=%g mass=%g pos=(%g,%g)\n",
-					MYID(simpar), i, PINDX(bp+i), bp[i].ie, bp[i].volume, bp[i].den, bp[i].pressure,
-					bp[i].mass, bp[i].x, bp[i].y);
+					MYID(simpar), i, PINDX(bpi), bpi->ie, bpi->volume, bpi->den, bpi->pressure,
+					bpi->mass, bpi->x, bpi->y);
 		}
 	}
 }
@@ -1886,7 +1834,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 									ibp_pressure, jbp_pressure, tmp, neighwork, simpar, RT);
 
 							/* Viscous traction vector: τ·dS (full tensor, not just normal projection) */
-							postype tau_dot_dS_x = 0, tau_dot_dS_y = 0;
+							tau_dot_dS_x = 0; tau_dot_dS_y = 0;
 							if(av_mode >= 1){
 								/* M(n,m) face-average of τ components */
 								postype txx_face, txy_face, tyy_face;
@@ -2041,18 +1989,21 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 						ibp_rk4->dt = MIN(ibp_rk4->dt, dt);
 						if(dt < Dtime) Dtime = dt;
 
-						/* Viscous CFL: dt_visc = 0.5 h^2 / max(nu,chi) */
-						if(nu_phys > 0){
+						/* Viscous CFL: dt_visc = 0.5 h^2 / max(nu_phys,nu_cd,chi) */
+						if(av_mode >= 1 || nu_phys > 0){
 							postype h_i = sqrt(ibp_rk4->volume);
-							postype chi = (prandtl > 0) ? nu_phys / prandtl : 0;
-							postype nu_eff = fmax(nu_phys, chi);
-							postype dt_visc = 0.5 * h_i * h_i / nu_eff;
-							ibp_rk4->dt = MIN(ibp_rk4->dt, dt_visc);
-							if(dt_visc < Dtime) Dtime = dt_visc;
+							postype nu_cd_i = ibp->stress.alpha_cd * h_i * ibp_csound;
+							postype chi = (nu_phys > 0 && prandtl > 0) ? nu_phys / prandtl : 0;
+							postype nu_eff = fmax(fmax(nu_phys, nu_cd_i), chi);
+							if(nu_eff > 0){
+								postype dt_visc = 0.5 * h_i * h_i / nu_eff;
+								ibp_rk4->dt = MIN(ibp_rk4->dt, dt_visc);
+								if(dt_visc < Dtime) Dtime = dt_visc;
+							}
 						}
 
 						/* Track vsig_max for CD10 */
-						if(av_mode >= 2){
+						if(av_mode >= 1){
 							/* For ghost faces, use sound-speed-only signal velocity
 							   (reversed velocity inflates the full vsig artificially) */
 							postype vsig_cd = jbp_is_ghost ?
@@ -2577,7 +2528,8 @@ double getAccVoro2D(SimParameters *simpar, postype xmin, postype ymin,
 double getAccVoro2D_kNN(SimParameters *simpar,
 		postype xmin, postype ymin, postype xmax, postype ymax,
 		postype OrderOfAccuracy, postype Courant, postype Gamma,
-		TStruct *tree, TPtlStruct *ptl, int nptl){
+		TStruct *tree, TPtlStruct *ptl, int nptl,
+		int (*skipBP)(treevorork4particletype *)){
 	postype boxsize = BOXSIZE(simpar)/NX(simpar)*5;
 	treevorork4particletype *bp = VORORK4_TBP(simpar);
 	int nbp = VORO_NP(simpar);
@@ -2593,47 +2545,47 @@ double getAccVoro2D_kNN(SimParameters *simpar,
 	float epsvis = GAS_EPSVIS(simpar);
 
 	int K_START = 32;
-	postype Lx_cyl_a = SIMBOX(simpar).x.max;
 	size_t p_size_a = TVORORK4_DDINFO(simpar)[0].n_size;
 	char *bp_raw_a = (char*)VORORK4_TBP(simpar);
+
 #ifdef _OPENMP
 #pragma omp parallel for reduction(min:Dtime)
 #endif
 	for(int ii=0;ii<nbp;ii++){
-		/* Skip out-of-bounds particles for Cylinder (outflow boundary) */
-		if(SIMMODEL(simpar) == Cylinder){
+		int skip_this = 0;
+		if(skipBP){
 			treevorork4particletype *bpi_chk = (treevorork4particletype*)(bp_raw_a + ii*p_size_a);
-			if(bpi_chk->x < 0 || bpi_chk->x >= Lx_cyl_a) continue;
+			if(skipBP(bpi_chk)) skip_this = 1;
 		}
+		if(!skip_this){
 
 		int mp = 1000;
 		Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
 		Voro2D_point neighbors[MAX_NUM_NEAR];
 		Voro2D_point neighwork[MAX_NUM_NEAR];
+		memset(neighwork, 0, sizeof(neighwork));
 		PosType maxr;
 		int K = K_START;
 		int nfound, ip;
 
-		retry_knn_acc:
-		nfound = searchKNN2D(ptl+ii, K, tree, neighbors, &maxr);
-		if(nfound < 3 || maxr < 1e-20){
-			free(vorocorner);
-			continue;
-		}
+		/* Adaptive kNN with retry (no goto/continue — Intel OpenMP safe) */
+		int knn_ok = 0;
+		while(!knn_ok){
+			nfound = searchKNN2D(ptl+ii, K, tree, neighbors, &maxr);
+			if(nfound < 3 || maxr < 1e-20) break;
 
-		treevorork4particletype *ibp = (treevorork4particletype*)(ptl[ii].bp);
-		Voro2D_point center;
-		center.x = ibp->x;
-		center.y = ibp->y;
-		center.indx = PINDX(ibp);
-		center.csound = ibp->csound;
-		center.w2 = ibp->w2;
+			treevorork4particletype *ibp_tmp = (treevorork4particletype*)(ptl[ii].bp);
+			Voro2D_point center;
+			center.x = ibp_tmp->x;
+			center.y = ibp_tmp->y;
+			center.indx = PINDX(ibp_tmp);
+			center.csound = ibp_tmp->csound;
+			center.w2 = ibp_tmp->w2;
 
-		ibp->dt = 1.e10;
-		ip = Voro2D_FindVC(&center, neighbors, neighwork, nfound, vorocorner, mp, boxsize);
+			ibp_tmp->dt = 1.e10;
+			ip = Voro2D_FindVC(&center, neighbors, neighwork, nfound, vorocorner, mp, boxsize);
 
-		/* Completeness check */
-		{
+			/* Completeness check */
 			Voro2D_Corner *vtmp = vorocorner;
 			postype maxvert2 = 0;
 			do {
@@ -2645,9 +2597,13 @@ double getAccVoro2D_kNN(SimParameters *simpar,
 			} while(vtmp != vorocorner);
 			if(sqrt(maxvert2) > 0.95*maxr && K < MAX_NUM_NEAR){
 				K = MIN(K*2, MAX_NUM_NEAR);
-				goto retry_knn_acc;
+			} else {
+				knn_ok = 1;
 			}
 		}
+
+		if(knn_ok){
+		treevorork4particletype *ibp = (treevorork4particletype*)(ptl[ii].bp);
 
 		postype ibp_vx = ibp->vx;
 		postype ibp_vy = ibp->vy;
@@ -2769,9 +2725,10 @@ double getAccVoro2D_kNN(SimParameters *simpar,
 			nan_warn++;
 			ibp->ax = 0; ibp->ay = 0; ibp->die = 0;
 		}
+		} /* if(knn_ok) */
 		free(vorocorner);
+		} /* if(!skip_this) */
 	}
-
 	{
 		postype TDtime;
 		MPI_Allreduce(&Dtime, &TDtime, 1, MPI_POSTYPE, MPI_MIN, MPI_COMM(simpar));
@@ -4834,6 +4791,39 @@ double exam2d_vph_rk4_int(
 }
 
 /* ================================================================
+ *  periodic_postStage_kNN / periodic_postStage_blend:
+ *  Default postStage callbacks for periodic boundary models (KH etc.).
+ *  Wrap x,y and migrate particles between MPI ranks.
+ * ================================================================ */
+void periodic_postStage_kNN(SimParameters *simpar){
+	postype Lx = SIMBOX(simpar).x.max - SIMBOX(simpar).x.min;
+	postype Ly = SIMBOX(simpar).y.max - SIMBOX(simpar).y.min;
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *raw = (char*)VORORK4_TBP(simpar);
+	int np = VORO_NP(simpar);
+	int i;
+	for(i=0;i<np;i++){
+		treevorork4particletype *bp = (treevorork4particletype*)(raw + i*p_size);
+		bp->x = fmod(bp->x + Lx, Lx);
+		bp->y = fmod(bp->y + Ly, Ly);
+	}
+	migrateTreeVorork4Particles(simpar);
+}
+
+void periodic_postStage_blend(SimParameters *simpar){
+	postype Lx = SIMBOX(simpar).x.max - SIMBOX(simpar).x.min;
+	postype Ly = SIMBOX(simpar).y.max - SIMBOX(simpar).y.min;
+	treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	int np = VORO_NP(simpar);
+	int i;
+	for(i=0;i<np;i++){
+		sbp[i].x = fmod(sbp[i].x + Lx, Lx);
+		sbp[i].y = fmod(sbp[i].y + Ly, Ly);
+	}
+	migrateTreeVorork4Particles(simpar);
+}
+
+/* ================================================================
  *  exam2d_vph_rk4_int_blend:
  *  RK4 integrator with NS stress + HLLC + CD10 two-tier blending.
  *  Uses treevorostressrk4particletype for stress fields.
@@ -4848,7 +4838,8 @@ double exam2d_vph_rk4_int_blend(
 		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *),
 		int (*targetBP)(treevorork4particletype*, postype, postype),
 		void mkLinkedList2D(SimParameters *, postype, postype , postype , postype , postype,
-			void (*)(SimParameters *, postype))
+			void (*)(SimParameters *, postype)),
+		void (*postStage)(SimParameters *)
 		){
 	/* All array indexing uses treevorostressrk4particletype* (sbp) for correct
 	   stride when particles are stress-sized.  Common fields (x, y, vx, vy,
@@ -4882,7 +4873,7 @@ double exam2d_vph_rk4_int_blend(
 	}
 
 	/* Reset vsig_max at start */
-	if(av_mode >= 2){
+	if(av_mode >= 1){
 		for(i=0;i<VORO_NP(simpar);i++)
 			sbp[i].stress.vsig_max = 0;
 	}
@@ -4911,15 +4902,12 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].vx += sbp[i].rk4.k1vx*0.5;
 		sbp[i].vy += sbp[i].rk4.k1vy*0.5;
 		sbp[i].ie += sbp[i].rk4.k1ie*0.5;
-		if(SIMMODEL(simpar) != Cylinder)
-			sbp[i].x = fmod(sbp[i].x+Lx, Lx);
-		sbp[i].y = fmod(sbp[i].y+Ly, Ly);
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
-	if(av_mode >= 2)
+	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
@@ -4943,15 +4931,12 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].vx += (sbp[i].rk4.k2vx-sbp[i].rk4.k1vx)*0.5;
 		sbp[i].vy += (sbp[i].rk4.k2vy-sbp[i].rk4.k1vy)*0.5;
 		sbp[i].ie += (sbp[i].rk4.k2ie-sbp[i].rk4.k1ie)*0.5;
-		if(SIMMODEL(simpar) != Cylinder)
-			sbp[i].x = fmod(sbp[i].x+Lx, Lx);
-		sbp[i].y = fmod(sbp[i].y+Ly, Ly);
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
-	if(av_mode >= 2)
+	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
@@ -4975,15 +4960,12 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].vx += sbp[i].rk4.k3vx - sbp[i].rk4.k2vx*0.5;
 		sbp[i].vy += sbp[i].rk4.k3vy - sbp[i].rk4.k2vy*0.5;
 		sbp[i].ie += sbp[i].rk4.k3ie - sbp[i].rk4.k2ie*0.5;
-		if(SIMMODEL(simpar) != Cylinder)
-			sbp[i].x = fmod(sbp[i].x+Lx, Lx);
-		sbp[i].y = fmod(sbp[i].y+Ly, Ly);
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
-	if(av_mode >= 2)
+	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
@@ -5007,11 +4989,8 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].vx -= sbp[i].rk4.k3vx;
 		sbp[i].vy -= sbp[i].rk4.k3vy;
 		sbp[i].ie -= sbp[i].rk4.k3ie;
-		if(SIMMODEL(simpar) != Cylinder)
-			sbp[i].x = fmod(sbp[i].x+Lx, Lx);
-		sbp[i].y = fmod(sbp[i].y+Ly, Ly);
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
@@ -5025,17 +5004,12 @@ double exam2d_vph_rk4_int_blend(
 			sbp[i].vx += (sbp[i].rk4.k1vx+2*sbp[i].rk4.k2vx+2*sbp[i].rk4.k3vx+sbp[i].rk4.k4vx)/6.;
 			sbp[i].vy += (sbp[i].rk4.k1vy+2*sbp[i].rk4.k2vy+2*sbp[i].rk4.k3vy+sbp[i].rk4.k4vy)/6.;
 			sbp[i].ie += (sbp[i].rk4.k1ie+2*sbp[i].rk4.k2ie+2*sbp[i].rk4.k3ie+sbp[i].rk4.k4ie)/6.;
-			if(SIMMODEL(simpar) != Cylinder)
-				sbp[i].x = fmod(sbp[i].x+Lx,Lx);
-			sbp[i].y = fmod(sbp[i].y+Ly,Ly);
 		}
 	}
+	postStage(simpar);
+	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	migrateTreeVorork4Particles(simpar);
-
-	/* Centroid shift */
-	if(GAS_FCENTROID(simpar)>0)
-		exam2d_centroidShift(simpar,paddingAllTreeParticles,find2DNeighborBP, find2DCellBP,mkLinkedList2D);
 
 	/* Update volume & density */
 	exam2dUpdateVol(simpar,paddingAllTreeParticles,find2DNeighborBP, find2DCellBP,mkLinkedList2D);
@@ -5079,7 +5053,7 @@ double exam2d_vph_rk4_int_blend(
 	}
 
 	/* CD10 alpha update after full RK4 step */
-	if(av_mode >= 2){
+	if(av_mode >= 1){
 		update_alpha_cd_2d(simpar, Dtime);
 	}
 
@@ -5095,9 +5069,12 @@ double exam2d_vph_rk4_int_kNN(
 		SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
 		double (*measureW2)(SimParameters *, postype, postype, postype),
-		int (*targetBP)(treevorork4particletype*, postype, postype)
+		int (*targetBP)(treevorork4particletype*, postype, postype),
+		int (*skipBP)(treevorork4particletype *),
+		void (*postStage)(SimParameters *)
 		){
 	treevorork4particletype *bp = VORORK4_TBP(simpar);
+	size_t p_sz = TVORORK4_DDINFO(simpar)[0].n_size;
 	postype xmin, ymin, xmax, ymax, OrderOfAccuracy;
 	postype Courant = GAS_COURANT(simpar);
 	postype Gamma = GAS_GAMMA(simpar);
@@ -5117,210 +5094,173 @@ double exam2d_vph_rk4_int_kNN(
 
 	/* Debug: check ie at very start of RK4 */
 	DEBUGPRINT("P%d RK4 start: np=%d bp=%p bp[0] ie=%g vol=%g pos=(%g,%g) PINDX=%ld\n",
-		MYID(simpar), VORO_NP(simpar), (void*)bp, bp[0].ie, bp[0].volume, bp[0].x, bp[0].y, PINDX(bp));
+		MYID(simpar), VORO_NP(simpar), (void*)bp, bp->ie, bp->volume, bp->x, bp->y, PINDX(bp));
 
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].w2old = bp[i].w2;
-		bp[i].rk4.w2backup = bp[i].w2;
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->w2old = bpi->w2;
+		bpi->rk4.w2backup = bpi->w2;
 	}
 
 	/* ---- RK4 Stage 1 ---- */
 	{
 		TStruct *tree; TPtlStruct *ptl; int nptl;
-		buildTree2D(simpar, paddingAllTreeParticles, &tree, &ptl, &nptl);
+		buildTree2D(simpar, paddingAllTreeParticles, skipBP, &tree, &ptl, &nptl);
 		bp = VORORK4_TBP(simpar);
 		updateDenW2Pressure2D_kNN(simpar, xmin, ymin, xmax, ymax, Gamma,
-				tree, ptl, nptl, 1);
+				tree, ptl, nptl, 1, skipBP);
 		Dtime = getAccVoro2D_kNN(simpar, xmin, ymin, xmax, ymax,
-				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl);
+				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl, skipBP);
 		my_free(ptl); my_free(tree); my_free(VORORK4_TBPP(simpar));
 	}
-
 	bp = VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].rk4.k1x = bp[i].vx*Dtime;
-		bp[i].rk4.k1y = bp[i].vy*Dtime;
-		bp[i].rk4.k1vx = (bp[i].ax + GAS_ACCX(simpar))*Dtime;
-		bp[i].rk4.k1vy = (bp[i].ay + GAS_ACCY(simpar))*Dtime;
-		bp[i].rk4.k1ie = bp[i].die*Dtime;
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->rk4.k1x = bpi->vx*Dtime;
+		bpi->rk4.k1y = bpi->vy*Dtime;
+		bpi->rk4.k1vx = (bpi->ax + GAS_ACCX(simpar))*Dtime;
+		bpi->rk4.k1vy = (bpi->ay + GAS_ACCY(simpar))*Dtime;
+		bpi->rk4.k1ie = bpi->die*Dtime;
 	}
 	/* RK4 second half-step */
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].x += bp[i].rk4.k1x*0.5;
-		bp[i].y += bp[i].rk4.k1y*0.5;
-		bp[i].vx += bp[i].rk4.k1vx*0.5;
-		bp[i].vy += bp[i].rk4.k1vy*0.5;
-		bp[i].ie += bp[i].rk4.k1ie*0.5;
-		if(SIMMODEL(simpar) != Cylinder)
-			bp[i].x = fmod(bp[i].x+Lx, Lx);
-		bp[i].y = fmod(bp[i].y+Ly, Ly);
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->x += bpi->rk4.k1x*0.5;
+		bpi->y += bpi->rk4.k1y*0.5;
+		bpi->vx += bpi->rk4.k1vx*0.5;
+		bpi->vy += bpi->rk4.k1vy*0.5;
+		bpi->ie += bpi->rk4.k1ie*0.5;
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	bp = VORORK4_TBP(simpar);
 	/* ---- RK4 Stage 2 ---- */
-	for(i=0;i<VORO_NP(simpar);i++) bp[i].w2 = bp[i].rk4.w2backup;
+	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->w2 = bpi->rk4.w2backup;
+	}
 	{
 		TStruct *tree; TPtlStruct *ptl; int nptl;
-		buildTree2D(simpar, paddingAllTreeParticles, &tree, &ptl, &nptl);
+		buildTree2D(simpar, paddingAllTreeParticles, skipBP, &tree, &ptl, &nptl);
 		updateDenW2Pressure2D_kNN(simpar, xmin, ymin, xmax, ymax, Gamma,
-				tree, ptl, nptl, Dtime);
+				tree, ptl, nptl, Dtime, skipBP);
 		dt = getAccVoro2D_kNN(simpar, xmin, ymin, xmax, ymax,
-				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl);
+				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl, skipBP);
 		my_free(ptl); my_free(tree); my_free(VORORK4_TBPP(simpar));
 	}
 
 	bp = VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].rk4.k2x = bp[i].vx*Dtime;
-		bp[i].rk4.k2y = bp[i].vy*Dtime;
-		bp[i].rk4.k2vx = (bp[i].ax + GAS_ACCX(simpar))*Dtime;
-		bp[i].rk4.k2vy = (bp[i].ay + GAS_ACCY(simpar))*Dtime;
-		bp[i].rk4.k2ie = bp[i].die*Dtime;
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->rk4.k2x = bpi->vx*Dtime;
+		bpi->rk4.k2y = bpi->vy*Dtime;
+		bpi->rk4.k2vx = (bpi->ax + GAS_ACCX(simpar))*Dtime;
+		bpi->rk4.k2vy = (bpi->ay + GAS_ACCY(simpar))*Dtime;
+		bpi->rk4.k2ie = bpi->die*Dtime;
 	}
 	/* RK4 third half-step */
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].x += (bp[i].rk4.k2x-bp[i].rk4.k1x)*0.5;
-		bp[i].y += (bp[i].rk4.k2y-bp[i].rk4.k1y)*0.5;
-		bp[i].vx += (bp[i].rk4.k2vx-bp[i].rk4.k1vx)*0.5;
-		bp[i].vy += (bp[i].rk4.k2vy-bp[i].rk4.k1vy)*0.5;
-		bp[i].ie += (bp[i].rk4.k2ie-bp[i].rk4.k1ie)*0.5;
-		if(SIMMODEL(simpar) != Cylinder)
-			bp[i].x = fmod(bp[i].x+Lx, Lx);
-		bp[i].y = fmod(bp[i].y+Ly, Ly);
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->x += (bpi->rk4.k2x-bpi->rk4.k1x)*0.5;
+		bpi->y += (bpi->rk4.k2y-bpi->rk4.k1y)*0.5;
+		bpi->vx += (bpi->rk4.k2vx-bpi->rk4.k1vx)*0.5;
+		bpi->vy += (bpi->rk4.k2vy-bpi->rk4.k1vy)*0.5;
+		bpi->ie += (bpi->rk4.k2ie-bpi->rk4.k1ie)*0.5;
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	bp = VORORK4_TBP(simpar);
 
-	/* Debug: check for NaN/extreme positions before stage 3 */
-	{
-		int nan_count = 0;
-		for(i=0;i<VORO_NP(simpar);i++){
-			if(isnan(bp[i].x) || isnan(bp[i].y) || isnan(bp[i].ie) ||
-			   bp[i].x < -Lx || bp[i].x > 2*Lx || bp[i].y < -Ly || bp[i].y > 2*Ly){
-				if(nan_count < 3)
-					DEBUGPRINT("P%d pre-S3 BAD: i=%d x=%g y=%g ie=%g PINDX=%ld\n",
-						MYID(simpar), i, bp[i].x, bp[i].y, bp[i].ie, PINDX(bp+i));
-				nan_count++;
-			}
-		}
-		if(nan_count > 0){
-			DEBUGPRINT("P%d pre-S3: %d particles with NaN/extreme pos\n", MYID(simpar), nan_count);
-		}
-		fflush(stderr);
-	}
-
 	/* ---- RK4 Stage 3 ---- */
-	for(i=0;i<VORO_NP(simpar);i++) bp[i].w2 = bp[i].rk4.w2backup;
+	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->w2 = bpi->rk4.w2backup;
+	}
 	{
 		TStruct *tree; TPtlStruct *ptl; int nptl;
-		buildTree2D(simpar, paddingAllTreeParticles, &tree, &ptl, &nptl);
+		buildTree2D(simpar, paddingAllTreeParticles, skipBP, &tree, &ptl, &nptl);
 		updateDenW2Pressure2D_kNN(simpar, xmin, ymin, xmax, ymax, Gamma,
-				tree, ptl, nptl, Dtime);
+				tree, ptl, nptl, Dtime, skipBP);
 		dt = getAccVoro2D_kNN(simpar, xmin, ymin, xmax, ymax,
-				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl);
+				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl, skipBP);
 		my_free(ptl); my_free(tree); my_free(VORORK4_TBPP(simpar));
 	}
 
 	bp = VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].rk4.k3x = bp[i].vx*Dtime;
-		bp[i].rk4.k3y = bp[i].vy*Dtime;
-		bp[i].rk4.k3vx = (bp[i].ax + GAS_ACCX(simpar))*Dtime;
-		bp[i].rk4.k3vy = (bp[i].ay + GAS_ACCY(simpar))*Dtime;
-		bp[i].rk4.k3ie = bp[i].die*Dtime;
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->rk4.k3x = bpi->vx*Dtime;
+		bpi->rk4.k3y = bpi->vy*Dtime;
+		bpi->rk4.k3vx = (bpi->ax + GAS_ACCX(simpar))*Dtime;
+		bpi->rk4.k3vy = (bpi->ay + GAS_ACCY(simpar))*Dtime;
+		bpi->rk4.k3ie = bpi->die*Dtime;
 	}
 	/* RK4 fourth full-step */
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].x += bp[i].rk4.k3x - bp[i].rk4.k2x*0.5;
-		bp[i].y += bp[i].rk4.k3y - bp[i].rk4.k2y*0.5;
-		bp[i].vx += bp[i].rk4.k3vx - bp[i].rk4.k2vx*0.5;
-		bp[i].vy += bp[i].rk4.k3vy - bp[i].rk4.k2vy*0.5;
-		bp[i].ie += bp[i].rk4.k3ie - bp[i].rk4.k2ie*0.5;
-		if(SIMMODEL(simpar) != Cylinder)
-			bp[i].x = fmod(bp[i].x+Lx, Lx);
-		bp[i].y = fmod(bp[i].y+Ly, Ly);
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->x += bpi->rk4.k3x - bpi->rk4.k2x*0.5;
+		bpi->y += bpi->rk4.k3y - bpi->rk4.k2y*0.5;
+		bpi->vx += bpi->rk4.k3vx - bpi->rk4.k2vx*0.5;
+		bpi->vy += bpi->rk4.k3vy - bpi->rk4.k2vy*0.5;
+		bpi->ie += bpi->rk4.k3ie - bpi->rk4.k2ie*0.5;
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	bp = VORORK4_TBP(simpar);
 
 	/* ---- RK4 Stage 4 ---- */
-	for(i=0;i<VORO_NP(simpar);i++) bp[i].w2 = bp[i].rk4.w2backup;
+	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->w2 = bpi->rk4.w2backup;
+	}
 	{
 		TStruct *tree; TPtlStruct *ptl; int nptl;
-		buildTree2D(simpar, paddingAllTreeParticles, &tree, &ptl, &nptl);
+		buildTree2D(simpar, paddingAllTreeParticles, skipBP, &tree, &ptl, &nptl);
 		updateDenW2Pressure2D_kNN(simpar, xmin, ymin, xmax, ymax, Gamma,
-				tree, ptl, nptl, Dtime);
+				tree, ptl, nptl, Dtime, skipBP);
 		dt = getAccVoro2D_kNN(simpar, xmin, ymin, xmax, ymax,
-				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl);
+				OrderOfAccuracy, Courant, Gamma, tree, ptl, nptl, skipBP);
 		my_free(ptl); my_free(tree); my_free(VORORK4_TBPP(simpar));
 	}
 
 	bp = VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].rk4.k4x = bp[i].vx*Dtime;
-		bp[i].rk4.k4y = bp[i].vy*Dtime;
-		bp[i].rk4.k4vx = (bp[i].ax + GAS_ACCX(simpar))*Dtime;
-		bp[i].rk4.k4vy = (bp[i].ay + GAS_ACCY(simpar))*Dtime;
-		bp[i].rk4.k4ie = bp[i].die*Dtime;
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->rk4.k4x = bpi->vx*Dtime;
+		bpi->rk4.k4y = bpi->vy*Dtime;
+		bpi->rk4.k4vx = (bpi->ax + GAS_ACCX(simpar))*Dtime;
+		bpi->rk4.k4vy = (bpi->ay + GAS_ACCY(simpar))*Dtime;
+		bpi->rk4.k4ie = bpi->die*Dtime;
 	}
 	/* Rollback k3 step */
 	for(i=0;i<VORO_NP(simpar);i++){
-		bp[i].x -= bp[i].rk4.k3x;
-		bp[i].y -= bp[i].rk4.k3y;
-		bp[i].vx -= bp[i].rk4.k3vx;
-		bp[i].vy -= bp[i].rk4.k3vy;
-		bp[i].ie -= bp[i].rk4.k3ie;
-		if(SIMMODEL(simpar) != Cylinder)
-			bp[i].x = fmod(bp[i].x+Lx, Lx);
-		bp[i].y = fmod(bp[i].y+Ly, Ly);
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->x -= bpi->rk4.k3x;
+		bpi->y -= bpi->rk4.k3y;
+		bpi->vx -= bpi->rk4.k3vx;
+		bpi->vy -= bpi->rk4.k3vy;
+		bpi->ie -= bpi->rk4.k3ie;
 	}
-	if(SIMMODEL(simpar) != Cylinder) migrateTreeVorork4Particles(simpar);
+	postStage(simpar);
 	bp = VORORK4_TBP(simpar);
 
 	/* Final RK4 combination */
-	for(i=0;i<VORO_NP(simpar);i++) bp[i].w2 = bp[i].rk4.w2backup;
+	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		bpi->w2 = bpi->rk4.w2backup;
+	}
 	bp = VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
-		if(targetBP(bp+i, Lx, Ly)){
-			bp[i].x  += (bp[i].rk4.k1x +2*bp[i].rk4.k2x +2*bp[i].rk4.k3x +bp[i].rk4.k4x )/6.;
-			bp[i].y  += (bp[i].rk4.k1y +2*bp[i].rk4.k2y +2*bp[i].rk4.k3y +bp[i].rk4.k4y )/6.;
-			bp[i].vx += (bp[i].rk4.k1vx+2*bp[i].rk4.k2vx+2*bp[i].rk4.k3vx+bp[i].rk4.k4vx)/6.;
-			bp[i].vy += (bp[i].rk4.k1vy+2*bp[i].rk4.k2vy+2*bp[i].rk4.k3vy+bp[i].rk4.k4vy)/6.;
-			bp[i].ie += (bp[i].rk4.k1ie+2*bp[i].rk4.k2ie+2*bp[i].rk4.k3ie+bp[i].rk4.k4ie)/6.;
-			if(SIMMODEL(simpar) != Cylinder)
-				bp[i].x = fmod(bp[i].x+Lx, Lx);
-			bp[i].y = fmod(bp[i].y+Ly, Ly);
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		if(targetBP(bpi, Lx, Ly)){
+			bpi->x  += (bpi->rk4.k1x +2*bpi->rk4.k2x +2*bpi->rk4.k3x +bpi->rk4.k4x )/6.;
+			bpi->y  += (bpi->rk4.k1y +2*bpi->rk4.k2y +2*bpi->rk4.k3y +bpi->rk4.k4y )/6.;
+			bpi->vx += (bpi->rk4.k1vx+2*bpi->rk4.k2vx+2*bpi->rk4.k3vx+bpi->rk4.k4vx)/6.;
+			bpi->vy += (bpi->rk4.k1vy+2*bpi->rk4.k2vy+2*bpi->rk4.k3vy+bpi->rk4.k4vy)/6.;
+			bpi->ie += (bpi->rk4.k1ie+2*bpi->rk4.k2ie+2*bpi->rk4.k3ie+bpi->rk4.k4ie)/6.;
 		}
 	}
+	postStage(simpar);
+	bp = VORORK4_TBP(simpar);
 	migrateTreeVorork4Particles(simpar);
 
-	/* Cylinder: remove particles outside [0,Lx) before cell-based code.
-	   These particles were skipped by cyl_evolBP but still exist in the array. */
-	if(SIMMODEL(simpar) == Cylinder){
-		size_t p_sz = TVORORK4_DDINFO(simpar)[0].n_size;
-		char *raw = (char*)VORORK4_TBP(simpar);
-		int old_n = VORO_NP(simpar);
-		int new_n = 0, ii;
-		for(ii = 0; ii < old_n; ii++){
-			treevorork4particletype *bpi = (treevorork4particletype*)(raw + ii*p_sz);
-			if(bpi->x >= 0 && bpi->x < Lx){
-				if(new_n < ii)
-					memmove(raw + new_n*p_sz, raw + ii*p_sz, p_sz);
-				new_n++;
-			}
-		}
-		if(new_n < old_n){
-			VORO_NP(simpar) = new_n;
-			DEBUGPRINT("P%d kNN outflow cleanup: %d -> %d\n",
-				MYID(simpar), old_n, new_n);
-		}
-		bp = VORORK4_TBP(simpar);
-	}
-
-	/* Centroid shift — uses cell-based method */
-	if(GAS_FCENTROID(simpar) > 0)
-		exam2d_centroidShift(simpar, paddingAllTreeParticles,
-				searchCellRk4Neighbors2D, findCellRk4BP2D, mkLinkedList2D_oExam);
 	/* Update volume & density with final positions — uses cell-based method */
 	exam2dUpdateVol(simpar, paddingAllTreeParticles,
 			searchCellRk4Neighbors2D, findCellRk4BP2D, mkLinkedList2D_oExam);
@@ -5330,13 +5270,14 @@ double exam2d_vph_rk4_int_kNN(
 #pragma omp parallel for
 #endif
 	for(i=0;i<VORO_NP(simpar);i++){
-		if(targetBP(bp+i, Lx, Ly)){
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		if(targetBP(bpi, Lx, Ly)){
 			if(GAS_Kappa(simpar) < 0){
-				bp[i].w2 = -GAS_Kappa(simpar);
+				bpi->w2 = -GAS_Kappa(simpar);
 			}
 			else if(GAS_Kappa(simpar) > 0){
-				bp[i].w2hydro = getw2forHydroParticle(simpar, (bp+i), Dtime);
-				bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil);
+				bpi->w2hydro = getw2forHydroParticle(simpar, bpi, Dtime);
+				bpi->w2 = MIN(bpi->w2hydro, bpi->w2ceil);
 			}
 		}
 	}
@@ -5344,14 +5285,15 @@ double exam2d_vph_rk4_int_kNN(
 #pragma omp parallel for
 #endif
 	for(i=0;i<VORO_NP(simpar);i++){
-		if(targetBP(bp+i, Lx, Ly)){
-			bp[i].den = bp[i].mass/bp[i].volume;
-			bp[i].pressure = bp[i].ie/bp[i].volume * (Gamma-1);
-			if(bp[i].pressure <= 0){
-				bp[i].pressure = 1e-6;
-				bp[i].ie = bp[i].pressure * bp[i].volume / (Gamma-1);
+		treevorork4particletype *bpi = (treevorork4particletype*)((char*)bp + i*p_sz);
+		if(targetBP(bpi, Lx, Ly)){
+			bpi->den = bpi->mass/bpi->volume;
+			bpi->pressure = bpi->ie/bpi->volume * (Gamma-1);
+			if(bpi->pressure <= 0){
+				bpi->pressure = 1e-6;
+				bpi->ie = bpi->pressure * bpi->volume / (Gamma-1);
 			}
-			bp[i].csound = sqrt(Gamma*bp[i].pressure/bp[i].den);
+			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
 		}
 	}
 

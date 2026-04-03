@@ -13,8 +13,8 @@
 #include "exam2d.h"
 #include "cylinder.h"
 
-/* Cylinder geometry cached for cyl_evolBP (which has no simpar access) */
-static postype _cyl_cx, _cyl_cy, _cyl_R;
+/* Cylinder geometry cached for callbacks (which have no simpar access) */
+static postype _cyl_cx, _cyl_cy, _cyl_R, _cyl_Lx;
 
 void cyl_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	int np = VORO_NP(simpar);
@@ -111,30 +111,61 @@ void cyl_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 }
 
 int cyl_evolBP(treevorork4particletype *bp, postype Lx, postype Ly){
-	/* x: flag out-of-bounds particles (don't update in final RK4 step) */
-	if(bp->x >= Lx || bp->x < 0) return 0;
+	return (bp->x >= 0 && bp->x < Lx) ? 1 : 0;
+}
 
-	/* y: periodic wrapping */
-	bp->y = fmod(bp->y + Ly, Ly);
+int cyl_skipBP(treevorork4particletype *bp){
+	return (bp->x < 0 || bp->x >= _cyl_Lx) ? 1 : 0;
+}
 
-	/* Cylinder boundary: push particles inside cylinder to surface */
-	postype dx = bp->x - _cyl_cx;
-	postype dy = bp->y - _cyl_cy;
-	postype r = sqrt(dx*dx + dy*dy);
-	if(r < _cyl_R){
-		postype nx = dx/r;
-		postype ny = dy/r;
-		bp->x = _cyl_cx + nx * _cyl_R;
-		bp->y = _cyl_cy + ny * _cyl_R;
-		/* Reflect normal velocity component (free-slip) */
-		postype vn = bp->vx*nx + bp->vy*ny;
-		if(vn < 0){
-			bp->vx -= 2*vn*nx;
-			bp->vy -= 2*vn*ny;
+void cyl_postStage(SimParameters *simpar){
+	postype Ly = SIMBOX(simpar).y.max - SIMBOX(simpar).y.min;
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *raw = (char*)VORORK4_TBP(simpar);
+	int np = VORO_NP(simpar);
+	int i;
+	for(i=0;i<np;i++){
+		treevorork4particletype *bp = (treevorork4particletype*)(raw + i*p_size);
+		bp->y = fmod(bp->y + Ly, Ly);
+		/* Cylinder boundary: push particles inside cylinder to surface */
+		postype dx = bp->x - _cyl_cx;
+		postype dy = bp->y - _cyl_cy;
+		postype r = sqrt(dx*dx + dy*dy);
+		if(r < _cyl_R){
+			postype nx = dx/r, ny = dy/r;
+			bp->x = _cyl_cx + nx * _cyl_R;
+			bp->y = _cyl_cy + ny * _cyl_R;
+			postype vn = bp->vx*nx + bp->vy*ny;
+			if(vn < 0){
+				bp->vx -= 2*vn*nx;
+				bp->vy -= 2*vn*ny;
+			}
 		}
 	}
+	/* y is periodic: migrate needed for multi-rank runs.
+	   x is open boundary: no x-wrap. */
+	migrateTreeVorork4Particles(simpar);
+}
 
-	return 1;
+void cyl_outflowCleanup(SimParameters *simpar){
+	size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *raw = (char*)VORORK4_TBP(simpar);
+	postype Lx = SIMBOX(simpar).x.max;
+	int old_np = VORO_NP(simpar);
+	int new_np = 0, i;
+	for(i = 0; i < old_np; i++){
+		treevorork4particletype *bpi = (treevorork4particletype*)(raw + i*p_size);
+		if(bpi->x >= 0 && bpi->x < Lx){
+			if(new_np < i)
+				memmove(raw + new_np*p_size, raw + i*p_size, p_size);
+			new_np++;
+		}
+	}
+	if(new_np < old_np){
+		VORO_NP(simpar) = new_np;
+		DEBUGPRINT("P%d outflow cleanup: %d -> %d\n",
+			MYID(simpar), old_np, new_np);
+	}
 }
 
 
@@ -161,8 +192,21 @@ int RunCylinder(SimParameters *simpar, int icont){
 	if(av_mode >= 1){
 		int ndd = NDDINFO(simpar);
 		int k;
-		for(k=0;k<=ndd;k++){
-			TVORORK4_DDINFO(simpar)[k].n_size = sizeof(treevorostressrk4particletype);
+		size_t new_nsize = sizeof(treevorostressrk4particletype);
+		for(k=0;k<ndd;k++){
+			DoDeInfo *di = &TVORORK4_DDINFO(simpar)[k];
+			size_t old_nsize = di->n_size;
+			di->n_size = new_nsize;
+			if(di->npivot > 0 && new_nsize > old_nsize){
+				char *new_pivot = (char*)my_malloc(di->npivot * new_nsize);
+				memset(new_pivot, 0, di->npivot * new_nsize);
+				char *old_pivot = (char*)di->pivot;
+				int j;
+				for(j=0; j<di->npivot; j++)
+					memcpy(new_pivot + j*new_nsize, old_pivot + j*old_nsize, old_nsize);
+				my_free(old_pivot);
+				di->pivot = new_pivot;
+			}
 		}
 		if(MYID(simpar)==0)
 			DEBUGPRINT("CYL: using treevorostressrk4particletype for av_mode=%d\n", av_mode);
@@ -182,10 +226,11 @@ int RunCylinder(SimParameters *simpar, int icont){
 
 	VORO_BASICCELL(simpar)= (CellType*)malloc(sizeof(CellType)*100);
 
-	/* Cache cylinder geometry for cyl_evolBP */
+	/* Cache cylinder geometry for callbacks */
 	_cyl_cx = CYL_CX(simpar);
 	_cyl_cy = CYL_CY(simpar);
 	_cyl_R  = CYL_R(simpar);
+	_cyl_Lx = SIMBOX(simpar).x.max;
 
 	if(icont ==0) {
 		t = 0;
@@ -205,17 +250,22 @@ int RunCylinder(SimParameters *simpar, int icont){
 	postype out_interval = astep > 0 ? astep : 0.1;
 
 	do {
+		DEBUGPRINT("P%d entering integrator: np=%d evolmethod=%d av_mode=%d\n",
+			MYID(simpar), VORO_NP(simpar), GAS_EVOLMETHOD(simpar), av_mode);
+		fflush(stdout); fflush(stderr);
 		if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_blend(simpar,
 				paddingCylinderParticles, cyl_w2Measure2D,
 				searchCellRk4Neighbors2D, findCellRk4BP2D,
 				cyl_evolBP,
-				mkLinkedList2D_oExam
+				mkLinkedList2D_oExam,
+				cyl_postStage
 				);
 		else if(GAS_EVOLMETHOD(simpar) == 2)
 			dt = exam2d_vph_rk4_int_kNN(simpar,
 				paddingCylinderParticles, cyl_w2Measure2D,
-				cyl_evolBP
+				cyl_evolBP,
+				cyl_skipBP, cyl_postStage
 				);
 		else if(GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int(simpar,
@@ -230,27 +280,7 @@ int RunCylinder(SimParameters *simpar, int icont){
 				cyl_evolBP,
 				mkLinkedList2D_oExam
 				);
-		/* --- Outflow deletion: remove particles with x >= Lx or x < 0 --- */
-		{
-			size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
-			char *bp_raw = (char*)VORORK4_TBP(simpar);
-			postype Lx = SIMBOX(simpar).x.max;
-			int old_np = VORO_NP(simpar);
-			int new_np = 0, ii;
-			for(ii = 0; ii < old_np; ii++){
-				treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + ii*p_size);
-				if(bpi->x >= 0 && bpi->x < Lx){
-					if(new_np < ii)
-						memmove(bp_raw + new_np*p_size, bp_raw + ii*p_size, p_size);
-					new_np++;
-				}
-			}
-			if(new_np < old_np){
-				VORO_NP(simpar) = new_np;
-				DEBUGPRINT("P%d outflow: deleted %d particles (%d -> %d)\n",
-					MYID(simpar), old_np - new_np, old_np, new_np);
-			}
-		}
+		cyl_outflowCleanup(simpar);
 
 		/* --- Inflow injection: constant flux from left boundary --- */
 		{

@@ -205,7 +205,7 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_KH_Ymin      SET"KH Ymin             = "S_DOUBLE" # Minimum Y of the simulation space\n"
 #define P_KH_Xmax      SET"KH Xmax             = "S_DOUBLE" # Maximum X of the simulation space\n"
 #define P_KH_Ymax      SET"KH Ymax             = "S_DOUBLE" # Maximum Y of the simulation space\n"
-#define P_KH_GridSize  SET"KH Grid Size        = "S_DOUBLE" # Grid size for Linked List\n"
+/* P_KH_GridSize removed: computed at runtime as (Xmax-Xmin)/Nx*4 */
 #define P_KH_OrderAcc  SET"KH Order of Accuracy= "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
 #define P_KH_Kappa     SET"KH Kappa            = "S_FLOAT" # coefficient to determine w2 in the 2d KH\n"
 /* BlowShock parameters */
@@ -222,7 +222,7 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_RT_DEN2 SET"RT Higher density         = "S_FLOAT" # High Density in the RT Test\n"
 #define P_RT_extG  SET"RT External Force   = "S_DOUBLE" # External Gravity in ydirection in the RT Test\n"
 #define P_RT_OrderAcc  SET"RT Order of Accuracy= "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
-#define P_RT_GridSize  SET"RT Grid Size        = "S_DOUBLE" # Grid size for Linked List\n"
+/* P_RT_GridSize removed: computed at runtime */
 #define P_RT_Deltay    SET"RT Transition size  = "S_FLOAT" # Initial Transition region of the RT Test\n"
 #define P_RT_Vperturb  SET"RT Vel Perturb Amp  = "S_FLOAT" # Initial Perturbation ampl. of Vel. in Y-direction\n"
 #define P_RT_Phalf  SET"RT Pressure at Ly/2  = "S_FLOAT" # Hydrostatic pressure at Ly/2\n"
@@ -232,14 +232,14 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_KP_XMAX   SET"Kepler xmax (box)   = "S_DOUBLE" # Maximum X in the Kepler Test\n"
 #define P_KP_YMAX   SET"Kepler ymax (box)   = "S_DOUBLE" # Maximum Y in the Kepler Test\n"
 #define P_KP_OrderAcc  SET"Kepler Order of Accuracy = "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
-#define P_KP_GridSize  SET"Kepler Grid Size = "S_DOUBLE" # Grid size for Linked List\n"
+/* P_KP_GridSize removed: computed at runtime */
 #define P_KP_Kappa     SET"Kepler Kappa     = "S_FLOAT" # coefficient to determine w2 (<=0.3 for rec.)"\
 													"in the 2d Kepler test\n"
 
 #define P_GL2D_XMAX   SET"MkGL2D xmax (box)   = "S_DOUBLE" # Maximum X in makding 2D glass\n"
 #define P_GL2D_YMAX   SET"MkGL2D ymax (box)   = "S_DOUBLE" # Maximum Y in making 2D glass\n"
 #define P_GL2D_OrderAcc  SET"MkGL2D Order of Accuracy = "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
-#define P_GL2D_GridSize  SET"MkGL2D Grid Size    = "S_DOUBLE" # Grid size for Linked List\n"
+/* P_GL2D_GridSize removed: computed at runtime */
 #define P_GL2D_Kappa     SET"MkGL2D Kappa        = "S_FLOAT" # coefficient to determine w2 in the 2d glass\n"
 /* Cylinder flow parameters */
 #define P_CYL_XMAX    SET"CYL maximum x (box) = "S_DOUBLE" # Maximum X in the Cylinder Test\n"
@@ -250,7 +250,7 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_CYL_UINF    SET"CYL inflow velocity  = "S_FLOAT" # Inflow velocity U_inf\n"
 #define P_CYL_RHO     SET"CYL density          = "S_FLOAT" # Freestream density\n"
 #define P_CYL_P       SET"CYL pressure         = "S_FLOAT" # Freestream pressure\n"
-#define P_CYL_GridSize SET"CYL Grid Size        = "S_DOUBLE" # Grid size for Linked List\n"
+/* P_CYL_GridSize removed: computed at runtime */
 #define P_CYL_OrderAcc SET"CYL Order of Accuracy= "S_FLOAT" # Order of Accuracy in Voro mode\n"
 #define P_CYL_Kappa    SET"CYL Kappa            = "S_FLOAT" # coefficient to determine w2\n"
 #define P_GAS_w2Factor    SET"GAS w2 factor       = "S_FLOAT" # a factor to w2 increment\n"
@@ -352,7 +352,7 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_KH_Xmax,sp KH_XMAX(simpar));\
 		ncnt += frw(wp,P_KH_Ymin,sp KH_YMIN(simpar));\
 		ncnt += frw(wp,P_KH_Ymax,sp KH_YMAX(simpar));\
-		ncnt += frw(wp,P_KH_GridSize,sp KH_GridSize(simpar));\
+		/* KH Grid Size removed: computed at runtime */\
 		ncnt += frw(wp,P_KH_OrderAcc,sp KH_OA(simpar));\
 		ncnt += frw(wp,P_KH_Kappa,sp KH_Kappa(simpar));\
 	}\
@@ -375,7 +375,7 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_RT_DEN1,sp RT_DEN1(simpar));\
 		ncnt += frw(wp,P_RT_DEN2,sp RT_DEN2(simpar));\
 		ncnt += frw(wp,P_RT_extG,sp GAS_ACCY(simpar));\
-		ncnt += frw(wp,P_RT_GridSize,sp RT_GridSize(simpar));\
+		/* RT Grid Size removed: computed at runtime */\
 		ncnt += frw(wp,P_RT_OrderAcc,sp RT_OA(simpar));\
 		ncnt += frw(wp,P_RT_Deltay,sp RT_Deltay(simpar));\
 		ncnt += frw(wp,P_RT_Vperturb,sp RT_Vperturb(simpar));\
@@ -389,7 +389,7 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_KP_XMAX,sp KP_XMAX(simpar));\
 		ncnt += frw(wp,P_KP_YMAX,sp KP_YMAX(simpar));\
 		ncnt += frw(wp,P_KP_EPS,sp KP_EPS(simpar));\
-		ncnt += frw(wp,P_KP_GridSize,sp KP_GridSize(simpar));\
+		/* KP Grid Size removed: computed at runtime */\
 		ncnt += frw(wp,P_KP_OrderAcc,sp KP_OA(simpar));\
 		ncnt += frw(wp,P_KP_Kappa,sp KP_Kappa(simpar));\
 	}\
@@ -399,7 +399,7 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_GL2D_XMAX,sp GL2D_XMAX(simpar));\
 		ncnt += frw(wp,P_GL2D_YMAX,sp GL2D_YMAX(simpar));\
-		ncnt += frw(wp,P_GL2D_GridSize,sp GL2D_GridSize(simpar));\
+		/* GL2D Grid Size removed: computed at runtime */\
 		ncnt += frw(wp,P_GL2D_OrderAcc,sp GL2D_OA(simpar));\
 		ncnt += frw(wp,P_GL2D_Kappa,sp GL2D_Kappa(simpar));\
 	}\
@@ -420,7 +420,7 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_CYL_UINF,sp CYL_UINF(simpar));\
 		ncnt += frw(wp,P_CYL_RHO,sp CYL_RHO(simpar));\
 		ncnt += frw(wp,P_CYL_P,sp CYL_P(simpar));\
-		ncnt += frw(wp,P_CYL_GridSize,sp CYL_GridSize(simpar));\
+		/* CYL Grid Size removed: computed at runtime */\
 		ncnt += frw(wp,P_CYL_OrderAcc,sp CYL_OA(simpar));\
 		ncnt += frw(wp,P_CYL_Kappa,sp CYL_Kappa(simpar));\
 	}\

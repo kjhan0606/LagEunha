@@ -152,8 +152,21 @@ int RunRT(SimParameters *simpar, int icont){
 	if(av_mode >= 1){
 		int ndd = NDDINFO(simpar);
 		int k;
-		for(k=0;k<=ndd;k++){
-			TVORORK4_DDINFO(simpar)[k].n_size = sizeof(treevorostressrk4particletype);
+		size_t new_nsize = sizeof(treevorostressrk4particletype);
+		for(k=0;k<ndd;k++){
+			DoDeInfo *di = &TVORORK4_DDINFO(simpar)[k];
+			size_t old_nsize = di->n_size;
+			di->n_size = new_nsize;
+			if(di->npivot > 0 && new_nsize > old_nsize){
+				char *new_pivot = (char*)my_malloc(di->npivot * new_nsize);
+				memset(new_pivot, 0, di->npivot * new_nsize);
+				char *old_pivot = (char*)di->pivot;
+				int j;
+				for(j=0; j<di->npivot; j++)
+					memcpy(new_pivot + j*new_nsize, old_pivot + j*old_nsize, old_nsize);
+				my_free(old_pivot);
+				di->pivot = new_pivot;
+			}
 		}
 		if(MYID(simpar)==0)
 			DEBUGPRINT("RT: using treevorostressrk4particletype for av_mode=%d\n", av_mode);
@@ -197,7 +210,8 @@ int RunRT(SimParameters *simpar, int icont){
 				paddingTreeVorork4Particles,rt_w2Measure2D,
 				searchCellRk4Neighbors2D,findCellRk4BP2D,
 				rt_evolBP,
-				mkLinkedList2D_rt
+				mkLinkedList2D_rt,
+				periodic_postStage_blend
 				);
 		else if(GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_rt(simpar,
