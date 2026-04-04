@@ -1543,21 +1543,28 @@ void updateDenW2Pressure2DBlend(
 							postype dSx = tmp2->y - tmp->y;
 							postype dSy = -(tmp2->x - tmp->x);
 
-							/* M(n,m) face velocity interpolation */
+							/* Laguerre-aware face velocity interpolation
+							   1D analog: vf[i] = vL + wfrac*(vR-vL), with M(n,m) correction */
 							postype vx_face, vy_face;
+							postype dx_ij = jbp->x - ibp->x;
+							postype dy_ij = jbp->y - ibp->y;
+							postype d2_ij = dx_ij*dx_ij + dy_ij*dy_ij;
+							postype wfrac = (d2_ij > 0) ?
+								0.5 + 0.5*(ibp_rk4->w2 - ((treevorork4particletype*)jbp)->w2)/d2_ij : 0.5;
 							if(jbp_grad_ghost){
-								/* Wall face: use simple average (not M(n,m))
-								   to avoid kp/km ghost contamination */
-								vx_face = 0.5*(ibp->vx + jbp->vx);
-								vy_face = 0.5*(ibp->vy + jbp->vy);
+								/* Wall face: symmetric average (ghost mirrors have same w2) */
+								vx_face = ibp->vx + wfrac*(jbp->vx - ibp->vx);
+								vy_face = ibp->vy + wfrac*(jbp->vy - ibp->vy);
 							} else if(OoA > 0 && (tmp->upperlink)->upperrelated >= 0 && tmp->lowerrelated >= 0){
 								treevorostressrk4particletype *kp = (treevorostressrk4particletype*)(neighwork[(tmp->upperlink)->upperrelated].bp);
 								treevorostressrk4particletype *km = (treevorostressrk4particletype*)(neighwork[tmp->lowerrelated].bp);
-								vx_face = (0.5-OoA/3.)*(ibp->vx + jbp->vx) + OoA/3.*(kp->vx + km->vx);
-								vy_face = (0.5-OoA/3.)*(ibp->vy + jbp->vy) + OoA/3.*(kp->vy + km->vy);
+								vx_face = ibp->vx + wfrac*(jbp->vx - ibp->vx)
+								        + OoA/3.*(kp->vx + km->vx - ibp->vx - jbp->vx);
+								vy_face = ibp->vy + wfrac*(jbp->vy - ibp->vy)
+								        + OoA/3.*(kp->vy + km->vy - ibp->vy - jbp->vy);
 							} else {
-								vx_face = 0.5*(ibp->vx + jbp->vx);
-								vy_face = 0.5*(ibp->vy + jbp->vy);
+								vx_face = ibp->vx + wfrac*(jbp->vx - ibp->vx);
+								vy_face = ibp->vy + wfrac*(jbp->vy - ibp->vy);
 							}
 
 							sum_gUxx += vx_face * dSx;
@@ -1929,10 +1936,9 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 
 						/* === Accumulate forces and energy rates === */
 						/* Internal energy: pressure work + viscous heating + heat conduction */
-						Voro2D_point uradix = get2dUpqradRk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
-						Voro2D_point uradix_ui;
-						uradix_ui.x = 0.5*(jbp_vx - ibp_vx);
-						uradix_ui.y = 0.5*(jbp_vy - ibp_vy);
+						/* uradix = v_face - v_i (Laguerre-aware: wfrac + AA correction)
+						   1D analog: pf[i]*(vf[i]-P[i].v) where vf includes AA */
+						Voro2D_point uradix_ui = get2dUpqradRk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
 						/* Pressure work: -p * (v_face - v_i) · dS */
 						die += -pi_total * Vec2DDotP(&uradix_ui, &dS);
 						/* Viscous heating: (τ·dS) · (v_face - v_i) */
@@ -1947,10 +1953,11 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 							die += chi * rho_face * (Tj - Ti) / dramp * facearea;
 						}
 
-						/* Total energy */
+						/* Total energy: ua = v_face = v_i + (v_face - v_i)
+						   ensures dte = die + dke consistency */
 						Voro2D_point ua;
-						ua.x = 0.5*(jbp_vx + ibp_vx);
-						ua.y = 0.5*(jbp_vy + ibp_vy);
+						ua.x = ibp_vx + uradix_ui.x;
+						ua.y = ibp_vy + uradix_ui.y;
 						dte += -pi_total * Vec2DDotP(&ua, &dS)
 						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
 
@@ -1971,13 +1978,10 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 						dv.y = jbp_vy - ibp_vy;
 						postype VdotR = Vec2DDotP(&dv, &er);
 						postype vsig = jbp_csound + ibp_csound - MIN(0, VdotR);
-						/* CFL floor for ghost neighbors — the small distance
-						   to a mirror particle is geometric, not physical */
-						postype dramp_cfl = dramp;
-						if(jbp_is_ghost){
-							postype heff = 0.1*sqrt(ibp_rk4->volume);
-							if(dramp_cfl < heff) dramp_cfl = heff;
-						}
+						/* CFL floor: prevent dt→0 from particle clustering
+						   or geometric proximity of ghost mirrors */
+						postype heff = 0.25*sqrt(ibp_rk4->volume);
+						postype dramp_cfl = fmax(dramp, heff);
 						postype dt = 2*Courant*dramp_cfl/vsig;
 
 						if(isnan(dt)){
@@ -2246,10 +2250,11 @@ double getAccVoro2D_rt(SimParameters *simpar, postype xmin, postype ymin,
 
 						postype VdotR = Vec2DDotP(&dv,&er);
 						postype vsig = (jbp_csound + ibp_csound - MIN(0, VdotR));
-						postype dt = 2*Courant*dramp/vsig;
+						postype dramp_cfl = fmax(dramp, 0.25*sqrt(ibp->volume));
+						postype dt = 2*Courant*dramp_cfl/vsig;
                         if(isnan(dt)){
                             DEBUGPRINT("P%d has error dt %d p(%ld,%ld) x/y= %g %g : %g %g : %g %g : %g : dv.xy= %g %g for p(%ld,%ld)\n",
-                                    MYID(simpar), i, PINDX(p+i)%nx, PINDX(p+i)/nx, 
+                                    MYID(simpar), i, PINDX(p+i)%nx, PINDX(p+i)/nx,
 									p[i].x, p[i].y, dramp, vsig,jbp_csound, ibp_csound, VdotR, dv.x, dv.y,
 									PINDX(jbp)%nx, PINDX(jbp)/nx);
 //							DEBUGGING(simpar);
@@ -2470,7 +2475,8 @@ double getAccVoro2D(SimParameters *simpar, postype xmin, postype ymin,
 
 						postype VdotR = Vec2DDotP(&dv,&er);
 						postype vsig = (jbp_csound + ibp_csound - MIN(0, VdotR));
-						postype dt = 2*Courant*dramp/vsig;
+						postype dramp_cfl = fmax(dramp, 0.25*sqrt(ibp->volume));
+						postype dt = 2*Courant*dramp_cfl/vsig;
                         if(isnan(dt)){
                             DEBUGPRINT("P%d has error dt %d %ld x/y= %g %g : %g %g : %g %g : %g : dv.xy= %g %g\n",
                                     MYID(simpar), i, PINDX(p+i), p[i].x, p[i].y, dramp, vsig,jbp_csound, ibp_csound, VdotR, dv.x, dv.y);
@@ -2693,15 +2699,9 @@ double getAccVoro2D_kNN(SimParameters *simpar,
 				dv.y = (jbp_vy - ibp_vy);
 				postype VdotR = Vec2DDotP(&dv, &er);
 				postype vsig = (jbp_csound + ibp_csound - MIN(0, VdotR));
-				/* For boundary ghost neighbors very close to real particles,
-				   floor dramp to prevent CFL collapse.  Use 10% of cell size
-				   as minimum — enough to avoid dt→0 while still restricting
-				   dt for moderately close wall particles. */
-				postype dramp_cfl = dramp;
-				if(PINDX(jbp) == MAX_INDEX){
-					postype heff = 0.1*sqrt(ibp->volume);
-					if(dramp_cfl < heff) dramp_cfl = heff;
-				}
+				/* CFL floor: prevent dt→0 from particle clustering
+				   or geometric proximity of ghost mirrors */
+				postype dramp_cfl = fmax(dramp, 0.25*sqrt(ibp->volume));
 				postype dt = 2*Courant*dramp_cfl/vsig;
 				if(isnan(dt)){
 					DEBUGPRINT("P%d kNN has error dt %d %ld : %g %g : %g %g : %g\n",
@@ -3348,7 +3348,8 @@ double exam2d_vph(SimParameters *simpar,
 
                         postype VdotR = Vec2DDotP(&dv,&er);
                         postype vsig = (jbp_csound + ibp_csound - MIN(0, VdotR));
-                        postype dt = 2*Courant*dramp/vsig;
+                        postype dramp_cfl = fmax(dramp, 0.25*sqrt(ibp->volume));
+                        postype dt = 2*Courant*dramp_cfl/vsig;
                         if(isnan(dt)){
                             DEBUGPRINT("P%d has error dt %d %ld : %g %g : %g %g : %g : dv.xy= %g %g\n",
                                     MYID(simpar), i, PINDX(p+i), dramp, vsig,jbp_csound, ibp_csound, VdotR, dv.x, dv.y);
@@ -3795,7 +3796,8 @@ double exam2d_vph_int_rt(SimParameters *simpar,
 
                         postype VdotR = Vec2DDotP(&dv,&er);
                         postype vsig = (jbp_csound + ibp_csound - MIN(0, VdotR));
-                        postype dt = 2*Courant*dramp/vsig;
+                        postype dramp_cfl = fmax(dramp, 0.25*sqrt(ibp->volume));
+                        postype dt = 2*Courant*dramp_cfl/vsig;
                         if(isnan(dt)){
                             DEBUGPRINT("P%d has error dt %d %ld : %g %g : %g %g : %g : dv.xy= %g %g\n",
                                     MYID(simpar), i, PINDX(p+i), dramp, vsig,jbp_csound, ibp_csound, VdotR, dv.x, dv.y);
@@ -4256,7 +4258,8 @@ double exam2d_vph_int(SimParameters *simpar,
 
                         postype VdotR = Vec2DDotP(&dv,&er);
                         postype vsig = (jbp_csound + ibp_csound - MIN(0, VdotR));
-                        postype dt = 2*Courant*dramp/vsig;
+                        postype dramp_cfl = fmax(dramp, 0.25*sqrt(ibp->volume));
+                        postype dt = 2*Courant*dramp_cfl/vsig;
                         if(isnan(dt)){
                             DEBUGPRINT("P%d has error dt %d %ld : %g %g : %g %g : %g : dv.xy= %g %g\n",
                                     MYID(simpar), i, PINDX(p+i), dramp, vsig,jbp_csound, ibp_csound, VdotR, dv.x, dv.y);
