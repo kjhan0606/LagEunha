@@ -48,7 +48,7 @@ SUBDIRS = $(MPIAUX) $(CAMBDIR) $(PARAMS) $(Cosmos) $(CosmosIC) \
 		$(TIMER) $(DFFT) $(DENRW) $(ParallelIO) $(KH) $(VORO)\
 		$(COLORLIB)  $(RT) $(KEPLER) $(GLASS2D) $(EXAM)
 
-all: 
+all:
 	$(MAKE) misc
 
 this: $(OBJS)
@@ -87,12 +87,15 @@ misc:
 	$(F90C) -o $(VIEWPOW) viewpower.o -I./$(CAMBDIR) -L./$(CAMBDIR) -lcamb $(OPT) $(specialrules)
 	$(F90C) -c mkpower.f90 -I./$(CAMBDIR) $(OPT) $(specialrules)
 	$(CC) -c getsimparm.c $(OPT) $(specialrules) -lm -I$(FFTW)/include -I$(RkS)  -I$(PARAMS)
-	$(FC) -o $(MKPOW) mkpower.o getsimparm.o -L$(PARAMS) -lheader -L$(MPIAUX) -lmpiaux -I./$(CAMBDIR) -L./$(CAMBDIR) -lcamb $(OPT) $(specialrules) -L$(Cosmos) -lcosmology -L$(CosmosIC) -ltwolpt 
+	$(FC) -o $(MKPOW) mkpower.o getsimparm.o -L$(PARAMS) -lheader -L$(MPIAUX) -lmpiaux -I./$(CAMBDIR) -L./$(CAMBDIR) -lcamb $(OPT) $(specialrules) -L$(Cosmos) -lcosmology -L$(CosmosIC) -ltwolpt
 	$(CC) -o $(MKPFILE) mkpfile.c -I$(FFTWDIR)/include  -L$(PARAMS) -lheader  -L$(MPIAUX) -lmpiaux  $(OPT) $(specialrules) -lm   -I$(RkS) -I$(PARAMS) -I$(FFTW)/include -L$(Cosmos) -lcosmology -L$(CosmosIC) -ltwolpt -L$(DENRW) -ldenrw # -l$(VORO) -lmyvoro
-	$(CC) -c sync2txt.c  $(OPT) $(specialrules) -lm $(INCLUDES) $(MPI_LINKS)  
-	$(FC) -o $(EXAMREAD) sync2txt.o -qopenmp $(MPI_LINKS) $(INCLUDES)  $(LDFLAGS) $(LIBS) -lm
-	$(CC) -c econ.c  $(OPT) $(specialrules) -lm $(INCLUDES) $(MPI_LINKS)  
-	$(FC) -o econ.exe econ.o -qopenmp $(MPI_LINKS) $(INCLUDES)  $(LDFLAGS) $(LIBS) -lm
+
+# sync2txt and econ require eunha2.o (my_malloc/my_free) — build from top-level src/
+heavy:
+	$(CC) -c sync2txt.c  $(OPT) $(specialrules) -lm $(INCLUDES) $(MPI_LINKS)
+	$(FC) -o $(EXAMREAD) sync2txt.o ../eunha2.o -qopenmp $(MPI_LINKS) $(INCLUDES)  $(LDFLAGS) $(LIBS) -lm
+	$(CC) -c econ.c  $(OPT) $(specialrules) -lm $(INCLUDES) $(MPI_LINKS)
+	$(FC) -o econ.exe econ.o ../eunha2.o -qopenmp $(MPI_LINKS) $(INCLUDES)  $(LDFLAGS) $(LIBS) -lm
 
 
 gputest:

@@ -11,6 +11,8 @@
 #include "cosmology.h"
 #include "params.h"
 
+extern void InitializeReadStart(SimParameters *);
+
 
 
 int main(int argc, char **argv){

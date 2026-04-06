@@ -71,6 +71,8 @@ static double av_bt_mn = 0.0;    /* AV beta minimum (smooth region) */
 static int    use_muscl= 0;      /* MUSCL reconstruction (C: 0=off) */
 static int    use_riemann=0;     /* 1=acoustic, 2=exact, 3=HLLC */
 static int    av_mode = 0;       /* 0=Monaghan, 1=Price signal, 2=CD10 */
+static double nu_phys  = 0.0;   /* fixed kinematic viscosity for NS stress (0=off) */
+static double nu_coeff = 0.0;   /* adaptive: nu += nu_coeff*h*cs (0=off) */
 
 /* Cullen-Dehnen (2010) switch parameters */
 static double cd_ell  = 0.1;     /* decay length parameter */
@@ -502,7 +504,21 @@ static void face_st(void){
                 }
             }
         }
-        if(pf[i] < 0) pf[i] = 0;
+
+        /* NS viscous stress: tau_xx = (4/3)*nu*rho*dv/dx
+         * p_eff = p_face - tau_xx  (tension in expansion, extra pressure in compression) */
+        {
+            double nu = nu_phys;
+            if(nu_coeff > 0)
+                nu += nu_coeff * 0.5*(P[i-1].vol + P[i].vol) * Cs;
+            if(nu > 0){
+                double dvdx = (P[i].v - P[i-1].v) / dx;
+                pf[i] -= (4.0/3.0) * nu * denij * dvdx;
+            }
+        }
+
+        /* Floor: allow negative pf when NS stress is active (physical tension) */
+        if(pf[i] < 0 && nu_phys <= 0 && nu_coeff <= 0) pf[i] = 0;
         qf[i] = 0;
     }
     /* Boundary conditions */
@@ -1382,29 +1398,37 @@ static void set_method_hllc_cd10(void){
     w_coeff=0; use_riemann=3; use_muscl=1; av_mode=2;
     cd_amax=1.0; cd_ell=0.05; cd_amin=0; av_beta=1.0;
     shock_th=0; face_dp=0; face_dv=0; prev_dt=0;
-    use_AA=0; alpha_u=0;
+    use_AA=0; alpha_u=0; nu_phys=0; nu_coeff=0;
 }
 static void set_method_hllc_price(void){
     w_coeff=0; use_riemann=3; use_muscl=1; av_mode=1;
     av_alpha=0.25; av_beta=1.0;
     shock_th=0; face_dp=0; face_dv=0; prev_dt=0;
-    use_AA=0; alpha_u=0;
+    use_AA=0; alpha_u=0; nu_phys=0; nu_coeff=0;
 }
 static void set_method_price(void){
     w_coeff=0; use_riemann=0; use_muscl=1; av_mode=1;
     av_alpha=1.5; av_beta=2.0;
     shock_th=0; face_dp=0; face_dv=0; prev_dt=0;
-    use_AA=0; alpha_u=0;
+    use_AA=0; alpha_u=0; nu_phys=0; nu_coeff=0;
 }
 static void set_method_voronoi(void){
     w_coeff=0; use_riemann=0; use_muscl=0; av_mode=0;
     av_alpha=3; av_beta=4; face_dp=0.5; face_dv=0;
     shock_th=0; prev_dt=0;
-    use_AA=0; alpha_u=0;
+    use_AA=0; alpha_u=0; nu_phys=0; nu_coeff=0;
 }
 static void set_method_sph(void){
     w_coeff=0; use_riemann=0; use_muscl=0; av_mode=0;
     av_alpha=1; av_beta=2; face_dp=0; face_dv=0;
+    shock_th=0; prev_dt=0;
+    use_AA=0; alpha_u=0; nu_phys=0; nu_coeff=0;
+}
+/* M(n,m) + NS stress + dp/Z + Monaghan AV — matches multi-D recipe */
+static void set_method_ns_av(void){
+    w_coeff=0; use_riemann=0; use_muscl=0; av_mode=0;
+    av_alpha=0.5; av_beta=4.0; face_dp=0.25; face_dv=0;
+    nu_coeff=0.10; nu_phys=0;
     shock_th=0; prev_dt=0;
     use_AA=0; alpha_u=0;
 }
@@ -1677,7 +1701,7 @@ int main(int argc, char **argv)
     }
 
     /* reset av_mode for Monaghan-based runs */
-    av_mode = 0; use_muscl = 0;
+    av_mode = 0; use_muscl = 0; nu_phys = 0; nu_coeff = 0;
 
     /* ---- Summary ---- */
     fprintf(stderr,"\n===== Comparison =====\n");
@@ -1851,18 +1875,19 @@ int main(int argc, char **argv)
                             "Shu-Osher Shock-Entropy", "Noh Strong Shock",
                             "Lax Shock Tube", "Double Rarefaction (Toro #2)",
                             "Two-Shock Collision (Toro #4)", "Stationary Contact"};
-    const char *mname[]  = {"hllc_cd10", "hllc_price", "price", "voronoi", "sph"};
+    const char *mname[]  = {"hllc_cd10", "hllc_price", "price", "voronoi", "sph", "ns_av"};
     const char *mlabel[] = {"HLLC+CD10", "HLLC+Price", "Price AV",
-                            "Vor M(3,4)+dpZ", "SPH"};
-    const char *mcolor[] = {"#a65628", "#377eb8", "#e41a1c", "#4daf4a", "#984ea3"};
-    int         mmode[]  = {LAGUERRE, LAGUERRE, LAGUERRE, VORONOI, SPH_MODE};
+                            "Vor M(3,4)+dpZ", "SPH", "NS+AV"};
+    const char *mcolor[] = {"#a65628", "#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#ff7f00"};
+    int         mmode[]  = {LAGUERRE, LAGUERRE, LAGUERRE, VORONOI, SPH_MODE, LAGUERRE};
 
     typedef void (*msetup_fn)(void);
     msetup_fn msetup[] = {set_method_hllc_cd10, set_method_hllc_price,
-                          set_method_price, set_method_voronoi, set_method_sph};
+                          set_method_price, set_method_voronoi, set_method_sph,
+                          set_method_ns_av};
 
     int np_test = 200;
-    int nprob = 8, nmeth = 5;
+    int nprob = 8, nmeth = 6;
 
     for(int pid = 0; pid < nprob; pid++){
         setup_problem(pid);
@@ -1891,8 +1916,8 @@ int main(int argc, char **argv)
         for(int k=0;k<4;k++){ gmin[k]=1e30; gmax[k]=-1e30; }
 
         /* run 5 methods, track which succeed */
-        char files[5][128];
-        int mfailed[5] = {0};
+        char files[6][128];
+        int mfailed[6] = {0};
         for(int mi=0; mi<nmeth; mi++){
             msetup[mi]();
             sprintf(files[mi], "%s/%s.dat", pname[pid], mname[mi]);
@@ -1995,7 +2020,7 @@ int main(int argc, char **argv)
         sprintf(pngf, "%s/result_%d.png", pname[pid], np_test);
         sprintf(title, "%s (N=%d)", ptitle[pid], np_test);
 
-        const char *fptrs[5], *lptrs[5], *cptrs[5];
+        const char *fptrs[6], *lptrs[6], *cptrs[6];
         int nplot = 0;
         for(int mi=0; mi<nmeth; mi++){
             if(!mfailed[mi]){
@@ -2011,6 +2036,77 @@ int main(int argc, char **argv)
                         x0_dom, x1_dom, ylo, yhi);
 
         fprintf(stderr,"Plot: gnuplot %s -> %s\n", gpf, pngf);
+    }
+
+    /* ============================================================
+     *  Phase NS: NS stress + dp/Z + Monaghan AV sweep
+     *  In 1D, simple average has no upwinding (unlike multi-D M(n,m)
+     *  which has transverse terms). dp/Z correction provides the
+     *  1D equivalent of multi-D M(n,m) implicit upwinding.
+     * ============================================================ */
+    {
+        double nc_v[]  = {0.0, 0.02, 0.05, 0.1};
+        double dp_v[]  = {0.0, 0.25, 0.5};
+        double al_ns[] = {0.5, 1.0, 2.0, 3.0};
+        double bt_ns[] = {0.0, 2.0, 4.0};
+        int n_nc = 4, n_dp = 3, n_al = 4, n_bt = 3;
+        const char *pname_ns[] = {"sod","blast","shuosher","noh",
+                                  "lax","dblfan","collision","contact"};
+
+        fprintf(stderr,"\n===== Phase NS: NS + dp/Z + Monaghan AV (N=200) =====\n");
+        fprintf(stderr,"%6s %4s %4s %4s | %10s %10s %10s %10s %10s %10s %10s %10s\n",
+                "nu_c","dpZ","a_av","b_av","Sod","Blast","ShuOsher","Noh",
+                "Lax","DblFan","Collision","Contact");
+        fprintf(stderr,"------|----|----|----|-");
+        for(int k=0;k<8;k++) fprintf(stderr,"----------|-");
+        fprintf(stderr,"\n");
+
+        double best_ns_score = 1e30;
+        double best_nc = 0, best_dpz = 0.5, best_aln = 3, best_btn = 4;
+
+        for(int inc=0; inc<n_nc; inc++)
+        for(int idp=0; idp<n_dp; idp++)
+        for(int ia=0; ia<n_al; ia++)
+        for(int ib=0; ib<n_bt; ib++){
+            double l1[8];
+            int any_fail = 0;
+            for(int pid=0; pid<8; pid++){
+                setup_problem(pid);
+                if(!has_exact_sol){
+                    char rf[128];
+                    sprintf(rf, "%s/ref.dat", pname_ns[pid]);
+                    read_reference(rf);
+                } else if(pid != PROB_NOH){
+                    exact_riemann(&ps_exact,&vs_exact);
+                }
+                w_coeff=0; use_riemann=0; use_muscl=0; av_mode=0;
+                face_dv=0; shock_th=0; prev_dt=0;
+                use_AA=0; alpha_u=0;
+                nu_coeff = nc_v[inc]; nu_phys = 0;
+                face_dp = dp_v[idp];
+                av_alpha = al_ns[ia]; av_beta = bt_ns[ib];
+                Metrics m = run_sim(LAGUERRE, 200, "/dev/null", 0);
+                l1[pid] = m.failed ? -1.0 : m.l1_rho;
+                if(m.failed) any_fail = 1;
+            }
+            double score = 0;
+            for(int k=0;k<8;k++){
+                if(l1[k] < 0) { score = 1e30; break; }
+                score += l1[k];
+            }
+            fprintf(stderr," %5.3f %4.2f %4.1f %4.1f |",
+                    nc_v[inc],dp_v[idp],al_ns[ia],bt_ns[ib]);
+            for(int k=0;k<8;k++) fprintf(stderr," %10.4e",l1[k]);
+            fprintf(stderr,"%s\n",(score<best_ns_score)?" *":"");
+            if(score < best_ns_score){
+                best_ns_score = score;
+                best_nc = nc_v[inc]; best_dpz = dp_v[idp];
+                best_aln = al_ns[ia]; best_btn = bt_ns[ib];
+            }
+        }
+        fprintf(stderr,"\nBest NS+AV: nu_coeff=%.3f dp/Z=%.2f alpha=%.1f beta=%.1f score=%.4e\n",
+                best_nc, best_dpz, best_aln, best_btn, best_ns_score);
+        nu_phys = 0; nu_coeff = 0;
     }
 
     return 0;

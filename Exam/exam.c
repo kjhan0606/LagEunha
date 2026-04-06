@@ -26,18 +26,8 @@ inline postype getw2forHydroParticle(SimParameters *simpar, treevorork4particlet
 	int ndim = NDIM(simpar);
 	if(1){
 		postype w2new= GAS_Kappa(simpar)*GAS_Kappa(simpar)*
-			GAS_dMean(simpar)*GAS_dMean(simpar) 
-			*pow(bp->mass*bp->pressure/bp->den*GAS_invw2Scale(simpar), GAS_w2Power(simpar));
-		/*
-		printf("check w2, %g : %g %g %g %g %g : %g\n", w2new,
-				GAS_Kappa(simpar),
-				GAS_dMean(simpar),
-				bp->mass,
-				bp->pressure,
-				bp->den,
-				GAS_invw2Scale(simpar));
-		exit(0);
-		*/
+			GAS_dMean(simpar)*GAS_dMean(simpar)
+			*pow(bp->pressure*GAS_invw2Scale(simpar), GAS_w2Power(simpar));
 		return w2new;
 	}
 	else {
@@ -55,6 +45,48 @@ inline postype getw2forHydroParticle(SimParameters *simpar, treevorork4particlet
 		postype w2 = w1*w1;
 		return w2;
 	}
+}
+
+/* Apply w2 control mechanisms: floor, relaxation, rate limiter, ceiling.
+ * In 2D, w2ceil is a hard geometric constraint (cell degenerates if exceeded),
+ * so ceiling MUST be applied last — rate limiter must not push w2 above w2ceil.
+ * (This differs from 1D where ceiling is soft and rate limiter comes after.)
+ * Call AFTER getw2forHydroParticle sets bp->w2hydro. */
+static inline void applyW2Controls(SimParameters *simpar, treevorork4particletype *bp, postype Dtime){
+	postype w2 = bp->w2hydro;
+
+	/* 1. Floor: w >= w2_floor_frac * dMean */
+	postype w2ff = GAS_W2FLOORFRAC(simpar);
+	if(w2ff > 0){
+		postype wf = w2ff * GAS_dMean(simpar);
+		postype w2floor = wf * wf;
+		if(w2 < w2floor) w2 = w2floor;
+	}
+
+	/* 2. Relaxation: exponential smoothing toward target */
+	postype w2rt = GAS_W2RELAXTAU(simpar);
+	if(w2rt > 0 && Dtime > 0){
+		postype ci = fmax(bp->csound, 1e-10);
+		postype tau = w2rt * GAS_dMean(simpar) / ci;
+		postype alpha_r = fmin(1.0, Dtime / tau);
+		postype w2_old = (bp->w2old > 0) ? bp->w2old : w2;
+		w2 = w2_old + alpha_r * (w2 - w2_old);
+	}
+
+	/* 3. Rate limiter: |Δw2/w2_old| ≤ w2_rate_max */
+	postype w2rm = GAS_W2RATEMAX(simpar);
+	if(w2rm > 0 && bp->w2old > 0){
+		postype w2_hi = bp->w2old * (1.0 + w2rm);
+		postype w2_lo = bp->w2old * (1.0 - w2rm);
+		if(w2_lo < 0) w2_lo = 0;
+		if(w2 > w2_hi) w2 = w2_hi;
+		if(w2 < w2_lo) w2 = w2_lo;
+	}
+
+	bp->w2hydro = w2;
+
+	/* 4. Ceiling: w2 ≤ w2ceil (MUST be last — hard geometric constraint in 2D) */
+	bp->w2 = MIN(w2, bp->w2ceil);
 }
 
 // *_w2Masure2D are obsolete and instead use getw2forHydroParticle.
@@ -1217,8 +1249,8 @@ void updateDenW2Pressure2D(
 			bp[i].w2 = -GAS_Kappa(simpar); 
 		} 
 		else if (GAS_Kappa(simpar) >0){ 
-			bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime); 
-			bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil); 
+			bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
+			applyW2Controls(simpar, bp+i, Dtime);
 		}
 	}
 	/*
@@ -1314,7 +1346,7 @@ void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 		}
 		else if(GAS_Kappa(simpar) >0){
 			bpi->w2hydro = getw2forHydroParticle(simpar, bpi, Dtime);
-			bpi->w2 = MIN(bpi->w2hydro, bpi->w2ceil);
+			applyW2Controls(simpar, bpi, Dtime);
 		}
 	}
 
@@ -1488,7 +1520,7 @@ void updateDenW2Pressure2DBlend(
 		}
 		else if (GAS_Kappa(simpar) >0){
 			bp[i].w2hydro = getw2forHydroParticle(simpar,(treevorork4particletype*)(bp+i),Dtime);
-			bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil);
+			applyW2Controls(simpar, (treevorork4particletype*)(bp+i), Dtime);
 		}
 	}
 
@@ -1529,9 +1561,13 @@ void updateDenW2Pressure2DBlend(
 				get2dAreaAvgNeighorPressure(ibp_rk4, vorocorner, neighwork, (treevorork4particletype*)bp);
 				ibp_rk4->den = ibp_rk4->mass/ibp_rk4->volume;
 
-				/* Compute velocity gradient via Gauss divergence theorem */
+				/* Compute cell-averaged gradients via Green-Gauss:
+				 *   ⟨∇Q⟩_i = (1/V_i) Σ_faces Q_face·dS
+				 * Face-averaged values use M(n,m) stencil.
+				 * Computes: ∇⊗v (velocity gradient) and ∇P (pressure gradient for MUSCL). */
 				if(av_mode >= 1){
 					postype sum_gUxx=0, sum_gUxy=0, sum_gUyx=0, sum_gUyy=0;
+					postype sum_dPdx=0, sum_dPdy=0;
 					postype OoA = VoroAccuracyOrder(simpar);
 					Voro2D_Corner *tmp = vorocorner;
 					do {
@@ -1543,34 +1579,43 @@ void updateDenW2Pressure2DBlend(
 							postype dSx = tmp2->y - tmp->y;
 							postype dSy = -(tmp2->x - tmp->x);
 
-							/* Laguerre-aware face velocity interpolation
-							   1D analog: vf[i] = vL + wfrac*(vR-vL), with M(n,m) correction */
-							postype vx_face, vy_face;
+							/* Laguerre-aware face interpolation weight */
 							postype dx_ij = jbp->x - ibp->x;
 							postype dy_ij = jbp->y - ibp->y;
 							postype d2_ij = dx_ij*dx_ij + dy_ij*dy_ij;
 							postype wfrac = (d2_ij > 0) ?
 								0.5 + 0.5*(ibp_rk4->w2 - ((treevorork4particletype*)jbp)->w2)/d2_ij : 0.5;
+
+							postype vx_face, vy_face, P_face;
 							if(jbp_grad_ghost){
-								/* Wall face: symmetric average (ghost mirrors have same w2) */
+								/* Wall ghost: simple weighted average */
 								vx_face = ibp->vx + wfrac*(jbp->vx - ibp->vx);
 								vy_face = ibp->vy + wfrac*(jbp->vy - ibp->vy);
+								P_face  = ibp->pressure + wfrac*(jbp->pressure - ibp->pressure);
 							} else if(OoA > 0 && (tmp->upperlink)->upperrelated >= 0 && tmp->lowerrelated >= 0){
+								/* M(n,m) 4-point stencil: face-averaged value */
 								treevorostressrk4particletype *kp = (treevorostressrk4particletype*)(neighwork[(tmp->upperlink)->upperrelated].bp);
 								treevorostressrk4particletype *km = (treevorostressrk4particletype*)(neighwork[tmp->lowerrelated].bp);
+								postype OoA3 = OoA/3.;
 								vx_face = ibp->vx + wfrac*(jbp->vx - ibp->vx)
-								        + OoA/3.*(kp->vx + km->vx - ibp->vx - jbp->vx);
+								        + OoA3*(kp->vx + km->vx - ibp->vx - jbp->vx);
 								vy_face = ibp->vy + wfrac*(jbp->vy - ibp->vy)
-								        + OoA/3.*(kp->vy + km->vy - ibp->vy - jbp->vy);
+								        + OoA3*(kp->vy + km->vy - ibp->vy - jbp->vy);
+								P_face  = ibp->pressure + wfrac*(jbp->pressure - ibp->pressure)
+								        + OoA3*(kp->pressure + km->pressure - ibp->pressure - jbp->pressure);
 							} else {
 								vx_face = ibp->vx + wfrac*(jbp->vx - ibp->vx);
 								vy_face = ibp->vy + wfrac*(jbp->vy - ibp->vy);
+								P_face  = ibp->pressure + wfrac*(jbp->pressure - ibp->pressure);
 							}
 
+							/* Accumulate Green-Gauss: ∮ Q_face · dS */
 							sum_gUxx += vx_face * dSx;
 							sum_gUxy += vx_face * dSy;
 							sum_gUyx += vy_face * dSx;
 							sum_gUyy += vy_face * dSy;
+							sum_dPdx += P_face * dSx;
+							sum_dPdy += P_face * dSy;
 						}
 						tmp = tmp->upperlink;
 					} while(tmp != vorocorner);
@@ -1581,6 +1626,8 @@ void updateDenW2Pressure2DBlend(
 					ibp->stress.gUyx = sum_gUyx * invVol;
 					ibp->stress.gUyy = sum_gUyy * invVol;
 					ibp->stress.divv = ibp->stress.gUxx + ibp->stress.gUyy;
+					ibp->stress.dPdx = sum_dPdx * invVol;
+					ibp->stress.dPdy = sum_dPdy * invVol;
 				}
 			}
 			if(np>0) free(p);
@@ -1600,7 +1647,7 @@ void updateDenW2Pressure2DBlend(
 		}
 		bp[i].csound = sqrt(Gamma*bp[i].pressure/bp[i].den);
 
-		if(av_mode >= 1){
+		if(av_mode == 1){
 			/* NS stress: τ = -ν ρ (∇v + ∇v^T - 2/3 (∇·v) I) */
 			postype h = sqrt(bp[i].volume);
 			postype nu_cd = bp[i].stress.alpha_cd * h * bp[i].csound;
@@ -1610,6 +1657,11 @@ void updateDenW2Pressure2DBlend(
 			bp[i].stress.tauxx = -nu * bp[i].den * (2.0*bp[i].stress.gUxx - (2.0/3.0)*divv);
 			bp[i].stress.tauxy = -nu * bp[i].den * (bp[i].stress.gUxy + bp[i].stress.gUyx);
 			bp[i].stress.tauyy = -nu * bp[i].den * (2.0*bp[i].stress.gUyy - (2.0/3.0)*divv);
+		} else if(av_mode >= 2){
+			/* av_mode=2: HLLC+CD10 only, no NS stress (like 1D) */
+			bp[i].stress.tauxx = 0;
+			bp[i].stress.tauxy = 0;
+			bp[i].stress.tauyy = 0;
 		}
 	}
 
@@ -1832,6 +1884,89 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 							}
 							pi_total = pi;
 
+						} else if(av_mode == 3) {
+							/* ========== AREPO-style: always HLLC + MUSCL ========== */
+							/* No M(n,m), no NS stress, no CD10 blending.
+							   HLLC Riemann solver is the sole dissipation mechanism. */
+							postype ds_mag_inv = 1.0/(facearea + 1e-30);
+							postype nx_hat = dS.x * ds_mag_inv;
+							postype ny_hat = dS.y * ds_mag_inv;
+							postype vnL = ibp_vx*nx_hat + ibp_vy*ny_hat;
+							postype vnR = jbp_vx*nx_hat + jbp_vy*ny_hat;
+							postype pL = ibp_pressure;
+							postype pR = jbp_pressure;
+
+							/* MUSCL reconstruction at face midpoint */
+							postype xf = 0.5*(tmp->x + tmp2->x);
+							postype yf = 0.5*(tmp->y + tmp2->y);
+							postype dx_iF = xf - ibp->x;
+							postype dy_iF = yf - ibp->y;
+							postype dx_jF = xf - jbp->x;
+							postype dy_jF = yf - jbp->y;
+
+							/* Pressure reconstruction */
+							postype dp_i = ibp->stress.dPdx*dx_iF + ibp->stress.dPdy*dy_iF;
+							postype dp_j = jbp->stress.dPdx*dx_jF + jbp->stress.dPdy*dy_jF;
+							pL += dp_i;
+							pR += dp_j;
+
+							/* Velocity reconstruction */
+							postype dvnL = (ibp->stress.gUxx*nx_hat + ibp->stress.gUxy*ny_hat)*dx_iF
+							             + (ibp->stress.gUyx*nx_hat + ibp->stress.gUyy*ny_hat)*dy_iF;
+							postype dvnR = (jbp->stress.gUxx*nx_hat + jbp->stress.gUxy*ny_hat)*dx_jF
+							             + (jbp->stress.gUyx*nx_hat + jbp->stress.gUyy*ny_hat)*dy_jF;
+							vnL += dvnL;
+							vnR += dvnR;
+
+							/* Slope limiter: clamp to prevent new extrema */
+							postype pmin = fmin(ibp_pressure, jbp_pressure);
+							postype pmax = fmax(ibp_pressure, jbp_pressure);
+							if(pL < pmin) pL = pmin; if(pL > pmax) pL = pmax;
+							if(pR < pmin) pR = pmin; if(pR > pmax) pR = pmax;
+							postype vnmin = fmin(vnL - dvnL, vnR - dvnR);
+							postype vnmax = fmax(vnL - dvnL, vnR - dvnR);
+							if(vnL < vnmin) vnL = vnmin; if(vnL > vnmax) vnL = vnmax;
+							if(vnR < vnmin) vnR = vnmin; if(vnR > vnmax) vnR = vnmax;
+
+							/* Positivity: floor on reconstructed pressure */
+							if(pL < 1e-10) pL = 1e-10;
+							if(pR < 1e-10) pR = 1e-10;
+
+							postype pst, vnst;
+							hllc_face_2d(ibp_den, pL, vnL, ibp_csound,
+							             jbp_den, pR, vnR, jbp_csound,
+							             Gamma, &pst, &vnst);
+							pi_total = pst;
+
+							/* CD10 viscous pressure (compression only) */
+							if(cd_amax > 0){
+								postype dvn_hllc = vnR - vnL;
+								if(dvn_hllc < 0){
+									postype alpha_face = 0.5*(ibp->stress.alpha_cd + jbp->stress.alpha_cd);
+									postype rho_mean = 0.5*(ibp_den + jbp_den);
+									postype vsig_cd = ibp_csound + jbp_csound - fmin(0.0, dvn_hllc);
+									pi_total += 0.5 * alpha_face * vsig_cd * rho_mean * (-dvn_hllc);
+								}
+							}
+
+							/* Optional Monaghan AV for contact noise control */
+							if(alphavis > 0){
+								Voro2D_point uij;
+								uij.x = jbp_vx - ibp_vx;
+								uij.y = jbp_vy - ibp_vy;
+								postype rvel = Vec2DDotP(&er, &uij);
+								if(rvel < 0){
+									postype wcomp = sqrt(ibp_rk4->w2)+sqrt(((treevorork4particletype*)jbp)->w2);
+									postype scaleFactor = (wcomp==0 ? etavis: wcomp);
+									postype drampScale = dramp/scaleFactor;
+									postype mu = rvel/(drampScale + epsvis/drampScale);
+									postype meanden = 0.5*(ibp_den + jbp_den);
+									postype meanCsound = 0.5*(ibp_csound + jbp_csound);
+									pi_total += (-alphavis*meanCsound*mu + betavis*mu*mu)*meanden;
+								}
+							}
+							/* tau_dot_dS_x/y remain 0 — no NS stress */
+
 						} else {
 							/* Two-tier blended path (real-real faces only) */
 							postype OoA = OrderOfAccuracy;
@@ -1842,7 +1977,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 
 							/* Viscous traction vector: τ·dS (full tensor, not just normal projection) */
 							tau_dot_dS_x = 0; tau_dot_dS_y = 0;
-							if(av_mode >= 1){
+							if(av_mode == 1){
 								/* M(n,m) face-average of τ components */
 								postype txx_face, txy_face, tyy_face;
 								if(OoA > 0 && (tmp->upperlink)->upperrelated >= 0 && tmp->lowerrelated >= 0){
@@ -1866,8 +2001,23 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 							}
 
 							if(av_mode == 1){
-								/* NS stress only, no HLLC */
+								/* NS stress + optional Monaghan AV (when Alpha>0) */
 								pi_total = p_mnm;
+								if(alphavis > 0){
+									Voro2D_point uij;
+									uij.x = jbp_vx - ibp_vx;
+									uij.y = jbp_vy - ibp_vy;
+									postype rvel = Vec2DDotP(&er, &uij);
+									if(rvel < 0){
+										postype wcomp = sqrt(ibp_rk4->w2)+sqrt(((treevorork4particletype*)jbp)->w2);
+										postype scaleFactor = (wcomp==0 ? etavis: wcomp);
+										postype drampScale = dramp/scaleFactor;
+										postype mu = rvel/(drampScale + epsvis/drampScale);
+										postype meanden = 0.5*(ibp_den + jbp_den);
+										postype meanCsound = 0.5*(ibp_csound + jbp_csound);
+										pi_total += (-alphavis*meanCsound*mu + betavis*mu*mu)*meanden;
+									}
+								}
 								/* tau_dot_dS already computed above */
 							} else {
 								/* === av_mode == 2: Two-tier blend === */
@@ -1894,14 +2044,41 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 									vnR = jbp_vx*nx_hat + jbp_vy*ny_hat;
 
 									if(use_muscl){
-										/* MUSCL reconstruction with minmod limiter */
-										postype dp_fd = jbp_pressure - ibp_pressure;
-										postype dv_fd = vnR - vnL;
-										/* Quarter-slope reconstruction (conservative) */
-										pL = ibp_pressure + 0.25*dp_fd;
-										pR = jbp_pressure - 0.25*dp_fd;
-										vnL = vnL + 0.25*dv_fd;
-										vnR = vnR - 0.25*dv_fd;
+										/* MUSCL reconstruction using cell-averaged gradients.
+										 * ∇P, ∇v computed via Green-Gauss in updateDenW2Pressure2DBlend.
+										 * Reconstruct at face midpoint: Q_L = Q̄_i + ⟨∇Q⟩_i · (x_f - x_i) */
+										postype xf = 0.5*(tmp->x + tmp2->x);
+										postype yf = 0.5*(tmp->y + tmp2->y);
+
+										/* Displacement: cell center → face midpoint */
+										postype dx_iF = xf - ibp->x;
+										postype dy_iF = yf - ibp->y;
+										postype dx_jF = xf - jbp->x;
+										postype dy_jF = yf - jbp->y;
+
+										/* Pressure reconstruction */
+										postype dp_i = ibp->stress.dPdx*dx_iF + ibp->stress.dPdy*dy_iF;
+										postype dp_j = jbp->stress.dPdx*dx_jF + jbp->stress.dPdy*dy_jF;
+										pL = ibp_pressure + dp_i;
+										pR = jbp_pressure + dp_j;
+
+										/* Velocity reconstruction (project gradient onto face normal) */
+										postype dvnL = (ibp->stress.gUxx*nx_hat + ibp->stress.gUxy*ny_hat)*dx_iF
+										             + (ibp->stress.gUyx*nx_hat + ibp->stress.gUyy*ny_hat)*dy_iF;
+										postype dvnR = (jbp->stress.gUxx*nx_hat + jbp->stress.gUxy*ny_hat)*dx_jF
+										             + (jbp->stress.gUyx*nx_hat + jbp->stress.gUyy*ny_hat)*dy_jF;
+										vnL += dvnL;
+										vnR += dvnR;
+
+										/* Simple limiter: clamp to prevent new extrema */
+										postype pmin = fmin(ibp_pressure, jbp_pressure);
+										postype pmax = fmax(ibp_pressure, jbp_pressure);
+										if(pL < pmin) pL = pmin; if(pL > pmax) pL = pmax;
+										if(pR < pmin) pR = pmin; if(pR > pmax) pR = pmax;
+										postype vnmin = fmin(vnL - dvnL, vnR - dvnR);
+										postype vnmax = fmax(vnL - dvnL, vnR - dvnR);
+										if(vnL < vnmin) vnL = vnmin; if(vnL > vnmax) vnL = vnmax;
+										if(vnR < vnmin) vnR = vnmin; if(vnR > vnmax) vnR = vnmax;
 									}
 
 									pL = use_muscl ? pL : ibp_pressure;
@@ -1923,7 +2100,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 										postype alpha_face = 0.5*(ibp->stress.alpha_cd + jbp->stress.alpha_cd);
 										postype rho_mean = 0.5*(rhoL + rhoR);
 										postype vsig = cL + cR - fmin(0.0, dvn);
-										Pi_cd10 = 0.5 * alpha_face * vsig * rho_mean * dvn;
+										Pi_cd10 = 0.5 * alpha_face * vsig * rho_mean * (-dvn);
 									}
 								}
 
@@ -1936,8 +2113,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 
 						/* === Accumulate forces and energy rates === */
 						/* Internal energy: pressure work + viscous heating + heat conduction */
-						/* uradix = v_face - v_i (Laguerre-aware: wfrac + AA correction)
-						   1D analog: pf[i]*(vf[i]-P[i].v) where vf includes AA */
+						/* get2dUpqradRk4 returns v_face - v_i (Laguerre wfrac + AA correction) */
 						Voro2D_point uradix_ui = get2dUpqradRk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
 						/* Pressure work: -p * (v_face - v_i) · dS */
 						die += -pi_total * Vec2DDotP(&uradix_ui, &dS);
@@ -1990,6 +2166,10 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 									(long)PINDX((treevorork4particletype*)jbp), jbp->x, jbp->y,
 									dramp, vsig, ibp_csound, jbp_csound, pi_total);
 						}
+						if(dt < 1e-6){
+							fprintf(stderr,"[HYDRO_CFL] P%d i=%d dt=%g dramp=%g dramp_cfl=%g vsig=%g csound_i=%g csound_j=%g vol=%g x=%g y=%g\n",
+								MYID(simpar), i, dt, dramp, dramp_cfl, vsig, ibp_csound, jbp_csound, ibp_rk4->volume, ibp_rk4->x, ibp_rk4->y);
+						}
 						ibp_rk4->dt = MIN(ibp_rk4->dt, dt);
 						if(dt < Dtime) Dtime = dt;
 
@@ -2001,6 +2181,10 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 							postype nu_eff = fmax(fmax(nu_phys, nu_cd_i), chi);
 							if(nu_eff > 0){
 								postype dt_visc = 0.5 * h_i * h_i / nu_eff;
+								if(dt_visc < 1e-6){
+									fprintf(stderr,"[VISC_CFL] P%d i=%d dt_visc=%g h_i=%g nu_eff=%g alpha_cd=%g csound=%g den=%g P=%g ie=%g vol=%g x=%g y=%g\n",
+										MYID(simpar), i, dt_visc, h_i, nu_eff, ibp->stress.alpha_cd, ibp_csound, ibp_den, ibp_pressure, ibp_rk4->ie, ibp_rk4->volume, ibp_rk4->x, ibp_rk4->y);
+								}
 								ibp_rk4->dt = MIN(ibp_rk4->dt, dt_visc);
 								if(dt_visc < Dtime) Dtime = dt_visc;
 							}
@@ -2210,18 +2394,14 @@ double getAccVoro2D_rt(SimParameters *simpar, postype xmin, postype ymin,
 							}
 						}
 
-						// for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-//						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
-						Voro2D_point uradix_ui; 
-						uradix_ui.x = 0.5*(jbp_vx-ibp_vx); 
-						uradix_ui.y = 0.5*(jbp_vy-ibp_vy);
+						// for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
-						// for the total energy 
-						ua.x = Half*(jbp_vx + ibp_vx); 
-						ua.y = Half*(jbp_vy + ibp_vy);
+						// for the total energy
+						ua.x = ibp_vx + uradix_ui.x;
+						ua.y = ibp_vy + uradix_ui.y;
 						dte += -pi*Vec2DDotP(&ua, &dS);
 
 						// for the kinetic energy 
@@ -2439,22 +2619,21 @@ double getAccVoro2D(SimParameters *simpar, postype xmin, postype ymin,
 							}
 						}
 
-						// for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+						// for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
-						// for the total energy 
-						ua.x = Half*(jbp_vx + ibp_vx); 
-						ua.y = Half*(jbp_vy + ibp_vy);
+						// for the total energy
+						ua.x = ibp_vx + uradix_ui.x;
+						ua.y = ibp_vy + uradix_ui.y;
 						dte += -pi*Vec2DDotP(&ua, &dS);
 
-						// for the kinetic energy 
+						// for the kinetic energy
 						ub.x = ibp_vx;
 						ub.y = ibp_vy;
 						dke += -pi*Vec2DDotP(&ub, &dS);
 
-						// for the force 
+						// for the force
 						fx += -pi * dS.x;
 						fy += -pi * dS.y;
 
@@ -2673,14 +2852,13 @@ double getAccVoro2D_kNN(SimParameters *simpar,
 				}
 
 				/* internal energy */
-				Voro2D_point uradix = get2dUpqradRk4(ibp, jbp, dtold);
-				Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+				Voro2D_point uradix_ui = get2dUpqradRk4(ibp, jbp, dtold);
 				die += -pi * Vec2DDotP(&uradix_ui, &dS);
 
 				/* total energy */
 				Voro2D_point ua;
-				ua.x = Half*(jbp_vx + ibp_vx);
-				ua.y = Half*(jbp_vy + ibp_vy);
+				ua.x = ibp_vx + uradix_ui.x;
+				ua.y = ibp_vy + uradix_ui.y;
 				dte += -pi*Vec2DDotP(&ua, &dS);
 
 				/* kinetic energy */
@@ -3086,8 +3264,8 @@ double exam2d_vph_rk4(
 			bp[i].w2 = -GAS_Kappa(simpar); 
 		} 
 		else if (GAS_Kappa(simpar) >0){ 
-			bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime); 
-			bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil); 
+			bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
+			applyW2Controls(simpar, bp+i, Dtime);
 		}
     }
 #ifdef _OPENMP
@@ -3324,13 +3502,12 @@ double exam2d_vph(SimParameters *simpar,
                         }
 
                         /* for the internal energy */
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
                         /* for the total energy */
-                        ua.x = Half*(jbp_vx + ibp_vx);
-                        ua.y = Half*(jbp_vy + ibp_vy);
+                        ua.x = ibp_vx + uradix_ui.x;
+                        ua.y = ibp_vy + uradix_ui.y;
                         dte += -pi*Vec2DDotP(&ua, &dS);
 
                         /* for the kinetic energy */
@@ -3578,9 +3755,8 @@ double exam2d_vph(SimParameters *simpar,
                              pi = pi +(-alphavis * meanCsound*mu + betavis*mu*mu)*meanden;
                         }
 
-                        // for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+                        // for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
                     }
@@ -3611,7 +3787,7 @@ double exam2d_vph(SimParameters *simpar,
         }
         else if (GAS_Kappa(simpar) >0){
           	bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
-            bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil);
+            applyW2Controls(simpar, bp+i, Dtime);
         }
     }
 #ifdef _OPENMP
@@ -3771,14 +3947,13 @@ double exam2d_vph_int_rt(SimParameters *simpar,
                             pi = pi +(-alphavis * meanCsound*mu + betavis*mu*mu)*meanden;
                         }
 
-                        // for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+                        // for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
                         // for the total energy
-                        ua.x = Half*(jbp_vx + ibp_vx);
-                        ua.y = Half*(jbp_vy + ibp_vy);
+                        ua.x = ibp_vx + uradix_ui.x;
+                        ua.y = ibp_vy + uradix_ui.y;
                         dte += -pi*Vec2DDotP(&ua, &dS);
 
                         // for the kinetic energy 
@@ -4028,9 +4203,8 @@ double exam2d_vph_int_rt(SimParameters *simpar,
                              pi = pi +(-alphavis * meanCsound*mu + betavis*mu*mu)*meanden;
                         }
 
-                        // for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+                        // for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
                     }
@@ -4062,7 +4236,7 @@ double exam2d_vph_int_rt(SimParameters *simpar,
 			} 
 			else if (GAS_Kappa(simpar) >0){ 
           		bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
-				bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil); 
+				applyW2Controls(simpar, bp+i, Dtime);
 			} 
 		}
 	}
@@ -4233,14 +4407,13 @@ double exam2d_vph_int(SimParameters *simpar,
                             pi = pi +(-alphavis * meanCsound*mu + betavis*mu*mu)*meanden;
                         }
 
-                        // for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+                        // for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
                         // for the total energy
-                        ua.x = Half*(jbp_vx + ibp_vx);
-                        ua.y = Half*(jbp_vy + ibp_vy);
+                        ua.x = ibp_vx + uradix_ui.x;
+                        ua.y = ibp_vy + uradix_ui.y;
                         dte += -pi*Vec2DDotP(&ua, &dS);
 
                         // for the kinetic energy 
@@ -4489,9 +4662,8 @@ double exam2d_vph_int(SimParameters *simpar,
 							pi = pi +(-alphavis * meanCsound*mu + betavis*mu*mu)*meanden;
                         }
 
-                        // for the internal energy 
-                        Voro2D_point uradix = get2dUpqradRk4(ibp,jbp,dtold);
-						Voro2D_point uradix_ui; uradix_ui.x = uradix.x-ibp_vx; uradix_ui.y = uradix.y-ibp_vy;
+                        // for the internal energy
+                        Voro2D_point uradix_ui = get2dUpqradRk4(ibp,jbp,dtold);
 						die += -pi * Vec2DDotP(&uradix_ui,&dS);
 
                     }
@@ -4524,7 +4696,7 @@ double exam2d_vph_int(SimParameters *simpar,
 			} 
 			else if (GAS_Kappa(simpar) >0){ 
           		bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
-				bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil); 
+				applyW2Controls(simpar, bp+i, Dtime);
 			} 
 		}
 	}
@@ -4762,7 +4934,7 @@ double exam2d_vph_rk4_int(
 			} 
 			else if (GAS_Kappa(simpar) >0){ 
           		bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
-				bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil); 
+				applyW2Controls(simpar, bp+i, Dtime);
 			} 
 		}
 	}
@@ -5030,7 +5202,7 @@ double exam2d_vph_rk4_int_blend(
 			}
 			else if (GAS_Kappa(simpar) >0){
 				sbp[i].w2hydro = getw2forHydroParticle(simpar,(treevorork4particletype*)(sbp+i),Dtime);
-				sbp[i].w2 = MIN(sbp[i].w2hydro, sbp[i].w2ceil);
+				applyW2Controls(simpar, (treevorork4particletype*)(sbp+i), Dtime);
 			}
 		}
 	}
@@ -5280,7 +5452,7 @@ double exam2d_vph_rk4_int_kNN(
 			}
 			else if(GAS_Kappa(simpar) > 0){
 				bpi->w2hydro = getw2forHydroParticle(simpar, bpi, Dtime);
-				bpi->w2 = MIN(bpi->w2hydro, bpi->w2ceil);
+				applyW2Controls(simpar, bpi, Dtime);
 			}
 		}
 	}
@@ -5518,7 +5690,7 @@ double exam2d_vph_rk4_int_rt(
 			} 
 			else if (GAS_Kappa(simpar) >0){ 
           		bp[i].w2hydro = getw2forHydroParticle(simpar,(bp+i),Dtime);
-				bp[i].w2 = MIN(bp[i].w2hydro, bp[i].w2ceil); 
+				applyW2Controls(simpar, bp+i, Dtime);
 			} 
 		}
 	}

@@ -200,7 +200,8 @@ treevorork4particletype *cyl_mkinitial(SimParameters *simpar, int *mp){
 		res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
 	}
 
-	GAS_invw2Scale(simpar) = 1.L/(p_inf*meanvol/(Gamma-1));
+	GAS_invw2Scale(simpar) = 1.L / p_inf;
+	GAS_w2Power(simpar) = (Gamma-1)/Gamma;
 
 	int nbp = np;
 	*mp = nbp;

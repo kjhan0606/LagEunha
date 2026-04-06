@@ -346,6 +346,9 @@ typedef struct GasInfo{
 	float cd_amax, cd_ell, cd_amin;   // CD10 switch parameters
 	float blend_theta;                 // two-tier blending threshold θ₀
 	float prandtl;                     // Prandtl number Pr=nu/chi (default 1.0, 0=no heat conduction)
+	float w2_relax_tau;                // w2 relaxation timescale in units of d/c (0=off)
+	float w2_rate_max;                 // max fractional change |Δw2/w2_old| per step (0=off)
+	float w2_floor_frac;               // w floor as fraction of dMean (0=off)
 }GasInfo;
 #define GAS_MEANRHO(simpar) ((simpar)->physics.gasinfo.meanrho)
 #define GAS_RHOS2RHOR(simpar) ((simpar)->physics.gasinfo.rhos2rhor)
@@ -516,9 +519,10 @@ typedef struct RK4{
 
 // Stress tensor: velocity gradient + NS viscous stress + CD10 switch
 typedef struct Stress {
-	PosType gUxx, gUxy;         // ∂vx/∂x, ∂vx/∂y  (2D velocity gradient)
+	PosType gUxx, gUxy;         // ∂vx/∂x, ∂vx/∂y  (cell-averaged velocity gradient)
 	PosType gUyx, gUyy;         // ∂vy/∂x, ∂vy/∂y
 	PosType divv;               // ∇·v = gUxx + gUyy
+	PosType dPdx, dPdy;         // cell-averaged pressure gradient (for MUSCL)
 	PosType tauxx, tauxy, tauyy; // NS stress tensor components
 	PosType divv_old;           // ∇·v from previous timestep (CD10)
 	PosType alpha_cd;           // CD10 viscosity coefficient
@@ -934,6 +938,9 @@ typedef struct SimParameters{
 #define GAS_CDAMIN(simpar) ((simpar)->physics.gasinfo.cd_amin)
 #define GAS_BLENDTHETA(simpar) ((simpar)->physics.gasinfo.blend_theta)
 #define GAS_PRANDTL(simpar) ((simpar)->physics.gasinfo.prandtl)
+#define GAS_W2RELAXTAU(simpar) ((simpar)->physics.gasinfo.w2_relax_tau)
+#define GAS_W2RATEMAX(simpar) ((simpar)->physics.gasinfo.w2_rate_max)
+#define GAS_W2FLOORFRAC(simpar) ((simpar)->physics.gasinfo.w2_floor_frac)
 
 #define SPH_NUMNEAR(simpar) ((simpar)->bp.sph.NumNear)
 #define SPH_INITFLAG(simpar) ((simpar)->bp.sph.init_flag)

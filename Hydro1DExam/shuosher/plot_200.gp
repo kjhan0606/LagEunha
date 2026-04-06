@@ -1,6 +1,6 @@
-set terminal pngcairo size 2250,1200 enhanced font 'Arial,11'
+set terminal pngcairo size 2700,1200 enhanced font 'Arial,11'
 set output 'shuosher/result_200.png'
-set multiplot layout 4,5 title 'Shu-Osher Shock-Entropy (N=200)' font ',14'
+set multiplot layout 4,6 title 'Shu-Osher Shock-Entropy (N=200)' font ',14'
 set key top right font ',9'
 
 set title 'HLLC+CD10' font ',12'
@@ -43,6 +43,14 @@ set yrange [0:5.23192]
 plot 'shuosher/ref.dat' u 1:2 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/sph.dat' u 1:2 w p pt 2 ps 1.0 lw 2 lc rgb '#984ea3' t 'SPH'
 
+set title 'NS+AV' font ',12'
+unset ylabel
+set xlabel 'x'
+set xrange [-5:5]
+set yrange [0:5.23192]
+plot 'shuosher/ref.dat' u 1:2 w l lw 2 lc rgb '#000000' t 'Ref', \
+     'shuosher/ns_av.dat' u 1:2 w p pt 2 ps 1.0 lw 2 lc rgb '#ff7f00' t 'NS+AV'
+
 unset title
 set ylabel 'Velocity'
 set xlabel 'x'
@@ -84,10 +92,18 @@ plot 'shuosher/ref.dat' u 1:3 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/sph.dat' u 1:3 w p pt 2 ps 1.0 lw 2 lc rgb '#984ea3' t 'SPH'
 
 unset title
+unset ylabel
+set xlabel 'x'
+set xrange [-5:5]
+set yrange [-1.74663:3.43736]
+plot 'shuosher/ref.dat' u 1:3 w l lw 2 lc rgb '#000000' t 'Ref', \
+     'shuosher/ns_av.dat' u 1:3 w p pt 2 ps 1.0 lw 2 lc rgb '#ff7f00' t 'NS+AV'
+
+unset title
 set ylabel 'Pressure'
 set xlabel 'x'
 set xrange [-5:5]
-set yrange [0:12.1868]
+set yrange [0:12.2184]
 plot 'shuosher/ref.dat' u 1:4 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/hllc_cd10.dat' u 1:4 w p pt 2 ps 1.0 lw 2 lc rgb '#a65628' t 'HLLC+CD10'
 
@@ -95,7 +111,7 @@ unset title
 unset ylabel
 set xlabel 'x'
 set xrange [-5:5]
-set yrange [0:12.1868]
+set yrange [0:12.2184]
 plot 'shuosher/ref.dat' u 1:4 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/hllc_price.dat' u 1:4 w p pt 2 ps 1.0 lw 2 lc rgb '#377eb8' t 'HLLC+Price'
 
@@ -103,7 +119,7 @@ unset title
 unset ylabel
 set xlabel 'x'
 set xrange [-5:5]
-set yrange [0:12.1868]
+set yrange [0:12.2184]
 plot 'shuosher/ref.dat' u 1:4 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/price.dat' u 1:4 w p pt 2 ps 1.0 lw 2 lc rgb '#e41a1c' t 'Price AV'
 
@@ -111,7 +127,7 @@ unset title
 unset ylabel
 set xlabel 'x'
 set xrange [-5:5]
-set yrange [0:12.1868]
+set yrange [0:12.2184]
 plot 'shuosher/ref.dat' u 1:4 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/voronoi.dat' u 1:4 w p pt 2 ps 1.0 lw 2 lc rgb '#4daf4a' t 'Vor M(3,4)+dpZ'
 
@@ -119,9 +135,17 @@ unset title
 unset ylabel
 set xlabel 'x'
 set xrange [-5:5]
-set yrange [0:12.1868]
+set yrange [0:12.2184]
 plot 'shuosher/ref.dat' u 1:4 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/sph.dat' u 1:4 w p pt 2 ps 1.0 lw 2 lc rgb '#984ea3' t 'SPH'
+
+unset title
+unset ylabel
+set xlabel 'x'
+set xrange [-5:5]
+set yrange [0:12.2184]
+plot 'shuosher/ref.dat' u 1:4 w l lw 2 lc rgb '#000000' t 'Ref', \
+     'shuosher/ns_av.dat' u 1:4 w p pt 2 ps 1.0 lw 2 lc rgb '#ff7f00' t 'NS+AV'
 
 unset title
 set ylabel 'Internal Energy'
@@ -162,5 +186,13 @@ set xrange [-5:5]
 set yrange [0.199977:9.41753]
 plot 'shuosher/ref.dat' u 1:5 w l lw 2 lc rgb '#000000' t 'Ref', \
      'shuosher/sph.dat' u 1:5 w p pt 2 ps 1.0 lw 2 lc rgb '#984ea3' t 'SPH'
+
+unset title
+unset ylabel
+set xlabel 'x'
+set xrange [-5:5]
+set yrange [0.199977:9.41753]
+plot 'shuosher/ref.dat' u 1:5 w l lw 2 lc rgb '#000000' t 'Ref', \
+     'shuosher/ns_av.dat' u 1:5 w p pt 2 ps 1.0 lw 2 lc rgb '#ff7f00' t 'NS+AV'
 
 unset multiplot

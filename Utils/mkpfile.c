@@ -12,7 +12,7 @@ int main (int argc, char **argv){
 	int i,j,k;
 	FILE *wp;
 	SimParameters sim;
-
+	memset(&sim, 0, sizeof(sim));
 
 	if(argc !=3){
 		DEBUGPRINT("Please input as mkpfile.exe [outputfilename]"

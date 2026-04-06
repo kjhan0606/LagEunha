@@ -200,7 +200,8 @@ int RunRT(SimParameters *simpar, int icont){
 		postype ycen = 0.5*Ly;
 		postype getRT_Den(postype , postype , postype , postype ,postype );
 //		GAS_invw2Scale(simpar) = 1.L/(RT_Phalf(simpar)/getRT_Den(rho1,rho2,deltay,ycen,ycen));
-		GAS_invw2Scale(simpar) = 1.L/(RT_Phalf(simpar)*dmean*dmean);
+		GAS_invw2Scale(simpar) = 1.L / RT_Phalf(simpar);
+		GAS_w2Power(simpar) = (GAS_GAMMA(simpar)-1)/GAS_GAMMA(simpar);
 	}
 
 	do {

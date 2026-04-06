@@ -255,19 +255,28 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_CYL_Kappa    SET"CYL Kappa            = "S_FLOAT" # coefficient to determine w2\n"
 #define P_GAS_w2Factor    SET"GAS w2 factor       = "S_FLOAT" # a factor to w2 increment\n"
 #define P_GAS_w2Power    SET"GAS w2 power       = "S_FLOAT" # a power to w2 \n"
-#define P_GAS_AVMODE     SET"GAS av_mode        = "S_INT" # 0=Monaghan, 1=NS-stress, 2=two-tier\n"
+#define P_GAS_AVMODE     SET"GAS av_mode        = "S_INT" # 0=Monaghan, 1=NS-stress, 2=two-tier, 3=HLLC-only\n"
 #define P_GAS_USEMUSCL   SET"GAS use_muscl      = "S_INT" # 0=piecewise const, 1=MUSCL\n"
 #define P_GAS_CDAMAX     SET"GAS cd_amax        = "S_FLOAT" # CD10 alpha_max\n"
 #define P_GAS_CDELL      SET"GAS cd_ell         = "S_FLOAT" # CD10 ell parameter\n"
 #define P_GAS_CDAMIN     SET"GAS cd_amin        = "S_FLOAT" # CD10 alpha_min\n"
 #define P_GAS_BLENDTHETA SET"GAS blend_theta    = "S_FLOAT" # two-tier theta_0\n"
 #define P_GAS_PRANDTL    SET"GAS prandtl        = "S_FLOAT" # Prandtl number Pr=nu/chi\n"
+#define P_GAS_W2RELAXTAU SET"GAS w2_relax_tau   = "S_FLOAT" # w2 relaxation timescale (d/c units, 0=off)\n"
+#define P_GAS_W2RATEMAX  SET"GAS w2_rate_max    = "S_FLOAT" # max fractional dw2/w2 per step (0=off)\n"
+#define P_GAS_W2FLOORFRAC SET"GAS w2_floor_frac  = "S_FLOAT" # w floor as fraction of dMean (0=off)\n"
 
-#define P_VORO_AlphaVis  SET"Alpha parameter in Voro  = "S_FLOAT" # Alpha factor of Voronoi AV\n"
-#define P_VORO_BetaVis  SET"Beta parameter in Voro  = "S_FLOAT" # Beta factor of Voronoi AV\n"
-#define P_VORO_EtaVis  SET"Eta parameter in Voro  = "S_FLOAT" # Eta factor of Voronoi AV ~ mean separation\n"
-#define P_VORO_EpsVis  SET"Eps parameter in Voro  = "S_FLOAT" # Eps factor of Voronoi AV\n"
-#define P_VORO_Viscosity  SET"Re parameter in Voro   = "S_FLOAT" # Reynolds number of Voronoi\n"
+#define P_VORO_AlphaVis  SET"GAS av_alpha       = "S_FLOAT" # Monaghan AV alpha\n"
+#define P_VORO_BetaVis  SET"GAS av_beta        = "S_FLOAT" # Monaghan AV beta\n"
+#define P_VORO_EtaVis  SET"GAS av_eta         = "S_FLOAT" # Monaghan AV eta (softening)\n"
+#define P_VORO_EpsVis  SET"GAS av_eps         = "S_FLOAT" # Monaghan AV pressure-switch eps\n"
+#define P_VORO_Viscosity  SET"GAS nu_phys        = "S_FLOAT" # Physical kinematic viscosity\n"
+/* backward-compat aliases for old param files */
+#define P_VORO_AlphaVis_OLD  SET"Alpha parameter in Voro  = "S_FLOAT" # Alpha factor of Voronoi AV\n"
+#define P_VORO_BetaVis_OLD  SET"Beta parameter in Voro  = "S_FLOAT" # Beta factor of Voronoi AV\n"
+#define P_VORO_EtaVis_OLD  SET"Eta parameter in Voro  = "S_FLOAT" # Eta factor of Voronoi AV ~ mean separation\n"
+#define P_VORO_EpsVis_OLD  SET"Eps parameter in Voro  = "S_FLOAT" # Eps factor of Voronoi AV\n"
+#define P_VORO_Viscosity_OLD  SET"Re parameter in Voro   = "S_FLOAT" # Reynolds number of Voronoi\n"
 #define P_TIME_STEPPING  SET"Hydro time-stepping way = "S_INT" # 0: leap-frog, 1: RK4\n"
 #define P_FCENTROID  SET"Voro centroid shift factor = "S_FLOAT" # 0: no, >0: fshift\n"
 
@@ -275,7 +284,7 @@ void  read_slab_head(FILE*, SimParameters *);
 
 #define P_Closing   "#End of Ascii Header\n"
 #define P_NULL      "##################################################\n"
-#define P_VOROVISINFO      "# INFORMATION ON THE VORONOI VISCOSITY (AV:artificial viscosity)\n"
+#define P_VOROVISINFO      "# GAS dissipation parameters\n"
 
 #define MPI_DATA(frw,wp,sp,simpar)do{\
  	ncnt += frw(wp,P_Myid,sp MYID(simpar));\
@@ -527,12 +536,21 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_VORO_EpsVis,sp GAS_EPSVIS(simpar));\
 		ncnt += frw(wp,P_VORO_Viscosity,sp GAS_VISCOSITY(simpar));\
 		ncnt += frw(wp,P_GAS_AVMODE,sp GAS_AVMODE(simpar));\
-		ncnt += frw(wp,P_GAS_USEMUSCL,sp GAS_USEMUSCL(simpar));\
-		ncnt += frw(wp,P_GAS_CDAMAX,sp GAS_CDAMAX(simpar));\
-		ncnt += frw(wp,P_GAS_CDELL,sp GAS_CDELL(simpar));\
-		ncnt += frw(wp,P_GAS_CDAMIN,sp GAS_CDAMIN(simpar));\
-		ncnt += frw(wp,P_GAS_BLENDTHETA,sp GAS_BLENDTHETA(simpar));\
-		ncnt += frw(wp,P_GAS_PRANDTL,sp GAS_PRANDTL(simpar));\
+		if(GAS_AVMODE(simpar) >= 1){\
+			ncnt += frw(wp,P_GAS_CDAMAX,sp GAS_CDAMAX(simpar));\
+			ncnt += frw(wp,P_GAS_CDELL,sp GAS_CDELL(simpar));\
+			ncnt += frw(wp,P_GAS_CDAMIN,sp GAS_CDAMIN(simpar));\
+			ncnt += frw(wp,P_GAS_PRANDTL,sp GAS_PRANDTL(simpar));\
+		}\
+		if(GAS_AVMODE(simpar) >= 2){\
+			ncnt += frw(wp,P_GAS_USEMUSCL,sp GAS_USEMUSCL(simpar));\
+			ncnt += frw(wp,P_GAS_BLENDTHETA,sp GAS_BLENDTHETA(simpar));\
+		}\
+		if(GAS_W2RELAXTAU(simpar) > 0 || GAS_W2RATEMAX(simpar) > 0 || GAS_W2FLOORFRAC(simpar) > 0){\
+			ncnt += frw(wp,P_GAS_W2RELAXTAU,sp GAS_W2RELAXTAU(simpar));\
+			ncnt += frw(wp,P_GAS_W2RATEMAX,sp GAS_W2RATEMAX(simpar));\
+			ncnt += frw(wp,P_GAS_W2FLOORFRAC,sp GAS_W2FLOORFRAC(simpar));\
+		}\
 	}\
 	ncnt += frw(wp,P_NULL);\
 }while(0)

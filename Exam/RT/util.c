@@ -238,7 +238,8 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 		}
 	}
 //	GAS_invw2Scale(simpar) = 1.L/(RT_Phalf(simpar)/getRT_Den(rho1,rho2,deltay,ycen,ycen));
-	GAS_invw2Scale(simpar) = 1.L/(RT_Phalf(simpar)*meanvol);
+	GAS_invw2Scale(simpar) = 1.L / RT_Phalf(simpar);
+	GAS_w2Power(simpar) = (Gamma-1)/Gamma;
 	for(j=ny/2-1;j>=0;j--){
 		postype y = (postype)(j+0.5)*Ly/ny;
         postype rho = getRT_Den(rho1, rho2, deltay, ycen, y);

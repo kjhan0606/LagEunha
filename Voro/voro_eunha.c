@@ -71,13 +71,13 @@ Voro2D_point get2dUpqradRk4(treevorork4particletype *p, treevorork4particletype 
 	Voro2D_point uradpq,upq, er;
 	upq.x = q->vx - p->vx;
 	upq.y = q->vy - p->vy;
-	postype absupq = sqrt(upq.x*upq.x + upq.y*upq.y);
 	er.x = q->x - p->x;
 	er.y = q->y - p->y;
 	postype dpq2 = (er.x*er.x + er.y*er.y);
 	postype dpq = sqrt(dpq2);
 	er.x /= dpq;
 	er.y /= dpq;
+	postype er_dot_upq = er.x*upq.x + er.y*upq.y; /* radial relative velocity */
 	postype wp2,wq2,wpold2,wqold2;
 	wp2 = p->w2;
 	wq2 = q->w2;
@@ -87,13 +87,16 @@ Voro2D_point get2dUpqradRk4(treevorork4particletype *p, treevorork4particletype 
 	postype dwpdt = (sqrt(wp2)-sqrt(wpold2))/dtold;
 	postype dwqdt = (sqrt(wq2)-sqrt(wqold2))/dtold;
 	postype vpw, vqw;
-	if(dwpdt >0) vpw = (p->csound < dwpdt ? p->csound: dwpdt);
-	else vpw = (-p->csound > dwpdt ? p->csound: dwpdt);
-	if(dwqdt >0) vqw = (q->csound < dwqdt ? q->csound: dwqdt);
-	else vqw = (-q->csound > dwqdt ? q->csound: dwqdt);
+	/* Clamp dw/dt by sound speed: |vpw| <= csound, preserving sign */
+	if(dwpdt >0) vpw = (p->csound < dwpdt ? p->csound : dwpdt);
+	else vpw = (-p->csound > dwpdt ? -p->csound : dwpdt);
+	if(dwqdt >0) vqw = (q->csound < dwqdt ? q->csound : dwqdt);
+	else vqw = (-q->csound > dwqdt ? -q->csound : dwqdt);
 
+	/* fact2 = dΔw²/dt/(2D) - Δw²·(ê·u_pq)/D²
+	   where w·vpw = (1/2)·dw²/dt, so (w_p·vpw - w_q·vqw)/D = dΔw²/dt/(2D) */
 	postype fact2 = (sqrt(wp2)*vpw - sqrt(wq2)*vqw)/dpq;
-	fact2 = fact2 - (wp2-wq2)/dpq2 * absupq; 
+	fact2 = fact2 - (wp2-wq2)/dpq2 * er_dot_upq;
 	uradpq.x = fact1*upq.x + fact2*er.x;
 	uradpq.y = fact1*upq.y + fact2*er.y;
 	return uradpq;
@@ -104,25 +107,30 @@ Voro2D_point get2dUpqrad(treevoroparticletype *p, treevoroparticletype *q,
 	Voro2D_point uradpq,upq, nr;
 	upq.x = q->vx - p->vx;
 	upq.y = q->vy - p->vy;
-	postype absupq = sqrt(upq.x*upq.x + upq.y*upq.y);
 	nr.x = q->x - p->x;
 	nr.y = q->y - p->y;
 	postype dpq2 = (nr.x*nr.x + nr.y*nr.y);
 	postype dpq = sqrt(dpq2);
 	nr.x /= dpq;
 	nr.y /= dpq;
+	postype nr_dot_upq = nr.x*upq.x + nr.y*upq.y; /* radial relative velocity */
 	postype wp2,wq2,wpold2,wqold2;
 	wp2 = p->w2;
 	wq2 = q->w2;
 	wpold2 = p->w2old;
 	wqold2 = q->w2old;
 	postype fact1 = 0.5*(1+(wp2-wq2)/dpq2);
-    postype dwpdt = (sqrt(wp2)-sqrt(wpold2))/dtold;
-    postype dwqdt = (sqrt(wq2)-sqrt(wqold2))/dtold;
-    postype vpw = (p->csound < dwpdt ? p->csound: dwpdt);
-    postype vqw = (q->csound < dwqdt ? q->csound: dwqdt);
-    postype fact2 = (sqrt(wp2)*vpw - sqrt(wq2)*vqw)/(dpq+dpq);
-    fact2 = fact2 - (wp2-wq2)/dpq2 * absupq;
+	postype dwpdt = (sqrt(wp2)-sqrt(wpold2))/dtold;
+	postype dwqdt = (sqrt(wq2)-sqrt(wqold2))/dtold;
+	postype vpw, vqw;
+	/* Clamp dw/dt by sound speed: |vpw| <= csound, preserving sign */
+	if(dwpdt >0) vpw = (p->csound < dwpdt ? p->csound : dwpdt);
+	else vpw = (-p->csound > dwpdt ? -p->csound : dwpdt);
+	if(dwqdt >0) vqw = (q->csound < dwqdt ? q->csound : dwqdt);
+	else vqw = (-q->csound > dwqdt ? -q->csound : dwqdt);
+	/* fact2 = dΔw²/dt/(2D) - Δw²·(ê·u_pq)/D² */
+	postype fact2 = (sqrt(wp2)*vpw - sqrt(wq2)*vqw)/dpq;
+	fact2 = fact2 - (wp2-wq2)/dpq2 * nr_dot_upq;
 	uradpq.x = fact1*upq.x + fact2*nr.x;
 	uradpq.y = fact1*upq.y + fact2*nr.y;
 	return uradpq;
@@ -141,13 +149,24 @@ Voro3D_point get3dUpqradRk4(treevorork4particletype *p, treevorork4particletype 
 	postype dpq = sqrt(dpq2);
 	nr.x /= dpq;
 	nr.y /= dpq;
+	nr.z /= dpq;
+	postype nr_dot_upq = nr.x*upq.x + nr.y*upq.y + nr.z*upq.z;
 	postype wp2,wq2,wpold2,wqold2;
 	wp2 = p->w2;
 	wq2 = q->w2;
 	wpold2 = p->w2old;
 	wqold2 = q->w2old;
-	postype fact1 = 0.5*(1-(wp2-wq2)/dpq2);
-	postype fact2 = 0.5/(dpq*dtold)* (wp2-wpold2 - (wq2-wqold2));
+	postype fact1 = 0.5*(1+(wp2-wq2)/dpq2);
+	postype dwpdt = (sqrt(wp2)-sqrt(wpold2))/dtold;
+	postype dwqdt = (sqrt(wq2)-sqrt(wqold2))/dtold;
+	postype vpw, vqw;
+	if(dwpdt >0) vpw = (p->csound < dwpdt ? p->csound : dwpdt);
+	else vpw = (-p->csound > dwpdt ? -p->csound : dwpdt);
+	if(dwqdt >0) vqw = (q->csound < dwqdt ? q->csound : dwqdt);
+	else vqw = (-q->csound > dwqdt ? -q->csound : dwqdt);
+	/* fact2 = dΔw²/dt/(2D) - Δw²·(ê·u_pq)/D² */
+	postype fact2 = (sqrt(wp2)*vpw - sqrt(wq2)*vqw)/dpq;
+	fact2 = fact2 - (wp2-wq2)/dpq2 * nr_dot_upq;
 	uradpq.x = fact1*upq.x + fact2*nr.x;
 	uradpq.y = fact1*upq.y + fact2*nr.y;
 	uradpq.z = fact1*upq.z + fact2*nr.z;
@@ -166,13 +185,24 @@ Voro3D_point get3dUpqrad(treevoroparticletype *p, treevoroparticletype *q,
 	postype dpq = sqrt(dpq2);
 	nr.x /= dpq;
 	nr.y /= dpq;
+	nr.z /= dpq;
+	postype nr_dot_upq = nr.x*upq.x + nr.y*upq.y + nr.z*upq.z;
 	postype wp2,wq2,wpold2,wqold2;
 	wp2 = p->w2;
 	wq2 = q->w2;
 	wpold2 = p->w2old;
 	wqold2 = q->w2old;
-	postype fact1 = 0.5*(1.-(wp2-wq2)/dpq2);
-	postype fact2 = 0.5/(dpq*dtold)* (wp2-wpold2 - (wq2-wqold2));
+	postype fact1 = 0.5*(1.+(wp2-wq2)/dpq2);
+	postype dwpdt = (sqrt(wp2)-sqrt(wpold2))/dtold;
+	postype dwqdt = (sqrt(wq2)-sqrt(wqold2))/dtold;
+	postype vpw, vqw;
+	if(dwpdt >0) vpw = (p->csound < dwpdt ? p->csound : dwpdt);
+	else vpw = (-p->csound > dwpdt ? -p->csound : dwpdt);
+	if(dwqdt >0) vqw = (q->csound < dwqdt ? q->csound : dwqdt);
+	else vqw = (-q->csound > dwqdt ? -q->csound : dwqdt);
+	/* fact2 = dΔw²/dt/(2D) - Δw²·(ê·u_pq)/D² */
+	postype fact2 = (sqrt(wp2)*vpw - sqrt(wq2)*vqw)/dpq;
+	fact2 = fact2 - (wp2-wq2)/dpq2 * nr_dot_upq;
 	uradpq.x = fact1*upq.x + fact2*nr.x;
 	uradpq.y = fact1*upq.y + fact2*nr.y;
 	uradpq.z = fact1*upq.z + fact2*nr.z;

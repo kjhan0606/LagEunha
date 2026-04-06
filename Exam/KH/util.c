@@ -316,7 +316,8 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		res = (treevorork4particletype*)realloc(res, sizeof(treevorork4particletype)*np);
 	}
 
-	GAS_invw2Scale(simpar) = 1.L/( KH_Pressure(simpar)*meanvol/(Gamma-1));
+	GAS_invw2Scale(simpar) = 1.L / KH_Pressure(simpar);
+	/* w2Power is now read from params.dat ("GAS w2 power") */
 
 
 	int nbp = np;

@@ -40,8 +40,8 @@ int nullfct1();
 
 
 TStruct *divide_gnn_node(
-		TStruct *thisNode, 
-		TStruct *freeNode, 
+		TStruct *thisNode,
+		TStruct *freeNode,
 		void (*rule2Divide)(TStruct *, TStruct *),
 		void (*findCentroid)(TStruct *),
 		void (*findCellSize)(TStruct *),

@@ -186,6 +186,9 @@ int RunKH(SimParameters *simpar, int icont){
 		int nstep = icont;
 		kh_readdata(simpar, &t, &dt, nstep);
 		icount = nstep;
+		postype Gamma = GAS_GAMMA(simpar);
+		GAS_invw2Scale(simpar) = 1.L / KH_Pressure(simpar);
+		GAS_w2Power(simpar) = (Gamma-1)/Gamma;
 	}
 
 	do {

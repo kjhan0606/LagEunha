@@ -243,6 +243,9 @@ int RunCylinder(SimParameters *simpar, int icont){
 		int nstep = icont;
 		cyl_readdata(simpar, &t, &dt, nstep);
 		icount = nstep;
+		postype Gamma = GAS_GAMMA(simpar);
+		GAS_invw2Scale(simpar) = 1.L / CYL_P(simpar);
+		GAS_w2Power(simpar) = (Gamma-1)/Gamma;
 	}
 
 	postype t_max = AMAX(simpar);

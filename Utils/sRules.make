@@ -7,12 +7,12 @@ AR = ar rcv
 #CC = mpiicc -cc=icx
 #CPP = icx
 ### openmpi compilers
-FC = mpifort -nofor-main 
-CC = mpicc  -w2
-CPP = icc -w2
+FC = mpiifx -nofor-main
+CC = mpiicx
+CPP = icx
 
 
-F90C = ifort -nofor-main 
+F90C = mpiifx -nofor-main
 ### sgi compilers
 #FC = ftn
 #CC = cc

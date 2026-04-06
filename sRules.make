@@ -19,7 +19,7 @@ FC = mpiifx -nofor-main
 CC = mpiicx   -debug
 CPP = icx -debug
 F90C = ifx -nofor-main
-OPT = -g -O2 -qopenmp #-xavx #-E
+OPT = -g -O2 -fno-strict-aliasing -qopenmp #-xavx #-E
 
 ### openmpi compilers
 
