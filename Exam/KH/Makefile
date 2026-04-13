@@ -9,6 +9,9 @@
 #FFLAGS = -openmp -O2 -ip -W0 -WB -fpp2 -vec_report0
 include ../sRules.make
 CCFLAGS = $(OPT) $(specialrules)
+ifdef USE_CUDA
+CCFLAGS += -DUSE_CUDA
+endif
 LDFLAGS = -L. -lrt  $(OPT)
 
 

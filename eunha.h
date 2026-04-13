@@ -349,6 +349,7 @@ typedef struct GasInfo{
 	float w2_relax_tau;                // w2 relaxation timescale in units of d/c (0=off)
 	float w2_rate_max;                 // max fractional change |Δw2/w2_old| per step (0=off)
 	float w2_floor_frac;               // w floor as fraction of dMean (0=off)
+	float reynolds;                    // Reynolds number (inf=inviscid)
 }GasInfo;
 #define GAS_MEANRHO(simpar) ((simpar)->physics.gasinfo.meanrho)
 #define GAS_RHOS2RHOR(simpar) ((simpar)->physics.gasinfo.rhos2rhor)
@@ -363,6 +364,7 @@ typedef struct GasInfo{
 #define GAS_ETAVIS(simpar) ((simpar)->physics.gasinfo.etavis)
 #define GAS_EPSVIS(simpar) ((simpar)->physics.gasinfo.epsvis)
 #define GAS_VISCOSITY(simpar) ((simpar)->physics.gasinfo.viscosity)
+#define GAS_REYNOLDS(simpar) ((simpar)->physics.gasinfo.reynolds)
 #define GAS_SPHFORCEFACTOR(simpar) ((simpar)->physics.gasinfo.sphforcefactor)
 #define GAS_TEMPEVOLFACTOR(simpar) ((simpar)->physics.gasinfo.Tempevolfactor)
 #define GAS_G1(simpar) ((simpar)->physics.gasinfo.g1)
@@ -523,10 +525,18 @@ typedef struct Stress {
 	PosType gUyx, gUyy;         // ∂vy/∂x, ∂vy/∂y
 	PosType divv;               // ∇·v = gUxx + gUyy
 	PosType dPdx, dPdy;         // cell-averaged pressure gradient (for MUSCL)
+	PosType dRhodx, dRhody;     // cell-averaged density gradient (Arepo MUSCL)
 	PosType tauxx, tauxy, tauyy; // NS stress tensor components
 	PosType divv_old;           // ∇·v from previous timestep (CD10)
 	PosType alpha_cd;           // CD10 viscosity coefficient
 	PosType vsig_max;           // max signal velocity (CD10)
+	/* LagMFM (av_mode=4): inverse of E matrix for matrix-weighted gradients
+	 * E_i^{ab} = sum_j psi_j(x_i) (x_j-x_i)^a (x_j-x_i)^b
+	 * E_inv is the 2x2 inverse used for gradient and effective face.
+	 */
+	PosType E_inv_xx, E_inv_xy;
+	PosType E_inv_yx, E_inv_yy;
+	PosType h_mfm;              // kernel bandwidth used at last density pass
 } Stress;
 
 typedef struct vorostressparticletype{

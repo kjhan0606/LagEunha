@@ -14,7 +14,7 @@
 #include "color.h"
 
 
-static CellType *cells=NULL;
+static CellType *cells = NULL;
 
 int cyl_makemap(SimParameters *simpar, int icount){
 	postype cellsize = CYL_GridSize(simpar);
@@ -179,8 +179,8 @@ treevorork4particletype *cyl_mkinitial(SimParameters *simpar, int *mp){
 					res[np].avgNeighboringPressure = p_inf;
 					res[np].w2 = getw2forHydroParticle(simpar, res+np, 0);
 					res[np].w2old = res[np].w2;
-					res[np].w2ceil = res[np].w2;
 				}
+				res[np].w2ceil = res[np].w2;
 				np++;
 			}
 		}
@@ -555,6 +555,7 @@ void cyl_findVol(SimParameters *simpar){
 		for(ix=0;ix<mx;ix++){
 			int np;
 			treevorork4particletype *p = findCellRk4BP2D(simpar,ix,iy,&np);
+			if(!p || np == 0) continue;
 			int nneigh;
 			Voro2D_point *neighbors = searchCellRk4Neighbors2D(simpar,ix,iy,&nneigh);
 			Voro2D_point *neighwork = (Voro2D_point*)malloc(sizeof(Voro2D_point)*nneigh);
@@ -571,6 +572,7 @@ void cyl_findVol(SimParameters *simpar){
 				ibp->dt = 1.e10;
 				int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize);
 				ibp->volume = Area2DPolygon(vorocorner,mp);
+				if(ibp->volume <= 0) ibp->volume = 1e-30;
 				ibp->den = ibp->mass / ibp->volume;
 			}
 			free(neighwork);
@@ -583,4 +585,5 @@ void cyl_findVol(SimParameters *simpar){
 
 	VORO_NPAD(simpar) = 0;
 	free(VORORK4_TBPP(simpar));
+	VORORK4_TBPP(simpar) = NULL;
 }

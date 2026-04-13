@@ -242,10 +242,15 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	postype dmean = Lx/nx;
 	GAS_dMean(simpar) = dmean;
 	int av_mode = GAS_AVMODE(simpar);
+#ifdef USE_CUDA
+	int use_stress = 1;  /* GPU blend path needs stress-type for all av_modes */
+#else
+	int use_stress = (av_mode >= 1 || GAS_VISCOSITY(simpar) > 0);
+#endif
 
 	postype Gamma = GAS_GAMMA(simpar);
 
-    if(av_mode >= 1)
+    if(use_stress)
         res = (treevorork4particletype*)my_malloc(sizeof(treevorostressrk4particletype)*nx*ny);
     else
         res = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*nx*ny);
@@ -301,7 +306,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             }
         }
     }
-	if(av_mode >= 1){
+	if(use_stress){
 		res = (treevorork4particletype*)realloc(res, sizeof(treevorostressrk4particletype)*np);
 		treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)res;
 		char *old_base = (char*)res;
@@ -329,8 +334,8 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	VORO_NP(simpar) = nbp;
 	// declare the particles as not being boundary ghost particle
 	{
-		size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype)
-		                               : sizeof(treevorork4particletype);
+		size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype)
+		                             : sizeof(treevorork4particletype);
 		char *bp_raw = (char*)res;
 		for(i=0;i<np;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
@@ -350,8 +355,8 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	nbp = VORO_NP(simpar);
 
 	{
-		size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype)
-		                               : sizeof(treevorork4particletype);
+		size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype)
+		                             : sizeof(treevorork4particletype);
 		char *bp_raw = (char*)res;
 		for(i=0;i<nbp;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);

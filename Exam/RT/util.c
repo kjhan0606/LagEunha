@@ -202,8 +202,8 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	ymax = RT_YMAX(simpar);
 	int nx = NX(simpar);
 	int ny = NY(simpar);
-	float Lx = SIMBOX(simpar).x.max;
-	float Ly = SIMBOX(simpar).y.max;
+	postype Lx = SIMBOX(simpar).x.max;
+	postype Ly = SIMBOX(simpar).y.max;
 	postype dmean = Lx/nx;
 	postype ycen = 0.5*Ly;
 	int av_mode = GAS_AVMODE(simpar);
@@ -225,6 +225,7 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 		res = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*nx*ny);
 	postype meanvol = Lx*Ly/(postype)nx/(postype)ny;
 	postype Pressure[ny+1];
+	memset(Pressure, 0, sizeof(postype)*(ny+1));
 	postype dy = Ly/ny;
 	for(j=ny/2;j<=ny;j++){
 		postype y = (postype)(j+0.5)*Ly/ny;
@@ -251,10 +252,7 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	for(j=0;j<ny;j++){
 		postype rho;
 		postype y = (postype)(j+0.5)*Ly/(postype)ny;
-		char iregion;
 		rho = getRT_Den(rho1, rho2, deltay, ycen, y); 
-		if(j==0 || j == ny-1) iregion = -1;
-		else iregion = 0;
 		postype vx = 0;
 		for(i=0;i<nx;i++){
 			postype vy;
@@ -283,6 +281,8 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 				res[np].y  = y;
 				res[np].vx  = vx;
 				res[np].vy  = vy;
+				res[np].z = 0; res[np].vz = 0;
+				res[np].ax = 0; res[np].ay = 0; res[np].az = 0;
 
 				res[np].mass  = rho*meanvol;
 				res[np].den  = rho;
@@ -303,8 +303,8 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 			     res[np].avgNeighboringPressure = res[np].pressure;
        		     res[np].w2 = getw2forHydroParticle(simpar, (res+np),1);
            		 res[np].w2old = res[np].w2;
-		            res[np].w2ceil = res[np].w2;
        		 }
+				res[np].w2ceil = res[np].w2;
 				np++;
 			}
 		}

@@ -99,6 +99,19 @@ void read_head(FILE *fp, SimParameters *simpar){
 				ncnt += sscanf(line,P_VORO_EtaVis_OLD,&GAS_ETAVIS(simpar));
 				ncnt += sscanf(line,P_VORO_EpsVis_OLD,&GAS_EPSVIS(simpar));
 				ncnt += sscanf(line,P_VORO_Viscosity_OLD,&GAS_VISCOSITY(simpar));
+				/* backward compat: old Kappa/OrderAcc parameter names */
+				ncnt += sscanf(line,SET"KH Kappa            = "S_FLOAT,&GAS_Kappa(simpar));
+				ncnt += sscanf(line,SET"RT Kappa            = "S_FLOAT,&GAS_Kappa(simpar));
+				ncnt += sscanf(line,SET"Kepler Kappa     = "S_FLOAT,&GAS_Kappa(simpar));
+				ncnt += sscanf(line,SET"MkGL2D Kappa        = "S_FLOAT,&GAS_Kappa(simpar));
+				ncnt += sscanf(line,SET"CYL Kappa            = "S_FLOAT,&GAS_Kappa(simpar));
+				ncnt += sscanf(line,SET"KH Order of Accuracy= "S_FLOAT,&VoroAccuracyOrder(simpar));
+				ncnt += sscanf(line,SET"RT Order of Accuracy= "S_FLOAT,&VoroAccuracyOrder(simpar));
+				ncnt += sscanf(line,SET"Kepler Order of Accuracy = "S_FLOAT,&VoroAccuracyOrder(simpar));
+				ncnt += sscanf(line,SET"MkGL2D Order of Accuracy = "S_FLOAT,&VoroAccuracyOrder(simpar));
+				ncnt += sscanf(line,SET"CYL Order of Accuracy= "S_FLOAT,&VoroAccuracyOrder(simpar));
+				/* backward compat: old fcentroid */
+				ncnt += sscanf(line,SET"Voro centroid shift factor = "S_FLOAT,&GAS_FCENTROID(simpar));
 			}
 			if(strstr(line,"=") != NULL && strstr(line,"define")!=NULL && ncnt ==0) {
 				fprintf(stderr,"Warning: the following parameter line is unknown:\n %s\n\n\n",line);
@@ -175,6 +188,7 @@ void MkDefaultCosParam(SimParameters *defsim, char *cosmology){
 			OMEPLAM(defsim)+(1-OMEP(defsim)-OMEPLAM(defsim))*pow(1+zi,2));
 	sprintf(ANIM_VIEWFILE(defsim),"\\0");
 	GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 }
 
 
@@ -377,7 +391,8 @@ void mk_default_kh_param(SimParameters *defsim){
 		GAS_AlphaVis(defsim) = 1.0;
 		GAS_BetaVis(defsim) = 2.0;
 		GAS_EPSVIS(defsim) = 0.01;
-		GAS_VISCOSITY(defsim) = 0;   // no NS viscosity for av_mode=0
+		GAS_VISCOSITY(defsim) = 0;
+		GAS_REYNOLDS(defsim) = INFINITY;
 
 		GRAVITY(defsim) = 'N';
 		GAS_SFFLAG(defsim) = 'N';
@@ -392,6 +407,7 @@ void mk_default_rt_param(SimParameters *defsim, int iflag){
 		BGEXPAND(defsim) = 'N';
 		GAS_TYPE(defsim) = 'V';
 		GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 		if(iflag == 0) SIMMODEL(defsim) = RT;
 		else if(iflag == 1) SIMMODEL(defsim) = RT_LF;
 		RT_XMAX(defsim) = 0.5;
@@ -445,6 +461,7 @@ void mk_default_kepler_param(SimParameters *defsim){
 	BGEXPAND(defsim) = 'N'; 
 	GAS_TYPE(defsim) = 'V'; 
 	GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 	SIMMODEL(defsim) = Kepler; 
 	KP_XMAX(defsim) = 6.;
 	KP_YMAX(defsim) = 6.; 
@@ -465,6 +482,7 @@ void mk_default_kepler_param(SimParameters *defsim){
 	GAS_ETAVIS(defsim) = HydroGridSize(defsim)/4.;
 	GAS_EPSVIS(defsim) = 0.01;
 	GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 }
 void mk_default_cylinder_param(SimParameters *defsim){
 	NDIM(defsim) = 2;
@@ -473,6 +491,7 @@ void mk_default_cylinder_param(SimParameters *defsim){
 	BGEXPAND(defsim) = 'N';
 	GAS_TYPE(defsim) = 'V';
 	GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 	SIMMODEL(defsim) = Cylinder;
 	GAS_CONSTMU(defsim) = 'Y';
 	HUBBLE(defsim) = 1;
@@ -532,6 +551,7 @@ void mk_default_2dglass_param(SimParameters *defsim, int flag){
     BGEXPAND(defsim) = 'N';
     GAS_TYPE(defsim) = 'V';
     GAS_VISCOSITY(defsim) = 0;
+    GAS_REYNOLDS(defsim) = INFINITY;
 	SIMMODEL(defsim) = MkGlass2D;
     GL2D_XMAX(defsim) = 1.;
     GL2D_YMAX(defsim) = 1.;
@@ -552,6 +572,7 @@ void mk_default_2dglass_param(SimParameters *defsim, int flag){
 	GAS_ETAVIS(defsim) = HydroGridSize(defsim)/4.;
     GAS_EPSVIS(defsim) = 0.01;
     GAS_VISCOSITY(defsim) = 0;
+    GAS_REYNOLDS(defsim) = INFINITY;
 }
 
 
@@ -563,6 +584,7 @@ void mk_default_bowshock_param(SimParameters *defsim){
 		HUBBLE(defsim) = 1;
 		GAS_TYPE(defsim) = 'V';
 		GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 		SIMMODEL(defsim) = BowShock;
 		NDIM(defsim) = 3;
 		STATBOXSIZE(defsim) = 2;
@@ -592,6 +614,7 @@ void mk_default_blast_param(SimParameters *defsim){
 		NDIM(defsim) = 2;
 		GAS_TYPE(defsim) = 'V';
 		GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
 		BGEXPAND(defsim) = 'N';
 		GAS_CONSTMU(defsim) = 'Y';
 		HUBBLE(defsim) = 1;
@@ -667,6 +690,7 @@ void mk_default_param(SimParameters *defsim, char *cosmology){
 	GAS_ETAVIS(defsim) = HydroGridSize(defsim)/4.;
     GAS_EPSVIS(defsim) = 0.01;
     GAS_VISCOSITY(defsim) = 0;
+    GAS_REYNOLDS(defsim) = INFINITY;
 
 	GAS_COURANT(defsim) = 0.2;
 	GAS_ACCX(defsim) = 0;

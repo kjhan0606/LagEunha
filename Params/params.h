@@ -206,8 +206,8 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_KH_Xmax      SET"KH Xmax             = "S_DOUBLE" # Maximum X of the simulation space\n"
 #define P_KH_Ymax      SET"KH Ymax             = "S_DOUBLE" # Maximum Y of the simulation space\n"
 /* P_KH_GridSize removed: computed at runtime as (Xmax-Xmin)/Nx*4 */
-#define P_KH_OrderAcc  SET"KH Order of Accuracy= "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
-#define P_KH_Kappa     SET"KH Kappa            = "S_FLOAT" # coefficient to determine w2 in the 2d KH\n"
+#define P_KH_OrderAcc  P_GAS_LagOA
+#define P_KH_Kappa     P_GAS_Kappa
 /* BlowShock parameters */
 #define P_BSInitTemp  SET"BS    Init Temp     = "S_FLOAT" # Initial Temperature of the BowShock Test\n"
 #define P_BSMU  	SET"BS    Constat MU    = "S_FLOAT" # Constant value of MU of the BowShcok Test\n"
@@ -221,26 +221,25 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_RT_DEN1 SET"RT Lower density     = "S_FLOAT" # Low Density in the RT Test\n"
 #define P_RT_DEN2 SET"RT Higher density         = "S_FLOAT" # High Density in the RT Test\n"
 #define P_RT_extG  SET"RT External Force   = "S_DOUBLE" # External Gravity in ydirection in the RT Test\n"
-#define P_RT_OrderAcc  SET"RT Order of Accuracy= "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
+#define P_RT_OrderAcc  P_GAS_LagOA
 /* P_RT_GridSize removed: computed at runtime */
 #define P_RT_Deltay    SET"RT Transition size  = "S_FLOAT" # Initial Transition region of the RT Test\n"
 #define P_RT_Vperturb  SET"RT Vel Perturb Amp  = "S_FLOAT" # Initial Perturbation ampl. of Vel. in Y-direction\n"
 #define P_RT_Phalf  SET"RT Pressure at Ly/2  = "S_FLOAT" # Hydrostatic pressure at Ly/2\n"
-#define P_RT_Kappa     SET"RT Kappa            = "S_FLOAT" # coefficient to determine w2 in the 2d RT\n"
+#define P_RT_Kappa     P_GAS_Kappa
 
 #define P_KP_EPS    SET"Keplyer EPS of g    = "S_FLOAT" # g-epsilon\n"
 #define P_KP_XMAX   SET"Kepler xmax (box)   = "S_DOUBLE" # Maximum X in the Kepler Test\n"
 #define P_KP_YMAX   SET"Kepler ymax (box)   = "S_DOUBLE" # Maximum Y in the Kepler Test\n"
-#define P_KP_OrderAcc  SET"Kepler Order of Accuracy = "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
+#define P_KP_OrderAcc  P_GAS_LagOA
 /* P_KP_GridSize removed: computed at runtime */
-#define P_KP_Kappa     SET"Kepler Kappa     = "S_FLOAT" # coefficient to determine w2 (<=0.3 for rec.)"\
-													"in the 2d Kepler test\n"
+#define P_KP_Kappa     P_GAS_Kappa
 
 #define P_GL2D_XMAX   SET"MkGL2D xmax (box)   = "S_DOUBLE" # Maximum X in makding 2D glass\n"
 #define P_GL2D_YMAX   SET"MkGL2D ymax (box)   = "S_DOUBLE" # Maximum Y in making 2D glass\n"
-#define P_GL2D_OrderAcc  SET"MkGL2D Order of Accuracy = "S_FLOAT" # Order of Accuracy in Voro mode. 0<=w<0.5\n"
+#define P_GL2D_OrderAcc  P_GAS_LagOA
 /* P_GL2D_GridSize removed: computed at runtime */
-#define P_GL2D_Kappa     SET"MkGL2D Kappa        = "S_FLOAT" # coefficient to determine w2 in the 2d glass\n"
+#define P_GL2D_Kappa     P_GAS_Kappa
 /* Cylinder flow parameters */
 #define P_CYL_XMAX    SET"CYL maximum x (box) = "S_DOUBLE" # Maximum X in the Cylinder Test\n"
 #define P_CYL_YMAX    SET"CYL maximum y (box) = "S_DOUBLE" # Maximum Y in the Cylinder Test\n"
@@ -251,11 +250,13 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_CYL_RHO     SET"CYL density          = "S_FLOAT" # Freestream density\n"
 #define P_CYL_P       SET"CYL pressure         = "S_FLOAT" # Freestream pressure\n"
 /* P_CYL_GridSize removed: computed at runtime */
-#define P_CYL_OrderAcc SET"CYL Order of Accuracy= "S_FLOAT" # Order of Accuracy in Voro mode\n"
-#define P_CYL_Kappa    SET"CYL Kappa            = "S_FLOAT" # coefficient to determine w2\n"
-#define P_GAS_w2Factor    SET"GAS w2 factor       = "S_FLOAT" # a factor to w2 increment\n"
+#define P_CYL_OrderAcc P_GAS_LagOA
+#define P_CYL_Kappa    P_GAS_Kappa
+#define P_GAS_Kappa      SET"GAS kappa           = "S_FLOAT" # Laguerre weight scale factor (0=uniform w2)\n"
+#define P_GAS_LagOA      SET"GAS laguerre_oa     = "S_FLOAT" # Laguerre face-averaged M(n,m) stencil weight (0<=w<0.5)\n"
+#define P_GAS_w2Factor    SET"GAS w2 factor       = "S_FLOAT" # (unused) w2 increment factor\n"
 #define P_GAS_w2Power    SET"GAS w2 power       = "S_FLOAT" # a power to w2 \n"
-#define P_GAS_AVMODE     SET"GAS av_mode        = "S_INT" # 0=Monaghan, 1=NS-stress, 2=two-tier, 3=HLLC-only\n"
+#define P_GAS_AVMODE     SET"GAS av_mode        = "S_INT" # 0=Monaghan+NS, 1=CD10+NS, 2=two-tier(HLLC+CD10+NS), 3=HLLC-only\n"
 #define P_GAS_USEMUSCL   SET"GAS use_muscl      = "S_INT" # 0=piecewise const, 1=MUSCL\n"
 #define P_GAS_CDAMAX     SET"GAS cd_amax        = "S_FLOAT" # CD10 alpha_max\n"
 #define P_GAS_CDELL      SET"GAS cd_ell         = "S_FLOAT" # CD10 ell parameter\n"
@@ -271,6 +272,7 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_VORO_EtaVis  SET"GAS av_eta         = "S_FLOAT" # Monaghan AV eta (softening)\n"
 #define P_VORO_EpsVis  SET"GAS av_eps         = "S_FLOAT" # Monaghan AV pressure-switch eps\n"
 #define P_VORO_Viscosity  SET"GAS nu_phys        = "S_FLOAT" # Physical kinematic viscosity\n"
+#define P_GAS_REYNOLDS    SET"GAS reynolds       = "S_FLOAT" # Reynolds number (inf=inviscid)\n"
 /* backward-compat aliases for old param files */
 #define P_VORO_AlphaVis_OLD  SET"Alpha parameter in Voro  = "S_FLOAT" # Alpha factor of Voronoi AV\n"
 #define P_VORO_BetaVis_OLD  SET"Beta parameter in Voro  = "S_FLOAT" # Beta factor of Voronoi AV\n"
@@ -340,7 +342,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar)  == Blast){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_BlastInitTemp,sp BLAST_INITTEMP(simpar));\
 		ncnt += frw(wp,P_BlastMU,sp GAS_MU(simpar));\
@@ -348,7 +349,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar) == KH){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_KH_Rho1,sp KH_Rho1(simpar));\
 		ncnt += frw(wp,P_KH_Rho2,sp KH_Rho2(simpar));\
@@ -367,7 +367,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar) == BowShock){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_BSInitTemp,sp BS_INITTEMP(simpar));\
 		ncnt += frw(wp,P_BSMU,sp GAS_MU(simpar));\
@@ -377,7 +376,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar) == RT || SIMMODEL(simpar) == RT_LF){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_RT_XMAX,sp RT_XMAX(simpar));\
 		ncnt += frw(wp,P_RT_YMAX,sp RT_YMAX(simpar));\
@@ -393,7 +391,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar) == Kepler){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_KP_XMAX,sp KP_XMAX(simpar));\
 		ncnt += frw(wp,P_KP_YMAX,sp KP_YMAX(simpar));\
@@ -404,7 +401,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar) == MkGlass2D ){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_GL2D_XMAX,sp GL2D_XMAX(simpar));\
 		ncnt += frw(wp,P_GL2D_YMAX,sp GL2D_YMAX(simpar));\
@@ -414,7 +410,6 @@ void  read_slab_head(FILE*, SimParameters *);
 	}\
 	else if(SIMMODEL(simpar) == Cylinder){\
 		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
-		ncnt += frw(wp,P_FCENTROID,sp GAS_FCENTROID(simpar));\
 		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
 		ncnt += frw(wp,P_Boxsize,sp STATBOXSIZE(simpar));\
 		ncnt += frw(wp,P_Nstep,sp NSTEP(simpar));\
@@ -433,7 +428,6 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_CYL_OrderAcc,sp CYL_OA(simpar));\
 		ncnt += frw(wp,P_CYL_Kappa,sp CYL_Kappa(simpar));\
 	}\
-	ncnt += frw(wp,P_GAS_w2Factor,sp GAS_w2Factor(simpar));\
 	ncnt += frw(wp,P_GAS_w2Power,sp GAS_w2Power(simpar));\
 	ncnt += frw(wp,P_NULL);\
 	ncnt += frw(wp,"### Nx, Ny, and Nz should be same & nspace should be int.\n");\
@@ -535,6 +529,7 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_VORO_EtaVis,sp GAS_ETAVIS(simpar));\
 		ncnt += frw(wp,P_VORO_EpsVis,sp GAS_EPSVIS(simpar));\
 		ncnt += frw(wp,P_VORO_Viscosity,sp GAS_VISCOSITY(simpar));\
+		ncnt += frw(wp,P_GAS_REYNOLDS,sp GAS_REYNOLDS(simpar));\
 		ncnt += frw(wp,P_GAS_AVMODE,sp GAS_AVMODE(simpar));\
 		if(GAS_AVMODE(simpar) >= 1){\
 			ncnt += frw(wp,P_GAS_CDAMAX,sp GAS_CDAMAX(simpar));\

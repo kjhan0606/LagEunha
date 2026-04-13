@@ -227,6 +227,19 @@ void extractLocalDomainVolume(SimParameters *simpar){
                     ddinfo[i].xyzchip);
         }
     }
+    /* Single-process: NDDINFO stayed 0 from buildSimpleRMS, but ddinfo[0]
+       was initialized above.  Bump to 1 so SIM_LXMIN = ddinfo[NDDINFO-1]
+       reads ddinfo[0] instead of the undefined ddinfo[-1]. */
+    if(NDDINFO(simpar) == 0){
+        NDDINFO(simpar) = 1;
+        ddinfo[0].n_size = sizeof(vorork4particletype);
+        ddinfo[0].npivot = 0;
+        ddinfo[0].nsubgroup = 1;
+        ddinfo[0].subgroupsize = 1;
+        ddinfo[0].subgroupid = 0;
+        ddinfo[0].myid = 0;
+        ddinfo[0].nid = 1;
+    }
 }
 
 void buildSimpleRMS(SimParameters *simpar, SimBoxRange box,  size_t n_size, DoDeFunc *ddfunc, DoDeInfo *ddinfo, MPI_Comm Comm){

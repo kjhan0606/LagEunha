@@ -53,7 +53,7 @@ S_TYPE = -DGOTPM
 #specialrules = -DINTEL   -DGOTPM   -DXYZDBL -DDEBUG
 #specialrules = -DINTEL   -DGOTPM   -DDEBUG
 
-specialrules = -DINTEL   -DXYZDBL  $(S_TYPE)      #  -Wmissing-prototypes #-DGOTPM # -DDEBUG
+specialrules = -DINTEL   -DXYZDBL  $(S_TYPE) -DGPU_TESS_COMPARE     #  -Wmissing-prototypes #-DGOTPM # -DDEBUG
 
 FFTW = /home/kjhan/local
 

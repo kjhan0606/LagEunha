@@ -131,6 +131,7 @@ void cyl_postStage(SimParameters *simpar){
 		postype dx = bp->x - _cyl_cx;
 		postype dy = bp->y - _cyl_cy;
 		postype r = sqrt(dx*dx + dy*dy);
+		if(r < 1e-12) continue;  /* particle exactly at center — skip */
 		if(r < _cyl_R){
 			postype nx = dx/r, ny = dy/r;
 			bp->x = _cyl_cx + nx * _cyl_R;

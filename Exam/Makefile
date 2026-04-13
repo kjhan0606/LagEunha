@@ -79,6 +79,20 @@ EXLIB       = libexam.a
 
 EXOBJ       = exam.o mpirks.exam2d.o # exam.stress.o
 
+ifdef USE_CUDA
+CUDA_HOME  ?= /opt/ohpc/pub/cuda/13.0.2
+NVCC        = $(CUDA_HOME)/bin/nvcc
+CUDA_ARCH  ?= sm_86
+NVCCFLAGS   = -O3 -arch=$(CUDA_ARCH) --use_fast_math -DXYZDBL -DGOTPM -DUSE_CUDA \
+              -I.. -I../../Voro
+CCFLAGS    += -DUSE_CUDA
+EXOBJ      += exam_gpu.o exam_gpu_extract.o
+ifdef GPU_VALIDATE
+CCFLAGS    += -DGPU_VALIDATE
+NVCCFLAGS  += -DGPU_VALIDATE
+endif
+endif
+
 
 INCLUDES = -I. -I../  -I$(VORO) -I$(FFTW)/include -I$(RKS) -I$(COSMOS) -I$(TIMER) -I$(MPIAUX) -I$(COLOR)  -I$(OST)
 
@@ -128,6 +142,12 @@ clean:
 .c.exe :
 	$(CC) -o $*.exe $(DRAWOBJS) $(LIBS) $(LDFLAGS) $(INCLUDES)
 
+ifdef USE_CUDA
+exam_gpu.o: exam_gpu.cu exam_gpu.h
+	$(NVCC) $(NVCCFLAGS) $(INCLUDES) -c $< -o $@
 
+exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
+endif
 
 #include ../sRules.make

@@ -39,9 +39,10 @@ void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 		if(myid ==i){
 			if(myid==0){
 				wp = fopen(outfile,"w");
+				if(!wp) { fprintf(stderr,"P%d: cannot open %s\n",myid,outfile); MPI_Abort(MPI_COMM(simpar),1); }
 				fwrite(&tnp, sizeof(int),1,wp);
 			}
-			else wp = fopen(outfile,"a");
+			else { wp = fopen(outfile,"a"); if(!wp) { fprintf(stderr,"P%d: cannot open %s\n",myid,outfile); MPI_Abort(MPI_COMM(simpar),1); } }
 			/* Write common-prefix per particle using correct stride.
 			   Always writes sizeof(treevorork4particletype) bytes per particle
 			   for backward-compatible checkpoint format. */
@@ -55,6 +56,7 @@ void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	}
 	if(myid==0){
 		wp = fopen(outfile,"a");
+		if(!wp) { fprintf(stderr,"P0: cannot open %s for append\n",outfile); MPI_Abort(MPI_COMM(simpar),1); }
 		fwrite(&t, sizeof(postype), 1, wp);
 		fwrite(&dt, sizeof(postype), 1, wp);
 		fwrite(&GAS_dtold(simpar), sizeof(float), 1, wp);
@@ -79,6 +81,7 @@ void rt_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype) : sizeof(treevorork4particletype);
 	if(myid ==0){
 		FILE *fp = fopen(infile,"r");
+		if(!fp) { fprintf(stderr,"P0: cannot open %s for read\n",infile); MPI_Abort(MPI_COMM(simpar),1); }
 		int np;
 		fread(&np, sizeof(int), 1, fp);
 		VORO_TNP(simpar) = VORO_NP(simpar) = np;

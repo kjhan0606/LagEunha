@@ -141,6 +141,27 @@ double exam2d_vph_rk4_int_blend(
 			postype , postype , postype , postype, void (*)(SimParameters *, postype)),
 		void (*)(SimParameters *));
 
+/* LagMFM (av_mode=4): kernel-based meshless finite mass (Hopkins 2015) */
+void updateDenW2Pressure2D_LagMFM(SimParameters *,
+		postype, postype, postype, postype, postype,
+		void (*)(SimParameters *, postype),
+		void (*)(SimParameters *, postype,
+			postype, postype, postype, postype, void (*)(SimParameters *, postype)),
+		postype);
+double getAccVoro2D_LagMFM(SimParameters *,
+		postype, postype, postype, postype, postype, postype, postype,
+		void (*)(SimParameters *, postype),
+		void (*)(SimParameters *, postype,
+			postype, postype, postype, postype, void (*)(SimParameters *, postype)));
+double exam2d_vph_rk4_int_lagmfm(
+		SimParameters *,
+		void (*)(SimParameters *, postype),
+		double (*)(SimParameters *, postype, postype, postype),
+		int (*)(treevorork4particletype*, postype, postype),
+		void (*)(SimParameters *, postype,
+			postype, postype, postype, postype, void (*)(SimParameters *, postype)),
+		void (*)(SimParameters *));
+
 /* k-NN based functions */
 int near2dOpen_kNN(void *, TStruct *, int, PosType, int);
 void buildTree2D(SimParameters *,

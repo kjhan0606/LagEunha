@@ -139,6 +139,10 @@ LIBS = $(MPIAUXLIB) \
 	$(CAMBLIBS) 
 
 
+ifdef USE_CUDA
+CUDA_HOME ?= /opt/ohpc/pub/cuda/13.0.2
+LIBS += -L$(CUDA_HOME)/lib64 -lcudart -lcudadevrt -lstdc++
+endif
 		# -L$(CUDA)/lib64 -lcudart
 #	$(MKL_LIB)/libmkl_intel_lp64.a -Wl,--start-group -L$(MKL_LIB) -lmkl_cdft_core -lmkl_blacs_openmpi_lp64\
 #	-lmkl_sequential  -lmkl_core -lmkl_intel_lp64 -Wl,--end-group

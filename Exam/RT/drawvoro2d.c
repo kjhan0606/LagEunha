@@ -257,6 +257,8 @@ int main(int argc,char **argv){
         if(argc >=6)ymin = atof(argv[5]);
         if(argc >=7)ymax = atof(argv[6]);
 	}
+	if(!fp) { fprintf(stderr,"Cannot open input file\n"); exit(1); }
+	if(!wp) { fprintf(stderr,"Cannot open output SM file\n"); exit(1); }
 	sminitialize(wp, xmin,xmax,ymin,ymax);
 	fread(&np,sizeof(int),1,fp);
 	treevorork4particletype *bp = (treevorork4particletype*)malloc(sizeof(treevorork4particletype)*(np));
@@ -338,6 +340,7 @@ int main(int argc,char **argv){
 				int ip = Voro2D_FindVC(&center,neighbors, neighwork,nneigh, vorocorner,mp,boxsize); 
 				treevorork4particletype *ibp = p[i].bp;
 				ibp->volume = Area2DPolygon(vorocorner, mp); 
+				if(ibp->volume <= 0) ibp->volume = 1e-30;
 				ibp->den = ibp->mass/ibp->volume;
 
 //				ibp->den = ibp->mass/meanvol;

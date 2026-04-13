@@ -37,9 +37,10 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 		if(myid ==i){
 			if(myid==0){
 				wp = fopen(outfile,"w");
+				if(!wp) { fprintf(stderr,"P%d: cannot open %s\n",myid,outfile); MPI_Abort(MPI_COMM(simpar),1); }
 				fwrite(&tnp, sizeof(int),1,wp);
 			}
-			else wp = fopen(outfile,"a");
+			else { wp = fopen(outfile,"a"); if(!wp) { fprintf(stderr,"P%d: cannot open %s\n",myid,outfile); MPI_Abort(MPI_COMM(simpar),1); } }
 			int j;
 			for(j=0;j<np;j++)
 				fwrite(bp_raw + j*p_size, sizeof(treevorork4particletype), 1, wp);
@@ -50,6 +51,7 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	}
 	if(myid==0){
 		wp = fopen(outfile,"a");
+		if(!wp) { fprintf(stderr,"P0: cannot open %s for append\n",outfile); MPI_Abort(MPI_COMM(simpar),1); }
 		fwrite(&t, sizeof(postype), 1, wp);
 		fwrite(&dt, sizeof(postype), 1, wp);
 		fwrite(&GAS_dtold(simpar), sizeof(float), 1, wp);
@@ -73,14 +75,16 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	sprintf(infile,"khout.%.6d.dat", nstep);
 	int myid = MYID(simpar);
 	int av_mode = GAS_AVMODE(simpar);
-	size_t p_size = (av_mode >= 1) ? sizeof(treevorostressrk4particletype) : sizeof(treevorork4particletype);
+	int use_stress = (av_mode >= 1 || GAS_VISCOSITY(simpar) > 0);
+	size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype) : sizeof(treevorork4particletype);
 	if(myid ==0){
 		printf("P0: is now reading starting file: %s\n", infile);
 		FILE *fp = fopen(infile,"r");
 		int np;
+		if(!fp) { fprintf(stderr,"P0: cannot open %s for read\n",infile); MPI_Abort(MPI_COMM(simpar),1); }
 		fread(&np, sizeof(int), 1, fp);
 		VORO_TNP(simpar) = VORO_NP(simpar) = np;
-		if(av_mode >= 1){
+		if(use_stress){
 			size_t common_size = offsetof(treevorork4particletype, bp);
 			treevorork4particletype *tmp_buf = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*np);
 			fread(tmp_buf, sizeof(treevorork4particletype), np, fp);
@@ -138,7 +142,13 @@ int RunKH(SimParameters *simpar, int icont){
 	startRkSDD2D(simpar,KH);
 
 	int av_mode = GAS_AVMODE(simpar);
-	if(av_mode >= 1){
+	postype nu_phys = GAS_VISCOSITY(simpar);
+#ifdef USE_CUDA
+	int use_stress = 1;  /* GPU blend path needs stress-type for all av_modes */
+#else
+	int use_stress = (av_mode >= 1 || nu_phys > 0);
+#endif
+	if(use_stress){
 		int ndd = NDDINFO(simpar);
 		int k;
 		size_t new_nsize = sizeof(treevorostressrk4particletype);
@@ -158,7 +168,7 @@ int RunKH(SimParameters *simpar, int icont){
 			}
 		}
 		if(MYID(simpar)==0)
-			DEBUGPRINT("KH: using treevorostressrk4particletype for av_mode=%d\n", av_mode);
+			DEBUGPRINT("KH: using treevorostressrk4particletype (av_mode=%d, nu_phys=%g)\n", av_mode, nu_phys);
 	}
 
 	DEBUGPRINT("P%d has volume: rmin= %g %g rmax= %g %g\n", MYID(simpar),
@@ -198,7 +208,15 @@ int RunKH(SimParameters *simpar, int icont){
 				searchCellRk4Neighbors2D, findCellRk4BP2D);
 		else dt = exam2d_vph(simpar, kh_w2Measure2D);
 		*/
-		if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 1)
+		if(av_mode == 4 && GAS_EVOLMETHOD(simpar) == 1)
+			dt = exam2d_vph_rk4_int_lagmfm(simpar,
+				paddingTreeVorork4Particles,kh_w2Measure2D,
+				kh_evolBP,
+				mkLinkedList2D_oExam,
+				periodic_postStage_blend
+				);
+		else
+		if(use_stress && GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_blend(simpar,
 				paddingTreeVorork4Particles,kh_w2Measure2D,
 				searchCellRk4Neighbors2D,findCellRk4BP2D,
