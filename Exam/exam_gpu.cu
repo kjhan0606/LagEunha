@@ -982,6 +982,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
 }
 
 /* ================================================================
+
+/* ================================================================
  *  GPU Tessellation: Voronoi/Laguerre on GPU
  *
  *  Three kernels:
@@ -1266,6 +1268,45 @@ void voronoi_tessellate_kernel(
             if (cd > new_max) new_max = cd;
         }
         maxdist2 = new_max;
+    }
+
+    /* ---- Merge near-coincident vertices (degenerate faces at grid corners) ----
+     * On a regular/near-regular grid, 4+ Voronoi cells meet at (near) a
+     * single point. Sutherland-Hodgman clipping produces two nearly-
+     * identical vertices, creating a tiny face.  These cause CFL dt
+     * collapse.  Use RELATIVE threshold: edge < 1e-4 * max_edge. */
+    {
+        double max_edge2 = 0;
+        for (int e = 0; e < nc; e++) {
+            int en = (e + 1) % nc;
+            double dx_m = poly_x[en] - poly_x[e];
+            double dy_m = poly_y[en] - poly_y[e];
+            double e2 = dx_m * dx_m + dy_m * dy_m;
+            if (e2 > max_edge2) max_edge2 = e2;
+        }
+        double merge_eps2 = max_edge2 * 1e-6;  /* (1e-3 * max_edge)^2 */
+        if (merge_eps2 < 1e-30) merge_eps2 = 1e-30;
+
+        int new_nc = 0;
+        for (int e = 0; e < nc; e++) {
+            int en = (e + 1) % nc;
+            double dx_m = poly_x[en] - poly_x[e];
+            double dy_m = poly_y[en] - poly_y[e];
+            if (dx_m * dx_m + dy_m * dy_m > merge_eps2) {
+                tmp_x[new_nc] = poly_x[e];
+                tmp_y[new_nc] = poly_y[e];
+                tmp_neigh[new_nc] = poly_neigh[e];
+                new_nc++;
+            }
+        }
+        if (new_nc >= 3 && new_nc < nc) {
+            nc = new_nc;
+            for (int e = 0; e < nc; e++) {
+                poly_x[e] = tmp_x[e];
+                poly_y[e] = tmp_y[e];
+                poly_neigh[e] = tmp_neigh[e];
+            }
+        }
     }
 
     /* ---- Compute volume via shoelace formula ---- */
@@ -2184,9 +2225,9 @@ void lagmfm_force_kernel(
                 /* Effective face area vector */
                 double W_ij = dev_wendland_c2_2d(r, h_i);
                 double W_ji = dev_wendland_c2_2d(r, h_j);
-                double Vi2 = iV * iV;
+                double Vi2 = iV;       /* Hopkins (2015): V_i, not V_i^2 */
                 double Vj  = (double)pvolume[j];
-                double Vj2 = Vj * Vj;
+                double Vj2 = Vj;       /* Hopkins (2015): V_j, not V_j^2 */
 
                 double Ax_i = Vi2 * W_ij * (Ei_xx * dx + Ei_xy * dy);
                 double Ay_i = Vi2 * W_ij * (Ei_yx * dx + Ei_yy * dy);
@@ -2317,7 +2358,7 @@ void lagmfm_force_kernel(
                 double er_x = dx / r, er_y = dy / r;
                 double VdotR = dvx_sig * er_x + dvy_sig * er_y;
                 double vsig = cL + cR - fmin(0.0, VdotR);
-                double heff = 0.25 * sqrt(iV);
+                double heff = sqrt(iV);
                 double dramp_cfl = fmax(r, heff);
                 float dt_face = (float)(2.0 * Courant * dramp_cfl / vsig);
                 if (dt_face < my_dt) my_dt = dt_face;

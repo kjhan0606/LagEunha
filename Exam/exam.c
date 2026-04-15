@@ -1541,6 +1541,129 @@ void updateDenW2Pressure2D_kNN(SimParameters *simpar,
 }
 
 /* ================================================================
+ *  Voro2D_SutherlandHodgman_CPU:
+ *  Sutherland-Hodgman polygon clipping tessellation (array-based).
+ *  Same algorithm as the GPU kernel, ported to plain C for benchmarking.
+ *  Input: center (x,y,w2), neighbors (relative coords, sorted by drad2).
+ *  Output: volume.  out_nfaces = number of polygon faces.
+ * ================================================================ */
+#ifdef TESS_BENCHMARK
+#define SH_MAX_CORNERS 64
+static double Voro2D_SutherlandHodgman_CPU(
+	double w2c,
+	Voro2D_point *neighbors, int nneigh,
+	double boxsize, int *out_nfaces)
+{
+	double halfbox = 0.5 * boxsize;
+	double poly_x[SH_MAX_CORNERS], poly_y[SH_MAX_CORNERS];
+	double tmp_x[SH_MAX_CORNERS], tmp_y[SH_MAX_CORNERS];
+	int nc = 4;
+	poly_x[0] = -halfbox; poly_y[0] = -halfbox;
+	poly_x[1] =  halfbox; poly_y[1] = -halfbox;
+	poly_x[2] =  halfbox; poly_y[2] =  halfbox;
+	poly_x[3] = -halfbox; poly_y[3] =  halfbox;
+
+	double maxdist2 = halfbox * sqrt(3.0);
+
+	for (int ni = 0; ni < nneigh; ni++) {
+		if (neighbors[ni].drad2 > maxdist2) break;
+
+		double nx_n = neighbors[ni].x, ny_n = neighbors[ni].y;
+		double dist2 = nx_n*nx_n + ny_n*ny_n;
+		double wfrac = 0.5 + 0.5*(w2c - neighbors[ni].w2)/dist2;
+		double threshold = wfrac * dist2;
+
+		int out_count = 0;
+		for (int e = 0; e < nc && out_count < SH_MAX_CORNERS-2; e++) {
+			int e_next = (e+1) % nc;
+			double ax = poly_x[e],    ay = poly_y[e];
+			double bx = poly_x[e_next], by = poly_y[e_next];
+			double da = ax*nx_n + ay*ny_n;
+			double db = bx*nx_n + by*ny_n;
+			int a_in = (da <= threshold);
+			int b_in = (db <= threshold);
+
+			if (a_in && b_in) {
+				tmp_x[out_count] = ax;
+				tmp_y[out_count] = ay;
+				out_count++;
+			} else if (a_in && !b_in) {
+				tmp_x[out_count] = ax;
+				tmp_y[out_count] = ay;
+				out_count++;
+				double denom = db - da;
+				double t = (fabs(denom) > 1e-30) ? (threshold - da)/denom : wfrac;
+				if (t < 1e-9) t = 1e-9;
+				if (t > 1.0 - 1e-9) t = 1.0 - 1e-9;
+				tmp_x[out_count] = ax + t*(bx-ax);
+				tmp_y[out_count] = ay + t*(by-ay);
+				out_count++;
+			} else if (!a_in && b_in) {
+				double denom = db - da;
+				double t = (fabs(denom) > 1e-30) ? (threshold - da)/denom : wfrac;
+				if (t < 1e-9) t = 1e-9;
+				if (t > 1.0 - 1e-9) t = 1.0 - 1e-9;
+				tmp_x[out_count] = ax + t*(bx-ax);
+				tmp_y[out_count] = ay + t*(by-ay);
+				out_count++;
+			}
+		}
+		nc = out_count;
+		for (int e = 0; e < nc; e++) {
+			poly_x[e] = tmp_x[e]; poly_y[e] = tmp_y[e];
+		}
+		if (nc < 3) break;
+
+		double new_max = 0;
+		for (int e = 0; e < nc; e++) {
+			double cd = poly_x[e]*poly_x[e] + poly_y[e]*poly_y[e];
+			if (cd > new_max) new_max = cd;
+		}
+		maxdist2 = new_max;
+	}
+
+	/* Vertex merging (same as GPU kernel) */
+	{
+		double max_edge2 = 0;
+		for (int e = 0; e < nc; e++) {
+			int en = (e+1) % nc;
+			double dx = poly_x[en]-poly_x[e], dy = poly_y[en]-poly_y[e];
+			double e2 = dx*dx + dy*dy;
+			if (e2 > max_edge2) max_edge2 = e2;
+		}
+		double merge_eps2 = max_edge2 * 1e-6;
+		if (merge_eps2 < 1e-30) merge_eps2 = 1e-30;
+		int new_nc = 0;
+		for (int e = 0; e < nc; e++) {
+			int en = (e+1) % nc;
+			double dx = poly_x[en]-poly_x[e], dy = poly_y[en]-poly_y[e];
+			if (dx*dx + dy*dy > merge_eps2) {
+				tmp_x[new_nc] = poly_x[e];
+				tmp_y[new_nc] = poly_y[e];
+				new_nc++;
+			}
+		}
+		if (new_nc >= 3 && new_nc < nc) {
+			nc = new_nc;
+			for (int e = 0; e < nc; e++) {
+				poly_x[e] = tmp_x[e]; poly_y[e] = tmp_y[e];
+			}
+		}
+	}
+
+	/* Shoelace volume */
+	double area = 0;
+	for (int e = 0; e < nc; e++) {
+		int en = (e+1) % nc;
+		area += poly_x[e]*poly_y[en] - poly_y[e]*poly_x[en];
+	}
+	*out_nfaces = nc;
+	return 0.5 * fabs(area);
+}
+#undef SH_MAX_CORNERS
+#endif /* TESS_BENCHMARK */
+
+/* ================================================================
  *  updateDenW2Pressure2DBlend:
  *  Same as updateDenW2Pressure2D but for treevorostressrk4particletype.
  *  Also computes velocity gradient (∇⊗v) via Gauss divergence theorem
@@ -1588,6 +1711,105 @@ void updateDenW2Pressure2DBlend(
 	CellType *cells = (VORO_BASICCELL(simpar) = (CellType*)my_malloc(sizeof(CellType)*mx*my));
 	mkLinkedList2D(simpar, cellsize, xmin,ymin,xmax,ymax, paddingAllTreeParticles);
 
+#ifdef TESS_BENCHMARK
+	/* ---- Tess Benchmark: Incremental vs Sutherland-Hodgman on CPU ---- */
+	{
+		static int _bench_done = 0;
+		if (!_bench_done && MYID(simpar) == 0) {
+			_bench_done = 1;
+			postype boxsize_b = BOXSIZE(simpar)/NX(simpar)*5;
+			double vol_inc_sum = 0, vol_sh_sum = 0;
+			int nf_inc_sum = 0, nf_sh_sum = 0;
+			int nbp_b = nbp;
+			int my_b = my, mx_b = mx;
+
+			/* --- Pass 1: Incremental (Voro2D_FindVC) --- */
+			double t0_inc = MPI_Wtime();
+			for (int iy_b = 0; iy_b < my_b; iy_b++) {
+				int mp_b = 1000;
+				Voro2D_Corner *vc = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp_b);
+				for (int ix_b = 0; ix_b < mx_b; ix_b++) {
+					int np_b;
+					treevorork4particletype *p_b = find2DCellBP(simpar, ix_b, iy_b, &np_b);
+					int nn_b;
+					Voro2D_point *neigh_b = find2DNeighboringBP(simpar, ix_b, iy_b, &nn_b);
+					Voro2D_point *nw_b = (Voro2D_point*)malloc(sizeof(Voro2D_point)*nn_b);
+					for (int ii = 0; ii < np_b; ii++) {
+						Voro2D_point ctr;
+						ctr.x = p_b[ii].x; ctr.y = p_b[ii].y;
+						ctr.indx = PINDX(p_b+ii);
+						ctr.csound = p_b[ii].csound;
+						ctr.w2 = p_b[ii].w2;
+						int ip_b = Voro2D_FindVC(&ctr, neigh_b, nw_b, nn_b, vc, mp_b, boxsize_b);
+						/* Count faces and accumulate volume */
+						Voro2D_Corner *et = vc;
+						int fc = 0;
+						double vol_b = 0;
+						do {
+							if (et->status == Active) {
+								Voro2D_Corner *et2 = et->upperlink;
+								vol_b += et->x * et2->y - et->y * et2->x;
+								fc++;
+							}
+							et = et->upperlink;
+						} while (et != vc);
+						vol_inc_sum += 0.5 * fabs(vol_b);
+						nf_inc_sum += fc;
+					}
+					if (np_b > 0) free(p_b);
+					if (nn_b > 0) { free(neigh_b); free(nw_b); }
+				}
+				free(vc);
+			}
+			double t1_inc = MPI_Wtime();
+
+			/* --- Pass 2: Sutherland-Hodgman --- */
+			double t0_sh = MPI_Wtime();
+			for (int iy_b = 0; iy_b < my_b; iy_b++) {
+				for (int ix_b = 0; ix_b < mx_b; ix_b++) {
+					int np_b;
+					treevorork4particletype *p_b = find2DCellBP(simpar, ix_b, iy_b, &np_b);
+					int nn_b;
+					Voro2D_point *neigh_b = find2DNeighboringBP(simpar, ix_b, iy_b, &nn_b);
+					Voro2D_point *nw_b = (Voro2D_point*)malloc(sizeof(Voro2D_point)*nn_b);
+					for (int ii = 0; ii < np_b; ii++) {
+						/* Copy & subtract center (relative coords, same as Voro2D_FindVC) */
+						postype w2c = p_b[ii].w2;
+						int j_b = 0;
+						for (int k = 0; k < nn_b; k++) {
+							if (neigh_b[k].indx != PINDX(p_b+ii)) {
+								nw_b[j_b].x = neigh_b[k].x - p_b[ii].x;
+								nw_b[j_b].y = neigh_b[k].y - p_b[ii].y;
+								nw_b[j_b].dist2 = nw_b[j_b].x*nw_b[j_b].x + nw_b[j_b].y*nw_b[j_b].y;
+								nw_b[j_b].w2 = neigh_b[k].w2;
+								double dd = nw_b[j_b].dist2;
+								double ww = (w2c - nw_b[j_b].w2)/dd;
+								nw_b[j_b].drad2 = 0.25*dd*(1+ww)*(1+ww);
+								j_b++;
+							}
+						}
+						qsort(nw_b, j_b, sizeof(Voro2D_point), sort2Ddrad2);
+						int nf_b;
+						double vol_b = Voro2D_SutherlandHodgman_CPU(w2c, nw_b, j_b, boxsize_b, &nf_b);
+						vol_sh_sum += vol_b;
+						nf_sh_sum += nf_b;
+					}
+					if (np_b > 0) free(p_b);
+					if (nn_b > 0) { free(neigh_b); free(nw_b); }
+				}
+			}
+			double t1_sh = MPI_Wtime();
+
+			double ms_inc = (t1_inc - t0_inc)*1e3;
+			double ms_sh  = (t1_sh  - t0_sh )*1e3;
+			fprintf(stderr, "[TESS BENCH] nbp=%d  Incremental=%.1f ms  S-H=%.1f ms  ratio=%.2fx\n",
+				nbp_b, ms_inc, ms_sh, ms_inc/ms_sh);
+			fprintf(stderr, "[TESS BENCH] faces: inc=%d sh=%d  vol: inc=%.6e sh=%.6e  vol_diff=%.2e\n",
+				nf_inc_sum, nf_sh_sum, vol_inc_sum, vol_sh_sum, fabs(vol_inc_sum-vol_sh_sum));
+		}
+	}
+#endif /* TESS_BENCHMARK */
+
 #ifdef USE_CUDA
 	size_t _fused_p_size = TVORORK4_DDINFO(simpar)[0].n_size;
 	char *_fused_real_base = (char*)VORORK4_TBP(simpar);
@@ -1598,6 +1820,7 @@ void updateDenW2Pressure2DBlend(
 	_fused_nthreads = omp_get_max_threads();
 #endif
 
+  if (GAS_GPU_ENABLED(simpar)) {
 	/* === GPU Tessellation Path === */
 	{
 		GPUContext *gctx = gpu_get_context();
@@ -1721,6 +1944,7 @@ void updateDenW2Pressure2DBlend(
 	/* Fused face extraction init (for CPU fallback path) */
 	gpu_fused_begin(nbp, _fused_npad, _fused_p_size, _fused_nthreads,
 	                _fused_real_base, _fused_pad_base);
+  } /* end if (GAS_GPU_ENABLED) */
 #endif
 
 	int iy;
@@ -2145,10 +2369,14 @@ _gpu_tess_skip_cpu:
 #endif
 	my_free(VORO_BASICCELL(simpar));
 #ifdef USE_CUDA
-	if (!gpu_get_context()->tess_faces_on_device) {
-		gpu_fused_end();
+	if (GAS_GPU_ENABLED(simpar)) {
+		if (!gpu_get_context()->tess_faces_on_device) {
+			gpu_fused_end();
+		}
+		/* Keep VORORK4_TBPP alive — GPU wrapper will free it after SoA fill */
+	} else {
+		my_free(VORORK4_TBPP(simpar));
 	}
-	/* Keep VORORK4_TBPP alive — GPU wrapper will free it after SoA fill */
 #else
 	my_free(VORORK4_TBPP(simpar));
 #endif
@@ -2616,18 +2844,13 @@ static void update_alpha_cd_2d(SimParameters *simpar, postype dt){
 }
 
 /* ================================================================
- *  getAccVoro2DBlend: Two-tier blended force computation.
- *  Per-face blend between M(n,m)+NS-stress and HLLC+CD10.
+ *  getAccVoro2DBlend_impl: Inner implementation of blended force.
  * ================================================================ */
-double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
+static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postype ymin,
 		postype xmax, postype ymax,
 		postype OrderOfAccuracy, postype Courant, postype Gamma,
-		void (*paddingAllTreeParticles)(SimParameters *, postype),
 		Voro2D_point *(*find2DNeighboringBP)(SimParameters *, int, int, int *),
-		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *),
-		void mkLinkedList2D(SimParameters *, postype, postype , postype , postype , postype,
-			void (*)(SimParameters *, postype))
-		){
+		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *)){
 	postype boxsize = BOXSIZE(simpar)/NX(simpar)*5;
 	treevorostressrk4particletype *bp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	int nbp = VORO_NP(simpar);
@@ -2642,13 +2865,8 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 
 	postype Lx = SIMBOX(simpar).x.max;
 	postype Ly = SIMBOX(simpar).y.max;
-	postype cellsize;
-	cellsize = BASICCELL_CELLWIDTH(simpar);
-	int mx, my;
-	BASICCELL_MX(simpar) = mx = ceil((xmax-xmin)/cellsize);
-	BASICCELL_MY(simpar) = my = ceil((ymax-ymin)/cellsize);
-	CellType *cells = (VORO_BASICCELL(simpar)= (CellType*)my_malloc(sizeof(CellType)*mx*my));
-	mkLinkedList2D(simpar, cellsize,xmin,ymin,xmax,ymax, paddingAllTreeParticles);
+	int mx = BASICCELL_MX(simpar);
+	int my = BASICCELL_MY(simpar);
 
 	postype dtold = GAS_dtold(simpar);
 
@@ -2674,6 +2892,8 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 			Voro2D_point *neighwork = (Voro2D_point*)malloc(sizeof(Voro2D_point)*nneigh);
 			int i;
 			for(i=0;i<np;i++){
+				treevorork4particletype *ibp_rk4 = p[i].bp;
+
 				Voro2D_point center;
 				center.x = p[i].x;
 				center.y = p[i].y;
@@ -2681,7 +2901,6 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 				center.csound = p[i].csound;
 				center.w2 = p[i].w2;
 
-				treevorork4particletype *ibp_rk4 = p[i].bp;
 				treevorostressrk4particletype *ibp = (treevorostressrk4particletype*)ibp_rk4;
 				ibp_rk4->dt = 1.e10;
 
@@ -3291,6 +3510,32 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 		}
 		free(vorocorner);
 	}
+	return Dtime;
+}
+
+/* ================================================================
+ *  getAccVoro2DBlend: Original entry point (calls _impl).
+ * ================================================================ */
+double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
+		postype xmax, postype ymax,
+		postype OrderOfAccuracy, postype Courant, postype Gamma,
+		void (*paddingAllTreeParticles)(SimParameters *, postype),
+		Voro2D_point *(*find2DNeighboringBP)(SimParameters *, int, int, int *),
+		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *),
+		void mkLinkedList2D(SimParameters *, postype, postype , postype , postype , postype,
+			void (*)(SimParameters *, postype))
+		){
+	postype cellsize = BASICCELL_CELLWIDTH(simpar);
+	int mx, my;
+	BASICCELL_MX(simpar) = mx = ceil((xmax-xmin)/cellsize);
+	BASICCELL_MY(simpar) = my = ceil((ymax-ymin)/cellsize);
+	VORO_BASICCELL(simpar) = (CellType*)my_malloc(sizeof(CellType)*mx*my);
+	mkLinkedList2D(simpar, cellsize, xmin, ymin, xmax, ymax, paddingAllTreeParticles);
+
+	postype Dtime = getAccVoro2DBlend_impl(simpar, xmin, ymin, xmax, ymax,
+		OrderOfAccuracy, Courant, Gamma,
+		find2DNeighboringBP, find2DCellBP);
+
 	my_free(VORO_BASICCELL(simpar));
 	my_free(VORORK4_TBPP(simpar));
 	{
@@ -3300,6 +3545,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 	}
 	return Dtime;
 }
+
 
 /* ================================================================
  *  getAccVoro2D_LagMFM (av_mode=4):
@@ -3417,9 +3663,9 @@ double getAccVoro2D_LagMFM(SimParameters *simpar, postype xmin, postype ymin,
 							 * use only the i-side contribution. */
 							postype W_ij = mfm_W_wendland2d(r, h_i);
 							postype W_ji = mfm_W_wendland2d(r, h_j);
-							postype Vi2 = Vi*Vi;
+							postype Vi2 = Vi;       /* Hopkins (2015): V_i, not V_i^2 */
 							postype Vj  = jbp->volume;
-							postype Vj2 = Vj*Vj;
+							postype Vj2 = Vj;       /* Hopkins (2015): V_j, not V_j^2 */
 							postype Ej_xx = jbp->stress.E_inv_xx;
 							postype Ej_xy = jbp->stress.E_inv_xy;
 							postype Ej_yx = jbp->stress.E_inv_yx;
@@ -3654,7 +3900,7 @@ double getAccVoro2D_LagMFM(SimParameters *simpar, postype xmin, postype ymin,
 							postype er_y = dy/r;
 							postype VdotR = dvx*er_x + dvy*er_y;
 							postype vsig = cL + cR - MIN(0, VdotR);
-							postype heff = 0.25*sqrt(Vi);
+							postype heff = sqrt(Vi);
 							postype dramp_cfl = fmax(r, heff);
 							postype dt_face = 2.0*Courant*dramp_cfl/vsig;
 							if(dt_face < dt_cell) dt_cell = dt_face;
@@ -6556,18 +6802,21 @@ double exam2d_vph_rk4_int_blend(
 	_t_update += MPI_Wtime() - _t0;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
-	Dtime = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		Dtime = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+	else
 #elif defined(USE_CUDA)
-	Dtime = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		Dtime = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#else
+	else
+#endif
 	Dtime = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#endif
 	_t_force += MPI_Wtime() - _t0;
 
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
@@ -6602,18 +6851,21 @@ double exam2d_vph_rk4_int_blend(
 	_t_update += MPI_Wtime() - _t0;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
-	dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+	else
 #elif defined(USE_CUDA)
-	dt = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		dt = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#else
+	else
+#endif
 	dt = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#endif
 	_t_force += MPI_Wtime() - _t0;
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -6647,18 +6899,21 @@ double exam2d_vph_rk4_int_blend(
 	_t_update += MPI_Wtime() - _t0;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
-	dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+	else
 #elif defined(USE_CUDA)
-	dt = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		dt = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#else
+	else
+#endif
 	dt = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#endif
 	_t_force += MPI_Wtime() - _t0;
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -6692,18 +6947,21 @@ double exam2d_vph_rk4_int_blend(
 	_t_update += MPI_Wtime() - _t0;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
-	dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+	else
 #elif defined(USE_CUDA)
-	dt = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
+	if (GAS_GPU_ENABLED(simpar))
+		dt = getAccVoro2DBlend_GPU(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#else
+	else
+#endif
 	dt = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
-#endif
 	_t_force += MPI_Wtime() - _t0;
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -6860,17 +7118,20 @@ double exam2d_vph_rk4_int_lagmfm(
 
 	/* === K1 === */
 #ifdef USE_CUDA
-	updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, 1);
-	lagmfm_w2_post_density(simpar, 1);
-	Dtime = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
-#else
-	updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, 1);
-	Dtime = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	if (GAS_GPU_ENABLED(simpar)) {
+		updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, 1);
+		lagmfm_w2_post_density(simpar, 1);
+		Dtime = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	} else
 #endif
+	{
+		updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, 1);
+		Dtime = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	}
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k1x  = sbp[i].vx*Dtime;
@@ -6893,17 +7154,20 @@ double exam2d_vph_rk4_int_lagmfm(
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 #ifdef USE_CUDA
-	updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
-	lagmfm_w2_post_density(simpar, Dtime);
-	dt = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
-#else
-	updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
-	dt = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	if (GAS_GPU_ENABLED(simpar)) {
+		updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
+		lagmfm_w2_post_density(simpar, Dtime);
+		dt = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	} else
 #endif
+	{
+		updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
+		dt = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	}
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k2x  = sbp[i].vx*Dtime;
@@ -6926,17 +7190,20 @@ double exam2d_vph_rk4_int_lagmfm(
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 #ifdef USE_CUDA
-	updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
-	lagmfm_w2_post_density(simpar, Dtime);
-	dt = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
-#else
-	updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
-	dt = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	if (GAS_GPU_ENABLED(simpar)) {
+		updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
+		lagmfm_w2_post_density(simpar, Dtime);
+		dt = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	} else
 #endif
+	{
+		updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
+		dt = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	}
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k3x  = sbp[i].vx*Dtime;
@@ -6959,17 +7226,20 @@ double exam2d_vph_rk4_int_lagmfm(
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 #ifdef USE_CUDA
-	updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
-	lagmfm_w2_post_density(simpar, Dtime);
-	dt = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
-#else
-	updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
-	dt = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
-			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	if (GAS_GPU_ENABLED(simpar)) {
+		updateDenW2Pressure2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
+		lagmfm_w2_post_density(simpar, Dtime);
+		dt = getAccVoro2D_LagMFM_GPU(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	} else
 #endif
+	{
+		updateDenW2Pressure2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				Gamma, paddingAllTreeParticles, mkLinkedList2D, Dtime);
+		dt = getAccVoro2D_LagMFM(simpar, xmin,ymin,xmax,ymax,
+				OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, mkLinkedList2D);
+	}
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k4x  = sbp[i].vx*Dtime;
