@@ -82,8 +82,11 @@ EXOBJ       = exam.o mpirks.exam2d.o # exam.stress.o
 ifdef USE_CUDA
 CUDA_HOME  ?= /opt/ohpc/pub/cuda/13.0.2
 NVCC        = $(CUDA_HOME)/bin/nvcc
-CUDA_ARCH  ?= sm_86
-NVCCFLAGS   = -O3 -arch=$(CUDA_ARCH) --use_fast_math -DXYZDBL -DGOTPM -DUSE_CUDA \
+NVCCFLAGS   = -O3 --use_fast_math -DXYZDBL -DGOTPM -DUSE_CUDA \
+              -gencode arch=compute_80,code=sm_80 \
+              -gencode arch=compute_86,code=sm_86 \
+              -gencode arch=compute_89,code=sm_89 \
+              -gencode arch=compute_90,code=sm_90 \
               -I.. -I../../Voro
 CCFLAGS    += -DUSE_CUDA
 EXOBJ      += exam_gpu.o exam_gpu_extract.o

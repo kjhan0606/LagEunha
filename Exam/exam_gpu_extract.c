@@ -596,18 +596,18 @@ static void extractFaceCSR_2D_scatter_cached(FaceCSR *faces)
 /* ================================================================
  *  writeBackResults: copy GPU output back to particle AoS
  * ================================================================ */
-static void writeBackResults(
+static void writeBackResults_range(
     SimParameters *simpar,
     const ParticleSoA *h_parts,
-    int has_stress)
+    int has_stress,
+    int i_start, int i_end)
 {
     size_t p_size  = TVORORK4_DDINFO(simpar)[0].n_size;
     char *real_base = (char *)VORORK4_TBP(simpar);
-    int nbp = VORO_NP(simpar);
     int i;
 
 #pragma omp parallel for schedule(static)
-    for (i = 0; i < nbp; i++) {
+    for (i = i_start; i < i_end; i++) {
         treevorork4particletype *bp =
             (treevorork4particletype *)(real_base + i * p_size);
 
@@ -624,6 +624,14 @@ static void writeBackResults(
     }
 }
 
+static void writeBackResults(
+    SimParameters *simpar,
+    const ParticleSoA *h_parts,
+    int has_stress)
+{
+    writeBackResults_range(simpar, h_parts, has_stress, 0, VORO_NP(simpar));
+}
+
 /* ================================================================
  *  Global GPU context (persistent across RK4 stages)
  * ================================================================ */
@@ -635,16 +643,17 @@ GPUContext *gpu_get_context(void) { return &g_gpu_ctx; }
  *  getAccVoro2DBlend_GPU: top-level wrapper replacing getAccVoro2DBlend
  *
  *  Called from exam2d_vph_rk4_int_blend in place of getAccVoro2DBlend.
+ *  All particles processed on GPU (single stream).
+ *
  *  Sequence:
- *    1. Build cell linked list (mkLinkedList2D) — same as CPU
- *    2. Extract Voronoi faces to CSR
- *    3. Fill particle SoA
- *    4. Upload to GPU (H2D)
- *    5. Launch force kernel
- *    6. Download results (D2H)
- *    7. Write back to particle struct
- *    8. MPI_Allreduce(min_dt) → return
+ *    1. Build cell linked list (or reuse from fused tessellation)
+ *    2. Extract Voronoi faces to CSR (or reuse from GPU tessellation)
+ *    3. Fill particle SoA + upload to GPU
+ *    4. Launch force kernel → CFL reduction
+ *    5. Download results + write back to particle struct
+ *    6. MPI_Allreduce(min_dt) → return
  * ================================================================ */
+
 static int gpu_call_count = 0;
 
 double getAccVoro2DBlend_GPU(
@@ -674,7 +683,13 @@ double getAccVoro2DBlend_GPU(
            padding still alive from that call. */
         npad = VORO_NPAD(simpar);
     } else {
-        /* Fallback: build cell linked list (identical to CPU path) */
+        /* Fallback: build cell linked list (identical to CPU path).
+         * GPU-tess path kept TBPP alive in updateDenW2Pressure2DBlend; free it
+         * here before paddingTreeVorork4Particles overwrites the pointer. */
+        if (VORORK4_TBPP(simpar) != NULL) {
+            my_free(VORORK4_TBPP(simpar));
+            VORORK4_TBPP(simpar) = NULL;
+        }
         int mx, my;
         BASICCELL_MX(simpar) = mx = (int)ceil((xmax - xmin) / cellsize);
         BASICCELL_MY(simpar) = my = (int)ceil((ymax - ymin) / cellsize);
@@ -791,15 +806,16 @@ double getAccVoro2DBlend_GPU(
     params.blend_theta = GAS_BLENDTHETA(simpar);
     params.dtold       = GAS_dtold(simpar);
 
-    double Dtime_local = gpu_launch_force_kernel(&g_gpu_ctx, nbp, &params);
+    /* --- Launch GPU kernel (all particles) --- */
+    double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, &params);
 
     double t5_download = MPI_Wtime();
-    /* --- Download results --- */
     gpu_download_results(&g_gpu_ctx, nbp);
 
     double t6_writeback = MPI_Wtime();
-    /* --- Write back to particle struct --- */
-    writeBackResults(simpar, &g_gpu_ctx.h_parts, has_stress);
+    writeBackResults_range(simpar, &g_gpu_ctx.h_parts, has_stress, 0, nbp);
+
+    double Dtime_local = Dtime_gpu;
 
     /* --- MPI reduction for global minimum dt --- */
     double Dtime;
@@ -819,7 +835,7 @@ double getAccVoro2DBlend_GPU(
         printf("[GPU step %d] np=%d faces=%d %s | "
                "extract=%.1fms SoA=%.1fms upload=%.1fms "
                "kernel=%.1fms download=%.1fms writeback=%.1fms | "
-               "total=%.1fms\n",
+               "total=%.1fms dt=%.3e\n",
                gpu_call_count / 4, nbp, n_faces,
                fused ? "(fused)" : "(full)",
                (t2_soa - t1_extract) * 1e3,
@@ -828,7 +844,8 @@ double getAccVoro2DBlend_GPU(
                (t5_download - t4_kernel) * 1e3,
                (t6_writeback - t5_download) * 1e3,
                (t7_done - t6_writeback) * 1e3,
-               (t7_done - t0_total) * 1e3);
+               (t7_done - t0_total) * 1e3,
+               Dtime_gpu);
         fflush(stdout);
     }
 
@@ -1809,6 +1826,11 @@ double getAccVoro2D_LagMFM_GPU(
     int mx, my;
     BASICCELL_MX(simpar) = mx = (int)ceil((xmax - xmin) / cellsize);
     BASICCELL_MY(simpar) = my = (int)ceil((ymax - ymin) / cellsize);
+    /* LagMFM density kept TBPP alive; free before rebuild to avoid leak. */
+    if (VORORK4_TBPP(simpar) != NULL) {
+        my_free(VORORK4_TBPP(simpar));
+        VORORK4_TBPP(simpar) = NULL;
+    }
     VORO_BASICCELL(simpar) =
         (HydroTreeLinkedCell *)my_malloc(sizeof(HydroTreeLinkedCell) * mx * my);
     mkLinkedList2D(simpar, cellsize, xmin, ymin, xmax, ymax,

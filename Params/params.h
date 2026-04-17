@@ -273,6 +273,7 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_VORO_EpsVis  SET"GAS av_eps         = "S_FLOAT" # Monaghan AV pressure-switch eps\n"
 #define P_VORO_Viscosity  SET"GAS nu_phys        = "S_FLOAT" # Physical kinematic viscosity\n"
 #define P_GAS_REYNOLDS    SET"GAS reynolds       = "S_FLOAT" # Reynolds number (inf=inviscid)\n"
+#define P_GAS_GPU_ENABLED SET"GAS gpu_enabled    = "S_INT"   # 0=CPU only (default), 1=use GPU\n"
 /* backward-compat aliases for old param files */
 #define P_VORO_AlphaVis_OLD  SET"Alpha parameter in Voro  = "S_FLOAT" # Alpha factor of Voronoi AV\n"
 #define P_VORO_BetaVis_OLD  SET"Beta parameter in Voro  = "S_FLOAT" # Beta factor of Voronoi AV\n"
@@ -546,6 +547,7 @@ void  read_slab_head(FILE*, SimParameters *);
 			ncnt += frw(wp,P_GAS_W2RATEMAX,sp GAS_W2RATEMAX(simpar));\
 			ncnt += frw(wp,P_GAS_W2FLOORFRAC,sp GAS_W2FLOORFRAC(simpar));\
 		}\
+		ncnt += frw(wp,P_GAS_GPU_ENABLED,sp GAS_GPU_ENABLED(simpar));\
 	}\
 	ncnt += frw(wp,P_NULL);\
 }while(0)

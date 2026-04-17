@@ -350,6 +350,7 @@ typedef struct GasInfo{
 	float w2_rate_max;                 // max fractional change |Δw2/w2_old| per step (0=off)
 	float w2_floor_frac;               // w floor as fraction of dMean (0=off)
 	float reynolds;                    // Reynolds number (inf=inviscid)
+	int   gpu_enabled;                 // 0=CPU only (default), 1=use GPU
 }GasInfo;
 #define GAS_MEANRHO(simpar) ((simpar)->physics.gasinfo.meanrho)
 #define GAS_RHOS2RHOR(simpar) ((simpar)->physics.gasinfo.rhos2rhor)
@@ -951,6 +952,9 @@ typedef struct SimParameters{
 #define GAS_W2RELAXTAU(simpar) ((simpar)->physics.gasinfo.w2_relax_tau)
 #define GAS_W2RATEMAX(simpar) ((simpar)->physics.gasinfo.w2_rate_max)
 #define GAS_W2FLOORFRAC(simpar) ((simpar)->physics.gasinfo.w2_floor_frac)
+
+// GPU parameter
+#define GAS_GPU_ENABLED(simpar) ((simpar)->physics.gasinfo.gpu_enabled)
 
 #define SPH_NUMNEAR(simpar) ((simpar)->bp.sph.NumNear)
 #define SPH_INITFLAG(simpar) ((simpar)->bp.sph.init_flag)

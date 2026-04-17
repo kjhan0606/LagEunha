@@ -442,6 +442,7 @@ void mk_default_rt_param(SimParameters *defsim, int iflag){
 		GAS_W2RELAXTAU(defsim) = 0.0;
 		GAS_W2RATEMAX(defsim) = 0.0;
 		GAS_W2FLOORFRAC(defsim) = 0.0;
+		GAS_GPU_ENABLED(defsim) = 1;
 		/* Monaghan AV (used as ghost-face fallback in blend) */
 		GAS_AlphaVis(defsim) = 1.0;
 		GAS_BetaVis(defsim) = 2.0;
@@ -536,6 +537,7 @@ void mk_default_cylinder_param(SimParameters *defsim){
 	GAS_W2RELAXTAU(defsim) = 0.0;
 	GAS_W2RATEMAX(defsim) = 0.0;
 	GAS_W2FLOORFRAC(defsim) = 0.0;
+	GAS_GPU_ENABLED(defsim) = 1;
 
 	GRAVITY(defsim) = 'N';
 	GAS_SFFLAG(defsim) = 'N';

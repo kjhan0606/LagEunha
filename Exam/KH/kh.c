@@ -75,7 +75,11 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	sprintf(infile,"khout.%.6d.dat", nstep);
 	int myid = MYID(simpar);
 	int av_mode = GAS_AVMODE(simpar);
+#ifdef USE_CUDA
+	int use_stress = 1;  /* GPU blend path needs stress-type for all av_modes */
+#else
 	int use_stress = (av_mode >= 1 || GAS_VISCOSITY(simpar) > 0);
+#endif
 	size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype) : sizeof(treevorork4particletype);
 	if(myid ==0){
 		printf("P0: is now reading starting file: %s\n", infile);
