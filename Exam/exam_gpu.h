@@ -81,6 +81,7 @@ typedef struct {
     float *ie, *w2, *w2old;
     float *w2ceil;                          /* Laguerre ceiling */
     float *avgNeighP;                       /* avg neighboring pressure */
+    float *K;                               /* entropy K=P/ρ^γ (used iff entropy_mode==1) */
 
     /* Stress fields (PosType = double) — only used when av_mode >= 1 */
     double *gUxx, *gUxy, *gUyx, *gUyy;   /* velocity gradient tensor */
@@ -97,8 +98,19 @@ typedef struct {
     /* Output arrays (written by GPU kernel, read back to CPU) */
     double *ax_out, *ay_out;
     float  *die_out;
+    float  *dK_out;                         /* entropy rate (always computed; used iff entropy_mode==1) */
     float  *dt_out;
     double *vsig_max_out;                   /* for CD10 */
+
+    /* XSPH (Monaghan 1989) face-area-weighted velocity offset
+     * (real-neighbor faces only; ghost mirrors excluded).
+     * Position drift: x += (v + xsph_eps * v_smooth) * dt. */
+    double *vsmoothx_out, *vsmoothy_out;
+
+    /* Hyperviscosity: per-particle velocity Laplacian
+     * Pass 1 (gradient kernel) writes lap_v; Pass 2 (force kernel)
+     * reads neighbor's lap_v values for biharmonic accumulation. */
+    double *lap_vx, *lap_vy;
 } ParticleSoA;
 
 /* ---- GPU memory manager (persistent across RK4 stages) ---- */
@@ -157,13 +169,21 @@ typedef struct {
     double cd_amax;
     double blend_theta;
     double dtold;
-    /* LagMFM (av_mode=4) */
-    double lagmfm_eta;       /* 1.8: h = eta * sqrt(V) */
-    int    lagmfm_h_iter;    /* 3: Newton iterations for adaptive h */
-    double lagmfm_h_tol;     /* 0.005: convergence tolerance */
+    /* LagMFM (av_mode=4) — Hopkins 2015 fiducial */
+    double lagmfm_eta;       /* 1.4: h = eta * sqrt(V)  (N_nb ≈ 25 in 2D) */
+    int    lagmfm_h_iter;    /* 50: Newton iterations for adaptive h */
+    double lagmfm_h_tol;     /* 0.001: convergence tolerance */
+    int    lagmfm_pure_gizmo;/* 1 = disable Monaghan AV / NS stress / CD10 */
     double cellsize;         /* cell linked-list cell width */
     int    mx, my;           /* cell grid dimensions */
     double xmin, ymin;       /* domain lower-left corner */
+    double hyperv_alpha;     /* 4th-order hyperviscosity coefficient (0=off) */
+    double hyperv_force_cap; /* HV force cap: |a_HV| <= cap*cs^2/sqrt(V) (0=off) */
+    /* Entropy-EOS mode (mirrors GAS_ENTROPY_MODE / GAS_K_FLOOR in GasInfo).
+     * When entropy_mode==1, pressure_stress_kernel uses P = K·ρ^γ instead of
+     * the ie-EOS, matching the CPU path in updateDenW2Pressure2DBlend. */
+    int    entropy_mode;
+    double K_floor;
 } GPUPhysicsParams;
 
 /* ================================================================
@@ -195,7 +215,9 @@ void gpu_upload_cells(GPUContext *ctx, int n_cells, int n_entries);
 void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     int mx, int my, double cellsize, double xmin, double ymin,
     double boxsize, double OoA, int av_mode, double Gamma,
-    double nu_phys, double prandtl, double cd_amax);
+    double nu_phys, double prandtl, double cd_amax,
+    int gradient_method,
+    int entropy_mode, double K_floor);
 void gpu_download_tess_results(GPUContext *ctx, int nbp, int has_stress);
 
 /* --- CPU-side helpers for GPU tessellation (exam_gpu_extract.c) --- */

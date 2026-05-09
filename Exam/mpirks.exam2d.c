@@ -256,12 +256,16 @@ void buildSimpleRMS(SimParameters *simpar, SimBoxRange box,  size_t n_size, DoDe
 
     MPI_Comm_rank(Comm,&myid);
     MPI_Comm_size(Comm,&nid);
+    fprintf(stderr,"[BSRMS] myid=%d nid=%d enter\n", myid, nid); fflush(stderr);
 
     int nsubgroup = getNextPrimeNumber(nid);
+    fprintf(stderr,"[BSRMS] myid=%d nid=%d nsubgroup=%d\n", myid, nid, nsubgroup); fflush(stderr);
     if(nsubgroup == 1) {
+        fprintf(stderr,"[BSRMS] myid=%d returning early NDDINFO=%d\n", myid, NDDINFO(simpar)); fflush(stderr);
         return;
     }
     NDDINFO(simpar) ++;
+    fprintf(stderr,"[BSRMS] myid=%d after NDDINFO++ NDDINFO=%d\n", myid, NDDINFO(simpar)); fflush(stderr);
     int npivot = nsubgroup-1;
     vorork4particletype pivot[npivot];
 

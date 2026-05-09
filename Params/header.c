@@ -105,11 +105,14 @@ void read_head(FILE *fp, SimParameters *simpar){
 				ncnt += sscanf(line,SET"Kepler Kappa     = "S_FLOAT,&GAS_Kappa(simpar));
 				ncnt += sscanf(line,SET"MkGL2D Kappa        = "S_FLOAT,&GAS_Kappa(simpar));
 				ncnt += sscanf(line,SET"CYL Kappa            = "S_FLOAT,&GAS_Kappa(simpar));
+				ncnt += sscanf(line,SET"Sedov2D Kappa       = "S_FLOAT,&GAS_Kappa(simpar));
 				ncnt += sscanf(line,SET"KH Order of Accuracy= "S_FLOAT,&VoroAccuracyOrder(simpar));
 				ncnt += sscanf(line,SET"RT Order of Accuracy= "S_FLOAT,&VoroAccuracyOrder(simpar));
 				ncnt += sscanf(line,SET"Kepler Order of Accuracy = "S_FLOAT,&VoroAccuracyOrder(simpar));
 				ncnt += sscanf(line,SET"MkGL2D Order of Accuracy = "S_FLOAT,&VoroAccuracyOrder(simpar));
 				ncnt += sscanf(line,SET"CYL Order of Accuracy= "S_FLOAT,&VoroAccuracyOrder(simpar));
+				ncnt += sscanf(line,SET"Sedov2D Order of Acc= "S_FLOAT,&VoroAccuracyOrder(simpar));
+				ncnt += sscanf(line,SET"Sedov2D Grid Size   = "S_DOUBLE,&HydroGridSize(simpar));
 				/* backward compat: old fcentroid */
 				ncnt += sscanf(line,SET"Voro centroid shift factor = "S_FLOAT,&GAS_FCENTROID(simpar));
 			}
@@ -257,6 +260,16 @@ void ReadSimulationParameters(FILE *simfile, int *icont, SimParameters *simpar){
 			CYL_XMIN(simpar) = CYL_YMIN(simpar) = 0;
 			HydroGridSize(simpar) = (CYL_XMAX(simpar)-CYL_XMIN(simpar))/NX(simpar)*4;
 		}
+		else if(SIMMODEL(simpar) == Sedov2D){
+			printf("Sedov2D Blast Wave Test is set\n");
+			printf("box size nx/ny/nz= %ld %ld %ld\n", NX(simpar), NY(simpar), NZ(simpar));
+			printf("Sedov2D: center=(%g,%g), E_blast=%g r_blast=%g rho_amb=%g P_amb=%g\n",
+				SEDOV2D_CX(simpar), SEDOV2D_CY(simpar),
+				SEDOV2D_E(simpar), SEDOV2D_RBLAST(simpar),
+				SEDOV2D_RHOAMB(simpar), SEDOV2D_PAMB(simpar));
+			SEDOV2D_XMIN(simpar) = SEDOV2D_YMIN(simpar) = 0;
+			HydroGridSize(simpar) = (SEDOV2D_XMAX(simpar)-SEDOV2D_XMIN(simpar))/NX(simpar)*4;
+		}
 		MPI_COMM(simpar) = com;
 	}
 	MPI_Bcast(simpar, sizeof(SimParameters), MPI_BYTE, 0, COM(simpar));
@@ -377,6 +390,21 @@ void mk_default_kh_param(SimParameters *defsim){
 		KH_OA(defsim) = 0.33333333;
 		KH_Kappa(defsim) = 0.4;
 		GAS_w2Power(defsim) = 0.2;  // pressure-based Laguerre weight
+		GAS_W2RELAXTAU(defsim) = 0.0;
+		GAS_W2RATEMAX(defsim) = 0.0;
+		GAS_W2FLOORFRAC(defsim) = 0.0;
+		GAS_W2MODE(defsim) = 0;
+		GAS_W2SREF(defsim) = 0.0;
+		GAS_W2SSCALE(defsim) = 1.0;
+		GAS_W2SBETA(defsim) = 0.0;
+		GAS_W2VOLGAMMA(defsim) = 0.0;
+		GAS_GPU_ENABLED(defsim) = 1;
+		GAS_GRADIENT_METHOD(defsim) = 0;
+		GAS_XSPHEPS(defsim) = 0.0;
+		GAS_HYPERVALPHA(defsim) = 0.0;
+		GAS_HYPERVFORCECAP(defsim) = 0.0;
+		GAS_ENTROPY_MODE(defsim) = 0;
+		GAS_K_FLOOR(defsim) = 1.e-30;
 
 		/* Grid: 256x256 default */
 		NX(defsim) = NY(defsim) = 256;
@@ -442,7 +470,18 @@ void mk_default_rt_param(SimParameters *defsim, int iflag){
 		GAS_W2RELAXTAU(defsim) = 0.0;
 		GAS_W2RATEMAX(defsim) = 0.0;
 		GAS_W2FLOORFRAC(defsim) = 0.0;
+		GAS_W2MODE(defsim) = 0;        // pressure-based (default, backward compat)
+		GAS_W2SREF(defsim) = 0.0;
+		GAS_W2SSCALE(defsim) = 1.0;    // avoid div-by-zero if mode=2 picked w/o IC override
+		GAS_W2SBETA(defsim) = 0.0;
+		GAS_W2VOLGAMMA(defsim) = 0.0;
 		GAS_GPU_ENABLED(defsim) = 1;
+		GAS_GRADIENT_METHOD(defsim) = 0;
+		GAS_XSPHEPS(defsim) = 0.0;
+		GAS_HYPERVALPHA(defsim) = 0.0;
+		GAS_HYPERVFORCECAP(defsim) = 0.0;
+		GAS_ENTROPY_MODE(defsim) = 0;
+		GAS_K_FLOOR(defsim) = 1.e-30;
 		/* Monaghan AV (used as ghost-face fallback in blend) */
 		GAS_AlphaVis(defsim) = 1.0;
 		GAS_BetaVis(defsim) = 2.0;
@@ -537,7 +576,84 @@ void mk_default_cylinder_param(SimParameters *defsim){
 	GAS_W2RELAXTAU(defsim) = 0.0;
 	GAS_W2RATEMAX(defsim) = 0.0;
 	GAS_W2FLOORFRAC(defsim) = 0.0;
+	GAS_W2MODE(defsim) = 0;
+	GAS_W2SREF(defsim) = 0.0;
+	GAS_W2SSCALE(defsim) = 1.0;
+	GAS_W2SBETA(defsim) = 0.0;
+	GAS_W2VOLGAMMA(defsim) = 0.0;
 	GAS_GPU_ENABLED(defsim) = 1;
+	GAS_GRADIENT_METHOD(defsim) = 0;
+	GAS_XSPHEPS(defsim) = 0.0;
+	GAS_HYPERVALPHA(defsim) = 0.0;
+	GAS_HYPERVFORCECAP(defsim) = 0.0;
+
+	GRAVITY(defsim) = 'N';
+	GAS_SFFLAG(defsim) = 'N';
+	GAS_COOLFLAG(defsim) = 'N';
+	GAS_SNFBFLAG(defsim) = 'N';
+	GAS_BGHEATFLAG(defsim) = 'N';
+	GAS_GAMMA(defsim) = 1.4;
+}
+void mk_default_sedov2d_param(SimParameters *defsim){
+	NDIM(defsim) = 2;
+	GAS_EVOLMETHOD(defsim) = 3;
+	GAS_FCENTROID(defsim) = 0.0;
+	BGEXPAND(defsim) = 'N';
+	GAS_TYPE(defsim) = 'V';
+	GAS_VISCOSITY(defsim) = 0;
+	GAS_REYNOLDS(defsim) = INFINITY;
+	SIMMODEL(defsim) = Sedov2D;
+	GAS_CONSTMU(defsim) = 'Y';
+	HUBBLE(defsim) = 1;
+	STATBOXSIZE(defsim) = NX(defsim);
+
+	AMAX(defsim) = 100;
+	ANOW(defsim) = 1.;
+	ASTEP(defsim) = 0.005;
+	NSTEP(defsim) = 100000;
+	NX(defsim) = 256;
+	NY(defsim) = 256;
+	NZ(defsim) = 1;
+	NXNY(defsim) = NX(defsim)*NY(defsim);
+
+	SEDOV2D_XMIN(defsim) = 0.0;
+	SEDOV2D_XMAX(defsim) = 1.0;
+	SEDOV2D_YMIN(defsim) = 0.0;
+	SEDOV2D_YMAX(defsim) = 1.0;
+	SEDOV2D_CX(defsim) = 0.5;
+	SEDOV2D_CY(defsim) = 0.5;
+	SEDOV2D_E(defsim) = 1.0;
+	SEDOV2D_RBLAST(defsim) = 0.02;
+	SEDOV2D_RHOAMB(defsim) = 1.0;
+	SEDOV2D_PAMB(defsim) = 1.0e-5;
+	HydroGridSize(defsim) = 1.0/256.0;
+	GAS_ETAVIS(defsim) = HydroGridSize(defsim);
+
+	GAS_AlphaVis(defsim) = 1.0;
+	GAS_BetaVis(defsim) = 2.0;
+	GAS_EPSVIS(defsim) = 0.01;
+	GAS_COURANT(defsim) = 0.3;
+
+	GAS_AVMODE(defsim) = 1;
+	GAS_USEMUSCL(defsim) = 0;
+	GAS_CDAMAX(defsim) = 1.0;
+	GAS_CDELL(defsim) = 0.05;
+	GAS_CDAMIN(defsim) = 0.0;
+	GAS_BLENDTHETA(defsim) = 0.0;
+	GAS_PRANDTL(defsim) = 1.0;
+	GAS_W2RELAXTAU(defsim) = 0.0;
+	GAS_W2RATEMAX(defsim) = 0.0;
+	GAS_W2FLOORFRAC(defsim) = 0.0;
+	GAS_W2MODE(defsim) = 0;
+	GAS_W2SREF(defsim) = 0.0;
+	GAS_W2SSCALE(defsim) = 1.0;
+	GAS_W2SBETA(defsim) = 0.0;
+	GAS_W2VOLGAMMA(defsim) = 0.0;
+	GAS_GPU_ENABLED(defsim) = 1;
+	GAS_GRADIENT_METHOD(defsim) = 0;
+	GAS_XSPHEPS(defsim) = 0.0;
+	GAS_HYPERVALPHA(defsim) = 0.0;
+	GAS_HYPERVFORCECAP(defsim) = 0.0;
 
 	GRAVITY(defsim) = 'N';
 	GAS_SFFLAG(defsim) = 'N';
@@ -700,6 +816,19 @@ void mk_default_param(SimParameters *defsim, char *cosmology){
 	GAS_ACCZ(defsim) = 0;
 
 	GAS_w2Power(defsim) = 0;
+	/* w2-control + entropy-mode defaults (all off = backward compat) */
+	GAS_W2RELAXTAU(defsim) = 0.0;
+	GAS_W2RATEMAX(defsim) = 0.0;
+	GAS_W2FLOORFRAC(defsim) = 0.0;
+	GAS_W2MODE(defsim) = 0;
+	GAS_W2SREF(defsim) = 0.0;
+	GAS_W2SSCALE(defsim) = 1.0;
+	GAS_W2SBETA(defsim) = 0.0;
+	GAS_W2VOLGAMMA(defsim) = 0.0;
+	GAS_GRADIENT_METHOD(defsim) = 0;
+	GAS_XSPHEPS(defsim) = 0.0;
+	GAS_HYPERVALPHA(defsim) = 0.0;
+	GAS_HYPERVFORCECAP(defsim) = 0.0;
 
 
 //	RT_ACC(defsim) = 0;
@@ -812,6 +941,10 @@ void mk_default_param(SimParameters *defsim, char *cosmology){
 	}
 	else if(strcmp(cosmology,"Cylinder")==0){
 		mk_default_cylinder_param(defsim);
+	}
+	else if(strcmp(cosmology,"Sedov2D")==0){
+		void mk_default_sedov2d_param(SimParameters *);
+		mk_default_sedov2d_param(defsim);
 	}
 	else {
 		exit(999);

@@ -217,6 +217,14 @@ int RunRT(SimParameters *simpar, int icont){
 				mkLinkedList2D_rt,
 				periodic_postStage_blend
 				);
+		else if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 3)
+			dt = exam2d_vph_kdk_int_blend(simpar,
+				paddingTreeVorork4Particles,rt_w2Measure2D,
+				searchCellRk4Neighbors2D,findCellRk4BP2D,
+				rt_evolBP,
+				mkLinkedList2D_rt,
+				periodic_postStage_blend
+				);
 		else if(GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_rt(simpar,
 				paddingTreeVorork4Particles,rt_w2Measure2D,

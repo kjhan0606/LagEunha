@@ -309,6 +309,9 @@ static void fillParticleSoA(
             h_parts->tauyy[i]    = sbp->stress.tauyy;
             h_parts->alpha_cd[i] = sbp->stress.alpha_cd;
             h_parts->divv[i]     = sbp->stress.divv;
+            h_parts->lap_vx[i]   = sbp->stress.lap_vx;
+            h_parts->lap_vy[i]   = sbp->stress.lap_vy;
+            h_parts->K[i]        = sbp->stress.K;
             /* LagMFM fields */
             h_parts->E_inv_xx[i] = sbp->stress.E_inv_xx;
             h_parts->E_inv_xy[i] = sbp->stress.E_inv_xy;
@@ -620,6 +623,12 @@ static void writeBackResults_range(
             treevorostressrk4particletype *sbp =
                 (treevorostressrk4particletype *)bp;
             sbp->stress.vsig_max = h_parts->vsig_max_out[i];
+            sbp->stress.v_smooth_x = h_parts->vsmoothx_out[i];
+            sbp->stress.v_smooth_y = h_parts->vsmoothy_out[i];
+            /* Entropy rate (used by RK4 iff entropy_mode==1; mirrors
+             * exam.c:4546-4568 CPU path). dK_out is always written by the
+             * GPU kernel — leaving it for the CPU integrator to consume. */
+            sbp->stress.dK = h_parts->dK_out[i];
         }
     }
 }
@@ -805,6 +814,8 @@ double getAccVoro2DBlend_GPU(
     params.cd_amax     = GAS_CDAMAX(simpar);
     params.blend_theta = GAS_BLENDTHETA(simpar);
     params.dtold       = GAS_dtold(simpar);
+    params.hyperv_alpha = GAS_HYPERVALPHA(simpar);
+    params.hyperv_force_cap = GAS_HYPERVFORCECAP(simpar);
 
     /* --- Launch GPU kernel (all particles) --- */
     double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, &params);
@@ -1553,6 +1564,12 @@ void gpu_writeback_tess_results(void *simpar_opaque, GPUContext *ctx,
             sbp->stress.tauxy  = h->tauxy[i];
             sbp->stress.tauyy  = h->tauyy[i];
             sbp->stress.divv   = h->divv[i];
+            sbp->stress.lap_vx = h->lap_vx[i];
+            sbp->stress.lap_vy = h->lap_vy[i];
+            /* K may have been clamped to K_floor by pressure_stress_kernel
+             * when entropy_mode==1. When entropy_mode==0, GPU does not touch
+             * K so this is a no-op (h->K[i] equals what we uploaded). */
+            sbp->stress.K = h->K[i];
         }
     }
 }
@@ -1576,21 +1593,27 @@ void det2d_dpqRK4_GPU(
     int mx, my;
     BASICCELL_MX(simpar) = mx = (int)ceil((xmax - xmin) / cellsize);
     BASICCELL_MY(simpar) = my = (int)ceil((ymax - ymin) / cellsize);
+    fprintf(stderr,"[DPQ] P%d enter mx=%d my=%d cellsize=%g\n", MYID(simpar), mx, my, cellsize); fflush(stderr);
     VORO_BASICCELL(simpar) =
         (HydroTreeLinkedCell *)my_malloc(sizeof(HydroTreeLinkedCell) * mx * my);
+    fprintf(stderr,"[DPQ] P%d before mkLinkedList2D\n", MYID(simpar)); fflush(stderr);
     mkLinkedList2D(simpar, cellsize, xmin, ymin, xmax, ymax,
                    paddingAllTreeParticles);
+    fprintf(stderr,"[DPQ] P%d after mkLinkedList2D npad=%ld\n", MYID(simpar), (long)VORO_NPAD(simpar)); fflush(stderr);
 
     int nbp  = VORO_NP(simpar);
     int npad = VORO_NPAD(simpar);
     int n_total = nbp + npad;
     size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+    fprintf(stderr,"[DPQ] P%d nbp=%d npad=%d n_total=%d p_size=%zu\n", MYID(simpar), nbp, npad, n_total, p_size); fflush(stderr);
 
     /* --- Lazy GPU context initialization --- */
     if (!g_gpu_ctx.initialized) {
         int max_p = (int)(n_total * 1.2) + 1024;
         int max_f = max_p * 20;
+        fprintf(stderr,"[DPQ] P%d gpu_init max_p=%d\n", MYID(simpar), max_p); fflush(stderr);
         gpu_init(&g_gpu_ctx, max_p, max_f, MYID(simpar));
+        fprintf(stderr,"[DPQ] P%d gpu_init done\n", MYID(simpar)); fflush(stderr);
     }
     if (n_total > g_gpu_ctx.max_particles) {
         gpu_free(&g_gpu_ctx);
@@ -1600,13 +1623,17 @@ void det2d_dpqRK4_GPU(
     }
 
     /* --- Build CellCSR --- */
+    fprintf(stderr,"[DPQ] P%d before gpu_build_cell_csr\n", MYID(simpar)); fflush(stderr);
     gpu_build_cell_csr(&g_gpu_ctx, simpar, mx, my, p_size);
+    fprintf(stderr,"[DPQ] P%d after gpu_build_cell_csr\n", MYID(simpar)); fflush(stderr);
 
     /* --- Fill SoA and upload (only x, y, indx, w2, w2ceil needed) --- */
     int has_stress = (GAS_AVMODE(simpar) >= 1) ? 1 : 0;
     fillParticleSoA(simpar, &g_gpu_ctx.h_parts, has_stress);
+    fprintf(stderr,"[DPQ] P%d after fillParticleSoA has_stress=%d\n", MYID(simpar), has_stress); fflush(stderr);
     gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
     gpu_upload_cells(&g_gpu_ctx, mx * my, g_gpu_ctx.h_cells.n_entries);
+    fprintf(stderr,"[DPQ] P%d after upload\n", MYID(simpar)); fflush(stderr);
 
     /* --- Launch nearest-neighbor kernel --- */
     GPUPhysicsParams params;
@@ -1618,15 +1645,21 @@ void det2d_dpqRK4_GPU(
     params.ymin     = ymin;
 
     double t1 = MPI_Wtime();
+    fprintf(stderr,"[DPQ] P%d before nearest_neighbor kernel\n", MYID(simpar)); fflush(stderr);
     gpu_launch_nearest_neighbor(&g_gpu_ctx, nbp, n_total, &params,
                                 (float)GAS_Kappa(simpar));
+    fprintf(stderr,"[DPQ] P%d after nearest_neighbor kernel\n", MYID(simpar)); fflush(stderr);
 
     /* --- Download w2ceil + w2 --- */
     gpu_download_w2ceil(&g_gpu_ctx, nbp);
+    fprintf(stderr,"[DPQ] P%d after download\n", MYID(simpar)); fflush(stderr);
     double t2 = MPI_Wtime();
 
     /* --- Write back w2ceil + w2 to particle struct --- */
     char *bp_raw = (char *)VORORK4_TBP(simpar);
+    fprintf(stderr,"[DPQ] P%d before writeback bp_raw=%p p_size=%zu nbp=%d w2ceil_ptr=%p w2_ptr=%p\n",
+        MYID(simpar), (void*)bp_raw, p_size, nbp,
+        (void*)g_gpu_ctx.h_parts.w2ceil, (void*)g_gpu_ctx.h_parts.w2); fflush(stderr);
     int i;
 #pragma omp parallel for schedule(static)
     for (i = 0; i < nbp; i++) {
@@ -1635,10 +1668,14 @@ void det2d_dpqRK4_GPU(
         bpi->w2ceil = g_gpu_ctx.h_parts.w2ceil[i];
         bpi->w2     = g_gpu_ctx.h_parts.w2[i];
     }
+    fprintf(stderr,"[DPQ] P%d after writeback\n", MYID(simpar)); fflush(stderr);
 
     /* --- Free cells + padding --- */
+    fprintf(stderr,"[DPQ] P%d before free basiccell=%p tbpp=%p\n",
+        MYID(simpar), (void*)VORO_BASICCELL(simpar), (void*)VORORK4_TBPP(simpar)); fflush(stderr);
     my_free(VORO_BASICCELL(simpar));
     my_free(VORORK4_TBPP(simpar));
+    fprintf(stderr,"[DPQ] P%d after free\n", MYID(simpar)); fflush(stderr);
 
     double t3 = MPI_Wtime();
     if (MYID(simpar) == 0) {
@@ -1766,9 +1803,10 @@ void updateDenW2Pressure2D_LagMFM_GPU(
     params.av_mode       = GAS_AVMODE(simpar);
     params.Gamma         = Gamma;
     params.nu_phys       = GAS_VISCOSITY(simpar);
-    params.lagmfm_eta    = 1.8;
-    params.lagmfm_h_iter = 3;
-    params.lagmfm_h_tol  = 0.005;
+    params.lagmfm_eta      = 1.4;  /* Hopkins 2015 fiducial */
+    params.lagmfm_h_iter   = 50;
+    params.lagmfm_h_tol    = 0.001;
+    params.lagmfm_pure_gizmo = 1;
     params.cellsize      = cellsize;
     params.mx            = mx;
     params.my            = my;
@@ -1858,7 +1896,8 @@ double getAccVoro2D_LagMFM_GPU(
     params.etavis        = GAS_ETAVIS(simpar) * Lx / NX(simpar);
     params.epsvis        = GAS_EPSVIS(simpar);
     params.nu_phys       = GAS_VISCOSITY(simpar);
-    params.lagmfm_eta    = 1.8;
+    params.lagmfm_eta      = 1.4;  /* Hopkins 2015 fiducial */
+    params.lagmfm_pure_gizmo = 1;
     params.cellsize      = cellsize;
     params.mx            = mx;
     params.my            = my;

@@ -99,24 +99,80 @@ void dev_hllc_face_2d(
     double Gamma,
     double *pstar, double *vnstar)
 {
-    double ZL = rhoL * cL, ZR = rhoR * cR;
-    double GP1 = Gamma + 1.0;
+    /* True HLLC: ports GIZMO get_wavespeeds_and_pressure_star (reimann.h:527).
+     * 3-stage: Gaburov/Davis → Roe fallback → PVRS-Rusanov last resort. */
+    const double tiny = 1.0e-30;
+    double S_L, S_R, S_M, P_M;
+    double cmax = cL > cR ? cL : cR;
 
-    double p_pvrs = (ZR * pL + ZL * pR + ZL * ZR * (vnL - vnR)) / (ZL + ZR);
-    if (p_pvrs < 0) p_pvrs = 0;
+    if ((vnR - vnL) > cmax) {
+        *pstar = tiny; *vnstar = 0.5*(vnL + vnR);
+        return;
+    }
 
-    double qL = 1.0, qR = 1.0;
-    if (p_pvrs > pL)
-        qL = sqrt(1.0 + GP1 / (2.0 * Gamma) * (p_pvrs / pL - 1.0));
-    if (p_pvrs > pR)
-        qR = sqrt(1.0 + GP1 / (2.0 * Gamma) * (p_pvrs / pR - 1.0));
+    /* Primary: Gaburov/Davis */
+    {
+        double vmin = vnL < vnR ? vnL : vnR;
+        double vmax = vnL > vnR ? vnL : vnR;
+        S_L = vmin - cmax;
+        S_R = vmax + cmax;
+        double rho_wt_L = rhoL * (S_L - vnL);
+        double rho_wt_R = rhoR * (S_R - vnR);
+        double denom = rho_wt_L - rho_wt_R;
+        if (fabs(denom) > tiny) {
+            S_M = ((pR - pL) + rho_wt_L*vnL - rho_wt_R*vnR) / denom;
+            P_M = (pL*rho_wt_R - pR*rho_wt_L + rho_wt_L*rho_wt_R*(vnR - vnL))
+                  / (rho_wt_R - rho_wt_L);
+            if (P_M > 0 && !isnan(P_M) && !isinf(P_M)) {
+                *pstar = P_M; *vnstar = S_M; return;
+            }
+        }
+    }
 
-    double WL = rhoL * cL * qL;
-    double WR = rhoR * cR * qR;
-    double Ws = WL + WR;
+    /* Roe fallback */
+    {
+        double sqL = sqrt(rhoL), sqR = sqrt(rhoR);
+        double sq_inv = 1.0 / (sqL + sqR + tiny);
+        double vn_roe = (sqL*vnL + sqR*vnR) * sq_inv;
+        double h_L = Gamma*pL/((Gamma - 1.0)*rhoL) + 0.5*vnL*vnL;
+        double h_R = Gamma*pR/((Gamma - 1.0)*rhoR) + 0.5*vnR*vnR;
+        double h_roe = (sqL*h_L + sqR*h_R) * sq_inv;
+        double c2_roe = (Gamma - 1.0) * (h_roe - 0.5*vn_roe*vn_roe);
+        if (c2_roe < tiny) c2_roe = tiny;
+        double c_roe = sqrt(c2_roe);
 
-    *pstar  = (WR * pL + WL * pR + WL * WR * (vnL - vnR)) / Ws;
-    *vnstar = (WL * vnL + WR * vnR + pL - pR) / Ws;
+        double srA = vnR + cR, srB = vn_roe + c_roe;
+        double slA = vnL - cL, slB = vn_roe - c_roe;
+        S_R = srA > srB ? srA : srB;
+        S_L = slA < slB ? slA : slB;
+
+        double rho_wt_R =  rhoR * (S_R - vnR);
+        double rho_wt_L = -rhoL * (S_L - vnL);
+        double denom = rho_wt_R + rho_wt_L;
+        if (fabs(denom) > tiny) {
+            S_M = (rho_wt_R*vnR + rho_wt_L*vnL + (pL - pR)) / denom;
+            P_M = rhoL*(vnL - S_L)*(vnL - S_M) + pL;
+            if (P_M > 0 && !isnan(P_M) && !isinf(P_M)) {
+                *pstar = P_M; *vnstar = S_M; return;
+            }
+        }
+    }
+
+    /* Last resort: PVRS + Rusanov */
+    {
+        P_M = 0.5*((pL + pR) + (vnL - vnR)*0.25*(rhoL + rhoR)*(cL + cR));
+        S_M = 0.5*(vnR + vnL) + 2.0*(pL - pR)/((rhoL + rhoR)*(cL + cR) + tiny);
+        double a1 = fabs(vnL - cL), a2 = fabs(vnR - cR);
+        double a3 = fabs(vnL + cL), a4 = fabs(vnR + cR);
+        double S_plus = a1;
+        if (a2 > S_plus) S_plus = a2;
+        if (a3 > S_plus) S_plus = a3;
+        if (a4 > S_plus) S_plus = a4;
+        if (S_M < -S_plus) S_M = -S_plus;
+        if (S_M >  S_plus) S_M =  S_plus;
+        if (P_M < tiny) P_M = tiny;
+        *pstar = P_M; *vnstar = S_M;
+    }
 }
 
 __device__ __forceinline__
@@ -168,17 +224,22 @@ void getAccVoro2DBlend_kernel(
     const double *__restrict__ ptauxx, const double *__restrict__ ptauxy,
     const double *__restrict__ ptauyy,
     const double *__restrict__ palpha_cd, const double *__restrict__ pdivv,
+    /* Hyperviscosity Pass 2 input: per-particle velocity Laplacian */
+    const double *__restrict__ plap_vx, const double *__restrict__ plap_vy,
     /* Output arrays */
     double *__restrict__ ax_out, double *__restrict__ ay_out,
-    float *__restrict__ die_out, float *__restrict__ dt_out,
+    float *__restrict__ die_out, float *__restrict__ dK_out,
+    float *__restrict__ dt_out,
     double *__restrict__ vsig_max_out,
+    double *__restrict__ vsmoothx_out, double *__restrict__ vsmoothy_out,
     /* Physics parameters */
     int n_particles,
     int av_mode, int use_muscl,
     double OoA, double Courant, double Gamma,
     double alphavis, double betavis, double etavis, double epsvis,
     double nu_phys, double prandtl,
-    double cd_amax, double blend_theta, double dtold)
+    double cd_amax, double blend_theta, double dtold,
+    double hyperv_alpha, double hyperv_force_cap)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -195,8 +256,18 @@ void getAccVoro2DBlend_kernel(
     float  ibp_w2old  = pw2old[i];
 
     double fx = 0, fy = 0, die = 0;
+    /* Dissipative-only contributions (viscous heating + heat conduction).
+     * Mirrors CPU dK_diss (exam.c:3829..4459); converted to dK after the loop. */
+    double dK_diss = 0;
     float  my_dt = 1.0e10f;
     double my_vsig_max = 0;
+    /* XSPH: face-area-weighted velocity-difference accumulator
+     * (real-neighbor faces only; ghost mirrors excluded). */
+    double xsph_vx_acc = 0, xsph_vy_acc = 0, xsph_w_acc = 0;
+    /* Hyperviscosity Pass 2: A_face/d_ij × (lap_v_j - lap_v_i) accumulator */
+    double biharm_vx_acc = 0, biharm_vy_acc = 0;
+    double ibp_lap_vx = (hyperv_alpha > 0) ? plap_vx[i] : 0.0;
+    double ibp_lap_vy = (hyperv_alpha > 0) ? plap_vy[i] : 0.0;
 
     int f_begin = face_offset[i];
     int f_end   = face_offset[i + 1];
@@ -227,6 +298,28 @@ void getAccVoro2DBlend_kernel(
         double dSx = line_y;
         double dSy = -line_x;
         double facearea = sqrt(dSx * dSx + dSy * dSy);
+
+        /* XSPH accumulation: real (non-ghost) neighbors only.
+         * Wall mirror velocities are reflected and would pull the
+         * particle off-axis. */
+        if (!jbp_is_ghost) {
+            xsph_vx_acc += facearea * (jbp_vx - ibp_vx);
+            xsph_vy_acc += facearea * (jbp_vy - ibp_vy);
+            xsph_w_acc  += facearea;
+        }
+
+        /* Hyperviscosity Pass 2: accumulate A_face/d_ij × (lap_v_j - lap_v_i)
+         * for real neighbors only. */
+        if (hyperv_alpha > 0 && !jbp_is_ghost) {
+            double drx_h = jbp_x - ibp_x;
+            double dry_h = jbp_y - ibp_y;
+            double dramp_h = sqrt(drx_h * drx_h + dry_h * dry_h);
+            if (dramp_h > 0) {
+                double invd_bh = facearea / dramp_h;
+                biharm_vx_acc += invd_bh * (plap_vx[j] - ibp_lap_vx);
+                biharm_vy_acc += invd_bh * (plap_vy[j] - ibp_lap_vy);
+            }
+        }
 
         /* Inter-particle direction */
         double drx = jbp_x - ibp_x;
@@ -264,7 +357,7 @@ void getAccVoro2DBlend_kernel(
             double rvel = erx * uijx + ery * uijy;
             if (rvel < 0) {
                 double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
-                double scaleFactor = (wcomp == 0 ? etavis : wcomp);
+                double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                 double drampScale = dramp / scaleFactor;
                 double mu = rvel / (drampScale + epsvis / drampScale);
                 double meanden = 0.5 * (ibp_den + jbp_den);
@@ -288,7 +381,7 @@ void getAccVoro2DBlend_kernel(
             double rvel = erx * uijx + ery * uijy;
             if (rvel < 0) {
                 double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
-                double scaleFactor = (wcomp == 0 ? etavis : wcomp);
+                double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                 double drampScale = dramp / scaleFactor;
                 double mu = rvel / (drampScale + epsvis / drampScale);
                 double meanden = 0.5 * (ibp_den + jbp_den);
@@ -362,7 +455,7 @@ void getAccVoro2DBlend_kernel(
                 double rvel = erx * uijx + ery * uijy;
                 if (rvel < 0) {
                     double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
-                    double scaleFactor = (wcomp == 0 ? etavis : wcomp);
+                    double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                     double drampScale = dramp / scaleFactor;
                     double mu = rvel / (drampScale + epsvis / drampScale);
                     double meanden = 0.5 * (ibp_den + jbp_den);
@@ -432,7 +525,7 @@ void getAccVoro2DBlend_kernel(
                 double rvel = erx * uijx + ery * uijy;
                 if (rvel < 0) {
                     double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
-                    double scaleFactor = (wcomp == 0 ? etavis : wcomp);
+                    double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                     double drampScale = dramp / scaleFactor;
                     double mu = rvel / (drampScale + epsvis / drampScale);
                     double meanden = 0.5 * (ibp_den + jbp_den);
@@ -476,7 +569,7 @@ void getAccVoro2DBlend_kernel(
             }
 
             if (av_mode == 0 || av_mode == 1) {
-                /* M(n,m) + NS stress + optional Monaghan AV */
+                /* M(n,m) + NS stress + optional Monaghan AV (Balsara-modulated) */
                 pi_total = p_mnm;
                 if (alphavis > 0) {
                     double uijx = jbp_vx - ibp_vx;
@@ -484,13 +577,34 @@ void getAccVoro2DBlend_kernel(
                     double rvel = erx * uijx + ery * uijy;
                     if (rvel < 0) {
                         double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
-                        double scaleFactor = (wcomp == 0 ? etavis : wcomp);
+                        double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                         double drampScale = dramp / scaleFactor;
                         double mu = rvel / (drampScale + epsvis / drampScale);
                         double meanden = 0.5 * (ibp_den + jbp_den);
                         double meanCsound = 0.5 * (ibp_csound + jbp_csound);
-                        pi_total += (-alphavis * meanCsound * mu
-                                     + betavis * mu * mu) * meanden;
+                        double divv_i  = pdivv[i];
+                        double curlv_i = pgUyx[i] - pgUxy[i];
+                        double divv_j  = pdivv[j];
+                        double curlv_j = pgUyx[j] - pgUxy[j];
+                        double xi_b    = 1.0e-4 * meanCsound / dramp;
+                        double f_i = fabs(divv_i) / (fabs(divv_i) + fabs(curlv_i) + xi_b);
+                        double f_j = fabs(divv_j) / (fabs(divv_j) + fabs(curlv_j) + xi_b);
+                        double f_balsara = 0.5 * (f_i + f_j);
+                        pi_total += f_balsara * (-alphavis * meanCsound * mu
+                                                  + betavis * mu * mu) * meanden;
+                    }
+                }
+                /* CD10 viscous pressure (Cullen-Dehnen 2010) — strong-shock
+                 * detector that survives Voronoi cell collapse. */
+                if (av_mode == 1 && cd_amax > 0) {
+                    double uijx_cd = jbp_vx - ibp_vx;
+                    double uijy_cd = jbp_vy - ibp_vy;
+                    double rvel_cd = erx * uijx_cd + ery * uijy_cd;
+                    if (rvel_cd < 0) {
+                        double alpha_face = 0.5 * (palpha_cd[i] + palpha_cd[j]);
+                        double rho_mean   = 0.5 * (ibp_den + jbp_den);
+                        double vsig_cd    = ibp_csound + jbp_csound - rvel_cd;
+                        pi_total += 0.5 * alpha_face * vsig_cd * rho_mean * (-rvel_cd);
                     }
                 }
             } else {
@@ -587,16 +701,22 @@ void getAccVoro2DBlend_kernel(
 
         /* Pressure work: -p * (v_face - v_i) · dS */
         die += -pi_total * (uradx * dSx + urady * dSy);
-        /* Viscous heating: (τ·dS) · (v_face - v_i) */
-        die += tau_dot_dS_x * uradx + tau_dot_dS_y * urady;
+        /* Viscous heating: (τ·dS) · (v_face - v_i) — dissipative */
+        {
+            double die_visc_face = tau_dot_dS_x * uradx + tau_dot_dS_y * urady;
+            die     += die_visc_face;
+            dK_diss += die_visc_face;
+        }
 
-        /* Heat conduction */
+        /* Heat conduction — dissipative */
         if (nu_phys > 0 && prandtl > 0 && !jbp_is_ghost) {
             double chi = nu_phys / prandtl;
             double Ti = ibp_pressure / ibp_den;
             double Tj = jbp_pressure / jbp_den;
             double rho_face = 0.5 * (ibp_den + jbp_den);
-            die += chi * rho_face * (Tj - Ti) / dramp * facearea;
+            double die_cond_face = chi * rho_face * (Tj - Ti) / dramp * facearea;
+            die     += die_cond_face;
+            dK_diss += die_cond_face;
         }
 
         /* Force: -p·dS + τ·dS */
@@ -636,12 +756,57 @@ void getAccVoro2DBlend_kernel(
         }
     }
 
+    /* Hyperviscosity force: dv/dt -= ν₄ × biharm_v_i / V_i
+     * ν₄ = α₄ × cs × Δx³ with Δx = sqrt(V_i) (cell-local scale).
+     * Selectively damps high-k modes (rate ∝ ν₄ k⁴).
+     * Optional cap: |a_HV| ≤ cap·cs²/Δx (CFL accel) — prevents lap_v runaway
+     * from feeding back into a destabilizing force. */
+    if (hyperv_alpha > 0 && ibp_volume > 0) {
+        double invVol_hv = 1.0 / ibp_volume;
+        double dx_eff = sqrt(ibp_volume);
+        double nu4 = hyperv_alpha * ibp_csound * dx_eff * dx_eff * dx_eff;
+        double a_hv_x = -nu4 * biharm_vx_acc * invVol_hv;
+        double a_hv_y = -nu4 * biharm_vy_acc * invVol_hv;
+        if (hyperv_force_cap > 0) {
+            double a_hv_mag = sqrt(a_hv_x*a_hv_x + a_hv_y*a_hv_y);
+            double a_hv_max = hyperv_force_cap * ibp_csound * ibp_csound / dx_eff;
+            if (a_hv_mag > a_hv_max && a_hv_mag > 0) {
+                double s = a_hv_max / a_hv_mag;
+                a_hv_x *= s; a_hv_y *= s;
+            }
+        }
+        fx += ibp_mass * a_hv_x;
+        fy += ibp_mass * a_hv_y;
+    }
+
+    /* Convert dissipative die to entropy rate dK/dt (mirrors exam.c:4546-4568):
+     *   dK/dt = (γ-1) · q_diss / ρ^γ                    (per unit volume)
+     *         = (γ-1) · dK_diss / (V_cell · ρ^γ)
+     *         = (γ-1) · dK_diss / (m · ρ^(γ-1))         (m = ρ·V)
+     * Always written; CPU integrator uses it iff entropy_mode==1. */
+    double dK_val = 0.0;
+    if (isfinite(dK_diss) && ibp_mass > 0 && ibp_den > 0) {
+        double rho_pow = pow(ibp_den, Gamma - 1.0);
+        double cand = (Gamma - 1.0) * dK_diss / (ibp_mass * rho_pow);
+        if (isfinite(cand)) dK_val = cand;
+    }
+
     /* Write outputs */
     ax_out[i]       = fx / ibp_mass;
     ay_out[i]       = fy / ibp_mass;
     die_out[i]      = (float)die;
+    dK_out[i]       = (float)dK_val;
     dt_out[i]       = my_dt;
     vsig_max_out[i] = my_vsig_max;
+
+    /* XSPH face-averaged velocity offset (zero if no real neighbors) */
+    if (xsph_w_acc > 0) {
+        vsmoothx_out[i] = xsph_vx_acc / xsph_w_acc;
+        vsmoothy_out[i] = xsph_vy_acc / xsph_w_acc;
+    } else {
+        vsmoothx_out[i] = 0;
+        vsmoothy_out[i] = 0;
+    }
 }
 
 /* ================================================================
@@ -672,6 +837,7 @@ static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n)
     ALLOC_PAIR_F(csound);   ALLOC_PAIR_F(volume);
     ALLOC_PAIR_F(ie);       ALLOC_PAIR_F(w2);      ALLOC_PAIR_F(w2old);
     ALLOC_PAIR_F(w2ceil);   ALLOC_PAIR_F(avgNeighP);
+    ALLOC_PAIR_F(K);
     ALLOC_PAIR_D(gUxx);     ALLOC_PAIR_D(gUxy);
     ALLOC_PAIR_D(gUyx);     ALLOC_PAIR_D(gUyy);
     ALLOC_PAIR_D(dPdx);     ALLOC_PAIR_D(dPdy);
@@ -684,8 +850,10 @@ static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n)
     ALLOC_PAIR_D(h_mfm);
 
     ALLOC_PAIR_D(ax_out);   ALLOC_PAIR_D(ay_out);
-    ALLOC_PAIR_F(die_out);  ALLOC_PAIR_F(dt_out);
+    ALLOC_PAIR_F(die_out);  ALLOC_PAIR_F(dK_out);  ALLOC_PAIR_F(dt_out);
     ALLOC_PAIR_D(vsig_max_out);
+    ALLOC_PAIR_D(vsmoothx_out); ALLOC_PAIR_D(vsmoothy_out);
+    ALLOC_PAIR_D(lap_vx);       ALLOC_PAIR_D(lap_vy);
 
 #undef ALLOC_PAIR_D
 #undef ALLOC_PAIR_F
@@ -705,6 +873,7 @@ static void free_particle_soa(ParticleSoA *h, ParticleSoA *d)
     FREE_PAIR(csound);   FREE_PAIR(volume);
     FREE_PAIR(ie);       FREE_PAIR(w2);      FREE_PAIR(w2old);
     FREE_PAIR(w2ceil);   FREE_PAIR(avgNeighP);
+    FREE_PAIR(K);
     FREE_PAIR(gUxx);     FREE_PAIR(gUxy);
     FREE_PAIR(gUyx);     FREE_PAIR(gUyy);
     FREE_PAIR(dPdx);     FREE_PAIR(dPdy);
@@ -716,8 +885,10 @@ static void free_particle_soa(ParticleSoA *h, ParticleSoA *d)
     FREE_PAIR(h_mfm);
 
     FREE_PAIR(ax_out);   FREE_PAIR(ay_out);
-    FREE_PAIR(die_out);  FREE_PAIR(dt_out);
+    FREE_PAIR(die_out);  FREE_PAIR(dK_out);  FREE_PAIR(dt_out);
     FREE_PAIR(vsig_max_out);
+    FREE_PAIR(vsmoothx_out); FREE_PAIR(vsmoothy_out);
+    FREE_PAIR(lap_vx);       FREE_PAIR(lap_vy);
 
 #undef FREE_PAIR
 #undef FREE_PAIR_H
@@ -858,6 +1029,8 @@ void gpu_upload_particles(GPUContext *ctx, int n, int has_stress)
         UP_D(dPdx);  UP_D(dPdy);  UP_D(dRhodx);  UP_D(dRhody);
         UP_D(tauxx);  UP_D(tauxy);  UP_D(tauyy);
         UP_D(alpha_cd);  UP_D(divv);
+        UP_D(lap_vx);  UP_D(lap_vy);
+        UP_F(K);  /* entropy variable; mirrors sbp->stress.K */
     }
 
 #undef UP_D
@@ -914,8 +1087,11 @@ void gpu_download_results(GPUContext *ctx, int n)
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.ax_out, ctx->d_parts.ax_out, sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.ay_out, ctx->d_parts.ay_out, sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.die_out, ctx->d_parts.die_out, sf, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dK_out, ctx->d_parts.dK_out, sf, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dt_out, ctx->d_parts.dt_out, sf, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.vsig_max_out, ctx->d_parts.vsig_max_out, sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.vsmoothx_out, ctx->d_parts.vsmoothx_out, sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.vsmoothy_out, ctx->d_parts.vsmoothy_out, sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaStreamSynchronize(s));
 }
 
@@ -954,10 +1130,14 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         ctx->d_parts.dRhodx, ctx->d_parts.dRhody,
         ctx->d_parts.tauxx, ctx->d_parts.tauxy, ctx->d_parts.tauyy,
         ctx->d_parts.alpha_cd, ctx->d_parts.divv,
+        /* Hyperviscosity Pass 2 input */
+        ctx->d_parts.lap_vx, ctx->d_parts.lap_vy,
         /* Output */
         ctx->d_parts.ax_out, ctx->d_parts.ay_out,
-        ctx->d_parts.die_out, ctx->d_parts.dt_out,
+        ctx->d_parts.die_out, ctx->d_parts.dK_out,
+        ctx->d_parts.dt_out,
         ctx->d_parts.vsig_max_out,
+        ctx->d_parts.vsmoothx_out, ctx->d_parts.vsmoothy_out,
         /* Physics */
         n_particles,
         params->av_mode, params->use_muscl,
@@ -965,7 +1145,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         params->alphavis, params->betavis,
         params->etavis, params->epsvis,
         params->nu_phys, params->prandtl,
-        params->cd_amax, params->blend_theta, params->dtold);
+        params->cd_amax, params->blend_theta, params->dtold,
+        params->hyperv_alpha, params->hyperv_force_cap);
 
     CUDA_CHECK(cudaGetLastError());
 
@@ -1101,13 +1282,16 @@ void voronoi_tessellate_kernel(
     double *__restrict__ out_gUyx, double *__restrict__ out_gUyy,
     double *__restrict__ out_dPdx, double *__restrict__ out_dPdy,
     double *__restrict__ out_dRhodx, double *__restrict__ out_dRhody,
+    /* Output: hyperviscosity Pass 1 (velocity Laplacian) */
+    double *__restrict__ out_lap_vx, double *__restrict__ out_lap_vy,
     /* Output: polygon for face scatter */
     PolygonOut *__restrict__ polygons,
     int *__restrict__ face_count_out,
     /* Grid parameters */
     int nbp, int n_total, int mx, int my,
     double cellsize, double xmin, double ymin,
-    double boxsize, double OoA, int av_mode)
+    double boxsize, double OoA, int av_mode,
+    int gradient_method)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
@@ -1198,6 +1382,7 @@ void voronoi_tessellate_kernel(
         double nx_n = n_dx[ni], ny_n = n_dy[ni];
         double dist2 = nx_n * nx_n + ny_n * ny_n;
         double wfrac = 0.5 + 0.5 * (w2i - n_w2[ni]) / dist2;
+        if(wfrac < 0.05) wfrac = 0.05; else if(wfrac > 0.95) wfrac = 0.95;
         double threshold = wfrac * dist2;  /* wfrac * dot(neigh, neigh) */
         int j_soa = n_soa_idx[ni];
 
@@ -1343,10 +1528,18 @@ void voronoi_tessellate_kernel(
     }
     double avgNP = (avgNP_len > 0) ? avgNP_sum / avgNP_len : (double)ppressure_in[i];
 
-    /* ---- Green-Gauss gradients ---- */
+    /* ---- Gradients: Green-Gauss (gradient_method==0) or Pakmor 2016 LSF (==1) ---- */
+    int use_lsf = (gradient_method == 1);
+    /* Green-Gauss accumulators */
     double sum_gUxx = 0, sum_gUxy = 0, sum_gUyx = 0, sum_gUyy = 0;
     double sum_dPdx = 0, sum_dPdy = 0;
     double sum_dRhodx = 0, sum_dRhody = 0;
+    /* LSF normal-equation matrix M = Σ w (Δr Δr^T) and per-Q RHS */
+    double Mxx = 0, Mxy = 0, Myy = 0;
+    double bxVx = 0, byVx = 0, bxVy = 0, byVy = 0;
+    double bxP  = 0, byP  = 0, bxR  = 0, byR  = 0;
+    /* Hyperviscosity Pass 1 accumulators (real neighbors only) */
+    double sum_lap_vx = 0, sum_lap_vy = 0;
 
     for (int e = 0; e < nc; e++) {
         int en = (e + 1) % nc;
@@ -1357,71 +1550,116 @@ void voronoi_tessellate_kernel(
         double dSx = poly_y[en] - poly_y[e];
         double dSy = -(poly_x[en] - poly_x[e]);
 
-        /* Laguerre-aware face interpolation weight */
         double dx_ij = px[j_neigh] - xi;
         double dy_ij = py[j_neigh] - yi;
         double d2_ij = dx_ij * dx_ij + dy_ij * dy_ij;
-        double wfrac_g = (d2_ij > 0) ?
-            0.5 + 0.5 * (w2i - (double)pw2[j_neigh]) / d2_ij : 0.5;
 
-        int is_ghost = (pindx[j_neigh] == MAX_INDEX_GPU);
+        /* Hyperviscosity Pass 1: accumulate (v_j - v_i) weighted by A_face/d_ij;
+         * exclude ghost mirrors so wall noise doesn't leak into biharmonic. */
+        if (pindx[j_neigh] != MAX_INDEX_GPU && d2_ij > 0) {
+            double A_face_lap = sqrt(dSx * dSx + dSy * dSy);
+            double invd_lap = A_face_lap / sqrt(d2_ij);
+            sum_lap_vx += invd_lap * (pvx[j_neigh] - pvx[i]);
+            sum_lap_vy += invd_lap * (pvy[j_neigh] - pvy[i]);
+        }
 
-        double vx_face, vy_face, P_face, Rho_face;
-
-        if (is_ghost) {
-            /* Wall ghost: simple weighted average */
-            double vxi = pvx[i], vyi = pvy[i];
-            double vxj = pvx[j_neigh], vyj = pvy[j_neigh];
-            vx_face  = vxi + wfrac_g * (vxj - vxi);
-            vy_face  = vyi + wfrac_g * (vyj - vyi);
-            P_face   = (double)ppressure_in[i] + wfrac_g * ((double)ppressure_in[j_neigh] - (double)ppressure_in[i]);
-            Rho_face = (double)pden_in[i] + wfrac_g * ((double)pden_in[j_neigh] - (double)pden_in[i]);
+        if (use_lsf) {
+            /* Pakmor 2016 LSF: weight = A_face / |Δr|^2 */
+            double A_face = sqrt(dSx * dSx + dSy * dSy);
+            double w = (d2_ij > 0) ? A_face / d2_ij : 0.0;
+            double dvx = pvx[j_neigh] - pvx[i];
+            double dvy = pvy[j_neigh] - pvy[i];
+            double dP  = (double)ppressure_in[j_neigh] - (double)ppressure_in[i];
+            double dR  = (double)pden_in[j_neigh] - (double)pden_in[i];
+            Mxx += w * dx_ij * dx_ij;
+            Mxy += w * dx_ij * dy_ij;
+            Myy += w * dy_ij * dy_ij;
+            bxVx += w * dx_ij * dvx;  byVx += w * dy_ij * dvx;
+            bxVy += w * dx_ij * dvy;  byVy += w * dy_ij * dvy;
+            bxP  += w * dx_ij * dP;   byP  += w * dy_ij * dP;
+            bxR  += w * dx_ij * dR;   byR  += w * dy_ij * dR;
         } else {
-            /* Check M(n,m) stencil neighbors: kp = edge_neigh[(e+1)%nc], km = edge_neigh[(e-1+nc)%nc] */
-            int kp_neigh = poly_neigh[en];
-            int km_neigh = poly_neigh[(e - 1 + nc) % nc];
+            double wfrac_g = (d2_ij > 0) ?
+                0.5 + 0.5 * (w2i - (double)pw2[j_neigh]) / d2_ij : 0.5;
 
-            if (OoA > 0 && kp_neigh >= 0 && km_neigh >= 0) {
-                double OoA3 = OoA / 3.0;
-                double vxi = pvx[i], vyi = pvy[i];
-                double vxj = pvx[j_neigh], vyj = pvy[j_neigh];
-                double pi_val = (double)ppressure_in[i], pj_val = (double)ppressure_in[j_neigh];
-                double rhoi = (double)pden_in[i], rhoj = (double)pden_in[j_neigh];
+            int is_ghost = (pindx[j_neigh] == MAX_INDEX_GPU);
 
-                vx_face  = vxi + wfrac_g * (vxj - vxi)
-                         + OoA3 * (pvx[kp_neigh] + pvx[km_neigh] - vxi - vxj);
-                vy_face  = vyi + wfrac_g * (vyj - vyi)
-                         + OoA3 * (pvy[kp_neigh] + pvy[km_neigh] - vyi - vyj);
-                P_face   = pi_val + wfrac_g * (pj_val - pi_val)
-                         + OoA3 * ((double)ppressure_in[kp_neigh] + (double)ppressure_in[km_neigh] - pi_val - pj_val);
-                Rho_face = rhoi + wfrac_g * (rhoj - rhoi)
-                         + OoA3 * ((double)pden_in[kp_neigh] + (double)pden_in[km_neigh] - rhoi - rhoj);
-            } else {
+            double vx_face, vy_face, P_face, Rho_face;
+
+            if (is_ghost) {
+                /* Wall ghost: simple weighted average */
                 double vxi = pvx[i], vyi = pvy[i];
                 double vxj = pvx[j_neigh], vyj = pvy[j_neigh];
                 vx_face  = vxi + wfrac_g * (vxj - vxi);
                 vy_face  = vyi + wfrac_g * (vyj - vyi);
                 P_face   = (double)ppressure_in[i] + wfrac_g * ((double)ppressure_in[j_neigh] - (double)ppressure_in[i]);
                 Rho_face = (double)pden_in[i] + wfrac_g * ((double)pden_in[j_neigh] - (double)pden_in[i]);
-            }
-        }
+            } else {
+                int kp_neigh = poly_neigh[en];
+                int km_neigh = poly_neigh[(e - 1 + nc) % nc];
 
-        sum_gUxx += vx_face * dSx;
-        sum_gUxy += vx_face * dSy;
-        sum_gUyx += vy_face * dSx;
-        sum_gUyy += vy_face * dSy;
-        sum_dPdx += P_face * dSx;
-        sum_dPdy += P_face * dSy;
-        sum_dRhodx += Rho_face * dSx;
-        sum_dRhody += Rho_face * dSy;
+                if (OoA > 0 && kp_neigh >= 0 && km_neigh >= 0) {
+                    double OoA3 = OoA / 3.0;
+                    double vxi = pvx[i], vyi = pvy[i];
+                    double vxj = pvx[j_neigh], vyj = pvy[j_neigh];
+                    double pi_val = (double)ppressure_in[i], pj_val = (double)ppressure_in[j_neigh];
+                    double rhoi = (double)pden_in[i], rhoj = (double)pden_in[j_neigh];
+
+                    vx_face  = vxi + wfrac_g * (vxj - vxi)
+                             + OoA3 * (pvx[kp_neigh] + pvx[km_neigh] - vxi - vxj);
+                    vy_face  = vyi + wfrac_g * (vyj - vyi)
+                             + OoA3 * (pvy[kp_neigh] + pvy[km_neigh] - vyi - vyj);
+                    P_face   = pi_val + wfrac_g * (pj_val - pi_val)
+                             + OoA3 * ((double)ppressure_in[kp_neigh] + (double)ppressure_in[km_neigh] - pi_val - pj_val);
+                    Rho_face = rhoi + wfrac_g * (rhoj - rhoi)
+                             + OoA3 * ((double)pden_in[kp_neigh] + (double)pden_in[km_neigh] - rhoi - rhoj);
+                } else {
+                    double vxi = pvx[i], vyi = pvy[i];
+                    double vxj = pvx[j_neigh], vyj = pvy[j_neigh];
+                    vx_face  = vxi + wfrac_g * (vxj - vxi);
+                    vy_face  = vyi + wfrac_g * (vyj - vyi);
+                    P_face   = (double)ppressure_in[i] + wfrac_g * ((double)ppressure_in[j_neigh] - (double)ppressure_in[i]);
+                    Rho_face = (double)pden_in[i] + wfrac_g * ((double)pden_in[j_neigh] - (double)pden_in[i]);
+                }
+            }
+
+            sum_gUxx += vx_face * dSx;
+            sum_gUxy += vx_face * dSy;
+            sum_gUyx += vy_face * dSx;
+            sum_gUyy += vy_face * dSy;
+            sum_dPdx += P_face * dSx;
+            sum_dPdy += P_face * dSy;
+            sum_dRhodx += Rho_face * dSx;
+            sum_dRhody += Rho_face * dSy;
+        }
     }
 
-    double invVol = 1.0 / volume;
-    double gUxx = sum_gUxx * invVol, gUxy = sum_gUxy * invVol;
-    double gUyx = sum_gUyx * invVol, gUyy = sum_gUyy * invVol;
+    double gUxx, gUxy, gUyx, gUyy;
+    double dPdx_val, dPdy_val, dRhodx_val, dRhody_val;
+    if (use_lsf) {
+        double det = Mxx * Myy - Mxy * Mxy;
+        if (fabs(det) > 1e-30) {
+            double invDet = 1.0 / det;
+            gUxx = ( Myy*bxVx - Mxy*byVx) * invDet;
+            gUxy = (-Mxy*bxVx + Mxx*byVx) * invDet;
+            gUyx = ( Myy*bxVy - Mxy*byVy) * invDet;
+            gUyy = (-Mxy*bxVy + Mxx*byVy) * invDet;
+            dPdx_val   = ( Myy*bxP - Mxy*byP) * invDet;
+            dPdy_val   = (-Mxy*bxP + Mxx*byP) * invDet;
+            dRhodx_val = ( Myy*bxR - Mxy*byR) * invDet;
+            dRhody_val = (-Mxy*bxR + Mxx*byR) * invDet;
+        } else {
+            gUxx = gUxy = gUyx = gUyy = 0;
+            dPdx_val = dPdy_val = dRhodx_val = dRhody_val = 0;
+        }
+    } else {
+        double invVol = 1.0 / volume;
+        gUxx = sum_gUxx * invVol; gUxy = sum_gUxy * invVol;
+        gUyx = sum_gUyx * invVol; gUyy = sum_gUyy * invVol;
+        dPdx_val = sum_dPdx * invVol; dPdy_val = sum_dPdy * invVol;
+        dRhodx_val = sum_dRhodx * invVol; dRhody_val = sum_dRhody * invVol;
+    }
     double divv_val = gUxx + gUyy;
-    double dPdx_val = sum_dPdx * invVol, dPdy_val = sum_dPdy * invVol;
-    double dRhodx_val = sum_dRhodx * invVol, dRhody_val = sum_dRhody * invVol;
 
     /* ---- TVD slope limiter (av_mode==5) ---- */
     if (av_mode == 5) {
@@ -1497,6 +1735,13 @@ void voronoi_tessellate_kernel(
     out_dPdx[i] = dPdx_val;  out_dPdy[i] = dPdy_val;
     out_dRhodx[i] = dRhodx_val;  out_dRhody[i] = dRhody_val;
 
+    /* Hyperviscosity Pass 1 finalize: lap_v = (1/V) Σ A_face/d_ij × Δv */
+    {
+        double invVol_lap = (volume > 0) ? 1.0 / volume : 0.0;
+        out_lap_vx[i] = sum_lap_vx * invVol_lap;
+        out_lap_vy[i] = sum_lap_vy * invVol_lap;
+    }
+
     /* Write PolygonOut for face scatter */
     PolygonOut *po = &polygons[i];
     po->n_corners = nc;
@@ -1521,6 +1766,7 @@ __global__
 void pressure_stress_kernel(
     const float *__restrict__ pie, const float *__restrict__ pvolume,
     const float *__restrict__ pden,
+    float *__restrict__ pK,         /* in/out: K is clamped to K_floor when entropy_mode==1 */
     const double *__restrict__ pgUxx, const double *__restrict__ pgUxy,
     const double *__restrict__ pgUyx, const double *__restrict__ pgUyy,
     const double *__restrict__ palpha_cd,
@@ -1528,7 +1774,8 @@ void pressure_stress_kernel(
     double *__restrict__ out_tauxx, double *__restrict__ out_tauxy,
     double *__restrict__ out_tauyy,
     double *__restrict__ out_divv,
-    int nbp, int av_mode, double Gamma, double nu_phys, double cd_amax)
+    int nbp, int av_mode, double Gamma, double nu_phys, double cd_amax,
+    int entropy_mode, double K_floor)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
@@ -1537,7 +1784,16 @@ void pressure_stress_kernel(
     double vol    = (double)pvolume[i];
     double den    = (double)pden[i];
 
-    double P = ie_val / vol * (Gamma - 1.0);
+    double P;
+    if (entropy_mode == 1) {
+        /* K-EOS: P = K · ρ^γ. Mirrors CPU updateDenW2Pressure2DBlend
+         * (exam.c:2686-2692): clamp K to floor, then derive P. */
+        double K_val = (double)pK[i];
+        if (K_val < K_floor) { K_val = K_floor; pK[i] = (float)K_val; }
+        P = K_val * pow(den, Gamma);
+    } else {
+        P = ie_val / vol * (Gamma - 1.0);
+    }
     if (P <= 0) P = 1e-6;
     double cs = sqrt(Gamma * P / den);
 
@@ -1627,7 +1883,9 @@ extern "C"
 void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     int mx, int my, double cellsize, double xmin, double ymin,
     double boxsize, double OoA, int av_mode, double Gamma,
-    double nu_phys, double prandtl, double cd_amax)
+    double nu_phys, double prandtl, double cd_amax,
+    int gradient_method,
+    int entropy_mode, double K_floor)
 {
     cudaStream_t s = (cudaStream_t)ctx->stream;
     int blockSize = 256;
@@ -1649,20 +1907,24 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         ctx->d_parts.gUyx, ctx->d_parts.gUyy,
         ctx->d_parts.dPdx, ctx->d_parts.dPdy,
         ctx->d_parts.dRhodx, ctx->d_parts.dRhody,
+        ctx->d_parts.lap_vx, ctx->d_parts.lap_vy,
         ctx->d_polygons, ctx->d_face_count,
-        nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, OoA, av_mode);
+        nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, OoA, av_mode,
+        gradient_method);
     CUDA_CHECK(cudaGetLastError());
 
     /* Kernel B: Pressure, sound speed, NS stress */
     pressure_stress_kernel<<<gridSize, blockSize, 0, s>>>(
         ctx->d_parts.ie, ctx->d_parts.volume, ctx->d_parts.den,
+        ctx->d_parts.K,
         ctx->d_parts.gUxx, ctx->d_parts.gUxy,
         ctx->d_parts.gUyx, ctx->d_parts.gUyy,
         ctx->d_parts.alpha_cd,
         ctx->d_parts.pressure, ctx->d_parts.csound,
         ctx->d_parts.tauxx, ctx->d_parts.tauxy, ctx->d_parts.tauyy,
         ctx->d_parts.divv,
-        nbp, av_mode, Gamma, nu_phys, cd_amax);
+        nbp, av_mode, Gamma, nu_phys, cd_amax,
+        entropy_mode, K_floor);
     CUDA_CHECK(cudaGetLastError());
 
     /* CUB prefix sum: face_count → face_offset */
@@ -1756,6 +2018,10 @@ void gpu_download_tess_results(GPUContext *ctx, int nbp, int has_stress)
         CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.tauxy,   ctx->d_parts.tauxy,   sd, cudaMemcpyDeviceToHost, s));
         CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.tauyy,   ctx->d_parts.tauyy,   sd, cudaMemcpyDeviceToHost, s));
         CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.divv,    ctx->d_parts.divv,    sd, cudaMemcpyDeviceToHost, s));
+        CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.lap_vx,  ctx->d_parts.lap_vx,  sd, cudaMemcpyDeviceToHost, s));
+        CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.lap_vy,  ctx->d_parts.lap_vy,  sd, cudaMemcpyDeviceToHost, s));
+        /* K may have been clamped to K_floor by pressure_stress_kernel */
+        CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.K,       ctx->d_parts.K,       sf, cudaMemcpyDeviceToHost, s));
     }
 
     CUDA_CHECK(cudaStreamSynchronize(s));
@@ -1800,6 +2066,8 @@ void gpu_download_lagmfm_density(GPUContext *ctx, int n)
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.gUyy,    ctx->d_parts.gUyy,    sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dPdx,    ctx->d_parts.dPdx,    sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dPdy,    ctx->d_parts.dPdy,    sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dRhodx,  ctx->d_parts.dRhodx,  sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dRhody,  ctx->d_parts.dRhody,  sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.divv,    ctx->d_parts.divv,    sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.tauxx,   ctx->d_parts.tauxx,   sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.tauxy,   ctx->d_parts.tauxy,   sd, cudaMemcpyDeviceToHost, s));
@@ -1824,6 +2092,31 @@ double dev_wendland_c2_2d(double r, double h)
     double u4 = u2 * u2;
     double C = 7.0 / (4.0 * M_PI * h * h);
     return C * u4 * (1.0 + 2.0 * q);
+}
+
+/* 2D cubic spline (M4), Hopkins (2015) fiducial; σ = 10/(7π h²). */
+__device__ __forceinline__
+double dev_cspline_2d(double r, double h)
+{
+    if (h <= 0) return 0;
+    double q = r / h;
+    if (q >= 2.0) return 0;
+    double sigma = 10.0 / (7.0 * M_PI * h * h);
+    if (q < 1.0) return sigma * (1.0 - 1.5*q*q + 0.75*q*q*q);
+    double tq = 2.0 - q;
+    return sigma * 0.25 * tq*tq*tq;
+}
+
+__device__ __forceinline__
+double dev_dWdr_cspline_2d(double r, double h)
+{
+    if (h <= 0) return 0;
+    double q = r / h;
+    if (q >= 2.0) return 0;
+    double sigma = 10.0 / (7.0 * M_PI * h * h);
+    if (q < 1.0) return (sigma/h) * (-3.0*q + 2.25*q*q);
+    double tq = 2.0 - q;
+    return -(sigma/h) * 0.75 * tq*tq;
 }
 
 /* ================================================================
@@ -1915,6 +2208,7 @@ void lagmfm_density_kernel(
     double *__restrict__ gUxx_out, double *__restrict__ gUxy_out,
     double *__restrict__ gUyx_out, double *__restrict__ gUyy_out,
     double *__restrict__ dPdx_out, double *__restrict__ dPdy_out,
+    double *__restrict__ dRhodx_out, double *__restrict__ dRhody_out,
     double *__restrict__ divv_out,
     double *__restrict__ tauxx_out, double *__restrict__ tauxy_out,
     double *__restrict__ tauyy_out,
@@ -1924,7 +2218,7 @@ void lagmfm_density_kernel(
     double eta, int h_iter_max, double h_tol,
     double cellsize, int mx, int my,
     double xmin, double ymin,
-    double Gamma, double nu_phys)
+    double Gamma, double nu_phys, int pure_gizmo)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -1951,18 +2245,39 @@ void lagmfm_density_kernel(
     if (ciy < 0) ciy = 0; if (ciy >= my) ciy = my - 1;
 
     double n_i = 0;
+    double rho_ker = 0;
     double Exx = 0, Exy = 0, Eyy = 0;
     double Sxx_vx = 0, Sxy_vx = 0;
     double Sxx_vy = 0, Sxy_vy = 0;
     double Sxx_P = 0, Sxy_P = 0;
+    /* Hopkins (2015) B31 neighbor extrema for limiter */
+    double P_min = iP, P_max = iP;
+    double vx_min = ivx, vx_max = ivx;
+    double vy_min = ivy, vy_max = ivy;
+    double rho_min_local = 0, rho_max_local = 0; /* filled below */
+    /* Initialize rho bounds after we have rho_i (deferred: use mass*n_prev
+     * estimate by reading any neighbor).  Safer: initialize to +inf/-inf
+     * and overwrite once we include self or at first neighbor. */
+    rho_min_local =  1e300;
+    rho_max_local = -1e300;
 
-    /* Newton iteration for adaptive h */
+    /* Newton iteration with bisection fallback (Hopkins 2015). */
+    double h_lo = 0, h_hi = 0;
+    double dh_prev = 0;
+    int use_bisect = 0;
+
     for (int h_it = 0; h_it < h_iter_max; h_it++) {
         n_i = 0;
+        rho_ker = 0;
         Exx = Exy = Eyy = 0;
         Sxx_vx = Sxy_vx = 0;
         Sxx_vy = Sxy_vy = 0;
         Sxx_P = Sxy_P = 0;
+        P_min = P_max = iP;
+        vx_min = vx_max = ivx;
+        vy_min = vy_max = ivy;
+        rho_min_local =  1e300;
+        rho_max_local = -1e300;
 
         double two_h = 2.0 * h_i;
         double two_h2 = two_h * two_h;
@@ -1988,6 +2303,7 @@ void lagmfm_density_kernel(
                         double r = sqrt(r2);
                         double Wij = dev_wendland_c2_2d(r, h_i);
                         n_i += Wij;
+                        rho_ker += Wij * pmass[j];
                         Exx += Wij * dx * dx;
                         Exy += Wij * dx * dy;
                         Eyy += Wij * dy * dy;
@@ -2000,6 +2316,17 @@ void lagmfm_density_kernel(
                         Sxy_vy += Wij * dvy * dy;
                         Sxx_P  += Wij * dP  * dx;
                         Sxy_P  += Wij * dP  * dy;
+                        /* Neighbor extrema for B31 limiter.
+                         * ρ_j ≈ m_j / V_j_prev (lagged, consistent with pden). */
+                        double Pj = (double)ppressure_in[j];
+                        if (Pj < P_min) P_min = Pj; if (Pj > P_max) P_max = Pj;
+                        if (pvx[j] < vx_min) vx_min = pvx[j];
+                        if (pvx[j] > vx_max) vx_max = pvx[j];
+                        if (pvy[j] < vy_min) vy_min = pvy[j];
+                        if (pvy[j] > vy_max) vy_max = pvy[j];
+                        double rho_j_est = pmass[j] / (double)pvolume_in[j];
+                        if (rho_j_est < rho_min_local) rho_min_local = rho_j_est;
+                        if (rho_j_est > rho_max_local) rho_max_local = rho_j_est;
                     }
                 }
             }
@@ -2008,13 +2335,27 @@ void lagmfm_density_kernel(
         if (n_i <= 0) break;  /* isolated */
 
         double V_new = 1.0 / n_i;
-        double h_new = eta * sqrt(V_new);
-        double dh = fabs(h_new - h_i);
-        if (dh < h_tol * h_i) {
-            h_i = h_new;
-            break;
+        double h_target = eta * sqrt(V_new);
+        double R = h_i - h_target;
+        if (R > 0) h_hi = h_i; else h_lo = h_i;
+
+        double h_new;
+        if (use_bisect && h_lo > 0 && h_hi > 0) {
+            h_new = 0.5*(h_lo + h_hi);
+        } else {
+            h_new = h_target;
+            double dh = h_new - h_i;
+            if (h_it > 0 && dh*dh_prev < 0 &&
+                fabs(dh) > 0.5*fabs(dh_prev) &&
+                h_lo > 0 && h_hi > 0) {
+                use_bisect = 1;
+                h_new = 0.5*(h_lo + h_hi);
+            }
+            dh_prev = dh;
         }
+        double adh = fabs(h_new - h_i);
         h_i = h_new;
+        if (adh < h_tol * h_i) break;
     }
 
     /* Isolated particle — retain previous state */
@@ -2045,26 +2386,126 @@ void lagmfm_density_kernel(
     double gvy = Einv_yx * Sxx_vy + Einv_yy * Sxy_vy;
     double dpx = Einv_xx * Sxx_P  + Einv_xy * Sxy_P;
     double dpy = Einv_yx * Sxx_P  + Einv_yy * Sxy_P;
-    double divv_val = gux + gvy;
 
-    /* EOS */
+    /* Density and EOS (mass-weighted: ρ_i = Σ_j m_j W_ij) */
+    double rho_val = rho_ker;
     double ie_val = (double)pie_in[i];
     double P_val = ie_val / Vi * (Gamma - 1.0);
     if (P_val <= 0) {
         P_val = 1e-6;
         ie_val = P_val * Vi / (Gamma - 1.0);
     }
-    double rho_val = imass * n_i;
     double cs_val = sqrt(Gamma * P_val / rho_val);
 
-    /* NS stress (3D-slab trace convention, matches CPU) */
-    double h_eff = sqrt(Vi);
-    double alpha_cd_val = palpha_cd[i];
-    double nu_cd = alpha_cd_val * h_eff * cs_val;
-    double nu = (nu_phys > 0) ? fmax(nu_phys, nu_cd) : nu_cd;
-    double tau_xx = -nu * rho_val * (2.0 * gux - (2.0 / 3.0) * divv_val);
-    double tau_xy = -nu * rho_val * (guy + gvx);
-    double tau_yy = -nu * rho_val * (2.0 * gvy - (2.0 / 3.0) * divv_val);
+    /* Post-Newton ρ gradient pass (needs final n_i → ρ_i).
+     * Re-walk neighbors with converged h_i and accumulate ρ-moments. */
+    double Sxx_Rho_f = 0, Sxy_Rho_f = 0;
+    double rho_min_f = rho_val, rho_max_f = rho_val;
+    {
+        double two_h = 2.0 * h_i;
+        double two_h2 = two_h * two_h;
+        int nbr = (int)ceil(two_h * invcs);
+        if (nbr < 1) nbr = 1;
+        if (nbr > 10) nbr = 10;
+        for (int jy = ciy - nbr; jy <= ciy + nbr; jy++) {
+            if (jy < 0 || jy >= my) continue;
+            for (int jx = cix - nbr; jx <= cix + nbr; jx++) {
+                if (jx < 0 || jx >= mx) continue;
+                int cell_id = jx + mx * jy;
+                int ks = cell_offset[cell_id];
+                int ke = cell_offset[cell_id + 1];
+                for (int k = ks; k < ke; k++) {
+                    int j = particle_index[k];
+                    if (j < 0 || j >= n_total) continue;
+                    double dx = px[j] - xi;
+                    double dy = py[j] - yi;
+                    double r2 = dx * dx + dy * dy;
+                    if (r2 < two_h2) {
+                        double rr = sqrt(r2);
+                        double Wij = dev_wendland_c2_2d(rr, h_i);
+                        double rho_j = pmass[j] / (double)pvolume_in[j];
+                        double dRho = rho_j - rho_val;
+                        Sxx_Rho_f += Wij * dRho * dx;
+                        Sxy_Rho_f += Wij * dRho * dy;
+                        if (rho_j < rho_min_f) rho_min_f = rho_j;
+                        if (rho_j > rho_max_f) rho_max_f = rho_j;
+                    }
+                }
+            }
+        }
+    }
+    double dRhodx_val = Einv_xx * Sxx_Rho_f + Einv_xy * Sxy_Rho_f;
+    double dRhody_val = Einv_yx * Sxx_Rho_f + Einv_yy * Sxy_Rho_f;
+
+    /* Hopkins (2015) B31 gradient-scaling limiter with ADAPTIVE β_i.
+     * β_i = max(β_min, β_max · min(1, N_crit/N_cond)), N_cond = λ_max/λ_min(E).
+     * In degenerate neighborhoods (rolled-up vortex edges) β drops to β_min=1
+     * → tight limiter → suppresses grid-noise sub-mode amplification.
+     * Matches Hopkins Appendix B (β_min=1, β_max=2, N_crit=10). */
+    double Ncond_i;
+    {
+        double tr = Exx + Eyy;
+        double disc = (Exx - Eyy) * (Exx - Eyy) + 4.0 * Exy * Exy;
+        double sqrtdisc = sqrt(disc > 0 ? disc : 0);
+        double lam_max = 0.5 * (tr + sqrtdisc);
+        double lam_min = 0.5 * (tr - sqrtdisc);
+        if (det <= 0 || lam_min <= 0) Ncond_i = 1.0e30;
+        else                          Ncond_i = lam_max / lam_min;
+    }
+    {
+        double recon_scale = h_i;
+        double N_crit = 10.0;
+        double beta_lim = fmax(1.0, 2.0 * fmin(1.0, N_crit / Ncond_i));
+        double gmag_P = sqrt(dpx*dpx + dpy*dpy) * recon_scale;
+        if (gmag_P > 0) {
+            double a_up = beta_lim * (P_max - P_val) / gmag_P;
+            double a_dn = beta_lim * (P_val - P_min) / gmag_P;
+            double alpha = fmin(1.0, fmin(a_up, a_dn));
+            if (alpha < 0) alpha = 0;
+            dpx *= alpha; dpy *= alpha;
+        }
+        double gmag_vx = sqrt(gux*gux + guy*guy) * recon_scale;
+        if (gmag_vx > 0) {
+            double a_up = beta_lim * (vx_max - ivx) / gmag_vx;
+            double a_dn = beta_lim * (ivx - vx_min) / gmag_vx;
+            double alpha = fmin(1.0, fmin(a_up, a_dn));
+            if (alpha < 0) alpha = 0;
+            gux *= alpha; guy *= alpha;
+        }
+        double gmag_vy = sqrt(gvx*gvx + gvy*gvy) * recon_scale;
+        if (gmag_vy > 0) {
+            double a_up = beta_lim * (vy_max - ivy) / gmag_vy;
+            double a_dn = beta_lim * (ivy - vy_min) / gmag_vy;
+            double alpha = fmin(1.0, fmin(a_up, a_dn));
+            if (alpha < 0) alpha = 0;
+            gvx *= alpha; gvy *= alpha;
+        }
+        double gmag_rho = sqrt(dRhodx_val*dRhodx_val + dRhody_val*dRhody_val) * recon_scale;
+        if (gmag_rho > 0) {
+            double a_up = beta_lim * (rho_max_f - rho_val) / gmag_rho;
+            double a_dn = beta_lim * (rho_val - rho_min_f) / gmag_rho;
+            double alpha = fmin(1.0, fmin(a_up, a_dn));
+            if (alpha < 0) alpha = 0;
+            dRhodx_val *= alpha; dRhody_val *= alpha;
+        }
+    }
+    double divv_val = gux + gvy;
+
+    /* NS stress: zeroed in pure-GIZMO mode (inviscid Euler).
+     * Otherwise (3D-slab trace convention, matches CPU). */
+    double tau_xx, tau_xy, tau_yy;
+    if (pure_gizmo) {
+        tau_xx = 0; tau_xy = 0; tau_yy = 0;
+        (void)nu_phys; (void)palpha_cd;
+    } else {
+        double h_eff = sqrt(Vi);
+        double alpha_cd_val = palpha_cd[i];
+        double nu_cd = alpha_cd_val * h_eff * cs_val;
+        double nu = (nu_phys > 0) ? fmax(nu_phys, nu_cd) : nu_cd;
+        tau_xx = -nu * rho_val * (2.0 * gux - (2.0 / 3.0) * divv_val);
+        tau_xy = -nu * rho_val * (guy + gvx);
+        tau_yy = -nu * rho_val * (2.0 * gvy - (2.0 / 3.0) * divv_val);
+    }
 
     /* Write outputs */
     den_out[i]      = (float)rho_val;
@@ -2082,6 +2523,8 @@ void lagmfm_density_kernel(
     gUyy_out[i]     = gvy;
     dPdx_out[i]     = dpx;
     dPdy_out[i]     = dpy;
+    dRhodx_out[i]   = dRhodx_val;
+    dRhody_out[i]   = dRhody_val;
     divv_out[i]     = divv_val;
     tauxx_out[i]    = tau_xx;
     tauxy_out[i]    = tau_xy;
@@ -2141,6 +2584,7 @@ void lagmfm_force_kernel(
     const double *__restrict__ pgUxx, const double *__restrict__ pgUxy,
     const double *__restrict__ pgUyx, const double *__restrict__ pgUyy,
     const double *__restrict__ pdPdx, const double *__restrict__ pdPdy,
+    const double *__restrict__ pdRhodx, const double *__restrict__ pdRhody,
     const double *__restrict__ ptauxx, const double *__restrict__ ptauxy,
     const double *__restrict__ ptauyy,
     const double *__restrict__ palpha_cd,
@@ -2157,7 +2601,7 @@ void lagmfm_force_kernel(
     double xmin, double ymin,
     double Courant, double Gamma,
     double alphavis, double betavis, double etavis, double epsvis,
-    double nu_phys, double eta)
+    double nu_phys, double eta, int pure_gizmo)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -2181,6 +2625,7 @@ void lagmfm_force_kernel(
     double i_gUxx = pgUxx[i], i_gUxy = pgUxy[i];
     double i_gUyx = pgUyx[i], i_gUyy = pgUyy[i];
     double i_dPdx = pdPdx[i], i_dPdy = pdPdy[i];
+    double i_dRhodx = pdRhodx[i], i_dRhody = pdRhody[i];
     double i_tauxx = ptauxx[i], i_tauxy = ptauxy[i], i_tauyy = ptauyy[i];
 
     double invcs = 1.0 / cellsize;
@@ -2222,12 +2667,24 @@ void lagmfm_force_kernel(
                 if (r2 > two_h_max * two_h_max) continue;
                 double r = sqrt(r2);
 
-                /* Effective face area vector */
+                /* Effective face area vector.  GIZMO volume-disparity test:
+                 * |V_i-V_j|/min(V)/NUMDIMS > 1.25 (2D: 2.5) → symmetric weight. */
                 double W_ij = dev_wendland_c2_2d(r, h_i);
                 double W_ji = dev_wendland_c2_2d(r, h_j);
-                double Vi2 = iV;       /* Hopkins (2015): V_i, not V_i^2 */
                 double Vj  = (double)pvolume[j];
-                double Vj2 = Vj;       /* Hopkins (2015): V_j, not V_j^2 */
+                double Vi2, Vj2;
+                {
+                    double Vmin = (iV < Vj) ? iV : Vj;
+                    double Vabs = iV - Vj; if (Vabs < 0) Vabs = -Vabs;
+                    if (Vmin > 0 && (Vabs/Vmin) > 2.5) {
+                        double denom = iV*W_ij + Vj*W_ji;
+                        double wcomm = (denom > 0) ? (iV*Vj*(W_ij+W_ji)/denom) : iV;
+                        Vi2 = Vj2 = wcomm;
+                    } else {
+                        Vi2 = iV;
+                        Vj2 = Vj;
+                    }
+                }
 
                 double Ax_i = Vi2 * W_ij * (Ei_xx * dx + Ei_xy * dy);
                 double Ay_i = Vi2 * W_ij * (Ei_yx * dx + Ei_yy * dy);
@@ -2253,41 +2710,74 @@ void lagmfm_force_kernel(
                 double jrho = (double)pden[j];
                 double jcs  = (double)pcsound[j];
 
-                /* MUSCL reconstruction */
+                /* GIZMO default equal-weight midpoint (hydro_core_meshless.h:86-102
+                 * with s_star_ij=0): reconstruct from particle center to 0.5·r. */
                 double hdx = 0.5 * dx, hdy = 0.5 * dy;
-                double pL  = iP  + i_dPdx * hdx + i_dPdy * hdy;
-                double pR  = jP  - pdPdx[j] * hdx - pdPdy[j] * hdy;
-                double vxL = ivx + i_gUxx * hdx + i_gUxy * hdy;
-                double vxR = jvx - pgUxx[j] * hdx - pgUxy[j] * hdy;
-                double vyL = ivy + i_gUyx * hdx + i_gUyy * hdy;
-                double vyR = jvy - pgUyx[j] * hdx - pgUyy[j] * hdy;
+                double pL   = iP   + i_dPdx * hdx   + i_dPdy * hdy;
+                double pR   = jP   - pdPdx[j] * hdx - pdPdy[j] * hdy;
+                double vxL  = ivx  + i_gUxx * hdx   + i_gUxy * hdy;
+                double vxR  = jvx  - pgUxx[j] * hdx - pgUxy[j] * hdy;
+                double vyL  = ivy  + i_gUyx * hdx   + i_gUyy * hdy;
+                double vyR  = jvy  - pgUyx[j] * hdx - pgUyy[j] * hdy;
+                double rhoL = irho + i_dRhodx * hdx + i_dRhody * hdy;
+                double rhoR = jrho - pdRhodx[j]*hdx - pdRhody[j]*hdy;
 
-                /* Pair-wise clamp */
-                #define DEV_CLAMP(Qrec,Qi,Qj) do { \
-                    double qmn = fmin(Qi,Qj), qmx = fmax(Qi,Qj); \
-                    if (Qrec < qmn) Qrec = qmn; \
-                    if (Qrec > qmx) Qrec = qmx; \
-                } while(0)
-                DEV_CLAMP(pL,  iP,  jP);
-                DEV_CLAMP(pR,  iP,  jP);
-                DEV_CLAMP(vxL, ivx, jvx);
-                DEV_CLAMP(vxR, ivx, jvx);
-                DEV_CLAMP(vyL, ivy, jvy);
-                DEV_CLAMP(vyR, ivy, jvy);
-                #undef DEV_CLAMP
-
-                /* Wall: skip reconstruction */
-                if (jwall) {
-                    pL  = iP;  vxL = ivx; vyL = ivy;
-                    pR  = jP;  vxR = jvx; vyR = jvy;
+                /* GIZMO asymmetric pair-wise limiter (reimann.h:188-237).
+                 * ψ_1 = 0.5 (fac_minmax), ψ_2 = 0.375 (fac_meddev).
+                 * L = from i, R = from j (our convention; role-swap for Q_i vs Q_j ordering). */
+                if (!jwall) {
+                    #define GIZMO_PAIRLIM(QL, QR, Qi, Qj) do {                  \
+                        if ((Qi) != (Qj)) {                                     \
+                            double _Qmed = 0.5 * ((Qi) + (Qj));                 \
+                            double _Qmin, _Qmax;                                 \
+                            if ((Qi) < (Qj)) { _Qmin=(Qi); _Qmax=(Qj); }         \
+                            else             { _Qmin=(Qj); _Qmax=(Qi); }         \
+                            double _dQ = _Qmax - _Qmin;                          \
+                            double _f1 = 0.5   * _dQ;                            \
+                            double _f2 = 0.375 * _dQ;                            \
+                            double _Qmax_eff = _Qmax + _f1;                      \
+                            double _Qmin_eff = _Qmin - _f1;                      \
+                            double _Qmed_max = _Qmed + _f2;                      \
+                            double _Qmed_min = _Qmed - _f2;                      \
+                            if (_Qmed_max > _Qmax_eff) _Qmed_max = _Qmax_eff;    \
+                            if (_Qmed_min < _Qmin_eff) _Qmed_min = _Qmin_eff;    \
+                            if ((Qi) < (Qj)) {                                   \
+                                if ((QL) < _Qmin_eff) (QL) = _Qmin_eff;          \
+                                if ((QL) > _Qmed_max) (QL) = _Qmed_max;          \
+                                if ((QR) > _Qmax_eff) (QR) = _Qmax_eff;          \
+                                if ((QR) < _Qmed_min) (QR) = _Qmed_min;          \
+                            } else {                                             \
+                                if ((QL) > _Qmax_eff) (QL) = _Qmax_eff;          \
+                                if ((QL) < _Qmed_min) (QL) = _Qmed_min;          \
+                                if ((QR) < _Qmin_eff) (QR) = _Qmin_eff;          \
+                                if ((QR) > _Qmed_max) (QR) = _Qmed_max;          \
+                            }                                                    \
+                        }                                                        \
+                    } while(0)
+                    GIZMO_PAIRLIM(pL,   pR,   iP,   jP);
+                    GIZMO_PAIRLIM(vxL,  vxR,  ivx,  jvx);
+                    GIZMO_PAIRLIM(vyL,  vyR,  ivy,  jvy);
+                    GIZMO_PAIRLIM(rhoL, rhoR, irho, jrho);
+                    #undef GIZMO_PAIRLIM
                 }
+
+                /* Wall: skip reconstruction on both sides */
+                if (jwall) {
+                    pL   = iP;   vxL = ivx; vyL = ivy; rhoL = irho;
+                    pR   = jP;   vxR = jvx; vyR = jvy; rhoR = jrho;
+                }
+                /* Safety floor for reconstructed ρ, P */
+                if (rhoL <= 0) rhoL = irho;
+                if (rhoR <= 0) rhoR = jrho;
+                if (pL   <= 0) pL   = iP;
+                if (pR   <= 0) pR   = jP;
 
                 double vnL_lab = vxL * nx_hat + vyL * ny_hat;
                 double vnR_lab = vxR * nx_hat + vyR * ny_hat;
-                double rhoL = irho, rhoR = jrho;
-                double cL = ics, cR = jcs;
+                double cL = sqrt(Gamma * pL / rhoL);
+                double cR = sqrt(Gamma * pR / rhoR);
 
-                /* HLLC face rest frame */
+                /* GIZMO default equal-weight face velocity. */
                 double wx = 0.5 * (ivx + jvx);
                 double wy = 0.5 * (ivy + jvy);
                 double wn = wx * nx_hat + wy * ny_hat;
@@ -2303,15 +2793,15 @@ void lagmfm_force_kernel(
                         wn, Gamma, &pstar, &vnstar_lab);
                 }
 
-                /* Optional Monaghan AV */
-                if (alphavis > 0 && !jwall) {
+                /* Non-GIZMO: Monaghan AV add-on.  Pure mode skips. */
+                if (!pure_gizmo && alphavis > 0 && !jwall) {
                     double uij_x = jvx - ivx;
                     double uij_y = jvy - ivy;
                     double er_x = dx / r, er_y = dy / r;
                     double rvel = er_x * uij_x + er_y * uij_y;
                     if (rvel < 0) {
                         double wcomp = sqrt(iw2) + sqrt((double)pw2[j]);
-                        double scaleFactor = (wcomp == 0 ? etavis : wcomp);
+                        double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                         double drampScale = r / scaleFactor;
                         double mu = rvel / (drampScale + epsvis / drampScale);
                         double meanden = 0.5 * (irho + jrho);
@@ -2320,9 +2810,9 @@ void lagmfm_force_kernel(
                     }
                 }
 
-                /* NS viscous traction */
+                /* Non-GIZMO: NS viscous traction. */
                 double tau_A_x = 0, tau_A_y = 0;
-                if (!jwall) {
+                if (!pure_gizmo && !jwall) {
                     double txx_f = 0.5 * (i_tauxx + ptauxx[j]);
                     double txy_f = 0.5 * (i_tauxy + ptauxy[j]);
                     double tyy_f = 0.5 * (i_tauyy + ptauyy[j]);
@@ -2334,15 +2824,17 @@ void lagmfm_force_kernel(
                 fx += -pstar * Ax + tau_A_x;
                 fy += -pstar * Ay + tau_A_y;
 
-                /* Full face velocity */
+                /* Full face velocity: Hopkins (2015) §2.5 passive tangential
+                 * advection (upwind across contact wave). */
                 double tx_hat = -ny_hat;
                 double ty_hat =  nx_hat;
-                double vt_avg = 0.5 * ((ivx + jvx) * tx_hat + (ivy + jvy) * ty_hat);
-                double vfx = vnstar_lab * nx_hat + vt_avg * tx_hat;
-                double vfy = vnstar_lab * ny_hat + vt_avg * ty_hat;
+                double vtL = vxL * tx_hat + vyL * ty_hat;
+                double vtR = vxR * tx_hat + vyR * ty_hat;
+                double vt_up = (vnstar_lab - wn) >= 0 ? vtL : vtR;
+                double vfx = vnstar_lab * nx_hat + vt_up * tx_hat;
+                double vfy = vnstar_lab * ny_hat + vt_up * ty_hat;
 
                 if (jwall) {
-                    /* Free-slip: tangential = v_i, normal = 0 */
                     double vti = ivx * tx_hat + ivy * ty_hat;
                     vfx = vti * tx_hat;
                     vfy = vti * ty_hat;
@@ -2352,25 +2844,23 @@ void lagmfm_force_kernel(
                 die += -pstar * ((vfx - ivx) * Ax + (vfy - ivy) * Ay);
                 die += tau_A_x * (vfx - ivx) + tau_A_y * (vfy - ivy);
 
-                /* Signal velocity for CFL */
+                /* CFL (Hopkins 2015, eq. 9): dt = C · h_i / vsig */
                 double dvx_sig = jvx - ivx;
                 double dvy_sig = jvy - ivy;
                 double er_x = dx / r, er_y = dy / r;
                 double VdotR = dvx_sig * er_x + dvy_sig * er_y;
                 double vsig = cL + cR - fmin(0.0, VdotR);
-                double heff = sqrt(iV);
-                double dramp_cfl = fmax(r, heff);
-                float dt_face = (float)(2.0 * Courant * dramp_cfl / vsig);
+                float dt_face = (float)(Courant * h_i / vsig);
                 if (dt_face < my_dt) my_dt = dt_face;
 
-                if (!jwall && vsig > my_vsig_max)
+                if (!pure_gizmo && !jwall && vsig > my_vsig_max)
                     my_vsig_max = vsig;
             }
         }
     }
 
-    /* Viscous CFL */
-    {
+    /* Viscous CFL (NS + CD10; non-GIZMO).  Pure mode skips. */
+    if (!pure_gizmo) {
         double h_eff = sqrt(iV);
         double nu_cd = palpha_cd[i] * h_eff * ics;
         double nu_eff = fmax(nu_phys, nu_cd);
@@ -2450,6 +2940,7 @@ void gpu_launch_lagmfm_density_kernel(GPUContext *ctx, int n_particles,
         ctx->d_parts.gUxx, ctx->d_parts.gUxy,
         ctx->d_parts.gUyx, ctx->d_parts.gUyy,
         ctx->d_parts.dPdx, ctx->d_parts.dPdy,
+        ctx->d_parts.dRhodx, ctx->d_parts.dRhody,
         ctx->d_parts.divv,
         ctx->d_parts.tauxx, ctx->d_parts.tauxy, ctx->d_parts.tauyy,
         ctx->d_parts.w2ceil,
@@ -2458,7 +2949,7 @@ void gpu_launch_lagmfm_density_kernel(GPUContext *ctx, int n_particles,
         params->lagmfm_eta, params->lagmfm_h_iter, params->lagmfm_h_tol,
         params->cellsize, params->mx, params->my,
         params->xmin, params->ymin,
-        params->Gamma, params->nu_phys);
+        params->Gamma, params->nu_phys, params->lagmfm_pure_gizmo);
 
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaStreamSynchronize(s));
@@ -2486,6 +2977,7 @@ double gpu_launch_lagmfm_force_kernel(GPUContext *ctx, int n_particles,
         ctx->d_parts.gUxx, ctx->d_parts.gUxy,
         ctx->d_parts.gUyx, ctx->d_parts.gUyy,
         ctx->d_parts.dPdx, ctx->d_parts.dPdy,
+        ctx->d_parts.dRhodx, ctx->d_parts.dRhody,
         ctx->d_parts.tauxx, ctx->d_parts.tauxy, ctx->d_parts.tauyy,
         ctx->d_parts.alpha_cd,
         /* Cell CSR */
@@ -2501,7 +2993,7 @@ double gpu_launch_lagmfm_force_kernel(GPUContext *ctx, int n_particles,
         params->Courant, params->Gamma,
         params->alphavis, params->betavis,
         params->etavis, params->epsvis,
-        params->nu_phys, params->lagmfm_eta);
+        params->nu_phys, params->lagmfm_eta, params->lagmfm_pure_gizmo);
 
     CUDA_CHECK(cudaGetLastError());
 

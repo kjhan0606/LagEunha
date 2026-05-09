@@ -28,9 +28,17 @@ typedef HydroTreeLinkedCell CellType;
 void mkLinkedList2D_oExam(SimParameters *, postype , 
 		postype , postype , postype , postype , 
 		void (*)(SimParameters *, postype)); 
-void mkLinkedList2D_rt(SimParameters *, postype , 
-		postype , postype , postype , postype , 
-		void (*)(SimParameters *, postype)); 
+void mkLinkedList2D_rt(SimParameters *, postype ,
+		postype , postype , postype , postype ,
+		void (*)(SimParameters *, postype));
+void mkLinkedList2D_sod(SimParameters *, postype ,
+		postype , postype , postype , postype ,
+		void (*)(SimParameters *, postype));
+void mkLinkedList2D_sedov2d(SimParameters *, postype ,
+		postype , postype , postype , postype ,
+		void (*)(SimParameters *, postype));
+void wallx_postStage_blend(SimParameters *);
+void walls_xy_postStage_blend(SimParameters *);
 
 int periodicity(int , int , int );
 
@@ -131,6 +139,16 @@ double getAccVoro2DBlend(SimParameters *, postype , postype ,
 			postype , postype , postype , postype, void (*)(SimParameters *, postype))
 		);
 double exam2d_vph_rk4_int_blend(
+		SimParameters *,
+		void (*)(SimParameters *, postype),
+		double (*)(SimParameters *, postype, postype, postype),
+		Voro2D_point *(*)(SimParameters *, int , int, int *),
+		treevorork4particletype *(*)(SimParameters *, int , int , int *),
+		int (*)(treevorork4particletype*, postype, postype),
+		void (*)(SimParameters *, postype ,
+			postype , postype , postype , postype, void (*)(SimParameters *, postype)),
+		void (*)(SimParameters *));
+double exam2d_vph_kdk_int_blend(
 		SimParameters *,
 		void (*)(SimParameters *, postype),
 		double (*)(SimParameters *, postype, postype, postype),

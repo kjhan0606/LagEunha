@@ -4,14 +4,19 @@
 #include "mpiaux.h"
 
 void Mpi_Basic_Set(SimParameters *simpar, MPI_Comm com){
+	fprintf(stderr,"[MBS] enter\n"); fflush(stderr);
 	MPICOM(simpar) = MPI_COMM(simpar) = com;
+	fprintf(stderr,"[MBS] set com\n"); fflush(stderr);
 	int myid,nid;
 	MPI_Comm_rank(com,&myid);
 	MPI_Comm_size(com,&nid);
+	fprintf(stderr,"[MBS] myid=%d nid=%d NWGROUP=%d\n", myid, nid, NWGROUP(simpar)); fflush(stderr);
 	MYID(simpar) = myid;
 	NID(simpar) = nid;
 	MPI_COMM(simpar) = com;
+	fprintf(stderr,"[MBS] before divide nid=%d NWGROUP=%d\n", nid, NWGROUP(simpar)); fflush(stderr);
 	WGROUPSIZE(simpar) = (nid + NWGROUP(simpar) - 1) /NWGROUP(simpar);
+	fprintf(stderr,"[MBS] WGROUPSIZE=%d done\n", WGROUPSIZE(simpar)); fflush(stderr);
 }
 
 void my_MPI_Sendrecv(void *sbase, long smem, MPI_Datatype datatype1, int dest, int stag,

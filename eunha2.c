@@ -115,15 +115,20 @@ int FUNC(MAIN)(int argc, char **argv)
 
 	/* Make Default SimParameter for Cosmological Simulation */
 	mk_default_param(&simpar, "WMAP5");
+	fprintf(stderr,"[DBG] after mk_default_param simmodel=%d NWGROUP=%d\n",
+		SIMMODEL((&simpar)), NWGROUP((&simpar))); fflush(stderr);
 
 	/* Initial Setting of MPI Communicator */
 	Mpi_Basic_Set(&simpar, com);
+	fprintf(stderr,"[DBG] after Mpi_Basic_Set myid=%d\n", MYID((&simpar))); fflush(stderr);
 
 	HAMB(&simpar);
+	fprintf(stderr,"[DBG] after HAMB\n"); fflush(stderr);
 
 
 	/* Read Simulation Input Parameters */
 	ReadSimulationParameters(fp, &icont, &simpar);
+	fprintf(stderr,"[DBG] after ReadSimulationParameters simmodel=%d\n", SIMMODEL((&simpar))); fflush(stderr);
 
 	if(SIMMODEL( (&simpar) ) == Cosmos) {
 		RunCosmos(&simpar, icont); // icont from ReadSimulationParameters is an input here.
@@ -175,6 +180,11 @@ int FUNC(MAIN)(int argc, char **argv)
 		if(argc ==3) icont = atoi(argv[2]);
 		int RunCylinder(SimParameters *, int);
 		RunCylinder(&simpar, icont);
+	}
+	else if(SIMMODEL( (&simpar) ) == Sedov2D) {
+		if(argc ==3) icont = atoi(argv[2]);
+		int RunSedov2D(SimParameters *, int);
+		RunSedov2D(&simpar, icont);
 	}
 
 	MPI_Finalize();

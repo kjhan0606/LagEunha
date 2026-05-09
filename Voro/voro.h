@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
+#include<stdint.h>
 #include<string.h>
 #include<math.h>
 #ifdef VORO_MAIN
@@ -250,7 +251,14 @@ postype getAvgPressureOnSurface3D(postype , postype , Voro3D_point *, Voro3D_Ver
 #define getNextPolygonVertex(now,next) ( { int _i=0; while(next->link[_i]!=now) { _i = (_i+1)%3; } _i = (_i-1+3)%3; Voro3D_Vertex *nnext = next->link[_i]; nnext;})
 
 
-#define getwfrac(sqw1,sqw2,sqd12) (0.5 +0.5*((sqw1-sqw2)/sqd12))
+/* Clamp Laguerre wfrac to [0.05, 0.95].  Unclamped values can exceed [0,1]
+ * when weights differ enormously (e.g. Sedov's P_hot/P_amb=5e5), pushing the
+ * radical axis beyond any corner and producing a degenerate/empty cell that
+ * sends FindingLowerLimit/FindingUpperLimit into an infinite loop. */
+#define getwfrac(sqw1,sqw2,sqd12) \
+	( (0.5 +0.5*((sqw1-sqw2)/sqd12)) < 0.05 ? 0.05 : \
+	  ((0.5 +0.5*((sqw1-sqw2)/sqd12)) > 0.95 ? 0.95 : \
+	   (0.5 +0.5*((sqw1-sqw2)/sqd12))) )
 
 #define initStreeUpq(ai) do{\
 	Stress *stress=ai->stress;\

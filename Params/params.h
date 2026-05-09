@@ -252,6 +252,17 @@ void  read_slab_head(FILE*, SimParameters *);
 /* P_CYL_GridSize removed: computed at runtime */
 #define P_CYL_OrderAcc P_GAS_LagOA
 #define P_CYL_Kappa    P_GAS_Kappa
+/* Sedov2D parameters */
+#define P_SEDOV2D_XMAX    SET"Sedov2D maximum x   = "S_DOUBLE" # Maximum X in the Sedov2D Test\n"
+#define P_SEDOV2D_YMAX    SET"Sedov2D maximum y   = "S_DOUBLE" # Maximum Y in the Sedov2D Test\n"
+#define P_SEDOV2D_CX      SET"Sedov2D Center X    = "S_DOUBLE" # Sedov2D blast center X\n"
+#define P_SEDOV2D_CY      SET"Sedov2D Center Y    = "S_DOUBLE" # Sedov2D blast center Y\n"
+#define P_SEDOV2D_E       SET"Sedov2D Blast Energy= "S_FLOAT" # Total injected thermal energy\n"
+#define P_SEDOV2D_RBLAST  SET"Sedov2D Blast Radius= "S_FLOAT" # Initial blast radius\n"
+#define P_SEDOV2D_RHOAMB  SET"Sedov2D Ambient Dens= "S_FLOAT" # Ambient density\n"
+#define P_SEDOV2D_PAMB    SET"Sedov2D Ambient Pres= "S_FLOAT" # Ambient pressure\n"
+#define P_SEDOV2D_OrderAcc P_GAS_LagOA
+#define P_SEDOV2D_Kappa    P_GAS_Kappa
 #define P_GAS_Kappa      SET"GAS kappa           = "S_FLOAT" # Laguerre weight scale factor (0=uniform w2)\n"
 #define P_GAS_LagOA      SET"GAS laguerre_oa     = "S_FLOAT" # Laguerre face-averaged M(n,m) stencil weight (0<=w<0.5)\n"
 #define P_GAS_w2Factor    SET"GAS w2 factor       = "S_FLOAT" # (unused) w2 increment factor\n"
@@ -266,6 +277,11 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_GAS_W2RELAXTAU SET"GAS w2_relax_tau   = "S_FLOAT" # w2 relaxation timescale (d/c units, 0=off)\n"
 #define P_GAS_W2RATEMAX  SET"GAS w2_rate_max    = "S_FLOAT" # max fractional dw2/w2 per step (0=off)\n"
 #define P_GAS_W2FLOORFRAC SET"GAS w2_floor_frac  = "S_FLOAT" # w floor as fraction of dMean (0=off)\n"
+#define P_GAS_W2MODE     SET"GAS w2_mode        = "S_INT" # 0=pressure, 1=entropy-A, 2=specific-entropy add, 3=pressure+vol-equalize\n"
+#define P_GAS_W2SREF     SET"GAS w2_s_ref       = "S_FLOAT" # reference specific entropy s=ln(P/rho^gamma) (modes 1,2)\n"
+#define P_GAS_W2SSCALE   SET"GAS w2_s_scale     = "S_FLOAT" # scale for specific-entropy perturbation (mode 2 denom)\n"
+#define P_GAS_W2SBETA    SET"GAS w2_s_beta      = "S_FLOAT" # amplitude beta for specific-entropy mode 2 (0=off)\n"
+#define P_GAS_W2VOLGAMMA SET"GAS w2_vol_gamma   = "S_FLOAT" # volume-equalization strength gamma for mode 3 (0=off)\n"
 
 #define P_VORO_AlphaVis  SET"GAS av_alpha       = "S_FLOAT" # Monaghan AV alpha\n"
 #define P_VORO_BetaVis  SET"GAS av_beta        = "S_FLOAT" # Monaghan AV beta\n"
@@ -274,6 +290,12 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_VORO_Viscosity  SET"GAS nu_phys        = "S_FLOAT" # Physical kinematic viscosity\n"
 #define P_GAS_REYNOLDS    SET"GAS reynolds       = "S_FLOAT" # Reynolds number (inf=inviscid)\n"
 #define P_GAS_GPU_ENABLED SET"GAS gpu_enabled    = "S_INT"   # 0=CPU only (default), 1=use GPU\n"
+#define P_GAS_GRADIENT_METHOD SET"GAS gradient_method= "S_INT"   # 0=Green-Gauss (default), 1=Pakmor 2016 LSF\n"
+#define P_GAS_XSPHEPS    SET"GAS xsph_eps       = "S_FLOAT" # XSPH position-drift coefficient (Monaghan 1989). 0=off\n"
+#define P_GAS_HYPERVALPHA SET"GAS hyperv_alpha   = "S_FLOAT" # 4th-order hyperviscosity alpha4: nu4=alpha4*cs*dx^3. 0=off\n"
+#define P_GAS_HYPERVFORCECAP SET"GAS hyperv_force_cap = "S_FLOAT" # HV force cap: |a_HV| <= cap*cs^2/sqrt(V). 0=off\n"
+#define P_GAS_ENTROPY_MODE SET"GAS entropy_mode   = "S_INT"   # av_mode=1 thermodynamic var: 0=ie (default), 1=K=P/rho^gamma\n"
+#define P_GAS_K_FLOOR     SET"GAS K_floor        = "S_FLOAT" # entropy_mode=1 positivity floor on K. default 1e-30\n"
 /* backward-compat aliases for old param files */
 #define P_VORO_AlphaVis_OLD  SET"Alpha parameter in Voro  = "S_FLOAT" # Alpha factor of Voronoi AV\n"
 #define P_VORO_BetaVis_OLD  SET"Beta parameter in Voro  = "S_FLOAT" # Beta factor of Voronoi AV\n"
@@ -429,6 +451,20 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_CYL_OrderAcc,sp CYL_OA(simpar));\
 		ncnt += frw(wp,P_CYL_Kappa,sp CYL_Kappa(simpar));\
 	}\
+	else if(SIMMODEL(simpar) == Sedov2D){\
+		ncnt += frw(wp,P_TIME_STEPPING,sp GAS_EVOLMETHOD(simpar));\
+		ncnt += frw(wp,P_Gamma,sp GAS_GAMMA(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_XMAX,sp SEDOV2D_XMAX(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_YMAX,sp SEDOV2D_YMAX(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_CX,sp SEDOV2D_CX(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_CY,sp SEDOV2D_CY(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_E,sp SEDOV2D_E(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_RBLAST,sp SEDOV2D_RBLAST(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_RHOAMB,sp SEDOV2D_RHOAMB(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_PAMB,sp SEDOV2D_PAMB(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_OrderAcc,sp VoroAccuracyOrder(simpar));\
+		ncnt += frw(wp,P_SEDOV2D_Kappa,sp GAS_Kappa(simpar));\
+	}\
 	ncnt += frw(wp,P_GAS_w2Power,sp GAS_w2Power(simpar));\
 	ncnt += frw(wp,P_NULL);\
 	ncnt += frw(wp,"### Nx, Ny, and Nz should be same & nspace should be int.\n");\
@@ -542,12 +578,23 @@ void  read_slab_head(FILE*, SimParameters *);
 			ncnt += frw(wp,P_GAS_USEMUSCL,sp GAS_USEMUSCL(simpar));\
 			ncnt += frw(wp,P_GAS_BLENDTHETA,sp GAS_BLENDTHETA(simpar));\
 		}\
-		if(GAS_W2RELAXTAU(simpar) > 0 || GAS_W2RATEMAX(simpar) > 0 || GAS_W2FLOORFRAC(simpar) > 0){\
-			ncnt += frw(wp,P_GAS_W2RELAXTAU,sp GAS_W2RELAXTAU(simpar));\
-			ncnt += frw(wp,P_GAS_W2RATEMAX,sp GAS_W2RATEMAX(simpar));\
-			ncnt += frw(wp,P_GAS_W2FLOORFRAC,sp GAS_W2FLOORFRAC(simpar));\
-		}\
+		ncnt += frw(wp,P_GAS_W2RELAXTAU,sp GAS_W2RELAXTAU(simpar));\
+		ncnt += frw(wp,P_GAS_W2RATEMAX,sp GAS_W2RATEMAX(simpar));\
+		ncnt += frw(wp,P_GAS_W2FLOORFRAC,sp GAS_W2FLOORFRAC(simpar));\
+		/* w2_mode fields are always read/written so first-read isn't skipped
+		 * by a conditional check against the uninitialized default. */\
+		ncnt += frw(wp,P_GAS_W2MODE,sp GAS_W2MODE(simpar));\
+		ncnt += frw(wp,P_GAS_W2SREF,sp GAS_W2SREF(simpar));\
+		ncnt += frw(wp,P_GAS_W2SSCALE,sp GAS_W2SSCALE(simpar));\
+		ncnt += frw(wp,P_GAS_W2SBETA,sp GAS_W2SBETA(simpar));\
+		ncnt += frw(wp,P_GAS_W2VOLGAMMA,sp GAS_W2VOLGAMMA(simpar));\
 		ncnt += frw(wp,P_GAS_GPU_ENABLED,sp GAS_GPU_ENABLED(simpar));\
+		ncnt += frw(wp,P_GAS_GRADIENT_METHOD,sp GAS_GRADIENT_METHOD(simpar));\
+		ncnt += frw(wp,P_GAS_XSPHEPS,sp GAS_XSPHEPS(simpar));\
+		ncnt += frw(wp,P_GAS_HYPERVALPHA,sp GAS_HYPERVALPHA(simpar));\
+		ncnt += frw(wp,P_GAS_HYPERVFORCECAP,sp GAS_HYPERVFORCECAP(simpar));\
+		ncnt += frw(wp,P_GAS_ENTROPY_MODE,sp GAS_ENTROPY_MODE(simpar));\
+		ncnt += frw(wp,P_GAS_K_FLOOR,sp GAS_K_FLOOR(simpar));\
 	}\
 	ncnt += frw(wp,P_NULL);\
 }while(0)

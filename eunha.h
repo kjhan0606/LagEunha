@@ -64,7 +64,7 @@ enum dimension {X=1, Y=2, Z=3, VX = 1, VY = 2, VZ = 3};
 
 #include <sys/types.h>
 enum SimulationModels {Cosmos=0, Static=1,ZoomedCosmos=2,KH=3,Blast=4,
-	BowShock=5, RT=6,RT_LF=60,Kepler=7,Cylinder=8,MkGlass2D=30};
+	BowShock=5, RT=6,RT_LF=60,Kepler=7,Cylinder=8,MkGlass2D=30,Sedov2D=31};
 /*
 #define Cosmos 0
 #define Static 1
@@ -295,6 +295,11 @@ typedef struct CylinderInfo{
     double cx, cy, radius;
 }CylinderInfo;
 
+typedef struct Sedov2DInfo{
+    float E_blast, r_blast, rho_amb, P_amb;
+    double cx, cy;
+}Sedov2DInfo;
+
 typedef struct Glass2D{
     float eps;
     float xmin,ymin,xmax,ymax;
@@ -349,8 +354,24 @@ typedef struct GasInfo{
 	float w2_relax_tau;                // w2 relaxation timescale in units of d/c (0=off)
 	float w2_rate_max;                 // max fractional change |Δw2/w2_old| per step (0=off)
 	float w2_floor_frac;               // w floor as fraction of dMean (0=off)
+	int   w2_mode;                     // 0=pressure (default), 1=entropy-A, 2=specific-entropy add, 3=pressure+volume-equalize hybrid
+	float w2_s_ref;                    // reference specific entropy (for modes 1,2). s = ln(P/rho^gamma)
+	float w2_s_scale;                  // scale for additive specific-entropy mode (denominator, ≈ |s_L - s_R|)
+	float w2_s_beta;                   // amplitude of specific-entropy perturbation (mode 2, dimensionless)
+	float w2_vol_gamma;                // volume-equalization strength γ for mode 3 (0=off, recovers mode 0)
 	float reynolds;                    // Reynolds number (inf=inviscid)
 	int   gpu_enabled;                 // 0=CPU only (default), 1=use GPU
+	int   gradient_method;             // 0=Green-Gauss (default), 1=Pakmor 2016 LSF (least-squares fit)
+	float xsph_eps;                    // XSPH position-drift coefficient ε (Monaghan 1989). 0=off
+	float hyperv_alpha;                // 4th-order hyperviscosity α₄: ν₄ = α₄·cs·Δx³. 0=off
+	float hyperv_force_cap;            // HV force magnitude cap: |a_HV| ≤ cap·cs²/sqrt(V). 0=off
+	/* Entropy formulation (av_mode=1 only):
+	 * 0 = standard internal-energy form (default), 1 = K=P/rho^gamma form.
+	 * Goal: structurally remove heating runaway at strong shocks by integrating
+	 * specific entropy K instead of internal energy ie. P/cs are derived from
+	 * (K, rho); ie is kept as a diagnostic only. */
+	int   entropy_mode;
+	float K_floor;                     // positivity floor on K (entropy_mode=1)
 }GasInfo;
 #define GAS_MEANRHO(simpar) ((simpar)->physics.gasinfo.meanrho)
 #define GAS_RHOS2RHOR(simpar) ((simpar)->physics.gasinfo.rhos2rhor)
@@ -517,6 +538,7 @@ typedef struct RK4{
 	PosType k3x,k3y,k3vx,k3vy;
 	PosType k4x,k4y,k4vx,k4vy;
 	PosType k1ie,k2ie,k3ie,k4ie;
+	PosType k1K,k2K,k3K,k4K;     /* entropy variable K=P/rho^gamma stages (av_mode=1 entropy_mode=1) */
 	float w2backup;
 } RK4;
 
@@ -538,6 +560,25 @@ typedef struct Stress {
 	PosType E_inv_xx, E_inv_xy;
 	PosType E_inv_yx, E_inv_yy;
 	PosType h_mfm;              // kernel bandwidth used at last density pass
+	/* MFV (LAGMFV compile flag): accumulated mass flux out of particle this step.
+	 * MFM keeps particle mass constant, so this is unused when MFM is default. */
+	PosType mass_flux_accum;
+	/* XSPH (Monaghan 1989): face-averaged velocity offset used for position drift.
+	 * v_smooth_i = Σ_j A_ij (v_j - v_i) / Σ_j A_ij  (real-neighbor faces only)
+	 * Position update becomes dx/dt = v + xsph_eps * v_smooth.
+	 * Velocity itself is not modified, so momentum/energy stay conserved. */
+	PosType v_smooth_x, v_smooth_y;
+	/* Hyperviscosity (Path 1): velocity Laplacian per particle.
+	 * Pass 1: lap_v_i = (1/V_i) Σ_j A_ij (v_j - v_i)/d_ij  (in gradient face loop)
+	 * Pass 2: dv_i/dt -= ν₄ × (1/V_i) Σ_j A_ij (lap_v_j - lap_v_i)/d_ij
+	 * Coefficient ν₄ = α₄ × cs × Δx³ kills high-k modes selectively. */
+	PosType lap_vx, lap_vy;
+	/* Entropy formulation (entropy_mode=1, av_mode=1):
+	 * K = P/rho^gamma is the specific entropy variable. Smooth Lagrangian
+	 * compression preserves K (dK=0); only viscous/Riemann dissipation grows K.
+	 * Pressure recovery: P = K*rho^gamma; cs^2 = gamma*K*rho^(gamma-1).
+	 * Springel & Hernquist 2002 MNRAS 333, 649. */
+	PosType K, dK;
 } Stress;
 
 typedef struct vorostressparticletype{
@@ -759,6 +800,7 @@ typedef struct SimModels{
 	KPI kp;
 	Glass2D gl2d;
 	CylinderInfo cyl;
+	Sedov2DInfo sedov2d;
 	Simbox simbox;
 }SimModels;
 
@@ -952,6 +994,17 @@ typedef struct SimParameters{
 #define GAS_W2RELAXTAU(simpar) ((simpar)->physics.gasinfo.w2_relax_tau)
 #define GAS_W2RATEMAX(simpar) ((simpar)->physics.gasinfo.w2_rate_max)
 #define GAS_W2FLOORFRAC(simpar) ((simpar)->physics.gasinfo.w2_floor_frac)
+#define GAS_W2MODE(simpar) ((simpar)->physics.gasinfo.w2_mode)
+#define GAS_W2SREF(simpar) ((simpar)->physics.gasinfo.w2_s_ref)
+#define GAS_W2SSCALE(simpar) ((simpar)->physics.gasinfo.w2_s_scale)
+#define GAS_W2SBETA(simpar) ((simpar)->physics.gasinfo.w2_s_beta)
+#define GAS_W2VOLGAMMA(simpar) ((simpar)->physics.gasinfo.w2_vol_gamma)
+#define GAS_GRADIENT_METHOD(simpar) ((simpar)->physics.gasinfo.gradient_method)
+#define GAS_XSPHEPS(simpar) ((simpar)->physics.gasinfo.xsph_eps)
+#define GAS_HYPERVALPHA(simpar) ((simpar)->physics.gasinfo.hyperv_alpha)
+#define GAS_HYPERVFORCECAP(simpar) ((simpar)->physics.gasinfo.hyperv_force_cap)
+#define GAS_ENTROPY_MODE(simpar) ((simpar)->physics.gasinfo.entropy_mode)
+#define GAS_K_FLOOR(simpar) ((simpar)->physics.gasinfo.K_floor)
 
 // GPU parameter
 #define GAS_GPU_ENABLED(simpar) ((simpar)->physics.gasinfo.gpu_enabled)
@@ -1069,6 +1122,18 @@ typedef struct SimParameters{
 #define CYL_UINF(simpar) ((simpar)->simmodel.cyl.u_inf)
 #define CYL_RHO(simpar) ((simpar)->simmodel.cyl.rho_inf)
 #define CYL_P(simpar) ((simpar)->simmodel.cyl.p_inf)
+/* 2D Sedov blast wave */
+#define SEDOV2D_XMAX(simpar) Xmax_HydroExam(simpar)
+#define SEDOV2D_YMAX(simpar) Ymax_HydroExam(simpar)
+#define SEDOV2D_XMIN(simpar) Xmin_HydroExam(simpar)
+#define SEDOV2D_YMIN(simpar) Ymin_HydroExam(simpar)
+#define SEDOV2D_GridSize(simpar) HydroGridSize(simpar)
+#define SEDOV2D_E(simpar) ((simpar)->simmodel.sedov2d.E_blast)
+#define SEDOV2D_RBLAST(simpar) ((simpar)->simmodel.sedov2d.r_blast)
+#define SEDOV2D_RHOAMB(simpar) ((simpar)->simmodel.sedov2d.rho_amb)
+#define SEDOV2D_PAMB(simpar) ((simpar)->simmodel.sedov2d.P_amb)
+#define SEDOV2D_CX(simpar) ((simpar)->simmodel.sedov2d.cx)
+#define SEDOV2D_CY(simpar) ((simpar)->simmodel.sedov2d.cy)
 #define CYL_OA(simpar) VoroAccuracyOrder(simpar)
 
 #define GAS_Kappa(simpar) ((simpar)->physics.gasinfo.Kappa)

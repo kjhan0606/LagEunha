@@ -259,21 +259,185 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	// Lecoanet et al. (2016) Section 3.2 IC
 	postype z1 = 0.5, z2 = 1.5;      // interface positions (fixed for [0,2] domain)
 	postype sigma = 0.2;              // Gaussian envelope width for vy perturbation
-	for(j=0;j<ny;j++){
-        postype rho,vx;
-        postype y = (postype)(j+0.5)*Ly/(postype)ny;
-        // tanh profile: 0.5*(tanh((y-z1)/a) - tanh((y-z2)/a))
-        // ranges from 0 (outer) to 1 (inner)
+
+	// Glass IC loading.  If a binary file at ./glass_NxxNy.bin (or pointed to
+	// by env var LAGMFM_GLASS_FILE) exists with matching np=nx*ny, Lx, Ly,
+	// use its positions; else fall back to regular grid + per-row McNally.
+	double *glass_x = NULL, *glass_y = NULL;
+	int use_glass = 0;
+	{
+		char path[512];
+		const char *env = getenv("LAGMFM_GLASS_FILE");
+		if(env && *env) snprintf(path, sizeof(path), "%s", env);
+		else            snprintf(path, sizeof(path), "./glass_%dx%d.bin", nx, ny);
+#if defined(IC_SOD2D)
+		/* Sod with reflecting x-walls needs regular grid IC: glass irregularity
+		 * puts some particles within << dx/2 of x=0/Lx, and their wall mirrors
+		 * then create tiny Voronoi cells → density spikes. */
+		FILE *fp = NULL;
+#else
+		FILE *fp = fopen(path, "rb");
+#endif
+		if(fp){
+			int np_file;
+			double Lx_file, Ly_file;
+			if(fread(&np_file, sizeof(int), 1, fp)==1 &&
+			   fread(&Lx_file, sizeof(double), 1, fp)==1 &&
+			   fread(&Ly_file, sizeof(double), 1, fp)==1 &&
+			   np_file == nx*ny &&
+			   fabs(Lx_file-Lx) < 1e-9 && fabs(Ly_file-Ly) < 1e-9){
+				glass_x = (double*)malloc(sizeof(double)*np_file);
+				glass_y = (double*)malloc(sizeof(double)*np_file);
+				if(fread(glass_x, sizeof(double), np_file, fp)==(size_t)np_file &&
+				   fread(glass_y, sizeof(double), np_file, fp)==(size_t)np_file){
+					use_glass = 1;
+					DEBUGPRINT("KH: loaded glass IC from %s (np=%d)\n", path, np_file);
+				} else {
+					free(glass_x); free(glass_y); glass_x=glass_y=NULL;
+				}
+			} else {
+				DEBUGPRINT("KH: glass file %s header mismatch, falling back to grid\n", path);
+			}
+			fclose(fp);
+		} else {
+			DEBUGPRINT("KH: glass file %s not found, using regular grid\n", path);
+		}
+	}
+
+	size_t n_particles_total = (size_t)nx*(size_t)ny;
+	for(size_t p=0; p<n_particles_total; p++){
+		postype x, y;
+		if(use_glass){
+			x = (postype)glass_x[p];
+			y = (postype)glass_y[p];
+			i = (int)(p % (size_t)nx);
+			j = (int)(p / (size_t)nx);
+		} else {
+			i = (int)(p % (size_t)nx);
+			j = (int)(p / (size_t)nx);
+			x = (postype)(i+0.5)*Lx/(postype)nx;
+			y = (postype)(j+0.5)*Ly/(postype)ny;
+		}
+        postype rho,vx,press;
+        postype vy_seed = 0;
+#if defined(IC_SOD2D)
+        /* 2D Sod shock tube: step at x=Lx/2.  For periodic BC, use wide box
+         * (Lx ≥ 4) so waves don't wrap around to T_end=0.2.  Analytical
+         * comparison valid in [Lx/2 - 1.2·T, Lx/2 + 1.8·T] roughly. */
+        if(x < 0.5*Lx){ rho = 1.0;   press = 1.0; }
+        else          { rho = 0.125; press = 0.1; }
+        vx = 0;
+        char iregion = (x < 0.5*Lx) ? 0 : 1;
+#elif defined(IC_SEDOV2D)
+        /* 2D Sedov (GIZMO/Wengen-style): top-hat energy over N_hot=64 central
+         * particles, not a 1-cell spike.  P_hot = E(gamma-1)/(N_hot*h^2) so
+         * the total deposited energy is E=1.  R_hot = sqrt(N_hot/pi)*h gives
+         * a disk that contains exactly N_hot particles on a regular grid.
+         *   N=64, gamma=1.4, h=L/nx  ->  P_hot ~= 102, ratio P_hot/P_amb=1e5.
+         * The previous single-cell step (P_hot=500, ratio 5e5, N=12) made the
+         * Laguerre cell construction degenerate and produced grid-anisotropy
+         * in the blast. */
+        rho   = 1.0;
+        vx    = 0;
+        {
+            postype dx_c = x - 0.5*Lx, dy_c = y - 0.5*Ly;
+            postype h0 = Lx/(postype)nx;
+            postype R_hot = 4.51 * h0;    /* sqrt(64/pi) ~ 4.51 */
+            /* P_hot = E*(gamma-1)/(N_hot*h^2) so total deposited E=1 for any gamma */
+            postype P_hot = (Gamma - 1.0) / (64.0 * h0 * h0);
+            if(dx_c*dx_c + dy_c*dy_c < R_hot*R_hot)
+                press = P_hot;
+            else
+                press = 1.0e-3;
+        }
+        char iregion = 0;
+#elif defined(IC_NOH2D)
+        /* 2D Noh: radial inflow v = -r̂, ρ=1, P=1e-6. */
+        rho = 1.0;
+        press = 1.0e-6;
+        postype dx_c = x - 0.5*Lx, dy_c = y - 0.5*Ly;
+        postype r   = sqrt(dx_c*dx_c + dy_c*dy_c) + 1e-30;
+        vx = -dx_c/r;
+        vy_seed = -dy_c/r;
+        char iregion = 0;
+#elif defined(IC_DMR2D)
+        /* Simplified DMR-like: Mach 10 planar oblique shock in periodic box.
+         * Real DMR needs reflective bottom wall; this variant just tests
+         * HLLC handling of Mach 10 shock state before wall interaction.
+         *  Pre-shock (ahead of shock):  ρ=1.4, P=1, v=0
+         *  Post-shock:  ρ=8, P=116.5, u=7.14, v=-4.13
+         *  Initial shock front at x = 1/6 + y/√3 */
+        {
+            postype shock_x = Lx/6.0 + y / sqrt(3.0);
+            if(x < shock_x){
+                rho = 8.0; press = 116.5; vx = 7.145; vy_seed = -4.125;
+            } else {
+                rho = 1.4; press = 1.0;   vx = 0.0;   vy_seed = 0.0;
+            }
+        }
+        char iregion = 0;
+#elif defined(IC_RIEMANN2D)
+        /* Schulz-Rinne config 3: all 4 shocks moving into UR quadrant.
+         * Box [0,1]², partition at x=0.5, y=0.5.  (Lax & Liu 1998, Config 3.)
+         *  UR (x>0.5, y>0.5): ρ=1.5,    u=0,     v=0,     P=1.5
+         *  UL (x<0.5, y>0.5): ρ=0.5323, u=1.206, v=0,     P=0.3
+         *  LL (x<0.5, y<0.5): ρ=0.138,  u=1.206, v=1.206, P=0.029
+         *  LR (x>0.5, y<0.5): ρ=0.5323, u=0,     v=1.206, P=0.3
+         * γ = 1.4, t_final ≈ 0.3 */
+        {
+            postype xc_ = 0.5*Lx, yc_ = 0.5*Ly;
+            if(x > xc_ && y > yc_) {      /* UR */
+                rho = 1.5;    vx = 0.0;    vy_seed = 0.0;   press = 1.5;
+            } else if(x < xc_ && y > yc_){ /* UL */
+                rho = 0.5323; vx = 1.206;  vy_seed = 0.0;   press = 0.3;
+            } else if(x < xc_ && y < yc_){ /* LL */
+                rho = 0.138;  vx = 1.206;  vy_seed = 1.206; press = 0.029;
+            } else {                       /* LR */
+                rho = 0.5323; vx = 0.0;    vy_seed = 1.206; press = 0.3;
+            }
+        }
+        char iregion = 0;
+#elif defined(IC_GRESHO2D)
+        /* 2D Gresho vortex: stationary rotating vortex (Liska & Wendroff 2003).
+         *  r < 0.2: u_φ = 5r      P = 5 + 25/2 r²
+         *  0.2 < r < 0.4: u_φ = 2 - 5r  P = 9 + 25/2 r² - 20r + 4 ln(5r)
+         *  r > 0.4: u_φ = 0       P = 3 + 4 ln 2
+         *  ρ = 1, γ = 5/3 typically (low Mach). */
+        rho = 1.0;
+        {
+            postype dx_c = x - 0.5*Lx, dy_c = y - 0.5*Ly;
+            postype r = sqrt(dx_c*dx_c + dy_c*dy_c) + 1e-30;
+            postype uphi;
+            if(r < 0.2) {
+                uphi = 5.0 * r;
+                press = 5.0 + 12.5 * r * r;
+            } else if(r < 0.4) {
+                uphi = 2.0 - 5.0 * r;
+                press = 9.0 + 12.5 * r * r - 20.0 * r + 4.0 * log(5.0 * r);
+            } else {
+                uphi = 0.0;
+                press = 3.0 + 4.0 * log(2.0);
+            }
+            vx = -uphi * dy_c / r;      /* tangential: +φ̂ = (-y, x)/r */
+            vy_seed = uphi * dx_c / r;
+        }
+        char iregion = 0;
+#else
+        /* Default: Lecoanet et al. (2016) Section 3.2 KH IC. */
+        {
         postype profile = 0.5*(tanh((y-z1)/deltay) - tanh((y-z2)/deltay));
         rho = rho1 + (rho2-rho1)*profile;
         vx  = U1   + (U2-U1)*profile;
-        char iregion = (profile > 0.5) ? 1 : 0;
-        for(i=0;i<nx;i++){
-            postype x = (postype)(i+0.5)*Lx/(postype)nx;
-            postype vy = dvy0*sin(2.0*M_PI*x)
-                        *(exp(-(y-z1)*(y-z1)/(sigma*sigma))
-                         +exp(-(y-z2)*(y-z2)/(sigma*sigma)));
-            size_t indx = i+nx*j;
+        press = KH_Pressure(simpar);
+        }
+        char iregion = (y > z1 && y < z2) ? 1 : 0;
+        vy_seed = dvy0*sin(2.0*M_PI*x)
+                 *(exp(-(y-z1)*(y-z1)/(sigma*sigma))
+                  +exp(-(y-z2)*(y-z2)/(sigma*sigma)));
+#endif
+        {
+            postype vy = vy_seed;
+            size_t indx = p;
             if(x>=xmin && x < xmax && y>=ymin && y < ymax){
                 res[np].u4if.indx  = indx;
                 res[np].u4if.Flag[ENDIAN_OFFSET]  = iregion;
@@ -283,7 +447,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
                 res[np].vy  = vy;
                 res[np].mass  = rho*meanvol;
                 res[np].den  = rho;
-                res[np].pressure  = KH_Pressure(simpar);
+                res[np].pressure  = press;
                 res[np].ie  = res[np].pressure *meanvol/(Gamma-1);
 				/*
                 res[np].ke  = 0.5*(res[np].vx*res[np].vx + res[np].vy*res[np].vy);
@@ -296,9 +460,9 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
        		     res[np].w2 = - GAS_Kappa(simpar);
            		 res[np].w2old = - GAS_Kappa(simpar);
 		        } 
-				else { 
-			    	res[np].avgNeighboringPressure = KH_Pressure(simpar);
-					res[np].w2 = getw2forHydroParticle(simpar, res+np,0); 
+				else {
+			    	res[np].avgNeighboringPressure = press;
+					res[np].w2 = getw2forHydroParticle(simpar, res+np,0);
 					res[np].w2old = res[np].w2;
 		            res[np].w2ceil = res[np].w2;
        		 	}
@@ -306,6 +470,9 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             }
         }
     }
+	if(use_glass){
+		free(glass_x); free(glass_y);
+	}
 	if(use_stress){
 		res = (treevorork4particletype*)realloc(res, sizeof(treevorostressrk4particletype)*np);
 		treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)res;
@@ -323,6 +490,27 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 
 	GAS_invw2Scale(simpar) = 1.L / KH_Pressure(simpar);
 	/* w2Power is now read from params.dat ("GAS w2 power") */
+
+	/* Specific-entropy normalization for w2_mode >= 1.
+	 * s = ln(P/rho^gamma); KH has P common, two densities rho1, rho2.
+	 * s_ref = (s1 + s2)/2, s_scale = |s1 - s2| = gamma*|ln(rho1/rho2)|.
+	 * For mode 1 (entropy-A power-law), we also rescale invw2Scale to
+	 * A_ref = P / rho_ref^gamma where rho_ref = sqrt(rho1*rho2) (geometric mean),
+	 * so that the geometric mean of the two fluid w2 values ≈ base. */
+	{
+		postype P0 = KH_Pressure(simpar);
+		postype rho1 = KH_Rho1(simpar), rho2 = KH_Rho2(simpar);
+		postype gamma = GAS_GAMMA(simpar);
+		postype s1 = log(P0 / pow(rho1, gamma));
+		postype s2 = log(P0 / pow(rho2, gamma));
+		GAS_W2SREF(simpar)   = 0.5*(s1 + s2);
+		GAS_W2SSCALE(simpar) = fabs(s1 - s2);
+		if(GAS_W2SSCALE(simpar) < 1e-12) GAS_W2SSCALE(simpar) = 1.0;
+		if(GAS_W2MODE(simpar) == 1){
+			postype rho_ref = sqrt(rho1 * rho2);
+			GAS_invw2Scale(simpar) = pow(rho_ref, gamma) / P0;  /* 1/A_ref */
+		}
+	}
 
 
 	int nbp = np;
@@ -566,7 +754,11 @@ void kh_findVol(SimParameters *simpar){
     CellType *cells = VORO_BASICCELL(simpar)= (CellType*)malloc(sizeof(CellType)*mx*my);
     // building the linked list with "paddingTreeVorork4Particles()" which pads the domain
     // with the tree voro particles defined in ../Exam/mpirks.exam2d.c.
+#if defined(IC_SOD2D)
+    mkLinkedList2D_sod(simpar, cellsize,xmin,ymin,xmax,ymax, paddingTreeVorork4Particles);
+#else
     mkLinkedList2D_oExam(simpar, cellsize,xmin,ymin,xmax,ymax, paddingTreeVorork4Particles);
+#endif
 
     int i;
     /*

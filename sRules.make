@@ -53,7 +53,7 @@ S_TYPE = -DGOTPM
 #specialrules = -DINTEL   -DGOTPM   -DXYZDBL -DDEBUG
 #specialrules = -DINTEL   -DGOTPM   -DDEBUG
 
-specialrules = -DINTEL   -DXYZDBL  $(S_TYPE)      #  -Wmissing-prototypes #-DGOTPM # -DDEBUG
+specialrules = -DINTEL   -DXYZDBL  $(S_TYPE)   #  -Wmissing-prototypes # -DIC_SEDOV2D  -DGOTPM  -DDEBUG  (IC_SEDOV2D was overriding default KH IC — removed 2026-04-20)
 
 FFTW = /home/kjhan/local
 

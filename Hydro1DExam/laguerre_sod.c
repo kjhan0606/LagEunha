@@ -1081,28 +1081,86 @@ static void exact_riemann_face(double rhoL, double pL, double vL, double cL,
 }
 
 /* ============================================================
- *  HLLC face solver
+ *  HLLC face solver (TRUE HLLC with Gaburov/Davis wave speeds +
+ *  Roe-averaged fallback + PVRS-Rusanov last resort, ports GIZMO
+ *  reimann.h:527-593.  Previous impl here was TSRS disguised as HLLC.)
  * ============================================================ */
 static void hllc_face(double rhoL, double pL, double vL, double cL,
                       double rhoR, double pR, double vR, double cR,
                       double *pstar, double *vstar)
 {
-    double ZL = rhoL * cL, ZR = rhoR * cR;
-    double p_pvrs = (ZR*pL + ZL*pR + ZL*ZR*(vL - vR)) / (ZL + ZR);
-    if(p_pvrs < 0) p_pvrs = 0;
+    const double tiny = 1.0e-30;
+    double S_L, S_R, S_M, P_M;
+    double cmax = cL > cR ? cL : cR;
 
-    double qL = 1.0, qR = 1.0;
-    if(p_pvrs > pL)
-        qL = sqrt(1.0 + GP1/(2.0*GAM) * (p_pvrs/pL - 1.0));
-    if(p_pvrs > pR)
-        qR = sqrt(1.0 + GP1/(2.0*GAM) * (p_pvrs/pR - 1.0));
+    if((vR - vL) > cmax){
+        *pstar = tiny; *vstar = 0.5*(vL + vR);
+        return;
+    }
 
-    double WL = rhoL * cL * qL;
-    double WR = rhoR * cR * qR;
-    double Ws = WL + WR;
+    /* Primary: Gaburov/Davis */
+    {
+        double vmin = vL < vR ? vL : vR;
+        double vmax = vL > vR ? vL : vR;
+        S_L = vmin - cmax;
+        S_R = vmax + cmax;
+        double rho_wt_L = rhoL*(S_L - vL);
+        double rho_wt_R = rhoR*(S_R - vR);
+        double denom = rho_wt_L - rho_wt_R;
+        if(fabs(denom) > tiny){
+            S_M = ((pR - pL) + rho_wt_L*vL - rho_wt_R*vR) / denom;
+            P_M = (pL*rho_wt_R - pR*rho_wt_L + rho_wt_L*rho_wt_R*(vR - vL))
+                  / (rho_wt_R - rho_wt_L);
+            if(P_M > 0 && !isnan(P_M) && !isinf(P_M)){
+                *pstar = P_M; *vstar = S_M; return;
+            }
+        }
+    }
 
-    *pstar = (WR*pL + WL*pR + WL*WR*(vL - vR)) / Ws;
-    *vstar = (WL*vL + WR*vR + pL - pR) / Ws;
+    /* Roe fallback */
+    {
+        double sqL = sqrt(rhoL), sqR = sqrt(rhoR);
+        double sq_inv = 1.0/(sqL + sqR + tiny);
+        double v_roe = (sqL*vL + sqR*vR)*sq_inv;
+        double h_L = GAM*pL/((GAM - 1.0)*rhoL) + 0.5*vL*vL;
+        double h_R = GAM*pR/((GAM - 1.0)*rhoR) + 0.5*vR*vR;
+        double h_roe = (sqL*h_L + sqR*h_R)*sq_inv;
+        double c2_roe = (GAM - 1.0)*(h_roe - 0.5*v_roe*v_roe);
+        if(c2_roe < tiny) c2_roe = tiny;
+        double c_roe = sqrt(c2_roe);
+
+        double srA = vR + cR, srB = v_roe + c_roe;
+        double slA = vL - cL, slB = v_roe - c_roe;
+        S_R = srA > srB ? srA : srB;
+        S_L = slA < slB ? slA : slB;
+
+        double rho_wt_R =  rhoR*(S_R - vR);
+        double rho_wt_L = -rhoL*(S_L - vL);
+        double denom = rho_wt_R + rho_wt_L;
+        if(fabs(denom) > tiny){
+            S_M = (rho_wt_R*vR + rho_wt_L*vL + (pL - pR))/denom;
+            P_M = rhoL*(vL - S_L)*(vL - S_M) + pL;
+            if(P_M > 0 && !isnan(P_M) && !isinf(P_M)){
+                *pstar = P_M; *vstar = S_M; return;
+            }
+        }
+    }
+
+    /* Last resort */
+    {
+        P_M = 0.5*((pL + pR) + (vL - vR)*0.25*(rhoL + rhoR)*(cL + cR));
+        S_M = 0.5*(vR + vL) + 2.0*(pL - pR)/((rhoL + rhoR)*(cL + cR) + tiny);
+        double a1 = fabs(vL - cL), a2 = fabs(vR - cR);
+        double a3 = fabs(vL + cL), a4 = fabs(vR + cR);
+        double S_plus = a1;
+        if(a2 > S_plus) S_plus = a2;
+        if(a3 > S_plus) S_plus = a3;
+        if(a4 > S_plus) S_plus = a4;
+        if(S_M < -S_plus) S_M = -S_plus;
+        if(S_M >  S_plus) S_M =  S_plus;
+        if(P_M < tiny) P_M = tiny;
+        *pstar = P_M; *vstar = S_M;
+    }
 }
 
 /* ============================================================

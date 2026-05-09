@@ -384,25 +384,31 @@ int Voro3D_InitializeVertex(Voro3D_Vertex *Vertex,int np, postype boxsize){
 }
 
 
-Voro2D_Corner *FindingUpperLimit( 
-		Voro2D_point *neigh, 
+Voro2D_Corner *FindingUpperLimit(
+		Voro2D_point *neigh,
 		Voro2D_Corner *a,
 		postype wfrac
 		){
+	Voro2D_Corner *start = a;
+	int guard = 0;
 	a = a->lowerlink;
 	while(Voro2D_CutOrStay(neigh,a,wfrac) ==Outside){
 		a = a->lowerlink;
+		if(++guard > 100000 || a == start) break;   /* degenerate cell: extreme Laguerre wfrac */
 	}
 	return a;
 }
 Voro2D_Corner *FindingLowerLimit(
-		Voro2D_point *neigh, 
-		Voro2D_Corner *a, 
+		Voro2D_point *neigh,
+		Voro2D_Corner *a,
 		postype wfrac
 		){
+	Voro2D_Corner *start = a;
+	int guard = 0;
 	a = a->upperlink;
 	while(Voro2D_CutOrStay(neigh,a,wfrac) ==Outside){
 		a = a->upperlink;
+		if(++guard > 100000 || a == start) break;   /* degenerate cell: extreme Laguerre wfrac */
 	}
 	return a;
 }
@@ -536,7 +542,21 @@ int CreateNewCorner(
 
 	Voro2D_Corner *old= upper;
 	Voro2D_Corner *new= upper->upperlink;
+	int wd_iter = 0;
+	const int wd_max = 200000;
 	do {
+		if(++wd_iter > wd_max){
+			fprintf(stderr,"[VORO_WD] CreateNewCorner ring walk exceeded %d iters; pp=%d ip=%d neighbor=(%g,%g) wfrac=%g\n",
+				wd_max, pp, ip, (double)neighbor->x, (double)neighbor->y, (double)wfrac);
+			fflush(stderr);
+			return ip;
+		}
+		if((uintptr_t)old < 4096 || (uintptr_t)new < 4096){
+			fprintf(stderr,"[VORO_WD] CreateNewCorner null/tiny pointer: old=%p new=%p iter=%d pp=%d ip=%d\n",
+				(void*)old, (void*)new, wd_iter, pp, ip);
+			fflush(stderr);
+			return ip;
+		}
 		postype dist = sqrt(neighbor->x*neighbor->x + neighbor->y*neighbor->y)*0.5;
 		Voro2D_Corner line  = Vec2DSubCorner(old,new);
 		postype linelength = sqrt(Vec2DInnP(&line,&line));
@@ -1215,7 +1235,13 @@ int Voro2D_FindVC(
 				lower = FindingLowerLimit(neighbors+i, lower, wfrac);
 				Voro2D_Corner *upper = voroCorner+j;
 				upper = FindingUpperLimit(neighbors+i,upper, wfrac);
-				InactivateLowerAndUpper(lower,upper); 
+				InactivateLowerAndUpper(lower,upper);
+				if(ip + 4 > mp){
+					fprintf(stderr,"[VORO_OVF] Voro2D_FindVC: ip=%d would exceed mp=%d (need +2). i=%d/%d ctrCenter=(%g,%g)\n",
+						ip, mp, i, np, (double)ctrCenter->x, (double)ctrCenter->y);
+					fflush(stderr);
+					return ip;  /* abort cell — will leave partial corners */
+				}
 				ip = CreateNewCorner(lower,upper, voroCorner,ip,neighbors+i,i, wfrac);
 				ip = Voro2D_Trim_Corner(voroCorner,ip, &maxdist2);
 				j = ip;
