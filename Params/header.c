@@ -398,6 +398,11 @@ void mk_default_kh_param(SimParameters *defsim){
 		GAS_W2SSCALE(defsim) = 1.0;
 		GAS_W2SBETA(defsim) = 0.0;
 		GAS_W2VOLGAMMA(defsim) = 0.0;
+		GAS_W2ALPHA(defsim) = 0.1;     // cs-based modes 4/5/6: sensitivity (cs=1 -> length=0.1*dMean)
+		GAS_W2BETA(defsim) = 0.5;      // cs-based mode 5: Pade saturation point (length cap = 0.5*dMean)
+		GAS_W2CSEXP(defsim) = 1.0;     // cs-based mode 6: power-law exponent (1=linear)
+		GAS_W2DKBETA(defsim) = 0.0;    // dK-based mode 7: heating feedback strength (0=off, baseline only)
+		GAS_W2DKETAMAX(defsim) = 10.0; // dK-based mode 7: clamp on dimensionless heating measure
 		GAS_GPU_ENABLED(defsim) = 1;
 		GAS_GRADIENT_METHOD(defsim) = 0;
 		GAS_XSPHEPS(defsim) = 0.0;
@@ -405,6 +410,8 @@ void mk_default_kh_param(SimParameters *defsim){
 		GAS_HYPERVFORCECAP(defsim) = 0.0;
 		GAS_ENTROPY_MODE(defsim) = 0;
 		GAS_K_FLOOR(defsim) = 1.e-30;
+		GAS_DKPDVFACTOR(defsim) = 0.0;
+		GAS_DKRATEMAX(defsim) = 0.0;
 
 		/* Grid: 256x256 default */
 		NX(defsim) = NY(defsim) = 256;
@@ -475,6 +482,11 @@ void mk_default_rt_param(SimParameters *defsim, int iflag){
 		GAS_W2SSCALE(defsim) = 1.0;    // avoid div-by-zero if mode=2 picked w/o IC override
 		GAS_W2SBETA(defsim) = 0.0;
 		GAS_W2VOLGAMMA(defsim) = 0.0;
+		GAS_W2ALPHA(defsim) = 0.1;     // cs-based modes 4/5/6: sensitivity (cs=1 -> length=0.1*dMean)
+		GAS_W2BETA(defsim) = 0.5;      // cs-based mode 5: Pade saturation point (length cap = 0.5*dMean)
+		GAS_W2CSEXP(defsim) = 1.0;     // cs-based mode 6: power-law exponent (1=linear)
+		GAS_W2DKBETA(defsim) = 0.0;    // dK-based mode 7: heating feedback strength (0=off, baseline only)
+		GAS_W2DKETAMAX(defsim) = 10.0; // dK-based mode 7: clamp on dimensionless heating measure
 		GAS_GPU_ENABLED(defsim) = 1;
 		GAS_GRADIENT_METHOD(defsim) = 0;
 		GAS_XSPHEPS(defsim) = 0.0;
@@ -482,6 +494,8 @@ void mk_default_rt_param(SimParameters *defsim, int iflag){
 		GAS_HYPERVFORCECAP(defsim) = 0.0;
 		GAS_ENTROPY_MODE(defsim) = 0;
 		GAS_K_FLOOR(defsim) = 1.e-30;
+		GAS_DKPDVFACTOR(defsim) = 0.0;
+		GAS_DKRATEMAX(defsim) = 0.0;
 		/* Monaghan AV (used as ghost-face fallback in blend) */
 		GAS_AlphaVis(defsim) = 1.0;
 		GAS_BetaVis(defsim) = 2.0;

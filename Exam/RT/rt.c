@@ -132,6 +132,12 @@ int rt_evolBP(treevorork4particletype *bp,postype Lx, postype Ly){
 	else return 1;
 }
 
+static postype rt_tmax(void){
+	const char *ts = getenv("HYDRO_TSTOP");
+	if(ts && ts[0]) return atof(ts);
+	return (postype)10;
+}
+
 int RunRT(SimParameters *simpar, int icont){
 	postype t;
 	postype dt;
@@ -259,6 +265,6 @@ int RunRT(SimParameters *simpar, int icont){
             DEBUGPRINT("Time= %g & icount= %d with dTime= %g malloc count= %d\n",
 					t,icount, dt, get_malloc_call_count()); fflush(stdout);
         }
-	} while(t<10.);
+	} while(t<rt_tmax());
 	return 1;
 }

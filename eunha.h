@@ -354,11 +354,17 @@ typedef struct GasInfo{
 	float w2_relax_tau;                // w2 relaxation timescale in units of d/c (0=off)
 	float w2_rate_max;                 // max fractional change |Δw2/w2_old| per step (0=off)
 	float w2_floor_frac;               // w floor as fraction of dMean (0=off)
-	int   w2_mode;                     // 0=pressure (default), 1=entropy-A, 2=specific-entropy add, 3=pressure+volume-equalize hybrid
+	int   w2_mode;                     // 0=pressure (default), 1=entropy-A, 2=specific-entropy add, 3=pressure+volume-equalize hybrid, 4=cs-linear, 5=cs-Pade-saturation, 6=cs-power
 	float w2_s_ref;                    // reference specific entropy (for modes 1,2). s = ln(P/rho^gamma)
 	float w2_s_scale;                  // scale for additive specific-entropy mode (denominator, ≈ |s_L - s_R|)
 	float w2_s_beta;                   // amplitude of specific-entropy perturbation (mode 2, dimensionless)
 	float w2_vol_gamma;                // volume-equalization strength γ for mode 3 (0=off, recovers mode 0)
+	float w2_alpha;                    // cs-based modes 4/5/6: sensitivity. length = α·cs·dMean (mode 4)
+	float w2_beta;                     // cs-based mode 5 only: Padé saturation. length → β·dMean as cs→∞
+	float w2_csexp;                    // cs-based mode 6 only: power-law exponent. length = α·cs^p·dMean
+	float w2_dk_beta;                  // dK-based mode 7 only: heating feedback strength.
+	                                   // length² = (α·dMean)² · (1 + β·max(0,η)),  η = max(0,dK/K)·(dMean/cs)
+	float w2_dk_etamax;                // dK-based mode 7 only: clamp η ≤ η_max (default 10) to bound feedback
 	float reynolds;                    // Reynolds number (inf=inviscid)
 	int   gpu_enabled;                 // 0=CPU only (default), 1=use GPU
 	int   gradient_method;             // 0=Green-Gauss (default), 1=Pakmor 2016 LSF (least-squares fit)
@@ -372,6 +378,12 @@ typedef struct GasInfo{
 	 * (K, rho); ie is kept as a diagnostic only. */
 	int   entropy_mode;
 	float K_floor;                     // positivity floor on K (entropy_mode=1)
+	float dK_pdv_factor;               // entropy_mode=1 only: include factor*PdV work in dK source.
+	                                    // Physically wrong for adiabatic flow (double-counts), but
+	                                    // serves as numerical brake on K-runaway. 0=off (default).
+	float dK_rate_max;                 // entropy_mode=1 only: max |dK·dt|/K per RK4 stage.
+	                                    // Clamps stress.dK so K cannot grow more than rate_max
+	                                    // fraction per stage. 0=off (default). Recommended 0.1-0.5.
 }GasInfo;
 #define GAS_MEANRHO(simpar) ((simpar)->physics.gasinfo.meanrho)
 #define GAS_RHOS2RHOR(simpar) ((simpar)->physics.gasinfo.rhos2rhor)
@@ -999,12 +1011,19 @@ typedef struct SimParameters{
 #define GAS_W2SSCALE(simpar) ((simpar)->physics.gasinfo.w2_s_scale)
 #define GAS_W2SBETA(simpar) ((simpar)->physics.gasinfo.w2_s_beta)
 #define GAS_W2VOLGAMMA(simpar) ((simpar)->physics.gasinfo.w2_vol_gamma)
+#define GAS_W2ALPHA(simpar) ((simpar)->physics.gasinfo.w2_alpha)
+#define GAS_W2BETA(simpar) ((simpar)->physics.gasinfo.w2_beta)
+#define GAS_W2CSEXP(simpar) ((simpar)->physics.gasinfo.w2_csexp)
+#define GAS_W2DKBETA(simpar) ((simpar)->physics.gasinfo.w2_dk_beta)
+#define GAS_W2DKETAMAX(simpar) ((simpar)->physics.gasinfo.w2_dk_etamax)
 #define GAS_GRADIENT_METHOD(simpar) ((simpar)->physics.gasinfo.gradient_method)
 #define GAS_XSPHEPS(simpar) ((simpar)->physics.gasinfo.xsph_eps)
 #define GAS_HYPERVALPHA(simpar) ((simpar)->physics.gasinfo.hyperv_alpha)
 #define GAS_HYPERVFORCECAP(simpar) ((simpar)->physics.gasinfo.hyperv_force_cap)
 #define GAS_ENTROPY_MODE(simpar) ((simpar)->physics.gasinfo.entropy_mode)
 #define GAS_K_FLOOR(simpar) ((simpar)->physics.gasinfo.K_floor)
+#define GAS_DKPDVFACTOR(simpar) ((simpar)->physics.gasinfo.dK_pdv_factor)
+#define GAS_DKRATEMAX(simpar) ((simpar)->physics.gasinfo.dK_rate_max)
 
 // GPU parameter
 #define GAS_GPU_ENABLED(simpar) ((simpar)->physics.gasinfo.gpu_enabled)

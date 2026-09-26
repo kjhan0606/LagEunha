@@ -1496,6 +1496,30 @@ static void set_method_ns_av(void){
  * ============================================================ */
 int main(int argc, char **argv)
 {
+    if(argc >= 2 && strcmp(argv[1], "vr") == 0){
+        int np = (argc >= 3) ? atoi(argv[2]) : 200;
+        const char *names[] = {"sod","blast","shuosher","noh","lax","dblfan","collision","contact"};
+        const char *refs[] = {
+            "sod/ref.dat","blast/ref.dat","shuosher/ref.dat","noh/ref.dat",
+            "lax/ref.dat","dblfan/ref.dat","collision/ref.dat","contact/ref.dat"
+        };
+        printf("# Voronoi + MUSCL + HLLC, w=0, N=%d\n", np);
+        printf("# %-10s %12s %12s %12s %12s %6s\n",
+               "problem","L1_rho","L1_v","L1_p","eng_err","nstep");
+        for(int pid=0; pid<8; pid++){
+            setup_problem(pid);
+            if(has_exact_sol) exact_riemann(&ps_exact, &vs_exact);
+            else read_reference(refs[pid]);
+            set_method_hllc_cd10();
+            char out[256];
+            snprintf(out, sizeof(out), "vr_%s.dat", names[pid]);
+            Metrics m = run_sim(VORONOI, np, out, 0);
+            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d\n",
+                   names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep);
+            fflush(stdout);
+        }
+        return 0;
+    }
     /* ---- Setup Sod problem for Phase 1 sweeps ---- */
     setup_problem(PROB_SOD);
     exact_riemann(&ps_exact,&vs_exact);

@@ -282,6 +282,11 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_GAS_W2SSCALE   SET"GAS w2_s_scale     = "S_FLOAT" # scale for specific-entropy perturbation (mode 2 denom)\n"
 #define P_GAS_W2SBETA    SET"GAS w2_s_beta      = "S_FLOAT" # amplitude beta for specific-entropy mode 2 (0=off)\n"
 #define P_GAS_W2VOLGAMMA SET"GAS w2_vol_gamma   = "S_FLOAT" # volume-equalization strength gamma for mode 3 (0=off)\n"
+#define P_GAS_W2ALPHA    SET"GAS w2_alpha       = "S_FLOAT" # cs-based modes 4/5/6: sensitivity, length=alpha*cs*dMean (mode 4)\n"
+#define P_GAS_W2BETA     SET"GAS w2_beta        = "S_FLOAT" # cs-based mode 5: Pade saturation, length->beta*dMean as cs->inf\n"
+#define P_GAS_W2CSEXP    SET"GAS w2_csexp       = "S_FLOAT" # cs-based mode 6: power-law exponent, length=alpha*cs^p*dMean\n"
+#define P_GAS_W2DKBETA   SET"GAS w2_dk_beta     = "S_FLOAT" # dK-based mode 7: heating feedback beta, length^2=(alpha*dM)^2*(1+beta*max(0,eta))\n"
+#define P_GAS_W2DKETAMAX SET"GAS w2_dk_etamax   = "S_FLOAT" # dK-based mode 7: clamp eta=max(0,dK/K)*(dM/cs) <= eta_max (default 10)\n"
 
 #define P_VORO_AlphaVis  SET"GAS av_alpha       = "S_FLOAT" # Monaghan AV alpha\n"
 #define P_VORO_BetaVis  SET"GAS av_beta        = "S_FLOAT" # Monaghan AV beta\n"
@@ -296,6 +301,8 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_GAS_HYPERVFORCECAP SET"GAS hyperv_force_cap = "S_FLOAT" # HV force cap: |a_HV| <= cap*cs^2/sqrt(V). 0=off\n"
 #define P_GAS_ENTROPY_MODE SET"GAS entropy_mode   = "S_INT"   # av_mode=1 thermodynamic var: 0=ie (default), 1=K=P/rho^gamma\n"
 #define P_GAS_K_FLOOR     SET"GAS K_floor        = "S_FLOAT" # entropy_mode=1 positivity floor on K. default 1e-30\n"
+#define P_GAS_DKPDVFACTOR SET"GAS dK_pdv_factor  = "S_FLOAT" # entropy_mode=1: include factor*PdV in dK source. 0=off (default), 1=full PdV (numerical brake on K-runaway)\n"
+#define P_GAS_DKRATEMAX  SET"GAS dK_rate_max    = "S_FLOAT" # entropy_mode=1: max |dK*dt|/K per RK4 stage. 0=off, 0.1-0.5 typical (limits K growth per step)\n"
 /* backward-compat aliases for old param files */
 #define P_VORO_AlphaVis_OLD  SET"Alpha parameter in Voro  = "S_FLOAT" # Alpha factor of Voronoi AV\n"
 #define P_VORO_BetaVis_OLD  SET"Beta parameter in Voro  = "S_FLOAT" # Beta factor of Voronoi AV\n"
@@ -588,6 +595,11 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_GAS_W2SSCALE,sp GAS_W2SSCALE(simpar));\
 		ncnt += frw(wp,P_GAS_W2SBETA,sp GAS_W2SBETA(simpar));\
 		ncnt += frw(wp,P_GAS_W2VOLGAMMA,sp GAS_W2VOLGAMMA(simpar));\
+		ncnt += frw(wp,P_GAS_W2ALPHA,sp GAS_W2ALPHA(simpar));\
+		ncnt += frw(wp,P_GAS_W2BETA,sp GAS_W2BETA(simpar));\
+		ncnt += frw(wp,P_GAS_W2CSEXP,sp GAS_W2CSEXP(simpar));\
+		ncnt += frw(wp,P_GAS_W2DKBETA,sp GAS_W2DKBETA(simpar));\
+		ncnt += frw(wp,P_GAS_W2DKETAMAX,sp GAS_W2DKETAMAX(simpar));\
 		ncnt += frw(wp,P_GAS_GPU_ENABLED,sp GAS_GPU_ENABLED(simpar));\
 		ncnt += frw(wp,P_GAS_GRADIENT_METHOD,sp GAS_GRADIENT_METHOD(simpar));\
 		ncnt += frw(wp,P_GAS_XSPHEPS,sp GAS_XSPHEPS(simpar));\
@@ -595,6 +607,8 @@ void  read_slab_head(FILE*, SimParameters *);
 		ncnt += frw(wp,P_GAS_HYPERVFORCECAP,sp GAS_HYPERVFORCECAP(simpar));\
 		ncnt += frw(wp,P_GAS_ENTROPY_MODE,sp GAS_ENTROPY_MODE(simpar));\
 		ncnt += frw(wp,P_GAS_K_FLOOR,sp GAS_K_FLOOR(simpar));\
+		ncnt += frw(wp,P_GAS_DKPDVFACTOR,sp GAS_DKPDVFACTOR(simpar));\
+		ncnt += frw(wp,P_GAS_DKRATEMAX,sp GAS_DKRATEMAX(simpar));\
 	}\
 	ncnt += frw(wp,P_NULL);\
 }while(0)

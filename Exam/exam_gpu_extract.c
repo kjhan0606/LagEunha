@@ -23,6 +23,7 @@
 #include "../eunha.h"
 #include "../Voro/voro.h"
 #include "../Voro/voro_eunha.h"
+#include "../OST/nnost.h"   /* TStruct / TPtlStruct for tree serialization */
 /* exam.h/exam2d.h omitted: TStruct dependency.
    CellType = HydroTreeLinkedCell (from eunha.h). */
 
@@ -905,11 +906,28 @@ static inline void cpu_get2dUpqradRk4(
     *urady = fact1 * upqy + fact2 * ery;
 }
 
+#ifndef HLLC_VACUUM_PRATIO
+#define HLLC_VACUUM_PRATIO 100.0
+#endif
+#ifndef HLLC_VACUUM_PMIN_GUARD
+#define HLLC_VACUUM_PMIN_GUARD 0.01
+#endif
+
 static inline void cpu_hllc_face_2d(
     double rhoL, double pL, double vnL, double cL,
     double rhoR, double pR, double vnR, double cR,
     double Gamma, double *pstar, double *vnstar)
 {
+    /* Fix C v2: extreme P-ratio guard (HLLE fallback), only when both sides above floor */
+    {
+        double pmin = pL < pR ? pL : pR;
+        double pmax = pL > pR ? pL : pR;
+        if (pmin > HLLC_VACUUM_PMIN_GUARD && pmax > HLLC_VACUUM_PRATIO * pmin) {
+            *pstar  = pmin;
+            *vnstar = 0.5*(vnL + vnR);
+            return;
+        }
+    }
     double ZL = rhoL * cL, ZR = rhoR * cR;
     double GP1 = Gamma + 1.0;
     double p_pvrs = (ZR * pL + ZL * pR + ZL * ZR * (vnL - vnR)) / (ZL + ZR);
@@ -998,7 +1016,7 @@ static void cpu_reference_force_csr(
                     double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                     double scaleFactor = (wcomp == 0 ? P->etavis : wcomp);
                     double drampScale = dramp / scaleFactor;
-                    double mu = rvel / (drampScale + P->epsvis / drampScale);
+                    double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                     double meanden = 0.5 * (ibp_den + jbp_den);
                     double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                     pi_total += (-P->alphavis * meanCsound * mu + P->betavis * mu * mu) * meanden;
@@ -1016,7 +1034,7 @@ static void cpu_reference_force_csr(
                     double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                     double scaleFactor = (wcomp == 0 ? P->etavis : wcomp);
                     double drampScale = dramp / scaleFactor;
-                    double mu = rvel / (drampScale + P->epsvis / drampScale);
+                    double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                     double meanden = 0.5 * (ibp_den + jbp_den);
                     double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                     pi_total += (-P->alphavis * meanCsound * mu + P->betavis * mu * mu) * meanden;
@@ -1069,7 +1087,7 @@ static void cpu_reference_force_csr(
                         double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                         double scaleFactor = (wcomp == 0 ? P->etavis : wcomp);
                         double drampScale = dramp / scaleFactor;
-                        double mu = rvel / (drampScale + P->epsvis / drampScale);
+                        double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                         double meanden = 0.5 * (ibp_den + jbp_den);
                         double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                         pi_total += (-P->alphavis*meanCsound*mu + P->betavis*mu*mu)*meanden;
@@ -1129,7 +1147,7 @@ static void cpu_reference_force_csr(
                         double wcomp = sqrt((double)ibp_w2)+sqrt((double)jbp_w2);
                         double scaleFactor = (wcomp == 0 ? P->etavis : wcomp);
                         double drampScale = dramp/scaleFactor;
-                        double mu = rvel/(drampScale+P->epsvis/drampScale);
+                        double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                         double meanden = 0.5*(ibp_den+jbp_den);
                         double meanCsound = 0.5*(ibp_csound+jbp_csound);
                         pi_total += (-P->alphavis*meanCsound*mu+P->betavis*mu*mu)*meanden;
@@ -1170,7 +1188,7 @@ static void cpu_reference_force_csr(
                             double wcomp = sqrt((double)ibp_w2)+sqrt((double)jbp_w2);
                             double scaleFactor = (wcomp == 0 ? P->etavis : wcomp);
                             double drampScale = dramp/scaleFactor;
-                            double mu = rvel/(drampScale+P->epsvis/drampScale);
+                            double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                             double meanden = 0.5*(ibp_den+jbp_den);
                             double meanCsound = 0.5*(ibp_csound+jbp_csound);
                             pi_total += (-P->alphavis*meanCsound*mu+P->betavis*mu*mu)*meanden;
@@ -1575,8 +1593,114 @@ void gpu_writeback_tess_results(void *simpar_opaque, GPUContext *ctx,
 }
 
 /* ================================================================
- *  det2d_dpqRK4_GPU: GPU replacement for det2d_dpqRK4.
- *  Uses CellCSR nearest-neighbor search instead of k-d tree.
+ *  Option C: serialize CPU OST tree → GPU SoA arrays
+ *
+ *  The CPU tree is two contiguous arrays:
+ *    ptl[0..nptl-1]            (TPtlStruct, leaves)
+ *    tree[0..max_tree_slots-1] (TStruct, internal nodes; only the first
+ *                                portion is filled by Make_GNN_Tree, but
+ *                                the unused tail is unreachable from root)
+ *
+ *  Flat GPU indexing:
+ *    indices [0, nptl)                = PTL nodes (i ↔ ptl[i])
+ *    indices [nptl, nptl+max_tree)    = TREE nodes (j ↔ tree[j-nptl])
+ *  Root = nptl + 0 (i.e. tree[0]).
+ *
+ *  Sibling/daughter pointers are converted to indices via address
+ *  arithmetic.  NULL → -1.  Unused tree slots have garbage but are
+ *  never reached from the root, so the GPU walker never visits them.
+ * ================================================================ */
+static inline int ost_ptr_to_idx(const void *ptr,
+                                  const TPtlStruct *ptl_base, int nptl,
+                                  const TStruct   *tree_base, int max_tree)
+{
+    if (!ptr) return -1;
+    /* PTL range */
+    ptrdiff_t off_p = (const char *)ptr - (const char *)ptl_base;
+    if (off_p >= 0 && off_p < (ptrdiff_t)(nptl * sizeof(TPtlStruct))
+        && (off_p % (ptrdiff_t)sizeof(TPtlStruct)) == 0) {
+        return (int)(off_p / (ptrdiff_t)sizeof(TPtlStruct));
+    }
+    /* TREE range */
+    ptrdiff_t off_t = (const char *)ptr - (const char *)tree_base;
+    if (off_t >= 0 && off_t < (ptrdiff_t)(max_tree * sizeof(TStruct))
+        && (off_t % (ptrdiff_t)sizeof(TStruct)) == 0) {
+        return nptl + (int)(off_t / (ptrdiff_t)sizeof(TStruct));
+    }
+    return -1;
+}
+
+void gpu_serialize_ost_tree(GPUContext *ctx,
+                             struct TPtlStruct *ptl_in, int nptl,
+                             struct TStruct *tree_in, int max_tree_slots)
+{
+    TPtlStruct *ptl  = (TPtlStruct *)ptl_in;
+    TStruct    *tree = (TStruct    *)tree_in;
+
+    int total = nptl + max_tree_slots;
+    if (total > ctx->max_tree_nodes) {
+        fprintf(stderr, "[GPU tree] serialize: need %d nodes, allocated %d\n",
+                total, ctx->max_tree_nodes);
+        exit(1);
+    }
+
+    /* PTL nodes: indices 0..nptl-1 */
+#pragma omp parallel for schedule(static)
+    for (int i = 0; i < nptl; i++) {
+        ctx->h_tree_type[i]     = 1;  /* TYPE_PTL */
+        ctx->h_tree_cx[i]       = (float)ptl[i].x;
+        ctx->h_tree_cy[i]       = (float)ptl[i].y;
+        ctx->h_tree_size[i]     = 0.f;
+        ctx->h_tree_ptl_idx[i]  = (int)ptl[i].indx;
+        ctx->h_tree_daughter[i] = -1;
+        ctx->h_tree_sibling[i]  = ost_ptr_to_idx(ptl[i].sibling,
+                                                  ptl, nptl, tree, max_tree_slots);
+    }
+
+    /* TREE nodes: indices nptl..nptl+max_tree_slots-1 */
+#pragma omp parallel for schedule(static)
+    for (int j = 0; j < max_tree_slots; j++) {
+        int gi = nptl + j;
+        ctx->h_tree_type[gi]     = 0;  /* TYPE_TREE */
+        ctx->h_tree_cx[gi]       = (float)tree[j].monox;
+        ctx->h_tree_cy[gi]       = (float)tree[j].monoy;
+        ctx->h_tree_size[gi]     = (float)tree[j].nodesize;
+        ctx->h_tree_ptl_idx[gi]  = -1;
+        ctx->h_tree_daughter[gi] = ost_ptr_to_idx(tree[j].daughter,
+                                                   ptl, nptl, tree, max_tree_slots);
+        ctx->h_tree_sibling[gi]  = ost_ptr_to_idx(tree[j].sibling,
+                                                   ptl, nptl, tree, max_tree_slots);
+    }
+
+    ctx->n_tree_ptl    = nptl;
+    ctx->n_tree_nodes  = total;
+    ctx->tree_root_idx = nptl;   /* == &tree[0] */
+}
+
+/* Forward declaration: CPU OST tree builder (exam.c).  Allocates and
+   populates ptl/tree, runs Make_GNN_Tree, but does NOT compute w2ceil
+   (that's the GPU's job). */
+void buildTree2D_for_GPU(SimParameters *simpar,
+    void (*paddingAllTreeParticles)(SimParameters *, postype),
+    TStruct **tree_out, TPtlStruct **ptl_out,
+    int *nptl_out, int *max_tree_slots_out);
+
+/* ================================================================
+ *  det2d_dpqRK4_GPU: GPU replacement for det2d_dpqRK4 (Option C tree NN).
+ *
+ *  Phase 3 of Option C: replaces CellCSR 3×3 nearest-neighbor search
+ *  (which fails when sqrt(Vcell) > 3*cellsize, e.g. Sedov2D rarefaction)
+ *  with OST k-d tree walk on GPU.  The tree prunes by bounding sphere and
+ *  is robust to arbitrary cell expansion.
+ *
+ *  Flow:
+ *    1. Build OST tree on CPU (buildTree2D_for_GPU).
+ *    2. Fill ParticleSoA from CPU particles.
+ *    3. Serialize OST tree → flat GPU SoA (gpu_serialize_ost_tree).
+ *    4. Upload particles + tree to GPU.
+ *    5. Launch nearest_neighbor_tree_kernel.
+ *    6. Download w2ceil, w2.  Write back to CPU particle struct.
+ *    7. Free CPU tree + ptl + padding.
  *  Computes w2ceil and clips w2 for all av_modes.
  * ================================================================ */
 void det2d_dpqRK4_GPU(
@@ -1588,32 +1712,24 @@ void det2d_dpqRK4_GPU(
 {
     double t0 = MPI_Wtime();
 
-    /* --- Build cell linked list --- */
-    postype cellsize = BASICCELL_CELLWIDTH(simpar);
-    int mx, my;
-    BASICCELL_MX(simpar) = mx = (int)ceil((xmax - xmin) / cellsize);
-    BASICCELL_MY(simpar) = my = (int)ceil((ymax - ymin) / cellsize);
-    fprintf(stderr,"[DPQ] P%d enter mx=%d my=%d cellsize=%g\n", MYID(simpar), mx, my, cellsize); fflush(stderr);
-    VORO_BASICCELL(simpar) =
-        (HydroTreeLinkedCell *)my_malloc(sizeof(HydroTreeLinkedCell) * mx * my);
-    fprintf(stderr,"[DPQ] P%d before mkLinkedList2D\n", MYID(simpar)); fflush(stderr);
-    mkLinkedList2D(simpar, cellsize, xmin, ymin, xmax, ymax,
-                   paddingAllTreeParticles);
-    fprintf(stderr,"[DPQ] P%d after mkLinkedList2D npad=%ld\n", MYID(simpar), (long)VORO_NPAD(simpar)); fflush(stderr);
+    /* --- Build OST tree on CPU (includes padding via callback) --- */
+    TStruct *tree = NULL;
+    TPtlStruct *ptl = NULL;
+    int nptl = 0;
+    int max_tree_slots = 0;
+    buildTree2D_for_GPU(simpar, paddingAllTreeParticles,
+                         &tree, &ptl, &nptl, &max_tree_slots);
 
     int nbp  = VORO_NP(simpar);
     int npad = VORO_NPAD(simpar);
     int n_total = nbp + npad;
     size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
-    fprintf(stderr,"[DPQ] P%d nbp=%d npad=%d n_total=%d p_size=%zu\n", MYID(simpar), nbp, npad, n_total, p_size); fflush(stderr);
 
     /* --- Lazy GPU context initialization --- */
     if (!g_gpu_ctx.initialized) {
         int max_p = (int)(n_total * 1.2) + 1024;
         int max_f = max_p * 20;
-        fprintf(stderr,"[DPQ] P%d gpu_init max_p=%d\n", MYID(simpar), max_p); fflush(stderr);
         gpu_init(&g_gpu_ctx, max_p, max_f, MYID(simpar));
-        fprintf(stderr,"[DPQ] P%d gpu_init done\n", MYID(simpar)); fflush(stderr);
     }
     if (n_total > g_gpu_ctx.max_particles) {
         gpu_free(&g_gpu_ctx);
@@ -1622,44 +1738,36 @@ void det2d_dpqRK4_GPU(
         gpu_init(&g_gpu_ctx, max_p, max_f, MYID(simpar));
     }
 
-    /* --- Build CellCSR --- */
-    fprintf(stderr,"[DPQ] P%d before gpu_build_cell_csr\n", MYID(simpar)); fflush(stderr);
-    gpu_build_cell_csr(&g_gpu_ctx, simpar, mx, my, p_size);
-    fprintf(stderr,"[DPQ] P%d after gpu_build_cell_csr\n", MYID(simpar)); fflush(stderr);
+    /* --- Allocate tree buffers (lazy: grows on demand) --- */
+    int max_tree_total = nptl + max_tree_slots;
+    if (max_tree_total > g_gpu_ctx.max_tree_nodes) {
+        /* Grow with headroom to avoid frequent reallocs */
+        int cap = (int)(max_tree_total * 1.3) + 1024;
+        gpu_alloc_tree_buffers(&g_gpu_ctx, cap);
+    }
 
-    /* --- Fill SoA and upload (only x, y, indx, w2, w2ceil needed) --- */
+    /* --- Fill SoA + upload particles --- */
     int has_stress = (GAS_AVMODE(simpar) >= 1) ? 1 : 0;
     fillParticleSoA(simpar, &g_gpu_ctx.h_parts, has_stress);
-    fprintf(stderr,"[DPQ] P%d after fillParticleSoA has_stress=%d\n", MYID(simpar), has_stress); fflush(stderr);
     gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
-    gpu_upload_cells(&g_gpu_ctx, mx * my, g_gpu_ctx.h_cells.n_entries);
-    fprintf(stderr,"[DPQ] P%d after upload\n", MYID(simpar)); fflush(stderr);
 
-    /* --- Launch nearest-neighbor kernel --- */
-    GPUPhysicsParams params;
-    memset(&params, 0, sizeof(params));
-    params.cellsize = cellsize;
-    params.mx       = mx;
-    params.my       = my;
-    params.xmin     = xmin;
-    params.ymin     = ymin;
+    /* --- Serialize tree → host SoA, then upload --- */
+    gpu_serialize_ost_tree(&g_gpu_ctx,
+                            (struct TPtlStruct *)ptl, nptl,
+                            (struct TStruct *)tree, max_tree_slots);
+    gpu_upload_tree(&g_gpu_ctx, g_gpu_ctx.n_tree_nodes);
 
+    /* --- Launch tree-walk NN kernel --- */
     double t1 = MPI_Wtime();
-    fprintf(stderr,"[DPQ] P%d before nearest_neighbor kernel\n", MYID(simpar)); fflush(stderr);
-    gpu_launch_nearest_neighbor(&g_gpu_ctx, nbp, n_total, &params,
-                                (float)GAS_Kappa(simpar));
-    fprintf(stderr,"[DPQ] P%d after nearest_neighbor kernel\n", MYID(simpar)); fflush(stderr);
+    gpu_launch_nearest_neighbor_tree(&g_gpu_ctx, nbp, n_total,
+                                      (float)GAS_Kappa(simpar));
 
     /* --- Download w2ceil + w2 --- */
     gpu_download_w2ceil(&g_gpu_ctx, nbp);
-    fprintf(stderr,"[DPQ] P%d after download\n", MYID(simpar)); fflush(stderr);
     double t2 = MPI_Wtime();
 
-    /* --- Write back w2ceil + w2 to particle struct --- */
+    /* --- Write back to particle struct --- */
     char *bp_raw = (char *)VORORK4_TBP(simpar);
-    fprintf(stderr,"[DPQ] P%d before writeback bp_raw=%p p_size=%zu nbp=%d w2ceil_ptr=%p w2_ptr=%p\n",
-        MYID(simpar), (void*)bp_raw, p_size, nbp,
-        (void*)g_gpu_ctx.h_parts.w2ceil, (void*)g_gpu_ctx.h_parts.w2); fflush(stderr);
     int i;
 #pragma omp parallel for schedule(static)
     for (i = 0; i < nbp; i++) {
@@ -1668,21 +1776,18 @@ void det2d_dpqRK4_GPU(
         bpi->w2ceil = g_gpu_ctx.h_parts.w2ceil[i];
         bpi->w2     = g_gpu_ctx.h_parts.w2[i];
     }
-    fprintf(stderr,"[DPQ] P%d after writeback\n", MYID(simpar)); fflush(stderr);
 
-    /* --- Free cells + padding --- */
-    fprintf(stderr,"[DPQ] P%d before free basiccell=%p tbpp=%p\n",
-        MYID(simpar), (void*)VORO_BASICCELL(simpar), (void*)VORORK4_TBPP(simpar)); fflush(stderr);
-    my_free(VORO_BASICCELL(simpar));
+    /* --- Free CPU tree + ptl + padding --- */
+    my_free(tree);
+    my_free(ptl);
     my_free(VORORK4_TBPP(simpar));
-    fprintf(stderr,"[DPQ] P%d after free\n", MYID(simpar)); fflush(stderr);
 
     double t3 = MPI_Wtime();
     if (MYID(simpar) == 0) {
         static int dpq_count = 0;
         dpq_count++;
-        printf("[GPU dpq %d] np=%d kernel=%.1fms writeback=%.1fms total=%.1fms\n",
-               dpq_count, nbp,
+        printf("[GPU dpq-tree %d] np=%d nodes=%d kernel=%.1fms writeback=%.1fms total=%.1fms\n",
+               dpq_count, nbp, g_gpu_ctx.n_tree_nodes,
                (t2 - t1) * 1e3, (t3 - t2) * 1e3, (t3 - t0) * 1e3);
     }
 }

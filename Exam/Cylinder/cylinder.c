@@ -250,6 +250,10 @@ int RunCylinder(SimParameters *simpar, int icont){
 	}
 
 	postype t_max = AMAX(simpar);
+	{
+		const char *ts = getenv("HYDRO_TSTOP");
+		if(ts && ts[0]) t_max = atof(ts);
+	}
 	postype astep = ASTEP(simpar);
 	postype out_interval = astep > 0 ? astep : 0.1;
 
@@ -259,6 +263,14 @@ int RunCylinder(SimParameters *simpar, int icont){
 		fflush(stdout); fflush(stderr);
 		if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_blend(simpar,
+				paddingCylinderParticles, cyl_w2Measure2D,
+				searchCellRk4Neighbors2D, findCellRk4BP2D,
+				cyl_evolBP,
+				mkLinkedList2D_oExam,
+				cyl_postStage
+				);
+		else if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 3)
+			dt = exam2d_vph_kdk_int_blend(simpar,
 				paddingCylinderParticles, cyl_w2Measure2D,
 				searchCellRk4Neighbors2D, findCellRk4BP2D,
 				cyl_evolBP,

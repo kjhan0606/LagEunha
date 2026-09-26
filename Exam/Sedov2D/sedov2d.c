@@ -112,6 +112,17 @@ int sedov2d_evolBP(treevorork4particletype *bp, postype Lx, postype Ly){
 
 postype rt_w2Measure2D(SimParameters *, postype, postype, postype);
 
+static postype sedov2d_tstop(void){
+	const char *flag = getenv("SEDOV_PHASE1");
+	const char *lag = getenv("SEDOV_LAGVOL");
+	if((flag && flag[0] == '1') || (lag && lag[0] == '1')){
+		const char *ts = getenv("SEDOV_PHASE1_TSTOP");
+		if(ts && ts[0]) return atof(ts);
+		return (postype)0.06;
+	}
+	return (postype)0.5;
+}
+
 int RunSedov2D(SimParameters *simpar, int icont){
 	postype t, dt;
 	int np;
@@ -248,7 +259,7 @@ int RunSedov2D(SimParameters *simpar, int icont){
 				t, icount, dt, get_malloc_call_count());
 			fflush(stdout);
 		}
-	} while(t < 0.5);
+	} while(t < sedov2d_tstop());
 
 	return 1;
 }

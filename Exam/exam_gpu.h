@@ -153,6 +153,33 @@ typedef struct {
     /* CUDA stream for async transfers */
     void *stream;            /* cudaStream_t, opaque to C code */
 
+    /* ---- OST tree SoA (Option C: GPU k-d tree NN search) ----
+     * Replaces CellCSR-based nearest_neighbor_kernel which fails when
+     * Voronoi cell expansion exceeds 3×cellsize (Sedov rarefaction zone).
+     * Unified flat array: indices [0, n_tree_ptl) are PTL leaves,
+     *                     indices [n_tree_ptl, n_tree_nodes) are TREE internal nodes.
+     * Root: index n_tree_ptl (== first TREE node == tree[0] of CPU). */
+    int  n_tree_nodes;            /* total flattened nodes (PTL + TREE) */
+    int  n_tree_ptl;              /* number of PTL nodes (= np + npad) */
+    int  tree_root_idx;           /* index of root TREE node (= n_tree_ptl) */
+    int  max_tree_nodes;          /* allocated capacity */
+
+    /* device tree arrays */
+    int   *d_tree_type;           /* 0=TREE, 1=PTL  (int per node) */
+    int   *d_tree_sibling;        /* sibling index, -1 if NULL */
+    int   *d_tree_daughter;       /* first daughter index, -1 if leaf/NULL */
+    int   *d_tree_ptl_idx;        /* SoA particle index for PTL nodes, -1 for TREE */
+    float *d_tree_cx, *d_tree_cy;/* centroid (TREE) or position (PTL) */
+    float *d_tree_size;           /* nodesize (TREE), 0 (PTL) */
+
+    /* host-side pinned staging */
+    int   *h_tree_type;
+    int   *h_tree_sibling;
+    int   *h_tree_daughter;
+    int   *h_tree_ptl_idx;
+    float *h_tree_cx, *h_tree_cy;
+    float *h_tree_size;
+
     int initialized;
 } GPUContext;
 
@@ -259,6 +286,28 @@ void gpu_download_face_csr(GPUContext *ctx, int n_particles, int n_faces,
 void gpu_launch_nearest_neighbor(GPUContext *ctx, int n_particles, int n_total,
                                   const GPUPhysicsParams *params, float kappa);
 void gpu_download_w2ceil(GPUContext *ctx, int n_particles);
+
+/* --- Option C: GPU OST k-d tree NN search (exam_gpu.cu / exam_gpu_extract.c) ---
+ *  Robust replacement for nearest_neighbor_kernel.  CellCSR-based search
+ *  fails when sqrt(Vcell) > 3*cellsize (Sedov rarefaction).  Tree walk
+ *  prunes by bounding-sphere and never misses a closer neighbor. */
+void gpu_alloc_tree_buffers(GPUContext *ctx, int max_tree_nodes);
+void gpu_free_tree_buffers(GPUContext *ctx);
+void gpu_upload_tree(GPUContext *ctx, int n_nodes);
+void gpu_launch_nearest_neighbor_tree(GPUContext *ctx, int n_particles,
+                                       int n_total, float kappa);
+
+/* Serialize CPU OST tree (TPtlStruct + TStruct pointer chain) into the
+ * pinned host TreeSoA arrays already allocated in GPUContext.
+ * Caller must have called gpu_alloc_tree_buffers with capacity
+ * >= nptl + max_tree_slots.  TStruct's monox/monoy/nodesize and TPtlStruct's
+ * x/y are read; sibling/daughter pointers are converted to flat indices.
+ * Sets ctx->n_tree_nodes, n_tree_ptl, tree_root_idx. */
+struct TPtlStruct;
+struct TStruct;
+void gpu_serialize_ost_tree(GPUContext *ctx,
+                             struct TPtlStruct *ptl, int nptl,
+                             struct TStruct *tree, int max_tree_slots);
 
 /* --- LagMFM (av_mode=4) GPU kernels (exam_gpu.cu) --- */
 void gpu_launch_lagmfm_density_kernel(GPUContext *ctx, int n_particles,

@@ -181,6 +181,12 @@ int kh_evolBP(treevorork4particletype *bp,postype Lx, postype Ly){
 }
 
 
+static postype kh_tmax(void){
+	const char *ts = getenv("HYDRO_TSTOP");
+	if(ts && ts[0]) return atof(ts);
+	return (postype)10;
+}
+
 int RunKH(SimParameters *simpar, int icont){
 	postype t,dt;
 	int np;
@@ -347,6 +353,6 @@ int RunKH(SimParameters *simpar, int icont){
 			fflush(stdout);
 		}
 
-	} while(t<10.);
+	} while(t<kh_tmax());
 	return 1;
 }

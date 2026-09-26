@@ -92,6 +92,29 @@ void dev_get2dUpqradRk4(
 /* ================================================================
  *  Device inline: HLLC solver
  * ================================================================ */
+/* Fix C v2: extreme P-ratio guard with pmin floor discriminator (mirrors CPU) */
+#ifndef HLLC_VACUUM_PRATIO
+#define HLLC_VACUUM_PRATIO 100.0
+#endif
+#ifndef HLLC_VACUUM_PMIN_GUARD
+#define HLLC_VACUUM_PMIN_GUARD 0.01
+#endif
+
+/* Acceleration CFL: dt ≤ ACC_CFL_FRAC · sqrt(h_i / |a_i|).
+ * Mirrors CPU exam.c — caps free-fall time across cell under current force. */
+#ifndef ACC_CFL_FRAC
+#define ACC_CFL_FRAC 0.25
+#endif
+
+/* dK-aware CFL: dt ≤ DKCFL_FRAC · K / |dK| (mirrors CPU exam.c).
+ * Mode 2 mitigation — preserves conservation, no dK clipping. */
+#ifndef DKCFL_FRAC
+#define DKCFL_FRAC 0.1
+#endif
+#ifndef DKCFL_KFLOOR
+#define DKCFL_KFLOOR 1.0e-10
+#endif
+
 __device__ __forceinline__
 void dev_hllc_face_2d(
     double rhoL, double pL, double vnL, double cL,
@@ -104,6 +127,17 @@ void dev_hllc_face_2d(
     const double tiny = 1.0e-30;
     double S_L, S_R, S_M, P_M;
     double cmax = cL > cR ? cL : cR;
+
+    /* Fix C v2: extreme P-ratio guard (HLLE fallback), only when both sides above floor */
+    {
+        double pmin = pL < pR ? pL : pR;
+        double pmax = pL > pR ? pL : pR;
+        if (pmin > HLLC_VACUUM_PMIN_GUARD && pmax > HLLC_VACUUM_PRATIO * pmin) {
+            *pstar  = pmin;
+            *vnstar = 0.5*(vnL + vnR);
+            return;
+        }
+    }
 
     if ((vnR - vnL) > cmax) {
         *pstar = tiny; *vnstar = 0.5*(vnL + vnR);
@@ -338,6 +372,10 @@ void getAccVoro2DBlend_kernel(
 
         double pi_total;
         double tau_dot_dS_x = 0, tau_dot_dS_y = 0;
+        /* Fix A+B: dissipative AV pressure extracted from pi_total.
+         * Sum of (Monaghan AV + CD10 + HLLC-jump-excess) >= 0 when active.
+         * Used downstream to compute pair-symmetric eps_AV >= 0 heating. */
+        double p_av_for_heat = 0;
 
         /* ======== av_mode dispatch ======== */
         if (av_mode == 0 && nu_phys <= 0) {
@@ -359,7 +397,7 @@ void getAccVoro2DBlend_kernel(
                 double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                 double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                 double drampScale = dramp / scaleFactor;
-                double mu = rvel / (drampScale + epsvis / drampScale);
+                double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                 double meanden = 0.5 * (ibp_den + jbp_den);
                 double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                 pi_total += (-alphavis * meanCsound * mu
@@ -383,7 +421,7 @@ void getAccVoro2DBlend_kernel(
                 double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                 double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                 double drampScale = dramp / scaleFactor;
-                double mu = rvel / (drampScale + epsvis / drampScale);
+                double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                 double meanden = 0.5 * (ibp_den + jbp_den);
                 double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                 pi_total += (-alphavis * meanCsound * mu
@@ -457,7 +495,7 @@ void getAccVoro2DBlend_kernel(
                     double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                     double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                     double drampScale = dramp / scaleFactor;
-                    double mu = rvel / (drampScale + epsvis / drampScale);
+                    double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                     double meanden = 0.5 * (ibp_den + jbp_den);
                     double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                     pi_total += (-alphavis * meanCsound * mu
@@ -527,7 +565,7 @@ void getAccVoro2DBlend_kernel(
                     double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                     double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                     double drampScale = dramp / scaleFactor;
-                    double mu = rvel / (drampScale + epsvis / drampScale);
+                    double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                     double meanden = 0.5 * (ibp_den + jbp_den);
                     double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                     pi_total += (-alphavis * meanCsound * mu
@@ -579,7 +617,7 @@ void getAccVoro2DBlend_kernel(
                         double wcomp = sqrt((double)ibp_w2) + sqrt((double)jbp_w2);
                         double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                         double drampScale = dramp / scaleFactor;
-                        double mu = rvel / (drampScale + epsvis / drampScale);
+                        double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                         double meanden = 0.5 * (ibp_den + jbp_den);
                         double meanCsound = 0.5 * (ibp_csound + jbp_csound);
                         double divv_i  = pdivv[i];
@@ -590,8 +628,10 @@ void getAccVoro2DBlend_kernel(
                         double f_i = fabs(divv_i) / (fabs(divv_i) + fabs(curlv_i) + xi_b);
                         double f_j = fabs(divv_j) / (fabs(divv_j) + fabs(curlv_j) + xi_b);
                         double f_balsara = 0.5 * (f_i + f_j);
-                        pi_total += f_balsara * (-alphavis * meanCsound * mu
-                                                  + betavis * mu * mu) * meanden;
+                        double mon_av_pi = f_balsara * (-alphavis * meanCsound * mu
+                                                         + betavis * mu * mu) * meanden;
+                        pi_total += mon_av_pi;
+                        if (mon_av_pi > 0) p_av_for_heat += mon_av_pi;
                     }
                 }
                 /* CD10 viscous pressure (Cullen-Dehnen 2010) — strong-shock
@@ -604,7 +644,9 @@ void getAccVoro2DBlend_kernel(
                         double alpha_face = 0.5 * (palpha_cd[i] + palpha_cd[j]);
                         double rho_mean   = 0.5 * (ibp_den + jbp_den);
                         double vsig_cd    = ibp_csound + jbp_csound - rvel_cd;
-                        pi_total += 0.5 * alpha_face * vsig_cd * rho_mean * (-rvel_cd);
+                        double cd10_pi = 0.5 * alpha_face * vsig_cd * rho_mean * (-rvel_cd);
+                        pi_total += cd10_pi;
+                        p_av_for_heat += cd10_pi;
                     }
                 }
             } else {
@@ -693,28 +735,84 @@ void getAccVoro2DBlend_kernel(
                 pi_total = (1.0 - f_pq) * p_mnm + f_pq * (p_hllc + Pi_cd10);
                 tau_dot_dS_x *= (1.0 - f_pq);
                 tau_dot_dS_y *= (1.0 - f_pq);
+                /* HLLC star excess pressure over centered M(n,m) is the
+                 * dissipative part of the HLLC face flux. Together with
+                 * Pi_cd10 (always non-negative when active) this is the
+                 * total dissipative AV pressure for the av_mode=2 blend. */
+                double Pi_hllc_extra = (p_hllc > p_mnm ? (p_hllc - p_mnm) : 0);
+                p_av_for_heat = f_pq * (Pi_hllc_extra + Pi_cd10);
             }
         }
 
         /* ======== Accumulate forces and energy rates ======== */
         /* uradx, urady already computed before av_mode dispatch */
 
-        /* Pressure work: -p * (v_face - v_i) · dS */
-        die += -pi_total * (uradx * dSx + urady * dSy);
-        /* Viscous heating: (τ·dS) · (v_face - v_i) — dissipative */
+        /* Fix A+B: compression gate on AV.
+         *   pi_total = p_rev + p_av_for_heat (decomposition)
+         *     p_rev          := p_mnm (face-symmetric, reversible)
+         *     p_av_for_heat  := Monaghan AV + CD10 + HLLC-jump-excess (dissipative)
+         *   FACE GATE: if u_n_compress > 0 (approaching cells):
+         *     - F_AV acts; eps_AV_face = p_av * u_n * |dS| (>=0)
+         *     - die_AV += 1/2 eps_AV  (pair-symmetric: j gets the other half)
+         *   else: strip p_av_for_heat from pi_total (force AND heat both off). */
+        double u_n_compress;
+        {
+            double dvx_av = jbp_vx - ibp_vx;
+            double dvy_av = jbp_vy - ibp_vy;
+            u_n_compress = -(dvx_av * erx + dvy_av * ery);
+        }
+        double eps_av_face = 0;
+        if (p_av_for_heat > 0 && u_n_compress > 0) {
+            eps_av_face = p_av_for_heat * u_n_compress * facearea;
+        } else if (p_av_for_heat != 0) {
+            pi_total -= p_av_for_heat;
+            p_av_for_heat = 0;
+        }
+
+        /* Reversible PdV from face-symmetric reference pressure.
+         *   p_rev_face = pi_total - p_av_for_heat
+         * In av_mode 3/5/ghost: p_av_for_heat=0 -> p_rev_face = pi_total
+         *   (preserves OLD behavior for those paths). */
+        {
+            double p_rev_face = pi_total - p_av_for_heat;
+            die += -p_rev_face * (uradx * dSx + urady * dSy);
+        }
+        /* Pair-symmetric AV heating (1/2 here, 1/2 in j's loop) — >=0 by construction */
+        if (eps_av_face > 0) {
+            double half_eps = 0.5 * eps_av_face;
+            die     += half_eps;
+            dK_diss += half_eps;
+        }
+        /* NS viscous heating: (τ·dS) · (v_face - v_i) — dissipative */
         {
             double die_visc_face = tau_dot_dS_x * uradx + tau_dot_dS_y * urady;
             die     += die_visc_face;
             dK_diss += die_visc_face;
         }
 
-        /* Heat conduction — dissipative */
-        if (nu_phys > 0 && prandtl > 0 && !jbp_is_ghost) {
+        /* Heat conduction — dissipative.
+         * dramp is floored at heff (= cell radius) — same floor used by CFL —
+         * to avoid divide-by-near-zero when Voronoi tessellation produces
+         * degenerate face geometry (Sedov2D rings IC at Nx=512 hit dramp~1e-26
+         * and detonated K to ~1e22 in one step). */
+        if (nu_phys > 0 && prandtl > 0 && !jbp_is_ghost
+            && ibp_den > 0 && jbp_den > 0
+            && ibp_volume > 0 && facearea > 0) {
             double chi = nu_phys / prandtl;
             double Ti = ibp_pressure / ibp_den;
             double Tj = jbp_pressure / jbp_den;
             double rho_face = 0.5 * (ibp_den + jbp_den);
-            double die_cond_face = chi * rho_face * (Tj - Ti) / dramp * facearea;
+            /* dramp floor at heff (= cell radius) — same floor used by CFL. */
+            double dramp_cond = fmax(dramp, 0.25 * sqrt(ibp_volume));
+            double die_cond_face = chi * rho_face * (Tj - Ti) / dramp_cond * facearea;
+            /* OOB diagnostic: log anomalous conduction faces. Sedov2D Nx>=256
+             * explodes K to ~1e23 in step 1 — pinpoint which i,j pair is bad. */
+            if (fabs(die_cond_face) > 1.0e6) {
+                printf("[GPU_COND_DIAG] i=%d j=%d Pi=%g Pj=%g rhoi=%g rhoj=%g "
+                       "dramp=%g dramp_cond=%g facearea=%g die_cond=%g jghost=%d\n",
+                       i, j, ibp_pressure, jbp_pressure, ibp_den, jbp_den,
+                       dramp, dramp_cond, facearea, die_cond_face, jbp_is_ghost);
+            }
             die     += die_cond_face;
             dK_diss += die_cond_face;
         }
@@ -779,16 +877,55 @@ void getAccVoro2DBlend_kernel(
         fy += ibp_mass * a_hv_y;
     }
 
-    /* Convert dissipative die to entropy rate dK/dt (mirrors exam.c:4546-4568):
+    /* Acceleration CFL: dt ≤ ACC_CFL_FRAC · sqrt(h_i / |a_i|).
+     * Mode 2 (Sedov shock-front): |a| ~ 1e+10 → free-fall time across cell
+     * collapses. Constrain dt so cell displacement under a stays small
+     * fraction of h. Preserves conservation (only shrinks dt). */
+    {
+        double ax_i = fx / ibp_mass;
+        double ay_i = fy / ibp_mass;
+        double amag2 = ax_i*ax_i + ay_i*ay_i;
+        if (amag2 > 0 && ibp_volume > 0) {
+            double amag = sqrt(amag2);
+            double h_i = sqrt(ibp_volume);
+            double dt_acc = ACC_CFL_FRAC * sqrt(h_i / amag);
+            if (dt_acc < (double)my_dt) my_dt = (float)dt_acc;
+        }
+    }
+
+    /* Fix A: per-cell entropy gate — dK_diss must be >= 0.
+     * The face-pair NS viscous term Σ_faces τ·dS·(v_f-v_i) is positive
+     * in the well-resolved limit (= q_NS·V >= 0), but individual face
+     * terms can be negative, and discretization noise/boundary effects
+     * can drive the cell sum slightly negative.  Clamping enforces the
+     * 2nd law per cell. */
+    if (dK_diss < 0) dK_diss = 0;
+    /* Convert dissipative die to entropy rate dK/dt (mirrors exam.c:4818-4830):
      *   dK/dt = (γ-1) · q_diss / ρ^γ                    (per unit volume)
      *         = (γ-1) · dK_diss / (V_cell · ρ^γ)
      *         = (γ-1) · dK_diss / (m · ρ^(γ-1))         (m = ρ·V)
      * Always written; CPU integrator uses it iff entropy_mode==1. */
     double dK_val = 0.0;
     if (isfinite(dK_diss) && ibp_mass > 0 && ibp_den > 0) {
-        double rho_pow = pow(ibp_den, Gamma - 1.0);
+        /* T8 (T4 component): floor ρ in dK conversion to prevent low-ρ
+         * amplifier blowing up. Pairs with T7b entropy diffusion. */
+        double rho_eff = fmax(ibp_den, 0.01);
+        double rho_pow = pow(rho_eff, Gamma - 1.0);
         double cand = (Gamma - 1.0) * dK_diss / (ibp_mass * rho_pow);
         if (isfinite(cand)) dK_val = cand;
+    }
+
+    /* dK-aware CFL: dt ≤ DKCFL_FRAC · K / |dK|.
+     * K derived locally from P/ρ^γ (avoids extra kernel input). */
+    {
+        double dK_abs = fabs(dK_val);
+        if (dK_abs > 0 && ibp_den > 0) {
+            double rho_pow_K = pow(fmax(ibp_den, 1.0e-30), Gamma);
+            double K_eff = ibp_pressure / rho_pow_K;
+            if (K_eff < DKCFL_KFLOOR) K_eff = DKCFL_KFLOOR;
+            double dt_dK = DKCFL_FRAC * K_eff / dK_abs;
+            if (dt_dK < (double)my_dt) my_dt = (float)dt_dK;
+        }
     }
 
     /* Write outputs */
@@ -996,6 +1133,7 @@ void gpu_free(GPUContext *ctx)
     free_particle_soa(&ctx->h_parts, &ctx->d_parts);
     free_face_csr(&ctx->h_faces, &ctx->d_faces);
     gpu_free_tess_buffers(ctx);
+    gpu_free_tree_buffers(ctx);
     if (ctx->d_cub_temp) { cudaFree(ctx->d_cub_temp); ctx->d_cub_temp = NULL; }
     if (ctx->d_cub_min_out) { cudaFree(ctx->d_cub_min_out); ctx->d_cub_min_out = NULL; }
     if (ctx->h_cub_min_out) { cudaFreeHost(ctx->h_cub_min_out); ctx->h_cub_min_out = NULL; }
@@ -1235,6 +1373,93 @@ void gpu_free_tess_buffers(GPUContext *ctx)
     ctx->cub_scan_temp_bytes = 0;
     ctx->max_cells = 0;
     ctx->max_cell_entries = 0;
+}
+
+/* ================================================================
+ *  Option C: OST k-d tree NN search — buffer management
+ * ================================================================ */
+extern "C"
+void gpu_alloc_tree_buffers(GPUContext *ctx, int max_tree_nodes)
+{
+    if (max_tree_nodes <= ctx->max_tree_nodes) return;  /* already large enough */
+
+    /* Free previous allocation if any (idempotent realloc) */
+    if (ctx->d_tree_type) { cudaFree(ctx->d_tree_type);     ctx->d_tree_type = NULL; }
+    if (ctx->d_tree_sibling)  { cudaFree(ctx->d_tree_sibling);  ctx->d_tree_sibling = NULL; }
+    if (ctx->d_tree_daughter) { cudaFree(ctx->d_tree_daughter); ctx->d_tree_daughter = NULL; }
+    if (ctx->d_tree_ptl_idx)  { cudaFree(ctx->d_tree_ptl_idx);  ctx->d_tree_ptl_idx = NULL; }
+    if (ctx->d_tree_cx)       { cudaFree(ctx->d_tree_cx);       ctx->d_tree_cx = NULL; }
+    if (ctx->d_tree_cy)       { cudaFree(ctx->d_tree_cy);       ctx->d_tree_cy = NULL; }
+    if (ctx->d_tree_size)     { cudaFree(ctx->d_tree_size);     ctx->d_tree_size = NULL; }
+    if (ctx->h_tree_type)     { cudaFreeHost(ctx->h_tree_type);     ctx->h_tree_type = NULL; }
+    if (ctx->h_tree_sibling)  { cudaFreeHost(ctx->h_tree_sibling);  ctx->h_tree_sibling = NULL; }
+    if (ctx->h_tree_daughter) { cudaFreeHost(ctx->h_tree_daughter); ctx->h_tree_daughter = NULL; }
+    if (ctx->h_tree_ptl_idx)  { cudaFreeHost(ctx->h_tree_ptl_idx);  ctx->h_tree_ptl_idx = NULL; }
+    if (ctx->h_tree_cx)       { cudaFreeHost(ctx->h_tree_cx);       ctx->h_tree_cx = NULL; }
+    if (ctx->h_tree_cy)       { cudaFreeHost(ctx->h_tree_cy);       ctx->h_tree_cy = NULL; }
+    if (ctx->h_tree_size)     { cudaFreeHost(ctx->h_tree_size);     ctx->h_tree_size = NULL; }
+
+    size_t si = max_tree_nodes * sizeof(int);
+    size_t sf = max_tree_nodes * sizeof(float);
+
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_type,     si));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_sibling,  si));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_daughter, si));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_ptl_idx,  si));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_cx,       sf));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_cy,       sf));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_size,     sf));
+
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_type,     si));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_sibling,  si));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_daughter, si));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_ptl_idx,  si));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_cx,       sf));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_cy,       sf));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_size,     sf));
+
+    ctx->max_tree_nodes = max_tree_nodes;
+    fprintf(stderr, "[GPU] Tree buffers allocated: %d nodes (%.1f MB total)\n",
+            max_tree_nodes, max_tree_nodes * (4*sizeof(int)+3*sizeof(float)) / 1048576.0);
+}
+
+extern "C"
+void gpu_free_tree_buffers(GPUContext *ctx)
+{
+    if (ctx->d_tree_type)     { cudaFree(ctx->d_tree_type);     ctx->d_tree_type = NULL; }
+    if (ctx->d_tree_sibling)  { cudaFree(ctx->d_tree_sibling);  ctx->d_tree_sibling = NULL; }
+    if (ctx->d_tree_daughter) { cudaFree(ctx->d_tree_daughter); ctx->d_tree_daughter = NULL; }
+    if (ctx->d_tree_ptl_idx)  { cudaFree(ctx->d_tree_ptl_idx);  ctx->d_tree_ptl_idx = NULL; }
+    if (ctx->d_tree_cx)       { cudaFree(ctx->d_tree_cx);       ctx->d_tree_cx = NULL; }
+    if (ctx->d_tree_cy)       { cudaFree(ctx->d_tree_cy);       ctx->d_tree_cy = NULL; }
+    if (ctx->d_tree_size)     { cudaFree(ctx->d_tree_size);     ctx->d_tree_size = NULL; }
+    if (ctx->h_tree_type)     { cudaFreeHost(ctx->h_tree_type);     ctx->h_tree_type = NULL; }
+    if (ctx->h_tree_sibling)  { cudaFreeHost(ctx->h_tree_sibling);  ctx->h_tree_sibling = NULL; }
+    if (ctx->h_tree_daughter) { cudaFreeHost(ctx->h_tree_daughter); ctx->h_tree_daughter = NULL; }
+    if (ctx->h_tree_ptl_idx)  { cudaFreeHost(ctx->h_tree_ptl_idx);  ctx->h_tree_ptl_idx = NULL; }
+    if (ctx->h_tree_cx)       { cudaFreeHost(ctx->h_tree_cx);       ctx->h_tree_cx = NULL; }
+    if (ctx->h_tree_cy)       { cudaFreeHost(ctx->h_tree_cy);       ctx->h_tree_cy = NULL; }
+    if (ctx->h_tree_size)     { cudaFreeHost(ctx->h_tree_size);     ctx->h_tree_size = NULL; }
+    ctx->max_tree_nodes = 0;
+    ctx->n_tree_nodes = 0;
+}
+
+extern "C"
+void gpu_upload_tree(GPUContext *ctx, int n_nodes)
+{
+    cudaStream_t s = (cudaStream_t)ctx->stream;
+    size_t si = n_nodes * sizeof(int);
+    size_t sf = n_nodes * sizeof(float);
+
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_type,     ctx->h_tree_type,     si, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_sibling,  ctx->h_tree_sibling,  si, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_daughter, ctx->h_tree_daughter, si, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_ptl_idx,  ctx->h_tree_ptl_idx,  si, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_cx,       ctx->h_tree_cx,       sf, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_cy,       ctx->h_tree_cy,       sf, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_size,     ctx->h_tree_size,     sf, cudaMemcpyHostToDevice, s));
+
+    ctx->n_tree_nodes = n_nodes;
 }
 
 extern "C"
@@ -1501,7 +1726,16 @@ void voronoi_tessellate_kernel(
         area += poly_x[e] * poly_y[en] - poly_y[e] * poly_x[en];
     }
     double volume = 0.5 * fabs(area);
-    if (volume < 1e-30) volume = 1e-30;
+    /* Volume floor at 0.1% of nominal cell area (= cellsize²).  Sutherland-
+     * Hodgman clipping at corners of rings IC (Nx≥256) sometimes produces
+     * polygon area ~1e-30 → density = mass/V → 1.5e+25 garbage → step-1
+     * K explosion via conduction.  See bug_gpu_sedov_zerovol.md. */
+    double volume_floor = 1.0e-3 * cellsize * cellsize;
+    if (volume < volume_floor) {
+        printf("[GPU_VOL_DIAG] i=%d nc=%d V_raw=%g V_floor=%g cellsize=%g\n",
+               i, nc, volume, volume_floor, cellsize);
+        volume = volume_floor;
+    }
     double density = massi / volume;
 
     /* ---- w2ceil and avgNeighboringPressure ---- */
@@ -1810,9 +2044,12 @@ void pressure_stress_kernel(
         out_tauxy[i] = -nu_phys * den * (gxy + gyx);
         out_tauyy[i] = -nu_phys * den * (2.0 * gyy - (2.0/3.0) * divv_val);
     } else if (av_mode == 1) {
-        double h = sqrt(vol);
-        double nu_cd = palpha_cd[i] * h * cs;
-        double nu = (nu_phys > 0) ? fmax(nu_phys, nu_cd) : nu_cd;
+        /* NS-stress uses ONLY physical viscosity. CD10 enters as viscous *pressure*
+         * Π_CD10 = ½ α vsig ρ̄ (-Δv) in the face loop (line ~612), not as NS-stress
+         * traction. The old nu_cd = α_cd·sqrt(V)·c_s injected an explicit 1/Nx factor
+         * that, combined with the 1/m ~ Nx² in dK conversion, drove K-runaway at
+         * high Nx. This matches av_mode>=2 design intent (CD10 as viscous pressure). */
+        double nu = (nu_phys > 0) ? nu_phys : 0.0;
         out_tauxx[i] = -nu * den * (2.0 * gxx - (2.0/3.0) * divv_val);
         out_tauxy[i] = -nu * den * (gxy + gyx);
         out_tauyy[i] = -nu * den * (2.0 * gyy - (2.0/3.0) * divv_val);
@@ -2498,10 +2735,10 @@ void lagmfm_density_kernel(
         tau_xx = 0; tau_xy = 0; tau_yy = 0;
         (void)nu_phys; (void)palpha_cd;
     } else {
-        double h_eff = sqrt(Vi);
-        double alpha_cd_val = palpha_cd[i];
-        double nu_cd = alpha_cd_val * h_eff * cs_val;
-        double nu = (nu_phys > 0) ? fmax(nu_phys, nu_cd) : nu_cd;
+        /* NS-stress: physical viscosity only. CD10 NS-stress path removed (caused
+         * Nx² K-runaway via h·c_s factor). CD10 still acts as viscous pressure. */
+        (void)palpha_cd;
+        double nu = (nu_phys > 0) ? nu_phys : 0.0;
         tau_xx = -nu * rho_val * (2.0 * gux - (2.0 / 3.0) * divv_val);
         tau_xy = -nu * rho_val * (guy + gvx);
         tau_yy = -nu * rho_val * (2.0 * gvy - (2.0 / 3.0) * divv_val);
@@ -2803,7 +3040,7 @@ void lagmfm_force_kernel(
                         double wcomp = sqrt(iw2) + sqrt((double)pw2[j]);
                         double scaleFactor = (wcomp > etavis ? wcomp : etavis);
                         double drampScale = r / scaleFactor;
-                        double mu = rvel / (drampScale + epsvis / drampScale);
+                        double mu = rvel /* Voronoi-AV-reform: no length regularization */;
                         double meanden = 0.5 * (irho + jrho);
                         double meanCs  = 0.5 * (ics + jcs);
                         pstar += (-alphavis * meanCs * mu + betavis * mu * mu) * meanden;
@@ -2889,6 +3126,123 @@ void gpu_download_w2ceil(GPUContext *ctx, int n)
     size_t sf = n * sizeof(float);
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.w2ceil, ctx->d_parts.w2ceil, sf, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.w2,     ctx->d_parts.w2,     sf, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaStreamSynchronize(s));
+}
+
+/* ================================================================
+ *  Option C: OST tree-walk nearest-neighbor kernel.
+ *
+ *  Mirrors CPU find_GNearest (gnnost.c:320) using a flat index-based
+ *  representation of the OST tree.  Stack-less while-loop with
+ *  bounding-sphere pruning (dist - nodesize > mindist → skip subtree).
+ *
+ *  Robust to arbitrary cell expansion: prunes by tree topology, not by
+ *  fixed-radius cell stencil.  Solves the Sedov rarefaction failure mode
+ *  where sqrt(Vcell) > 3*cellsize breaks CellCSR 3×3 search.
+ *
+ *  1 thread / real particle.  Each thread independently walks the tree.
+ * ================================================================ */
+__global__ __launch_bounds__(256, 4)
+void nearest_neighbor_tree_kernel(
+    /* Query particles */
+    const double *__restrict__ px, const double *__restrict__ py,
+    const long long *__restrict__ pindx,
+    /* Tree SoA */
+    const int   *__restrict__ tree_type,
+    const int   *__restrict__ tree_sibling,
+    const int   *__restrict__ tree_daughter,
+    const int   *__restrict__ tree_ptl_idx,
+    const float *__restrict__ tree_cx,
+    const float *__restrict__ tree_cy,
+    const float *__restrict__ tree_size,
+    int root_idx, int n_tree_nodes,
+    /* Output */
+    float *__restrict__ w2ceil_out,
+    float *__restrict__ w2_out,
+    int n_particles,
+    float kappa)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= n_particles) return;
+    if (pindx[i] == MAX_INDEX_GPU) return;
+
+    float qx = (float)px[i];
+    float qy = (float)py[i];
+    /* Self skip: when ptl[] is built by det2d_dpqRK4_GPU, real particle i
+     * occupies ptl[i] with indx=i (matches SoA index). */
+    int self_ptl_idx = i;
+
+    float mindist2 = 1.0e23f;
+    float mindist  = 1.0e23f;
+
+    int cur = root_idx;
+    /* Safety bound on iterations to guard against any cycles (should not
+     * happen by construction).  Use 4*n_tree_nodes as a generous cap. */
+    int iter = 0;
+    int iter_max = 4 * n_tree_nodes;
+
+    while (cur >= 0 && cur < n_tree_nodes && iter < iter_max) {
+        ++iter;
+        int type = tree_type[cur];
+        if (type == 0) {
+            /* TREE node: test bounding sphere */
+            float cx = tree_cx[cur];
+            float cy = tree_cy[cur];
+            float dx = qx - cx;
+            float dy = qy - cy;
+            float dist = sqrtf(dx*dx + dy*dy);
+            if (dist - tree_size[cur] > mindist) {
+                cur = tree_sibling[cur];     /* prune subtree */
+            } else {
+                cur = tree_daughter[cur];    /* descend */
+            }
+        } else {
+            /* PTL leaf */
+            int pidx = tree_ptl_idx[cur];
+            if (pidx != self_ptl_idx) {
+                float cx = tree_cx[cur];
+                float cy = tree_cy[cur];
+                float dx = qx - cx;
+                float dy = qy - cy;
+                float d2 = dx*dx + dy*dy;
+                if (d2 < mindist2 && d2 > 0.0f) {
+                    mindist2 = d2;
+                    mindist  = sqrtf(d2);
+                }
+            }
+            cur = tree_sibling[cur];
+        }
+    }
+
+    w2ceil_out[i] = mindist2;
+    if (kappa >= 0.0f) {
+        w2_out[i] = fminf(w2_out[i], mindist2);
+    }
+}
+
+extern "C"
+void gpu_launch_nearest_neighbor_tree(GPUContext *ctx, int n_particles,
+                                       int n_total, float kappa)
+{
+    int blockSize = 256;
+    int gridSize = (n_particles + blockSize - 1) / blockSize;
+    cudaStream_t s = (cudaStream_t)ctx->stream;
+
+    nearest_neighbor_tree_kernel<<<gridSize, blockSize, 0, s>>>(
+        ctx->d_parts.x, ctx->d_parts.y,
+        ctx->d_parts.indx,
+        ctx->d_tree_type,
+        ctx->d_tree_sibling,
+        ctx->d_tree_daughter,
+        ctx->d_tree_ptl_idx,
+        ctx->d_tree_cx, ctx->d_tree_cy,
+        ctx->d_tree_size,
+        ctx->tree_root_idx, ctx->n_tree_nodes,
+        ctx->d_parts.w2ceil, ctx->d_parts.w2,
+        n_particles,
+        kappa);
+
+    CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaStreamSynchronize(s));
 }
 
