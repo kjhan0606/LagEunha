@@ -15,6 +15,20 @@
 
 /* Cylinder geometry cached for callbacks (which have no simpar access) */
 static postype _cyl_cx, _cyl_cy, _cyl_R, _cyl_Lx;
+static int _cyl_wall_on = 0;
+
+/* Ghost at (x,y) lies inside the cylinder. nx,ny is center → ghost. */
+int cyl_wall_query(postype x, postype y, postype *nx, postype *ny){
+	if(!_cyl_wall_on || !(_cyl_R > 0)) return 0;
+	postype dx = x - _cyl_cx;
+	postype dy = y - _cyl_cy;
+	postype r2 = dx*dx + dy*dy;
+	if(!(r2 < _cyl_R*_cyl_R) || r2 < 1e-24) return 0;
+	postype r = sqrt(r2);
+	*nx = dx/r;
+	*ny = dy/r;
+	return 1;
+}
 
 void cyl_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	int np = VORO_NP(simpar);
@@ -132,14 +146,20 @@ void cyl_postStage(SimParameters *simpar){
 		postype dy = bp->y - _cyl_cy;
 		postype r = sqrt(dx*dx + dy*dy);
 		if(r < 1e-12) continue;  /* particle exactly at center — skip */
+		/* Hard wall. Reflect across the surface so a particle that
+		 * stepped inside comes back out by the same distance. Do not
+		 * park it on r=R (that stacks neighbors) and do not reverse
+		 * the normal speed (the wall Riemann already supplies the impulse).
+		 * Only cancel a remaining inward component. */
 		if(r < _cyl_R){
 			postype nx = dx/r, ny = dy/r;
-			bp->x = _cyl_cx + nx * _cyl_R;
-			bp->y = _cyl_cy + ny * _cyl_R;
+			postype r_out = 2*_cyl_R - r;
+			bp->x = _cyl_cx + nx * r_out;
+			bp->y = _cyl_cy + ny * r_out;
 			postype vn = bp->vx*nx + bp->vy*ny;
 			if(vn < 0){
-				bp->vx -= 2*vn*nx;
-				bp->vy -= 2*vn*ny;
+				bp->vx -= vn*nx;
+				bp->vy -= vn*ny;
 			}
 		}
 	}
@@ -232,6 +252,7 @@ int RunCylinder(SimParameters *simpar, int icont){
 	_cyl_cy = CYL_CY(simpar);
 	_cyl_R  = CYL_R(simpar);
 	_cyl_Lx = SIMBOX(simpar).x.max;
+	_cyl_wall_on = 1;
 
 	if(icont ==0) {
 		t = 0;

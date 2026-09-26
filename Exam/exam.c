@@ -4067,6 +4067,8 @@ void updateDenW2Pressure2D_LagMFM(
  * from the HLL average state. Dissipative dK heating is off, and the
  * kick stores that face work in the total energy, then sets
  * ie = E − kinetic. Gated so other tests keep the existing path. */
+int cyl_wall_query(postype x, postype y, postype *nx, postype *ny);
+
 static int sedov_phase1_on(void){
 	static int cached = -1;
 	if(cached < 0){
@@ -4794,6 +4796,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						postype phase1_vn = 0, phase1_nx = 0, phase1_ny = 0;
 						int riemann_vstar = 0;
 						postype riemann_vn = 0, riemann_nx = 0, riemann_ny = 0;
+						int hard_wall = 0;
+						postype hard_nx = 0, hard_ny = 0;
 						/* Fix A+B: dissipative AV pressure extracted from pi_total.
 						 * Sum of (Monaghan AV + CD10 + HLLC-jump-excess) ≥ 0 when active.
 						 * Used downstream to compute pair-symmetric ε_AV ≥ 0 heating. */
@@ -4820,6 +4824,27 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							pi_total = pi;
 
 						} else if(jbp_is_ghost) {
+							/* Cylinder mirror: reflective Riemann. The ghost is the
+							 * mirror state, so the contact sits on the wall and p*
+							 * is the wall pressure. Flat-wall ghosts stay on M(n,m);
+							 * HLLC there sees a fake collision when the face normal
+							 * is not the wall normal. */
+							postype gnx, gny;
+							if(cyl_wall_query(jbp->x, jbp->y, &gnx, &gny)){
+								postype pst, vnst;
+								postype vnL = ibp_vx*er.x + ibp_vy*er.y;
+								postype vnR = jbp_vx*er.x + jbp_vy*er.y;
+								hllc_face_2d_rest_frame(
+										ibp_den, ibp_pressure, vnL, ibp_csound,
+										jbp_den, jbp_pressure, vnR, jbp_csound,
+										(postype)0, Gamma, &pst, &vnst);
+								if(!(pst > 0) || isnan(pst))
+									pst = 0.5*(ibp_pressure + jbp_pressure);
+								pi_total = pst;
+								hard_wall = 1;
+								hard_nx = -gnx;
+								hard_ny = -gny;
+							} else {
 							/* Ghost face in blend path: use M(n,m) pressure
 							   + Monaghan AV for wall damping (same as av_mode=0).
 							   Skip NS stress and HLLC — ghost stress fields are
@@ -4847,6 +4872,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 								pi = pi + (-alphavis*meanCsound*mu + betavis*mu*mu)*meanden;
 							}
 							pi_total = pi;
+							}
 
 						} else if(av_mode == 3) {
 							/* ========== DEPRECATED: Pure HLLC (lab frame) ==========
@@ -5377,6 +5403,14 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						 *     - per-face can be either sign; cell-level clamp applied after loop.
 						 */
 						Voro2D_point uradix_ui = get2dUpqradRk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
+						/* Stationary hard wall: the face velocity has no normal part. */
+						if(hard_wall){
+							postype vn_i = ibp_vx*hard_nx + ibp_vy*hard_ny;
+							postype urn = uradix_ui.x*hard_nx + uradix_ui.y*hard_ny;
+							postype corr = urn + vn_i;
+							uradix_ui.x -= corr*hard_nx;
+							uradix_ui.y -= corr*hard_ny;
+						}
 
 						/* Cell-centered HLL. With MUSCL on, av_mode 5 already built
 						 * P* from limited face states; do not overwrite it.
