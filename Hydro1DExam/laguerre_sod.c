@@ -70,6 +70,23 @@ static double av_al_mn = 0.0;    /* AV alpha minimum (smooth region) */
 static double av_bt_mn = 0.0;    /* AV beta minimum (smooth region) */
 static int    use_muscl= 0;      /* MUSCL reconstruction (C: 0=off) */
 static int    use_riemann=0;     /* 1=acoustic, 2=exact, 3=HLLC */
+static int    extreme_hll=0;     /* HLL average when pressure ratio > 100 */
+static int    direct_hll=0;      /* faces move at v*, weights follow the faces */
+static int    material_hll=0;    /* extreme face uses the zero-mass-flux HLL speed */
+static double vol_smooth=0;      /* oscillation-limited volume-equalizing weights (0=off) */
+static double p_ratio_max=0;     /* if >0, do not shift a face whose pressure ratio exceeds this */
+static int    rk_face=0;         /* RK4 faces; speed clipped to the segment */
+static double face_margin=0.05;  /* fraction of d kept clear; 0 = 1e-12 only */
+static double xf_face[NMAX+1];
+static double stage_dt=0;
+static int    xf_ready=0;
+static int    n_face_clamp=0;
+static int    n_limiter=0;
+static int    n_limiter_early=0;
+static int    n_outside=0;
+static int    material_steps=0;
+static double max_abs_R=0;
+static double sum_abs_R=0;
 static int    av_mode = 0;       /* 0=Monaghan, 1=Price signal, 2=CD10 */
 static double nu_phys  = 0.0;   /* fixed kinematic viscosity for NS stress (0=off) */
 static double nu_coeff = 0.0;   /* adaptive: nu += nu_coeff*h*cs (0=off) */
@@ -103,6 +120,7 @@ typedef struct {
 
 static int    N, mode;
 static double meand;
+static double bc_eng_net;   /* energy carried in by inflow particles */
 static double p0_ref=0.2;
 static Pt     P[NMAX];
 static double face[NMAX+1], pf[NMAX+1], vf[NMAX+1], qf[NMAX+1];
@@ -327,6 +345,77 @@ static void cells_lag(void){
     }
 }
 
+/* Oscillation-limited Laguerre shift of the current face[] array: equalize
+ * adjacent cell volumes only where the volume profile alternates on both
+ * flanks (checkerboard).  Monotone jumps and isolated needles are untouched.
+ * Stateless: applied to the freshly built tessellation each stage. */
+static void smooth_faces(void){
+    double Vv[NMAX];
+    for(int i=0;i<N;i++){
+        Vv[i] = face[i+1] - face[i];
+        if(Vv[i] < 1e-15) Vv[i] = 1e-15;
+    }
+    for(int i=1;i<N;i++){
+        double d1 = Vv[i] - Vv[i-1];
+        double dl = (i>=2)   ? Vv[i-1] - Vv[i-2] : d1;
+        double dr = (i<=N-2) ? Vv[i+1] - Vv[i]   : d1;
+        if(d1*dl < 0 && d1*dr < 0){
+            if(p_ratio_max > 0){
+                double pa = P[i-1].p, pb = P[i].p;
+                double pmin = pa < pb ? pa : pb;
+                double pmax = pa > pb ? pa : pb;
+                if(pmin <= 0 || pmax > p_ratio_max * pmin) continue;
+            }
+            double mag = fmin(fabs(d1), fmin(fabs(dl), fabs(dr)));
+            /* never take more than a quarter of the shrinking cell */
+            mag = fmin(mag, 0.25 * ((d1 > 0) ? Vv[i] : Vv[i-1]));
+            double shift = 0.5 * vol_smooth * ((d1 > 0) ? mag : -mag);
+            double gapL = face[i] - P[i-1].x;
+            double gapR = P[i].x - face[i];
+            double smax = 0.45 * fmin(gapL, gapR);
+            if(smax < 0) smax = 0;
+            if(shift >  smax) shift =  smax;
+            if(shift < -smax) shift = -smax;
+            face[i] += shift;
+        }
+    }
+}
+
+static void cells_vsmooth(void){
+    if(bc_left == BC_TRANSMIT && N >= 2)
+        face[0] = P[0].x - 0.5*(P[1].x - P[0].x);
+    else
+        face[0] = x0_dom;
+    if(bc_right == BC_TRANSMIT && N >= 2)
+        face[N] = P[N-1].x + 0.5*(P[N-1].x - P[N-2].x);
+    else
+        face[N] = x1_dom;
+    for(int i=0;i<N-1;i++)
+        face[i+1] = 0.5*(P[i].x + P[i+1].x);
+    smooth_faces();
+    /* recover weights so the stored faces are Laguerre bisectors */
+    double w2[NMAX];
+    w2[N-1] = 0;
+    for(int i=N-2;i>=0;i--){
+        double d = P[i+1].x - P[i].x;
+        if(d < 1e-15) d = 1e-15;
+        double shift = face[i+1] - 0.5*(P[i].x + P[i+1].x);
+        w2[i] = w2[i+1] + 2.0*d*shift;
+    }
+    double wmin = w2[0];
+    for(int i=1;i<N;i++) if(w2[i] < wmin) wmin = w2[i];
+    for(int i=0;i<N;i++){
+        double ww = w2[i] - wmin;
+        if(ww < 0) ww = 0;
+        P[i].w = sqrt(ww);
+        P[i].vol = face[i+1] - face[i];
+        if(P[i].vol < 1e-15) P[i].vol = 1e-15;
+        P[i].rho = P[i].m / P[i].vol;
+        P[i].p = eos_p(P[i].rho, P[i].e);
+        P[i].c = eos_c(P[i].rho, P[i].p);
+    }
+}
+
 /* forward declarations for face Riemann solvers (defined after exact_riemann) */
 static void exact_riemann_face(double rhoL, double pL, double vL, double cL,
                                double rhoR, double pR, double vR, double cR,
@@ -535,13 +624,86 @@ static void face_st(void){
     if(pf[0]<0) pf[0]=0;
     if(pf[N]<0) pf[N]=0;
     qf[0] = 0;  qf[N] = 0;
+    if(rk_face && stage_dt > 0){
+        for(int i=1;i<N;i++){
+            double d = P[i].x - P[i-1].x;
+            double margin = (face_margin > 0 && d > 1e-15) ? face_margin*d : 1e-12;
+            double lo, hi;
+            if(d <= 2*margin){
+                lo = hi = (0.5*(P[i-1].x+P[i].x) - xf_face[i]) / stage_dt;
+            } else {
+                lo = (P[i-1].x + margin - xf_face[i]) / stage_dt;
+                hi = (P[i].x   - margin - xf_face[i]) / stage_dt;
+            }
+            if(lo > hi){ double t=lo; lo=hi; hi=t; }
+            double s = vf[i], sh = s;
+            if(sh < lo) sh = lo;
+            if(sh > hi) sh = hi;
+            if(fabs(sh - s) > 1e-12*(1.0+fabs(s))){
+                n_limiter++;
+                if(material_steps < 100) n_limiter_early++;
+            }
+            vf[i] = sh;
+        }
+    }
 }
 
 /* ============================================================
  *  RHS: mesh modes
  * ============================================================ */
+static void cells_hllface(void){
+    /* Radical planes are stored positions. Weights are recovered so the
+     * diagram is the Laguerre diagram of those planes. */
+    const double eps = 1e-12;
+    if(!xf_ready){
+        xf_face[0] = x0_dom;
+        for(int i=0;i<N-1;i++)
+            xf_face[i+1] = 0.5*(P[i].x + P[i+1].x);
+        xf_face[N] = x1_dom;
+        xf_ready = 1;
+        n_face_clamp = 0;
+    }
+    xf_face[0] = x0_dom;
+    xf_face[N] = x1_dom;
+    for(int i=0;i<N-1;i++){
+        double lo = P[i].x + eps, hi = P[i+1].x - eps;
+        if(hi < lo){ lo = hi = 0.5*(P[i].x + P[i+1].x); }
+        if(!rk_face){
+            if(xf_face[i+1] < lo){ xf_face[i+1] = lo; n_face_clamp++; }
+            if(xf_face[i+1] > hi){ xf_face[i+1] = hi; n_face_clamp++; }
+        }
+        face[i+1] = xf_face[i+1];
+    }
+    face[0] = xf_face[0];
+    face[N] = xf_face[N];
+    if(vol_smooth > 0) smooth_faces();
+    double w2[NMAX];
+    w2[N-1] = 0;
+    for(int i=N-2;i>=0;i--){
+        double d = P[i+1].x - P[i].x;
+        if(d < eps) d = eps;
+        double shift = face[i+1] - 0.5*(P[i].x + P[i+1].x);
+        w2[i] = w2[i+1] + 2.0*d*shift;
+    }
+    double wmin = w2[0];
+    for(int i=1;i<N;i++) if(w2[i] < wmin) wmin = w2[i];
+    for(int i=0;i<N;i++){
+        double ww = w2[i] - wmin;
+        if(ww < 0) ww = 0;
+        P[i].w = sqrt(ww);
+        P[i].vol = face[i+1] - face[i];
+        if(P[i].vol < 1e-15) P[i].vol = 1e-15;
+        P[i].rho = P[i].m / P[i].vol;
+        P[i].p = eos_p(P[i].rho, P[i].e);
+        P[i].c = eos_c(P[i].rho, P[i].p);
+    }
+}
+
 static void rhs_mesh(void){
-    if(mode==VORONOI) cells_vor(); else cells_lag();
+    if(direct_hll) cells_hllface();
+    else if(vol_smooth > 0) cells_vsmooth();
+    else if(mode==VORONOI) cells_vor();
+    else cells_lag();
     face_st();
     for(int i=0;i<N;i++){
         P[i].av = (pf[i] - pf[i+1]) / P[i].m;
@@ -626,7 +788,9 @@ static void compute_rhs(void){
     if(mode==SPH_MODE) rhs_sph(); else rhs_mesh();
 }
 static void update_derived(void){
-    if(mode==VORONOI) cells_vor();
+    if(direct_hll) cells_hllface();
+    else if(vol_smooth > 0) cells_vsmooth();
+    else if(mode==VORONOI) cells_vor();
     else if(mode==LAGUERRE) cells_lag();
     else sph_density();
 }
@@ -666,6 +830,58 @@ static double get_dt(void){
     return dt;
 }
 
+/* Keep a uniform reservoir on an inflow side. Transmit alone only
+ * extrapolates the end face, so a shock that must be fed from outside
+ * (Shu-Osher, colliding slabs) runs out of driver gas. */
+static void fill_reservoir(Pt *p, double x, double rho, double vel, double pgas, double m){
+    p->x = x;
+    p->v = vel;
+    p->m = m;
+    p->rho = rho;
+    p->p = pgas;
+    p->e = eos_e(rho, pgas);
+    p->c = eos_c(rho, pgas);
+    p->vol = m / fmax(rho, 1e-14);
+    p->w = 0;
+    p->av = p->ae = 0;
+}
+
+static void inflow_particles(void){
+    if(N < 2) return;
+    if(bc_left == BC_TRANSMIT && vL_ic > 1e-8){
+        double m = P[0].m;
+        double dx = m / fmax(rhoL_ic, 1e-14);
+        int guard = 0;
+        while(N < NMAX-1 && P[0].x > x0_dom + 1.5*dx && guard < 32){
+            memmove(&P[1], &P[0], (size_t)N * sizeof(Pt));
+            memmove(alpha_cd+1, alpha_cd, (size_t)N * sizeof(double));
+            memmove(divv+1, divv, (size_t)N * sizeof(double));
+            memmove(divv_old+1, divv_old, (size_t)N * sizeof(double));
+            memmove(vsig_max+1, vsig_max, (size_t)N * sizeof(double));
+            memmove(ow2+1, ow2, (size_t)N * sizeof(double));
+            fill_reservoir(&P[0], P[1].x - dx, rhoL_ic, vL_ic, pL_ic, m);
+            alpha_cd[0] = cd_amin;
+            divv[0] = divv_old[0] = vsig_max[0] = ow2[0] = 0;
+            bc_eng_net += m * (0.5*vL_ic*vL_ic + P[0].e);
+            N++;
+            guard++;
+        }
+    }
+    if(bc_right == BC_TRANSMIT && vR_ic < -1e-8){
+        double m = P[N-1].m;
+        double dx = m / fmax(rhoR_ic, 1e-14);
+        int guard = 0;
+        while(N < NMAX-1 && P[N-1].x < x1_dom - 1.5*dx && guard < 32){
+            fill_reservoir(&P[N], P[N-1].x + dx, rhoR_ic, vR_ic, pR_ic, m);
+            alpha_cd[N] = cd_amin;
+            divv[N] = divv_old[N] = vsig_max[N] = ow2[N] = 0;
+            bc_eng_net += m * (0.5*vR_ic*vR_ic + P[N].e);
+            N++;
+            guard++;
+        }
+    }
+}
+
 /* ============================================================
  *  RK4 step
  * ============================================================ */
@@ -674,8 +890,20 @@ static void rk4_step(double dt){
         for(int i=0;i<N;i++) ow2[i] = P[i].w * P[i].w;
         prev_dt = dt;
     }
+    if(rk_face && !xf_ready){
+        xf_face[0] = x0_dom;
+        for(int i=0;i<N-1;i++) xf_face[i+1] = 0.5*(P[i].x+P[i+1].x);
+        xf_face[N] = x1_dom;
+        xf_ready = 1;
+    }
+    double s0f[NMAX+1], kxf[4][NMAX+1];
     for(int i=0;i<N;i++){
         s0x[i]=P[i].x; s0v[i]=P[i].v; s0e[i]=P[i].e;
+    }
+    if(rk_face){
+        for(int i=0;i<=N;i++) s0f[i] = xf_face[i];
+        stage_dt = dt;
+        material_steps++;
     }
     for(int st=0;st<4;st++){
         if(st>0){
@@ -687,6 +915,11 @@ static void rk4_step(double dt){
                 P[i].e=s0e[i]+f*dt*ke[k][i];
                 if(P[i].e<1e-14) P[i].e=1e-14;
             }
+            if(rk_face){
+                for(int i=0;i<=N;i++) xf_face[i] = s0f[i] + f*dt*kxf[k][i];
+            }
+        } else if(rk_face){
+            for(int i=0;i<=N;i++) xf_face[i] = s0f[i];
         }
         if(av_mode==2)
             for(int i=0;i<N;i++) vsig_max[i]=0;
@@ -696,6 +929,15 @@ static void rk4_step(double dt){
             kv[st][i]=P[i].av;
             ke[st][i]=P[i].ae;
         }
+        /* Lab-frame power of the end faces. Walls have vf=0. An inflow
+         * also adds the particle's own energy when it is inserted. */
+        {
+            double wstage = (st==0 || st==3) ? dt/6.0 : dt/3.0;
+            bc_eng_net += wstage * (pf[0]*vf[0] - pf[N]*vf[N]);
+        }
+        if(rk_face){
+            for(int i=0;i<=N;i++) kxf[st][i] = vf[i];
+        }
     }
     for(int i=0;i<N;i++){
         P[i].x=s0x[i]+dt/6.0*(kx[0][i]+2*kx[1][i]+2*kx[2][i]+kx[3][i]);
@@ -703,7 +945,27 @@ static void rk4_step(double dt){
         P[i].e=s0e[i]+dt/6.0*(ke[0][i]+2*ke[1][i]+2*ke[2][i]+ke[3][i]);
         if(P[i].e<1e-14) P[i].e=1e-14;
     }
+    if(rk_face){
+        for(int i=0;i<=N;i++)
+            xf_face[i] = s0f[i] + dt/6.0*(kxf[0][i] + 2*kxf[1][i] + 2*kxf[2][i] + kxf[3][i]);
+        for(int i=0;i<N;i++){
+            double dV = (xf_face[i+1]-xf_face[i]) - (s0f[i+1]-s0f[i]);
+            double pred = dt/6.0*(
+                (kxf[0][i+1]-kxf[0][i]) + 2*(kxf[1][i+1]-kxf[1][i])
+              + 2*(kxf[2][i+1]-kxf[2][i]) + (kxf[3][i+1]-kxf[3][i]));
+            double r = dV - pred;
+            double ar = fabs(r);
+            sum_abs_R += ar;
+            if(ar > max_abs_R) max_abs_R = ar;
+        }
+        for(int i=0;i<N-1;i++){
+            if(xf_face[i+1] <= P[i].x || xf_face[i+1] >= P[i+1].x) n_outside++;
+        }
+    } else if(direct_hll){
+        for(int i=0;i<=N;i++) xf_face[i] += vf[i]*dt;
+    }
     update_derived();
+    inflow_particles();
     if(av_mode==2)
         update_alpha_cd(dt);
 }
@@ -1085,6 +1347,69 @@ static void exact_riemann_face(double rhoL, double pL, double vL, double cL,
  *  Roe-averaged fallback + PVRS-Rusanov last resort, ports GIZMO
  *  reimann.h:527-593.  Previous impl here was TSRS disguised as HLLC.)
  * ============================================================ */
+static void hll_star_state(double rhoL, double pL, double vL, double cL,
+                           double rhoR, double pR, double vR, double cR,
+                           double *pstar, double *vstar)
+{
+    double SL = fmin(vL - cL, vR - cR);
+    double SR = fmax(vL + cL, vR + cR);
+    if(SL >= 0){ *pstar = pL; *vstar = vL; return; }
+    if(SR <= 0){ *pstar = pR; *vstar = vR; return; }
+    double EL = pL/(GM1*fmax(rhoL,1e-30)) + 0.5*vL*vL;
+    double ER = pR/(GM1*fmax(rhoR,1e-30)) + 0.5*vR*vR;
+    double EdenL = rhoL*EL, EdenR = rhoR*ER;
+    double denom = SR - SL;
+    if(fabs(denom) < 1e-30){
+        *pstar = 0.5*(pL+pR); *vstar = 0.5*(vL+vR); return;
+    }
+    double rhoS = (SR*rhoR - SL*rhoL - (rhoR*vR - rhoL*vL)) / denom;
+    double momS = (SR*rhoR*vR - SL*rhoL*vL
+                   - ((rhoR*vR*vR + pR) - (rhoL*vL*vL + pL))) / denom;
+    double ES   = (SR*EdenR - SL*EdenL
+                   - (vR*(EdenR+pR) - vL*(EdenL+pL))) / denom;
+    if(!(rhoS > 1e-30) || isnan(rhoS) || isnan(momS) || isnan(ES)){
+        *pstar = 0.5*(pL+pR); *vstar = 0.5*(vL+vR); return;
+    }
+    double vS = momS / rhoS;
+    double PS = GM1 * rhoS * (ES/rhoS - 0.5*vS*vS);
+    if(!(PS > 0) || isnan(PS) || isnan(vS)){
+        *pstar = 0.5*(pL+pR); *vstar = 0.5*(vL+vR); return;
+    }
+    *pstar = PS; *vstar = vS;
+}
+
+/* Face speed at which the HLL fan carries no mass, and the momentum
+ * flux seen by a surface moving at that speed. */
+static void hll_material_state(double rhoL, double pL, double vL, double cL,
+                               double rhoR, double pR, double vR, double cR,
+                               double *pstar, double *vstar)
+{
+    double SL = fmin(vL - cL, vR - cR);
+    double SR = fmax(vL + cL, vR + cR);
+    if(SL >= 0){ *pstar = pL; *vstar = vL; return; }
+    if(SR <= 0){ *pstar = pR; *vstar = vR; return; }
+    double denom = SR - SL;
+    if(fabs(denom) < 1e-30){
+        *pstar = 0.5*(pL+pR); *vstar = 0.5*(vL+vR); return;
+    }
+    double FL_m = rhoL*vL, FR_m = rhoR*vR;
+    double FL_p = rhoL*vL*vL + pL, FR_p = rhoR*vR*vR + pR;
+    double Fmass = (SR*FL_m - SL*FR_m + SL*SR*(rhoR - rhoL)) / denom;
+    double Fmom  = (SR*FL_p - SL*FR_p + SL*SR*(rhoR*vR - rhoL*vL)) / denom;
+    double rhoS = (SR*rhoR - SL*rhoL - (FR_m - FL_m)) / denom;
+    double momS = (SR*rhoR*vR - SL*rhoL*vL - (FR_p - FL_p)) / denom;
+    if(!(rhoS > 1e-30) || isnan(rhoS) || isnan(momS) || isnan(Fmass) || isnan(Fmom)){
+        *pstar = 0.5*(pL+pR); *vstar = 0.5*(vL+vR); return;
+    }
+    double s0 = Fmass / rhoS;
+    if(s0 < SL) s0 = SL;
+    if(s0 > SR) s0 = SR;
+    double Pf = Fmom - s0*momS;
+    if(!(Pf > 0) || isnan(Pf)) Pf = 0.5*(pL+pR);
+    *pstar = Pf;
+    *vstar = s0;
+}
+
 static void hllc_face(double rhoL, double pL, double vL, double cL,
                       double rhoR, double pR, double vR, double cR,
                       double *pstar, double *vstar)
@@ -1092,6 +1417,19 @@ static void hllc_face(double rhoL, double pL, double vL, double cL,
     const double tiny = 1.0e-30;
     double S_L, S_R, S_M, P_M;
     double cmax = cL > cR ? cL : cR;
+
+    /* Same extreme-face rule as the 2D phase-1 Riemann path. */
+    {
+        double pmin = pL < pR ? pL : pR;
+        double pmax = pL > pR ? pL : pR;
+        if(extreme_hll && (pmin < 1e-3 || pmax > 100.0 * fmax(pmin, 1e-30))){
+            if(material_hll)
+                hll_material_state(rhoL, pL, vL, cL, rhoR, pR, vR, cR, pstar, vstar);
+            else
+                hll_star_state(rhoL, pL, vL, cL, rhoR, pR, vR, cR, pstar, vstar);
+            return;
+        }
+    }
 
     if((vR - vL) > cmax){
         *pstar = tiny; *vstar = 0.5*(vL + vR);
@@ -1299,6 +1637,7 @@ typedef struct {
     double l1_rho, l1_vel, l1_pre;
     double p_osc;
     double eng_err;
+    double t_end;
     int    nstep;
     int    failed;
 } Metrics;
@@ -1311,6 +1650,7 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
 
     /* initial total energy (computed numerically) */
     double eng0=0;
+    bc_eng_net = 0;
     for(int i=0;i<N;i++)
         eng0 += P[i].m*(0.5*P[i].v*P[i].v+P[i].e);
 
@@ -1323,15 +1663,34 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
         if(t+dt>tend) dt=tend-t;
         rk4_step(dt);
         t+=dt; met.nstep++;
-        if(diag_blast && (met.nstep%2000==0 || met.nstep<=5)){
+        if(diag_blast){
             double vmin=1e30, vmax=-1e30;
             int imin=-1;
             for(int i=0;i<N;i++){
                 if(P[i].vol<vmin){ vmin=P[i].vol; imin=i; }
                 if(P[i].vol>vmax) vmax=P[i].vol;
             }
-            fprintf(stderr,"    [diag] step=%d t=%.4e dt=%.4e vmin=%.4e(i=%d,x=%.4f,p=%.2e) vmax=%.4e\n",
-                    met.nstep, t, dt, vmin, imin, P[imin].x, P[imin].p, vmax);
+            int show = (met.nstep<=5 || met.nstep%2000==0);
+            static int dumped_1em3 = 0, dumped_1em4 = 0;
+            if(met.nstep==1){ dumped_1em3 = 0; dumped_1em4 = 0; }
+            if(vmin < 1e-3 && !dumped_1em3){ dumped_1em3 = 1; show = 1; }
+            if(vmin < 1e-4 && !dumped_1em4){ dumped_1em4 = 1; show = 1; }
+            if(show){
+                fprintf(stderr,"    [diag] step=%d t=%.4e dt=%.4e vmin=%.4e(i=%d,x=%.4f,v=%.3e,p=%.2e) vmax=%.4e\n",
+                        met.nstep, t, dt, vmin, imin, P[imin].x, P[imin].v, P[imin].p, vmax);
+                int a = imin-3, b = imin+3;
+                if(a<0) a=0;
+                if(b>N-1) b=N-1;
+                for(int i=a;i<=b;i++)
+                    fprintf(stderr,"      i=%d x=%.5f v=%.3e p=%.3e vol=%.3e  faceL p=%.3e v=%.3e  faceR p=%.3e v=%.3e\n",
+                            i, P[i].x, P[i].v, P[i].p, P[i].vol,
+                            pf[i], vf[i], pf[i+1], vf[i+1]);
+            }
+        }
+        if(dt < 1e-12){
+            fprintf(stderr,"  STOP: dt=%.3e at t=%.4e step=%d\n", dt, t, met.nstep);
+            met.failed = 1;
+            break;
         }
         if(met.nstep >= max_steps){
             fprintf(stderr,"  WARNING: max steps (%d) at t=%.4e/%.4e\n",
@@ -1346,13 +1705,14 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
             break;
         }
     }
+    met.t_end = t;
     double wall_ms = 1000.0*(clock()-t0)/CLOCKS_PER_SEC;
 
     /* conservation */
     double eng=0;
     for(int i=0;i<N;i++)
         eng += P[i].m*(0.5*P[i].v*P[i].v+P[i].e);
-    met.eng_err = (eng0>1e-30) ? fabs(eng-eng0)/eng0 : fabs(eng-eng0);
+    met.eng_err = (eng0>1e-30) ? fabs(eng - (eng0 + bc_eng_net))/eng0 : fabs(eng - (eng0 + bc_eng_net));
 
     /* L1 error */
     for(int i=0;i<N;i++){
@@ -1390,8 +1750,8 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
                 lbl[smode], met.nstep, met.l1_rho, met.p_osc, met.eng_err, wall_ms);
     }
 
-    /* write output (skip if failed) */
-    if(!met.failed && outfile){
+    /* write output, including a run that stopped early */
+    if(outfile){
         FILE *fp=fopen(outfile,"w");
         fprintf(fp,"# x  rho  v  p  e  w  vol\n");
         for(int i=0;i<N;i++){
@@ -1496,6 +1856,79 @@ static void set_method_ns_av(void){
  * ============================================================ */
 int main(int argc, char **argv)
 {
+    if(argc >= 2 && strcmp(argv[1], "blast") == 0){
+        /* Woodward-Colella blast.  Same HLLC+MUSCL, no artificial viscosity.
+         * Voronoi is w=0.  Laguerre is the pressure weight on top of that. */
+        int np = (argc >= 3) ? atoi(argv[2]) : 200;
+        const char *names[] = {"voronoi", "laguerre", "hllface", "material", "wtrack", "wsmooth", "pgate"};
+        const int modes[] = {VORONOI, LAGUERRE, LAGUERRE, LAGUERRE, LAGUERRE, LAGUERRE, LAGUERRE};
+        const double wcs[] = {0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0};
+        const int directs[] = {0, 0, 1, 1, 1, 0, 0};
+        const int materials[] = {0, 0, 0, 1, 0, 0, 0};
+        const int rkfaces[] = {0, 0, 0, 1, 1, 0, 0};
+        const double margins[] = {0, 0, 0, 0.05, 0, 0, 0};
+        double vsm[] = {0, 0, 0, 0, 0, 1.0, 1.0};
+        double pgates[] = {0, 0, 0, 0, 0, 0, 2.0};
+        const char *only = NULL;
+        if(argc >= 4 && argv[3][0] >= 'a' && argv[3][0] <= 'z') only = argv[3];
+        else if(argc >= 4) vsm[5] = atof(argv[3]);
+        printf("# blast Woodward-Colella  HLLC+MUSCL  no AV  N=%d  tend=0.038\n", np);
+        printf("# %-10s %8s %10s %8s %12s %12s %12s %6s\n",
+               "geom","w","t_end","steps","L1_rho","eng_err","rho_max","fail");
+        {
+            double ps, vs, cL=sqrt(1.4*1000), cR=sqrt(0.014);
+            hll_material_state(1,1000,0,cL, 1,0.01,0,cR, &ps, &vs);
+            printf("# material face check  s=%g  P=%g  (expect 0 and 500)\n", vs, ps);
+            hll_star_state(1,1000,0,cL, 1,0.01,0,cR, &ps, &vs);
+            printf("# mean-state face check  s=%g  P=%g  (expect 13.36 and 464)\n", vs, ps);
+        }
+        for(int k=0; k<7; k++){
+            if(only && strcmp(names[k], only) != 0) continue;
+            setup_problem(PROB_BLAST);
+            read_reference("blast/ref.dat");
+            w_coeff = wcs[k];
+            direct_hll = directs[k];
+            material_hll = materials[k];
+            vol_smooth = vsm[k];
+            p_ratio_max = pgates[k];
+            rk_face = rkfaces[k];
+            face_margin = margins[k];
+            xf_ready = 0;
+            n_face_clamp = 0;
+            n_limiter = 0;
+            n_limiter_early = 0;
+            n_outside = 0;
+            material_steps = 0;
+            max_abs_R = 0;
+            sum_abs_R = 0;
+            use_AA = 0;
+            use_riemann = 3;
+            extreme_hll = 1;
+            use_muscl = 1;
+            av_mode = 0;
+            av_alpha = 0;
+            av_beta = 0;
+            cd_amax = 0;
+            cd_amin = 0;
+            nu_phys = 0;
+            nu_coeff = 0;
+            face_dp = 0;
+            face_dv = 0;
+            shock_th = 0;
+            weight_mode = WM_PRESSURE;
+            char out[256];
+            snprintf(out, sizeof(out), "blast_%s.dat", names[k]);
+            Metrics m = run_sim(modes[k], np, out, 1);
+            double rmax = 0;
+            for(int i=0; i<N; i++) if(P[i].rho > rmax) rmax = P[i].rho;
+            printf("  %-10s %8.2f %10.4e %8d %12.4e %12.4e %12.4e %6d clamp=%d lim=%d lim100=%d out=%d maxR=%g\n",
+                   names[k], wcs[k], m.t_end, m.nstep,
+                   m.l1_rho, m.eng_err, rmax, m.failed, n_face_clamp,
+                   n_limiter, n_limiter_early, n_outside, max_abs_R);
+            fflush(stdout);
+        }
+        return 0;
+    }
     if(argc >= 2 && strcmp(argv[1], "vr") == 0){
         int np = (argc >= 3) ? atoi(argv[2]) : 200;
         const char *names[] = {"sod","blast","shuosher","noh","lax","dblfan","collision","contact"};
@@ -1503,10 +1936,12 @@ int main(int argc, char **argv)
             "sod/ref.dat","blast/ref.dat","shuosher/ref.dat","noh/ref.dat",
             "lax/ref.dat","dblfan/ref.dat","collision/ref.dat","contact/ref.dat"
         };
+        const char *only = (argc >= 4) ? argv[3] : NULL;
         printf("# Voronoi + MUSCL + HLLC, w=0, N=%d\n", np);
         printf("# %-10s %12s %12s %12s %12s %6s\n",
                "problem","L1_rho","L1_v","L1_p","eng_err","nstep");
         for(int pid=0; pid<8; pid++){
+            if(only && strcmp(names[pid], only) != 0) continue;
             setup_problem(pid);
             if(has_exact_sol) exact_riemann(&ps_exact, &vs_exact);
             else read_reference(refs[pid]);
@@ -1514,8 +1949,9 @@ int main(int argc, char **argv)
             char out[256];
             snprintf(out, sizeof(out), "vr_%s.dat", names[pid]);
             Metrics m = run_sim(VORONOI, np, out, 0);
-            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d\n",
-                   names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep);
+            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d bcE=%.6e\n",
+                   names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep,
+                   N, bc_eng_net);
             fflush(stdout);
         }
         return 0;

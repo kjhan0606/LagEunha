@@ -2445,6 +2445,277 @@ static void laguerre_volume_newton(
 	free(loc_of); free(edges); free(rhs); free(dw); free(cg_r); free(cg_p); free(cg_ap); free(dmin2);
 }
 
+static int sedov_wsmooth_on(double *kappa)
+{
+	const char *e = getenv("SEDOV_WSMOOTH");
+	if(!e || !e[0]) return 0;
+	*kappa = atof(e);
+	if(*kappa <= 0) *kappa = 1.0;
+	return 1;
+}
+
+/* Voronoi volumes are already on the particles. Shift a face only when the
+ * two cells are opposite volume extrema (checkerboard). A one-sided jump,
+ * such as a shock, is left at the midpoint. Weights are the least-squares
+ * Laguerre diagram of those face shifts. */
+static void sedov_wsmooth_apply(
+		SimParameters *simpar,
+		postype xmin, postype ymin, postype xmax, postype ymax,
+		postype boxsize, postype cellsize, int mx, int my,
+		Voro2D_point *(*find2DNeighboringBP)(SimParameters *, int, int, int *),
+		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *),
+		postype Gamma)
+{
+	double kappa;
+	if(!sedov_wsmooth_on(&kappa)) return;
+	treevorostressrk4particletype *bp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	int nbp = VORO_NP(simpar);
+	const int M = 24;
+	int *nn = (int*)calloc((size_t)nbp, sizeof(int));
+	int *nei = (int*)malloc((size_t)nbp * M * sizeof(int));
+	double *flen = (double*)malloc((size_t)nbp * M * sizeof(double));
+	double *dd = (double*)malloc((size_t)nbp * M * sizeof(double));
+	double *d2 = (double*)malloc((size_t)nbp * M * sizeof(double));
+	double *bb = (double*)calloc((size_t)nbp * M, sizeof(double));
+	signed char *flag = (signed char*)calloc((size_t)nbp, 1);
+	double *w = (double*)calloc((size_t)nbp, sizeof(double));
+	double *V = (double*)malloc((size_t)nbp * sizeof(double));
+	if(!nn || !nei || !flen || !dd || !d2 || !bb || !flag || !w || !V){
+		free(nn); free(nei); free(flen); free(dd); free(d2); free(bb); free(flag); free(w); free(V);
+		return;
+	}
+	for(int i=0;i<nbp;i++) V[i] = bp[i].volume;
+
+	for(int iy=0; iy<my; iy++){
+		int mp = 4000;
+		Voro2D_Corner *vc = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+		for(int ix=0; ix<mx; ix++){
+			int np, nneigh;
+			treevorork4particletype *p = find2DCellBP(simpar, ix, iy, &np);
+			Voro2D_point *neighbors = find2DNeighboringBP(simpar, ix, iy, &nneigh);
+			Voro2D_point *nw = (nneigh>0) ? (Voro2D_point*)malloc(sizeof(Voro2D_point)*nneigh) : NULL;
+			for(int i=0;i<np;i++){
+				int ii = (int)((treevorostressrk4particletype*)p[i].bp - bp);
+				if(ii < 0 || ii >= nbp) continue;
+				Voro2D_point center;
+				center.x = p[i].x; center.y = p[i].y;
+				center.indx = PINDX(p+i);
+				center.csound = p[i].csound;
+				center.w2 = 0;
+				int ip = Voro2D_FindVC(&center, neighbors, nw, nneigh, vc, mp, boxsize);
+				if(ip <= 0) continue;
+				Voro2D_Corner *c = vc;
+				int guard = 0;
+				do {
+					int ur = c->upperrelated;
+					if(ur >= 0 && ur < nneigh && nn[ii] < M){
+						treevorostressrk4particletype *jp = (treevorostressrk4particletype*)nw[ur].bp;
+						int jj = (int)(jp - bp);
+						if(jj >= 0 && jj < nbp && jj != ii){
+							int seen = 0;
+							for(int t=0;t<nn[ii];t++) if(nei[ii*M+t]==jj) seen = 1;
+							if(seen) { c = c->upperlink; if(++guard > mp) break; continue; }
+							Voro2D_Corner *c2 = c->upperlink;
+							double L = hypot(c2->x - c->x, c2->y - c->y);
+							double dx = jp->x - bp[ii].x, dy = jp->y - bp[ii].y;
+							double dist = hypot(dx, dy);
+							int slot = ii*M + nn[ii];
+							nei[slot] = jj;
+							flen[slot] = L;
+							dd[slot] = dist;
+							d2[slot] = dist*dist;
+							nn[ii]++;
+						}
+					}
+					c = c->upperlink;
+					if(++guard > mp) break;
+				} while(c && c != vc);
+			}
+			if(np>0) free(p);
+			if(nneigh>0){ free(neighbors); if(nw) free(nw); }
+		}
+		free(vc);
+	}
+
+	for(int i=0;i<nbp;i++){
+		if(nn[i] <= 0) continue;
+		int is_max = 1, is_min = 1;
+		for(int k=0;k<nn[i];k++){
+			double Vn = V[nei[i*M+k]];
+			if(!(V[i] > Vn)) is_max = 0;
+			if(!(V[i] < Vn)) is_min = 0;
+		}
+		if(is_max) flag[i] = 1;
+		else if(is_min) flag[i] = -1;
+	}
+
+	char *tagged = (char*)calloc((size_t)nbp * M, 1);
+	int *tdeg = (int*)calloc((size_t)nbp, sizeof(int));
+	int ncheck = 0;
+	double rsum = 0;
+	if(!tagged || !tdeg){
+		free(tagged); free(tdeg);
+		free(nn); free(nei); free(flen); free(dd); free(d2); free(bb);
+		free(flag); free(w); free(V);
+		return;
+	}
+	for(int i=0;i<nbp;i++){
+		for(int k=0;k<nn[i];k++){
+			int j = nei[i*M+k];
+			if(j <= i) continue;
+			double dist = dd[i*M+k];
+			double L = flen[i*M+k];
+			if(L < 1e-15 || dist < 1e-15) continue;
+			double nx = (bp[j].x - bp[i].x) / dist;
+			double ny = (bp[j].y - bp[i].y) / dist;
+			double wm = 0, numm = 0, wp = 0, nump = 0;
+			for(int k2=0;k2<nn[i];k2++){
+				int kk = nei[i*M+k2];
+				if(kk == j) continue;
+				double dk = dd[i*M+k2];
+				if(dk < 1e-15) continue;
+				double xh = (bp[kk].x - bp[i].x) / dk;
+				double yh = (bp[kk].y - bp[i].y) / dk;
+				double wt = -(nx*xh + ny*yh);
+				if(wt < 0) wt = 0;
+				wm += wt;
+				numm += wt * (V[i] - V[kk]);
+			}
+			for(int k2=0;k2<nn[j];k2++){
+				int mm = nei[j*M+k2];
+				if(mm == i) continue;
+				double dk = dd[j*M+k2];
+				if(dk < 1e-15) continue;
+				double xh = (bp[mm].x - bp[j].x) / dk;
+				double yh = (bp[mm].y - bp[j].y) / dk;
+				double wt = nx*xh + ny*yh;
+				if(wt < 0) wt = 0;
+				wp += wt;
+				nump += wt * (V[mm] - V[j]);
+			}
+			if(wm < 0.2 || wp < 0.2) continue;
+			double gm = numm / wm, gpv = nump / wp;
+			double dV = V[j] - V[i];
+			if(!(dV*gm < 0 && dV*gpv < 0)) continue;
+			/* A shock has a large pressure ratio. A contact is nearly isobaric.
+			 * Only the isobaric oscillation may move the face. */
+			{
+				double pi = bp[i].pressure, pj = bp[j].pressure;
+				double pmin = pi < pj ? pi : pj;
+				double pmax = pi > pj ? pi : pj;
+				if(!(pmin > 0) || pmax > 2.0 * pmin) continue;
+			}
+			double mag = fabs(dV);
+			if(mag > fabs(gm)) mag = fabs(gm);
+			if(mag > fabs(gpv)) mag = fabs(gpv);
+			double vsmall = V[i] < V[j] ? V[i] : V[j];
+			if(mag > 0.25 * vsmall) mag = 0.25 * vsmall;
+			double shift = 0.5 * kappa * (dV > 0 ? mag : -mag) / L;
+			double smax = 0.45 * 0.5 * dist;
+			if(shift > smax) shift = smax;
+			if(shift < -smax) shift = -smax;
+			double bij = 2.0 * dist * shift;
+			bb[i*M+k] = bij;
+			tagged[i*M+k] = 1;
+			tdeg[i]++; tdeg[j]++;
+			for(int k2=0;k2<nn[j];k2++){
+				if(nei[j*M+k2] == i){
+					bb[j*M+k2] = -bij;
+					tagged[j*M+k2] = 1;
+					break;
+				}
+			}
+			ncheck++;
+			rsum += hypot(0.5*(bp[i].x+bp[j].x) - 0.5, 0.5*(bp[i].y+bp[j].y) - 0.5);
+		}
+	}
+
+	for(int it=0; it<40; it++){
+		for(int i=0;i<nbp;i++){
+			if(tdeg[i] <= 0) continue;
+			double sum = 0;
+			for(int k=0;k<nn[i];k++){
+				if(!tagged[i*M+k]) continue;
+				sum += w[nei[i*M+k]] + bb[i*M+k];
+			}
+			w[i] = sum / tdeg[i];
+		}
+	}
+	for(int sweep=0; sweep<8; sweep++){
+		for(int i=0;i<nbp;i++){
+			for(int k=0;k<nn[i];k++){
+				if(!tagged[i*M+k]) continue;
+				int j = nei[i*M+k];
+				if(j <= i) continue;
+				double lim = 0.95 * d2[i*M+k];
+				double diff = w[i] - w[j];
+				if(diff > lim || diff < -lim){
+					double mid = 0.5*(w[i] + w[j]);
+					double h = 0.5 * lim;
+					if(diff < 0) h = -h;
+					w[i] = mid + h;
+					w[j] = mid - h;
+				}
+			}
+		}
+	}
+	double wmin = 0;
+	for(int i=0;i<nbp;i++) if(w[i] < wmin) wmin = w[i];
+	double wmax = 0;
+	for(int i=0;i<nbp;i++){
+		w[i] -= wmin;
+		if(w[i] < 0) w[i] = 0;
+		bp[i].w2 = w[i];
+		if(w[i] > wmax) wmax = w[i];
+	}
+	if(MYID(simpar)==0){
+		static int nlog = 0;
+		if(nlog < 8 || (nlog % 50) == 0)
+			fprintf(stderr, "[WSMOOTH] kappa=%g ncheck=%d maxw2=%g rmean=%g\n",
+				kappa, ncheck, wmax, ncheck ? rsum/ncheck : 0);
+		nlog++;
+	}
+
+	for(int iy=0; iy<my; iy++){
+		int mp = 4000;
+		Voro2D_Corner *vc = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+		for(int ix=0; ix<mx; ix++){
+			int np, nneigh;
+			treevorork4particletype *p = find2DCellBP(simpar, ix, iy, &np);
+			Voro2D_point *neighbors = find2DNeighboringBP(simpar, ix, iy, &nneigh);
+			Voro2D_point *nw = (nneigh>0) ? (Voro2D_point*)malloc(sizeof(Voro2D_point)*nneigh) : NULL;
+			for(int k=0;k<nneigh;k++){
+				treevorostressrk4particletype *jp = (treevorostressrk4particletype*)neighbors[k].bp;
+				int jj = (int)(jp - bp);
+				if(jj >= 0 && jj < nbp) neighbors[k].w2 = bp[jj].w2;
+			}
+			for(int i=0;i<np;i++){
+				treevorork4particletype *ibp0 = p[i].bp;
+				int ii = (int)((treevorostressrk4particletype*)ibp0 - bp);
+				Voro2D_point center;
+				center.x = p[i].x; center.y = p[i].y;
+				center.indx = PINDX(p+i);
+				center.csound = p[i].csound;
+				center.w2 = (ii >= 0 && ii < nbp) ? bp[ii].w2 : p[i].w2;
+				Voro2D_FindVC(&center, neighbors, nw, nneigh, vc, mp, boxsize);
+				treevorork4particletype *ibp = p[i].bp;
+				get2dAreaAvgNeighorPressure(ibp, vc, nw, (treevorork4particletype*)bp);
+				if(ibp->volume > 1e-15){
+					ibp->den = ibp->mass / ibp->volume;
+					ibp->pressure = ibp->ie / ibp->volume * (Gamma - 1);
+					if(ibp->pressure < 1e-6) ibp->pressure = 1e-6;
+					ibp->csound = sqrt(Gamma * ibp->pressure / ibp->den);
+				}
+			}
+			if(np>0) free(p);
+			if(nneigh>0){ free(neighbors); if(nw) free(nw); }
+		}
+		free(vc);
+	}
+	free(nn); free(nei); free(flen); free(dd); free(d2);
+	free(flag); free(w); free(V); free(bb); free(tagged); free(tdeg);
+}
+
 void updateDenW2Pressure2DBlend(
 		SimParameters *simpar,
 		postype xmin, postype ymin, postype xmax, postype ymax,
@@ -3141,6 +3412,9 @@ void updateDenW2Pressure2DBlend(
 			bp[i].stress.tauyy = 0;
 		}
 	}
+
+	sedov_wsmooth_apply(simpar, xmin, ymin, xmax, ymax, boxsize, cellsize, mx, my,
+		find2DNeighboringBP, find2DCellBP, Gamma);
 
 #ifdef GPU_TESS_COMPARE
 	/* === Compare GPU face CSR vs CPU fused face CSR === */
@@ -3850,16 +4124,32 @@ static inline void hll_star_state(
 	*vnstar = vnS;
 }
 
+static int phase1_ie_clips = 0;
 static inline void phase1_half_kick(treevorostressrk4particletype *p,
 		postype half_dt, postype ax_ext, postype ay_ext){
 	postype m = p->mass;
 	postype ke = (postype)0.5 * m * (p->vx*p->vx + p->vy*p->vy);
-	postype E = p->ie + ke;
-	E += p->die * half_dt;
+	postype E = p->ie + ke + p->die * half_dt;
 	p->vx += (p->ax + ax_ext) * half_dt;
 	p->vy += (p->ay + ay_ext) * half_dt;
 	ke = (postype)0.5 * m * (p->vx*p->vx + p->vy*p->vy);
-	p->ie = E - ke;
+	/* The kick must not spend more energy than the particle has.
+	 * Otherwise ie goes negative and the next Riemann step creates energy. */
+	if(!(E > ke)){
+		phase1_ie_clips++;
+		if(E > 0 && ke > 0){
+			postype s = sqrt(E / ke);
+			p->vx *= s;
+			p->vy *= s;
+			p->ie = (postype)0;
+		} else {
+			p->vx = 0;
+			p->vy = 0;
+			p->ie = (postype)0;
+		}
+	} else {
+		p->ie = E - ke;
+	}
 }
 
 /* Fix C v2 (2026-05-12): face-level near-vacuum guard with floor discriminator.
@@ -4752,13 +5042,21 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							                        rhoR, pR, vnR_lab, jbp_csound,
 							                        wn, Gamma, &pst, &vnst_lab);
 							pi_total = pst;
-							/* Phase 1 with MUSCL: the PdV face speed is this
-							 * contact velocity, along the same normal as dS. */
-							if(sedov_phase1_on() && use_muscl){
-								riemann_vstar = 1;
-								riemann_vn = vnst_lab;
-								riemann_nx = nx_hat;
-								riemann_ny = ny_hat;
+							/* PdV uses the Riemann face speed only where the
+							 * face is extreme (shock or floor). Ordinary faces
+							 * keep the geometric Voronoi speed, which matches
+							 * the cell's volume change. */
+							{
+								postype pmin_f = pL < pR ? pL : pR;
+								postype pmax_f = pL > pR ? pL : pR;
+								int face_extreme = (pmin_f < (postype)1.0e-3) ||
+									(pmax_f > (postype)100.0 * fmax(pmin_f, (postype)1.0e-30));
+								if(sedov_phase1_on() && use_muscl && face_extreme){
+									riemann_vstar = 1;
+									riemann_vn = vnst_lab;
+									riemann_nx = nx_hat;
+									riemann_ny = ny_hat;
+								}
 							}
 
 							/* Optional Monaghan AV for grid-scale noise control
@@ -9532,9 +9830,9 @@ double exam2d_vph_kdk_int_blend(
 			double nx = (double)NX(simpar);
 			double vnorm = vmin_g * nx * nx;
 			fprintf(stderr,
-				"[PHASE1] step=%d dt=%.3e Vmin=%.3e Vmin*Nx2=%.3e rho_max=%.3e E=%.6e dE/E0=%.3e n_neg=%d/%d\n",
+				"[PHASE1] step=%d dt=%.3e Vmin=%.3e Vmin*Nx2=%.3e rho_max=%.3e E=%.6e dE/E0=%.3e n_neg=%d/%d n_clip=%d\n",
 				p1step, (double)Dtime, vmin_g, vnorm, rhomax_g, etot_g,
-				(E0 != 0 ? (etot_g-E0)/E0 : 0), nneg_g, ncell_g);
+				(E0 != 0 ? (etot_g-E0)/E0 : 0), nneg_g, ncell_g, phase1_ie_clips);
 			fflush(stderr);
 		}
 	}

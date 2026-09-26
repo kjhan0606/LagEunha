@@ -817,6 +817,10 @@ double getAccVoro2DBlend_GPU(
     params.dtold       = GAS_dtold(simpar);
     params.hyperv_alpha = GAS_HYPERVALPHA(simpar);
     params.hyperv_force_cap = GAS_HYPERVFORCECAP(simpar);
+    {
+        const char *ph = getenv("SEDOV_PHASE1");
+        params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
+    }
 
     /* --- Launch GPU kernel (all particles) --- */
     double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, &params);
@@ -913,11 +917,66 @@ static inline void cpu_get2dUpqradRk4(
 #define HLLC_VACUUM_PMIN_GUARD 0.01
 #endif
 
-static inline void cpu_hllc_face_2d(
+static inline void cpu_hll_star_state(
     double rhoL, double pL, double vnL, double cL,
     double rhoR, double pR, double vnR, double cR,
     double Gamma, double *pstar, double *vnstar)
 {
+    double SL = fmin(vnL - cL, vnR - cR);
+    double SR = fmax(vnL + cL, vnR + cR);
+    if (SL >= 0) { *pstar = pL; *vnstar = vnL; return; }
+    if (SR <= 0) { *pstar = pR; *vnstar = vnR; return; }
+    double gm1 = Gamma - 1.0;
+    if (gm1 < 1.0e-8) gm1 = 1.0e-8;
+    double rhoLs = fmax(rhoL, 1.0e-30);
+    double rhoRs = fmax(rhoR, 1.0e-30);
+    double EL = pL / (gm1 * rhoLs) + 0.5 * vnL * vnL;
+    double ER = pR / (gm1 * rhoRs) + 0.5 * vnR * vnR;
+    double EdenL = rhoL * EL, EdenR = rhoR * ER;
+    double denom = SR - SL;
+    if (fabs(denom) < 1.0e-30) {
+        *pstar = 0.5 * (pL + pR);
+        *vnstar = 0.5 * (vnL + vnR);
+        return;
+    }
+    double FrL = rhoL * vnL, FrR = rhoR * vnR;
+    double FmL = rhoL * vnL * vnL + pL, FmR = rhoR * vnR * vnR + pR;
+    double FeL = vnL * (EdenL + pL), FeR = vnR * (EdenR + pR);
+    double rhoS = (SR * rhoR - SL * rhoL - (FrR - FrL)) / denom;
+    double momS = (SR * (rhoR * vnR) - SL * (rhoL * vnL) - (FmR - FmL)) / denom;
+    double ES   = (SR * EdenR - SL * EdenL - (FeR - FeL)) / denom;
+    if (!(rhoS > 1.0e-30) || isnan(rhoS) || isinf(rhoS)
+            || isnan(momS) || isinf(momS) || isnan(ES) || isinf(ES)) {
+        *pstar = 0.5 * (pL + pR);
+        *vnstar = 0.5 * (vnL + vnR);
+        return;
+    }
+    double vnS = momS / rhoS;
+    double eint = ES / rhoS - 0.5 * vnS * vnS;
+    double PS = gm1 * rhoS * eint;
+    if (!(PS > 0) || isnan(PS) || isinf(PS) || isnan(vnS) || isinf(vnS)) {
+        *pstar = 0.5 * (pL + pR);
+        *vnstar = 0.5 * (vnL + vnR);
+        return;
+    }
+    *pstar = PS;
+    *vnstar = vnS;
+}
+
+static inline void cpu_hllc_face_2d(
+    double rhoL, double pL, double vnL, double cL,
+    double rhoR, double pR, double vnR, double cR,
+    double Gamma, int phase1, double *pstar, double *vnstar)
+{
+    if (phase1) {
+        double pmin = pL < pR ? pL : pR;
+        double pmax = pL > pR ? pL : pR;
+        if (pmin < 1.0e-3 || pmax > 100.0 * fmax(pmin, 1.0e-30)) {
+            cpu_hll_star_state(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR,
+                               Gamma, pstar, vnstar);
+            return;
+        }
+    }
     /* Fix C v2: extreme P-ratio guard (HLLE fallback), only when both sides above floor */
     {
         double pmin = pL < pR ? pL : pR;
@@ -944,11 +1003,11 @@ static inline void cpu_hllc_face_2d(
 static inline void cpu_hllc_face_2d_rest_frame(
     double rhoL, double pL, double vnL_lab, double cL,
     double rhoR, double pR, double vnR_lab, double cR,
-    double wn, double Gamma, double *pstar, double *vnstar_lab)
+    double wn, double Gamma, int phase1, double *pstar, double *vnstar_lab)
 {
     double pst, vnst;
     cpu_hllc_face_2d(rhoL, pL, vnL_lab - wn, cL,
-                     rhoR, pR, vnR_lab - wn, cR, Gamma, &pst, &vnst);
+                     rhoR, pR, vnR_lab - wn, cR, Gamma, phase1, &pst, &vnst);
     *pstar = pst;
     *vnstar_lab = vnst + wn;
 }
@@ -1002,6 +1061,10 @@ static void cpu_reference_force_csr(
 
             double pi_total;
             double tau_dot_dS_x = 0, tau_dot_dS_y = 0;
+            int riemann_vstar = 0;
+            double riemann_vn = 0, riemann_nx = 0, riemann_ny = 0;
+            int phase1_cell = 0;
+            double phase1_vn = 0, phase1_nx = 0, phase1_ny = 0;
 
             if (P->av_mode == 0 && P->nu_phys <= 0) {
                 int kp = faces->kp_idx[f], km = faces->km_idx[f];
@@ -1077,8 +1140,18 @@ static void cpu_reference_force_csr(
 
                 double pst, vnst_lab;
                 cpu_hllc_face_2d_rest_frame(rhoL, pL, vnL_lab, ibp_csound,
-                    rhoR, pR, vnR_lab, jbp_csound, wn, P->Gamma, &pst, &vnst_lab);
+                    rhoR, pR, vnR_lab, jbp_csound, wn, P->Gamma, P->phase1, &pst, &vnst_lab);
                 pi_total = pst;
+                if (P->phase1 && P->use_muscl) {
+                    double pmin_f = pL < pR ? pL : pR;
+                    double pmax_f = pL > pR ? pL : pR;
+                    if (pmin_f < 1.0e-3 || pmax_f > 100.0 * fmax(pmin_f, 1.0e-30)) {
+                        riemann_vstar = 1;
+                        riemann_vn = vnst_lab;
+                        riemann_nx = nx_hat;
+                        riemann_ny = ny_hat;
+                    }
+                }
 
                 if (P->alphavis > 0) {
                     double uijx = jbp_vx - ibp_vx, uijy = jbp_vy - ibp_vy;
@@ -1128,7 +1201,7 @@ static void cpu_reference_force_csr(
 
                 double pst, vnst;
                 cpu_hllc_face_2d(ibp_den, pL, vnL, ibp_csound,
-                    jbp_den, pR, vnR, jbp_csound, P->Gamma, &pst, &vnst);
+                    jbp_den, pR, vnR, jbp_csound, P->Gamma, P->phase1, &pst, &vnst);
                 pi_total = pst;
 
                 if (P->cd_amax > 0) {
@@ -1253,7 +1326,7 @@ static void cpu_reference_force_csr(
                         double wn = wx*nx_hat+wy*ny_hat;
                         double pst, vnst_lab;
                         cpu_hllc_face_2d_rest_frame(rhoL, pL, vnL, cL,
-                            rhoR, pR, vnR, cR, wn, P->Gamma, &pst, &vnst_lab);
+                            rhoR, pR, vnR, cR, wn, P->Gamma, P->phase1, &pst, &vnst_lab);
                         p_hllc = pst;
 
                         if (f_pq <= 0.5) {
@@ -1278,6 +1351,38 @@ static void cpu_reference_force_csr(
                 jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
                 P->dtold, &uradx, &urady);
 
+            if (P->phase1 && !P->use_muscl && !jbp_is_ghost && facearea > 0) {
+                double invA = 1.0 / facearea;
+                double nx = dSx * invA, ny = dSy * invA;
+                double ps, vns;
+                tau_dot_dS_x = 0;
+                tau_dot_dS_y = 0;
+                cpu_hll_star_state(
+                    ibp_den, ibp_pressure, ibp_vx * nx + ibp_vy * ny, ibp_csound,
+                    jbp_den, jbp_pressure, jbp_vx * nx + jbp_vy * ny, jbp_csound,
+                    P->Gamma, &ps, &vns);
+                pi_total = ps;
+                phase1_cell = 1;
+                phase1_vn = vns;
+                phase1_nx = nx;
+                phase1_ny = ny;
+            }
+
+            if (P->phase1) {
+                double uax, uay;
+                if (phase1_cell) {
+                    uax = phase1_vn * phase1_nx;
+                    uay = phase1_vn * phase1_ny;
+                } else if (riemann_vstar) {
+                    uax = riemann_vn * riemann_nx;
+                    uay = riemann_vn * riemann_ny;
+                } else {
+                    uax = ibp_vx + uradx;
+                    uay = ibp_vy + urady;
+                }
+                die += -pi_total * (uax * dSx + uay * dSy)
+                     + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
+            } else {
             die += -pi_total * (uradx * dSx + urady * dSy);
             die += tau_dot_dS_x * uradx + tau_dot_dS_y * urady;
 
@@ -1287,6 +1392,7 @@ static void cpu_reference_force_csr(
                 double Tj = jbp_pressure / jbp_den;
                 double rho_face = 0.5 * (ibp_den + jbp_den);
                 die += chi * rho_face * (Tj - Ti) / dramp * facearea;
+            }
             }
 
             fx += -pi_total * dSx + tau_dot_dS_x;
@@ -1373,6 +1479,10 @@ double getAccVoro2DBlend_GPU_validate(
     params.cd_amax     = GAS_CDAMAX(simpar);
     params.blend_theta = GAS_BLENDTHETA(simpar);
     params.dtold       = GAS_dtold(simpar);
+    {
+        const char *ph = getenv("SEDOV_PHASE1");
+        params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
+    }
 
     double *ref_ax  = (double *)malloc(nbp * sizeof(double));
     double *ref_ay  = (double *)malloc(nbp * sizeof(double));

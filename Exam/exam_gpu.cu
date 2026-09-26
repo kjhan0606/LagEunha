@@ -116,10 +116,60 @@ void dev_get2dUpqradRk4(
 #endif
 
 __device__ __forceinline__
-void dev_hllc_face_2d(
+void dev_hll_star_state(
     double rhoL, double pL, double vnL, double cL,
     double rhoR, double pR, double vnR, double cR,
     double Gamma,
+    double *pstar, double *vnstar)
+{
+    /* HLL average of the conserved state, then the EOS pressure of that average.
+     * Same state as hll_star_state in exam.c. */
+    double SL = fmin(vnL - cL, vnR - cR);
+    double SR = fmax(vnL + cL, vnR + cR);
+    if (SL >= 0) { *pstar = pL; *vnstar = vnL; return; }
+    if (SR <= 0) { *pstar = pR; *vnstar = vnR; return; }
+    double gm1 = Gamma - 1.0;
+    if (gm1 < 1.0e-8) gm1 = 1.0e-8;
+    double rhoLs = fmax(rhoL, 1.0e-30);
+    double rhoRs = fmax(rhoR, 1.0e-30);
+    double EL = pL / (gm1 * rhoLs) + 0.5 * vnL * vnL;
+    double ER = pR / (gm1 * rhoRs) + 0.5 * vnR * vnR;
+    double EdenL = rhoL * EL, EdenR = rhoR * ER;
+    double denom = SR - SL;
+    if (fabs(denom) < 1.0e-30) {
+        *pstar = 0.5 * (pL + pR);
+        *vnstar = 0.5 * (vnL + vnR);
+        return;
+    }
+    double FrL = rhoL * vnL, FrR = rhoR * vnR;
+    double FmL = rhoL * vnL * vnL + pL, FmR = rhoR * vnR * vnR + pR;
+    double FeL = vnL * (EdenL + pL), FeR = vnR * (EdenR + pR);
+    double rhoS = (SR * rhoR - SL * rhoL - (FrR - FrL)) / denom;
+    double momS = (SR * (rhoR * vnR) - SL * (rhoL * vnL) - (FmR - FmL)) / denom;
+    double ES   = (SR * EdenR - SL * EdenL - (FeR - FeL)) / denom;
+    if (!(rhoS > 1.0e-30) || isnan(rhoS) || isinf(rhoS)
+            || isnan(momS) || isinf(momS) || isnan(ES) || isinf(ES)) {
+        *pstar = 0.5 * (pL + pR);
+        *vnstar = 0.5 * (vnL + vnR);
+        return;
+    }
+    double vnS = momS / rhoS;
+    double eint = ES / rhoS - 0.5 * vnS * vnS;
+    double PS = gm1 * rhoS * eint;
+    if (!(PS > 0) || isnan(PS) || isinf(PS) || isnan(vnS) || isinf(vnS)) {
+        *pstar = 0.5 * (pL + pR);
+        *vnstar = 0.5 * (vnL + vnR);
+        return;
+    }
+    *pstar = PS;
+    *vnstar = vnS;
+}
+
+__device__ __forceinline__
+void dev_hllc_face_2d(
+    double rhoL, double pL, double vnL, double cL,
+    double rhoR, double pR, double vnR, double cR,
+    double Gamma, int phase1,
     double *pstar, double *vnstar)
 {
     /* True HLLC: ports GIZMO get_wavespeeds_and_pressure_star (reimann.h:527).
@@ -127,6 +177,19 @@ void dev_hllc_face_2d(
     const double tiny = 1.0e-30;
     double S_L, S_R, S_M, P_M;
     double cmax = cL > cR ? cL : cR;
+
+    /* Phase 1: HLL average on a large pressure ratio or a floor state.
+     * Runs before Fix C, which would otherwise collapse the shock face. */
+    if (phase1) {
+        double pmin = pL < pR ? pL : pR;
+        double pmax = pL > pR ? pL : pR;
+        if (pmin < 1.0e-3 ||
+                pmax > 100.0 * fmax(pmin, 1.0e-30)) {
+            dev_hll_star_state(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR,
+                               Gamma, pstar, vnstar);
+            return;
+        }
+    }
 
     /* Fix C v2: extreme P-ratio guard (HLLE fallback), only when both sides above floor */
     {
@@ -213,13 +276,13 @@ __device__ __forceinline__
 void dev_hllc_face_2d_rest_frame(
     double rhoL, double pL, double vnL_lab, double cL,
     double rhoR, double pR, double vnR_lab, double cR,
-    double wn, double Gamma,
+    double wn, double Gamma, int phase1,
     double *pstar, double *vnstar_lab)
 {
     double vnL = vnL_lab - wn;
     double vnR = vnR_lab - wn;
     double pst, vnst;
-    dev_hllc_face_2d(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR, Gamma, &pst, &vnst);
+    dev_hllc_face_2d(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR, Gamma, phase1, &pst, &vnst);
     *pstar      = pst;
     *vnstar_lab = vnst + wn;
 }
@@ -273,7 +336,8 @@ void getAccVoro2DBlend_kernel(
     double alphavis, double betavis, double etavis, double epsvis,
     double nu_phys, double prandtl,
     double cd_amax, double blend_theta, double dtold,
-    double hyperv_alpha, double hyperv_force_cap)
+    double hyperv_alpha, double hyperv_force_cap,
+    int phase1)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -302,6 +366,7 @@ void getAccVoro2DBlend_kernel(
     double biharm_vx_acc = 0, biharm_vy_acc = 0;
     double ibp_lap_vx = (hyperv_alpha > 0) ? plap_vx[i] : 0.0;
     double ibp_lap_vy = (hyperv_alpha > 0) ? plap_vy[i] : 0.0;
+    double dte = 0;
 
     int f_begin = face_offset[i];
     int f_end   = face_offset[i + 1];
@@ -376,6 +441,12 @@ void getAccVoro2DBlend_kernel(
          * Sum of (Monaghan AV + CD10 + HLLC-jump-excess) >= 0 when active.
          * Used downstream to compute pair-symmetric eps_AV >= 0 heating. */
         double p_av_for_heat = 0;
+        /* PdV speed. Ordinary faces keep the geometric Voronoi speed.
+         * Extreme faces (and the non-MUSCL cell HLL) use the Riemann normal speed. */
+        int riemann_vstar = 0;
+        double riemann_vn = 0, riemann_nx = 0, riemann_ny = 0;
+        int phase1_cell = 0;
+        double phase1_vn = 0, phase1_nx = 0, phase1_ny = 0;
 
         /* ======== av_mode dispatch ======== */
         if (av_mode == 0 && nu_phys <= 0) {
@@ -483,8 +554,19 @@ void getAccVoro2DBlend_kernel(
             double pst, vnst_lab;
             dev_hllc_face_2d_rest_frame(rhoL, pL, vnL_lab, ibp_csound,
                                         rhoR, pR, vnR_lab, jbp_csound,
-                                        wn, Gamma, &pst, &vnst_lab);
+                                        wn, Gamma, phase1, &pst, &vnst_lab);
             pi_total = pst;
+            if (phase1 && use_muscl) {
+                double pmin_f = pL < pR ? pL : pR;
+                double pmax_f = pL > pR ? pL : pR;
+                if (pmin_f < 1.0e-3 ||
+                        pmax_f > 100.0 * fmax(pmin_f, 1.0e-30)) {
+                    riemann_vstar = 1;
+                    riemann_vn = vnst_lab;
+                    riemann_nx = nx_hat;
+                    riemann_ny = ny_hat;
+                }
+            }
 
             /* Optional Monaghan AV for contact noise */
             if (alphavis > 0) {
@@ -545,7 +627,7 @@ void getAccVoro2DBlend_kernel(
             double pst, vnst;
             dev_hllc_face_2d(ibp_den, pL, vnL, ibp_csound,
                              jbp_den, pR, vnR, jbp_csound,
-                             Gamma, &pst, &vnst);
+                             Gamma, phase1, &pst, &vnst);
             pi_total = pst;
 
             if (cd_amax > 0) {
@@ -718,7 +800,7 @@ void getAccVoro2DBlend_kernel(
                     double pst, vnst_lab;
                     dev_hllc_face_2d_rest_frame(rhoL, pL, vnL, cL,
                                                 rhoR, pR, vnR, cR,
-                                                wn, Gamma, &pst, &vnst_lab);
+                                                wn, Gamma, phase1, &pst, &vnst_lab);
                     p_hllc = pst;
 
                     if (f_pq <= 0.5) {
@@ -746,6 +828,27 @@ void getAccVoro2DBlend_kernel(
 
         /* ======== Accumulate forces and energy rates ======== */
         /* uradx, urady already computed before av_mode dispatch */
+
+        /* Cell-centered HLL when MUSCL is off. Ghost faces stay on the wall path.
+         * With MUSCL, av_mode 5 already built P* from the limited face states. */
+        if (phase1 && !use_muscl && !jbp_is_ghost && facearea > 0) {
+            double invA = 1.0 / facearea;
+            double nx = dSx * invA;
+            double ny = dSy * invA;
+            double ps, vns;
+            p_av_for_heat = 0;
+            tau_dot_dS_x = 0;
+            tau_dot_dS_y = 0;
+            dev_hll_star_state(
+                ibp_den, ibp_pressure, ibp_vx * nx + ibp_vy * ny, ibp_csound,
+                jbp_den, jbp_pressure, jbp_vx * nx + jbp_vy * ny, jbp_csound,
+                Gamma, &ps, &vns);
+            pi_total = ps;
+            phase1_cell = 1;
+            phase1_vn = vns;
+            phase1_nx = nx;
+            phase1_ny = ny;
+        }
 
         /* Fix A+B: compression gate on AV.
          *   pi_total = p_rev + p_av_for_heat (decomposition)
@@ -795,7 +898,7 @@ void getAccVoro2DBlend_kernel(
          * to avoid divide-by-near-zero when Voronoi tessellation produces
          * degenerate face geometry (Sedov2D rings IC at Nx=512 hit dramp~1e-26
          * and detonated K to ~1e22 in one step). */
-        if (nu_phys > 0 && prandtl > 0 && !jbp_is_ghost
+        if (!phase1 && nu_phys > 0 && prandtl > 0 && !jbp_is_ghost
             && ibp_den > 0 && jbp_den > 0
             && ibp_volume > 0 && facearea > 0) {
             double chi = nu_phys / prandtl;
@@ -815,6 +918,24 @@ void getAccVoro2DBlend_kernel(
             }
             die     += die_cond_face;
             dK_diss += die_cond_face;
+        }
+
+        /* Phase 1 stores dE/dt. Ordinary faces move at the geometric speed
+         * v_i + u_rad. Extreme faces move at the lab-frame Riemann normal speed. */
+        if (phase1) {
+            double uax, uay;
+            if (phase1_cell) {
+                uax = phase1_vn * phase1_nx;
+                uay = phase1_vn * phase1_ny;
+            } else if (riemann_vstar) {
+                uax = riemann_vn * riemann_nx;
+                uay = riemann_vn * riemann_ny;
+            } else {
+                uax = ibp_vx + uradx;
+                uay = ibp_vy + urady;
+            }
+            dte += -pi_total * (uax * dSx + uay * dSy)
+                 + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
         }
 
         /* Force: -p·dS + τ·dS */
@@ -898,15 +1019,15 @@ void getAccVoro2DBlend_kernel(
      * in the well-resolved limit (= q_NS·V >= 0), but individual face
      * terms can be negative, and discretization noise/boundary effects
      * can drive the cell sum slightly negative.  Clamping enforces the
-     * 2nd law per cell. */
-    if (dK_diss < 0) dK_diss = 0;
+     * 2nd law per cell. Phase 1 keeps dK = 0 and skips this CFL. */
+    if (!phase1 && dK_diss < 0) dK_diss = 0;
     /* Convert dissipative die to entropy rate dK/dt (mirrors exam.c:4818-4830):
      *   dK/dt = (γ-1) · q_diss / ρ^γ                    (per unit volume)
      *         = (γ-1) · dK_diss / (V_cell · ρ^γ)
      *         = (γ-1) · dK_diss / (m · ρ^(γ-1))         (m = ρ·V)
      * Always written; CPU integrator uses it iff entropy_mode==1. */
     double dK_val = 0.0;
-    if (isfinite(dK_diss) && ibp_mass > 0 && ibp_den > 0) {
+    if (!phase1 && isfinite(dK_diss) && ibp_mass > 0 && ibp_den > 0) {
         /* T8 (T4 component): floor ρ in dK conversion to prevent low-ρ
          * amplifier blowing up. Pairs with T7b entropy diffusion. */
         double rho_eff = fmax(ibp_den, 0.01);
@@ -919,7 +1040,7 @@ void getAccVoro2DBlend_kernel(
      * K derived locally from P/ρ^γ (avoids extra kernel input). */
     {
         double dK_abs = fabs(dK_val);
-        if (dK_abs > 0 && ibp_den > 0) {
+        if (!phase1 && dK_abs > 0 && ibp_den > 0) {
             double rho_pow_K = pow(fmax(ibp_den, 1.0e-30), Gamma);
             double K_eff = ibp_pressure / rho_pow_K;
             if (K_eff < DKCFL_KFLOOR) K_eff = DKCFL_KFLOOR;
@@ -931,8 +1052,9 @@ void getAccVoro2DBlend_kernel(
     /* Write outputs */
     ax_out[i]       = fx / ibp_mass;
     ay_out[i]       = fy / ibp_mass;
-    die_out[i]      = (float)die;
-    dK_out[i]       = (float)dK_val;
+    /* Phase 1: die is dE/dt. The CPU kick rebuilds ie from E − kinetic. */
+    die_out[i]      = (float)(phase1 ? dte : die);
+    dK_out[i]       = phase1 ? 0.f : (float)dK_val;
     dt_out[i]       = my_dt;
     vsig_max_out[i] = my_vsig_max;
 
@@ -1284,7 +1406,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         params->etavis, params->epsvis,
         params->nu_phys, params->prandtl,
         params->cd_amax, params->blend_theta, params->dtold,
-        params->hyperv_alpha, params->hyperv_force_cap);
+        params->hyperv_alpha, params->hyperv_force_cap,
+        params->phase1);
 
     CUDA_CHECK(cudaGetLastError());
 
@@ -3027,7 +3150,7 @@ void lagmfm_force_kernel(
                     dev_hllc_face_2d_rest_frame(
                         rhoL, pL, vnL_lab, cL,
                         rhoR, pR, vnR_lab, cR,
-                        wn, Gamma, &pstar, &vnstar_lab);
+                        wn, Gamma, 0, &pstar, &vnstar_lab);
                 }
 
                 /* Non-GIZMO: Monaghan AV add-on.  Pure mode skips. */

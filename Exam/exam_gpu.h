@@ -211,6 +211,8 @@ typedef struct {
      * the ie-EOS, matching the CPU path in updateDenW2Pressure2DBlend. */
     int    entropy_mode;
     double K_floor;
+    /* SEDOV_PHASE1: extreme faces use the HLL mean state, and die is dE/dt. */
+    int    phase1;
 } GPUPhysicsParams;
 
 /* ================================================================
