@@ -76,6 +76,10 @@ static int    geom_face=0;       /* GFS: geometric face speed except on extreme 
 static long   n_pair_1d=0;       /* interior faces inside the pair cutoff */
 static double gfs_1d_dt=0;        /* step used to bound the pair impulse */
 static long   n_efloor_1d=0;     /* e<1e-14 floor hits (stage and final) */
+static long   n_wlim_1d=0;       /* pair faces reduced by gfs_pair_work_limit */
+static double de_eta_1d=0;       /* GFS_DUAL_ENERGY: e < eta*e_K takes e_K (0 = off) */
+static long   n_de_1d=0;         /* dual-energy resets */
+static double de_inj_1d=0;       /* energy added by those resets */
 static long   n_retry_1d=0;      /* rk4 steps refused and halved */
 static double dt_min_1d=0;       /* smallest accepted dt */
 static int    extreme_geom=0;    /* GFS_EXTREME_GEOM=1: extreme faces also move at the midpoint speed (test only) */
@@ -125,6 +129,7 @@ typedef struct {
     double x, v, e, m;
     double rho, p, c, w, vol;
     double av, ae;
+    double K;        /* entropy P/rho^gamma at t=0 (dual-energy switch) */
 } Pt;
 
 static int    N, mode;
@@ -635,9 +640,12 @@ static void face_st(void){
             double pp = gfs_pair_pressure_len(
                     dx, P[i-1].vol, P[i].vol,
                     P[i-1].rho, P[i].rho, P[i-1].c, P[i].c, vclose);
+            /* The budget is internal energy, m e. P[].e is specific. */
+            double pp0 = pp;
             pp = gfs_pair_work_limit(pp, 1.0, gfs_1d_dt,
                     P[i-1].m, P[i].m, qpair,
-                    P[i-1].e, P[i].e, 2.0);
+                    P[i-1].m*P[i-1].e, P[i].m*P[i].e, 2.0);
+            if(pp < pp0) n_wlim_1d++;
             if(pp > 0){
                 pf[i] += pp;
                 n_pair_1d++;
@@ -912,6 +920,7 @@ static void fill_reservoir(Pt *p, double x, double rho, double vel, double pgas,
     p->vol = m / fmax(rho, 1e-14);
     p->w = 0;
     p->av = p->ae = 0;
+    p->K = pgas / pow(fmax(rho, 1e-300), GAM);
 }
 
 static void inflow_particles(void){
@@ -1051,6 +1060,22 @@ static int rk4_step(double dt){
         for(int i=0;i<=N;i++) xf_face[i] += vf[i]*dt;
     }
     update_derived();
+    /* Dual energy (off by default). The entropy K is the t=0 value and is
+     * never raised, so a shocked cell sits far above e_K and is untouched.
+     * A cell drained below eta*e_K takes e_K. The energy added is counted. */
+    if(de_eta_1d > 0){
+        for(int i=0;i<N;i++){
+            if(!(P[i].K > 0) || !(P[i].rho > 0)) continue;
+            double eK = P[i].K * pow(P[i].rho, GM1) / GM1;
+            if(P[i].e < de_eta_1d * eK){
+                de_inj_1d += P[i].m * (eK - P[i].e);
+                n_de_1d++;
+                P[i].e = eK;
+                P[i].p = GM1 * P[i].rho * P[i].e;
+                P[i].c = eos_c(P[i].rho, P[i].p);
+            }
+        }
+    }
     inflow_particles();
     if(av_mode==2)
         update_alpha_cd(dt);
@@ -1735,7 +1760,14 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
     mode = smode;
     n_pair_1d = 0;
     n_efloor_1d = 0; n_retry_1d = 0; dt_min_1d = 1e30;
+    n_wlim_1d = 0; n_de_1d = 0; de_inj_1d = 0;
+    {
+        const char *s = getenv("GFS_DUAL_ENERGY");
+        de_eta_1d = (s && s[0]) ? atof(s) : 0.0;
+    }
     init(np);
+    for(int i=0;i<N;i++)
+        P[i].K = (P[i].rho > 0 && P[i].p > 0) ? P[i].p / pow(P[i].rho, GAM) : 0.0;
 
     /* initial total energy (computed numerically) */
     double eng0=0;
@@ -2087,9 +2119,10 @@ int main(int argc, char **argv)
             if(!pref || !pref[0]) pref = "gfs";
             snprintf(out, sizeof(out), "%s_%s.dat", pref, names[pid]);
             Metrics m = run_sim(VORONOI, np, out, 0);
-            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld  fail=%d  dtmin=%.3e  retry=%ld  efloor=%ld\n",
+            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld  fail=%d  dtmin=%.3e  retry=%ld  efloor=%ld  nwlim=%ld  nde=%ld  deinj=%.3e\n",
                    names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep, N,
-                   n_pair_1d, m.failed, dt_min_1d, n_retry_1d, n_efloor_1d);
+                   n_pair_1d, m.failed, dt_min_1d, n_retry_1d, n_efloor_1d,
+                   n_wlim_1d, n_de_1d, de_inj_1d);
             fflush(stdout);
         }
         return 0;
