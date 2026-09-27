@@ -5,11 +5,19 @@
  * Identically zero for d >= d_c. The length entering d_c is sqrt(area)
  * in 2D and the cell length in 1D:
  *   d_c = 0.2 * min(length_i, length_j)
- *   P   = 16 * rho_bar * (c_bar^2 + v_close^2) * (1 - d/d_c)^2
+ *   P   = 16 * rho_bar * (c_bar^2 + min(v_close^2, c_bar^2)) * (1 - d/d_c)^2
  * v_close is the approaching speed along the pair (zero when separating
  * or already at rest). The value and the first derivative vanish at d_c.
  * As d -> 0 the pressure stays finite. A stationary pair is still pushed
- * by the thermal piece. Callers add it to the face pressure.
+ * by the thermal piece 16 rho c^2 (1-d/d_c)^2. The ram piece is capped at
+ * the thermal piece, so P never exceeds 32 rho_bar c_bar^2.
+ * Why the cap. The uncapped 16 rho v_close^2 is large on ordinary shear
+ * pairs in a cold disk (Kepler job 406510 gained energy through it).
+ * Thermal only (cap 16) does not stop the Mach-2 approach in the 1D
+ * Woodward-Colella blast, and neither does 20. 24 and above finish.
+ * 32 is the smallest round value with margin, and it gives the same blast
+ * L1 and energy error as the uncapped law. Callers add P to the face
+ * pressure.
  */
 #include <math.h>
 
@@ -29,10 +37,11 @@ static inline double gfs_pair_pressure_len(
 	rho = 0.5 * (rho_i + rho_j);
 	c2 = 0.5 * (cs_i * cs_i + cs_j * cs_j);
 	if(vclose < 0.0) vclose = 0.0;
-	s2 = c2 + vclose * vclose;
+	if(vclose > 0.0 && vclose * vclose > c2)
+		s2 = 2.0 * c2;          /* ram piece capped at the thermal piece */
+	else
+		s2 = c2 + vclose * vclose;
 	if(!(rho > 0.0) || !(s2 > 0.0) || !(q > 0.0)) return 0.0;
-	/* 16, not 4: the barrier is only 0.2 of a cell wide, and a Mach-2
-	 * approach carries more kinetic energy than 4*rho*c^2 can remove. */
 	p = 16.0 * rho * s2 * q * q;
 	if(!isfinite(p) || !(p > 0.0)) return 0.0;
 	return p;

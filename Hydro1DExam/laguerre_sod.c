@@ -74,6 +74,10 @@ static int    use_riemann=0;     /* 1=acoustic, 2=exact, 3=HLLC */
 static int    extreme_hll=0;     /* HLL average when pressure ratio > 100 */
 static int    geom_face=0;       /* GFS: geometric face speed except on extreme faces */
 static long   n_pair_1d=0;       /* interior faces inside the pair cutoff */
+static long   n_efloor_1d=0;     /* e<1e-14 floor hits (stage and final) */
+static long   n_retry_1d=0;      /* rk4 steps refused and halved */
+static double dt_min_1d=0;       /* smallest accepted dt */
+static int    extreme_geom=0;    /* GFS_EXTREME_GEOM=1: extreme faces also move at the midpoint speed (test only) */
 static int    pair_1d=1;         /* GFS_PAIR=0 turns the 1D restoring pressure off */
 static int    direct_hll=0;      /* faces move at v*, weights follow the faces */
 static int    material_hll=0;    /* extreme face uses the zero-mass-flux HLL speed */
@@ -485,9 +489,8 @@ static void face_st(void){
             if(geom_face){
                 double pmin = pL < pR ? pL : pR;
                 double pmax = pL > pR ? pL : pR;
-                int extreme = (pmin < 1.0e-3) ||
-                    (pmax > 100.0 * fmax(pmin, 1.0e-30));
-                if(!extreme)
+                int extreme = pmax > 100.0 * fmax(pmin, 1.0e-30);
+                if(!extreme || extreme_geom)
                     vf[i] = 0.5 * (P[i-1].v + P[i].v);
             }
         } else if(use_riemann == 1 && mode!=SPH_MODE){
@@ -974,7 +977,7 @@ static int rk4_step(double dt){
                 P[i].x=s0x[i]+f*dt*kx[k][i];
                 P[i].v=s0v[i]+f*dt*kv[k][i];
                 P[i].e=s0e[i]+f*dt*ke[k][i];
-                if(P[i].e<1e-14) P[i].e=1e-14;
+                if(P[i].e<1e-14){ P[i].e=1e-14; n_efloor_1d++; }
             }
             if(rk_face){
                 for(int i=0;i<=N;i++) xf_face[i] = s0f[i] + f*dt*kxf[k][i];
@@ -1012,7 +1015,7 @@ static int rk4_step(double dt){
         P[i].x=s0x[i]+dt/6.0*(kx[0][i]+2*kx[1][i]+2*kx[2][i]+kx[3][i]);
         P[i].v=s0v[i]+dt/6.0*(kv[0][i]+2*kv[1][i]+2*kv[2][i]+kv[3][i]);
         P[i].e=s0e[i]+dt/6.0*(ke[0][i]+2*ke[1][i]+2*ke[2][i]+ke[3][i]);
-        if(P[i].e<1e-14) P[i].e=1e-14;
+        if(P[i].e<1e-14){ P[i].e=1e-14; n_efloor_1d++; }
     }
     if(!positions_ordered()){
         for(int i=0;i<N;i++){
@@ -1500,7 +1503,7 @@ static void hllc_face(double rhoL, double pL, double vL, double cL,
     {
         double pmin = pL < pR ? pL : pR;
         double pmax = pL > pR ? pL : pR;
-        if(extreme_hll && (pmin < 1e-3 || pmax > 100.0 * fmax(pmin, 1e-30))){
+        if(extreme_hll && pmax > 100.0 * fmax(pmin, 1e-30)){
             if(material_hll)
                 hll_material_state(rhoL, pL, vL, cL, rhoR, pR, vR, cR, pstar, vstar);
             else
@@ -1725,6 +1728,7 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
     Metrics met = {0};
     mode = smode;
     n_pair_1d = 0;
+    n_efloor_1d = 0; n_retry_1d = 0; dt_min_1d = 1e30;
     init(np);
 
     /* initial total energy (computed numerically) */
@@ -1744,6 +1748,7 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
         while(rk4_step(dt) < 0){
             dt *= 0.5;
             tries++;
+            n_retry_1d++;
             if(tries > 24 || dt < 1e-12){
                 double dmin=1e30, vc=0, pp=0; int im=-1;
                 for(int i=0;i<N-1;i++){
@@ -1761,6 +1766,7 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
             }
         }
         if(met.failed) break;
+        if(dt < dt_min_1d && t+dt < tend-1e-14) dt_min_1d = dt;
         t+=dt; met.nstep++;
         if(diag_blast){
             double vmin=1e30, vmax=-1e30;
@@ -1926,6 +1932,8 @@ static void write_plot_grid(const char *gpfile, const char *pngfile,
 static void set_method_gfs(void){
     const char *ps = getenv("GFS_PAIR");
     pair_1d = !(ps && ps[0]=='0');
+    const char *eg = getenv("GFS_EXTREME_GEOM");
+    extreme_geom = (eg && eg[0]=='1');
     w_coeff=0; use_riemann=3; use_muscl=1; av_mode=0;
     extreme_hll=1; geom_face=1;
     av_alpha=0; av_beta=0;
@@ -2073,9 +2081,9 @@ int main(int argc, char **argv)
             if(!pref || !pref[0]) pref = "gfs";
             snprintf(out, sizeof(out), "%s_%s.dat", pref, names[pid]);
             Metrics m = run_sim(VORONOI, np, out, 0);
-            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld\n",
+            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld  fail=%d  dtmin=%.3e  retry=%ld  efloor=%ld\n",
                    names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep, N,
-                   n_pair_1d);
+                   n_pair_1d, m.failed, dt_min_1d, n_retry_1d, n_efloor_1d);
             fflush(stdout);
         }
         return 0;
