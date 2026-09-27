@@ -5623,12 +5623,20 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							postype vol_j = ((treevorork4particletype*)jbp)->volume;
 							double vclose = -((jbp_vx - ibp_vx)*er.x + (jbp_vy - ibp_vy)*er.y);
 							if(vclose < 0) vclose = 0;
+							double qpair = (jbp_vx - ibp_vx)*er.x
+									+ (jbp_vy - ibp_vy)*er.y;
 							postype p_pair = (postype)gfs_pair_pressure(
 									(double)dramp,
 									(double)ibp_rk4->volume, (double)vol_j,
 									(double)ibp_den, (double)jbp_den,
 									(double)ibp_csound, (double)jbp_csound,
 									vclose);
+							p_pair = (postype)gfs_pair_work_limit(
+									(double)p_pair, (double)facearea,
+									(double)GAS_dtold(simpar),
+									(double)ibp->mass, (double)jbp->mass,
+									qpair,
+									(double)ibp->ie, (double)jbp->ie, 6.0);
 							if(p_pair > 0){
 								pi_total += p_pair;
 #ifdef _OPENMP

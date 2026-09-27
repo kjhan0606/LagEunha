@@ -195,3 +195,35 @@ Job 406608, `LAGFORCE_KEP256h4`, syn08, 3× H100, 4 ranks (ranks 0 and 3 shared 
 `n_neg` stayed at 0 or 1. The gas energy grew from 8.79 to 33.5 while the density was still near the initial disk value, so this is not a collapsed cell. Capping `v_close²` by `c²` did not stop the heating. The thermal piece `16 ρ c² (1-d/d_c)²` is still on for every face inside the cutoff, and ~100 such faces are enough to triple the energy before one inner orbit (`T(R=2) = 17.8`).
 
 406515–406519 stay held. Do not copy this binary into them. The next Kepler run needs a pair pressure that is silent on a circular shear flow. Gresho shows the gate can stay at `n_pair ≈ 0` when the mesh does not pair. The disk does pair, and the present amplitude is too large.
+
+---
+
+## 10. Pair impulse limited by internal energy
+
+`P0` is the same capped law as `79af847`. The pressure added to the face is smaller when the discrete work would overdraw the internal energy:
+
+```
+μ = m_i m_j / (m_i + m_j)
+q = (v_j − v_i)·n          (q < 0 approaching)
+B = max(ie_i, 0)/nshare + max(ie_j, 0)/nshare
+Jmax = μ (sqrt(q² + 2B/μ) − q)
+P = min(P0, Jmax / (A Δt))
+```
+
+`nshare` is 6 in 2D and 2 in 1D. The work being limited is `W(J) = q J + J²/(2μ)`, so a stationary pair is limited by `sqrt(2 μ B)` and an approaching pair may still brake when `B = 0`. The function is `gfs_pair_work_limit` in `Exam/gfs_pair.h`. It is called from `exam.c`, `exam_gpu.cu`, `exam_gpu_extract.c`, and `Hydro1DExam/laguerre_sod.c`. On the 2D paths `Δt` is `GAS_dtold`, the previous accepted step. On the 1D path it is the `dt` of the current `rk4_step`. The 1D suite has not been rerun with this limit. **[CODE]**
+
+### Kepler 406734 — running
+
+406654 (`LAGFORCE_KEP_RK4`, RK4 with the cap but without this limit) was stopped after it had already gone to `E_hyd = nan` and `floor_cum = inf`. `mpirun` returned 255. The batch script still exited 0, so `sacct` says `COMPLETED`.
+
+406734, `LAGFORCE_KEP_W`, syn08, 3× H100, 4 ranks. Directory `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_budget_Nx256`. Same disk as 406654: RK4, `EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, `t_stop = 177.72`. At `t = 1.08` (step 1244):
+
+| | value |
+|---|---:|
+| dt | 6.3e-4 |
+| dEtot/\|Etot0\| | 1.8e-6 |
+| floor_cum | 6.5e-6 |
+| n_ie_le0 | 0 |
+| n_pair | 8 |
+
+406654 was still mild at `t ≈ 4.3` and crossed `|ΔE| = 0.01` at `t = 4.59`. This section is the launch, not a pass. 406515–406519 stay held. Do not copy this binary into them until this disk stays bounded through that time.

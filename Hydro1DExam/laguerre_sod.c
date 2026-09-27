@@ -74,6 +74,7 @@ static int    use_riemann=0;     /* 1=acoustic, 2=exact, 3=HLLC */
 static int    extreme_hll=0;     /* HLL average when pressure ratio > 100 */
 static int    geom_face=0;       /* GFS: geometric face speed except on extreme faces */
 static long   n_pair_1d=0;       /* interior faces inside the pair cutoff */
+static double gfs_1d_dt=0;        /* step used to bound the pair impulse */
 static long   n_efloor_1d=0;     /* e<1e-14 floor hits (stage and final) */
 static long   n_retry_1d=0;      /* rk4 steps refused and halved */
 static double dt_min_1d=0;       /* smallest accepted dt */
@@ -630,9 +631,13 @@ static void face_st(void){
         if(pair_1d && geom_face && dx > 0 && P[i-1].vol > 0 && P[i].vol > 0){
             double vclose = P[i-1].v - P[i].v;
             if(vclose < 0) vclose = 0;
+            double qpair = P[i].v - P[i-1].v;
             double pp = gfs_pair_pressure_len(
                     dx, P[i-1].vol, P[i].vol,
                     P[i-1].rho, P[i].rho, P[i-1].c, P[i].c, vclose);
+            pp = gfs_pair_work_limit(pp, 1.0, gfs_1d_dt,
+                    P[i-1].m, P[i].m, qpair,
+                    P[i-1].e, P[i].e, 2.0);
             if(pp > 0){
                 pf[i] += pp;
                 n_pair_1d++;
@@ -950,6 +955,7 @@ static void inflow_particles(void){
  * ============================================================ */
 static int rk4_step(double dt){
     double eng_save = bc_eng_net;
+    gfs_1d_dt = dt;
     if(mode==LAGUERRE && w_coeff > 0){
         for(int i=0;i<N;i++) ow2[i] = P[i].w * P[i].w;
         prev_dt = dt;

@@ -876,9 +876,14 @@ void getAccVoro2DBlend_kernel(
         if (!jbp_is_ghost) {
             double vclose = -((jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery);
             if (vclose < 0.0) vclose = 0.0;
+            double qpair = (jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery;
             double p_pair = gfs_pair_pressure(
                 dramp, ibp_volume, (double)pvolume[j],
                 ibp_den, jbp_den, ibp_csound, jbp_csound, vclose);
+            p_pair = gfs_pair_work_limit(
+                p_pair, facearea, dtold,
+                ibp_mass, (double)pmass[j], qpair,
+                (double)pie_in[i], (double)pie_in[j], 6.0);
             if (p_pair > 0.0) {
                 pi_total += p_pair;
                 atomicAdd(&d_gfs_pair_hits, 1ull);

@@ -1399,9 +1399,14 @@ static void cpu_reference_force_csr(
             if (!jbp_is_ghost) {
                 double vclose = -((jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery);
                 if (vclose < 0.0) vclose = 0.0;
+                double qpair = (jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery;
                 double p_pair = gfs_pair_pressure(
                     dramp, ibp_volume, (double)parts->volume[j],
                     ibp_den, jbp_den, ibp_csound, jbp_csound, vclose);
+                p_pair = gfs_pair_work_limit(
+                    p_pair, facearea, P->dtold,
+                    ibp_mass, (double)parts->mass[j], qpair,
+                    (double)parts->ie[i], (double)parts->ie[j], 6.0);
                 if (p_pair > 0.0) pi_total += p_pair;
             }
 

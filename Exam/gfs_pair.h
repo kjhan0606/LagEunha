@@ -47,6 +47,35 @@ static inline double gfs_pair_pressure_len(
 	return p;
 }
 
+/* Cap the pair impulse so its discrete work cannot exceed the spendable
+ * internal energy B. q = (v_j - v_i)·n with q < 0 approaching.
+ * nshare is the number of faces that share one cell's budget (6 in 2D, 2 in 1D).
+ * W(J) = q J + J^2/(2 mu). The returned pressure is the one actually added. */
+#ifdef __CUDACC__
+__host__ __device__
+#endif
+static inline double gfs_pair_work_limit(
+		double p0, double area, double dt,
+		double m_i, double m_j, double q,
+		double ie_i, double ie_j, double nshare)
+{
+	double mu, B, disc, jmax, pmax;
+	if(!(p0 > 0.0)) return 0.0;
+	if(!(area > 0.0) || !(dt > 0.0) || !(m_i > 0.0) || !(m_j > 0.0))
+		return p0;
+	if(!(nshare > 0.0)) nshare = 1.0;
+	mu = m_i * m_j / (m_i + m_j);
+	B = 0.0;
+	if(ie_i > 0.0) B += ie_i / nshare;
+	if(ie_j > 0.0) B += ie_j / nshare;
+	disc = q * q + 2.0 * B / mu;
+	if(!(disc > 0.0)) return 0.0;
+	jmax = mu * (sqrt(disc) - q);
+	if(!(jmax > 0.0)) return 0.0;
+	pmax = jmax / (area * dt);
+	return (p0 < pmax) ? p0 : pmax;
+}
+
 #ifdef __CUDACC__
 __host__ __device__
 #endif
