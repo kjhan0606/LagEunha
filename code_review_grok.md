@@ -227,3 +227,24 @@ P = min(P0, Jmax / (A Δt))
 | n_pair | 8 |
 
 406654 was still mild at `t ≈ 4.3` and crossed `|ΔE| = 0.01` at `t = 4.59`. This section is the launch, not a pass. 406515–406519 stay held. Do not copy this binary into them until this disk stays bounded through that time.
+
+---
+
+## 11. Report to Grokbot: Kepler 406734 through the old blow-up
+
+406734 is still running (syn08, 3× H100, 4 ranks, `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_budget_Nx256`). This is the same RK4 disk as 406654 (`EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, `t_stop = 177.72`) with `gfs_pair_work_limit` in the binary. Wall time about 41 min when this was written. No NaN. **[RUN]**
+
+406654, without the work limit, crossed `|ΔE| = 0.01` at `t = 4.59`, reached `0.1` at `t = 5.01`, and was at `~10^3` by `t = 5.84` (`floor_cum = inf` when it was stopped). 406734 went through that interval as follows.
+
+| t | step | dt | dEtot/\|Etot0\| | floor_cum | n_ie_le0 | n_pair | E_hyd | E_pot | E_tot |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 4.00 | 5945 | 6.44e-4 | 1.69e-4 | 1.46e-3 | 1 | 32 | 8.79003 | −17.5802 | −8.79017 |
+| 4.59 | 6889 | 6.13e-4 | 2.52e-4 | 2.17e-3 | 4 | 50 | 8.79086 | −17.5803 | −8.78944 |
+| 5.00 | 7546 | 6.49e-4 | 3.34e-4 | 2.85e-3 | 4 | 52 | 8.79072 | −17.5794 | −8.78872 |
+| 5.18 | 7837 | 4.70e-4 | 3.57e-4 | 3.03e-3 | 2 | 64 | 8.79086 | −17.5794 | −8.78852 |
+
+Over the run so far the largest `|dEtot/|Etot0||` is `3.6e-4`, the largest `floor_cum` is `3.0e-3`, `n_pair` peaked at 74, and `n_ie_le0` peaked at 9. In the last `Δt = 0.5` (`t = 4.68` to `5.18`) `floor_cum` rose from `2.38e-3` to `3.03e-3`. `E_pot` has moved from `−17.581` to `−17.579`. The gas-energy error tracks `floor_cum / |Etot0|` (`|Etot0| ≈ 8.79`). The cells that hit `ie ≤ 0` are still being replaced by `P = 1e-6`, and that replacement is the whole energy error.
+
+So the work limit stopped the `t ≈ 5` runaway. It did not stop the slow floor. `t = 5.18` is about 0.3 of an inner orbit (`T(R = 2) = 17.8`). Do not call this a pass, and do not copy this binary into 406515–406519. Leave 406734 running.
+
+Please rerun the eight 1D GFS problems with this limit. `Hydro1DExam/laguerre_sod.c` already calls `gfs_pair_work_limit` (`nshare = 2`, `Δt = gfs_1d_dt` set at the start of `rk4_step`). Do not overwrite `gfs_*.dat`. Compare with the cap-only `gfs_pair_*.dat` from section 9, especially the blast, where the old closing faces were Mach 2 and the work of braking is negative, so `B = 0` must still allow `P0`. On the 2D paths the `Δt` passed to the limiter is `GAS_dtold`, the previous accepted step, not the RK4 stage fraction.
