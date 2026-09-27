@@ -37,6 +37,39 @@ static double gfs_dual_energy_eta(void){
 	return eta;
 }
 
+/* GIZMO-style entropy switch and half-limit for the RK4 blend path.
+ * Both off by default. They act once per step, on the host, after the
+ * final RK4 combination and the new Voronoi volumes, where GIZMO's kick
+ * applies them (kicks.c, ENERGY_ENTROPY_SWITCH_IS_ACTIVE and the
+ * "dEnt < 0.5 u" line). So they work on GPU runs too.
+ *
+ * GFS_ENTROPY_SWITCH=1   gravity-dominated cold cells, where
+ *                        coef * m |g| h > max(0.5 ie_n, ie_E),
+ *                        take the adiabatic ie = ie_n (V_n/V)^(gamma-1)
+ *                        (K = P/rho^gamma held over the step) instead of
+ *                        the energy-equation value ie_E. g is gravity only
+ *                        (kepler_accel + GAS_ACC), h = sqrt(V).
+ * GFS_ES_COEF            coef, default 0.01 (GIZMO).
+ * GFS_HALF_LIMIT         0/1. ie < 0.5 ie_n becomes 0.5 ie_n. No floor
+ *                        refill. Default: same as GFS_ENTROPY_SWITCH.
+ *
+ * ie_n and V_n are held in stress.E_inv_xx / E_inv_xy, which only the
+ * LagMFM path (av_mode 4) uses, so they migrate with the particle. The
+ * switch is disabled for av_mode 4 and entropy_mode 1. */
+#define GFS_ES_IE0(p) ((p).stress.E_inv_xx)
+#define GFS_ES_V0(p)  ((p).stress.E_inv_xy)
+static int gfs_es_on = -1, gfs_half_on = -1;
+static double gfs_es_coef = 0.01;
+static void gfs_es_config(void){
+	if(gfs_es_on >= 0) return;
+	const char *s = getenv("GFS_ENTROPY_SWITCH");
+	gfs_es_on = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+	s = getenv("GFS_ES_COEF");
+	if(s && s[0] && atof(s) > 0) gfs_es_coef = atof(s);
+	s = getenv("GFS_HALF_LIMIT");
+	gfs_half_on = (s && s[0]) ? (atoi(s) > 0 ? 1 : 0) : gfs_es_on;
+}
+
 #ifdef USE_CUDA
 #include "exam_gpu.h"
 /* Forward declaration — full signature matches exam_gpu_extract.c */
@@ -9548,6 +9581,26 @@ double exam2d_vph_rk4_int_blend(
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, 1);
 	_t_update += MPI_Wtime() - _t0;
+	/* GFS_ENTROPY_SWITCH / GFS_HALF_LIMIT: remember ie_n and V_n at the
+	 * start of the step. Stage arithmetic never touches these fields. */
+	gfs_es_config();
+	int gfs_es_step = (gfs_es_on || gfs_half_on) && av_mode != 4
+		&& GAS_ENTROPY_MODE(simpar) != 1;
+	{
+		static int es_banner = 0;
+		if(!es_banner && (gfs_es_on || gfs_half_on) && MYID(simpar) == 0){
+			fprintf(stderr, "[ESW] entropy_switch=%d coef=%g half_limit=%d active=%d (off for av_mode 4 / entropy_mode 1)\n",
+					gfs_es_on, gfs_es_coef, gfs_half_on, gfs_es_step);
+			es_banner = 1;
+		}
+	}
+	if(gfs_es_step){
+		sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+		for(i=0;i<VORO_NP(simpar);i++){
+			GFS_ES_IE0(sbp[i]) = sbp[i].ie;
+			GFS_ES_V0(sbp[i])  = sbp[i].volume;
+		}
+	}
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
 	if (GAS_GPU_ENABLED(simpar))
@@ -9835,6 +9888,39 @@ double exam2d_vph_rk4_int_blend(
 	int rk4e_on = sedov_phase1_on()
 		|| (getenv("EUNHA_IC") && strcmp(getenv("EUNHA_IC"), "kepler") == 0);
 
+	/* GFS_ENTROPY_SWITCH / GFS_HALF_LIMIT, once per step on the final
+	 * state (see gfs_es_config). ie_E is the energy-equation value,
+	 * including any CPU stage floor. The ledger books ie - ie_E:
+	 * es_de from the switch and hl_de from the half-limit. */
+	double es_de_l = 0, hl_de_l = 0; int es_n_l = 0, hl_n_l = 0;
+	if(gfs_es_step){
+		postype gax = GAS_ACCX(simpar), gay = GAS_ACCY(simpar);
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+			double V = (double)sbp[i].volume, V0 = (double)GFS_ES_V0(sbp[i]);
+			double ie0 = (double)GFS_ES_IE0(sbp[i]);
+			double ieE = (double)sbp[i].ie, ie1 = ieE;
+			if(!(V > 0) || !(V0 > 0) || !(ie0 > 0)) continue;
+			if(gfs_es_on){
+				postype gx = gax, gy = gay;
+				kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+				double eg = (double)sbp[i].mass * sqrt((double)(gx*gx + gy*gy)) * sqrt(V);
+				double eth = (0.5*ie0 > ieE) ? 0.5*ie0 : ieE;
+				if(gfs_es_coef*eg > eth){
+					ie1 = ie0 * pow(V0/V, (double)(Gamma-1));
+					es_de_l += ie1 - ieE;
+					es_n_l++;
+				}
+			}
+			if(gfs_half_on && ie1 < 0.5*ie0){
+				hl_de_l += 0.5*ie0 - ie1;
+				hl_n_l++;
+				ie1 = 0.5*ie0;
+			}
+			sbp[i].ie = (postype)ie1;
+		}
+	}
+
 	/* GFS_DUAL_ENERGY: ie < eta*ie_K takes ie_K before the floor below.
 	 * GFS_FLOOR_LOG=1 prints up to 8 such cells per rank per step (before
 	 * the change), with R from the Kepler centre. Both off by default. */
@@ -9935,10 +10021,18 @@ double exam2d_vph_rk4_int_blend(
 		MPI_Allreduce(&de_n_l, &dn_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&rk4e_floor_l, &fl_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&rk4e_neg_l, &ng_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		double es_de_g = 0, hl_de_g = 0; int es_n_g = 0, hl_n_g = 0;
+		if(gfs_es_step){
+			MPI_Allreduce(&es_de_l, &es_de_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+			MPI_Allreduce(&hl_de_l, &hl_de_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+			MPI_Allreduce(&es_n_l, &es_n_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+			MPI_Allreduce(&hl_n_l, &hl_n_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		}
 		long long npair_l = gfs_pair_face_ends, npair_g = 0;
 		MPI_Allreduce(&npair_l, &npair_g, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM(simpar));
 		if(MYID(simpar)==0){
 			static double Et0 = 0, Eh0 = 0, fl_cum = 0, de_cum = 0;
+			static double es_cum = 0, hl_cum = 0;
 			static int st = 0, first = 1;
 			st++;
 			fl_cum += fl_g;
@@ -9946,10 +10040,21 @@ double exam2d_vph_rk4_int_blend(
 			double et = eh_g + ep_g;
 			if(first){ Et0 = et; Eh0 = eh_g; first = 0; }
 			fprintf(stderr,
-				"[RK4E] step=%d dt=%.3e E_hyd=%.6e E_pot=%.6e E_tot=%.6e dEtot/|Etot0|=%.3e dEhyd/Ehyd0=%.3e n_ie_le0=%d floor_inj=%.3e floor_cum=%.3e n_pair=%lld E_int=%.6e n_de=%d de_inj=%.3e de_cum=%.3e\n",
+				"[RK4E] step=%d dt=%.3e E_hyd=%.6e E_pot=%.6e E_tot=%.6e dEtot/|Etot0|=%.3e dEhyd/Ehyd0=%.3e n_ie_le0=%d floor_inj=%.3e floor_cum=%.3e n_pair=%lld E_int=%.6e n_de=%d de_inj=%.3e de_cum=%.3e",
 				st, (double)Dtime, eh_g, ep_g, et,
 				(Et0 != 0 ? (et-Et0)/fabs(Et0) : 0), (Eh0 != 0 ? (eh_g-Eh0)/Eh0 : 0),
 				ng_g, fl_g, fl_cum, npair_g, ei_g, dn_g, dei_g, de_cum);
+			/* Extra columns at the end of [RK4E], only when the switch or
+			 * the half-limit is on. The ledger becomes
+			 * dEtot*|Etot0| ~ floor_cum + de_cum + es_cum + hl_cum. */
+			if(gfs_es_step){
+				es_cum += es_de_g;
+				hl_cum += hl_de_g;
+				fprintf(stderr,
+					" n_es=%d es_de=%.3e es_cum=%.3e n_half=%d hl_de=%.3e hl_cum=%.3e",
+					es_n_g, es_de_g, es_cum, hl_n_g, hl_de_g, hl_cum);
+			}
+			fprintf(stderr, "\n");
 			fflush(stderr);
 		}
 	}
