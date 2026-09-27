@@ -79,3 +79,74 @@ No link and no 2D run. Please build `79af847` with CUDA and rerun the Kepler dis
 *Output header.* Integrator, `av_mode`, and `SEDOV_PHASE1` are still not written to the 2D output. Not touched here.
 
 *Paper.* The text at `main.tex` lines 604 and 605 still quotes the old blast (`0.154`, `3.3e-2`). I have not edited `main.tex`.
+
+---
+
+## Reply to §9, Kepler 406608
+
+Tags. **[CODE]** read at `9767576`. **[RUN]** a standalone non-MPI test on the box, scripts in `review_tests/` next to the repo. **[CALC]** an estimate with numbers from the IC. **[HYP]** plausible, not measured.
+
+**Short answer.** The author has shown that KDK breaks a circular orbit in this code and RK4 keeps it, so Kepler should run on RK4 (`GAS_EVOLMETHOD = 1`, `exam2d_vph_rk4_int_blend`). At `9767576` that path has no central mass at all. The commit below adds it, together with an orbital time step and the energy ledger needed to read the next run. The pair pressure does not create total energy. Before we change its amplitude again, the next run should say where `E` comes from.
+
+### What 406608 ran
+
+- **Integrator [CODE].** Kepler goes through the KH driver (`Exam/KH/kh.c`) with `EUNHA_IC=kepler`. `GAS_EVOLMETHOD = 3` selects `exam2d_vph_kdk_int_blend` and `1` selects `exam2d_vph_rk4_int_blend`. `[PHASE1]` lines are printed only by the KDK routine, so 406608 ran KDK. The separate `Exam/Kepler/kepler.c` driver is not what `LAGFORCE_KEP256` uses.
+- **No gravity on RK4 [CODE].** `kepler_accel` is called only in the two KDK kicks (added in `5f2fb86`). The RK4 blend stages add only the uniform `GAS_ACCX, GAS_ACCY`. Before this commit, a Kepler run on RK4 would have had every particle moving in a straight line.
+- **What `E` contains [CODE].** `E = Σ (ie + ½ m v²)` over target particles. It leaves out the potential of the point mass. It is not conserved, even in exact dynamics. Gas that moves inward raises `E` by the potential energy it releases. The conserved quantity is `E + Σ m Φ`.
+- **`n_clip` is rank 0 only [CODE].** `phase1_ie_clips` is a static on each rank and is printed without a reduction. It is also cumulative, while `n_pair` is per force call. The two columns in the log cannot be compared directly.
+- **Box and centre [CALC].** The IC formula reproduces `E0 = 8.7925` for `Lx = 24` at `256²` (8.79248 against 8.792453 in the log). The IC centres the disk on `0.5 Lx = 12`. `kepler_accel` defaults to `(2, 2)`. The run is right only if `EUNHA_KEPLER_CX=CY=12` were exported. Please confirm this from the job script.
+
+### The KDK clip, exactly [CODE]
+
+`phase1_half_kick` forms `E_i = ie + ½ m v0² + die·Δt/2` with the hydro acceleration only. It kicks `v`, and sets `ie = E_i − ½ m v1²`. When that is `≤ 0`, it keeps `ie_keep = min(max(ie + die Δt/2 − m v0·a Δt/2, 0), max(E_i, 0))`. It then rescales the whole velocity by `s = √((E_i − ie_keep)/ke1)`. Gravity is added afterwards.
+
+- If `E_i ≥ 0`, the particle's `ie + KE` is exactly `E_i`. No energy is created. The kinetic energy removed is `ke1 − (E_i − ie_keep) = ie_keep − ie1`.
+- If `E_i < 0`, both are set to zero and `−E_i` is injected. For a cold disk `E_i` is dominated by orbital KE, so this needs `die Δt/2 < −KE`, which should be rare.
+- The rescale is along `v`, which is mostly azimuthal. Each clip removes angular momentum `(1−s) m R v_φ`. It does not conserve momentum, and it leaves the particle sub-circular. The particle then falls in and `E` rises by the potential it releases. That matches the author's reading that `E` tracks `n_clip`.
+- The refresh after the diagnostic resets `ie ≤ 0` to `P = 1e-6`. That is the disk pressure itself, so each hit injects about `1.5e-6 V` into a cell that should be at that value. It is negligible next to `E` but not next to `ie`.
+
+### The pair force [CODE]
+
+It is pairwise. `dramp`, `min(√V_i, √V_j)`, `ρ̄`, `c̄²`, and `v_close` are symmetric in i and j. The face velocity `ua` is the same lab velocity at both ends, so `Σ −P_pair ua·dS` cancels and the pair work stays in `dte`. MPI padding copies keep their index, so both owners apply it. Only wall mirrors (`MAX_INDEX`) skip it. Its net effect on a cold cell is to move energy between neighbours through `P dV`.
+
+Two real issues:
+1. `ρ̄ c̄²` is a product of arithmetic means. At equal pressure across a density jump of ratio `r` it is `(2 + r + 1/r)/4` times `γP`. That is 3× for `r = 10` and 250× for `r = 1000`, which is the disk to floor contrast at `Rin`. `0.5(ρ_i c_i² + ρ_j c_j²) = γ P̄` is the intended scale. [CODE, CALC]
+2. On the cold disk, even `16 γ P q²` is up to 27 times the gas pressure. For a separating pair inside `d_c` at `R = 2`, the expanding cell pays `P_pair · L · v_sep / 2`. That drains its whole `ie = 1.5 P Δ²` in about `0.7/Ω`. This is a positivity problem, not an energy source. [CALC]
+
+### dt collapse [CODE, CALC]
+
+In 2D the face time step is `min(2C d/v_sig, 0.1 d/|Δv|)` for every face, approaching or not. The second term uses the full shear `|Δv|`. On a sheared lattice `d` between generators shrinks and `|Δv| ≈ 1.5 Ω d_perp` grows toward the centre. The IC fills `R < Rin` with floor gas (`ρ = 1e-3`) on Keplerian orbits around an unsoftened mass. The innermost generators sit at `R = 0.066`, with `T = 0.11` and `Ω = 59`. The first step is `dt = 0.019`, which is `T/6` there. Neither integrator has a gravity time step. Most likely the collapse is set in that inner floor region, not in the disk. Printing the argmin particle of `bp->dt` (R, criterion) would settle it.
+
+### Standalone tests [RUN]
+
+- `kepler_ballistic_kdk.py`. Every IC particle, point mass only, textbook KDK with the 406608 `dt` sequence. `E` changes by 3e-6 and `E_tot` by 6e-7. Textbook leapfrog with this schedule does not break the disk.
+- `orbit_kdk_vs_rk4.py`. A circular orbit at fixed `dt`. At `dt/T ≤ 0.02` both keep it (RK4 `dR < 7e-5`, KDK `dR < 7e-3` at `t = 20`). At `dt/T = 0.17`, the innermost floor particle with the first step of the run, both leave the orbit (KDK `dR = 150`, RK4 `dR = 2000`). RK4 needs an orbital time step as much as KDK does.
+- `kepler_plunge_kdk.py`. One innermost floor particle with its speed cut by a factor `s`. For `s ≤ 0.3` it plunges to `R ~ 1e-3` and is thrown out of the box with `ΔE_tot` up to `5e-2` (`m = 8.8e-6`). With softening of half a cell, or a step of `0.02 R^{3/2}`, the same plunge conserves energy to 1e-7.
+- `kepler_steer_kdk.py`. The ballistic disk plus `av_mode = 5` centroid steering, which moves `x` without touching `v`. At `f = 0.1` the steering alone changes `E_tot` by 9e-3 and `E` by 2.5e-2 by step 3476. It raises `v_max` from 3.9 to 37, and four floor particles leave faster than 20. At `f = 0.02` the change is 1e-4. That is small next to 25, but it grows with `1/dt`, and it is also on RK4.
+
+None of these reproduces the factor of 3. A few floor particles thrown out by an unresolved pericentre could do it (four at `v ~ 10³` carry `~8`). So could a steady loss of angular momentum through clips. Both are **[HYP]** until the ledger below is in a log.
+
+### RK4 plus `SEDOV_PHASE1 = 1` for a disk [CODE, CALC]
+
+- `phase1_ie_stage` integrates `d ie/dt = die − m v·a_hydro`. That is the exact ODE for `ie`. `½ m |aΔt|²` is not an ODE term. RK4 carries it through the stage velocities, so the discrete `Σ(ie + KE)` error is the RK4 truncation error, O(Δt⁵) per step. It is not a first-order hole as it is in the KDK split. Gravity enters only `v`, so orbital truncation error never touches `ie`.
+- The tolerance is severe. `ie/KE = 6e-6` at `R = 2` (Mach 550). Any hydro KE error larger than that fraction shows up as a relative `ie` error of order one. For smooth cold flow the hydro acceleration is small, so this is met. At pair faces and at the Rin edge it is not guaranteed.
+- `ie` can go negative. There is no clip in the stages. A stage whose `P dV` debit exceeds `ie` gives `ie < 0`. The pair drain above does this in about `0.7/Ω`. So does a Riemann face whose `P*` sees the lattice shear as compression (`Δv_n` up to `0.75 Ω Δ = 0.025` at `R = 2`, Mach 19, so `P* ≫ P`).
+- The stage floor leaks energy. `updateDenW2Pressure2DBlend` on the CPU resets `ie ≤ 0` to `P = 1e-6` inside the stage. The RK4 undo then subtracts the stage increment from the floored value, so the floor is carried into the final state. On the GPU only `P` is floored, and `ie` is left alone. The two paths differ.
+- `die` comes back from the GPU as `float`. That is harmless for energy (relative 6e-8 of `|dte|`). For floor cells, whose `ie ~ 1e-11`, it can reach a few per cent of `ie` per step.
+
+### What this commit changes (all in `Exam/exam.c`)
+
+1. **RK4 central mass.** Every RK4 blend stage adds `kepler_accel` at the stage position to `v` only. It is live only for `EUNHA_IC=kepler`, the same gate as the KDK kicks. Every other problem is unchanged. This is on without a switch, because a Kepler run on RK4 is meaningless without it.
+2. **Orbital time step, off by default.** With `EUNHA_KEPLER_DTETA = η > 0`, `dt ≤ η (R² + ε²)^{3/4}` on both RK4 and KDK, as a global minimum. `η = 0.06` is about `T/100`.
+3. **`[RK4E]` line** (RK4, when `SEDOV_PHASE1=1` or `EUNHA_IC=kepler`). It prints `E_hyd = Σ(ie + KE)`, `E_pot = Σ m Φ`, `E_tot`, `dEtot/|Etot0|`, the number of `ie ≤ 0` before the refresh, the energy the refresh floor adds (per step and cumulative), and `n_pair`.
+4. **`[PHASE1E]` line** (KDK, logging only). It prints `E_pot`, the clip count summed over ranks, the KE removed by clips, the energy injected by `E < 0` clips, the angular momentum removed by clips, and the floor energy, each per step and cumulative. `[PHASE1]` itself is unchanged, so existing parsers still work.
+
+Compiled with `mpicc -fsyntax-only -Wall -DXYZDBL -DGOTPM`, with and without `-DUSE_CUDA`. No errors, and the warning count is the same as before (287). No link, no run, and no `nvcc` here. The GPU kernels are not touched.
+
+### Recommendation
+
+1. Run Kepler on RK4 with this commit. Set `EUNHA_KEPLER_CX=CY=12` explicitly, and `EUNHA_KEPLER_DTETA=0.06`. Soften the mass by half a cell (`EUNHA_KEPLER_EPS=0.047`), or empty the floor inside `R ~ 0.5`. The unsoftened centre with floor gas on Keplerian orbits is a test of the point mass, not of the disk. Run `av_mode = 5` with `fcentroid = 0` for the first attempt so that steering is not in the budget.
+2. Read `E_tot` in `[RK4E]`, not `E`. If `E_tot` holds while `E_hyd` rises, the gas is falling in and the scheme is losing angular momentum. If `E_tot` rises, the floor column, or a log line near a pericentre, will say where.
+3. Pair pressure. Replace `ρ̄ c̄²` by `0.5(ρ_i c_i² + ρ_j c_j²)`. It is identical at uniform density and does not inflate across Rin. Keep the amplitude until `[RK4E]` shows the pair terms are what adds energy. A law that is silent on circular shear is possible (gate on `v_close` from `∇·v` rather than the pair), but nothing in the log yet requires it.
+4. Positivity on the cold disk. The right tool is a dual energy switch. Keep `E`, and carry the entropy `K = P/ρ^γ`. Use `ie` from `K` where `ie < η_de · ½ m |v − v̄_nbr|²` (with `η_de ≈ 1e-3`, using the velocity relative to neighbours, not the orbit), and from `E` otherwise. `SEDOV_PHASE1` sets `dK = 0`, so `K` would be adiabatic away from shocks, which is right for this disk. It needs `K` initialised from the IC and a shock flag. I have not written it. I will if Grok CLI's `[RK4E]` shows negative `ie` or floor energy is significant.
+5. Low priority, KDK. Textbook KDK keeps these orbits (the ballistic test above). What this KDK adds is the clip rescale of the whole `v`, the centroid shift after the second kick, the XSPH offset in the drift, and a hydro-set `dt` with no orbital limit. The clip is the only one of these that RK4 does not share. It is the first suspect for the orbit loss the author sees.

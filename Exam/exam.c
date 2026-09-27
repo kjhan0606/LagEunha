@@ -4133,6 +4133,12 @@ static inline void hll_star_state(
 }
 
 static int phase1_ie_clips = 0;
+/* KDK clip bookkeeping, summed over the kicks of one step on this rank.
+ * clip_dke is the kinetic energy removed by the velocity rescale.
+ * clip_inj is the energy added when E < 0 is raised to 0.
+ * clip_dL is the change of angular momentum about the Kepler centre. */
+static double phase1_clip_dke = 0, phase1_clip_inj = 0, phase1_clip_dL = 0;
+static long phase1_clip_events = 0;
 /* Central mass GM=1. Active only for EUNHA_IC=kepler.
  * Default is the GIZMO point-mass acceleration -r_hat/R^2.
  * EUNHA_KEPLER_EPS>0 switches on the softened force, which must
@@ -4160,6 +4166,64 @@ static void kepler_accel(postype x, postype y, postype *ax, postype *ay){
 	}
 	*ax += dx * f;
 	*ay += dy * f;
+}
+
+static void kepler_center(postype *cx, postype *cy){
+	const char *cxe = getenv("EUNHA_KEPLER_CX");
+	const char *cye = getenv("EUNHA_KEPLER_CY");
+	*cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+	*cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+}
+
+/* Potential of the same central mass, for the energy diagnostics only.
+ * Plummer when EUNHA_KEPLER_EPS>0, which is the potential of the
+ * softened force above. Returns 0 when EUNHA_IC is not kepler. */
+static postype kepler_phi(postype x, postype y){
+	const char *e = getenv("EUNHA_IC");
+	if(!e || strcmp(e, "kepler") != 0) return 0;
+	const char *cxe = getenv("EUNHA_KEPLER_CX");
+	const char *cye = getenv("EUNHA_KEPLER_CY");
+	const char *ee = getenv("EUNHA_KEPLER_EPS");
+	postype cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+	postype cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+	postype eps = ee && ee[0] ? atof(ee) : (postype)0.0;
+	postype dx = x - cx, dy = y - cy;
+	postype r2 = dx*dx + dy*dy + eps*eps;
+	if(!(r2 > (postype)1e-32)) return 0;
+	return -(postype)1.0 / sqrt(r2);
+}
+
+/* Orbital time step for the central mass. EUNHA_KEPLER_DTETA = eta > 0
+ * limits dt to eta * (R^2+eps^2)^(3/4), i.e. eta/(2 pi) of the local
+ * orbital period. Default 0 leaves dt alone. Returns a global minimum. */
+static postype kepler_dt_limit(SimParameters *simpar, void *base, size_t stride, int np){
+	static int cached = 0;
+	static postype eta = 0;
+	if(!cached){
+		const char *s = getenv("EUNHA_KEPLER_DTETA");
+		eta = (s && s[0]) ? atof(s) : (postype)0;
+		cached = 1;
+	}
+	const char *e = getenv("EUNHA_IC");
+	postype dtl = (postype)1e30, dtg;
+	if(eta > 0 && e && strcmp(e, "kepler") == 0){
+		const char *cxe = getenv("EUNHA_KEPLER_CX");
+		const char *cye = getenv("EUNHA_KEPLER_CY");
+		const char *ee = getenv("EUNHA_KEPLER_EPS");
+		postype cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+		postype cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+		postype eps = ee && ee[0] ? atof(ee) : (postype)0.0;
+		int i;
+		for(i=0;i<np;i++){
+			treevorork4particletype *b = (treevorork4particletype*)((char*)base + (size_t)i*stride);
+			postype dx = b->x - cx, dy = b->y - cy;
+			postype r2 = dx*dx + dy*dy + eps*eps;
+			postype d = eta * pow((double)r2, 0.75);
+			if(d < dtl) dtl = d;
+		}
+	}
+	MPI_Allreduce(&dtl, &dtg, 1, MPI_POSTYPE, MPI_MIN, MPI_COMM(simpar));
+	return dtg;
 }
 
 /* Voronoi bisector normal speed at the face centroid.
@@ -4217,6 +4281,19 @@ static inline void phase1_half_kick(treevorostressrk4particletype *p,
 		postype ke_allow = E - ie_keep;
 		if(ke_allow < (postype)0) ke_allow = (postype)0;
 		if(ie_keep <= (postype)0) phase1_ie_clips++;
+		phase1_clip_events++;
+		{
+			postype vxb = p->vx, vyb = p->vy;
+			if(ke1 > (postype)0 && ke_allow < ke1){
+				postype sc = sqrt(ke_allow / ke1);
+				phase1_clip_dke += (double)(ke1 - ke_allow);
+				postype kcx, kcy;
+				kepler_center(&kcx, &kcy);
+				phase1_clip_dL += (double)(m * (sc - (postype)1)
+						* ((p->x - kcx)*vyb - (p->y - kcy)*vxb));
+			}
+			if(E < (postype)0) phase1_clip_inj += (double)(-E);
+		}
 		if(ke1 > (postype)0 && ke_allow < ke1){
 			postype s = sqrt(ke_allow / ke1);
 			p->vx *= s;
@@ -9438,14 +9515,25 @@ double exam2d_vph_rk4_int_blend(
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 	_t_force += MPI_Wtime() - _t0;
+	{
+		postype dtk = kepler_dt_limit(simpar, VORORK4_TBP(simpar),
+				TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
+		if(dtk < Dtime) Dtime = dtk;
+	}
 
 	clamp_dK_rate_limiter(simpar, Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k1x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k1y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
-		sbp[i].rk4.k1vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
-		sbp[i].rk4.k1vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
+		{
+			/* Central mass at the stage position (EUNHA_IC=kepler only).
+			 * It enters v only. phase1_ie_stage uses the hydro ax, ay. */
+			postype gx = 0, gy = 0;
+			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+			sbp[i].rk4.k1vx = (sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
+			sbp[i].rk4.k1vy = (sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+		}
 		sbp[i].rk4.k1ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k1K  = sbp[i].stress.dK*Dtime;
 	}
@@ -9495,8 +9583,14 @@ double exam2d_vph_rk4_int_blend(
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k2x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k2y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
-		sbp[i].rk4.k2vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
-		sbp[i].rk4.k2vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
+		{
+			/* Central mass at the stage position (EUNHA_IC=kepler only).
+			 * It enters v only. phase1_ie_stage uses the hydro ax, ay. */
+			postype gx = 0, gy = 0;
+			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+			sbp[i].rk4.k2vx = (sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
+			sbp[i].rk4.k2vy = (sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+		}
 		sbp[i].rk4.k2ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k2K  = sbp[i].stress.dK*Dtime;
 	}
@@ -9546,8 +9640,14 @@ double exam2d_vph_rk4_int_blend(
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k3x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k3y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
-		sbp[i].rk4.k3vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
-		sbp[i].rk4.k3vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
+		{
+			/* Central mass at the stage position (EUNHA_IC=kepler only).
+			 * It enters v only. phase1_ie_stage uses the hydro ax, ay. */
+			postype gx = 0, gy = 0;
+			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+			sbp[i].rk4.k3vx = (sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
+			sbp[i].rk4.k3vy = (sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+		}
 		sbp[i].rk4.k3ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k3K  = sbp[i].stress.dK*Dtime;
 	}
@@ -9597,8 +9697,14 @@ double exam2d_vph_rk4_int_blend(
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k4x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k4y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
-		sbp[i].rk4.k4vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
-		sbp[i].rk4.k4vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
+		{
+			/* Central mass at the stage position (EUNHA_IC=kepler only).
+			 * It enters v only. phase1_ie_stage uses the hydro ax, ay. */
+			postype gx = 0, gy = 0;
+			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+			sbp[i].rk4.k4vx = (sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
+			sbp[i].rk4.k4vy = (sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+		}
 		sbp[i].rk4.k4ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k4K  = sbp[i].stress.dK*Dtime;
 	}
@@ -9672,6 +9778,21 @@ double exam2d_vph_rk4_int_blend(
 		}
 	}
 
+	/* Energy bookkeeping for the disk (SEDOV_PHASE1=1 or EUNHA_IC=kepler).
+	 * ie <= 0 here is what the refresh below floors to P = 1e-6. */
+	double rk4e_floor_l = 0; int rk4e_neg_l = 0;
+	int rk4e_on = sedov_phase1_on()
+		|| (getenv("EUNHA_IC") && strcmp(getenv("EUNHA_IC"), "kepler") == 0);
+	if(rk4e_on && GAS_ENTROPY_MODE(simpar) != 1){
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+			if(sbp[i].ie <= 0){
+				rk4e_neg_l++;
+				rk4e_floor_l += 1e-6*(double)sbp[i].volume/(double)(Gamma-1) - (double)sbp[i].ie;
+			}
+		}
+	}
+
 	/* Update pressure, csound, NaN check */
 	{
 		int entropy_mode = GAS_ENTROPY_MODE(simpar);
@@ -9699,6 +9820,38 @@ double exam2d_vph_rk4_int_blend(
 				sbp[i].vx = sbp[i].vy = 0;
 				sbp[i].w2 = sbp[i].rk4.w2backup;
 			}
+		}
+	}
+
+	if(rk4e_on){
+		double eh_l = 0, ep_l = 0, eh_g, ep_g, fl_g;
+		int ng_g;
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+			double m = (double)sbp[i].mass;
+			eh_l += (double)sbp[i].ie + 0.5*m*((double)sbp[i].vx*(double)sbp[i].vx
+					+ (double)sbp[i].vy*(double)sbp[i].vy);
+			ep_l += m*(double)kepler_phi(sbp[i].x, sbp[i].y);
+		}
+		MPI_Allreduce(&eh_l, &eh_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&ep_l, &ep_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&rk4e_floor_l, &fl_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&rk4e_neg_l, &ng_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		long long npair_l = gfs_pair_face_ends, npair_g = 0;
+		MPI_Allreduce(&npair_l, &npair_g, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM(simpar));
+		if(MYID(simpar)==0){
+			static double Et0 = 0, Eh0 = 0, fl_cum = 0;
+			static int st = 0, first = 1;
+			st++;
+			fl_cum += fl_g;
+			double et = eh_g + ep_g;
+			if(first){ Et0 = et; Eh0 = eh_g; first = 0; }
+			fprintf(stderr,
+				"[RK4E] step=%d dt=%.3e E_hyd=%.6e E_pot=%.6e E_tot=%.6e dEtot/|Etot0|=%.3e dEhyd/Ehyd0=%.3e n_ie_le0=%d floor_inj=%.3e floor_cum=%.3e n_pair=%lld\n",
+				st, (double)Dtime, eh_g, ep_g, et,
+				(Et0 != 0 ? (et-Et0)/fabs(Et0) : 0), (Eh0 != 0 ? (eh_g-Eh0)/Eh0 : 0),
+				ng_g, fl_g, fl_cum, npair_g);
+			fflush(stderr);
 		}
 	}
 
@@ -9843,6 +9996,11 @@ double exam2d_vph_kdk_int_blend(
 		 * step above stays larger than a gap that has already narrowed,
 		 * so a converging pair crosses in one drift. */
 		if(dt_dummy > (postype)0 && dt_dummy < Dtime) Dtime = dt_dummy;
+		{
+			postype dtk = kepler_dt_limit(simpar, VORORK4_TBP(simpar),
+					TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
+			if(dtk < Dtime) Dtime = dtk;
+		}
 	}
 
 	/* dK rate-limiter: clamp |dK|*dt_ref/K <= rate_max before stage-1 half-kick */
@@ -10005,6 +10163,46 @@ double exam2d_vph_kdk_int_blend(
 				p1step, (double)Dtime, vmin_g, vnorm, rhomax_g, etot_g,
 				(E0 != 0 ? (etot_g-E0)/E0 : 0), nneg_g, ncell_g, phase1_ie_clips,
 				(long long)npair_g);
+			fflush(stderr);
+		}
+	}
+
+	/* Floor energy of the refresh below, and the clip ledger of this step. */
+	double kdke_floor_l = 0;
+	if(sedov_phase1_on() && GAS_ENTROPY_MODE(simpar) != 1){
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+			if(sbp[i].ie <= 0)
+				kdke_floor_l += 1e-6*(double)sbp[i].volume/(double)(Gamma-1) - (double)sbp[i].ie;
+		}
+	}
+	if(sedov_phase1_on()){
+		double loc[5], glb[5];
+		double ep_l = 0;
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+			ep_l += (double)sbp[i].mass*(double)kepler_phi(sbp[i].x, sbp[i].y);
+		}
+		loc[0] = phase1_clip_dke; loc[1] = phase1_clip_inj; loc[2] = phase1_clip_dL;
+		loc[3] = (double)phase1_clip_events; loc[4] = kdke_floor_l;
+		MPI_Allreduce(loc, glb, 5, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		double ep_g;
+		MPI_Allreduce(&ep_l, &ep_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		int nclip_g = 0;
+		MPI_Allreduce(&phase1_ie_clips, &nclip_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		phase1_clip_dke = phase1_clip_inj = phase1_clip_dL = 0;
+		phase1_clip_events = 0;
+		if(MYID(simpar)==0){
+			static double inj_cum = 0, dke_cum = 0, fl_cum = 0;
+			static int st = 0;
+			st++;
+			inj_cum += glb[1]; dke_cum += glb[0]; fl_cum += glb[4];
+			/* E_pot is the central-mass potential energy. E in [PHASE1]
+			 * excludes it, so E + E_pot is the conserved total. */
+			fprintf(stderr,
+				"[PHASE1E] step=%d E_pot=%.6e clip_ev=%.0f n_clip_all=%d clip_dKE=%.3e clip_inj=%.3e clip_dL=%.3e floor_inj=%.3e cum_dKE=%.3e cum_inj=%.3e cum_floor=%.3e\n",
+				st, ep_g, glb[3], nclip_g, glb[0], glb[1], glb[2], glb[4],
+				dke_cum, inj_cum, fl_cum);
 			fflush(stderr);
 		}
 	}
