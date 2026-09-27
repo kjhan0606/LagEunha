@@ -159,3 +159,39 @@ Do not start Slurm jobs. Do not cancel 406510 or 406515–406519. This session w
 ### Kepler 406608 stopped
 
 Stopped at about 9.5 minutes. Last sample in `debug/2026-09-27_kepler_gresho.txt` is already decisive: `t=0.65`, `dE/E0=2.81`, `n_clip=2333`, `n_pair=136`. The cap `min(v_close^2, c^2)` did not keep the disk energy flat. Do not release 406515–406519 onto this binary. Gresho 406611 was still running on syn09 when Kepler was stopped.
+
+---
+
+## 9. Run report, capped pair pressure (`79af847`)
+
+Binary built from `master` at `79af847` (`P ≤ 32 ρ̄ c̄²`). H200 was not available, so both runs used H100. Sampled lines are in `debug/2026-09-27_kepler_gresho.txt`. That file was taken while both jobs were still running. The Gresho numbers below are the finished state.
+
+### Gresho — pass
+
+Job 406611, `LAGFORCE_GRES128`, syn09, 2× H100, 4 ranks (two ranks per GPU). Directory `/gpfs/kjhan/LagForce/Gresho_gfs_Nx128_cap`. `128²`, `t = 1`, wall time 4 min 21 s, `EXIT:0`.
+
+| | step 1 | step 993 | step 1985 | step 2977 | step 3969 |
+|---|---:|---:|---:|---:|---:|
+| t | 0.0005 | 0.370 | 0.577 | 0.792 | 1.000 |
+| dt | 5.0e-4 | 2.5e-4 | 2.1e-4 | 2.0e-4 | 2.4e-4 |
+| dE/E0 | 0 | −1.0e-6 | −1.2e-6 | −1.2e-6 | −1.3e-6 |
+| ρ_max | 1.001 | 1.241 | 1.176 | 1.086 | 1.085 |
+| n_pair | 0 | 0 | 0 | 0 | 0 |
+
+`n_neg = 0/16384` and `n_clip = 0` for the whole run. `n_pair` was 0 except for a few steps where it reached 2 or 4. The density image was written. No segfault. This is the same quality as the earlier Gresho on the uncapped binary (`dE/E0 = 3.9e-9`).
+
+### Kepler — fail, stopped
+
+Job 406608, `LAGFORCE_KEP256h4`, syn08, 3× H100, 4 ranks (ranks 0 and 3 shared device 0). Directory `/gpfs/kjhan/LagForce/Kepler_gfs_disk_h200_Nx256_cap`. Point-mass disk, `256²`, target `t = 177.72`. Stopped by request after 9.5 min. It was not going to recover.
+
+| step | t | dt | dE/E0 | ρ_max | n_clip | n_pair |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0.019 | 1.9e-2 | 0 | 0.80 | 0 | 0 |
+| 236 | — | 5.9e-4 | 0.010 | 0.80 | 171 | 14 |
+| 732 | — | 3.9e-5 | 1.01 | 0.80 | 602 | 40 |
+| 2001 | — | 9.5e-5 | 2.57 | 1.53 | 1951 | 130 |
+| 3476 | 0.647 | 8.8e-5 | 2.81 | 5.45 | 2333 | 136 |
+
+`n_neg` stayed at 0 or 1. The gas energy grew from 8.79 to 33.5 while the density was still near the initial disk value, so this is not a collapsed cell. Capping `v_close²` by `c²` did not stop the heating. The thermal piece `16 ρ c² (1-d/d_c)²` is still on for every face inside the cutoff, and ~100 such faces are enough to triple the energy before one inner orbit (`T(R=2) = 17.8`).
+
+406515–406519 stay held. Do not copy this binary into them. The next Kepler run needs a pair pressure that is silent on a circular shear flow. Gresho shows the gate can stay at `n_pair ≈ 0` when the mesh does not pair. The disk does pair, and the present amplitude is too large.
