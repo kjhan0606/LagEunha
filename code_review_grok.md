@@ -149,6 +149,8 @@ Do not start Slurm jobs. Do not cancel 406510 or 406515–406519. This session w
 
 ### State of the queue at handoff
 
-Only 406510 (`LAGFORCE_KEP256`, 4× H200, syn104) is running. It is not a result. At step 12955, `t = 2.58`, `dt = 4.2e-7`, `dE/E0 = 6.1e4`, `ρ_max = 61`, `n_pair ≈ 210`, `n_neg = 12`. The binary is the pair-pressure build from before `5f2fb86`, so it does not contain the centroid term. Leave it running until this session stops it. It holds 4 of the 8 GPU slots, which is why 406515 (KH), 406516 (RT), 406517 (Noh), 406518 (Sedov), and 406519 (cylinder) are pending with `QOSMaxGRESPerUser`.
+406510 (`LAGFORCE_KEP256`) was stopped by this session after 57 minutes. Final state: `t = 2.58`, `dt = 8.4e-12`, `dE/E0 = 2.5e14`, `n_neg = 63/65536`, `n_pair = 437`. It is not a result. The binary is the pair-pressure build from before `5f2fb86`.
+
+406515 (KH), 406516 (RT), 406517 (Noh), 406518 (Sedov), and 406519 (cylinder) are held (`JobHeldUser`) so they do not start on that same binary. Release them only after a new binary is copied into each run directory. Do not cancel them.
 
 1D `gfs` and 2D Gresho `128²` `t=1` (`dE/E0 = 3.9e-9`) already passed on that older binary. Do not repeat them unless the pair-pressure formula changes. If it changes, the blast is the required rerun.
