@@ -465,11 +465,33 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
              * circular speed below is the radial equilibrium. */
             postype Rin = (rins && rins[0]) ? atof(rins) : (postype)2.0;
             postype Rout = (routs && routs[0]) ? atof(routs) : (postype)8.0;
+            const char *profs = getenv("EUNHA_KEPLER_PROFILE");
+            if(profs && strcmp(profs, "hopkins") == 0){
+                /* Hopkins (2015, arXiv:1409.7395) Eq. 34, the mesh-code
+                 * version of the cold Keplerian disk, scaled from his
+                 * (0.5, 2) to (Rin, Rout):
+                 *   rho = floor + (R/Rin)^3           R < Rin
+                 *               + 1                   Rin <= R <= Rout
+                 *               + [1+(R-Rout)/w]^-3   R > Rout
+                 * floor 0.01 and w = 0.1*Rout/2 (0.4 for Rout = 8; the
+                 * same as 0.1*Rin/0.5). EUNHA_KEPLER_FLOOR and
+                 * EUNHA_KEPLER_WIDTH override them. P and v as below. */
+                const char *fls = getenv("EUNHA_KEPLER_FLOOR");
+                const char *ws = getenv("EUNHA_KEPLER_WIDTH");
+                postype hfloor = (fls && fls[0]) ? atof(fls) : (postype)0.01;
+                postype hw = (ws && ws[0]) ? atof(ws) : (postype)0.05*Rout;
+                postype shape;
+                if(R < Rin) { postype q = R/Rin; shape = q*q*q; }
+                else if(R <= Rout) shape = 1;
+                else { postype q = 1 + (R-Rout)/hw; shape = 1/(q*q*q); }
+                rho = hfloor + shape;
+            } else {
             postype edge = (postype)0.25;
             postype inner = (postype)0.5*(1+tanh((R-Rin)/edge));
             postype outer = (postype)0.5*(1+tanh((Rout-R)/edge));
             postype floor = (postype)1.0e-3;
             rho = floor + (Rin / (R + (postype)1e-6)) * inner * outer;
+            }
             postype Rsafe = (R > (postype)1e-8) ? R : (postype)1e-8;
             postype vamp = (eps > 0)
                 ? R * pow(R*R + eps*eps, (postype)-0.75)
