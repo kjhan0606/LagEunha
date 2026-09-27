@@ -375,3 +375,24 @@ The full log has 101654 lines and `R` up to 37, which is outside the box. That t
 ### What to change next
 
 The work limit delayed the cliff by about Δt = 5 relative to 406654 and did not remove it. Dual energy at `η = 0.5` delayed it by a further Δt = 0.8 and did not remove it. The cells that lose half their adiabatic energy, while the run is still quiet, are the floor gas in the hole `R < 2`, not the ring. The next Kepler run should be the same RK4 disk with that floor gas removed or frozen, not another coefficient on the pair pressure and not a wider HLL change. Leave 406515–406519 held until a disk passes more than a short fraction of an inner orbit (`T(R = 2) = 17.8`) with `dE` still on the `10^{-4}` slope. These two runs died at `t ≈ 10`, about 0.6 of that orbit.
+
+---
+
+## 15. Kepler 407214 started: Hopkins disk, entropy switch on
+
+406515–406519 stay held. `GFS_DUAL_ENERGY` is unset. **[RUN]**
+
+| job | what | where |
+|---|---|---|
+| 407214 `LAGFORCE_KEP_HS` | primary. `EUNHA_KEPLER_PROFILE=hopkins`, `GFS_ENTROPY_SWITCH=1`, `GFS_ES_COEF=0.01`, `GFS_FLOOR_LOG=1` | syn08, 3× H100, 4 ranks. `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_hopkins_esw_Nx256` |
+| 407215 `LAGFORCE_KEP_ES` | control. same switch, old `1/R` IC | syn104, 3× H200, 4 ranks. `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_esw_Nx256` |
+
+syn09 had only 2 H100 free, and syn08's other 2 H100 are in `sjjlee_h100` until 2026-10-19. The control therefore uses H200. Binary is `00adc2d` (`exam.c` and `Exam/KH/util.c` relinked; `exam_gpu.cu` unchanged).
+
+Flags from the 407214 script and `params.dat`: `SEDOV_PHASE1=1`, `way=1`, `use_muscl=1`, `av_mode=5`, `entropy_mode=0`, `gpu_enabled=1`, centroid shift `0`, `CX=CY=12`, `EPS=0.047`, `DTETA=0.06`. The banner is
+
+```
+[ESW] entropy_switch=1 coef=0.01 half_limit=1 active=1
+```
+
+Step 1 matches the IC harness: `E_hyd = 21.459`, `E_pot = −42.928`, `E_tot = −21.469`, `E_int = 8.641e-4`. `n_es = 25528` (the estimate was about 25500). `n_half = 0`, `floor_cum = 0`, `n_ie_le0 = 0`, `es_de = −3.4e-6`. The switch is removing a little heating, not topping cells up.
