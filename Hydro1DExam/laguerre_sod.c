@@ -80,6 +80,19 @@ static long   n_wlim_1d=0;       /* pair faces reduced by gfs_pair_work_limit */
 static double de_eta_1d=0;       /* GFS_DUAL_ENERGY: e < eta*e_K takes e_K (0 = off) */
 static long   n_de_1d=0;         /* dual-energy resets */
 static double de_inj_1d=0;       /* energy added by those resets */
+/* GIZMO-style entropy switch and half-limit (both off by default).
+ * GFS_ENTROPY_SWITCH=1: 1D has no gravity, so the criterion is GIZMO's
+ * kinetic form (kicks.c, compiled out there):
+ *   coef * (E_th + 0.5 m max_nbr |dv|^2) > E_th,  E_th = m max(0.5 e_n, e_E)
+ * A switched cell takes the adiabatic e = e_n (rho/rho_n)^(gamma-1)
+ * instead of the energy-equation value e_E. GFS_ES_COEF = coef (0.01).
+ * GFS_HALF_LIMIT=1: e < 0.5 e_n becomes 0.5 e_n (default: same as the
+ * switch). Both act once per accepted step, after update_derived. */
+static int    es_on_1d=0, half_on_1d=0;
+static double es_coef_1d=0.01;
+static long   n_es_1d=0, n_half_1d=0;
+static double es_de_1d=0, hl_de_1d=0;   /* m (e - e_E) booked by each */
+static double s0rho[NMAX];
 static long   n_retry_1d=0;      /* rk4 steps refused and halved */
 static double dt_min_1d=0;       /* smallest accepted dt */
 static int    extreme_geom=0;    /* GFS_EXTREME_GEOM=1: extreme faces also move at the midpoint speed (test only) */
@@ -978,6 +991,7 @@ static int rk4_step(double dt){
     double s0f[NMAX+1], kxf[4][NMAX+1];
     for(int i=0;i<N;i++){
         s0x[i]=P[i].x; s0v[i]=P[i].v; s0e[i]=P[i].e;
+        s0rho[i]=P[i].rho;
     }
     if(rk_face){
         for(int i=0;i<=N;i++) s0f[i] = xf_face[i];
@@ -1060,6 +1074,33 @@ static int rk4_step(double dt){
         for(int i=0;i<=N;i++) xf_face[i] += vf[i]*dt;
     }
     update_derived();
+    if(es_on_1d || half_on_1d){
+        for(int i=0;i<N;i++){
+            double e0 = s0e[i], eE = P[i].e, e1 = eE;
+            if(!(e0 > 0) || !(s0rho[i] > 0) || !(P[i].rho > 0)) continue;
+            if(es_on_1d){
+                double dv2 = 0, d;
+                if(i > 0){ d = P[i].v - P[i-1].v; if(d*d > dv2) dv2 = d*d; }
+                if(i < N-1){ d = P[i+1].v - P[i].v; if(d*d > dv2) dv2 = d*d; }
+                double eth = P[i].m * ((0.5*e0 > eE) ? 0.5*e0 : eE);
+                if(es_coef_1d * (eth + 0.5*P[i].m*dv2) > eth){
+                    e1 = e0 * pow(P[i].rho/s0rho[i], GM1);
+                    es_de_1d += P[i].m * (e1 - eE);
+                    n_es_1d++;
+                }
+            }
+            if(half_on_1d && e1 < 0.5*e0){
+                hl_de_1d += P[i].m * (0.5*e0 - e1);
+                n_half_1d++;
+                e1 = 0.5*e0;
+            }
+            if(e1 != eE){
+                P[i].e = e1;
+                P[i].p = GM1 * P[i].rho * P[i].e;
+                P[i].c = eos_c(P[i].rho, P[i].p);
+            }
+        }
+    }
     /* Dual energy (off by default). The entropy K is the t=0 value and is
      * never raised, so a shocked cell sits far above e_K and is untouched.
      * A cell drained below eta*e_K takes e_K. The energy added is counted. */
@@ -1764,6 +1805,13 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
     {
         const char *s = getenv("GFS_DUAL_ENERGY");
         de_eta_1d = (s && s[0]) ? atof(s) : 0.0;
+        s = getenv("GFS_ENTROPY_SWITCH");
+        es_on_1d = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+        s = getenv("GFS_ES_COEF");
+        es_coef_1d = (s && s[0] && atof(s) > 0) ? atof(s) : 0.01;
+        s = getenv("GFS_HALF_LIMIT");
+        half_on_1d = (s && s[0]) ? (atoi(s) > 0 ? 1 : 0) : es_on_1d;
+        n_es_1d = n_half_1d = 0; es_de_1d = hl_de_1d = 0;
     }
     init(np);
     for(int i=0;i<N;i++)
@@ -2119,10 +2167,14 @@ int main(int argc, char **argv)
             if(!pref || !pref[0]) pref = "gfs";
             snprintf(out, sizeof(out), "%s_%s.dat", pref, names[pid]);
             Metrics m = run_sim(VORONOI, np, out, 0);
-            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld  fail=%d  dtmin=%.3e  retry=%ld  efloor=%ld  nwlim=%ld  nde=%ld  deinj=%.3e\n",
+            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld  fail=%d  dtmin=%.3e  retry=%ld  efloor=%ld  nwlim=%ld  nde=%ld  deinj=%.3e",
                    names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep, N,
                    n_pair_1d, m.failed, dt_min_1d, n_retry_1d, n_efloor_1d,
                    n_wlim_1d, n_de_1d, de_inj_1d);
+            if(es_on_1d || half_on_1d)
+                printf("  nes=%ld  esde=%.3e  nhalf=%ld  hlde=%.3e",
+                       n_es_1d, es_de_1d, n_half_1d, hl_de_1d);
+            printf("\n");
             fflush(stdout);
         }
         return 0;
