@@ -270,3 +270,39 @@ Flags from the job, not from a guess:
 The cell-centred HLL overwrite in `exam.c` runs only when `sedov_phase1_on() && !use_muscl`. This job does not take that branch. The face pressure is the MUSCL/HLLC state from `av_mode` 5.
 
 Step 1 of 407021: `E_int = 8.644e-4`, `n_de = 0`, `de_cum = 0`, `floor_cum = 0`, `dEtot = 0`, `n_pair = 0`. That `E_int` matches the thermal energy of the initial box. No `[RK4F]` line in the first steps. 406515–406519 stay held.
+
+---
+
+## 13. Baseline runaway at t = 9.5, and the first [RK4F] radii
+
+Both jobs were still running when this was written. 406734 was not stopped. **[RUN]**
+
+### 406734, the work-limit baseline
+
+The slow floor lasted past the old blow-up and then failed the same way. 406654 crossed `|ΔE| = 0.01` at `t = 4.59`. 406734 did it at `t = 9.54`.
+
+| t | dEtot/\|Etot0\| | floor_cum | n_ie_le0 | n_pair | dt |
+|---:|---:|---:|---:|---:|---:|
+| 6.00 | 4.4e-4 | 3.7e-3 | 6 | 62 | 6.2e-4 |
+| 8.00 | 7.5e-4 | 5.4e-3 | 4 | 92 | 6.4e-4 |
+| 9.00 | 9.0e-4 | 6.5e-3 | 8 | 138 | 5.3e-4 |
+| 9.50 | 6.6e-3 | 2.6e-2 | 8 | 132 | 6.1e-4 |
+| 9.54 | 1.0e-2 | 3.4e-2 | — | — | — |
+| 9.60 | 1.39 | 11.8 | 11 | 172 | 7.7e-5 |
+
+`|ΔE| = 10^{-3}` was crossed at `t = 9.12`. From `t = 9.50` to `t = 9.60` the floor jumped by about 400× and `dt` dropped. `E_pot` was still `−17.577`. This is the pressure-floor runaway, delayed, not an orbit decay. The useful floor-rate baseline is the interval before `t ≈ 9.1`.
+
+### 407021, dual energy, t = 0.83
+
+527 `[RK4F]` lines, every one with `reset = 1`. None are in the disk.
+
+| region | lines | R |
+|---|---:|---|
+| R < 0.3 | 105 | 0.243–0.264 |
+| 0.3–1.9 | 422 | 0.336–0.399 |
+| 1.9–2.1 | 0 | |
+| R ≥ 2.1 | 0 | |
+
+`ie_K > 0` on all of them. 24 lines have `ie ≤ 0`; the rest are positive and sit at `ie/ie_K = 0.13–0.50`, which is the `η = 0.5` threshold and not an 8-cell-energy drain. `den` is `6.6e-4–2.5e-3`, the central floor gas (`ρ_floor = 1e-3`). `floor_cum = 0` and `n_ie_le0 = 0` at `t = 0.83`: the dual-energy reset is catching these cells before the `P = 1e-6` floor. `de_cum = 4.8e-6`, about `1e-8` per logged event, and `dEtot/|Etot0| = 1.2e-6`. The ledger matches that small injection.
+
+`E_int` went from `8.64e-4` at `t = 0` to `1.13e-3` at `t = 0.83`. `E_hyd` and `E_tot` did not move with it, so that rise is a conservative exchange, kinetic energy into internal energy. `de_cum` is 50× too small to be the source. The log does not split `E_int` by radius, so this does not yet say the disk is heating. It does say the cells that lose half their adiabatic energy are at `R = 0.24–0.40` and not at `Rin = 2`. Too early to call the `t ≈ 9` runaway fixed. `n_pair = 8`.
