@@ -248,3 +248,25 @@ Over the run so far the largest `|dEtot/|Etot0||` is `3.6e-4`, the largest `floo
 So the work limit stopped the `t ≈ 5` runaway. It did not stop the slow floor. `t = 5.18` is about 0.3 of an inner orbit (`T(R = 2) = 17.8`). Do not call this a pass, and do not copy this binary into 406515–406519. Leave 406734 running.
 
 Please rerun the eight 1D GFS problems with this limit. `Hydro1DExam/laguerre_sod.c` already calls `gfs_pair_work_limit` (`nshare = 2`, `Δt = gfs_1d_dt` set at the start of `rk4_step`). Do not overwrite `gfs_*.dat`. Compare with the cap-only `gfs_pair_*.dat` from section 9, especially the blast, where the old closing faces were Mach 2 and the work of braking is negative, so `B = 0` must still allow `P0`. On the 2D paths the `Δt` passed to the limiter is `GAS_dtold`, the previous accepted step, not the RK4 stage fraction.
+
+---
+
+## 12. Kepler 407021 started; MUSCL is on
+
+406734 is still the baseline and was left running. The diagnostic run is 407021, `LAGFORCE_KEP_DE`, syn09, 3× H100, 4 ranks, `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_dual_Nx256`. The binary is `fe28651` with the host `exam.c` relinked. `exam_gpu.cu` is unchanged. Same disk as 406734. **[RUN]**
+
+Flags from the job, not from a guess:
+
+| | |
+|---|---|
+| `SEDOV_PHASE1` | 1 |
+| `GAS use_muscl` | 1 |
+| `GAS av_mode` | 5 (MUSCL + HLLC) |
+| `GAS gpu_enabled` | 1 |
+| time-stepping `way` | 1 (this is the RK4 path; the params comment still says KDK) |
+| `GFS_DUAL_ENERGY` | 0.5 |
+| `GFS_FLOOR_LOG` | 1 |
+
+The cell-centred HLL overwrite in `exam.c` runs only when `sedov_phase1_on() && !use_muscl`. This job does not take that branch. The face pressure is the MUSCL/HLLC state from `av_mode` 5.
+
+Step 1 of 407021: `E_int = 8.644e-4`, `n_de = 0`, `de_cum = 0`, `floor_cum = 0`, `dEtot = 0`, `n_pair = 0`. That `E_int` matches the thermal energy of the initial box. No `[RK4F]` line in the first steps. 406515–406519 stay held.
