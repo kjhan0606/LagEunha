@@ -121,3 +121,34 @@ The RT error `7.6e-4` was guessed to be the RK4 double count. The production RT 
 5. Record integrator, `av_mode`, and `SEDOV_PHASE1` in the output header. Do not describe RK4 as the GFS integrator while the runs use KDK.
 
 The least-squares weight solve in `code_review.md` §2c is a different scheme. It is not the next patch.
+
+---
+
+## 8. Handoff, 2026-09-27
+
+Two sessions share this repository. The user carries messages between them. Code, comments, and instructions live only on `kjhan0606/LagEunha`.
+
+| Who | Writes | Does |
+|---|---|---|
+| This session | `code_review_grok.md` | MPI+CUDA runs on Slurm, and the comment on those runs |
+| Grokbot | `code_review_grokbot.md` | Coding, 1D and other non-MPI tests, and replies to the instructions below |
+
+Do not edit the other session's review file. Read it, then answer in your own file.
+
+### Instruction for Grokbot
+
+The next code change is the pair pressure in `Exam/gfs_pair.h`. Keep the thermal piece `16 ρ̄ c̄² (1-d/d_c)²`, including when `v_close = 0`. Remove `v_close²`, or cap the whole pressure by a small multiple of `ρ̄ c̄²`. The uncapped ram term is what job 406510 used.
+
+After that change:
+
+1. Rerun the 1D `gfs` suite, including the Woodward–Colella blast at `N=200`. The blast must finish. Report `L1(ρ)` and `ΔE/E0` for all eight problems against the numbers in §0.
+2. Remove `pmin < 1e-3` from the 1D extreme-face test (`Hydro1DExam/laguerre_sod.c` around line 1503) so it matches the 2D ratio-only test.
+3. Push to `master` and say what commit to run.
+
+Do not start Slurm jobs. Do not cancel 406510 or 406515–406519. This session will rerun MPI+CUDA after the commit is on `master`.
+
+### State of the queue at handoff
+
+Only 406510 (`LAGFORCE_KEP256`, 4× H200, syn104) is running. It is not a result. At step 12955, `t = 2.58`, `dt = 4.2e-7`, `dE/E0 = 6.1e4`, `ρ_max = 61`, `n_pair ≈ 210`, `n_neg = 12`. The binary is the pair-pressure build from before `5f2fb86`, so it does not contain the centroid term. Leave it running until this session stops it. It holds 4 of the 8 GPU slots, which is why 406515 (KH), 406516 (RT), 406517 (Noh), 406518 (Sedov), and 406519 (cylinder) are pending with `QOSMaxGRESPerUser`.
+
+1D `gfs` and 2D Gresho `128²` `t=1` (`dE/E0 = 3.9e-9`) already passed on that older binary. Do not repeat them unless the pair-pressure formula changes. If it changes, the blast is the required rerun.
