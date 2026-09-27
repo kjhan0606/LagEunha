@@ -19,6 +19,24 @@
 #include "exam2d.h"
 #include "gfs_pair.h"
 
+/* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
+ * on (default off). The entropy K = P/rho^gamma is stress.K. It is set from
+ * P and rho on the first RK4 call when it is not positive, and SEDOV_PHASE1
+ * keeps it adiabatic (dK = 0). A cell whose ie falls below eta * ie_K,
+ * ie_K = K rho^gamma V/(gamma-1), takes ie_K instead of the P = 1e-6 floor.
+ * A shock only raises ie above ie_K, so shocked gas is not touched. */
+static double gfs_dual_energy_eta(void){
+	static int cached = 0;
+	static double eta = 0;
+	if(!cached){
+		const char *s = getenv("GFS_DUAL_ENERGY");
+		eta = (s && s[0]) ? atof(s) : 0.0;
+		if(!(eta > 0)) eta = 0;
+		cached = 1;
+	}
+	return eta;
+}
+
 #ifdef USE_CUDA
 #include "exam_gpu.h"
 /* Forward declaration — full signature matches exam_gpu_extract.c */
@@ -3354,6 +3372,7 @@ void updateDenW2Pressure2DBlend(
 	/* Update pressure, csound, and NS stress tensor */
 	int entropy_mode = GAS_ENTROPY_MODE(simpar);
 	postype K_floor = GAS_K_FLOOR(simpar);
+	double de_eta_stage = gfs_dual_energy_eta();
 	for(i=0;i<nbp;i++){
 		if(entropy_mode == 1){
 			/* P recovered from entropy variable K = P/rho^gamma.
@@ -3364,7 +3383,11 @@ void updateDenW2Pressure2DBlend(
 		} else {
 			bp[i].pressure = bp[i].ie/bp[i].volume*(Gamma-1);
 			if(bp[i].pressure <= 0){
-				bp[i].pressure = 1e-6;
+				/* GFS_DUAL_ENERGY: the adiabatic value, not 1e-6. */
+				if(de_eta_stage > 0 && bp[i].stress.K > 0 && bp[i].den > 0)
+					bp[i].pressure = bp[i].stress.K * pow((double)bp[i].den, (double)Gamma);
+				else
+					bp[i].pressure = 1e-6;
 				bp[i].ie = bp[i].pressure * bp[i].volume / (Gamma-1);
 			}
 		}
@@ -9475,6 +9498,26 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.w2backup = sbp[i].w2;
 	}
 
+	/* GFS_DUAL_ENERGY: give every particle an entropy on the first call.
+	 * The KH/Kepler IC leaves stress.K = 0. */
+	{
+		static int de_k_init = 0;
+		if(!de_k_init && gfs_dual_energy_eta() > 0){
+			int nk = 0;
+			for(i=0;i<VORO_NP(simpar);i++){
+				if(sbp[i].stress.K > 0) continue;
+				if(sbp[i].den > 0 && sbp[i].pressure > 0){
+					sbp[i].stress.K = sbp[i].pressure / pow((double)sbp[i].den, (double)Gamma);
+					nk++;
+				}
+			}
+			if(MYID(simpar) == 0)
+				fprintf(stderr, "[DUALE] eta=%g K set from P/rho^gamma on %d particles of rank 0\n",
+						gfs_dual_energy_eta(), nk);
+			de_k_init = 1;
+		}
+	}
+
 	/* Reset vsig_max at start */
 	if(av_mode >= 1){
 		for(i=0;i<VORO_NP(simpar);i++)
@@ -9791,6 +9834,48 @@ double exam2d_vph_rk4_int_blend(
 	double rk4e_floor_l = 0; int rk4e_neg_l = 0;
 	int rk4e_on = sedov_phase1_on()
 		|| (getenv("EUNHA_IC") && strcmp(getenv("EUNHA_IC"), "kepler") == 0);
+
+	/* GFS_DUAL_ENERGY: ie < eta*ie_K takes ie_K before the floor below.
+	 * GFS_FLOOR_LOG=1 prints up to 8 such cells per rank per step (before
+	 * the change), with R from the Kepler centre. Both off by default. */
+	double de_inj_l = 0; int de_n_l = 0;
+	{
+		double de_eta = gfs_dual_energy_eta();
+		static int flog = -1;
+		if(flog < 0){
+			const char *fl = getenv("GFS_FLOOR_LOG");
+			flog = (fl && fl[0] == '1') ? 1 : 0;
+		}
+		if((de_eta > 0 || flog) && GAS_ENTROPY_MODE(simpar) != 1){
+			postype kcx, kcy;
+			int nlog = 0;
+			kepler_center(&kcx, &kcy);
+			for(i=0;i<VORO_NP(simpar);i++){
+				if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+				if(!(sbp[i].volume > 0)) continue;
+				double den_i = (double)sbp[i].mass/(double)sbp[i].volume;
+				double ieK = (sbp[i].stress.K > 0)
+					? (double)sbp[i].stress.K * pow(den_i, (double)Gamma)
+					  * (double)sbp[i].volume / (double)(Gamma-1)
+					: 0.0;
+				int reset = (de_eta > 0 && ieK > 0 && (double)sbp[i].ie < de_eta*ieK);
+				if(flog && (reset || sbp[i].ie <= 0) && nlog < 8){
+					double dx = (double)(sbp[i].x - kcx), dy = (double)(sbp[i].y - kcy);
+					fprintf(stderr, "[RK4F] r%d x=%.5f y=%.5f R=%.4f den=%.4e ie=%.4e ie_K=%.4e ie/ie_K=%.3e vol=%.4e reset=%d\n",
+							MYID(simpar), (double)sbp[i].x, (double)sbp[i].y, sqrt(dx*dx+dy*dy),
+							den_i, (double)sbp[i].ie, ieK,
+							(ieK > 0 ? (double)sbp[i].ie/ieK : 0.0), (double)sbp[i].volume, reset);
+					nlog++;
+				}
+				if(reset){
+					de_inj_l += ieK - (double)sbp[i].ie;
+					de_n_l++;
+					sbp[i].ie = (postype)ieK;
+				}
+			}
+		}
+	}
+
 	if(rk4e_on && GAS_ENTROPY_MODE(simpar) != 1){
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
@@ -9833,32 +9918,38 @@ double exam2d_vph_rk4_int_blend(
 
 	if(rk4e_on){
 		double eh_l = 0, ep_l = 0, eh_g, ep_g, fl_g;
-		int ng_g;
+		double ei_l = 0, ei_g = 0, dei_g = 0;
+		int ng_g, dn_g = 0;
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
 			double m = (double)sbp[i].mass;
 			eh_l += (double)sbp[i].ie + 0.5*m*((double)sbp[i].vx*(double)sbp[i].vx
 					+ (double)sbp[i].vy*(double)sbp[i].vy);
+			ei_l += (double)sbp[i].ie;
 			ep_l += m*(double)kepler_phi(sbp[i].x, sbp[i].y);
 		}
 		MPI_Allreduce(&eh_l, &eh_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&ep_l, &ep_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&ei_l, &ei_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&de_inj_l, &dei_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&de_n_l, &dn_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&rk4e_floor_l, &fl_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&rk4e_neg_l, &ng_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
 		long long npair_l = gfs_pair_face_ends, npair_g = 0;
 		MPI_Allreduce(&npair_l, &npair_g, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM(simpar));
 		if(MYID(simpar)==0){
-			static double Et0 = 0, Eh0 = 0, fl_cum = 0;
+			static double Et0 = 0, Eh0 = 0, fl_cum = 0, de_cum = 0;
 			static int st = 0, first = 1;
 			st++;
 			fl_cum += fl_g;
+			de_cum += dei_g;
 			double et = eh_g + ep_g;
 			if(first){ Et0 = et; Eh0 = eh_g; first = 0; }
 			fprintf(stderr,
-				"[RK4E] step=%d dt=%.3e E_hyd=%.6e E_pot=%.6e E_tot=%.6e dEtot/|Etot0|=%.3e dEhyd/Ehyd0=%.3e n_ie_le0=%d floor_inj=%.3e floor_cum=%.3e n_pair=%lld\n",
+				"[RK4E] step=%d dt=%.3e E_hyd=%.6e E_pot=%.6e E_tot=%.6e dEtot/|Etot0|=%.3e dEhyd/Ehyd0=%.3e n_ie_le0=%d floor_inj=%.3e floor_cum=%.3e n_pair=%lld E_int=%.6e n_de=%d de_inj=%.3e de_cum=%.3e\n",
 				st, (double)Dtime, eh_g, ep_g, et,
 				(Et0 != 0 ? (et-Et0)/fabs(Et0) : 0), (Eh0 != 0 ? (eh_g-Eh0)/Eh0 : 0),
-				ng_g, fl_g, fl_cum, npair_g);
+				ng_g, fl_g, fl_cum, npair_g, ei_g, dn_g, dei_g, de_cum);
 			fflush(stderr);
 		}
 	}
