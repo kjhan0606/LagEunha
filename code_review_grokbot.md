@@ -281,3 +281,182 @@ P  ≤ ie_i /(nshare A s_i dt)  if s_i > 0,   same for j
 
 - `716f6bf` 1D: pair work limit uses `m e`. `GFS_DUAL_ENERGY` smoke switch and counters.
 - `75f00ff` RK4 blend: `GFS_DUAL_ENERGY`, `E_int` / `n_de` / `de_inj` / `de_cum` in `[RK4E]`, and `GFS_FLOOR_LOG`.
+
+---
+
+## Reply to §12–14, the hole gas and a GIZMO-style disk
+
+Tags. **[CODE]** read in the source (ours at `2d56133`, GIZMO in `/workspace/gizmo`). **[RUN]** run on the box. **[CALC]** an estimate from IC numbers. **[HYP]** plausible, not measured.
+
+### Short answer
+
+1. I agree with §14. The created energy comes from the cold floor gas in the hole, `R = 0.5–1.9`. It does not come from the disk. We do not freeze that gas. **[RUN, from your logs]**
+2. GIZMO never meets this problem in its own disk run. For MFM/MFV the hole is empty: particles are removed inside `r < 0.5`. The floor `Σ ≥ 0.01` and the soft edges of Eq. 34 are only for mesh codes. **[CODE, paper §4.2.4, footnote 24]**
+3. I added the two GIZMO safeguards, both off by default: an entropy switch for cold, gravity-dominated cells, and a half-limit on `ie`. I also added the Hopkins mesh-code disk as an IC option. **[CODE]**
+4. When off, nothing changes. The 1D suite is byte-identical, and the compile warnings are the same. **[RUN]**
+5. Neither safeguard conserves energy. What they do is stop spurious heating from reaching the pressure, and stop the refill to `P = 1e-6`. The new `[RK4E]` columns measure the energy they add or remove. **[CODE, RUN]**
+
+### What GIZMO does [CODE]
+
+- **The hole is vacuum.** Footnote 24: particle codes use a sharp ring with nothing inside `r = 0.5`. Eq. 34 (`Σ = 0.01 + …`, the `(r/0.5)^3` inner ramp, the `[1 + (r−2)/0.1]^−3` outer edge, `P = 1e-6`, softened potential) exists because "most mesh-based schemes require non-vacuum boundaries".
+- **Moving meshes fail this test too.** Hopkins ran more than 200 FVMHD3D variants and some AREPO runs. With the simple setup, "the disk goes unstable and the angular momentum evolution tends to be corrupted within a few orbits". Our cliff at 0.6 of an inner orbit is earlier than that, but it is the same family of failure.
+- **The entropy switch** (`kicks.c` 261–312, macro `ENERGY_ENTROPY_SWITCH_IS_ACTIVE`):
+  - `e_potential = m |g| h`. Here `g` is gravity only and `h = Get_Particle_Size` (about `sqrt(area)` in 2D).
+  - `e_thermal = m · max(0.5 u_old, u_new)`, where `u_new` is the energy-equation result.
+  - If `0.01 · e_potential > e_thermal`, then `du/dt = −(P/ρ) ∇·v`. That is the adiabatic change and nothing else.
+  - A kinetic-energy criterion is computed, then overwritten (`do_entropy = 0`). The comment says the gravity form was cleaner.
+  - The macro is **commented out** in `allvars.h`: "even for pure hydro, this isn't recommended". The paper (App. D) used `α ≈ 0.001`, "almost never triggered". The code line has 0.01.
+- **The half-limit** (`kicks.c:336`, `predict.c:226`): if `u_new < 0.5 u_old`, then `u = 0.5 u_old`. This one is always on. After it, only `MinEgySpec` applies, which is 0 by default. There is no refill.
+
+### What is new
+
+All of it is off by default.
+
+**Entropy switch and half-limit, RK4 blend path** (`Exam/exam.c`) **[CODE]**
+
+| env | default | meaning |
+|---|---|---|
+| `GFS_ENTROPY_SWITCH` | 0 | 1 turns the switch on |
+| `GFS_ES_COEF` | 0.01 | coefficient in `coef · m|g|h > max(0.5 ie_n, ie_E)` |
+| `GFS_HALF_LIMIT` | same as `GFS_ENTROPY_SWITCH` | `ie < 0.5 ie_n` becomes `0.5 ie_n`. Set 0 or 1 to override |
+
+- `g` is `kepler_accel` plus `GAS_ACC`, at the new position. The hydro acceleration is not gravity and is not included. `h = sqrt(V)`. `ie_E` is the energy-equation value.
+- A switched cell gets `ie = ie_n (V_n/V)^(γ−1)`. This is `K = P/ρ^γ` held over the step at fixed mass. It is the exact integral of GIZMO's `−(P/ρ)∇·v`.
+- **Where it acts.** Once per step, on the host. It comes after the final RK4 combination, `exam2dUpdateVol`, and the `w2` update. It comes before `GFS_DUAL_ENERGY` and the `P = 1e-6` floor. That is where GIZMO's kick applies it.
+- **Why not in the stages.** Anything written into `ie` during a stage survives the RK4 undo (`ie −= k3ie` only removes the increment). This is how the CPU stage floor already leaks into the final `ie`. Acting once, on the final state, cannot leak. It also replaces that leaked stage floor for a switched cell, and bounds it for any other cell.
+- `ie_n` and `V_n` are saved right after the stage-1 density update. They must travel with the particle, because `postStage` migrates particles every stage. So they are kept in `stress.E_inv_xx` and `E_inv_xy`. Only LagMFM (`av_mode 4`) uses those fields. The GPU path uploads them but writes them back only in the LagMFM density call. The switch refuses to run for `av_mode 4` and for `entropy_mode 1`. I did not change the struct, so a host-only relink of `exam.c` stays safe.
+- **GPU runs.** The GPU kernels return `die` and `a`. The RK4 stages and the final combination of `ie` are on the host. So the switch works in GPU runs, the same way as `GFS_DUAL_ENERGY`. The GPU stage path is not touched. Within a step, stage pressures still come from the energy-equation stage `ie`.
+- **Not covered.** The KDK blend path. Also, if `GAS_FCENTROID > 0`, the centroid shift changes `V` with no flow, and a switched cell treats that as compression.
+- **Log.** When either switch is on, a banner `[ESW]` is printed once. Six columns are added at the end of `[RK4E]`: `n_es es_de es_cum n_half hl_de hl_cum`. `es_de` is `Σ(ie − ie_E)` from the switch, and `hl_de` is the same for the half-limit. The existing keys do not change. The ledger is now `dEtot·|Etot0| ≈ floor_cum + de_cum + es_cum + hl_cum`.
+
+**Hopkins disk IC** (`Exam/KH/util.c`, the `EUNHA_IC=kepler` branch) **[CODE]**
+
+| env | default | meaning |
+|---|---|---|
+| `EUNHA_KEPLER_PROFILE` | unset (old IC) | `hopkins` selects Eq. 34 |
+| `EUNHA_KEPLER_FLOOR` | 0.01 | floor, relative to the disk density 1 |
+| `EUNHA_KEPLER_WIDTH` | `0.05·Rout` = 0.4 | outer edge width |
+
+`ρ = floor + (R/Rin)^3` for `R < Rin`, `+1` for `Rin ≤ R ≤ Rout`, and `+[1 + (R−Rout)/w]^−3` for `R > Rout`. Our radii are exactly 4× Hopkins' (2 and 8 against 0.5 and 2). So `w = 0.1 × 4 = 0.4`, whether it is scaled by `Rin` or by `Rout`. The disk is flat (`Σ = 1`), as in the paper, not `1/R` as in our default. `P = 1e-6` and `v = R (R² + ε²)^−3/4` are unchanged. The old IC has no pressure-gradient term (`dP/dR = 0`), and neither does this one.
+
+**1D** (`Hydro1DExam/laguerre_sod.c`). Same env names. 1D has no gravity, so the switch uses GIZMO's kinetic form (the one GIZMO computes and then discards): `coef · (E_th + ½ m max_nbr |Δv|²) > E_th`. The half-limit is the same rule as in 2D. **[CODE]**
+
+### Tests on the box [RUN]
+
+No 2D run. The full build needs MKL/FFTW-MPI (Intel), CAMB and `nvcc`, and none of them is here. What I did run:
+
+**IC generator.** `review_tests/esw/ic_test.c` includes the `kepler` branch of `util.c` verbatim and evaluates it on the 256² grid of the 24-wide box (`ε = 0.047`). The default IC reproduces the logs: `E_pot = −17.5814`, `E_tot = −8.7917`, `E_int = 8.64e-4`. So the harness is the real code.
+
+| | default | hopkins |
+|---|---:|---:|
+| gas mass | 75.97 | 209.71 |
+| `E_pot` | −17.581 | −42.928 |
+| `E_kin` | 8.789 | 21.458 |
+| `\|Etot0\|` | 8.79 | 21.47 |
+| mass at `R < 1.9` | 0.586 | 3.98 |
+| ρ at `R = 0.5–1` | 1.0e-3 – 1.6e-3 | 0.027 – 0.13 |
+| ρ at `R = 1.5–1.9` | 0.027 – 0.33 | 0.44 – 0.87 |
+| ρ at `R = 2.1–7.9` | 0.18 – 0.80 (`2/R`) | 1.01 |
+| ρ at `R = 9–12` | 1.0e-3 | 0.011 – 0.033 |
+| max `\|v²/R − g\|/g` | 8e-16 | 8e-16 |
+
+The velocities match the softened `kepler_accel` to round-off in both. Note that the Hopkins hole is not light. Its `(R/Rin)^3` ramp puts 7× more mass inside `R = 1.9`.
+
+**Which cells the switch takes at t = 0.** Same harness, `ie = 1.32e-8` per cell:
+
+| R | default, coef 0.01 | hopkins, 0.01 | default, 0.001 | hopkins, 0.001 |
+|---|---:|---:|---:|---:|
+| < 0.25 | all | all | all | all |
+| 0.25–1.5 | all | all | none | all |
+| 1.5–1.9 | all | all | 86% | all |
+| 1.9–7.9 | all | all | all | all |
+| 8.1–8.5 | none | 87% | — | — |
+| > 8.5 | none | none | none | none |
+
+With 0.01 the whole hole and the whole disk are switched. The switch leaves a cell once its `ie` exceeds `0.01 m|g|h`. For the default floor (`ρ = 1e-3`) at `R = 1`, the margin is only a factor of 1.6. So heated floor gas there drops out of the switch quickly. **[RUN, CALC]**
+
+**Unit test of the 2D block.** `review_tests/esw/es_unit.c` includes the new `exam.c` block verbatim, on mock cells. All checks pass.
+- 200 steps of compression and expansion (±50%), with the energy equation returning garbage: `K` returns to `K0` within `2e-16`.
+- A switched hole cell with `ie_E = −8 ie_n` gets exactly the adiabatic value. `es_de = +9.0 ie_n`.
+- The same drain in an unswitched cell (`R = 10`) gives `ie = 0.5 ie_n`, and `hl_de = 8.5 ie_n`.
+- A heated edge cell (`ie_E = 10 ie_n`) is pulled back to adiabatic, with `es_de = −9 ie_n`. At `3000 ie_n` it leaves the switch.
+- Both off: untouched.
+- Half-limit alone, a cell asked for `−2 ie_n` every step: `ie` halves each step, and the total injected over 10 steps is `3.0 ie0`.
+
+What this says **[CALC]**. For one deep event, the switch and the half-limit inject about as much as the `P = 1e-6` refill did (9 `ie_n` against 8–9). That energy went into kinetic energy through the face force before the `ie` update. No `ie` rule can take it back. What changes:
+- The refill disappears (`floor_cum`, `n_ie_le0` should stay 0).
+- Spurious heating from converging faces never reaches `P` in switched cells (`es_de < 0` there).
+- A drained cell keeps its adiabatic `P`. With the half-limit, its `ie` shrinks geometrically, so its own share of injection is bounded while the drain is proportional to `ie`.
+
+**[HYP]** The cliff is a feedback loop: created energy → hotter floor gas → larger face pressures → deeper drains. The switch cuts the first link for the cold gas. If the drain is driven by `ρ Δv²` at shearing faces and not by `P`, the switch will not stop it. Then the energy fix is the face-pressure budget limit (design in the previous reply), not an `ie` rule.
+
+### 1D suite, switch on and off [RUN]
+
+`N = 200`, Shu–Osher also at `N = 800`. Run from `/workspace/lagEunha/scratch_esw1d` with `GFS_PREFIX` set to `base`, `off`, `es`, `half`, `esonly`, or `es1e3`. No `gfs_*.dat` or `gfs_pair_*.dat` was written.
+
+- **Off:** all eight `.dat` files and the summary line are byte-identical to the unmodified source (`cmp`).
+- **Half-limit alone** (`GFS_HALF_LIMIT=1`): byte-identical on all eight, `nhalf = 0`. No problem in the suite loses half its `e` in one step.
+
+| problem | L1(ρ) off | L1(ρ) switch 0.01 | ΔE/E0 off | ΔE/E0 switch 0.01 | cell-steps switched | `esde` |
+|---|---:|---:|---:|---:|---:|---:|
+| Sod | 5.858e-3 | 5.858e-3 | 1.26e-8 | 1.26e-8 | 0 | 0 |
+| blast | 5.462e-2 | **0.2159** | 1.45e-5 | **2.75e-2** | 5294 | −7.56 |
+| Shu–Osher N=200 | 0.9019 | 0.9019 | 3.11e-7 | 3.11e-7 | 0 | 0 |
+| Shu–Osher N=800 | 0.5713 | 0.5713 | 2.75e-7 | 2.75e-7 | 0 | 0 |
+| Noh | 1.363e-2 | 1.549e-2 | 2.00e-5 | 5.92e-4 | 2017 | −3.0e-4 |
+| Lax | 4.793e-3 | 4.793e-3 | 2.05e-7 | 2.05e-7 | 0 | 0 |
+| double rarefaction | 2.859e-2 | 2.859e-2 | 5.5e-10 | 5.5e-10 | 0 | 0 |
+| collision | 0.1046 | 0.1046 | 3.72e-6 | 3.72e-6 | 0 | 0 |
+| contact | 4.532e-3 | 4.532e-3 | 1.61e-7 | 1.61e-7 | 0 | 0 |
+
+- `nhalf = 0` everywhere, also with the switch on. The result for switch-only is identical to switch plus half-limit.
+- The kinetic switch fires where cold gas meets a shock (blast and Noh). There it replaces shock heating by adiabatic compression and destroys energy (`esde < 0`). The blast gets 4× worse. This is the failure GIZMO warns about, and the reason GIZMO dropped the kinetic form.
+- With `GFS_ES_COEF=0.001`: the blast is byte-identical to off (`nes = 0`). Noh has `nes = 1757`, and ΔE/E0 goes from 2.0049e-5 to 2.0226e-5. The other six are unchanged.
+- The 2D switch uses gravity, not `|Δv|`, so the 1D blast result does not carry over directly. But it is a warning. A disk cell hit by a real shock stays switched until its `ie` passes `0.01 m|g|h`, so its first shock-heating step is lost. `es_cum < 0` in the 2D log would show this.
+
+### Compile [RUN]
+
+`review_tests/syncheck.sh` (`mpicc -fsyntax-only -Wall -DXYZDBL -DGOTPM`):
+- `exam.c`: 287 warnings with and without `-DUSE_CUDA`, 0 errors. That is the baseline.
+- `exam_gpu_extract.c`: 0 and 16, unchanged.
+- `Exam/KH/util.c`: 26 and 27, the same as before the change.
+- `laguerre_sod.c` with `gcc -Wall`: 2 warnings, the same as before.
+
+No link. `exam_gpu.cu` is not touched.
+
+### Recommended next Kepler run
+
+Keep 406515–406519 held.
+
+1. **Primary, a GIZMO-style disk.** The binary at the tip of `master`, with 406734's settings (RK4 `way = 1`, `SEDOV_PHASE1 = 1`, `use_muscl = 1`, `av_mode = 5`, `EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, `t_stop = 177.72`), plus:
+   ```
+   EUNHA_IC=kepler  EUNHA_KEPLER_PROFILE=hopkins
+   GFS_ENTROPY_SWITCH=1          # half-limit follows (GFS_HALF_LIMIT=1)
+   GFS_ES_COEF=0.01              # default; say so in the report
+   GFS_FLOOR_LOG=1               # [RK4F] only fires now if ie <= 0
+   ```
+   Leave `GFS_DUAL_ENERGY` unset so the ledger has one mechanism. Check that `EUNHA_KEPLER_CX/CY = 12` is set. `kepler_accel` defaults to `(2, 2)`, while the IC defaults to the box centre. Check `GAS_FCENTROID` too (see above).
+2. **Control, if there is a second slot.** The same, without `EUNHA_KEPLER_PROFILE`. That separates the switch from the IC.
+
+The initial numbers for the Hopkins IC are `E_pot ≈ −42.93`, `|Etot0| ≈ 21.47`, `E_int(0) = 8.64e-4`. Expect `[ESW] entropy_switch=1 coef=0.01 half_limit=1 active=1` once.
+
+**Columns to watch in `[RK4E]`:**
+- `dEtot/|Etot0|`, against `(floor_cum + es_cum + hl_cum)/|Etot0|`. They should agree.
+- `es_cum`, with its sign. Positive: drained cells are being topped up. Negative: spurious heating is being removed. A large negative value means the disk is being shocked for real.
+- `hl_cum` and `n_half`. How much the half-limit adds.
+- `floor_cum` and `n_ie_le0`. These should stay 0.
+- `n_es`. At t = 0 the switch should take about 25500 cells (every cell inside `R ≈ 8.1` and most of `8.1–8.5`), which is 39% of the 65536 cells. A steady fall means cells are heating out of the switch.
+- `E_int`. It should stay within a factor of a few of `8.6e-4`. In 407021 it was 12× by `t = 8`.
+- `n_pair` and `dt`. A falling `dt` announced the cliff last time.
+
+**Pass criterion:** `dEtot/|Etot0|` stays on the `10^{-4}` slope (about `1e-4` per unit time, as in 406734 before `t = 9`), with no jump, for several inner orbits: `t > 3 × 17.8 ≈ 53`. The target is 10 inner orbits, `t = 177.7 = t_stop`. Please report the time of the first `|ΔE| = 10^{-3}` and `10^{-2}` crossings, as in §14. Only after a pass should anything go to 406515–406519.
+
+If it still falls off the cliff near `t ≈ 10`, with `es_cum` carrying the jump, then an `ie` rule is not enough. The next step is the face-pressure budget limit (previous reply), which needs `nvcc` to check the GPU kernel.
+
+### Commits
+
+- `aa2d091` RK4 blend: `GFS_ENTROPY_SWITCH`, `GFS_ES_COEF`, `GFS_HALF_LIMIT`, and the `[RK4E]` columns.
+- `ee0ea0e` Kepler IC: `EUNHA_KEPLER_PROFILE=hopkins`, `EUNHA_KEPLER_FLOOR`, `EUNHA_KEPLER_WIDTH`.
+- `d87f96d` 1D: the same switches, with the kinetic criterion.
+
+The test sources (`ic_test.c`, `es_unit.c`, and their outputs) are in `/workspace/lagEunha/review_tests/esw/` on the box. They are outside the repository.
