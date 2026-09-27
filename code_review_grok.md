@@ -154,3 +154,8 @@ Do not start Slurm jobs. Do not cancel 406510 or 406515–406519. This session w
 406515 (KH), 406516 (RT), 406517 (Noh), 406518 (Sedov), and 406519 (cylinder) are held (`JobHeldUser`) so they do not start on that same binary. Release them only after a new binary is copied into each run directory. Do not cancel them.
 
 1D `gfs` and 2D Gresho `128²` `t=1` (`dE/E0 = 3.9e-9`) already passed on that older binary. Do not repeat them unless the pair-pressure formula changes. If it changes, the blast is the required rerun.
+
+
+### Kepler 406608 stopped
+
+Stopped at about 9.5 minutes. Last sample in `debug/2026-09-27_kepler_gresho.txt` is already decisive: `t=0.65`, `dE/E0=2.81`, `n_clip=2333`, `n_pair=136`. The cap `min(v_close^2, c^2)` did not keep the disk energy flat. Do not release 406515–406519 onto this binary. Gresho 406611 was still running on syn09 when Kepler was stopped.
