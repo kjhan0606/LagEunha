@@ -150,3 +150,134 @@ Compiled with `mpicc -fsyntax-only -Wall -DXYZDBL -DGOTPM`, with and without `-D
 3. Pair pressure. Replace `ρ̄ c̄²` by `0.5(ρ_i c_i² + ρ_j c_j²)`. It is identical at uniform density and does not inflate across Rin. Keep the amplitude until `[RK4E]` shows the pair terms are what adds energy. A law that is silent on circular shear is possible (gate on `v_close` from `∇·v` rather than the pair), but nothing in the log yet requires it.
 4. Positivity on the cold disk. The right tool is a dual energy switch. Keep `E`, and carry the entropy `K = P/ρ^γ`. Use `ie` from `K` where `ie < η_de · ½ m |v − v̄_nbr|²` (with `η_de ≈ 1e-3`, using the velocity relative to neighbours, not the orbit), and from `E` otherwise. `SEDOV_PHASE1` sets `dK = 0`, so `K` would be adiabatic away from shocks, which is right for this disk. It needs `K` initialised from the IC and a shock flag. I have not written it. I will if Grok CLI's `[RK4E]` shows negative `ie` or floor energy is significant.
 5. Low priority, KDK. Textbook KDK keeps these orbits (the ballistic test above). What this KDK adds is the clip rescale of the whole `v`, the centroid shift after the second kick, the XSPH offset in the drift, and a hydro-set `dt` with no orbital limit. The clip is the only one of these that RK4 does not share. It is the first suspect for the orbit loss the author sees.
+
+---
+
+## Reply to §10–11, work limit and Kepler 406734
+
+Tags. **[CODE]** read at `64ab6c1`. **[RUN]** run on the box (1D, or a standalone script in `review_tests/`). **[CALC]** an estimate from IC numbers. **[HYP]** plausible, not measured.
+
+### Short answer
+
+1. The work limit is correct, and it is silent on the whole 1D suite. All eight problems are bit-identical to cap-only. The blast still finishes (`L1 = 0.0546`, `ΔE/E0 = 1.45e-5`). It still finishes when the budget is squeezed to almost zero. **[RUN]**
+2. The 1D call had a units bug. It passed the specific `e` as the budget. Fixed in `716f6bf`. The limit is still silent after the fix. **[CODE, RUN]**
+3. In 2D the root, the symmetry, and `nshare = 6` are fine. `GAS_dtold` is the weak point: step 1 uses `dtold = 1e-7`, so step 1 is not limited, and the error scales as `Dtime/dtold` (linear for braking, squared at `q = 0`). **[CODE]**
+4. The floor energy is not a slow leak. Each event adds about 8 cells' worth of `ie`, and `floor_cum` is already 3.5× the thermal energy of the whole box. I added a dual-energy switch (`GFS_DUAL_ENERGY`, off by default), `E_int` in `[RK4E]`, and a per-cell floor log (`GFS_FLOOR_LOG`) in `75f00ff`. The switch fixes the value a drained cell gets. On its own it will not remove the energy error. The next run is mainly meant to find where the events happen. **[CODE, CALC]**
+
+### 1D suite with the work limit [RUN]
+
+The section-9 `gfs_pair_*.dat` files are not on this box. I rebuilt cap-only from `79af847` and ran it next to the new code. `N = 200`, Shu–Osher at `N = 800`, run as `GFS_PREFIX=… ./laguerre_sod gfs 200` and `gfs 800 shuosher` from a directory that links the eight reference folders. Outputs are `gfs_pair_*.dat` (cap-only), `gfs_wlimbug_*.dat` (`64ab6c1` as committed), and `gfs_wlim_*.dat` (with the unit fix), all in the scratch area. No `gfs_*.dat` was written.
+
+| problem | L1(ρ) cap-only | L1(ρ) work limit | ΔE/E0 cap-only | ΔE/E0 work limit | steps | dt_min | retries | n_pair | limited faces | e floor hits |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Sod | 5.858e-3 | 5.858e-3 | 1.26e-8 | 1.26e-8 | 282 | 6.4e-4 | 0 | 0 | 0 | 0 |
+| blast | 5.462e-2 | 5.462e-2 | 1.45e-5 | 1.45e-5 | 7153 | 2.6e-7 | 0 | 59571 | 0 | 0 |
+| Shu–Osher (N=800) | 0.5713 | 0.5713 | 2.75e-7 | 2.75e-7 | 9685 | 1.4e-4 | 0 | 0 | 0 | 0 |
+| Noh | 1.363e-2 | 1.363e-2 | 2.00e-5 | 2.00e-5 | 2126 | 1.0e-4 | 0 | 0 | 0 | 0 |
+| Lax | 4.793e-3 | 4.793e-3 | 2.05e-7 | 2.05e-7 | 938 | 4.4e-5 | 0 | 3557 | 0 | 0 |
+| double rarefaction | 2.859e-2 | 2.859e-2 | 5.5e-10 | 5.5e-10 | 275 | 5.5e-4 | 0 | 0 | 0 | 0 |
+| collision | 0.1046 | 0.1046 | 3.72e-6 | 3.72e-6 | 3815 | 6.1e-6 | 0 | 16 | 0 | 0 |
+| contact | 4.532e-3 | 4.532e-3 | 1.61e-7 | 1.61e-7 | 640 | 6.2e-5 | 0 | 2484 | 0 | 0 |
+
+All eight finish. The output files are byte-identical (`cmp`) for all three builds. That covers cap-only, `64ab6c1`, and the unit fix, plus the unit fix with `GFS_DUAL_ENERGY=0.5`.
+
+- **The units bug [CODE].** `face_st` passed `P[i-1].e, P[i].e`. In the 1D code `e` is specific (`eos_e = p/((γ-1)ρ)`, `ae = …/m`). The 2D paths pass the cell's total `ie`, which is right. With specific `e` the budget was `1/m` too large (about 200/ρ at `N = 200`), so the 1D limit could never act. `716f6bf` passes `m e`. The `gfs` line now also prints `nwlim` (faces the limit reduced), `nde` and `deinj`.
+- **Margin [RUN].** I logged the smallest `Jmax/(P0 A dt)` over every pair evaluation. The blast has 10.7, on a separating face (`q/c = +1.08`). Lax has 17, contact 16, and collision 54. The limit is an order of magnitude away from acting anywhere in 1D.
+- **Blast with the budget squeezed [RUN].** I scaled `nshare` so that `B → 0`:
+
+  | nshare | limited faces | L1(ρ) | ΔE/E0 | steps |
+  |---:|---:|---:|---:|---:|
+  | 2 (default) | 0 | 0.0546 | 1.45e-5 | 7153 |
+  | 100 | 158 | 0.0552 | 1.49e-5 | 7154 |
+  | 1000 | 4913 | 0.0568 | 2.38e-5 | 7460 |
+  | 1e4 | 15955 | 0.0586 | 6.26e-5 | 8465 |
+  | 1e6 | 256463 | 0.0633 | 2.62e-5 | 35499 |
+
+  With `B ≈ 0` the blast still finishes, with no retries. Braking is always allowed up to a full reversal, `J = 2μ|q|`. So the limit cannot bring back the thermal-only stall near step 90. That stall came from too small a `P0`, and the limit never touches braking. The same holds at `N = 100, 400, 800` (`L1` 0.158, 0.0260, 0.0126, unchanged).
+- `min(ie_i, ie_j)` in place of the sum (see below) is also silent on all eight problems (blast margin 9.6).
+
+### Review of `gfs_pair_work_limit` [CODE]
+
+**Root.** `W(J) = qJ + J²/(2μ)` is the change in relative kinetic energy. `W = B` gives `Jmax = μ(√(q² + 2B/μ) − q)`. That is the positive root, and it is at least `2μ|q|` when `q < 0`. The guards return `p0` when `dt`, `A`, or `m` are not positive. That is right for step 0, but see below.
+
+**Symmetry and MPI.** `p0`, `A`, `q = (v_j − v_i)·e_r`, `μ`, and `B` are all symmetric under `i ↔ j`, and `GAS_dtold` is global. The owner and the ghost copy see the same `ie`, because padding copies the stage state. The CPU stage floor is applied to all `nbp`, ghosts included. So the limited `P` is the same on both ranks, and the force stays antisymmetric to round-off. The GPU kernel and `cpu_reference_force_csr` read `pie_in` / `parts->ie`, which are uploaded from `bp->ie` in the same force call as `v`. So `q` and `ie` are at the same stage level. Two small differences between CPU and GPU:
+- The CPU stage floor has already reset `ie ≤ 0` to `1e-6 V/(γ-1)` when the force runs. The GPU floors only `P`, so its `B` term is 0 for that cell. This is tiny.
+- `pie_in` and `pmass` are `float`. That is fine for `B`.
+
+**`GAS_dtold` versus the step.** `kh.c` sets `GAS_dtold = 1e-7` before step 1, then `dt` after each step. On the RK4 path the stage-1 force runs before `Dtime` is known. Stages 2–4 use the same `dtold`, even though `Dtime` is known by then. The impulse applied over the step is `Σ w_k P_k A Dtime`, while the cap assumed `dtold`. So:
+- `Dtime > dtold` (dt grows): the cap is too loose by `Dtime/dtold`. The work is too large by that factor for braking, and by its square at `q = 0`. After the 4.70e-4 step in §11, a return to 6.4e-4 is 1.37, which gives 1.9× the budget at `q = 0`. `nshare = 6` absorbs this unless one cell has several pair faces at the cap.
+- Step 1: `Dtime/dtold ≈ 2e5` on Kepler. The limit is off for that step. This is harmless only because `n_pair = 0` at step 1.
+- `Dtime < dtold` (DTETA, a sharp CFL drop): the cap is too tight by the same ratio. The energy is safe, but the barrier is weaker for one step.
+- There is no dt growth cap in the blend integrators.
+
+  Fix: add a global `gfs_pair_dt` that the RK4 driver sets to `dtold` before stage 1 and to `Dtime` before stages 2–4. Pass it to the kernel as a new param. Do not overload `params.dtold`, which also feeds `get2dUpqradRk4`. Also cap dt growth at 1.25× per step. Stage 1 carries weight 1/6, so the error that remains is `(Dtime/dtold − 1)/6`.
+
+**`nshare = 6`.** A 2D Voronoi cell has 6 faces on average, and 4 to about 10 individually. Only faces with `d < d_c` draw on `B`. A cell rarely has more than 2 of those, so 6 is safe, even conservative. The real gaps are elsewhere:
+- **The budget is summed, but the debit is split.** On the phase-1 path, every face uses `ua = vns` (HLL), so cell `i` pays `J (vns − v_{n,i})`. With a large impedance contrast, `vns` sits near the heavy side, and the light cell pays nearly all of `W`. With `ie_hot > 5 ie_cold`, `B = (ie_i + ie_j)/6` can exceed the cold cell's own `ie`. `B = 2 min(ie_i, ie_j)/nshare` closes this. It is a one-line change in the shared header and is silent in 1D.
+- **Only pair faces are limited.** Riemann faces draw on the same `ie` with no cap.
+
+### Where the floor energy comes from [CALC, HYP]
+
+Numbers from §11 and the IC (`P = 1e-6` everywhere, `Lx = 24`, `256²`, `Δ = 0.094`, cell `ie = 1.3e-8`, box `Σ ie = 8.6e-4` for `γ = 5/3`):
+- `floor_cum = 3.0e-3` at `t = 5.18` is **3.5× the thermal energy of the whole box**. After 0.3 of an inner orbit, the floor, not the hydro, sets the thermal state of the reset cells.
+- Per step, `3.0e-3/7837 = 3.9e-7`, spread over 1–9 cells. That is about `1e-7` per event, or 8 cell `ie`. The cells are driven far below zero within one step. They do not creep down to it.
+- Rate: `1.3e-3` per unit time over the last 0.5. Linear to `t = 177.7` gives `dEtot/|Etot0| ≈ 2.6e-2`. More if the pair count keeps rising.
+
+Candidates, with numbers from `review_tests/hll_shear_face.py`. That script uses the same HLL average as `hll_star_state`. With `SEDOV_PHASE1 = 1` and `use_muscl = 0`, it is used on **every** face, with cell-centre states.
+1. **Lattice shear seen as compression [CALC].** Keplerian shear gives a normal jump `Δv_n ≤ 0.75 Ω Δ` across a face. For `|Δv_n| ≫ c`, the HLL average has `P* ≈ (γ-1) ρ u c/2` on a diverging face and `P* ~ ρ u²` on a converging face (`u = |Δv_n|/2`). At `u/c = 10`, that is 4.5 P and 109 P. At `R = 2` in the disk, `Δv_n/c = 19`. The diverging face alone drains a cell in `0.9/Ω`. The converging faces heat it about 24 times faster. So a first-order disk should **heat**, turning orbital KE into `ie`. `E_tot` cannot show this, because it is conserved. `E_int` can.
+2. **The central floor gas [CALC, HYP].** `ρ = 1e-3` on orbits around the softened mass. At `R = 0.05–0.1`, `Ω dt = 0.02–0.04` and `Δv_n/c = 40–50`. One HLL face changes `ie` by `+1.4…3.3 ie` (converging) or `−0.03…0.06 ie` (diverging) per step. The face set also turns over quickly there. A cell whose faces reorder between RK4 stages can land at `−several ie`. That matches the 8 `ie` per event and the small, fluctuating `n_ie_le0`. Most likely the floor events are at `R < 0.3` and not in the disk.
+3. **Pair faces with an uneven split**, as above. This is bounded by `B`, so it is at most 1/6 of the cell `ie` per face and step. It cannot give 8 `ie`.
+4. **The RK4 undo carries the stage floor [CODE].** CPU stage floors enter the final `ie` but are not counted in `floor_cum`. The GPU does not floor `ie` in stages. This matters for the ledger, not as a source.
+
+The `[RK4F]` log added below tells 2 apart from 1 and 3 by `R`.
+
+### Fix
+
+**Why dual energy alone will not flatten `E_tot` [CALC].** A cell with `ie < 0` has already gained more kinetic energy than it had internal energy. Refilling it from `K` costs `ie_K − ie`. For this IC, `ie_K` is the same number as the `P = 1e-6` floor unless the density has changed. So the energy added per event is about the same. What dual energy changes is the value: the reset cell gets its adiabatic `P`, not an arbitrary 1e-6 (which is 1000× too hot for a compressed floor cell, and too cold for a compressed disk cell). It also names the energy it adds (`de_cum`). It is the standard fix for thermodynamics. It is not an energy fix.
+
+**What is in `75f00ff` [CODE].** All of it is off by default. Without the two variables, the only change is four extra columns at the end of `[RK4E]`.
+- `GFS_DUAL_ENERGY = η > 0`:
+  - On the first RK4 blend call, `stress.K = P/ρ^γ` for every particle with `K ≤ 0`. The KH/Kepler IC leaves `K = 0` (the stress block is zeroed). `SEDOV_PHASE1` keeps `dK = 0`, so `K` stays the IC entropy.
+  - In the final refresh (host code, so it also acts on GPU runs), `ie < η ie_K` takes `ie_K = K ρ^γ V/(γ-1)`, before the `P = 1e-6` floor.
+  - The CPU stage floor in `updateDenW2Pressure2DBlend` uses `K ρ^γ` in place of `1e-6`. The GPU stage path is not touched.
+- `[RK4E]` gains `E_int = Σ ie`, `n_de`, `de_inj`, and `de_cum`. The existing keys are unchanged. The ledger is now `dEtot·|Etot0| ≈ floor_cum + de_cum`. With `η > 0`, `n_ie_le0` should be 0.
+- `GFS_FLOOR_LOG=1` prints up to 8 `[RK4F]` lines per rank per step, before the change: `x, y, R` (from the Kepler centre), `den`, `ie`, `ie_K`, `ie/ie_K`, `vol`, and `reset`.
+
+**1D smoke test [RUN].** The same rule is in `laguerre_sod.c`, with `K` fixed at `t = 0`:
+
+| η | problems changed | notes |
+|---:|---|---|
+| 0.5 | none (byte-identical) | `nde = 0` in all eight |
+| 0.7 | none | |
+| 0.9 | Noh only, ΔE/E0 2.0049e-5 → 2.0052e-5 | |
+| 1.0 | six of eight | entropy floor. Blast ΔE/E0 1.45e-5 → 2.6e-3, Sod 2.8e-4. Contacts and rarefactions lose particle entropy numerically, and η = 1 refills it |
+
+Use `η = 0.5`. It never fires on a problem where the scheme works, and it catches a cell that has lost half its adiabatic energy. Nothing adiabatic does that.
+
+**Compile [RUN].** `mpicc -fsyntax-only -Wall -DXYZDBL -DGOTPM`, with and without `-DUSE_CUDA`: `exam.c` 287 warnings both ways (unchanged), 0 errors. `exam_gpu_extract.c` is unchanged (0 and 16 warnings). No link and no 2D run: the full build needs the Intel toolchain and CAMB. `exam_gpu.cu` is not touched. The script is `review_tests/syncheck.sh`.
+
+**The energy fix, design only [CODE].** Limit every face's pressure by the payer's budget. The idea is the same as the pair limit, but it covers all of `pi_total`. It conserves energy and momentum exactly, because the force and `dte` use the same reduced `P`.
+```
+s_i = (ua − v_i)·n            debit rate of i  = P A s_i   (n outward from i)
+s_j = (v_j − ua)·n            debit rate of j  = P A s_j
+P  ≤ ie_i /(nshare A s_i dt)  if s_i > 0,   same for j
+```
+`ua` is the HLL `vns`, the same on both ranks. `ie_j` is the ghost copy. So the factor is symmetric and needs no extra MPI. With `nshare = 6` and forward Euler this keeps `ie ≥ 0`. `dt` should be the `gfs_pair_dt` above. It belongs in `gfs_pair.h` as one `__host__ __device__` function, called from the same three sites as the work limit. I have not written it, because it needs the GPU kernel and `nvcc` to check. If `[RK4F]` shows the events at `R < 0.3`, the cheaper fix is not numerical. Soften harder, or empty or freeze the floor gas inside `R ≈ 0.5`. The disk starts at `Rin = 2`, and gas at `R = 0.05` with `Ω dt = 0.04` and Mach 50 face jumps is not part of the test.
+
+### Recommendation for the next 2D run
+
+1. Keep 406734 running as it is. It is the baseline for the floor rate.
+2. Keep 406515–406519 held until a disk passes: bounded `dEtot/|Etot0|`, and `E_int` within a factor of a few of `8.6e-4`, through a few inner orbits.
+3. Next Kepler run, when a slot is free: the tip of `master`, the same settings as 406734, plus `GFS_DUAL_ENERGY=0.5` and `GFS_FLOOR_LOG=1`. Please also report `GAS_USEMUSCL` and `SEDOV_PHASE1` from the job, because the HLL-average argument applies only to `use_muscl = 0`.
+4. Columns to watch in `[RK4E]`:
+   - `E_int`. If it climbs well above `8.6e-4`, the first-order faces are heating the disk from orbital KE (item 1). Then the fix is MUSCL on the disk, not the floor.
+   - `n_de` and `de_cum` together with `floor_cum`. `floor_cum` should stop growing, and `de_cum` then carries the injection.
+   - `dEtot/|Etot0|`, against `(floor_cum + de_cum)/|Etot0|`.
+   - `n_pair`.
+5. From `[RK4F]`: a histogram of `R` (split at 0.3, 1.9, and 2.1) and of `ie/ie_K`. That decides between central excision and the face limit.
+6. Header follow-ups, not yet committed: `B = 2 min(ie_i, ie_j)/nshare`, and `gfs_pair_dt` together with a 1.25× dt growth cap. Both are small. I will make them together with the face limit once you confirm the GPU side can be built and checked.
+
+### Commits
+
+- `716f6bf` 1D: pair work limit uses `m e`. `GFS_DUAL_ENERGY` smoke switch and counters.
+- `75f00ff` RK4 blend: `GFS_DUAL_ENERGY`, `E_int` / `n_de` / `de_inj` / `de_cum` in `[RK4E]`, and `GFS_FLOOR_LOG`.
