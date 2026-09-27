@@ -306,3 +306,72 @@ The slow floor lasted past the old blow-up and then failed the same way. 406654 
 `ie_K > 0` on all of them. 24 lines have `ie ≤ 0`; the rest are positive and sit at `ie/ie_K = 0.13–0.50`, which is the `η = 0.5` threshold and not an 8-cell-energy drain. `den` is `6.6e-4–2.5e-3`, the central floor gas (`ρ_floor = 1e-3`). `floor_cum = 0` and `n_ie_le0 = 0` at `t = 0.83`: the dual-energy reset is catching these cells before the `P = 1e-6` floor. `de_cum = 4.8e-6`, about `1e-8` per logged event, and `dEtot/|Etot0| = 1.2e-6`. The ledger matches that small injection.
 
 `E_int` went from `8.64e-4` at `t = 0` to `1.13e-3` at `t = 0.83`. `E_hyd` and `E_tot` did not move with it, so that rise is a conservative exchange, kinetic energy into internal energy. `de_cum` is 50× too small to be the source. The log does not split `E_int` by radius, so this does not yet say the disk is heating. It does say the cells that lose half their adiabatic energy are at `R = 0.24–0.40` and not at `Rin = 2`. Too early to call the `t ≈ 9` runaway fixed. `n_pair = 8`.
+
+---
+
+## 14. Kepler closed: both runs hit the same cliff
+
+Both jobs are finished. Neither is a pass. 406515–406519 stay held. Do not copy either binary into them. **[RUN]**
+
+Shared setup: RK4 (`way = 1`), `SEDOV_PHASE1 = 1`, `GAS use_muscl = 1`, `av_mode = 5`, `EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, annulus `R = 2–8` in a box of side 24 centred at `(12, 12)`, `t_stop = 177.72`. H100×3, 4 ranks. Initial `E_pot ≈ −17.581`, `|Etot0| ≈ 8.79`, initial thermal energy `E_int(0) = 8.644e-4`.
+
+| job | what | node | wall | end |
+|---|---|---|---:|---|
+| 406734 `LAGFORCE_KEP_W` | work limit, no dual energy | syn08 | 1 h 37 min | log: signal 11, `EXIT:255`. `sacct` says `COMPLETED 0:0` because the batch script does not fail on `mpirun` |
+| 407021 `LAGFORCE_KEP_DE` | `fe28651` plus `GFS_DUAL_ENERGY=0.5`, `GFS_FLOOR_LOG=1` | syn09 | 2 h 00 min, ended 2026-09-28 02:43 | `exam_gpu.cu:3428` CUDA `invalid argument`, then signal 9, `EXIT:255`. Same `sacct` `0:0` |
+
+406654, the RK4 disk without the work limit, crossed `|ΔE| = 0.01` at `t = 4.59`. The work limit moved that crossing to `t = 9.537`. Dual energy moved it to `t = 10.311`. The slope before the crossing is the same, and the jump after it is the same.
+
+### 406734
+
+`floor_cum` is the whole energy error. `E_pot` is still `−17.577` at the last finite step.
+
+| t | step | dt | dEtot/\|Etot0\| | floor_cum | n_ie_le0 | n_pair | E_pot |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 6.00 | 9141 | 6.21e-4 | 4.41e-4 | 3.67e-3 | 6 | 62 | −17.579 |
+| 8.00 | 12381 | 6.38e-4 | 7.53e-4 | 5.42e-3 | 4 | 92 | −17.578 |
+| 9.00 | 14024 | 5.31e-4 | 8.96e-4 | 6.54e-3 | 8 | 138 | −17.578 |
+| 9.123 | 14224 | 4.40e-4 | 1.02e-3 | 7.62e-3 | 11 | 152 | −17.577 |
+| 9.50 | 14858 | 6.14e-4 | 6.64e-3 | 2.63e-2 | 8 | 132 | −17.577 |
+| 9.537 | 14918 | 6.13e-4 | 1.03e-2 | 3.37e-2 | 12 | 138 | −17.577 |
+| 9.586 | 15016 | 3.51e-4 | 0.102 | 0.545 | 16 | 159 | −17.577 |
+| 9.597 | 15075 | 1.04e-4 | 1.32 | 9.55 | 13 | 172 | −17.577 |
+
+NaN starts after `t = 9.60`. The log then advances to `t = 17.68` with `dt ≈ 0.8` and `floor_cum = inf`. The record that can be compared is `t ≤ 9.1`.
+
+### 407021
+
+`floor_cum` stays 0 through the finite log. `n_ie_le0` stays 0 because that count is after the reset. The reset sets `ie` to `ie_K`, and `de_cum` adds `ie_K − ie`. A cell that has gone largely negative therefore injects its whole deficit. That is the same created energy as replacing `ie` with the `P = 1e-6` floor. Early on, the logged cells were only shallow (`ie/ie_K = 0.13–0.50`, about `1e-8` each). The cliff is the deep deficit.
+
+| t | step | dt | dEtot/\|Etot0\| | de_cum | E_int | n_de | n_pair | E_pot |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 6.00 | 9294 | 6.20e-4 | 4.48e-4 | 3.72e-3 | 6.39e-3 | 3 | 62 | −17.579 |
+| 8.00 | 12636 | 6.24e-4 | 7.34e-4 | 6.02e-3 | 1.06e-2 | 3 | 126 | −17.577 |
+| 9.00 | 14270 | 6.14e-4 | 9.04e-4 | 7.32e-3 | 1.32e-2 | 7 | 168 | −17.576 |
+| 9.304 | 14778 | 6.13e-4 | 1.00e-3 | 8.27e-3 | 1.42e-2 | 4 | 168 | −17.575 |
+| 10.00 | 15895 | 6.58e-4 | 1.60e-3 | 1.40e-2 | 1.71e-2 | 3 | 140 | −17.570 |
+| 10.311 | 16349 | 6.93e-4 | 1.24e-2 | 8.54e-2 | 7.72e-2 | 6 | 110 | −17.566 |
+| 10.413 | 16500 | 5.20e-4 | 0.103 | 1.18 | 0.679 | 10 | 134 | −17.563 |
+| 10.432 | 16578 | 2.34e-4 | 1.07 | 5.07 | 6.30 | 11 | 132 | −17.562 |
+
+At `t = 8` the two jobs match: `dE ≈ 7.5e-4` and about `6e-3` of created energy, booked as `floor_cum` in 406734 and as `de_cum` in 407021. `E_int(8) / E_int(0) ≈ 12`. Of that rise, `6.0e-3` is the injection and the rest is a conservative exchange of kinetic energy into internal energy. By the cliff, `E_int` and `de_cum` move together. `E_pot` at the last finite step is `−17.556`. NaN starts at `t = 10.441`. The last line in the log is `t = 10.93`, `dt = 0.099`, `de_cum = inf`.
+
+### Where the resets are
+
+Through `t = 7.94` (`dE = 7.3e-4`, still on the slow slope) there were 35200 `[RK4F]` lines. The annulus itself had 31.
+
+| R | lines at t = 7.94 |
+|---|---:|
+| < 0.5 | 4343 |
+| 0.5–1 | 9909 |
+| 1–1.5 | 15256 |
+| 1.5–1.9 | 5441 |
+| 1.9–2.1 | 32 |
+| 2.1–8 (the disk) | 31 |
+| > 8 | 188 |
+
+The full log has 101654 lines and `R` up to 37, which is outside the box. That tail is the runaway. It is not evidence that the orbiting ring was the source. `use_muscl` was already 1, so the cell-centred HLL overwrite was not the face pressure, and adding MUSCL on the disk is not what this log asks for.
+
+### What to change next
+
+The work limit delayed the cliff by about Δt = 5 relative to 406654 and did not remove it. Dual energy at `η = 0.5` delayed it by a further Δt = 0.8 and did not remove it. The cells that lose half their adiabatic energy, while the run is still quiet, are the floor gas in the hole `R < 2`, not the ring. The next Kepler run should be the same RK4 disk with that floor gas removed or frozen, not another coefficient on the pair pressure and not a wider HLL change. Leave 406515–406519 held until a disk passes more than a short fraction of an inner orbit (`T(R = 2) = 17.8`) with `dE` still on the `10^{-4}` slope. These two runs died at `t ≈ 10`, about 0.6 of that orbit.
