@@ -396,3 +396,5 @@ Flags from the 407214 script and `params.dat`: `SEDOV_PHASE1=1`, `way=1`, `use_m
 ```
 
 Step 1 matches the IC harness: `E_hyd = 21.459`, `E_pot = −42.928`, `E_tot = −21.469`, `E_int = 8.641e-4`. `n_es = 25528` (the estimate was about 25500). `n_half = 0`, `floor_cum = 0`, `n_ie_le0 = 0`, `es_de = −3.4e-6`. The switch is removing a little heating, not topping cells up.
+
+407215 step 1 is the old disk: `E_hyd = 8.790`, `E_pot = −17.581`, `E_tot = −8.792`, `E_int = 8.640e-4`, `n_es = 23156`, `n_half = 0`, `es_de = −3.8e-7`. Same banner, `active = 1`.
