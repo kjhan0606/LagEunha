@@ -17,6 +17,7 @@
 #include "gnnost.h"
 #include "exam.h"
 #include "exam2d.h"
+#include "gfs_pair.h"
 
 #ifdef USE_CUDA
 #include "exam_gpu.h"
@@ -67,6 +68,9 @@ double getAccVoro2D_LagMFM_GPU(
 
 inline postype getw2forHydroParticle(SimParameters *simpar, treevorork4particletype *bp,
 		postype Dtime){
+	/* Kappa = 0 is pure Voronoi. A NaN from pow() must not leak into w2,
+	 * or the neighbor clip turns it into d_nn^2 and the face leaves the midpoint. */
+	if(GAS_Kappa(simpar) == 0) return (postype)0;
 //	postype w1old = sqrt(bp->w2old);
 	postype gamma = GAS_GAMMA(simpar);
 	int ndim = NDIM(simpar);
@@ -638,7 +642,9 @@ void det2d_dpqRK4(
 	for(i=0;i<np;i++){
 		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
 		bpi->w2ceil = find_GNearest(ptl+i,  tree, nearest2dOpen, ex2d_dist);
-		if(GAS_Kappa(simpar) >= 0)
+		if(GAS_Kappa(simpar) == 0)
+			bpi->w2 = 0;
+		else if(GAS_Kappa(simpar) > 0)
 			bpi->w2 = MIN(bpi->w2, bpi->w2ceil);
 	}
 
@@ -4127,31 +4133,102 @@ static inline void hll_star_state(
 }
 
 static int phase1_ie_clips = 0;
+/* Central mass GM=1. Active only for EUNHA_IC=kepler.
+ * Default is the GIZMO point-mass acceleration -r_hat/R^2.
+ * EUNHA_KEPLER_EPS>0 switches on the softened force, which must
+ * match the circular speed set in the Kepler initial condition. */
+static void kepler_accel(postype x, postype y, postype *ax, postype *ay){
+	const char *e = getenv("EUNHA_IC");
+	if(!e || strcmp(e, "kepler") != 0) return;
+	const char *cxe = getenv("EUNHA_KEPLER_CX");
+	const char *cye = getenv("EUNHA_KEPLER_CY");
+	const char *ee = getenv("EUNHA_KEPLER_EPS");
+	postype cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+	postype cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+	postype eps = ee && ee[0] ? atof(ee) : (postype)0.0;
+	postype dx = x - cx, dy = y - cy;
+	postype r2 = dx*dx + dy*dy;
+	postype f;
+	if(eps > 0){
+		postype R2 = r2 + eps*eps;
+		f = -1.0 / (R2 * sqrt(R2));
+	}else if(r2 > (postype)1e-16){
+		postype invr = 1.0 / sqrt(r2);
+		f = -invr * invr * invr;
+	}else{
+		return;
+	}
+	*ax += dx * f;
+	*ay += dy * f;
+}
+
+/* Voronoi bisector normal speed at the face centroid.
+ * w = 0 only: u_n = n·ū − (u_q−u_p)·(c_f−m)/d. The second term is
+ * zero when the centroid sits on the midpoint. */
+static void voronoi_face_rotation(Voro2D_point *urad,
+		postype cx, postype cy,
+		postype xi, postype yi, postype xj, postype yj,
+		postype vxi, postype vyi, postype vxj, postype vyj,
+		postype erx, postype ery, postype dist,
+		postype w2i, postype w2j)
+{
+	postype dx, dy, delta;
+	if(!(dist > (postype)0) || w2i != (postype)0 || w2j != (postype)0) return;
+	dx = cx - (postype)0.5 * (xj - xi);
+	dy = cy - (postype)0.5 * (yj - yi);
+	delta = -((vxj - vxi) * dx + (vyj - vyi) * dy) / dist;
+	urad->x += delta * erx;
+	urad->y += delta * ery;
+}
+
+/* SEDOV_PHASE1 stores dE/dt in die. RK4 must not add that to ie. */
+static postype phase1_ie_stage(treevorostressrk4particletype *p, postype dt)
+{
+	postype dke;
+	if(!sedov_phase1_on()) return p->die * dt;
+	dke = p->mass * (p->vx * p->ax + p->vy * p->ay);
+	return (p->die - dke) * dt;
+}
+
 static inline void phase1_half_kick(treevorostressrk4particletype *p,
 		postype half_dt, postype ax_ext, postype ay_ext){
 	postype m = p->mass;
-	postype ke = (postype)0.5 * m * (p->vx*p->vx + p->vy*p->vy);
-	postype E = p->ie + ke + p->die * half_dt;
-	p->vx += (p->ax + ax_ext) * half_dt;
-	p->vy += (p->ay + ay_ext) * half_dt;
-	ke = (postype)0.5 * m * (p->vx*p->vx + p->vy*p->vy);
-	/* The kick must not spend more energy than the particle has.
-	 * Otherwise ie goes negative and the next Riemann step creates energy. */
-	if(!(E > ke)){
-		phase1_ie_clips++;
-		if(E > 0 && ke > 0){
-			postype s = sqrt(E / ke);
+	/* Hydro acceleration only. External gravity is applied after the
+	 * energy fix so a potential, which is not in E, cannot zero ie. */
+	postype ax = p->ax, ay = p->ay;
+	postype vx0 = p->vx, vy0 = p->vy;
+	postype ke0 = (postype)0.5 * m * (vx0*vx0 + vy0*vy0);
+	postype E = p->ie + ke0 + p->die * half_dt;
+	p->vx = vx0 + ax * half_dt;
+	p->vy = vy0 + ay * half_dt;
+	postype ke1 = (postype)0.5 * m * (p->vx*p->vx + p->vy*p->vy);
+	postype ie1 = E - ke1;
+	if(ie1 > (postype)0){
+		p->ie = ie1;
+	} else {
+		/* (1/2) m |a Δt|^2 is not carried by the face flux. Subtracting
+		 * the whole new kinetic energy therefore wipes the PdV heat and
+		 * the cold shock never builds pressure. Keep the first-order
+		 * internal energy and shed only the surplus kinetic energy. */
+		postype work = m * (vx0*ax + vy0*ay) * half_dt;
+		postype ie_pdv = p->ie + p->die * half_dt - work;
+		if(ie_pdv < (postype)0) ie_pdv = (postype)0;
+		postype ie_keep = (E > ie_pdv) ? ie_pdv : ((E > (postype)0) ? E : (postype)0);
+		postype ke_allow = E - ie_keep;
+		if(ke_allow < (postype)0) ke_allow = (postype)0;
+		if(ie_keep <= (postype)0) phase1_ie_clips++;
+		if(ke1 > (postype)0 && ke_allow < ke1){
+			postype s = sqrt(ke_allow / ke1);
 			p->vx *= s;
 			p->vy *= s;
-			p->ie = (postype)0;
-		} else {
+		} else if(!(ke_allow > (postype)0)){
 			p->vx = 0;
 			p->vy = 0;
-			p->ie = (postype)0;
 		}
-	} else {
-		p->ie = E - ke;
+		p->ie = ie_keep;
 	}
+	p->vx += ax_ext * half_dt;
+	p->vy += ay_ext * half_dt;
 }
 
 /* Fix C v2 (2026-05-12): face-level near-vacuum guard with floor discriminator.
@@ -4203,13 +4280,12 @@ static inline void hllc_face_2d(
 	postype S_L, S_R, S_M, P_M;
 	postype cmax = cL > cR ? cL : cR;
 
-	/* Phase 1: HLL average state on a large pressure ratio or a floor state.
-	 * The floor side is the Sedov shock face. Fix C below skips that face. */
+	/* Phase 1: HLL average only when the two pressures differ by the extreme
+	 * ratio. A uniformly cold face, as in the Noh inflow, stays on HLLC. */
 	if(sedov_phase1_on()){
 		postype pmin = pL < pR ? pL : pR;
 		postype pmax = pL > pR ? pL : pR;
-		if(pmin < (postype)1.0e-3 ||
-				pmax > (postype)100.0 * fmax(pmin, (postype)1.0e-30)){
+		if(pmax > (postype)100.0 * fmax(pmin, (postype)1.0e-30)){
 			hll_star_state(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR, Gamma, pstar, vnstar);
 			return;
 		}
@@ -4526,6 +4602,10 @@ static void update_alpha_cd_2d(SimParameters *simpar, postype dt){
 /* ================================================================
  *  getAccVoro2DBlend_impl: Inner implementation of blended force.
  * ================================================================ */
+/* Face-ends with d < d_c on the latest force evaluation. Each interior
+ * face is seen by both owners, so a shared pair contributes two. */
+long long gfs_pair_face_ends = 0;
+
 static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postype ymin,
 		postype xmax, postype ymax,
 		postype OrderOfAccuracy, postype Courant, postype Gamma,
@@ -4533,6 +4613,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *)){
 	static int s_force_call = 0;
 	s_force_call++;
+	gfs_pair_face_ends = 0;
 	/* Diagnostic call thresholds.  Defaults catch NP=2 OMP=8 (call=752);
 	 * env vars EUNHA_DBG_LO/HI let solo (call=464) reuse same code without
 	 * spamming the larger-NP logs. */
@@ -5005,6 +5086,14 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							Voro2D_point uradix_ui_boost =
 								get2dUpqradRk4(ibp_rk4,
 									(treevorork4particletype*)jbp, dtold);
+							voronoi_face_rotation(&uradix_ui_boost,
+									(postype)0.5*(tmp->x + tmp2->x),
+									(postype)0.5*(tmp->y + tmp2->y),
+									ibp->x, ibp->y, jbp->x, jbp->y,
+									ibp_vx, ibp_vy, jbp_vx, jbp_vy,
+									er.x, er.y, dramp,
+									ibp_rk4->w2,
+									((treevorork4particletype*)jbp)->w2);
 							postype wx = ibp_vx + uradix_ui_boost.x;
 							postype wy = ibp_vy + uradix_ui_boost.y;
 							postype wn = wx*nx_hat + wy*ny_hat;
@@ -5068,20 +5157,28 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							                        rhoR, pR, vnR_lab, jbp_csound,
 							                        wn, Gamma, &pst, &vnst_lab);
 							pi_total = pst;
-							/* PdV uses the Riemann face speed only where the
-							 * face is extreme (shock or floor). Ordinary faces
-							 * keep the geometric Voronoi speed, which matches
-							 * the cell's volume change. */
-							{
-								postype pmin_f = pL < pR ? pL : pR;
-								postype pmax_f = pL > pR ? pL : pR;
-								int face_extreme = (pmin_f < (postype)1.0e-3) ||
-									(pmax_f > (postype)100.0 * fmax(pmin_f, (postype)1.0e-30));
-								if(sedov_phase1_on() && use_muscl && face_extreme){
+							/* Extreme faces use one HLL state built from the
+							 * cell-centered pair along i→j. MUSCL values differ
+							 * on the two ends of the same face, so one end was
+							 * taking the shock speed and the other the
+							 * geometric speed. The pair then does not cancel
+							 * and the blast creates energy. */
+							if(sedov_phase1_on() && dramp > 0){
+								postype pmin_c = fmin(ibp_pressure, jbp_pressure);
+								postype pmax_c = fmax(ibp_pressure, jbp_pressure);
+								int face_extreme = (pmax_c > (postype)100.0 * fmax(pmin_c, (postype)1.0e-30));
+								if(face_extreme){
+									postype ps, vns;
+									hll_star_state(ibp_den, ibp_pressure,
+										ibp_vx*er.x + ibp_vy*er.y, ibp_csound,
+										jbp_den, jbp_pressure,
+										jbp_vx*er.x + jbp_vy*er.y, jbp_csound,
+										Gamma, &ps, &vns);
+									pi_total = ps;
 									riemann_vstar = 1;
-									riemann_vn = vnst_lab;
-									riemann_nx = nx_hat;
-									riemann_ny = ny_hat;
+									riemann_vn = vns;
+									riemann_nx = er.x;
+									riemann_ny = er.y;
 								}
 							}
 
@@ -5403,6 +5500,14 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						 *     - per-face can be either sign; cell-level clamp applied after loop.
 						 */
 						Voro2D_point uradix_ui = get2dUpqradRk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
+						voronoi_face_rotation(&uradix_ui,
+								(postype)0.5*(tmp->x + tmp2->x),
+								(postype)0.5*(tmp->y + tmp2->y),
+								ibp->x, ibp->y, jbp->x, jbp->y,
+								ibp_vx, ibp_vy, jbp_vx, jbp_vy,
+								er.x, er.y, dramp,
+								ibp_rk4->w2,
+								((treevorork4particletype*)jbp)->w2);
 						/* Stationary hard wall: the face velocity has no normal part. */
 						if(hard_wall){
 							postype vn_i = ibp_vx*hard_nx + ibp_vy*hard_ny;
@@ -5434,6 +5539,28 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						}
 
 						/* Compression gate on (v_i - v_j)·n̂.  er already points i→j. */
+						/* Restoring pressure along this face. Zero at and above the
+						 * local cutoff, and still present when Δv = 0. It is
+						 * part of pi_total, so the pair work stays in dE. */
+						if(!jbp_is_ghost){
+							postype vol_j = ((treevorork4particletype*)jbp)->volume;
+							double vclose = -((jbp_vx - ibp_vx)*er.x + (jbp_vy - ibp_vy)*er.y);
+							if(vclose < 0) vclose = 0;
+							postype p_pair = (postype)gfs_pair_pressure(
+									(double)dramp,
+									(double)ibp_rk4->volume, (double)vol_j,
+									(double)ibp_den, (double)jbp_den,
+									(double)ibp_csound, (double)jbp_csound,
+									vclose);
+							if(p_pair > 0){
+								pi_total += p_pair;
+#ifdef _OPENMP
+#pragma omp atomic
+#endif
+								gfs_pair_face_ends++;
+							}
+						}
+
 						postype u_n_compress;
 						{
 							Voro2D_point dv_av;
@@ -5532,21 +5659,21 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						dv.y = jbp_vy - ibp_vy;
 						postype VdotR = Vec2DDotP(&dv, &er);
 						postype vsig = jbp_csound + ibp_csound - MIN(0, VdotR);
-						/* CFL floor: prevent dt→0 from particle clustering
-						   or geometric proximity of ghost mirrors */
+						/* A flattened real cell must use its true thickness.
+						 * Flooring dramp up to sqrt(volume) let a Sedov shell
+						 * particle step across its neighbor. Ghost mirrors
+						 * keep the floor so a particle on the wall does not
+						 * drive dt to zero. */
 						postype heff = 0.25*sqrt(ibp_rk4->volume);
-						postype dramp_cfl = fmax(dramp, heff);
+						postype dramp_cfl = (jbp_is_ghost) ? fmax(dramp, heff) : dramp;
 						postype dt = 2*Courant*dramp_cfl/vsig;
 
-						/* dt3: relative-velocity CFL (OLD Sedov3D Voro_Test recipe).
-						   uij = 0.5*(v_j - v_i); dt3 = 0.1*dramp/|uij|^2.
-						   Catches Mode 2 acc-explosion where adjacent cells develop
-						   huge Δv before vsig CFL responds. */
+						/* dt3: 0.1 * d / |Δv|. The old 0.1*d/|Δv/2|^2 has units time^2/length. */
 						postype uij_x_half = 0.5*(jbp_vx - ibp_vx);
 						postype uij_y_half = 0.5*(jbp_vy - ibp_vy);
 						postype uij2 = uij_x_half*uij_x_half + uij_y_half*uij_y_half;
 						if(uij2 > 0){
-							postype dt3 = 0.1*dramp_cfl/uij2;
+							postype dt3 = 0.1*dramp_cfl / (2.0*sqrt(uij2));
 							if(dt3 < dt) dt = dt3;
 						}
 
@@ -9319,7 +9446,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k1y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
 		sbp[i].rk4.k1vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
 		sbp[i].rk4.k1vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
-		sbp[i].rk4.k1ie = sbp[i].die*Dtime;
+		sbp[i].rk4.k1ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k1K  = sbp[i].stress.dK*Dtime;
 	}
 
@@ -9370,7 +9497,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k2y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
 		sbp[i].rk4.k2vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
 		sbp[i].rk4.k2vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
-		sbp[i].rk4.k2ie = sbp[i].die*Dtime;
+		sbp[i].rk4.k2ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k2K  = sbp[i].stress.dK*Dtime;
 	}
 
@@ -9421,7 +9548,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k3y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
 		sbp[i].rk4.k3vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
 		sbp[i].rk4.k3vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
-		sbp[i].rk4.k3ie = sbp[i].die*Dtime;
+		sbp[i].rk4.k3ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k3K  = sbp[i].stress.dK*Dtime;
 	}
 
@@ -9472,7 +9599,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k4y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
 		sbp[i].rk4.k4vx = (sbp[i].ax + GAS_ACCX(simpar))*Dtime;
 		sbp[i].rk4.k4vy = (sbp[i].ay + GAS_ACCY(simpar))*Dtime;
-		sbp[i].rk4.k4ie = sbp[i].die*Dtime;
+		sbp[i].rk4.k4ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k4K  = sbp[i].stress.dK*Dtime;
 	}
 	_t0 = MPI_Wtime();
@@ -9712,6 +9839,10 @@ double exam2d_vph_kdk_int_blend(
 		postype vsig_max_global;
 		MPI_Allreduce(&vsig_max_local, &vsig_max_global, 1, MPI_POSTYPE, MPI_MAX, MPI_COMM(simpar));
 		Dtime = Courant * dx_uniform / vsig_max_global;
+		/* Face dt uses the true generator separation. The uniform-dx
+		 * step above stays larger than a gap that has already narrowed,
+		 * so a converging pair crosses in one drift. */
+		if(dt_dummy > (postype)0 && dt_dummy < Dtime) Dtime = dt_dummy;
 	}
 
 	/* dK rate-limiter: clamp |dK|*dt_ref/K <= rate_max before stage-1 half-kick */
@@ -9722,11 +9853,13 @@ double exam2d_vph_kdk_int_blend(
 	postype half_dt = 0.5 * Dtime;
 	for(i=0;i<VORO_NP(simpar);i++){
 		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
+			postype axk = accx_ext, ayk = accy_ext;
+			kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
 			if(sedov_phase1_on()){
-				phase1_half_kick(sbp+i, half_dt, accx_ext, accy_ext);
+				phase1_half_kick(sbp+i, half_dt, axk, ayk);
 			} else {
-				sbp[i].vx += (sbp[i].ax + accx_ext) * half_dt;
-				sbp[i].vy += (sbp[i].ay + accy_ext) * half_dt;
+				sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+				sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
 				sbp[i].ie += sbp[i].die             * half_dt;
 				sbp[i].stress.K += sbp[i].stress.dK * half_dt;
 			}
@@ -9782,11 +9915,13 @@ double exam2d_vph_kdk_int_blend(
 	{
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
+				postype axk = accx_ext, ayk = accy_ext;
+				kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
 				if(sedov_phase1_on()){
-					phase1_half_kick(sbp+i, half_dt, accx_ext, accy_ext);
+					phase1_half_kick(sbp+i, half_dt, axk, ayk);
 				} else {
-					sbp[i].vx += (sbp[i].ax + accx_ext) * half_dt;
-					sbp[i].vy += (sbp[i].ay + accy_ext) * half_dt;
+					sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+					sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
 					sbp[i].ie += sbp[i].die             * half_dt;
 					sbp[i].stress.K += sbp[i].stress.dK * half_dt;
 				}
@@ -9856,6 +9991,8 @@ double exam2d_vph_kdk_int_blend(
 		MPI_Allreduce(&etot_l, &etot_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&nneg_l, &nneg_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&ncell_l, &ncell_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		long long npair_l = gfs_pair_face_ends, npair_g = 0;
+		MPI_Allreduce(&npair_l, &npair_g, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM(simpar));
 		if(MYID(simpar)==0){
 			static double E0 = -1;
 			static int p1step = 0;
@@ -9864,9 +10001,10 @@ double exam2d_vph_kdk_int_blend(
 			double nx = (double)NX(simpar);
 			double vnorm = vmin_g * nx * nx;
 			fprintf(stderr,
-				"[PHASE1] step=%d dt=%.3e Vmin=%.3e Vmin*Nx2=%.3e rho_max=%.3e E=%.6e dE/E0=%.3e n_neg=%d/%d n_clip=%d\n",
+				"[PHASE1] step=%d dt=%.3e Vmin=%.3e Vmin*Nx2=%.3e rho_max=%.3e E=%.6e dE/E0=%.3e n_neg=%d/%d n_clip=%d n_pair=%lld\n",
 				p1step, (double)Dtime, vmin_g, vnorm, rhomax_g, etot_g,
-				(E0 != 0 ? (etot_g-E0)/E0 : 0), nneg_g, ncell_g, phase1_ie_clips);
+				(E0 != 0 ? (etot_g-E0)/E0 : 0), nneg_g, ncell_g, phase1_ie_clips,
+				(long long)npair_g);
 			fflush(stderr);
 		}
 	}

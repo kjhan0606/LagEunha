@@ -222,8 +222,12 @@ void f2pgm(Img *img) {
 	}
 
 /* renormalize to a number between 0 and 1 */
-	for(i=0; i<nx*ny; i++)
-		ccd[i] = (ccd[i] - ccdmin)/(ccdmax - ccdmin);
+	{
+		float span = ccdmax - ccdmin;
+		if(!(span > 0)) span = 1;
+		for(i=0; i<nx*ny; i++)
+			ccd[i] = (ccd[i] - ccdmin)/span;
+	}
 
 /* Do log transformation */
 	if( nlog > 0 ) {
@@ -283,6 +287,12 @@ void pgm2col(Img *img){
 	FILE *pgmfile, *colfile;
 
 	colfile = fopen(saofile,"r");
+	if(colfile == NULL){
+		for(i=0;i<nx*ny;i++){
+			r[i] = g[i] = b[i] = ccd[i];
+		}
+		return;
+	}
 	readsao(reverse,colfile);
 	fclose(colfile);
 	readpgm(ccd, nx,ny, r,g,b);

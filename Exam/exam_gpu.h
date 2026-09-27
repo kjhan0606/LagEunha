@@ -235,6 +235,8 @@ void gpu_download_results(GPUContext *ctx, int n_particles);
 /* --- Force kernel launch (exam_gpu.cu) --- */
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                const GPUPhysicsParams *params);
+/* Face-ends inside the pair cutoff on the latest launch. */
+long long gpu_take_pair_hits(void);
 
 /* --- GPU tessellation (exam_gpu.cu) --- */
 void gpu_alloc_tess_buffers(GPUContext *ctx, int max_particles,

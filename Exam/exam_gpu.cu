@@ -18,10 +18,14 @@
 
 /* CUB for device-wide reduction */
 #include <cub/cub.cuh>
+#include "gfs_pair.h"
 
 extern "C" {
 #include "exam_gpu.h"
 }
+
+static __device__ unsigned long long d_gfs_pair_hits;
+static long long h_gfs_pair_hits = 0;
 
 /* ================================================================
  *  Error checking macro
@@ -178,13 +182,12 @@ void dev_hllc_face_2d(
     double S_L, S_R, S_M, P_M;
     double cmax = cL > cR ? cL : cR;
 
-    /* Phase 1: HLL average on a large pressure ratio or a floor state.
-     * Runs before Fix C, which would otherwise collapse the shock face. */
+    /* Phase 1: HLL average only on a large pressure ratio. A uniformly
+     * cold face stays on HLLC. Runs before Fix C. */
     if (phase1) {
         double pmin = pL < pR ? pL : pR;
         double pmax = pL > pR ? pL : pR;
-        if (pmin < 1.0e-3 ||
-                pmax > 100.0 * fmax(pmin, 1.0e-30)) {
+        if (pmax > 100.0 * fmax(pmin, 1.0e-30)) {
             dev_hll_star_state(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR,
                                Gamma, pstar, vnstar);
             return;
@@ -434,6 +437,16 @@ void getAccVoro2DBlend_kernel(
             ibp_x, ibp_y, ibp_vx, ibp_vy, ibp_w2, ibp_w2old, (float)ibp_csound,
             jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
             dtold, &uradx, &urady);
+        /* Centroid correction for a pure Voronoi face (w = 0). */
+        if (ibp_w2 == 0.0f && jbp_w2 == 0.0f && dramp > 0.0) {
+            double cx = 0.5 * (c1x[f] + c2x[f]);
+            double cy = 0.5 * (c1y[f] + c2y[f]);
+            double dxc = cx - 0.5 * drx;
+            double dyc = cy - 0.5 * dry;
+            double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+            uradx += delta * erx;
+            urady += delta * ery;
+        }
 
         double pi_total;
         double tau_dot_dS_x = 0, tau_dot_dS_y = 0;
@@ -556,15 +569,23 @@ void getAccVoro2DBlend_kernel(
                                         rhoR, pR, vnR_lab, jbp_csound,
                                         wn, Gamma, phase1, &pst, &vnst_lab);
             pi_total = pst;
-            if (phase1 && use_muscl) {
-                double pmin_f = pL < pR ? pL : pR;
-                double pmax_f = pL > pR ? pL : pR;
-                if (pmin_f < 1.0e-3 ||
-                        pmax_f > 100.0 * fmax(pmin_f, 1.0e-30)) {
+            /* Same HLL state from both ends: cell-centered values along i→j.
+             * MUSCL left/right states are not swaps of each other, so the
+             * shock speed was applied on one end of the face only. */
+            if (phase1 && dramp > 0) {
+                double pmin_c = fmin(ibp_pressure, jbp_pressure);
+                double pmax_c = fmax(ibp_pressure, jbp_pressure);
+                if (pmax_c > 100.0 * fmax(pmin_c, 1.0e-30)) {
+                    double ps, vns;
+                    dev_hll_star_state(
+                        ibp_den, ibp_pressure, ibp_vx * erx + ibp_vy * ery, ibp_csound,
+                        jbp_den, jbp_pressure, jbp_vx * erx + jbp_vy * ery, jbp_csound,
+                        Gamma, &ps, &vns);
+                    pi_total = ps;
                     riemann_vstar = 1;
-                    riemann_vn = vnst_lab;
-                    riemann_nx = nx_hat;
-                    riemann_ny = ny_hat;
+                    riemann_vn = vns;
+                    riemann_nx = erx;
+                    riemann_ny = ery;
                 }
             }
 
@@ -850,6 +871,20 @@ void getAccVoro2DBlend_kernel(
             phase1_ny = ny;
         }
 
+        /* Local pair restoring pressure. Stays on at zero relative velocity
+         * and is part of the face pressure, so the work remains in dE. */
+        if (!jbp_is_ghost) {
+            double vclose = -((jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery);
+            if (vclose < 0.0) vclose = 0.0;
+            double p_pair = gfs_pair_pressure(
+                dramp, ibp_volume, (double)pvolume[j],
+                ibp_den, jbp_den, ibp_csound, jbp_csound, vclose);
+            if (p_pair > 0.0) {
+                pi_total += p_pair;
+                atomicAdd(&d_gfs_pair_hits, 1ull);
+            }
+        }
+
         /* Fix A+B: compression gate on AV.
          *   pi_total = p_rev + p_av_for_heat (decomposition)
          *     p_rev          := p_mnm (face-symmetric, reversible)
@@ -948,9 +983,11 @@ void getAccVoro2DBlend_kernel(
         double VdotR = dvx * erx + dvy * ery;
         double vsig = jbp_csound + ibp_csound - fmin(0.0, VdotR);
 
-        /* CFL with floor */
+        /* Real faces use the true separation. Flooring dramp up to the
+         * cell radius lets a flattened pair step across each other.
+         * Ghost mirrors keep the floor. */
         double heff = 0.25 * sqrt(ibp_volume);
-        double dramp_cfl = fmax(dramp, heff);
+        double dramp_cfl = jbp_is_ghost ? fmax(dramp, heff) : dramp;
         float dt_face = (float)(2.0 * Courant * dramp_cfl / vsig);
         if (dt_face < my_dt) my_dt = dt_face;
 
@@ -1360,6 +1397,12 @@ void gpu_download_results(GPUContext *ctx, int n)
  * ================================================================ */
 
 extern "C"
+long long gpu_take_pair_hits(void)
+{
+    return h_gfs_pair_hits;
+}
+
+extern "C"
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                const GPUPhysicsParams *params)
 {
@@ -1367,6 +1410,11 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
     int gridSize = (n_particles + blockSize - 1) / blockSize;
 
     cudaStream_t s = (cudaStream_t)ctx->stream;
+    {
+        unsigned long long z = 0;
+        CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_pair_hits, &z, sizeof(z), 0,
+                                           cudaMemcpyHostToDevice, s));
+    }
 
     getAccVoro2DBlend_kernel<<<gridSize, blockSize, 0, s>>>(
         /* Face CSR */
@@ -1419,6 +1467,11 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_cub_min_out, ctx->d_cub_min_out,
                                 sizeof(float), cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaStreamSynchronize(s));
+    {
+        unsigned long long h = 0;
+        CUDA_CHECK(cudaMemcpyFromSymbol(&h, d_gfs_pair_hits, sizeof(h)));
+        h_gfs_pair_hits = (long long)h;
+    }
 
     return (double)(*(float *)ctx->h_cub_min_out);
 }
@@ -2531,9 +2584,10 @@ void nearest_neighbor_kernel(
     }
 
     w2ceil_out[i] = (float)min_dist2;
-    if (kappa >= 0.0f) {
+    if (kappa == 0.0f)
+        w2_out[i] = 0.0f;
+    else if (kappa > 0.0f)
         w2_out[i] = fminf(w2_out[i], (float)min_dist2);
-    }
 }
 
 /* ================================================================
@@ -3338,9 +3392,10 @@ void nearest_neighbor_tree_kernel(
     }
 
     w2ceil_out[i] = mindist2;
-    if (kappa >= 0.0f) {
+    if (kappa == 0.0f)
+        w2_out[i] = 0.0f;
+    else if (kappa > 0.0f)
         w2_out[i] = fminf(w2_out[i], mindist2);
-    }
 }
 
 extern "C"
