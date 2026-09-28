@@ -9,6 +9,7 @@
 #include "mpiaux.h"
 #include "cosmology.h"
 #include "params.h"
+#include "Exam/exam3d_gfs.h"
 
 #ifdef PGCC
 #define FUNC(MAIN) (MAIN_)
@@ -108,6 +109,18 @@ int FUNC(MAIN)(int argc, char **argv)
 	mpi_fftw_initialize(argc, argv);
 #endif
 	checkarg(argc);
+
+	/* 3D GFS path (Exam/exam3d_gfs.c). Only a params file with
+	 * "define Simulation Model = Hydro3D" takes this branch; every other
+	 * model continues below unchanged. */
+	if(exam3d_gfs_is_hydro3d(argv[1])){
+		int rank3d = 0, nrank3d = 1, rc3d;
+		MPI_Comm_rank(MPI_COMM_WORLD, &rank3d);
+		MPI_Comm_size(MPI_COMM_WORLD, &nrank3d);
+		rc3d = exam3d_gfs_run(argv[1], rank3d, nrank3d);
+		MPI_Finalize();
+		return rc3d;
+	}
 
 	FILE *fp = fopen(argv[1],"r");
 

@@ -77,7 +77,7 @@ EXLIB       = libexam.a
 
 #CC            =  mpiicc
 
-EXOBJ       = exam.o mpirks.exam2d.o # exam.stress.o
+EXOBJ       = exam.o mpirks.exam2d.o exam3d_gfs.o # exam.stress.o
 
 ifdef USE_CUDA
 CUDA_HOME  ?= /opt/ohpc/pub/cuda/13.0.2
@@ -144,6 +144,16 @@ clean:
 
 .c.exe :
 	$(CC) -o $*.exe $(DRAWOBJS) $(LIBS) $(LDFLAGS) $(INCLUDES)
+
+# 3D GFS path (CPU/OpenMP). exam3d_gfs.o goes into libexam.a and is called
+# from eunha2.c for "Simulation Model = Hydro3D". lag3d.exe is the same
+# source as a standalone binary (no MPI/FFTW):  make lag3d.exe
+# On a gcc box:  make lag3d.exe CC=gcc OPT="-O2 -fopenmp"
+exam3d_gfs.o: exam3d_gfs.c exam3d_gfs.h gfs_riemann.h gfs_pair.h Tests3D/common/lag3d_ic.h
+	$(CC) $(CCFLAGS) $(INCLUDES) -c exam3d_gfs.c -o $@
+
+lag3d.exe: exam3d_main.c exam3d_gfs.c exam3d_gfs.h gfs_riemann.h gfs_pair.h $(VORO)/voro.c $(VORO)/voro.h
+	$(CC) $(CCFLAGS) -I. -I.. -I$(VORO) -o $@ exam3d_main.c exam3d_gfs.c $(VORO)/voro.c -lm
 
 ifdef USE_CUDA
 exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_pair.h
