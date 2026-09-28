@@ -143,6 +143,61 @@ static int gfs_w2lin_on(void){
 	}
 	return on;
 }
+/* GFS_DYN_W2=1 (default 0; scheme 3, Laguerre + dynamic weights,
+ * code_review.md 2(c); CPU RK4 blend path, av_mode 5, kappa = 0, 1 rank).
+ * Each RK4 stage solves the weighted least squares
+ *   min sum_f a_f (Wdot_p - Wdot_q - b_f)^2,
+ *   b_f = 2 d (v*_f - n.ubar - rot_f) + (W_p - W_q) ddot/d,
+ * (graph Laplacian L_a Wdot = B^T A b, Jacobi-PCG, zero mean) with v*_f the
+ * HLL face speed (cell states along e; GFS_DYN_W2_MID=1: mid-plane speed on
+ * ordinary faces). a_f = A_f * GFS_DYN_W2_RATIO on extreme faces
+ * (P_max > GFS_DYN_W2_PX * P_min, default 100), A_f elsewhere.
+ * W is a state variable: stage W = W_n + c Dt Wdot_prev, final
+ * W_n + Dt (k1 + 2k2 + 2k3 + k4)/6, shifted so min W = 0 (only differences
+ * enter the geometry). The face speed carries (Wdot_p - Wdot_q)/(2d) and the
+ * rotation term, and the work uses this realised speed (as GFS_GEOM_FACE_VEL).
+ * Cell validity |W_p - W_q| < (1 - GFS_DYN_W2_DELTA) d^2 (default 0.2):
+ * Dt limit from the K1 rates, ((1-delta) d^2 - |dW|)/(d|dW|/dt - (1-delta) d(d^2)/dt),
+ * logged as bound=1 / nbind; past (1 - 2 delta) d^2 a face switches to a
+ * barrier target (keep dW/d^2, relax over dt_old) with weight
+ * a_f * GFS_DYN_W2_BARRIER (default 1000), logged as nbar.
+ * Other knobs: GFS_DYN_W2_TOL (CG rel. tol, 1e-10), GFS_DYN_W2_MAXIT (2000),
+ * GFS_DYN_W2_OMP=1 (OpenMP face collection).
+ * [DYNW2] per step: ||r||/||b|| on extreme and ordinary faces (sums over
+ * the 4 stages), rms (realised - v*) on extreme faces from the solve
+ * (rms_dv_ext) and from the force loop (rms_dv_ext_force), rms_dv_ord,
+ * CG iterations, max |dW|/d^2, invalid faces, Dt limit.
+ * Single rank only (the solve is global; not active when NID > 1).
+ * No GPU path: CPU only, inactive when the GPU is enabled. */
+static int gfs_dynw2_active = 0;
+static double *dyn_wd = NULL, *dyn_k[4] = {NULL,NULL,NULL,NULL};
+static size_t dyn_cap = 0;
+static double dyn_fchk_s2 = 0; static long dyn_fchk_n = 0;
+static int gfs_dynw2_on(void){
+	static int on = -1;
+	if(on < 0){ const char *s = getenv("GFS_DYN_W2"); on = (s && s[0] && atoi(s) > 0) ? 1 : 0; }
+	return on;
+}
+static double gfs_env_d(const char *k, double def){
+	const char *s = getenv(k); return (s && s[0]) ? atof(s) : def;
+}
+static void dyn_ensure(size_t max_id){
+	size_t k;
+	if(max_id < dyn_cap) return;
+	size_t nc = max_id + 1 + max_id/4;
+	dyn_wd = (double*)realloc(dyn_wd, nc*sizeof(double));
+	for(k=dyn_cap;k<nc;k++) dyn_wd[k] = 0;
+	int s;
+	for(s=0;s<4;s++){
+		dyn_k[s] = (double*)realloc(dyn_k[s], nc*sizeof(double));
+		for(k=dyn_cap;k<nc;k++) dyn_k[s][k] = 0;
+	}
+	dyn_cap = nc;
+}
+static inline double dyn_wdot(treevorork4particletype *p){
+	size_t id = (size_t)PINDX(p);
+	return (PINDX(p) != MAX_INDEX && id < dyn_cap) ? dyn_wd[id] : 0;
+}
 /* GFS_VOL_AUDIT=1 (default 0, diagnostic, 1 rank): per step, compare the
  * geometric volume change of each cell (tessellation at the start of step
  * n+1 minus that at the start of step n, so end-of-step weight jumps are
@@ -810,7 +865,9 @@ void det2d_dpqRK4(
 	for(i=0;i<np;i++){
 		treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
 		bpi->w2ceil = find_GNearest(ptl+i,  tree, nearest2dOpen, ex2d_dist);
-		if(GAS_Kappa(simpar) == 0)
+		if(gfs_dynw2_active){
+			/* GFS_DYN_W2: W is a state variable, no clamp */
+		} else if(GAS_Kappa(simpar) == 0)
 			bpi->w2 = 0;
 		else if(GAS_Kappa(simpar) > 0)
 			bpi->w2 = MIN(bpi->w2, bpi->w2ceil);
@@ -4543,7 +4600,17 @@ static void voronoi_face_rotation(Voro2D_point *urad,
 static inline Voro2D_point gfs_upqrad_rk4(treevorork4particletype *p,
 		treevorork4particletype *q, postype dtold){
 	Voro2D_point u = get2dUpqradRk4(p, q, dtold);
-	if(gfs_w2lin_active){
+	if(gfs_dynw2_active){
+		/* Wall mirror (MAX_INDEX): use the cell's own rate. */
+		double wp = dyn_wdot(p);
+		double wq = (PINDX(q) == MAX_INDEX) ? wp : dyn_wdot(q);
+		postype ex = q->x - p->x, ey = q->y - p->y;
+		postype d2 = ex*ex + ey*ey;
+		if(d2 > 0){
+			postype f = (postype)((wp - wq) / (2*d2));
+			u.x += f*ex; u.y += f*ey;
+		}
+	} else if(gfs_w2lin_active){
 		postype ex = q->x - p->x, ey = q->y - p->y;
 		postype d2 = ex*ex + ey*ey;
 		if(d2 > 0){
@@ -5104,7 +5171,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 
 	postype dtold = GAS_dtold(simpar);
 	/* Read before the OpenMP region. */
-	int lag_rot = gfs_laguerre_rotation_on();
+	int lag_rot = gfs_laguerre_rotation_on() || gfs_dynw2_active;
 	int vaud_on_l = gfs_vaud_on();
 	if(vaud_on_l){
 		size_t max_id = 0;
@@ -5348,7 +5415,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						postype phase1_vn = 0, phase1_nx = 0, phase1_ny = 0;
 						int riemann_vstar = 0;
 						int faud_flags = 0;
-						const int geom_fv = gfs_geom_fv_on();
+						const int geom_fv = gfs_geom_fv_on() || gfs_dynw2_active;
 						postype riemann_vn = 0, riemann_nx = 0, riemann_ny = 0;
 						int hard_wall = 0;
 						postype hard_nx = 0, hard_ny = 0;
@@ -6164,6 +6231,18 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						dte += -pi_total * Vec2DDotP(&ua, &dS)
 						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
 						dvb += Vec2DDotP(&ua, &dS);
+						if(gfs_dynw2_active && riemann_vstar && !jbp_is_ghost){
+							/* realised face speed minus HLL v* (independent check) */
+							double dv = (double)(ua.x*riemann_nx + ua.y*riemann_ny) - (double)riemann_vn;
+#ifdef _OPENMP
+#pragma omp atomic
+#endif
+							dyn_fchk_s2 += dv*dv;
+#ifdef _OPENMP
+#pragma omp atomic
+#endif
+							dyn_fchk_n += 1;
+						}
 						if(gfs_faud_on() && !jbp_is_ghost){
 							size_t fs = (size_t)PINDX(ibp_rk4);
 							if(fs < faud_cap){
@@ -6408,6 +6487,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 				if(isnan(fx)){
 					DEBUGPRINT("P%d blend: nan fx %d : %g %g %ld p= %g\n",
 							MYID(simpar), i, ibp->x, ibp->y, PINDX(ibp), ibp_pressure);
+					if(gfs_dynw2_active){ fprintf(stderr,"[DYNW2] nan fx: den=%g vol=%g w2=%g w2old=%g cs=%g dtold=%g fy=%g die=%g\n",
+						(double)ibp_den,(double)ibp_rk4->volume,(double)ibp_rk4->w2,(double)ibp_rk4->w2old,(double)ibp_csound,(double)dtold,(double)fy,(double)die); fflush(stderr); }
 					exit(0);
 				}
 				if(do_i_dbg){
@@ -6440,6 +6521,241 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 /* ================================================================
  *  getAccVoro2DBlend: Original entry point (calls _impl).
  * ================================================================ */
+/* GFS_DYN_W2 (see gfs_dynw2_on): face collection, PCG solve, diagnostics. */
+typedef struct { int i, j, ext; double a, b, d, dd, dW, vstar_rel; } dyn_face_t;
+static dyn_face_t *dyn_f = NULL; static size_t dyn_fn = 0, dyn_fcap = 0;
+/* step accumulators (sums over the 4 stages) */
+static int dyn_stage_cur = 0; static double dyn_dtlim_last = 1e30;
+static double dyn_r2e, dyn_b2e, dyn_r2o, dyn_b2o, dyn_dv2e, dyn_vs2e, dyn_dv2o;
+static long dyn_ne, dyn_no, dyn_nbad, dyn_nbar; static int dyn_itmax; static double dyn_wratio_max;
+static void dyn_step_reset(void){
+	dyn_r2e = dyn_b2e = dyn_r2o = dyn_b2o = dyn_dv2e = dyn_vs2e = dyn_dv2o = 0;
+	dyn_ne = dyn_no = dyn_nbad = dyn_nbar = 0; dyn_itmax = 0; dyn_wratio_max = 0;
+	dyn_fchk_s2 = 0; dyn_fchk_n = 0;
+}
+static void dyn_face_push(dyn_face_t *buf, size_t n){
+	if(dyn_fn + n > dyn_fcap){
+		dyn_fcap = (dyn_fn + n)*2 + 1024;
+		dyn_f = (dyn_face_t*)realloc(dyn_f, dyn_fcap*sizeof(dyn_face_t));
+	}
+	memcpy(dyn_f + dyn_fn, buf, n*sizeof(dyn_face_t));
+	dyn_fn += n;
+}
+/* Returns the Dt limit from cell validity (1e30 if none). */
+static double gfs_dynw2_solve(SimParameters *simpar, int stage, postype Gamma,
+		Voro2D_point *(*find2DNeighboringBP)(SimParameters *, int, int, int *),
+		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *)){
+	treevorostressrk4particletype *bp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	int nbp = VORO_NP(simpar);
+	postype boxsize = BOXSIZE(simpar)/NX(simpar)*5;
+	int mx = BASICCELL_MX(simpar), my = BASICCELL_MY(simpar);
+	double ratio = gfs_env_d("GFS_DYN_W2_RATIO", 100.0);
+	double px = gfs_env_d("GFS_DYN_W2_PX", 100.0);
+	int mid = (int)gfs_env_d("GFS_DYN_W2_MID", 0);
+	double delta = gfs_env_d("GFS_DYN_W2_DELTA", 0.2);
+	double tol = gfs_env_d("GFS_DYN_W2_TOL", 1e-10);
+	int maxit = (int)gfs_env_d("GFS_DYN_W2_MAXIT", 2000);
+	double vbw = gfs_env_d("GFS_DYN_W2_BARRIER", 1000.0);
+	double tau = (double)GAS_dtold(simpar);
+	int i, iy;
+	size_t max_id = 0;
+	for(i=0;i<nbp;i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(bp+i)); if(id > max_id) max_id = id; }
+	dyn_ensure(max_id);
+	int *imap = (int*)malloc((max_id+1)*sizeof(int));
+	for(size_t k=0;k<=max_id;k++) imap[k] = -1;
+	for(i=0;i<nbp;i++) imap[(size_t)PINDX((treevorork4particletype*)(bp+i))] = i;
+	dyn_fn = 0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) if((int)gfs_env_d("GFS_DYN_W2_OMP", 0))
+#endif
+	for(iy=1;iy<my-1;iy++){
+		int mp = 4000, ix;
+		Voro2D_Corner *vorocorner = (Voro2D_Corner*)malloc(sizeof(Voro2D_Corner)*mp);
+		size_t nb = 0, cb = 256;
+		dyn_face_t *buf = (dyn_face_t*)malloc(cb*sizeof(dyn_face_t));
+		for(ix=1;ix<mx-1;ix++){
+			int np, nneigh, k;
+			treevorork4particletype *p = find2DCellBP(simpar,ix,iy,&np);
+			Voro2D_point *neighbors = find2DNeighboringBP(simpar,ix,iy,&nneigh);
+			Voro2D_point *neighwork = (Voro2D_point*)malloc(sizeof(Voro2D_point)*nneigh);
+			for(k=0;k<np;k++){
+				treevorork4particletype *ib = p[k].bp;
+				treevorostressrk4particletype *ibs = (treevorostressrk4particletype*)ib;
+				Voro2D_point center;
+				center.x = p[k].x; center.y = p[k].y;
+				center.indx = PINDX(p+k); center.csound = p[k].csound; center.w2 = p[k].w2;
+				Voro2D_point *nb_use = neighbors, *nw_use = neighwork, *ne = NULL, *nwe = NULL;
+				int nn_use = nneigh;
+				int ip = Voro2D_FindVC(&center, nb_use, nw_use, nn_use, vorocorner, mp, boxsize);
+				if(Voro2D_HasUnassignedCorner(vorocorner, ip)){
+					int R;
+					for(R=2;R<=4;R++){
+						int nne;
+						if(ne){ free(ne); free(nwe); }
+						ne = searchCellRk4Neighbors2D_R(simpar, ix, iy, R, &nne);
+						nwe = (Voro2D_point*)malloc(sizeof(Voro2D_point)*nne);
+						ip = Voro2D_FindVC(&center, ne, nwe, nne, vorocorner, mp, boxsize);
+						nb_use = ne; nw_use = nwe; nn_use = nne;
+						if(!Voro2D_HasUnassignedCorner(vorocorner, ip)) break;
+					}
+				}
+				size_t idi = (size_t)PINDX(ib);
+				Voro2D_Corner *tmp = vorocorner;
+				do {
+					if(tmp->upperrelated >= 0 && tmp->upperrelated < nn_use && nw_use[tmp->upperrelated].bp){
+						treevorork4particletype *jb = (treevorork4particletype*)nw_use[tmp->upperrelated].bp;
+						treevorostressrk4particletype *jbs = (treevorostressrk4particletype*)jb;
+						if(PINDX(jb) != MAX_INDEX && (size_t)PINDX(jb) > idi && (size_t)PINDX(jb) <= max_id
+								&& imap[(size_t)PINDX(jb)] >= 0){
+							Voro2D_Corner *tmp2 = tmp->upperlink;
+							double area = Vec2DLength(tmp,tmp2);
+							double rx = jb->x - ib->x, ry = jb->y - ib->y;
+							double d = sqrt(rx*rx + ry*ry);
+							if(d > 0 && area > 0){
+								double ex = rx/d, ey = ry/d;
+								double vni = ib->vx*ex + ib->vy*ey, vnj = jb->vx*ex + jb->vy*ey;
+								double dd = vnj - vni, nub = 0.5*(vni + vnj);
+								double dW = (double)ib->w2 - (double)jb->w2;
+								Voro2D_point ur; ur.x = 0; ur.y = 0;
+								voronoi_face_rotation(&ur, (postype)0.5*(tmp->x + tmp2->x), (postype)0.5*(tmp->y + tmp2->y),
+									ib->x, ib->y, jb->x, jb->y, ib->vx, ib->vy, jb->vx, jb->vy,
+									(postype)ex, (postype)ey, (postype)d, ib->w2, jb->w2, 1);
+								double rot = ur.x*ex + ur.y*ey;
+								postype ps, vns;
+								hll_star_state(ibs->den, ibs->pressure, (postype)vni, ibs->csound,
+									jbs->den, jbs->pressure, (postype)vnj, jbs->csound, Gamma, &ps, &vns);
+								double pmn = fmin(ibs->pressure, jbs->pressure), pmxv = fmax(ibs->pressure, jbs->pressure);
+								int ext = (pmxv > px*fmax(pmn, 1e-30));
+								double vt = (mid && !ext) ? (nub + rot) : (double)vns;
+								dyn_face_t f;
+								f.i = imap[idi]; f.j = imap[(size_t)PINDX(jb)]; f.ext = ext;
+								f.a = area*(ext ? ratio : 1.0);
+								f.b = 2*d*(vt - nub - rot) + dW*dd/d;
+								/* Validity barrier: past (1-2 delta) d^2 the target keeps
+								 * dW/d^2 fixed (dW' = 2 dW ddot/d) and relaxes |dW| back over
+								 * tau = dt_old, with weight a_f*vbw. Counted in [DYNW2] nbar. */
+								if(vbw > 0 && fabs(dW) > (1-2*delta)*d*d && tau > 0){
+									double ex_ = fabs(dW) - (1-2*delta)*d*d;
+									f.b = 2*dW*dd/d - (dW > 0 ? 1 : -1)*ex_/tau;
+									f.a = area*vbw*(ext ? ratio : 1.0);
+									f.ext = ext | 2;
+								}
+								f.d = d; f.dd = dd; f.dW = dW;
+								f.vstar_rel = (double)vns - nub - rot;
+								if(nb == cb){ cb *= 2; buf = (dyn_face_t*)realloc(buf, cb*sizeof(dyn_face_t)); }
+								buf[nb++] = f;
+							}
+						}
+					}
+					tmp = tmp->upperlink;
+				} while(tmp != vorocorner);
+				if(ne){ free(ne); free(nwe); }
+			}
+			free(p); free(neighbors); free(neighwork);
+		}
+#ifdef _OPENMP
+#pragma omp critical (dynw2_push)
+#endif
+		dyn_face_push(buf, nb);
+		free(buf); free(vorocorner);
+	}
+	/* PCG on L_a x = B^T A b */
+	size_t f; int n = nbp;
+	double *x = (double*)calloc(n, sizeof(double)), *g = (double*)calloc(n, sizeof(double));
+	double *r = (double*)malloc(n*sizeof(double)), *z = (double*)malloc(n*sizeof(double));
+	double *pp = (double*)malloc(n*sizeof(double)), *q = (double*)malloc(n*sizeof(double));
+	double *dg = (double*)calloc(n, sizeof(double));
+	for(f=0;f<dyn_fn;f++){
+		dyn_face_t *F = dyn_f+f;
+		g[F->i] += F->a*F->b; g[F->j] -= F->a*F->b;
+		dg[F->i] += F->a; dg[F->j] += F->a;
+	}
+	for(i=0;i<n;i++){ x[i] = dyn_wd[(size_t)PINDX((treevorork4particletype*)(bp+i))]; if(!(dg[i] > 0)) dg[i] = 1; }
+	{ double m = 0; for(i=0;i<n;i++) m += x[i]; m /= n; for(i=0;i<n;i++) x[i] -= m; }
+#define DYN_APPLY(v, out) do{ for(i=0;i<n;i++) out[i] = 0; \
+	for(f=0;f<dyn_fn;f++){ dyn_face_t *F = dyn_f+f; double t = F->a*(v[F->i]-v[F->j]); out[F->i] += t; out[F->j] -= t; } }while(0)
+	DYN_APPLY(x, q);
+	double gn = 0, rz = 0, rn = 0;
+	for(i=0;i<n;i++){ r[i] = g[i] - q[i]; gn += g[i]*g[i]; }
+	gn = sqrt(gn);
+	for(i=0;i<n;i++){ z[i] = r[i]/dg[i]; pp[i] = z[i]; rz += r[i]*z[i]; rn += r[i]*r[i]; }
+	int it = 0;
+	while(gn > 0 && sqrt(rn) > tol*gn && it < maxit){
+		DYN_APPLY(pp, q);
+		double pq = 0; for(i=0;i<n;i++) pq += pp[i]*q[i];
+		if(!(pq > 0)) break;
+		double al = rz/pq, rz2 = 0; rn = 0;
+		for(i=0;i<n;i++){ x[i] += al*pp[i]; r[i] -= al*q[i]; z[i] = r[i]/dg[i]; rz2 += r[i]*z[i]; rn += r[i]*r[i]; }
+		double be = rz2/rz; rz = rz2;
+		for(i=0;i<n;i++) pp[i] = z[i] + be*pp[i];
+		it++;
+	}
+#undef DYN_APPLY
+	{ double m = 0; for(i=0;i<n;i++) m += x[i]; m /= n; for(i=0;i<n;i++) x[i] -= m; }
+	if(it > dyn_itmax) dyn_itmax = it;
+	for(i=0;i<n;i++){
+		size_t id = (size_t)PINDX((treevorork4particletype*)(bp+i));
+		if(!isfinite(x[i])) x[i] = 0;
+		dyn_wd[id] = x[i]; dyn_k[stage][id] = x[i];
+	}
+	/* residuals, validity */
+	double dtlim = 1e30;
+	for(f=0;f<dyn_fn;f++){
+		dyn_face_t *F = dyn_f+f;
+		double dx = x[F->i] - x[F->j], rr = dx - F->b;
+		if(F->ext & 2) dyn_nbar++;
+		if(F->ext & 1){
+			dyn_r2e += rr*rr; dyn_b2e += F->b*F->b; dyn_ne++;
+			dyn_dv2e += rr*rr/(4*F->d*F->d);
+			dyn_vs2e += F->vstar_rel*F->vstar_rel;
+		} else { dyn_r2o += rr*rr; dyn_b2o += F->b*F->b; dyn_no++; dyn_dv2o += rr*rr/(4*F->d*F->d); }
+		double d2 = F->d*F->d, lim = (1-delta)*d2;
+		double wr = fabs(F->dW)/d2; if(wr > dyn_wratio_max) dyn_wratio_max = wr;
+		double m = lim - fabs(F->dW);
+		/* d|dW|/dt - (1-delta) d(d^2)/dt */
+		double grow = (F->dW > 0 ? dx : (F->dW < 0 ? -dx : fabs(dx))) - (1-delta)*2*F->d*F->dd;
+		if(m <= 0) dyn_nbad++;
+		else if(grow > 1e-30 && m/grow < dtlim) dtlim = m/grow;
+	}
+	free(x); free(g); free(r); free(z); free(pp); free(q); free(dg); free(imap);
+	return dtlim;
+}
+/* Stage W = W_n + cdt*k[kst] (kst < 0: final RK4 combination with Dt = cdt),
+ * shifted so min W = 0; w2old = w2. */
+static void gfs_dynw2_set(treevorostressrk4particletype *sbp, int np, postype cdt, int kst){
+	int i; double wmin = 1e300;
+	for(i=0;i<np;i++){
+		size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i));
+		double k = (kst >= 0) ? dyn_k[kst][id]
+			: (dyn_k[0][id] + 2*dyn_k[1][id] + 2*dyn_k[2][id] + dyn_k[3][id])/6.0;
+		double W = (double)sbp[i].rk4.w2backup + (double)cdt*k;
+		sbp[i].w2 = (postype)W;
+		if(W < wmin) wmin = W;
+	}
+	for(i=0;i<np;i++){
+		size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i));
+		double k = (kst >= 0) ? dyn_k[kst][id]
+			: (dyn_k[0][id] + 2*dyn_k[1][id] + 2*dyn_k[2][id] + dyn_k[3][id])/6.0;
+		double W = (double)sbp[i].rk4.w2backup + (double)cdt*k - wmin;
+		if(!(W > 0)) W = 0;   /* rounding only; sqrt(w2) is taken elsewhere */
+		sbp[i].w2 = (postype)W; sbp[i].w2old = sbp[i].w2;
+	}
+}
+static void gfs_dynw2_report(SimParameters *simpar, postype Dt, double dtlim, int bound){
+	static int st = 0; static long nbind = 0;
+	st++; if(bound) nbind++;
+	if(MYID(simpar) != 0) return;
+	fprintf(stderr, "[DYNW2] step=%d Dt=%.4e faces/stage=%ld ext=%ld relres_ext=%.3e relres_ord=%.3e relres_all=%.3e rms_dv_ext=%.3e rms_vstar_rel_ext=%.3e rms_dv_ext_force=%.3e rms_dv_ord=%.3e cg_it_max=%d maxdW/d2=%.3f invalid=%ld nbar=%ld rms_b_ord=%.3e dtlim=%.3e bound=%d nbind=%ld\n",
+		st, (double)Dt, (dyn_ne + dyn_no)/4, dyn_ne/4,
+		dyn_b2e > 0 ? sqrt(dyn_r2e/dyn_b2e) : 0.0,
+		dyn_b2o > 0 ? sqrt(dyn_r2o/dyn_b2o) : 0.0,
+		(dyn_b2e + dyn_b2o) > 0 ? sqrt((dyn_r2e + dyn_r2o)/(dyn_b2e + dyn_b2o)) : 0.0,
+		dyn_ne > 0 ? sqrt(dyn_dv2e/dyn_ne) : 0.0,
+		dyn_ne > 0 ? sqrt(dyn_vs2e/dyn_ne) : 0.0,
+		dyn_fchk_n > 0 ? sqrt(dyn_fchk_s2/dyn_fchk_n) : 0.0,
+		dyn_no > 0 ? sqrt(dyn_dv2o/dyn_no) : 0.0,
+		dyn_itmax, dyn_wratio_max, dyn_nbad/4, dyn_nbar/4, dyn_no > 0 ? sqrt(dyn_b2o/dyn_no) : 0.0, dtlim, bound, nbind);
+}
 double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 		postype xmax, postype ymax,
 		postype OrderOfAccuracy, postype Courant, postype Gamma,
@@ -6457,6 +6773,10 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 	VORO_BASICCELL(simpar) = (CellType*)my_malloc(sizeof(CellType)*mx*my);
 	mkLinkedList2D(simpar, cellsize, xmin, ymin, xmax, ymax, paddingAllTreeParticles);
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d beta after mkLinkedList2D\n", MYID(simpar)); fflush(stderr); }
+	/* GFS_DYN_W2: solve Wdot for this stage on the linked list just built. */
+	if(gfs_dynw2_active){
+		dyn_dtlim_last = gfs_dynw2_solve(simpar, dyn_stage_cur, Gamma, find2DNeighboringBP, find2DCellBP);
+	}
 
 	postype Dtime = getAccVoro2DBlend_impl(simpar, xmin, ymin, xmax, ymax,
 		OrderOfAccuracy, Courant, Gamma,
@@ -7682,7 +8002,7 @@ void exam2d_centroidShift(
 	if(GAS_Kappa(simpar)>0) det2d_dpqRK4_GPU(simpar, xmin, ymin, xmax, ymax,
 		paddingAllTreeParticles, mkLinkedList2D);
 #else
-	if(GAS_Kappa(simpar)>0) det2d_dpqRK4(simpar,paddingAllTreeParticles);
+	if(GAS_Kappa(simpar)>0 || gfs_dynw2_active) det2d_dpqRK4(simpar,paddingAllTreeParticles);
 #endif
 	// prepare the linked-list cells for mkLinkedList2D()  and tree findings below
     CellType *cells = (VORO_BASICCELL(simpar)= (CellType*)my_malloc(sizeof(CellType)*mx*my));
@@ -7775,7 +8095,7 @@ void exam2dUpdateVol(
 		fprintf(stderr,"[UPDV] P%d after det2d_dpqRK4_GPU\n", MYID(simpar)); fflush(stderr);
 	}
 #else
-	if(GAS_Kappa(simpar)>0) det2d_dpqRK4(simpar,paddingAllTreeParticles);
+	if(GAS_Kappa(simpar)>0 || gfs_dynw2_active) det2d_dpqRK4(simpar,paddingAllTreeParticles);
 #endif
 
 	int mx = BASICCELL_MX(simpar) = ceil((xmax-xmin)/cellsize);
@@ -10087,6 +10407,25 @@ double exam2d_vph_rk4_int_blend(
 	}
 	gfs_w2lin_active = w2lin;
 	if(w2lin) gfs_w2lin_start(simpar, sbp, VORO_NP(simpar), targetBP, Lx, Ly);
+	/* GFS_DYN_W2 (default off): scheme 3, see gfs_dynw2_on. */
+	int dynw2 = gfs_dynw2_on() && av_mode == 5 && GAS_Kappa(simpar) == 0
+		&& NID(simpar) == 1 && !w2lin && !sedov_lagvol_on();
+#ifdef USE_CUDA
+	if(GAS_GPU_ENABLED(simpar)) dynw2 = 0;   /* CPU only */
+#endif
+	{
+		static int dw_banner = 0;
+		if(!dw_banner && gfs_dynw2_on() && MYID(simpar) == 0){
+			fprintf(stderr, "[DYNW2] GFS_DYN_W2=1: active=%d (needs av_mode 5, kappa 0, 1 rank, CPU, no lagvol/W2_LINEAR) ratio=%g px=%g mid=%d delta=%g barrier=%g\n",
+				dynw2, gfs_env_d("GFS_DYN_W2_RATIO", 100.0), gfs_env_d("GFS_DYN_W2_PX", 100.0),
+				(int)gfs_env_d("GFS_DYN_W2_MID", 0), gfs_env_d("GFS_DYN_W2_DELTA", 0.2),
+				gfs_env_d("GFS_DYN_W2_BARRIER", 1000.0));
+			dw_banner = 1;
+		}
+	}
+	gfs_dynw2_active = dynw2;
+	double dyn_dtlim = 1e30; int dyn_bound = 0;
+	if(dynw2) dyn_step_reset();
 	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* === K1 evaluation === */
 	_t0 = MPI_Wtime();
@@ -10094,6 +10433,7 @@ double exam2d_vph_rk4_int_blend(
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, 1);
 	_t_update += MPI_Wtime() - _t0;
+	dyn_stage_cur = 0;
 	if(gfs_vaud_on()) vaud_close(simpar, sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* GFS_ENTROPY_SWITCH / GFS_HALF_LIMIT: remember ie_n and V_n at the
 	 * start of the step. Stage arithmetic never touches these fields. */
@@ -10143,6 +10483,8 @@ double exam2d_vph_rk4_int_blend(
 				TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
 		if(dtk < Dtime) Dtime = dtk;
 	}
+	if(dynw2) dyn_dtlim = dyn_dtlim_last;
+	if(dynw2 && dyn_dtlim < Dtime){ Dtime = dyn_dtlim; dyn_bound = 1; }
 
 	clamp_dK_rate_limiter(simpar, Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
@@ -10179,6 +10521,7 @@ double exam2d_vph_rk4_int_blend(
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
 	if(w2lin) gfs_w2lin_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime);
+	if(dynw2) gfs_dynw2_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime, 0);
 	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	_t0 = MPI_Wtime();
@@ -10186,6 +10529,7 @@ double exam2d_vph_rk4_int_blend(
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, Dtime);
 	_t_update += MPI_Wtime() - _t0;
+	dyn_stage_cur = 1;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
 	if (GAS_GPU_ENABLED(simpar))
@@ -10239,6 +10583,7 @@ double exam2d_vph_rk4_int_blend(
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
 	if(w2lin) gfs_w2lin_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime);
+	if(dynw2) gfs_dynw2_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime, 1);
 	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	_t0 = MPI_Wtime();
@@ -10246,6 +10591,7 @@ double exam2d_vph_rk4_int_blend(
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, Dtime);
 	_t_update += MPI_Wtime() - _t0;
+	dyn_stage_cur = 2;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
 	if (GAS_GPU_ENABLED(simpar))
@@ -10299,6 +10645,7 @@ double exam2d_vph_rk4_int_blend(
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
 	if(w2lin) gfs_w2lin_set(sbp, VORO_NP(simpar), (postype)1.0*Dtime);
+	if(dynw2) gfs_dynw2_set(sbp, VORO_NP(simpar), (postype)1.0*Dtime, 2);
 	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	_t0 = MPI_Wtime();
@@ -10306,6 +10653,7 @@ double exam2d_vph_rk4_int_blend(
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, Dtime);
 	_t_update += MPI_Wtime() - _t0;
+	dyn_stage_cur = 3;
 	_t0 = MPI_Wtime();
 #if defined(USE_CUDA) && defined(GPU_VALIDATE)
 	if (GAS_GPU_ENABLED(simpar))
@@ -10395,6 +10743,12 @@ double exam2d_vph_rk4_int_blend(
 	if(w2lin){
 		sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 		gfs_w2lin_set(sbp, VORO_NP(simpar), Dtime);
+	}
+	/* GFS_DYN_W2: W_{n+1} = W_n + Dt (k1 + 2k2 + 2k3 + k4)/6. */
+	if(dynw2){
+		sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+		gfs_dynw2_set(sbp, VORO_NP(simpar), Dtime, -1);
+		gfs_dynw2_report(simpar, Dtime, dyn_dtlim, dyn_bound);
 	}
 	/* Update volume & density */
 	exam2dUpdateVol(simpar,paddingAllTreeParticles,find2DNeighborBP, find2DCellBP,mkLinkedList2D);
@@ -10620,6 +10974,7 @@ double exam2d_vph_rk4_int_blend(
 	}
 
 	gfs_w2lin_active = 0;
+	gfs_dynw2_active = 0;
 	_t_fin = MPI_Wtime() - _t0;
 	{
 		static int _step_timer = 0;
