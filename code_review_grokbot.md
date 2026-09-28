@@ -527,3 +527,124 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 - (이 커밋) `GFS_LAGUERRE_ROTATION`: exam.c, exam_gpu.cu, exam_gpu.h, exam_gpu_extract.c, 이 절.
 
 시험 소스(`lagrot_fd.c`, `extracted.h`)는 박스의 `/workspace/lagEunha/review_tests/lagrot/`에 있고, 저장소 밖입니다.
+
+## Grok CLI께: 3D 시험 스위트 `Exam/Tests3D` (3D 드라이버가 생기기 전에는 제출하지 마세요)
+
+요약:
+1. **현재 코드에는 3D GFS 유체 경로가 없습니다.** 조사 결과는 아래와 같습니다. **[CODE]**
+2. 3D 이식은 하지 않았습니다. 빌드 없이는 한 번도 돌려 볼 수 없는 ~3000줄 이식이라, 검증하지 않은 코드를 넣는 것보다 부족한 부분을 정확히 적는 편이 낫다고 판단했습니다. 2D 코드는 한 줄도 바뀌지 않았습니다. 이번 커밋은 `Exam/Tests3D/` 아래 새 파일과 이 절뿐입니다.
+3. 대신 다섯 시험(음파, Sedov, Noh, Evrard, KH)의 다음을 모두 준비했습니다: IC 생성기, 파라미터 템플릿, `run.slurm`, 해석 스크립트, 합격 기준, 박스 자체 시험(`selftest.sh`).
+4. **모든 `run.slurm`은 바이너리에 표식 문자열 `LAGEUNHA_3D_GFS_V1`이 없으면 preflight에서 exit 3으로 멈춥니다.** 지금의 `eunha2.exe`로 제출하면 할당만 받고 곧바로 끝납니다. 3D 드라이버가 들어간 커밋이 생기면 그때 이 절의 명령을 쓰세요.
+
+### 3D 경로 조사 [CODE]
+
+| 항목 | 3D 상태 |
+|---|---|
+| `ex3d_*`, `nearest3dOpen`, `det3d_dpq(RK4)` (exam.c ~353–1007) | 3D 트리로 탐색 반경(`w2ceil`)만 계산. **어느 드라이버도 호출하지 않음** |
+| `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, 부피/중심 | 3D Voronoi 기하는 있음. 옛 `Exam/Sedov`만 사용 |
+| `Voro/Laguerre/` 3D (CPU + CUDA `construct_cells_3d_kernel`) | 주 빌드에 없음 (`Voro/Makefile`은 voro.o, voro_eunha.o만 빌드). CUDA 커널은 부피와 꼭짓점 평균 중심만 주고 면 목록이 없음 |
+| `Exam/Sedov` (3D Voronoi 유체) | 독립형 OpenMP, MPI 없음. Monaghan AV를 쓰고 HLLC/MUSCL/pair/RK4 없음. 어떤 Makefile에도 없고, 컴파일 오류 12개 |
+| HLLC+MUSCL, extreme face (P_max > 100 P_min), pair pressure + `gfs_pair_work_limit`, `voronoi_face_rotation` | **2D 전용** (`getAccVoro2DBlend_impl`, `hllc_face_2d`) |
+| 밀도/부피/floor (`updateDenW2Pressure2DBlend`) | **2D 전용** |
+| RK4 드라이버, `kepler_accel`, `phase1_ie_stage`, `[RK4E]`, GFS_DUAL_ENERGY, GFS_ENTROPY_SWITCH | **2D 전용** (`exam2d_vph_rk4_int_blend`) |
+| rk4 입자의 영역 분할 | `startRkSDD2D`, `MakeDoDeInfo2D`만 있음 |
+| `eunha2.c` SIMMODEL | KH/RT/RT_LF/MkGlass2D/Cylinder/Sedov2D만 있음. 3D 모델, IC 읽기, 출력 없음 |
+| GPU | `exam_gpu.cu`의 커널은 모두 2D. **3D는 드라이버가 생겨도 당분간 CPU 전용** |
+| 자체 중력 | GOTPM(TreePM)은 VORO 입자 질량을 넣지만 주기적 우주론 전용이고 `RunCosmos`는 GFS를 부르지 않음. 2D 드라이버에는 외부 `kepler_accel`과 `GAS_ACC`뿐. **Evrard는 3D 유체와 고립계 자체 중력이 모두 없어 두 겹으로 막혀 있음** |
+
+이식 계획, 기대하는 드라이버 인터페이스(LAG3DV1 IC/스냅숏 `snap_%06d.l3d`, `[E3D] step= t= dt= Ekin= Eint= Epot= Etot=` 로그 줄, 제안하는 params 키), 열린 결정은 `Exam/Tests3D/README.md` §1–2, §5에 있습니다.
+
+### 공통 설정
+
+- **빌드**: 3D 드라이버가 들어간 커밋에서 평소처럼 빌드합니다. GPU 플래그는 필요 없고, 3D는 CPU 전용입니다. 제출 전에 표식을 확인하세요.
+  ```
+  grep -a -c LAGEUNHA_3D_GFS_V1 eunha2.exe   # 1 이상이어야 함
+  ```
+- **env**: `common/flags_base.env`를 각 `config.env`가 source합니다. 우리가 정한 2D 관례 그대로입니다.
+  - `SEDOV_PHASE1=1`, `GFS_FLOOR_LOG=1` (음파와 KH는 0);
+  - `GFS_DUAL_ENERGY`, `GFS_ENTROPY_SWITCH`, `GFS_HALF_LIMIT`, `GFS_LAGUERRE_ROTATION`, `EUNHA_KEPLER_*`는 unset;
+  - `OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK`.
+- **params**: `params3d.dat`. RK4 (`way = 1`), `av_mode 5`, `use_muscl 1`, `kappa 0`, `gpu_enabled 0`, centroid shift 0. pair pressure는 capped law와 work limit를 씁니다. 3D의 `nshare`는 열린 결정입니다.
+- **스크립트 공통**: `sbatch`는 시험 디렉터리에서 실행합니다. `LAGEUNHA_SRC`(기본 `$HOME/LagEunha`)의 `eunha2.exe`를 `/gpfs/kjhan/LagForce/<시험>_gfs_…`에 복사하고, `COMMIT`/`ENV`를 기록하고, IC를 만들고, `mpirun` 출력은 `log`에, 마지막 줄 `EXIT:<rc>`를 씁니다. **2D 스크립트와 달리 스크립트가 mpirun의 rc로 끝나므로, 죽은 런이 COMPLETED 0:0으로 보이지 않습니다.**
+- **IC 생성**: `LAG3D_PY`(기본 `python3`)에 numpy와 scipy가 있어야 합니다.
+- **자원**: 기본 4 rank × 16 스레드이고, 파티션은 비워 두었습니다(`##SBATCH -p`). 클러스터에 맞게 정해 주세요.
+- **시간**: 아래 시간은 모두 **추정**입니다. 2D GPU Gresho 처리량(약 2.5×10⁵ 입자·스텝/s)에서 3D CPU를 rank당 약 10⁵으로 가정했고, 3배 정도 틀릴 수 있습니다.
+- **공통으로 보고해 주실 것**: 런 디렉터리, `COMMIT`, `ENV`, `EXIT:` 줄, `sacct` 상태, 스텝 수와 wall time, `[RK4F]`/floor 줄 개수, 해석 스크립트의 `*_summary.json` 전문과 PNG.
+
+### 1. SoundWave3D (선형 음파, 수렴과 Galilean 불변성)
+
+| | |
+|---|---|
+| 설정 | 주기 단위 상자, ρ0 = 1, c0 = 1, A = 10⁻⁶, x 방향, 한 주기 t = 1. cubic 격자, 질량 m = ρ(x) dx³ (2D KH/Gresho IC와 같은 방식) |
+| 실행 | `cd Exam/Tests3D/SoundWave3D`<br>`sbatch --export=ALL,N=32 run.slurm`<br>`sbatch --export=ALL,N=64 run.slurm`<br>`sbatch --export=ALL,N=128 -t 12:00:00 run.slurm`<br>`sbatch --export=ALL,N=64,BOOST=1 run.slurm` |
+| 해석 | `python3 analyze.py --snaps <N32>/<마지막 snap> <N64>/… <N128>/… --boosted <N64_boost1>/… -o sw3d` |
+| 추정 시간 | 32³ 수 분, 64³ 약 3분, 128³ 약 40분 (약 110/215/430 스텝) |
+| 합격 | P1: 가장 고운 두 해상도 사이 L1(ρ) 수렴 차수 ≥ 1.7<br>P2: 64³에서 L1/A ≤ 10⁻²<br>P3: L1_boost/L1_rest ≤ 1.25 |
+| 보고 | 해상도별 L1, 수렴 차수, boost 비, `sw3d_convergence.png`, `sw3d_profile.png` |
+
+### 2. Sedov3D (γ = 5/3)
+
+| | |
+|---|---|
+| 설정 | 주기 단위 상자, ρ = 1, P_amb = 10⁻⁵. E = 1을 중심 가까운 64개에 top hat으로 넣음 (cubic에서는 동률 때문에 88개가 되고, 그대로 기록). t_end = 0.05, R_an = 0.3475 (ξ0 = 1.15167) |
+| 격자 | 기본 cubic. glass는 `--export=ALL,N=64,LATTICE=glass`. **어느 쪽인지 꼭 보고** |
+| 실행 | `cd Exam/Tests3D/Sedov3D`<br>`sbatch --export=ALL,N=64 run.slurm`<br>그다음 `sbatch --export=ALL,N=128 -t 12:00:00 run.slurm` |
+| 해석 | `python3 analyze.py --snap <N64>/<마지막 snap> --ic <N64>/ic.l3d [--snap2 <N128>/<마지막 snap>] -o sedov3d` |
+| 추정 시간 | 64³ 약 20분 (약 2000 스텝), 128³ 약 6시간 |
+| 합격 | 스윕 질량 충격 반경 \|R/R_an − 1\| ≤ 0.03 (128³에서 0.02)<br>\|ΔE/E0\| ≤ 10⁻³<br>ρ_peak ≥ 2.5 (128³에서 3.0)<br>축/대각 비대칭 5% 이내<br>L1(128³) < L1(64³) |
+| 보고 | summary.json, `sedov3d_profiles.png`, floor에 닿은 셀 수 |
+
+### 3. Noh3D (구형, 충격 후 밀도 64)
+
+| | |
+|---|---|
+| 설정 | 주기 상자 L = 6, ρ = 1, P = 10⁻⁶, v = −r̂, t_end = 2. 정답: R = 2/3, ρ_post = 64, P_post = 64/3, 충격 앞 ρ = (1 + t/r)². 주기 경계의 교란이 들어오지 않은 r < 1 안에서만 비교 |
+| 실행 | `cd Exam/Tests3D/Noh3D`<br>`sbatch --export=ALL,N=128 run.slurm` |
+| 해석 | `python3 analyze.py --snap <마지막 snap> --ic ic.l3d -o noh3d` |
+| 추정 시간 | 128³ 약 1.5시간 (1–5시간), 약 1000 스텝 |
+| 합격 | \|R/R_an − 1\| ≤ 0.05<br>0.3–0.9 R 평균 밀도가 64의 20% 이내<br>충격 앞 L1 ≤ 5%<br>\|ΔE/E0\| ≤ 10⁻³<br>중심(r < 0.3 R)의 wall heating은 보고만 하고 채점하지 않음 |
+| 보고 | summary.json, `noh3d_profiles.png`, extreme face/pair pressure 관련 로그가 있으면 그 개수 |
+
+### 4. Evrard3D (자체 중력 필요, 현재 막힘)
+
+| | |
+|---|---|
+| 설정 | Evrard (1988), Springel (2010), Hopkins (2015)와 같은 표준 설정. γ = 5/3, G = M = R = 1, ρ = 1/(2πr), u = 0.05, v = 0. E_pot(0) = −2/3, E_tot = −0.6167. 격자를 r < 1로 자르고 r → r^{3/2}로 늘림 (같은 질량). Plummer ε = 0.01 |
+| 경계 | 기본 진공. `BACKGROUND=uniform`은 저밀도 배경 가스 (열린 결정) |
+| 필요한 것 | `Hydro3D gravity = 1`, 즉 유체 입자와 결합한 고립계 자체 중력. **아직 없음** |
+| 실행 | `cd Exam/Tests3D/Evrard3D`<br>`sbatch --export=ALL,N=64 run.slurm` (약 13.7만 입자, t_end = 3) |
+| 해석 | `python3 analyze.py --log log --snap <t≈0.8 스냅숏> -o evrard3d`. `[E3D]` 줄이 로그에 있어야 함 |
+| 기준 | `ref/evrard1d_N2000_*.txt`: 여기서 만든 1D 구대칭 라그랑주 풀이 (`evrard1d_ref.c`, 에너지 오차 1.5×10⁻⁵). t = 0.8 프로파일은 SWIFT의 HydroCode1D 파일과 log ρ 기준 0.3%로 일치. 논문 곡선을 디지털화한 것이 아님. 기준값: E_kin 최대 0.450 (t = 0.88), E_th 최대 1.758 (t = 1.07), E_pot 최소 −2.543 (t = 1.05) |
+| 추정 시간 | n = 64에서 유체만 약 2시간 (약 2×10⁴ 스텝)에 중력 비용 추가 |
+| 합격 | E1 (주 기준): max \|ΔE_tot\|/\|E0\| ≤ 1%<br>E2: E_kin 최대 시각 0.88 ± 0.10, E_th 최대 시각 1.07 ± 0.15<br>E3: E_th 곡선의 평균 상대 차이 ≤ 0.15<br>E4: t = 0.8에서 0.05 < r < 0.8 평균 \|log10 ρ/ρ_ref\| ≤ 0.10<br>E3와 E4는 우리가 정한 기준이고 공동체 표준이 아님 |
+| 보고 | `evrard3d_energy.png`, summary.json, 중력 해법과 ε |
+
+### 5. KH3D (McNally 2012 층을 z로 확장)
+
+| | |
+|---|---|
+| 설정 | 1 × 1 × Lz (기본 0.25), P = 2.5, ρ = 1/2, U = ±0.5, L = 0.025. 씨앗 v_y = 0.01 sin(4πx). 격자, 질량 = ρ dV |
+| 선형 이론 | 이 층의 압축성 고유값 풀이로 σ = 2.83. 날카로운 경계의 5.92는 비교 기준이 아님 |
+| 실행 | `cd Exam/Tests3D/KH3D`<br>`sbatch --export=ALL,N=128 run.slurm` (128×128×32)<br>가능하면 `N=256`도 |
+| 해석 | `python3 analyze.py --snaps '<run>/snap_*.l3d' --ic <run>/ic.l3d [--snaps2 '<run256>/snap_*.l3d'] -o kh3d` |
+| 추정 시간 | 128×128×32로 t = 2까지 약 50분 (약 2200 스텝) |
+| 합격 | K1: n ≥ 128에서 \|σ_fit/σ_lin − 1\| ≤ 0.15 (1.5 M0 ≤ M ≤ 0.06 구간, 4점 이상)<br>K2: 해상도를 올려도 오차가 커지지 않음 |
+| 보고 | σ_fit, 맞춤 구간, `kh3d_growth.png` |
+
+### 박스에서 확인한 것 [RUN]
+
+- `Exam/Tests3D/selftest.sh`가 모두 통과했습니다(깨끗한 clone에서도). 검사 내용:
+  - C 도구 빌드 (경고 0);
+  - 해석해: Sedov ξ0 = 1.15167, Noh 64 / 64/3 / R = 2/3, KH 풀이가 Michalke 0.1897과 일치;
+  - 다섯 IC의 질량, 운동량, 에너지 합과 C 읽기 교차 확인 (바이트 단위 왕복);
+  - 해석 스크립트를 합성 스냅숏에 적용;
+  - `run.slurm`: 표식 없는 바이너리에서 exit 3. 가짜 표식 바이너리와 stub `mpirun`으로 런 디렉터리, IC, 채워진 params, `EXIT:0` 생성. 실제로 제출한 것은 없습니다.
+- `review_tests/syncheck.sh`: `exam.c` 287/287 경고, 0 오류. `exam_gpu_extract.c` 0/16, 0 오류. 변경 없음.
+- 확인하지 못한 것: LagEunha로 돌리는 모든 부분. 합격 기준은 해석해와 2D 거동에 맞춘 것이고, 3D 런으로 보정한 것이 아닙니다.
+
+### 커밋
+
+- `45c2d67` Tests3D common: LAG3DV1 형식, 격자/glass, Sedov/Noh/KH 해석해, 실행 도우미
+- `0ea330b` 다섯 시험의 IC, config, run.slurm, 해석 (Evrard 1D 기준 포함)
+- `8573f55` README (3D 조사, 드라이버 인터페이스, 합격 기준)와 selftest.sh
+- (이 커밋) 이 절
