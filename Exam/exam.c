@@ -2791,6 +2791,11 @@ static void sedov_wsmooth_apply(
 	free(flag); free(w); free(V); free(bb); free(tagged); free(tdeg);
 }
 
+/* CPU stage-floor ledger (see the pressure loop of
+ * updateDenW2Pressure2DBlend). Reset each RK4 step, printed in [RK4E]. */
+static double gfs_stage_floor_l = 0;
+static int gfs_stage_floor_n_l = 0;
+
 void updateDenW2Pressure2DBlend(
 		SimParameters *simpar,
 		postype xmin, postype ymin, postype xmax, postype ymax,
@@ -3434,12 +3439,21 @@ void updateDenW2Pressure2DBlend(
 		} else {
 			bp[i].pressure = bp[i].ie/bp[i].volume*(Gamma-1);
 			if(bp[i].pressure <= 0){
+				double ie_before = (double)bp[i].ie;
 				/* GFS_DUAL_ENERGY: the adiabatic value, not 1e-6. */
 				if(de_eta_stage > 0 && bp[i].stress.K > 0 && bp[i].den > 0)
 					bp[i].pressure = bp[i].stress.K * pow((double)bp[i].den, (double)Gamma);
 				else
 					bp[i].pressure = 1e-6;
 				bp[i].ie = bp[i].pressure * bp[i].volume / (Gamma-1);
+				/* Stage floor. This reset stays in the final ie (the RK4
+				 * combination undoes the k's, not the reset), so it is an
+				 * energy source. Booked in [RK4E] as sfl_cum. Local cells
+				 * only; the ghosts are copies. */
+				if(i < VORO_NP(simpar)){
+					gfs_stage_floor_l += (double)bp[i].ie - ie_before;
+					gfs_stage_floor_n_l++;
+				}
 			}
 		}
 		bp[i].csound = sqrt(Gamma*bp[i].pressure/bp[i].den);
@@ -4166,8 +4180,17 @@ static inline void hll_star_state(
 {
 	postype SL = fmin(vnL - cL, vnR - cR);
 	postype SR = fmax(vnL + cL, vnR + cR);
-	if(SL >= 0){ *pstar = pL; *vnstar = vnL; return; }
-	if(SR <= 0){ *pstar = pR; *vnstar = vnR; return; }
+	/* No upwind selection here. This is the HLL average state between the
+	 * two waves, used as the face pressure and velocity of a moving
+	 * (Lagrangian) face, not an Eulerian flux at x/t = 0. The old
+	 * "SL >= 0 -> left state, SR <= 0 -> right state" test is made in
+	 * the frame of the caller, which is the lab frame for the extreme
+	 * face: in an orbiting disk (|v| >> c) it returned the hot cell's own
+	 * P and v_n, so a cold neighbour expanded against the hot pressure and
+	 * went to ie < 0 (Kepler floor runaway, see code_review_grokbot.md).
+	 * The average state is Galilean covariant (P* invariant, v* shifts
+	 * with the frame), so dropping the test gives the frame-independent
+	 * answer, and it is identical wherever SL < 0 < SR already held. */
 	postype gm1 = Gamma - (postype)1;
 	if(gm1 < (postype)1e-8) gm1 = (postype)1e-8;
 	postype rhoLs = fmax(rhoL, (postype)1e-30);
@@ -5729,6 +5752,24 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 									(double)ibp->mass, (double)jbp->mass,
 									qpair,
 									(double)ibp->ie, (double)jbp->ie, 6.0);
+							/* Charge cap: s_i from the face velocity this end
+							 * will use for the work (ua below), s_j = qA - s_i. */
+							if(p_pair > 0){
+								double uax, uay;
+								if(phase1_extreme){
+									uax = phase1_vn*phase1_nx; uay = phase1_vn*phase1_ny;
+								} else if(riemann_vstar){
+									uax = riemann_vn*riemann_nx; uay = riemann_vn*riemann_ny;
+								} else {
+									uax = ibp_vx + uradix_ui.x; uay = ibp_vy + uradix_ui.y;
+								}
+								double s_i = (uax - ibp_vx)*dS.x + (uay - ibp_vy)*dS.y;
+								double qA  = (jbp_vx - ibp_vx)*dS.x + (jbp_vy - ibp_vy)*dS.y;
+								p_pair = (postype)gfs_pair_charge_limit(
+										(double)p_pair, s_i, qA - s_i,
+										(double)GAS_dtold(simpar),
+										(double)ibp->ie, (double)jbp->ie, 6.0);
+							}
 							if(p_pair > 0){
 								pi_total += p_pair;
 #ifdef _OPENMP
@@ -10062,6 +10103,10 @@ double exam2d_vph_rk4_int_blend(
 		MPI_Allreduce(&de_n_l, &dn_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&rk4e_floor_l, &fl_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
 		MPI_Allreduce(&rk4e_neg_l, &ng_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		double sfl_g = 0; int sfl_n_g = 0;
+		MPI_Allreduce(&gfs_stage_floor_l, &sfl_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		MPI_Allreduce(&gfs_stage_floor_n_l, &sfl_n_g, 1, MPI_INT, MPI_SUM, MPI_COMM(simpar));
+		gfs_stage_floor_l = 0; gfs_stage_floor_n_l = 0;
 		double es_de_g = 0, hl_de_g = 0; int es_n_g = 0, hl_n_g = 0;
 		if(gfs_es_step){
 			MPI_Allreduce(&es_de_l, &es_de_g, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
@@ -10073,7 +10118,7 @@ double exam2d_vph_rk4_int_blend(
 		MPI_Allreduce(&npair_l, &npair_g, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM(simpar));
 		if(MYID(simpar)==0){
 			static double Et0 = 0, Eh0 = 0, fl_cum = 0, de_cum = 0;
-			static double es_cum = 0, hl_cum = 0;
+			static double es_cum = 0, hl_cum = 0, sfl_cum = 0;
 			static int st = 0, first = 1;
 			st++;
 			fl_cum += fl_g;
@@ -10095,6 +10140,12 @@ double exam2d_vph_rk4_int_blend(
 					" n_es=%d es_de=%.3e es_cum=%.3e n_half=%d hl_de=%.3e hl_cum=%.3e",
 					es_n_g, es_de_g, es_cum, hl_n_g, hl_de_g, hl_cum);
 			}
+			/* CPU stage floor. The GPU path floors only P in the stages, so
+			 * a negative ie reaches the end-of-step floor and is counted in
+			 * floor_cum there. Ledger:
+			 * dEtot*|Etot0| ~ floor_cum + sfl_cum + de_cum (+ es_cum, hl_cum). */
+			sfl_cum += sfl_g;
+			fprintf(stderr, " n_sfl=%d sfl_inj=%.3e sfl_cum=%.3e", sfl_n_g, sfl_g, sfl_cum);
 			fprintf(stderr, "\n");
 			fflush(stderr);
 		}

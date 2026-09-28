@@ -1506,8 +1506,17 @@ static void hll_star_state(double rhoL, double pL, double vL, double cL,
 {
     double SL = fmin(vL - cL, vR - cR);
     double SR = fmax(vL + cL, vR + cR);
-    if(SL >= 0){ *pstar = pL; *vstar = vL; return; }
-    if(SR <= 0){ *pstar = pR; *vstar = vR; return; }
+    /* No upwind selection here. This is the HLL average state between the
+     * two waves, used as the face pressure and velocity of a moving
+     * (Lagrangian) face, not an Eulerian flux at x/t = 0. The old
+     * "SL >= 0 -> left state, SR <= 0 -> right state" test is made in
+     * the frame of the caller, which is the lab frame for the extreme
+     * face: in an orbiting disk (|v| >> c) it returned the hot cell's own
+     * P and v_n, so a cold neighbour expanded against the hot pressure and
+     * went to ie < 0 (Kepler floor runaway, see code_review_grokbot.md).
+     * The average state is Galilean covariant (P* invariant, v* shifts
+     * with the frame), so dropping the test gives the frame-independent
+     * answer, and it is identical wherever SL < 0 < SR already held. */
     double EL = pL/(GM1*fmax(rhoL,1e-30)) + 0.5*vL*vL;
     double ER = pR/(GM1*fmax(rhoR,1e-30)) + 0.5*vR*vR;
     double EdenL = rhoL*EL, EdenR = rhoR*ER;
@@ -1539,8 +1548,9 @@ static void hll_material_state(double rhoL, double pL, double vL, double cL,
 {
     double SL = fmin(vL - cL, vR - cR);
     double SR = fmax(vL + cL, vR + cR);
-    if(SL >= 0){ *pstar = pL; *vstar = vL; return; }
-    if(SR <= 0){ *pstar = pR; *vstar = vR; return; }
+    /* No upwind selection, for the same reason as in hll_star_state:
+     * the state belongs to a moving face, and the lab-frame test picked
+     * one side's own P and v whenever the bulk speed exceeded c. */
     double denom = SR - SL;
     if(fabs(denom) < 1e-30){
         *pstar = 0.5*(pL+pR); *vstar = 0.5*(vL+vR); return;

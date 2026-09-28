@@ -65,15 +65,60 @@ static inline double gfs_pair_work_limit(
 		return p0;
 	if(!(nshare > 0.0)) nshare = 1.0;
 	mu = m_i * m_j / (m_i + m_j);
+	/* Budget from the poorer cell: B = 2 min(ie_i, ie_j) / nshare.
+	 * The old budget (ie_i + ie_j) / nshare pooled both cells, but the
+	 * work is not charged to the pair as a whole. Each end pays P dV of
+	 * its own volume change through this face, and on a separating pair
+	 * next to a Laguerre face almost all of it lands on one cell. With a
+	 * hot j and a cold i the pooled budget let j's energy pay for a pair
+	 * pressure that i alone had to do work against: in the 64^2 Kepler
+	 * run cells at R ~ 0.02 lost 500 times their ie in one stage through
+	 * the pair term, went to ie < 0 and were refilled by the stage floor
+	 * (the whole energy error, see code_review_grokbot.md). For equal ie
+	 * the budget is the same as before; it is symmetric in i and j, so
+	 * both ends of the face still get the same pressure. */
 	B = 0.0;
-	if(ie_i > 0.0) B += ie_i / nshare;
-	if(ie_j > 0.0) B += ie_j / nshare;
+	if(ie_i > 0.0 && ie_j > 0.0)
+		B = 2.0 * (ie_i < ie_j ? ie_i : ie_j) / nshare;
 	disc = q * q + 2.0 * B / mu;
 	if(!(disc > 0.0)) return 0.0;
 	jmax = mu * (sqrt(disc) - q);
 	if(!(jmax > 0.0)) return 0.0;
 	pmax = jmax / (area * dt);
 	return (p0 < pmax) ? p0 : pmax;
+}
+
+/* Second cap, on what each end actually pays. The ie of cell i changes by
+ * -P s_i dt on this face, s_i = (u_face - v_i)·dS the rate at which the
+ * face sweeps i's volume. s_i + s_j = (v_j - v_i)·dS, but the split is set
+ * by the face velocity (Laguerre weights, face rotation), not by q: near
+ * the Kepler centre a cold cell next to a hot one had s_i several times
+ * q A, so the pair pressure allowed by gfs_pair_work_limit still took
+ * about twice its ie per stage (stage floor, energy error). Only an end
+ * that expands (s > 0) pays; cap P so that P s dt <= ie / nshare there.
+ * s_j is computed from s_i on the i end and vice versa, so both ends get
+ * the same pressure as long as they see the same face velocity. */
+#ifdef __CUDACC__
+__host__ __device__
+#endif
+static inline double gfs_pair_charge_limit(
+		double p0, double s_i, double s_j, double dt,
+		double ie_i, double ie_j, double nshare)
+{
+	double p = p0, pm;
+	if(!(p0 > 0.0)) return 0.0;
+	if(!(dt > 0.0)) return p0;
+	if(!(nshare > 0.0)) nshare = 1.0;
+	if(s_i > 0.0){
+		pm = (ie_i > 0.0 ? ie_i : 0.0) / (nshare * s_i * dt);
+		if(pm < p) p = pm;
+	}
+	if(s_j > 0.0){
+		pm = (ie_j > 0.0 ? ie_j : 0.0) / (nshare * s_j * dt);
+		if(pm < p) p = pm;
+	}
+	if(!isfinite(p) || !(p > 0.0)) return 0.0;
+	return p;
 }
 
 #ifdef __CUDACC__
