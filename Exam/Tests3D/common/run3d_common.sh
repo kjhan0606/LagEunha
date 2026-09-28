@@ -9,19 +9,26 @@
 #
 # Nothing here submits or cancels jobs.
 
+# Binary: eunha2.exe dispatches "Simulation Model = Hydro3D" to the 3D GFS
+# path (Exam/exam3d_gfs.c, linked through libexam.a). The same source also
+# builds standalone without MPI/FFTW:
+#   cd $LAGEUNHA_SRC/Exam && make lag3d.exe      (then LAG3D_BIN=$LAGEUNHA_SRC/Exam/lag3d.exe)
 : "${LAGEUNHA_SRC:=$HOME/LagEunha}"        # checkout that holds eunha2.exe
 : "${LAG3D_BIN:=$LAGEUNHA_SRC/eunha2.exe}"
 : "${LAG3D_ROOT:=/gpfs/kjhan/LagForce}"
 : "${LAG3D_PY:=python3}"                    # needs numpy+scipy (IC generators)
-: "${NRANK:=${SLURM_NTASKS:-4}}"
+# The 3D path is one MPI rank + OpenMP (extra ranks would only idle), so the
+# default is 1 rank; threads come from OMP_NUM_THREADS (flags_base.env).
+: "${NRANK:=1}"
+# LAG3D_LAUNCH=mpirun (default) or direct (run the binary without mpirun;
+# fine for lag3d.exe, and for eunha2.exe where singleton MPI init works).
+: "${LAG3D_LAUNCH:=mpirun}"
 TESTS3D="$LAGEUNHA_SRC/Exam/Tests3D"
 
-# The 3D GFS driver does not exist at the commit that added this suite (see
-# Exam/Tests3D/README.md, "3D path audit"). A binary that has one must embed
-# the string LAGEUNHA_3D_GFS_V1, e.g.
-#   __attribute__((used)) static const char lag3d_marker[] = "LAGEUNHA_3D_GFS_V1";
-# and accept "define Hydro3D IC file = <file>" in params3d.dat.
-# Until then every run script stops here instead of burning an allocation.
+# A binary that has the 3D GFS driver embeds the string LAGEUNHA_3D_GFS_V1
+# (Exam/exam3d_gfs.c) and reads "define Hydro3D IC file = <file>" from
+# params3d.dat. Anything else (an old eunha2.exe, a typo in LAG3D_BIN) stops
+# here instead of burning an allocation.
 lag3d_preflight() {
 	local bin="$1"
 	if [ ! -x "$bin" ]; then
@@ -41,7 +48,7 @@ lag3d_setup() {
 	mkdir -p "$run" || return 1
 	cp "$LAG3D_BIN" "$run/eunha2.exe" || return 1
 	( cd "$LAGEUNHA_SRC" && git rev-parse HEAD 2>/dev/null ) > "$run/COMMIT"
-	env | grep -E '^(SEDOV_PHASE1|GFS_|EUNHA_|HYDRO_|LAG3D_|OMP_NUM_THREADS)' | sort > "$run/ENV"
+	env | grep -E '^(SEDOV_PHASE1|GFS_|GFS3D_|EUNHA_|HYDRO_|LAG3D_|OMP_NUM_THREADS)' | sort > "$run/ENV"
 	echo "[3D] run dir $run  commit $(cat "$run/COMMIT")  ranks $NRANK"
 }
 
@@ -56,10 +63,26 @@ lag3d_params() {
 	fi
 }
 
-# lag3d_mpirun : run in the current directory, log, return mpirun's rc
+# lag3d_mpirun : run in the current directory, log, return the launcher's rc.
+# One rank with many OpenMP threads: switch off the launcher's core binding,
+# or all threads share one core. Measured on the box (Open MPI 5.0.7, 8
+# threads, SoundWave3D N=16): 12.2 s bound vs 1.8 s with binding off.
+#   Open MPI 5 (PRRTE): PRTE_MCA_hwloc_default_binding_policy=none
+#   Open MPI 4:         OMPI_MCA_hwloc_base_binding_policy=none
+#   Intel MPI:          I_MPI_PIN_DOMAIN=omp (domain = OMP_NUM_THREADS cores)
+# LAG3D_MPIRUN_OPTS adds launcher options (e.g. "--bind-to none").
 lag3d_mpirun() {
-	mpirun -np "$NRANK" ./eunha2.exe params3d.dat > log 2>&1
-	local rc=$?
+	local rc
+	export PRTE_MCA_hwloc_default_binding_policy=${PRTE_MCA_hwloc_default_binding_policy:-none}
+	export OMPI_MCA_hwloc_base_binding_policy=${OMPI_MCA_hwloc_base_binding_policy:-none}
+	export I_MPI_PIN_DOMAIN=${I_MPI_PIN_DOMAIN:-omp}
+	echo "[3D] launch=$LAG3D_LAUNCH ranks=$NRANK OMP_NUM_THREADS=${OMP_NUM_THREADS:-unset}" > log
+	if [ "$LAG3D_LAUNCH" = direct ]; then
+		./eunha2.exe params3d.dat >> log 2>&1
+	else
+		mpirun -np "$NRANK" ${LAG3D_MPIRUN_OPTS:-} ./eunha2.exe params3d.dat >> log 2>&1
+	fi
+	rc=$?
 	echo "EXIT:$rc" >> log
 	return $rc
 }

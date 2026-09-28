@@ -12,16 +12,17 @@ solutions, and pass criteria.
 | 4 | spherical Noh | `Noh3D/` | exact (ρ_post = 64) |
 | 5 | Kelvin–Helmholtz, McNally 2012 profile in 3D | `KH3D/` | compressible linear theory solved here |
 
-> **Status: the repository has no 3D GFS hydro driver yet** (see "3D path
-> audit" below, which covers only what is in the repo). Juhan Kim reports that
-> an older 3D driver, **Exam3d**, exists on the cluster but has not been
-> pushed. **Grok CLI: please add Exam3d to the repo and push it.** Grokbot will
-> then audit it against the 2D GFS path and hook Tests3D up to it (preflight
-> marker check and an IC/energy-log adapter). Until then every `run.slurm`
-> stops at a preflight check (exit 3) unless the binary contains the marker
-> string `LAGEUNHA_3D_GFS_V1`. Nothing here was run with LagEunha. The IC
-> generators, analytic solvers, and analysis scripts were verified on
-> synthetic data (`./selftest.sh`).
+> **Status (Sep 28, 2026): the 3D GFS path is `Exam/exam3d_gfs.c`** (CPU,
+> OpenMP, one MPI rank; experimental). `eunha2.exe` dispatches
+> `Simulation Model = Hydro3D` to it, and the same source also builds as the
+> standalone `Exam/lag3d.exe` (`cd Exam && make lag3d.exe`). The binary embeds
+> the marker `LAGEUNHA_3D_GFS_V1`, so the `run.slurm` preflight passes. The
+> 2D code paths are untouched (`exam.c` is not modified).
+> `Exam/Sedov` is the old 3D prototype (the "Exam3d" that was built, tested
+> in 3D, and dropped for 2D). It is used only as a template for the
+> `Voro3D_FindVC` face loop. None of its physics is reused (§1.3).
+> Local box results (16³–64³) are in §1.5. Cluster-size runs have not been
+> done yet.
 
 ---------------------------------------------------------------------------
 
@@ -32,9 +33,9 @@ solutions, and pass criteria.
 | piece | where | state |
 |-------|-------|-------|
 | 3D tree / neighbour helpers | `Exam/exam.c` `ex3d_findCentroid`, `ex3d_FindCellSize`, `ex3d_idivision`, `nearest3dOpen`, `ex3d_dist`, `det3d_dpq`, `det3d_dpqRK4` (~l.353–1007) | Only compute the search radius (`w2ceil`) from a 3D tree walk. **No driver calls them.** |
-| 3D Voronoi cell primitives | `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, `Voro3D_Volume_Polyhedron`, `findPolyhedronCentroid`, `Voro3D_norm_polygon`, `getAvgPressureOnSurface3D`; type `Voro3D_GasParticle` in `voro_eunha.h` | Cell, face, and volume geometry. In the repo, used only by the legacy `Exam/Sedov` code (presumably also by Exam3d). |
+| 3D Voronoi cell primitives | `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, `Voro3D_Volume_Polyhedron`, `findPolyhedronCentroid`, `Voro3D_norm_polygon`, `getAvgPressureOnSurface3D`; type `Voro3D_GasParticle` in `voro_eunha.h` | Cell, face, and volume geometry. Used by the old prototype `Exam/Sedov` and now by the 3D GFS path `Exam/exam3d_gfs.c` (`Voro3D_FindVC` + own polygon area/centroid loop). |
 | 3D Laguerre library | `Voro/Laguerre/` (`constructLaguerreCell3D` CPU; CUDA `construct_cells_3d_kernel`) | CPU gives 2D+3D cells. The CUDA 3D kernel returns volume and a **vertex-average** centroid (not the true centroid) and **no face list**. **The main build does not use it:** `Voro/Makefile` builds only `voro.o` and `voro_eunha.o`. |
-| legacy 3D Voronoi hydro | `Exam/Sedov/` (`vch_hydro.c` …) | Standalone, OpenMP, non-MPI. Monaghan-type artificial viscosity (`alphavis`/`betavis`). No HLLC, MUSCL, pair pressure, or RK4. Not in any Makefile, and **does not compile** (12 errors in our check). |
+| old 3D prototype ("Exam3d") | `Exam/Sedov/` (`vch_hydro.c` …) | Standalone, OpenMP, non-MPI. Monaghan-type artificial viscosity (`alphavis`/`betavis`). No HLLC, MUSCL, pair pressure, or RK4. Not in any Makefile, and **does not compile** (12 errors in our check). |
 | particle types | `treevorork4particletype` has x,y,z / vx,vy,vz / ax,ay,az | Storage is 3D-capable. |
 | 3D domain decomposition | `Cosmos/cosmology.c` `MakeDoDeInfo3D` (for `voroparticletype`/`treevoroparticletype`) | Cosmology only. |
 | gravity with gas mass | `pmmain.c` `Get_TSC_Den` and the tree correction include VORO particle mass | Periodic cosmological TreePM (GOTPM) only. `RunCosmos` calls no GFS/Voronoi hydro. |
@@ -65,12 +66,22 @@ Cells") describes 3D equations that the code does not implement.
 
 ### 1.3 Decision
 
-Nothing was ported. Exam3d (on the cluster, not yet in the repo; see the
-status note at the top) is the starting point. Once it is pushed, Grokbot
-will audit it against items 1–8 above and hook Tests3D up to it. Every 2D
-code path is untouched (this commit adds files only under `Exam/Tests3D/`).
+The 3D path was written as a new port of the 2D GFS path into the main code
+(`Exam/exam3d_gfs.c`), not as a revival of `Exam/Sedov`. `Exam/Sedov` is
+the old 3D prototype. It gave the face-loop pattern (`Voro3D_FindVC`,
+vertex `considered[]` flags, `related[(j+2)%3]` = the neighbour of a face).
+It is not used for anything else, because of the failure modes found when
+it was re-examined:
+- an `ie = MAX(0, ie)` clamp that was the dominant energy source (+29–42 %);
+- a pinned central particle;
+- dt taken from a partially summed force;
+- a first-order two-pass update;
+- mean-pressure AV.
 
-### 1.4 Port plan (for whoever writes the 3D driver)
+Every 2D code path is untouched. `exam.c` is not modified, and its object
+file is byte-identical before and after this change (§1.5).
+
+### 1.4 Port plan (original notes; see 1.5 for what was done)
 
 - **Geometry**: take faces from `Voro3D_FindVC`/`Voro3D_FaceExtract` (CPU) or `constructLaguerreCell3D`, which needs a face list (area, normal, face centroid). Use the true polyhedron centroid (`findPolyhedronCentroid`), not the vertex average.
 - **Fluxes**: `hllc_face_3d` with two tangential components. MUSCL gradients by least squares over the face neighbours (2D uses the face-weighted form; generalise it). Keep `phase1_extreme` and the P_max > 100 P_min trigger unchanged.
@@ -81,12 +92,79 @@ code path is untouched (this commit adds files only under `Exam/Tests3D/`).
 - **DD**: 3D rk4 domain decomposition, or 1 rank + OpenMP at first.
 - **Interface the scripts here expect** (§2).
 
+### 1.5 The 3D GFS path as implemented (`Exam/exam3d_gfs.c`)
+
+**Files**
+- `Exam/exam3d_gfs.c` / `.h`: the driver.
+- `Exam/gfs_riemann.h`: copies of `hll_star_state` / `hllc_face_2d` / `hllc_face_2d_rest_frame` from `exam.c`, with `SEDOV_PHASE1` passed as an argument.
+- `Exam/exam3d_main.c`: the standalone main (`lag3d.exe`).
+- The dispatch in `eunha2.c`.
+- The `Exam/Makefile` targets `exam3d_gfs.o` (in `libexam.a`) and `lag3d.exe`.
+
+**Physics** (the 2D production path with dimensional changes only):
+- **Faces.** Each face uses its polygon area and area centroid. Where 2D uses `sqrt(V)`, 3D uses `cbrt(V)`: the pair law length, the ghost CFL floor `0.25 V^(1/3)`, the acceleration CFL and the entropy switch.
+- **Face flux.** HLLC in the face rest frame, with MUSCL `{ρ, P, v_n}` at the face centroid. The gradients are 3×3 Green–Gauss with the av_mode 5 Barth–Jespersen limiter.
+- **Extreme faces.** Under `SEDOV_PHASE1`, when the P ratio exceeds 100: an HLL star state along e_r from the cell-centred states, and the energy flux uses v* e_r.
+- **Face velocity.** `get3dUpqrad`, plus the Springel rotation term `-(Δv·(c_f − a))/d e_r`. The anchor a is the midpoint when w = 0. With `GFS_LAGUERRE_ROTATION=1` and w ≠ 0, it is `fact1 (x_j − x_i)`.
+- **Pair pressure.** The capped law via `gfs_pair_pressure_len(d, V_i^(1/3), V_j^(1/3), …)`, then `gfs_pair_work_limit` with **nshare = 16**. The reasoning: in 2D, 6 is the mean face count of a planar Voronoi mesh. The 3D mean face count is 15.5 (Poisson), about 14.5 (glass), 14 (bcc) and 12 (fcc), and 16 is at least all of these. Override with `GFS3D_PAIR_NSHARE`.
+- **Integrator.** RK4 as `exam2d_vph_rk4_int_blend`:
+  - dt comes from K1;
+  - k_v = (a_hydro + g_self + g_ext) dt;
+  - k_ie = (dE/dt − m v·a_hydro) dt under `SEDOV_PHASE1`.
+- **Time step.** The face CFL `2C d/v_sig`, `dt3 = 0.1 d/|Δv|`, and the acceleration CFL `0.25 (V^(1/3)/|a|)^(1/2)` with the **full summed** acceleration (hydro + gravity).
+- **Energy variables and flags.**
+  - `ie` is the only energy variable.
+  - `GFS_DUAL_ENERGY`, `GFS_ENTROPY_SWITCH` / `GFS_HALF_LIMIT` / `GFS_ES_COEF` and `GFS_FLOOR_LOG` have the 2D meaning.
+  - `[RK4E]` goes to stderr, and `[E3D]` to stdout, every step.
+- **Floor.** At the end of the step: P ≤ 0 → 1e-6, booked in `floor_cum`. At an RK stage the default floors only P and leaves ie alone (as the 2D GPU path does). `GFS3D_STAGE_FLOOR=1` gives the 2D CPU behaviour, which also resets ie; that injection is booked as `sfl_cum`. There is no pinned particle and no ie clamp outside these booked floors.
+- **Geometry.** Link cells are about 2 spacings wide. The stencil grows until 2 r_max ≤ R·cell. If `Voro3D_FindVC` returns a broken vertex graph (cospherical generators), the neighbour positions are retried with a 1e-9 to 1e-7 cell jitter used for the geometry only (counted in `njit`).
+- **Boundaries** (`Hydro3D boundary` or `LAG3D_BC`, one or three of `periodic|reflect|outflow`; the default is the IC periodic flags, with non-periodic = reflect):
+  - `periodic` uses images.
+  - `reflect` uses mirror images with v_n reversed. The cell is cut exactly by the wall, and the wall face has zero energy flux. Specular reflection happens at the end of the step.
+  - `outflow` uses mirror images with copied v. Particles that leave the box are removed, and their energy is booked in `out_cum`.
+- **Gravity** (`Hydro3D gravity = 1`). Isolated Barnes–Hut (monopole, θ = `LAG3D_THETA`, default 0.5) with Plummer ε. The default is direct summation for N ≤ 20000 (`LAG3D_GRAV_DIRECT=0/1` overrides). Epot = ½ Σ m φ. An external hook is available: a point mass via `LAG3D_PM_GM`, `LAG3D_PM_X/Y/Z`, `LAG3D_PM_EPS`, and a uniform field via `LAG3D_ACC=ax,ay,az`.
+- **Not in 3D yet:**
+  - adaptive Laguerre weights (`kappa > 0` is refused; `kappa < 0` gives uniform w2);
+  - entropy_mode 1;
+  - centroid steering;
+  - GPU;
+  - MPI domain decomposition (extra ranks idle).
+
+**Build / run**
+- On the cluster, `make` as usual. `eunha2.exe` then contains the path.
+- Standalone: `cd Exam && make lag3d.exe`. On a gcc box: `make lag3d.exe CC=gcc OPT="-O2 -fopenmp"`.
+- `run.slurm` uses `--ntasks=1 --cpus-per-task=32`, and `NRANK=1` by default.
+- `lag3d_mpirun` turns off launcher core binding. For Open MPI 5 on the box, 1 rank × 8 threads took 12.2 s bound and 1.8 s unbound.
+- `LAG3D_BIN=$LAGEUNHA_SRC/Exam/lag3d.exe LAG3D_LAUNCH=direct` runs the standalone binary.
+
+**Local results** (box, 8 threads, gcc 14, `SEDOV_PHASE1=1`, C = 0.3, cubic lattice unless noted):
+
+| test | N | result |
+|------|---|--------|
+| SoundWave3D, A = 1e-6, t = 1 | 16³ / 32³ / 64³ | L1(ρ)/A = 3.99e-2 / 8.64e-3 / 2.12e-3; order 2.21, 2.02 (fit 2.12); amplitude ratio 0.9665 / 0.9962 / 0.9996; \|dE/E\| ≤ 1.2e-13; `analyze.py` PASS |
+| SoundWave3D boosted, v_boost = 1 | 32³ | L1(ρ)/A = 8.64e-3, L1_boost/L1_rest = 0.9999998 (P3 true); \|dE/E\| = 1.5e-14 |
+| Sedov3D, t = 0.05 | 16³ | dE/E0 = 9.8e-5 (no floor); R_peak 0.357 (R_an 0.3475); R_meas 0.418; ρ_peak 1.40 |
+| Sedov3D | 32³ | dE/E0 = 1.03e-2, of which floor_cum = 1.01e-2 (the ledger closes); R_peak 0.331; R_meas 0.404; ρ_peak 1.77; aniso 0.985 |
+| Sedov3D, C = 0.15 | 32³ | dE/E0 = 2.6e-3 (floor 2.5e-3); ρ_peak 1.64 |
+| Sedov3D, glass | 32³ | dE/E0 = 1.2e-3 (floor 1.1e-3); R_meas 0.394; ρ_peak 1.79 |
+| Sedov3D, `GFS3D_STAGE_FLOOR=1` (2D CPU stage floor) | 32³ | dE/E0 = 2.2e-2, of which sfl_cum = 2.19e-2 |
+| Evrard3D, `--background uniform`, t = 0.8 | n = 16 (5968 particles) | direct-sum Epot(0) = −0.6594462, equal to the IC's direct sum; tree θ = 0.5 gives −0.659604. dE/E0 = 2.4e-3 at t = 0.8 (floor 1.4e-3, background cells at R ≈ 1.14) |
+| Evrard3D, vacuum (reflecting box B = 2) | n = 16 | 40 steps to t = 0.41: dE/E0 = 6.5e-6 |
+| Noh3D, KH3D | 16³ | 30-step smoke runs, no failures (Noh dE 2.9e-6) |
+
+The Sedov energy error comes entirely from the booked end-of-step floor
+(`ie ≤ 0` right behind the shock front). It is larger on the cubic lattice
+and shrinks with dt. On the cubic lattice, R_meas (the entropy-threshold
+swept mass) is biased high by a few dozen hot particles about 3 cells ahead
+of the shock along lattice directions. The glass run has 3 of these, the
+cubic run about 90.
+
 ---------------------------------------------------------------------------
 
 ## 2. Interface between this suite and a 3D driver
 
 - **Marker**: the binary embeds `LAGEUNHA_3D_GFS_V1`, e.g. `__attribute__((used)) static const char lag3d_marker[] = "LAGEUNHA_3D_GFS_V1";`.
-- **Parameters**: `common/params3d.dat.template`. Keys marked `[2D key]` already exist in `Params/params.h`. The `[proposed 3D key]` keys are:
+- **Parameters**: `common/params3d.dat.template`. Keys marked `[2D key]` already exist in `Params/params.h`. The `[3D key]` keys are read by `Exam/exam3d_gfs.c`:
   - `Simulation Model = Hydro3D`;
   - `Hydro3D IC file`, `Hydro3D t_end`, `Hydro3D dump dt`;
   - `Hydro3D gravity` (0/1), `Hydro3D softening`.
@@ -268,17 +346,22 @@ could be off by 3× either way.
   - with a fake marked binary and a stub `mpirun`, each builds the run directory, IC, fully filled `params3d.dat` and `log` with `EXIT:0`.
   - Nothing was submitted.
 
-**Not verified**: anything involving LagEunha itself. There is no 3D
-driver, and this machine has no nvcc, MKL, or CAMB. The pass thresholds
-are calibrated on analytic expectations and on the 2D behaviour of the code,
-not on a 3D run.
+**Verified since (Sep 28, 2026)**: the 3D path itself, built standalone from
+the same sources on the box (§1.5). This includes the run scripts end to end
+with the real binary (SoundWave3D and Sedov3D at N = 16 through `run.slurm`,
+with a real `mpirun`). **Not verified**: the full `eunha2.exe` link (the box
+has no nvcc, MKL, CAMB or Intel compilers); the dispatch branch was
+exercised through an equivalent MPI test main. The pass thresholds are
+calibrated on analytic expectations and on the 2D behaviour of the code.
 
 ## 5. Open decisions
 
 1. **Evrard outer boundary**: vacuum (particle-code convention; needs an unbounded-cell treatment in the tessellation) or a uniform low-density background (`--background uniform`, which perturbs the energy budget slightly and is reported separately).
 2. **Softening** for Evrard: ε = 0.01 (default), or scale it with the particle spacing.
-3. **Work-limit `nshare`** in 3D: 6 (the 2D value) or the 3D mean face count ≈ 15.
-4. **CPU partition, ranks, and threads** in `run.slurm` (placeholders).
+3. **Work-limit `nshare`** in 3D: decided 16 (≥ the 3D mean face count; §1.5). It can still be changed with `GFS3D_PAIR_NSHARE`.
+4. **CPU partition and threads** in `run.slurm`: 1 rank × 32 threads is a placeholder; the partition line is still commented out.
+8. **Stage floor**: `GFS3D_STAGE_FLOOR=0` (P only, the default, as the 2D GPU path) or 1 (the 2D CPU reset). The 2D CPU path injects the stage deficit without booking it.
+9. **Sedov floor energy on the cubic lattice** (1 % at 32³): accept and book it, reduce the Courant number, or default the Sedov runs to glass.
 5. **GPU precision**: if a 3D GPU path is written, `die`/`pie_in` must be double for the 10⁻⁶ sound wave.
 6. **KH Lz**: 0.25 (default, cheap; the linear mode is z-independent) or 1 (full cube).
 7. **Glass vs lattice**: lattice by default for every test (exact initial density). A glass is available for Sedov/Noh/Evrard to expose lattice imprint.

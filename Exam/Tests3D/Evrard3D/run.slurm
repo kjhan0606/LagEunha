@@ -1,15 +1,16 @@
 #!/bin/bash
 #SBATCH -J LAGFORCE_EVR3D
 #SBATCH -N 1
-#SBATCH --ntasks=4
-#SBATCH --cpus-per-task=16
+#SBATCH --ntasks=1                # 3D path: 1 rank + OpenMP (NRANK=1 in run3d_common.sh)
+#SBATCH --cpus-per-task=32        # = OMP_NUM_THREADS (flags_base.env)
 #SBATCH -t 24:00:00
 #SBATCH -o slurm-%x-%j.out
 ##SBATCH -p <cpu-partition>
 # Example (not submitted by Grokbot):
 #   sbatch --export=ALL,N=40 run.slurm            # ~33k particles, smoke run
 #   sbatch --export=ALL,N=64 run.slurm            # ~137k particles, the pass/fail run
-# Needs self-gravity coupled to the 3D hydro particles (does not exist yet).
+# Self-gravity: Barnes-Hut octree + Plummer softening in Exam/exam3d_gfs.c
+# (LAG3D_THETA, default 0.5; LAG3D_GRAV_DIRECT=1 for direct summation).
 set -u
 source "${LAGEUNHA_SRC:-$HOME/LagEunha}/Exam/Tests3D/common/run3d_common.sh"
 source "$TESTS3D/Evrard3D/config.env"

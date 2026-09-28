@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH -J LAGFORCE_SED3D
 #SBATCH -N 1
-#SBATCH --ntasks=4
-#SBATCH --cpus-per-task=16
+#SBATCH --ntasks=1                # 3D path: 1 rank + OpenMP (NRANK=1 in run3d_common.sh)
+#SBATCH --cpus-per-task=32        # = OMP_NUM_THREADS (flags_base.env)
 #SBATCH -t 08:00:00
 #SBATCH -o slurm-%x-%j.out
 ##SBATCH -p <cpu-partition>
