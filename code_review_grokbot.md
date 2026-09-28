@@ -789,3 +789,66 @@ Juhan 확인: "Exam3d" = `Exam/Sedov`(옛 3D 시제품, 3D에서 실패 후 2D�
 - `floor_cum`의 기울기: 406734는 t=8에서 5.4e-3, t=9에서 6.5e-3이었습니다. A는 이보다 뚜렷이 작아야 합니다.
 - dEtot가 1e-3을 넘는 시각 (406734는 t=9.12), dt 급락 (절벽의 신호), `n_ie_le0`, `n_pair`.
 - sacct가 `COMPLETED 0:0`이어도 로그가 `EXIT:255`일 수 있습니다.
+
+---
+
+## Grok CLI께: 세 방식 비교 실행 지시 (`1cc7e3f` 이상)
+
+**결론.** 이번에는 A와 B만 돌려 주세요. 모든 작업 이름과 보고에 방식 번호를 붙여 주세요. (1) 보로노이+HLL, (2) 라게르+HLL, (3) 라게르+동적 가중치입니다. (3)은 돌리지 않습니다.
+
+**현재 상태.** (1)은 `056ee76`(HLL 면 상태 풍상 선택, 짝 일 예산)과 `b9b8e46`(kappa 가드)이 들어간 기본 경로입니다. (2)는 w2 mode 8, κ=0.4, a=1입니다. 박스 CPU Kepler 64² t=3에서 |dE|는 (2)가 1.5e-6, (1)이 1.5e-4였습니다. Noh 48² 에너지는 (2)가 더 나빴습니다 (`GFS_W2_LINEAR=1`에서 dE 7.2e-3, (1)은 4.4e-3). (3) `GFS_DYN_W2`는 CPU 1랭크 전용이고 불안정합니다. Noh는 t≈0.09에 무너지고 Kepler는 t≈1.3–1.8부터 나빠집니다. 가중치가 셀 유효 한계까지 밀려 가고, Noh 중심부에서는 한 면의 두 셀이 서로 다른 면 기하를 계산하기 때문입니다.
+
+### 빌드 (nvcc, 현재 master)
+
+```
+cd <LagEunha 저장소> && git pull --rebase && git log -1 --format=%h    # 1cc7e3f 이상
+rm -f Exam/*.o Exam/libexam.a eunha2.o eunha2.exe
+make USE_CUDA=1        # 평소의 CC/OPT/FFTW 설정은 그대로
+```
+
+`USE_CUDA`를 켜면 `Exam/Makefile`이 `$(CUDA_HOME)/bin/nvcc`(기본 `/opt/ohpc/pub/cuda/13.0.2`, sm_80–sm_90)로 `exam_gpu.cu`를 빌드하고 `exam_gpu_extract.o`와 함께 `libexam.a`에 넣습니다. `exam_gpu.h`의 `GPUPhysicsParams`에 `face_charge`, `geom_fv`, `w2lin`이 추가되었습니다. 박스에는 nvcc가 없어 `exam_gpu.cu`는 컴파일해 보지 못했습니다. 컴파일 오류가 나면 고치지 말고 오류 전문을 보고해 주세요.
+
+새 바이너리인지 확인하는 법은 두 가지입니다. stdout 첫머리의 `EUNHA2: compiled at <시각> <날짜>`가 빌드 시각과 같아야 합니다. `strings eunha2.exe | grep -c GFS_DYN_W2`가 1 이상이어야 합니다 (`1cc7e3f`부터 있는 문자열).
+
+### 실행 순서
+
+**A, (1) 보로노이+HLL.** 406734 스크립트와 `params.dat`를 그대로 쓰고 바이너리만 바꿉니다. 256², 4랭크, `define Hydro time-stepping way = 1`(RK4), `GAS use_muscl = 1`, `GAS av_mode = 5`, `GAS entropy_mode = 0`, `GAS gpu_enabled = 1`, `GAS kappa = 0`, `Voro centroid shift factor = 0`입니다. env는 `EUNHA_IC=kepler`, `HYDRO_TSTOP=177.72`, `SEDOV_PHASE1=1`, `EUNHA_KEPLER_EPS=0.047`, `EUNHA_KEPLER_DTETA=0.06`, `EUNHA_KEPLER_CX=12`, `EUNHA_KEPLER_CY=12`, `GFS_FLOOR_LOG=1`이고 옛 1/R IC를 씁니다. 다음은 모두 unset입니다.
+
+```
+GFS_ALLOW_KAPPA GFS_LAGUERRE_ROTATION GFS_W2_LINEAR GFS_DYN_W2 GFS_VOL_AUDIT
+GFS_E_AUDIT GFS_FACE_AUDIT GFS_FACE_CHARGE_LIMIT GFS_GEOM_FACE_VEL
+GFS_DUAL_ENERGY GFS_ENTROPY_SWITCH GFS_ES_COEF GFS_HALF_LIMIT
+SEDOV_LAGVOL SEDOV_WSMOOTH EUNHA_KEPLER_PROFILE
+```
+
+**B1과 B2, (2) 라게르+HLL.** A와 같고 아래만 다릅니다. B2는 B1에 `GFS_W2_LINEAR=1`을 더한 것입니다.
+
+```
+define GAS kappa = 0.4
+define GAS w2 power = 1.0
+define GAS w2_mode = 8
+export GFS_ALLOW_KAPPA=1 GFS_LAGUERRE_ROTATION=1      # B2는 GFS_W2_LINEAR=1 추가
+```
+
+stderr 첫머리에 `[KAPPA_GUARD] ... kept (GFS_ALLOW_KAPPA=1)`와 `[LAGROT] GFS_LAGUERRE_ROTATION=1`이 있어야 합니다. B2에는 `[W2LIN] GFS_W2_LINEAR=1: active=1`도 있어야 합니다. 이 줄들이 없으면 멈추고 보고해 주세요. mode 8에는 GPU 구현이 따로 없습니다. w2는 host의 `updateDenW2Pressure2DBlend`가 `getw2forHydroParticle`로 매번 계산합니다. GPU 테셀레이션은 그 w2를 쓰고 `avgNeighboringPressure`를 host로 돌려줍니다. GPU 경로에서도 mode 8이 그대로 적용됩니다. `w2lin`과 `laguerre_rot`은 GPU 커널에 분기가 있지만 GPU와 다랭크에서는 한 번도 돌려 보지 않았습니다.
+
+**C (선택), (1) 대 (2).** 406517(Noh)과 406518(Sedov)의 해상도와 설정으로 A식 (1) 한 번, B2식 (2) 한 번씩 돌립니다.
+
+**406515–406519.** A가 t=17.8을 |dE|<1e-3으로 넘길 때만 해제합니다. 새 바이너리를 각 디렉터리에 복사하고 새 플래그 없이 해제합니다. 그 전에 A가 실패하면 보류를 유지해 주세요.
+
+### 보고 (code_review_grok.md에 이 표를 채워 주세요)
+
+| job | 방식 | 해상도 | 플래그 | 도달 t | dE t=1 | dE t=3 | dE t=10 | dE t=17.8 (또는 멈춘 시각) | floor_cum | sfl_cum | 최소 dt (t) | dE>1e-3 첫 t | [VAUD] cum |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+dE는 `[RK4E]`의 `dEtot/|Etot0|`입니다. `[VAUD]`는 CPU 힘 루프에서만 기록되므로 GPU 작업에서는 `GFS_VOL_AUDIT`를 켜지 말고 "—"로 적어 주세요. 실패하면 stderr 마지막 20줄을 표 아래에 붙여 주세요. 아래에서 `log`는 stdout, `err`는 stderr입니다.
+
+```
+for T in 1 3 10 17.8; do awk -v T=$T '$1=="Time=" && $2>=T {print T, $4; exit}' log; done   # t -> step
+grep -E '^\[RK4E\] step=<N> ' err | grep -oE 'dEtot/\|Etot0\|=[^ ]+|floor_cum=[^ ]+|sfl_cum=[^ ]+'
+awk '/^\[RK4E\]/{match($0,/dEtot\/\|Etot0\|=[^ ]+/); v=substr($0,RSTART+14,RLENGTH-14)+0; if(v>1e-3||v<-1e-3){print; exit}}' err
+awk '$1=="Time="{if(m==""||$6<m){m=$6;t=$2}} END{print "min dt",m,"at t",t}' log
+grep '\[VAUD\]' err | tail -1 | grep -oE 'cum_abs=[^ ]+'
+grep '\[LAGVOL\]' err | tail -3      # 나오면 SEDOV_LAGVOL이 켜진 것이니 보고
+tail -20 err
+```
