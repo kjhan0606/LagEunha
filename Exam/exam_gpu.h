@@ -213,6 +213,9 @@ typedef struct {
     double K_floor;
     /* SEDOV_PHASE1: extreme faces use the HLL mean state, and die is dE/dt. */
     int    phase1;
+    /* GFS_LAGUERRE_ROTATION: face-rotation correction on Laguerre faces
+     * too, about the anchor fact1 (x_j - x_i) (0 = w = 0 faces only). */
+    int    laguerre_rot;
 } GPUPhysicsParams;
 
 /* ================================================================

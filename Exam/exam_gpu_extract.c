@@ -823,6 +823,8 @@ double getAccVoro2DBlend_GPU(
     {
         const char *ph = getenv("SEDOV_PHASE1");
         params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
+        const char *lr = getenv("GFS_LAGUERRE_ROTATION");
+        params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
     }
 
     /* --- Launch GPU kernel (all particles) --- */
@@ -1121,6 +1123,17 @@ static void cpu_reference_force_csr(
                     double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
                     uradx_t += delta * erx;
                     urady_t += delta * ery;
+                } else if (P->laguerre_rot && dramp > 0.0) {
+                    /* GFS_LAGUERRE_ROTATION: anchor fact1 (x_j - x_i), as in exam.c. */
+                    double rx = jbp_x - ibp_x, ry = jbp_y - ibp_y;
+                    double fact1 = 0.5 * (1.0 + ((double)ibp_w2 - (double)jbp_w2) / (rx * rx + ry * ry));
+                    double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
+                    double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
+                    double dxc = cx - fact1 * rx;
+                    double dyc = cy - fact1 * ry;
+                    double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+                    uradx_t += delta * erx;
+                    urady_t += delta * ery;
                 }
                 double wx = ibp_vx + uradx_t, wy = ibp_vy + urady_t;
                 double wn = wx * nx_hat + wy * ny_hat;
@@ -1377,6 +1390,17 @@ static void cpu_reference_force_csr(
                 double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
                 uradx += delta * erx;
                 urady += delta * ery;
+            } else if (P->laguerre_rot && dramp > 0.0) {
+                /* GFS_LAGUERRE_ROTATION: anchor fact1 (x_j - x_i), as in exam.c. */
+                double rx = jbp_x - ibp_x, ry = jbp_y - ibp_y;
+                double fact1 = 0.5 * (1.0 + ((double)ibp_w2 - (double)jbp_w2) / (rx * rx + ry * ry));
+                double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
+                double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
+                double dxc = cx - fact1 * rx;
+                double dyc = cy - fact1 * ry;
+                double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+                uradx += delta * erx;
+                urady += delta * ery;
             }
 
             if (P->phase1 && !P->use_muscl && !jbp_is_ghost && facearea > 0) {
@@ -1524,6 +1548,8 @@ double getAccVoro2DBlend_GPU_validate(
     {
         const char *ph = getenv("SEDOV_PHASE1");
         params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
+        const char *lr = getenv("GFS_LAGUERRE_ROTATION");
+        params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
     }
 
     double *ref_ax  = (double *)malloc(nbp * sizeof(double));

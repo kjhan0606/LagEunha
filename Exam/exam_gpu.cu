@@ -340,7 +340,7 @@ void getAccVoro2DBlend_kernel(
     double nu_phys, double prandtl,
     double cd_amax, double blend_theta, double dtold,
     double hyperv_alpha, double hyperv_force_cap,
-    int phase1)
+    int phase1, int laguerre_rot)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -443,6 +443,17 @@ void getAccVoro2DBlend_kernel(
             double cy = 0.5 * (c1y[f] + c2y[f]);
             double dxc = cx - 0.5 * drx;
             double dyc = cy - 0.5 * dry;
+            double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+            uradx += delta * erx;
+            urady += delta * ery;
+        } else if (laguerre_rot && dramp > 0.0) {
+            /* GFS_LAGUERRE_ROTATION: Laguerre face, reference point at the
+             * anchor fact1 (x_j - x_i) that dev_get2dUpqradRk4 moves with. */
+            double fact1 = 0.5 * (1.0 + ((double)ibp_w2 - (double)jbp_w2) / (drx * drx + dry * dry));
+            double cx = 0.5 * (c1x[f] + c2x[f]);
+            double cy = 0.5 * (c1y[f] + c2y[f]);
+            double dxc = cx - fact1 * drx;
+            double dyc = cy - fact1 * dry;
             double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
             uradx += delta * erx;
             urady += delta * ery;
@@ -1460,7 +1471,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         params->nu_phys, params->prandtl,
         params->cd_amax, params->blend_theta, params->dtold,
         params->hyperv_alpha, params->hyperv_force_cap,
-        params->phase1);
+        params->phase1, params->laguerre_rot);
 
     CUDA_CHECK(cudaGetLastError());
 

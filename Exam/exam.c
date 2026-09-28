@@ -70,6 +70,24 @@ static void gfs_es_config(void){
 	gfs_half_on = (s && s[0]) ? (atoi(s) > 0 ? 1 : 0) : gfs_es_on;
 }
 
+/* GFS_LAGUERRE_ROTATION=1 extends the face-rotation correction of the face
+ * normal speed (voronoi_face_rotation) to Laguerre faces (w2_i != w2_j or
+ * either nonzero). Default 0: the correction stays w = 0 only, as before.
+ * A Laguerre face is still perpendicular to e = (x_j - x_i)/d, so
+ *   u_n(c_f) = u_n(a) - u_ij·(c_f - a)/d,
+ * where a = x_i + fact1 (x_j - x_i), fact1 = (1 + (w2_i - w2_j)/d^2)/2, is
+ * the anchor point whose velocity get2dUpqradRk4 returns. For w = 0,
+ * fact1 = 1/2 and a is the midpoint. The GPU force path reads the same
+ * variable (exam_gpu_extract.c, GPUPhysicsParams.laguerre_rot). */
+static int gfs_laguerre_rotation_on(void){
+	static int on = -1;
+	if(on < 0){
+		const char *s = getenv("GFS_LAGUERRE_ROTATION");
+		on = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+	}
+	return on;
+}
+
 #ifdef USE_CUDA
 #include "exam_gpu.h"
 /* Forward declaration — full signature matches exam_gpu_extract.c */
@@ -4283,19 +4301,35 @@ static postype kepler_dt_limit(SimParameters *simpar, void *base, size_t stride,
 }
 
 /* Voronoi bisector normal speed at the face centroid.
- * w = 0 only: u_n = n·ū − (u_q−u_p)·(c_f−m)/d. The second term is
- * zero when the centroid sits on the midpoint. */
+ * w = 0: u_n = n·ū − (u_q−u_p)·(c_f−m)/d. The second term is
+ * zero when the centroid sits on the midpoint.
+ * (cx, cy) is the face centroid relative to particle i (corner coordinates
+ * are local to the generator, see Voro2D_FindVC), so m = (x_j - x_i)/2.
+ * Laguerre faces (either w2 nonzero): only with laguerre = 1
+ * (GFS_LAGUERRE_ROTATION). The reference point is then the anchor
+ * a - x_i = fact1 (x_j - x_i), fact1 = (1 + (w2i - w2j)/d^2)/2, the point
+ * whose velocity get2dUpqradRk4 returns. The w = 0 branch is unchanged. */
 static void voronoi_face_rotation(Voro2D_point *urad,
 		postype cx, postype cy,
 		postype xi, postype yi, postype xj, postype yj,
 		postype vxi, postype vyi, postype vxj, postype vyj,
 		postype erx, postype ery, postype dist,
-		postype w2i, postype w2j)
+		postype w2i, postype w2j, int laguerre)
 {
 	postype dx, dy, delta;
-	if(!(dist > (postype)0) || w2i != (postype)0 || w2j != (postype)0) return;
-	dx = cx - (postype)0.5 * (xj - xi);
-	dy = cy - (postype)0.5 * (yj - yi);
+	if(!(dist > (postype)0)) return;
+	if(w2i == (postype)0 && w2j == (postype)0){
+		dx = cx - (postype)0.5 * (xj - xi);
+		dy = cy - (postype)0.5 * (yj - yi);
+	} else {
+		postype rx = xj - xi, ry = yj - yi;
+		postype fact1;
+		if(!laguerre) return;
+		/* Same d^2 and fact1 as get2dUpqradRk4. */
+		fact1 = (postype)0.5 * ((postype)1 + (w2i - w2j) / (rx*rx + ry*ry));
+		dx = cx - fact1 * rx;
+		dy = cy - fact1 * ry;
+	}
 	delta = -((vxj - vxi) * dx + (vyj - vyi) * dy) / dist;
 	urad->x += delta * erx;
 	urad->y += delta * ery;
@@ -4778,6 +4812,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 	int my = BASICCELL_MY(simpar);
 
 	postype dtold = GAS_dtold(simpar);
+	/* Read before the OpenMP region. */
+	int lag_rot = gfs_laguerre_rotation_on();
 	if(sedov_lagvol_on() && sedov_phase1_on() && use_muscl){
 		size_t max_id = 0;
 		for(int ii=0; ii<nbp; ii++){
@@ -5226,7 +5262,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 									ibp_vx, ibp_vy, jbp_vx, jbp_vy,
 									er.x, er.y, dramp,
 									ibp_rk4->w2,
-									((treevorork4particletype*)jbp)->w2);
+									((treevorork4particletype*)jbp)->w2, lag_rot);
 							postype wx = ibp_vx + uradix_ui_boost.x;
 							postype wy = ibp_vy + uradix_ui_boost.y;
 							postype wn = wx*nx_hat + wy*ny_hat;
@@ -5640,7 +5676,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 								ibp_vx, ibp_vy, jbp_vx, jbp_vy,
 								er.x, er.y, dramp,
 								ibp_rk4->w2,
-								((treevorork4particletype*)jbp)->w2);
+								((treevorork4particletype*)jbp)->w2, lag_rot);
 						/* Stationary hard wall: the face velocity has no normal part. */
 						if(hard_wall){
 							postype vn_i = ibp_vx*hard_nx + ibp_vy*hard_ny;
@@ -9592,6 +9628,11 @@ double exam2d_vph_rk4_int_blend(
 			fprintf(stderr, "[ESW] entropy_switch=%d coef=%g half_limit=%d active=%d (off for av_mode 4 / entropy_mode 1)\n",
 					gfs_es_on, gfs_es_coef, gfs_half_on, gfs_es_step);
 			es_banner = 1;
+		}
+		static int lr_banner = 0;
+		if(!lr_banner && gfs_laguerre_rotation_on() && MYID(simpar) == 0){
+			fprintf(stderr, "[LAGROT] GFS_LAGUERRE_ROTATION=1: face-rotation correction on Laguerre faces (anchor fact1 = (1+(w2i-w2j)/d^2)/2)\n");
+			lr_banner = 1;
 		}
 	}
 	if(gfs_es_step){

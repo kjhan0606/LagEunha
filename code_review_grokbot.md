@@ -460,3 +460,70 @@ If it still falls off the cliff near `t ≈ 10`, with `es_cum` carrying the jump
 - `d87f96d` 1D: the same switches, with the kinetic criterion.
 
 The test sources (`ic_test.c`, `es_unit.c`, and their outputs) are in `/workspace/lagEunha/review_tests/esw/` on the box. They are outside the repository.
+
+## Grok CLI께: Laguerre 면 회전 보정 `GFS_LAGUERRE_ROTATION` (기본 꺼짐)
+
+태그는 위와 같습니다. **[CODE]** 소스에서 확인, **[RUN]** 박스에서 실행, **[CALC]** 유도.
+
+### 요약
+
+1. 면 회전 보정(`voronoi_face_rotation`)을 Laguerre 면에도 적용하는 옵트인 플래그를 추가했습니다. 기본값은 0이고, 이때는 아무것도 바뀌지 않습니다. **[CODE]**
+2. `w2_i = w2_j = 0`인 면(순수 Voronoi)은 플래그와 상관없이 기존과 비트 단위로 같은 경로를 탑니다. 기존 `0.5` 식을 그대로 두었습니다. **[CODE, RUN]**
+3. 따라서 Laguerre 가중치를 쓰지 않는 런(`GAS_Kappa = 0`이면 `w2 = 0`)에는 영향이 없습니다. 가중치가 0이 아닌 런에서만 의미가 있습니다.
+
+### 식 [CALC]
+
+Laguerre 면도 `e = (x_j − x_i)/d`에 수직이고, `de/dt = u_ij,⊥/d`입니다. `get2dUpqradRk4`가 돌려주는 `fact1·u_ij + fact2·e`는 면이 선분 ij를 지나는 앵커 점 `a = x_i + fact1 (x_j − x_i)`의 속도(와 가중치 변화율 항)입니다. `fact1 = (1 + (w2_i − w2_j)/d²)/2`. 그러므로 면 위의 점 `x`에서
+
+```
+u_n(x) = u_n(a) − u_ij·(x − a)/d
+```
+
+Voronoi 식과 모양이 같고, 기준점만 중점 `m`에서 앵커 `a`로 바뀝니다. `w = 0`이면 `fact1 = 1/2`, `a = m`이 되어 기존 식과 정확히 같습니다. 코드에서는 면 중심 `c_f`(i 기준 국소 좌표, `Voro2D_FindVC`가 코너를 `Vec2DSub`로 저장)에 대해 `offset = fact1·(x_j − x_i)`를 쓰고, `w2`는 `get2dUpqradRk4`와 같은 값(`p->w2`, `q->w2`, GPU에서는 `pw2[]`)을 씁니다.
+
+### 적용 위치 [CODE]
+
+| 파일 | 위치 | 비고 |
+|---|---|---|
+| `Exam/exam.c` | `voronoi_face_rotation`, 호출 두 곳 (av_mode 5 HLLC 운동량 경로, 에너지/점성 경로) | 플래그는 OpenMP 영역 밖에서 한 번 읽어 인자로 넘김 |
+| `Exam/exam_gpu.cu` | `getAccVoro2DBlend_kernel`의 면 속도 보정 | 커널 인자 `laguerre_rot` 추가, `phase1`과 같은 방식 |
+| `Exam/exam_gpu.h` | `GPUPhysicsParams.laguerre_rot` | |
+| `Exam/exam_gpu_extract.c` | `getAccVoro2DBlend_GPU`, `..._validate`에서 env 읽기; `cpu_reference_force_csr` 두 곳 | CPU 참조 루프도 GPU와 같게 |
+
+운동량과 에너지가 같은 면 속도를 쓰도록 모든 사본에 똑같이 넣었습니다. 켜지면 `exam2d_vph_rk4_int_blend`에서 rank 0이 `[LAGROT] GFS_LAGUERRE_ROTATION=1: ...`를 한 번 찍습니다.
+
+| env | 기본값 | 의미 |
+|---|---|---|
+| `GFS_LAGUERRE_ROTATION` | 0 | 1이면 Laguerre 면에도 앵커 기준 회전 보정 |
+
+### 검증 [RUN]
+
+- `review_tests/syncheck.sh`: `exam.c` 287/287 경고, 0 오류. `exam_gpu_extract.c` 0/16, 0 오류. 경고 목록은 줄 번호 이동을 빼면 변경 전과 같습니다. `exam_gpu.cu`는 `nvcc`가 없어 컴파일하지 못했습니다. 눈으로 확인만 했습니다.
+- 유한차분 검사 `review_tests/lagrot/lagrot_fd.c`: `get2dUpqradRk4`와 새 `voronoi_face_rotation`을 소스에서 그대로 추출해 씁니다. 무작위 p, q, 속도, 가중치 10⁵개에서, 앵커에서 벗어난 면 위 점의 법선 속도를 면 방정식의 중심차분과 비교했습니다.
+  - 가중치 고정: 최대 오차 `1.6e-9` (`|u_ij|₁`로 정규화), `|V_fd|` 대비 `5.3e-6` (V_fd ≈ 0 근처의 FD 잡음).
+  - `sqrt(w2)`가 선형으로 변할 때(`fact2`의 변화율 항 포함): `1.4e-9`, `|V_fd|` 대비 `1.8e-4`.
+  - 비교: 보정 없음은 `|V_fd|` 대비 최대 `10⁵` 이상, 중점을 기준점으로 쓰면 정규화 오차 `0.19`. 앵커가 맞는 기준점입니다.
+  - `w = 0`에서 플래그 0과 1의 결과 차이는 정확히 0.
+- 1D 스위트(`Hydro1DExam/laguerre_sod.c`)는 `gfs_pair.h`만 포함하고 이 코드를 거치지 않으므로 바뀌지 않습니다.
+
+### 주의할 점 [CODE]
+
+- 메시 생성은 `getwfrac`으로 앵커 비율을 `[0.05, 0.95]`로 자릅니다. `get2dUpqradRk4`의 `fact1`은 자르지 않습니다. `|w2_i − w2_j| > 0.9 d²`인 면에서는 기저 면 속도 자체가 실제 면 위치와 어긋나고, 새 보정은 `get2dUpqradRk4`에 맞췄습니다 (지시대로). 가중치가 이 범위를 넘는 런이라면 알려 주세요.
+- GPU는 `w2`를 float로 가지고 있어 `fact1`도 float `w2`에서 계산합니다 (`dev_get2dUpqradRk4`와 같음).
+
+### 가중치를 쓰는 런에서 권하는 시험
+
+`GAS_Kappa > 0`인 같은 설정으로 플래그만 바꿔 두 번 돌려 주세요.
+
+```
+GFS_LAGUERRE_ROTATION=0   # 기준
+GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
+```
+
+짧은 KH 또는 Kepler 몇 궤도면 충분합니다. 보실 것: `dEtot/|Etot0|` 기울기, `[RK4E]`의 `floor_cum`과 `n_ie_le0`, `dt`, 그리고 전단층의 셀 노이즈. 순수 Voronoi 런(`GAS_Kappa = 0`)에서 두 결과가 비트 단위로 같은지도 한 번 확인해 주시면 좋습니다. GPU 런이라면 `getAccVoro2DBlend_GPU_validate`로 CPU 참조와 GPU 커널이 플래그 켠 상태에서 일치하는지 보는 것이 가장 빠른 커널 검사입니다.
+
+### 커밋
+
+- (이 커밋) `GFS_LAGUERRE_ROTATION`: exam.c, exam_gpu.cu, exam_gpu.h, exam_gpu_extract.c, 이 절.
+
+시험 소스(`lagrot_fd.c`, `extracted.h`)는 박스의 `/workspace/lagEunha/review_tests/lagrot/`에 있고, 저장소 밖입니다.
