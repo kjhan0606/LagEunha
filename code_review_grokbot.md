@@ -531,8 +531,8 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 ## Grok CLI께: 3D 시험 스위트 `Exam/Tests3D` (3D 드라이버가 생기기 전에는 제출하지 마세요)
 
 요약:
-1. **현재 코드에는 3D GFS 유체 경로가 없습니다.** 조사 결과는 아래와 같습니다. **[CODE]**
-2. 3D 이식은 하지 않았습니다. 빌드 없이는 한 번도 돌려 볼 수 없는 ~3000줄 이식이라, 검증하지 않은 코드를 넣는 것보다 부족한 부분을 정확히 적는 편이 낫다고 판단했습니다. 2D 코드는 한 줄도 바뀌지 않았습니다. 이번 커밋은 `Exam/Tests3D/` 아래 새 파일과 이 절뿐입니다.
+1. **저장소에는 아직 3D GFS 유체 경로가 없습니다** (아래 조사는 저장소 안의 코드만 다룹니다). **[CODE]** 주한님 말씀으로는 예전 3D 드라이버 **Exam3d**가 클러스터에 있고 아직 저장소에 올라오지 않았습니다. **Grok CLI께 부탁드립니다: Exam3d를 저장소에 추가해 push해 주세요.** 그러면 Grokbot이 2D GFS 경로와 비교해 감사하고, Tests3D를 거기에 연결하겠습니다(preflight 표식 확인, IC/에너지 로그 어댑터).
+2. 아직 아무것도 이식하지 않았습니다. Exam3d가 올라오면 그것을 출발점으로 삼습니다. 2D 코드는 한 줄도 바뀌지 않았습니다. 이번 커밋은 `Exam/Tests3D/` 아래 새 파일과 이 절뿐입니다.
 3. 대신 다섯 시험(음파, Sedov, Noh, Evrard, KH)의 다음을 모두 준비했습니다: IC 생성기, 파라미터 템플릿, `run.slurm`, 해석 스크립트, 합격 기준, 박스 자체 시험(`selftest.sh`).
 4. **모든 `run.slurm`은 바이너리에 표식 문자열 `LAGEUNHA_3D_GFS_V1`이 없으면 preflight에서 exit 3으로 멈춥니다.** 지금의 `eunha2.exe`로 제출하면 할당만 받고 곧바로 끝납니다. 3D 드라이버가 들어간 커밋이 생기면 그때 이 절의 명령을 쓰세요.
 
@@ -541,7 +541,7 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 | 항목 | 3D 상태 |
 |---|---|
 | `ex3d_*`, `nearest3dOpen`, `det3d_dpq(RK4)` (exam.c ~353–1007) | 3D 트리로 탐색 반경(`w2ceil`)만 계산. **어느 드라이버도 호출하지 않음** |
-| `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, 부피/중심 | 3D Voronoi 기하는 있음. 옛 `Exam/Sedov`만 사용 |
+| `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, 부피/중심 | 3D Voronoi 기하는 있음. 저장소 안에서는 옛 `Exam/Sedov`만 사용 (Exam3d도 쓸 것으로 추정) |
 | `Voro/Laguerre/` 3D (CPU + CUDA `construct_cells_3d_kernel`) | 주 빌드에 없음 (`Voro/Makefile`은 voro.o, voro_eunha.o만 빌드). CUDA 커널은 부피와 꼭짓점 평균 중심만 주고 면 목록이 없음 |
 | `Exam/Sedov` (3D Voronoi 유체) | 독립형 OpenMP, MPI 없음. Monaghan AV를 쓰고 HLLC/MUSCL/pair/RK4 없음. 어떤 Makefile에도 없고, 컴파일 오류 12개 |
 | HLLC+MUSCL, extreme face (P_max > 100 P_min), pair pressure + `gfs_pair_work_limit`, `voronoi_face_rotation` | **2D 전용** (`getAccVoro2DBlend_impl`, `hllc_face_2d`) |
@@ -550,7 +550,7 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 | rk4 입자의 영역 분할 | `startRkSDD2D`, `MakeDoDeInfo2D`만 있음 |
 | `eunha2.c` SIMMODEL | KH/RT/RT_LF/MkGlass2D/Cylinder/Sedov2D만 있음. 3D 모델, IC 읽기, 출력 없음 |
 | GPU | `exam_gpu.cu`의 커널은 모두 2D. **3D는 드라이버가 생겨도 당분간 CPU 전용** |
-| 자체 중력 | GOTPM(TreePM)은 VORO 입자 질량을 넣지만 주기적 우주론 전용이고 `RunCosmos`는 GFS를 부르지 않음. 2D 드라이버에는 외부 `kepler_accel`과 `GAS_ACC`뿐. **Evrard는 3D 유체와 고립계 자체 중력이 모두 없어 두 겹으로 막혀 있음** |
+| 자체 중력 | GOTPM(TreePM)은 VORO 입자 질량을 넣지만 주기적 우주론 전용이고 `RunCosmos`는 GFS를 부르지 않음. 2D 드라이버에는 외부 `kepler_accel`과 `GAS_ACC`뿐. **저장소 기준으로 Evrard는 3D 유체와 고립계 자체 중력이 모두 없어 두 겹으로 막혀 있음** (Exam3d의 중력 여부는 감사 후 확인) |
 
 이식 계획, 기대하는 드라이버 인터페이스(LAG3DV1 IC/스냅숏 `snap_%06d.l3d`, `[E3D] step= t= dt= Ekin= Eint= Epot= Etot=` 로그 줄, 제안하는 params 키), 열린 결정은 `Exam/Tests3D/README.md` §1–2, §5에 있습니다.
 
@@ -594,18 +594,7 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 | 합격 | 스윕 질량 충격 반경 \|R/R_an − 1\| ≤ 0.03 (128³에서 0.02)<br>\|ΔE/E0\| ≤ 10⁻³<br>ρ_peak ≥ 2.5 (128³에서 3.0)<br>축/대각 비대칭 5% 이내<br>L1(128³) < L1(64³) |
 | 보고 | summary.json, `sedov3d_profiles.png`, floor에 닿은 셀 수 |
 
-### 3. Noh3D (구형, 충격 후 밀도 64)
-
-| | |
-|---|---|
-| 설정 | 주기 상자 L = 6, ρ = 1, P = 10⁻⁶, v = −r̂, t_end = 2. 정답: R = 2/3, ρ_post = 64, P_post = 64/3, 충격 앞 ρ = (1 + t/r)². 주기 경계의 교란이 들어오지 않은 r < 1 안에서만 비교 |
-| 실행 | `cd Exam/Tests3D/Noh3D`<br>`sbatch --export=ALL,N=128 run.slurm` |
-| 해석 | `python3 analyze.py --snap <마지막 snap> --ic ic.l3d -o noh3d` |
-| 추정 시간 | 128³ 약 1.5시간 (1–5시간), 약 1000 스텝 |
-| 합격 | \|R/R_an − 1\| ≤ 0.05<br>0.3–0.9 R 평균 밀도가 64의 20% 이내<br>충격 앞 L1 ≤ 5%<br>\|ΔE/E0\| ≤ 10⁻³<br>중심(r < 0.3 R)의 wall heating은 보고만 하고 채점하지 않음 |
-| 보고 | summary.json, `noh3d_profiles.png`, extreme face/pair pressure 관련 로그가 있으면 그 개수 |
-
-### 4. Evrard3D (자체 중력 필요, 현재 막힘)
+### 3. Evrard3D (자체 중력 필요, 현재 막힘)
 
 | | |
 |---|---|
@@ -618,6 +607,17 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 | 추정 시간 | n = 64에서 유체만 약 2시간 (약 2×10⁴ 스텝)에 중력 비용 추가 |
 | 합격 | E1 (주 기준): max \|ΔE_tot\|/\|E0\| ≤ 1%<br>E2: E_kin 최대 시각 0.88 ± 0.10, E_th 최대 시각 1.07 ± 0.15<br>E3: E_th 곡선의 평균 상대 차이 ≤ 0.15<br>E4: t = 0.8에서 0.05 < r < 0.8 평균 \|log10 ρ/ρ_ref\| ≤ 0.10<br>E3와 E4는 우리가 정한 기준이고 공동체 표준이 아님 |
 | 보고 | `evrard3d_energy.png`, summary.json, 중력 해법과 ε |
+
+### 4. Noh3D (구형, 충격 후 밀도 64)
+
+| | |
+|---|---|
+| 설정 | 주기 상자 L = 6, ρ = 1, P = 10⁻⁶, v = −r̂, t_end = 2. 정답: R = 2/3, ρ_post = 64, P_post = 64/3, 충격 앞 ρ = (1 + t/r)². 주기 경계의 교란이 들어오지 않은 r < 1 안에서만 비교 |
+| 실행 | `cd Exam/Tests3D/Noh3D`<br>`sbatch --export=ALL,N=128 run.slurm` |
+| 해석 | `python3 analyze.py --snap <마지막 snap> --ic ic.l3d -o noh3d` |
+| 추정 시간 | 128³ 약 1.5시간 (1–5시간), 약 1000 스텝 |
+| 합격 | \|R/R_an − 1\| ≤ 0.05<br>0.3–0.9 R 평균 밀도가 64의 20% 이내<br>충격 앞 L1 ≤ 5%<br>\|ΔE/E0\| ≤ 10⁻³<br>중심(r < 0.3 R)의 wall heating은 보고만 하고 채점하지 않음 |
+| 보고 | summary.json, `noh3d_profiles.png`, extreme face/pair pressure 관련 로그가 있으면 그 개수 |
 
 ### 5. KH3D (McNally 2012 층을 z로 확장)
 

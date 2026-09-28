@@ -12,12 +12,16 @@ solutions, and pass criteria.
 | 4 | spherical Noh | `Noh3D/` | exact (ρ_post = 64) |
 | 5 | Kelvin–Helmholtz, McNally 2012 profile in 3D | `KH3D/` | compressible linear theory solved here |
 
-> **Status at the commit that added this suite: the code has no 3D GFS hydro
-> driver** (see "3D path audit" below). Every `run.slurm` stops at a preflight
-> check (exit 3) unless the binary contains the marker string
-> `LAGEUNHA_3D_GFS_V1`. Nothing here was run with LagEunha. The IC generators,
-> analytic solvers, and analysis scripts were verified on synthetic data
-> (`./selftest.sh`).
+> **Status: the repository has no 3D GFS hydro driver yet** (see "3D path
+> audit" below, which covers only what is in the repo). Juhan Kim reports that
+> an older 3D driver, **Exam3d**, exists on the cluster but has not been
+> pushed. **Grok CLI: please add Exam3d to the repo and push it.** Grokbot will
+> then audit it against the 2D GFS path and hook Tests3D up to it (preflight
+> marker check and an IC/energy-log adapter). Until then every `run.slurm`
+> stops at a preflight check (exit 3) unless the binary contains the marker
+> string `LAGEUNHA_3D_GFS_V1`. Nothing here was run with LagEunha. The IC
+> generators, analytic solvers, and analysis scripts were verified on
+> synthetic data (`./selftest.sh`).
 
 ---------------------------------------------------------------------------
 
@@ -28,7 +32,7 @@ solutions, and pass criteria.
 | piece | where | state |
 |-------|-------|-------|
 | 3D tree / neighbour helpers | `Exam/exam.c` `ex3d_findCentroid`, `ex3d_FindCellSize`, `ex3d_idivision`, `nearest3dOpen`, `ex3d_dist`, `det3d_dpq`, `det3d_dpqRK4` (~l.353–1007) | Only compute the search radius (`w2ceil`) from a 3D tree walk. **No driver calls them.** |
-| 3D Voronoi cell primitives | `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, `Voro3D_Volume_Polyhedron`, `findPolyhedronCentroid`, `Voro3D_norm_polygon`, `getAvgPressureOnSurface3D`; type `Voro3D_GasParticle` in `voro_eunha.h` | Cell, face, and volume geometry. Used only by the legacy `Exam/Sedov` code. |
+| 3D Voronoi cell primitives | `Voro/voro.c` `Voro3D_FindVC`, `Voro3D_FaceExtract`, `Voro3D_Volume_Polyhedron`, `findPolyhedronCentroid`, `Voro3D_norm_polygon`, `getAvgPressureOnSurface3D`; type `Voro3D_GasParticle` in `voro_eunha.h` | Cell, face, and volume geometry. In the repo, used only by the legacy `Exam/Sedov` code (presumably also by Exam3d). |
 | 3D Laguerre library | `Voro/Laguerre/` (`constructLaguerreCell3D` CPU; CUDA `construct_cells_3d_kernel`) | CPU gives 2D+3D cells. The CUDA 3D kernel returns volume and a **vertex-average** centroid (not the true centroid) and **no face list**. **The main build does not use it:** `Voro/Makefile` builds only `voro.o` and `voro_eunha.o`. |
 | legacy 3D Voronoi hydro | `Exam/Sedov/` (`vch_hydro.c` …) | Standalone, OpenMP, non-MPI. Monaghan-type artificial viscosity (`alphavis`/`betavis`). No HLLC, MUSCL, pair pressure, or RK4. Not in any Makefile, and **does not compile** (12 errors in our check). |
 | particle types | `treevorork4particletype` has x,y,z / vx,vy,vz / ax,ay,az | Storage is 3D-capable. |
@@ -61,13 +65,10 @@ Cells") describes 3D equations that the code does not implement.
 
 ### 1.3 Decision
 
-We ported nothing. A faithful 3D port covers items 1–6 (≈3000 lines of 2D
-code whose geometry is 2D throughout: edges instead of polygons, 2D
-rotation, 2D reconstruction stencils), plus an isolated gravity solver for
-Evrard. Without nvcc, MKL, and CAMB on the authoring machine it could not be
-compiled or run even once. A port we cannot test would be the "faked" result
-the task forbids. Every 2D code path is untouched (this commit adds files
-only under `Exam/Tests3D/`).
+Nothing was ported. Exam3d (on the cluster, not yet in the repo; see the
+status note at the top) is the starting point. Once it is pushed, Grokbot
+will audit it against items 1–8 above and hook Tests3D up to it. Every 2D
+code path is untouched (this commit adds files only under `Exam/Tests3D/`).
 
 ### 1.4 Port plan (for whoever writes the 3D driver)
 
@@ -187,23 +188,7 @@ could be off by 3× either way.
   - L1(128³) < L1(64³).
 - **Estimate**: 64³ ≈ 20 min (≈2000 steps), 128³ ≈ 6 h.
 
-### 3.3 Noh3D (test 4)
-
-- **Setup**:
-  - periodic cube L = 6, ρ = 1, P = 10⁻⁶, v = −r̂, t_end = 2;
-  - exact: R = t/3 = 2/3, ρ_post = 64, P_post = 64/3, pre-shock ρ = (1 + t/r)².
-  - Only r < L/2 − t = 1 is uncontaminated by the periodic edge, so the analysis uses that sphere only.
-- **Run**: `N=128` (R = 14 dx).
-- **Analysis**: `analyze.py --snap <last> --ic ic.l3d -o noh3d`.
-- **Pass**:
-  - |R/R_an − 1| ≤ 0.05;
-  - plateau (0.3–0.9 R) density within 20 % of 64;
-  - pre-shock L1 ≤ 5 %;
-  - |ΔE/E0| ≤ 10⁻³.
-  - Wall heating at r < 0.3 R is reported but not graded.
-- **Estimate**: 128³ ≈ 1.5 h (1–5 h), ≈1000 steps.
-
-### 3.4 Evrard3D (test 3)
+### 3.3 Evrard3D (test 3)
 
 - **Setup** (Evrard 1988, MNRAS 235, 911; as used by Springel 2010, MNRAS 401, 791 and Hopkins 2015, MNRAS 450, 53):
   - γ = 5/3, G = M = R = 1, ρ = 1/(2πr) for r < 1, u = 0.05, v = 0;
@@ -225,6 +210,22 @@ could be off by 3× either way.
   - E4: mean |log10 ρ/ρ_ref| ≤ 0.10 over 0.05 < r < 0.8 at t = 0.8.
   - E3 and E4 are thresholds we chose, not community standards.
 - **Estimate**: ≈2 h hydro at n = 64 (≈2×10⁴ steps) plus the gravity cost. **Blocked**.
+
+### 3.4 Noh3D (test 4)
+
+- **Setup**:
+  - periodic cube L = 6, ρ = 1, P = 10⁻⁶, v = −r̂, t_end = 2;
+  - exact: R = t/3 = 2/3, ρ_post = 64, P_post = 64/3, pre-shock ρ = (1 + t/r)².
+  - Only r < L/2 − t = 1 is uncontaminated by the periodic edge, so the analysis uses that sphere only.
+- **Run**: `N=128` (R = 14 dx).
+- **Analysis**: `analyze.py --snap <last> --ic ic.l3d -o noh3d`.
+- **Pass**:
+  - |R/R_an − 1| ≤ 0.05;
+  - plateau (0.3–0.9 R) density within 20 % of 64;
+  - pre-shock L1 ≤ 5 %;
+  - |ΔE/E0| ≤ 10⁻³.
+  - Wall heating at r < 0.3 R is reported but not graded.
+- **Estimate**: 128³ ≈ 1.5 h (1–5 h), ≈1000 steps.
 
 ### 3.5 KH3D (test 5)
 
