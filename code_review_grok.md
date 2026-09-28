@@ -398,3 +398,56 @@ Flags from the 407214 script and `params.dat`: `SEDOV_PHASE1=1`, `way=1`, `use_m
 Step 1 matches the IC harness: `E_hyd = 21.459`, `E_pot = −42.928`, `E_tot = −21.469`, `E_int = 8.641e-4`. `n_es = 25528` (the estimate was about 25500). `n_half = 0`, `floor_cum = 0`, `n_ie_le0 = 0`, `es_de = −3.4e-6`. The switch is removing a little heating, not topping cells up.
 
 407215 step 1 is the old disk: `E_hyd = 8.790`, `E_pot = −17.581`, `E_tot = −8.792`, `E_int = 8.640e-4`, `n_es = 23156`, `n_half = 0`, `es_de = −3.8e-7`. Same banner, `active = 1`.
+
+---
+
+## 16. Both entropy-switch Keplers died. The half-limit pays the hole
+
+Received `c6d6a81`. `GFS_LAGUERRE_ROTATION` and `Exam/Tests3D` are in the tree. Neither has been run. 406515–406519 stay held. **[RUN]**
+
+Exam3d is not in the places searched: `/home/kjhan/Eunha.A1`, `/home/kjhan/BACKUP/Eunha.A1`, `/home/kjhan/BackUP`, `/gpfs/kjhan/LagForce`, and the local LagEunha history (only `figs/Fig/exam3d.eps`). It was not pushed. Tests3D was not submitted. A path for Exam3d is needed before that driver can go into the repository.
+
+### What finished
+
+| job | IC | wall | `|ΔE| = 10^{-3}` | `|ΔE| = 10^{-2}` | `|ΔE| = 1` | end |
+|---|---|---:|---:|---:|---:|---|
+| 407215 `LAGFORCE_KEP_ES` | old `1/R` | 2 h 37 min | t = 13.091 | t = 14.038 | t = 14.306 | signal 9, `EXIT:255`. `sacct` `COMPLETED 0:0` |
+| 407214 `LAGFORCE_KEP_HS` | Hopkins | 3 h 26 min | t = 15.383 | t = 16.110 | t = 16.134 | signal 9, `EXIT:255`. Same `sacct` |
+
+For comparison: 406654 (no work limit) crossed `0.01` at `t = 4.59`, 406734 (work limit) at `t = 9.54`, 407021 (dual energy `η = 0.5`) at `t = 10.31`. The switch moved the crossing to `14.04` and `16.11`. It did not remove it. `T(R = 2) = 17.8`, so 407214 died at about 0.91 of an inner orbit. Not a pass.
+
+`floor_cum` stayed 0. `E_pot` at the `dE = 1` line was still `−17.56` (407215) and `−42.92` (407214). The orbit did not fall in.
+
+At the `0.01` crossing:
+
+| | t | dE | es_cum | hl_cum | E_int |
+|---|---:|---:|---:|---:|---:|
+| 407215 | 14.04 | 1.10e-2 | +1.32e-2 | 5.45e-2 | 8.43e-2 |
+| 407214 | 16.11 | 1.23e-2 | −1.89e-2 | 0.410 | 0.103 |
+
+`dE × |Etot0|` tracks `es_cum + hl_cum`. The jump from `0.01` to `1` is `Δt ≈ 0.03`, and in that interval `hl_cum` goes from `0.054` to `5.56` (407215) and from `0.41` to `32` (407214). The half-limit is the term that runs away. On the step where 407215 crossed `0.01`, `n_half = 1` and `hl_de = 7.3e-3`. One cell. A cell's initial internal energy is about `10^{-8}`.
+
+### Why the half-limit does that
+
+The final correction is once per step:
+
+```c
+if (gfs_es_on && coef * m * |g| * sqrt(V) > max(0.5*ie_n, ie_E)) {
+    ie1 = ie_n * (V_n/V)^(γ-1);     /* booked as es_de = ie1 - ie_E */
+}
+if (gfs_half_on && ie1 < 0.5*ie_n) {
+    hl_de += 0.5*ie_n - ie1;        /* then ie1 = 0.5*ie_n */
+}
+```
+
+`hl_de = 0.5*ie_n − ie_E` when the cell was not switched. If the energy equation has driven `ie_E` to a large negative number, the half-limit writes a cheque for the whole hole, not for half a thermal energy. The face force has already changed the kinetic energy. Putting the internal energy back does not undo that, so the total energy rises by about `|ie_E|`.
+
+The unit test bounded the injection by asking for `−2 ie_n` every step, after which `ie` halves and the next request shrinks. A face does not ask for a multiple of `ie`. One face can deposit a macroscopic `ΔE` in one step. `hl_de = 7.3e-3` on a single cell is that deposit.
+
+A switched cell does not take this path. A deep hole in a cold cell is booked in `es_de`, because the switch runs first and sets the adiabatic value. Early on, `es_cum` was negative: the switch was throwing away heating the energy equation wanted. That is why the cliff moved from `t ≈ 10` to `t ≈ 14–16`, and why Hopkins, with `n_es` stuck near 25500, lasted about `Δt = 2` longer than the old disk. `n_es` on 407214 was still about 25400 at the `dE = 1` line.
+
+The switch lets a cell go when `ie_n` exceeds `0.01 m |g| h`. Those cells have only the half-limit left. The half-limit has no gravity test and no cap against the face work. `E_int` was already tens of times `8.6e-4` before `hl_cum` overtook `es_cum`. The injected energy raises the pressure, the next face work digs a deeper hole, and the half-limit pays it. That is the feedback loop, on the half-limit side.
+
+`n_pair` reached several hundred on 407215 and about 800–1000 on 407214. The pair impulse is already limited by the internal-energy budget, so a `10^{-3}` hole in one cell is hard to blame on that term alone. The hydro face work is not limited that way.
+
+An internal-energy rule after the step has now been tried four times. The pressure floor, dual energy, the entropy switch, and the half-limit all book the same hole under different names. The crossing moved from `t = 4.59` to `9.54`, `10.31`, `14.04`, and `16.11`. The next change has to limit the face work that digs the hole, not the value written into `ie` afterwards. `av_mode` was 5 and centroid shift was 0, so this is not the LagMFM `E_inv` alias and not the centroid volume change.
