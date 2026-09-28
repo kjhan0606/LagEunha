@@ -277,7 +277,7 @@ void  read_slab_head(FILE*, SimParameters *);
 #define P_GAS_W2RELAXTAU SET"GAS w2_relax_tau   = "S_FLOAT" # w2 relaxation timescale (d/c units, 0=off)\n"
 #define P_GAS_W2RATEMAX  SET"GAS w2_rate_max    = "S_FLOAT" # max fractional dw2/w2 per step (0=off)\n"
 #define P_GAS_W2FLOORFRAC SET"GAS w2_floor_frac  = "S_FLOAT" # w floor as fraction of dMean (0=off)\n"
-#define P_GAS_W2MODE     SET"GAS w2_mode        = "S_INT" # 0=pressure, 1=entropy-A, 2=specific-entropy add, 3=pressure+vol-equalize\n"
+#define P_GAS_W2MODE     SET"GAS w2_mode        = "S_INT" # 0=P,1=A,2=s,3=P+V,4-6=cs,7=dK,8=local-P-contrast\n"
 #define P_GAS_W2SREF     SET"GAS w2_s_ref       = "S_FLOAT" # reference specific entropy s=ln(P/rho^gamma) (modes 1,2)\n"
 #define P_GAS_W2SSCALE   SET"GAS w2_s_scale     = "S_FLOAT" # scale for specific-entropy perturbation (mode 2 denom)\n"
 #define P_GAS_W2SBETA    SET"GAS w2_s_beta      = "S_FLOAT" # amplitude beta for specific-entropy mode 2 (0=off)\n"

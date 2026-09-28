@@ -354,7 +354,7 @@ typedef struct GasInfo{
 	float w2_relax_tau;                // w2 relaxation timescale in units of d/c (0=off)
 	float w2_rate_max;                 // max fractional change |Δw2/w2_old| per step (0=off)
 	float w2_floor_frac;               // w floor as fraction of dMean (0=off)
-	int   w2_mode;                     // 0=pressure (default), 1=entropy-A, 2=specific-entropy add, 3=pressure+volume-equalize hybrid, 4=cs-linear, 5=cs-Pade-saturation, 6=cs-power
+	int   w2_mode;                     // 0=pressure (default), 1=entropy-A, 2=specific-entropy add, 3=pressure+volume-equalize hybrid, 4=cs-linear, 5=cs-Pade-saturation, 6=cs-power, 7=dK-heating, 8=local-P-contrast
 	float w2_s_ref;                    // reference specific entropy (for modes 1,2). s = ln(P/rho^gamma)
 	float w2_s_scale;                  // scale for additive specific-entropy mode (denominator, ≈ |s_L - s_R|)
 	float w2_s_beta;                   // amplitude of specific-entropy perturbation (mode 2, dimensionless)

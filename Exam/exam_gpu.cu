@@ -55,7 +55,7 @@ void dev_get2dUpqradRk4(
     double xj, double yj, double vxj, double vyj,
     float w2j, float w2oldj, float csj,
     /* params */
-    double dtold,
+    double dtold, int w2lin,
     /* output: v_face - v_i */
     double *uradx, double *urady)
 {
@@ -76,6 +76,11 @@ void dev_get2dUpqradRk4(
 
     double fact1 = 0.5 * (1.0 + (wp2 - wq2) / dpq2);
 
+    double fact2;
+    if (w2lin) {
+        /* GFS_W2_LINEAR: w2old carries Wdot (mirrors gfs_upqrad_rk4). */
+        fact2 = 0.5 * (wpold2 - wqold2) * dpq_inv;
+    } else {
     double dwpdt = (sqrt(wp2) - sqrt(wpold2)) / dtold;
     double dwqdt = (sqrt(wq2) - sqrt(wqold2)) / dtold;
 
@@ -86,7 +91,8 @@ void dev_get2dUpqradRk4(
     if (dwqdt > 0) vqw = fmin((double)csj, dwqdt);
     else           vqw = fmax(-(double)csj, dwqdt);
 
-    double fact2 = (sqrt(wp2) * vpw - sqrt(wq2) * vqw) * dpq_inv;
+    fact2 = (sqrt(wp2) * vpw - sqrt(wq2) * vqw) * dpq_inv;
+    }
     fact2 -= (wp2 - wq2) / dpq2 * er_dot_upq;
 
     *uradx = fact1 * upqx + fact2 * erx;
@@ -349,7 +355,7 @@ void getAccVoro2DBlend_kernel(
     double nu_phys, double prandtl,
     double cd_amax, double blend_theta, double dtold,
     double hyperv_alpha, double hyperv_force_cap,
-    int phase1, int laguerre_rot, int face_charge, int geom_fv)
+    int phase1, int laguerre_rot, int face_charge, int geom_fv, int w2lin)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -445,7 +451,7 @@ void getAccVoro2DBlend_kernel(
         dev_get2dUpqradRk4(
             ibp_x, ibp_y, ibp_vx, ibp_vy, ibp_w2, ibp_w2old, (float)ibp_csound,
             jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
-            dtold, &uradx, &urady);
+            dtold, w2lin, &uradx, &urady);
         /* Centroid correction for a pure Voronoi face (w = 0). */
         if (ibp_w2 == 0.0f && jbp_w2 == 0.0f && dramp > 0.0) {
             double cx = 0.5 * (c1x[f] + c2x[f]);
@@ -1518,7 +1524,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         params->nu_phys, params->prandtl,
         params->cd_amax, params->blend_theta, params->dtold,
         params->hyperv_alpha, params->hyperv_force_cap,
-        params->phase1, params->laguerre_rot, params->face_charge, params->geom_fv);
+        params->phase1, params->laguerre_rot, params->face_charge, params->geom_fv,
+        params->w2lin);
 
     CUDA_CHECK(cudaGetLastError());
 

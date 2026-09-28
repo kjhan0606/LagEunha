@@ -72,6 +72,9 @@ typedef struct {
     int *neighbor, *kp, *km, *is_ghost, *owner;
 } ThreadFaceBuf;
 
+/* exam.c: 1 while GFS_W2_LINEAR drives the weights of the current RK4 step. */
+int gfs_w2lin_is_active(void);
+
 static void tfb_init(ThreadFaceBuf *b, int cap)
 {
     b->count = 0;
@@ -268,6 +271,7 @@ static void fillParticleSoA(
     int npad = VORO_NPAD(simpar);
     int n_total = nbp + npad;
     int i;
+    int w2lin_soa = gfs_w2lin_is_active();
 
     h_parts->n_total = n_total;
 
@@ -293,7 +297,8 @@ static void fillParticleSoA(
         h_parts->volume[i]   = bp->volume;
         h_parts->ie[i]       = bp->ie;
         h_parts->w2[i]       = bp->w2;
-        h_parts->w2old[i]    = bp->w2old;
+        /* GFS_W2_LINEAR: w2old carries Wdot (held in w2hydro). */
+        h_parts->w2old[i]    = w2lin_soa ? bp->w2hydro : bp->w2old;
         h_parts->w2ceil[i]   = bp->w2ceil;
         h_parts->avgNeighP[i]= bp->avgNeighboringPressure;
 
@@ -831,6 +836,7 @@ double getAccVoro2DBlend_GPU(
             const char *gv = getenv("GFS_GEOM_FACE_VEL");
             params.geom_fv = (gv && gv[0] && atoi(gv) > 0) ? 1 : 0;
         }
+        params.w2lin = gfs_w2lin_is_active();
     }
 
     /* --- Launch GPU kernel (all particles) --- */
@@ -896,7 +902,7 @@ static inline void cpu_get2dUpqradRk4(
     float w2i, float w2oldi, float csi,
     double xj, double yj, double vxj, double vyj,
     float w2j, float w2oldj, float csj,
-    double dtold,
+    double dtold, int w2lin,
     double *uradx, double *urady)
 {
     double upqx = vxj - vxi, upqy = vyj - vyi;
@@ -911,12 +917,18 @@ static inline void cpu_get2dUpqradRk4(
     double wpold2 = (double)w2oldi, wqold2 = (double)w2oldj;
     double fact1 = 0.5 * (1.0 + (wp2 - wq2) / dpq2);
 
+    double fact2;
+    if (w2lin) {
+        /* GFS_W2_LINEAR: w2old carries Wdot (mirrors gfs_upqrad_rk4). */
+        fact2 = 0.5 * (wpold2 - wqold2) * dpq_inv;
+    } else {
     double dwpdt = (sqrt(wp2) - sqrt(wpold2)) / dtold;
     double dwqdt = (sqrt(wq2) - sqrt(wqold2)) / dtold;
     double vpw = dwpdt > 0 ? fmin((double)csi, dwpdt) : fmax(-(double)csi, dwpdt);
     double vqw = dwqdt > 0 ? fmin((double)csj, dwqdt) : fmax(-(double)csj, dwqdt);
 
-    double fact2 = (sqrt(wp2) * vpw - sqrt(wq2) * vqw) * dpq_inv;
+    fact2 = (sqrt(wp2) * vpw - sqrt(wq2) * vqw) * dpq_inv;
+    }
     fact2 -= (wp2 - wq2) / dpq2 * er_dot_upq;
     *uradx = fact1 * upqx + fact2 * erx;
     *urady = fact1 * upqy + fact2 * ery;
@@ -1129,7 +1141,7 @@ static void cpu_reference_force_csr(
                 double uradx_t, urady_t;
                 cpu_get2dUpqradRk4(ibp_x, ibp_y, ibp_vx, ibp_vy, ibp_w2, ibp_w2old, (float)ibp_csound,
                     jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
-                    P->dtold, &uradx_t, &urady_t);
+                    P->dtold, P->w2lin, &uradx_t, &urady_t);
                 if (ibp_w2 == 0.0f && jbp_w2 == 0.0f && dramp > 0.0) {
                     double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
                     double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
@@ -1396,7 +1408,7 @@ static void cpu_reference_force_csr(
             double uradx, urady;
             cpu_get2dUpqradRk4(ibp_x, ibp_y, ibp_vx, ibp_vy, ibp_w2, ibp_w2old, (float)ibp_csound,
                 jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
-                P->dtold, &uradx, &urady);
+                P->dtold, P->w2lin, &uradx, &urady);
             if (ibp_w2 == 0.0f && jbp_w2 == 0.0f && dramp > 0.0) {
                 double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
                 double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
@@ -1604,6 +1616,7 @@ double getAccVoro2DBlend_GPU_validate(
             const char *gv = getenv("GFS_GEOM_FACE_VEL");
             params.geom_fv = (gv && gv[0] && atoi(gv) > 0) ? 1 : 0;
         }
+        params.w2lin = gfs_w2lin_is_active();
     }
 
     double *ref_ax  = (double *)malloc(nbp * sizeof(double));

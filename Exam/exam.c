@@ -116,6 +116,61 @@ static int gfs_laguerre_rotation_on(void){
 	return on;
 }
 
+/* GFS_W2_LINEAR=1 (default 0; CPU RK4 blend path, GAS kappa > 0 only).
+ * Books the face motion caused by the weight change in P dV.
+ * Default path: W is recomputed from each RK4 stage state, the face speed
+ * uses (w_stage - w_n)/dt_old clamped by c_s (about half of the weight
+ * motion over a step), and W jumps at the end of the step after the
+ * end-of-step volume update. None of the jump enters P dV.
+ * With the flag, each particle gets one rate per step,
+ *   Wdot = (W_target - W_n)/dt_old,  |Wdot| <= 2 c_s max(w_n, w_target),
+ * with W_target from getw2forHydroParticle + applyW2Controls on the state
+ * at the start of the step (a one-step relaxation toward the target).
+ * The target is capped at w2ceil/2 (margin for the nearest-neighbour
+ * ceiling). Stage k uses W = W_n + c_k Dt Wdot (c = 0, 1/2, 1/2, 1), the step ends
+ * at W_n + Dt Wdot before the volume update, and the face speed carries
+ * exactly (Wdot_i - Wdot_j)/(2d) (w2old = w2 in the stages, so the lagged
+ * term in get2dUpqradRk4 is zero). Wdot is held in w2hydro while active.
+ * GPU: GPUPhysicsParams.w2lin, and the uploaded w2old array carries Wdot
+ * (exam_gpu_extract.c fillParticleSoA, dev_get2dUpqradRk4). */
+static int gfs_w2lin_active = 0;
+int gfs_w2lin_is_active(void){ return gfs_w2lin_active; }
+static int gfs_w2lin_on(void){
+	static int on = -1;
+	if(on < 0){
+		const char *s = getenv("GFS_W2_LINEAR");
+		on = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+	}
+	return on;
+}
+/* GFS_VOL_AUDIT=1 (default 0, diagnostic, 1 rank): per step, compare the
+ * geometric volume change of each cell (tessellation at the start of step
+ * n+1 minus that at the start of step n, so end-of-step weight jumps are
+ * included) with the volume change booked by the face velocities used in
+ * the energy equation (RK4-weighted sum of face u·dS). Prints [VAUD] with
+ * sum|res|/sumV and the unbooked work sum P|res| per step and cumulative. */
+static int gfs_vaud_on(void){
+	static int on = -1;
+	if(on < 0){
+		const char *s = getenv("GFS_VOL_AUDIT");
+		on = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+	}
+	return on;
+}
+static size_t vaud_cap = 0;
+static double *vaud_rate = NULL, *vaud_book = NULL, *vaud_vprev = NULL;
+static char *vaud_have = NULL;
+static void vaud_ensure(size_t id){
+	if(id < vaud_cap) return;
+	size_t nc = id + id/4 + 64, k;
+	vaud_rate  = (double*)realloc(vaud_rate,  nc*sizeof(double));
+	vaud_book  = (double*)realloc(vaud_book,  nc*sizeof(double));
+	vaud_vprev = (double*)realloc(vaud_vprev, nc*sizeof(double));
+	vaud_have  = (char*)realloc(vaud_have, nc);
+	for(k=vaud_cap;k<nc;k++){ vaud_rate[k] = vaud_book[k] = vaud_vprev[k] = 0; vaud_have[k] = 0; }
+	vaud_cap = nc;
+}
+
 #ifdef USE_CUDA
 #include "exam_gpu.h"
 /* Forward declaration — full signature matches exam_gpu_extract.c */
@@ -262,6 +317,22 @@ inline postype getw2forHydroParticle(SimParameters *simpar, treevorork4particlet
 				}
 			}
 			return length0 * length0 * (1.0 + beta * eta);
+		} else if(mode == 8){
+			/* Local pressure contrast, bounded (default off; w2_mode 8).
+			 *   x = P_i / Pbar_i, Pbar_i = face-length-weighted mean of the
+			 *   neighbour pressures (avgNeighboringPressure, last tessellation),
+			 *   q = x^a / (1 + x^a), a = w2Power, so 0 < q < 1.
+			 * Uniform pressure gives q = 1/2 on every cell: W is uniform and
+			 * the mesh is exactly Voronoi, with no dependence on a global
+			 * pressure scale. Across a jump the high-pressure side tends to
+			 * q = 1 and the low side to 0, so |W_p - W_q| < base = kappa^2 dMean^2
+			 * and the face moves toward the low-pressure (upstream) side, as
+			 * the HLL shock speed does. */
+			postype Pn = bp->avgNeighboringPressure;
+			postype x = (Pn > 0 && bp->pressure > 0) ? bp->pressure / Pn : (postype)1;
+			postype xa = pow(x, GAS_w2Power(simpar));
+			q = xa / (1 + xa);
+			if(!(q >= 0)) q = 0.5;   /* NaN guard */
 		} else {
 			/* Mode 0 (default): pressure-based power-law. */
 			q = pow(bp->pressure * GAS_invw2Scale(simpar), GAS_w2Power(simpar));
@@ -2863,7 +2934,7 @@ void updateDenW2Pressure2DBlend(
 		if(GAS_Kappa(simpar) <0) {
 			bp[i].w2 = -GAS_Kappa(simpar);
 		}
-		else if (GAS_Kappa(simpar) >0){
+		else if (GAS_Kappa(simpar) >0 && !gfs_w2lin_active){
 			bp[i].w2hydro = getw2forHydroParticle(simpar,(treevorork4particletype*)(bp+i),Dtime);
 			applyW2Controls(simpar, (treevorork4particletype*)(bp+i), Dtime);
 		}
@@ -4467,6 +4538,22 @@ static void voronoi_face_rotation(Voro2D_point *urad,
 	urad->y += delta * ery;
 }
 
+/* get2dUpqradRk4 plus, under GFS_W2_LINEAR, the exact weight term
+ * (Wdot_p - Wdot_q)/(2d) along e (Wdot in w2hydro). */
+static inline Voro2D_point gfs_upqrad_rk4(treevorork4particletype *p,
+		treevorork4particletype *q, postype dtold){
+	Voro2D_point u = get2dUpqradRk4(p, q, dtold);
+	if(gfs_w2lin_active){
+		postype ex = q->x - p->x, ey = q->y - p->y;
+		postype d2 = ex*ex + ey*ey;
+		if(d2 > 0){
+			postype f = (p->w2hydro - q->w2hydro) / (2*d2);
+			u.x += f*ex; u.y += f*ey;
+		}
+	}
+	return u;
+}
+
 /* SEDOV_PHASE1 stores dE/dt in die. RK4 must not add that to ie. */
 static postype phase1_ie_stage(treevorostressrk4particletype *p, postype dt)
 {
@@ -5018,6 +5105,16 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 	postype dtold = GAS_dtold(simpar);
 	/* Read before the OpenMP region. */
 	int lag_rot = gfs_laguerre_rotation_on();
+	int vaud_on_l = gfs_vaud_on();
+	if(vaud_on_l){
+		size_t max_id = 0;
+		for(int ii=0; ii<nbp; ii++){
+			size_t id = (size_t)PINDX(bp+ii);
+			if(id > max_id) max_id = id;
+		}
+		vaud_ensure(max_id);
+		for(int ii=0; ii<nbp; ii++) vaud_rate[(size_t)PINDX(bp+ii)] = 0;
+	}
 	if(sedov_lagvol_on() && sedov_phase1_on() && use_muscl){
 		size_t max_id = 0;
 		for(int ii=0; ii<nbp; ii++){
@@ -5154,7 +5251,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 
 				Voro2D_Corner *tmp,*tmp2;
 				tmp = vorocorner;
-				double die, dte, dke, fx, fy;
+				double die, dte, dke, fx, fy, dvb = 0;
 				die = dte = dke = fx = fy = 0;
 				/* Dissipative-only energy rate for entropy variable K=P/rho^gamma:
 				 * accumulates ONLY viscous heating and heat conduction, NOT
@@ -5460,7 +5557,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							/* Face velocity in lab frame: v_face = v_i + uradix_ui
 							   with uradix_ui = (v_face - v_i) from get2dUpqradRk4. */
 							Voro2D_point uradix_ui_boost =
-								get2dUpqradRk4(ibp_rk4,
+								gfs_upqrad_rk4(ibp_rk4,
 									(treevorork4particletype*)jbp, dtold);
 							voronoi_face_rotation(&uradix_ui_boost,
 									(postype)0.5*(tmp->x + tmp2->x),
@@ -5875,7 +5972,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						 *     - per-cell sum ≥ 0 in well-resolved limit (τ:∇v ≥ 0)
 						 *     - per-face can be either sign; cell-level clamp applied after loop.
 						 */
-						Voro2D_point uradix_ui = get2dUpqradRk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
+						Voro2D_point uradix_ui = gfs_upqrad_rk4(ibp_rk4, (treevorork4particletype*)jbp, dtold);
 						voronoi_face_rotation(&uradix_ui,
 								(postype)0.5*(tmp->x + tmp2->x),
 								(postype)0.5*(tmp->y + tmp2->y),
@@ -6066,6 +6163,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						}
 						dte += -pi_total * Vec2DDotP(&ua, &dS)
 						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
+						dvb += Vec2DDotP(&ua, &dS);
 						if(gfs_faud_on() && !jbp_is_ghost){
 							size_t fs = (size_t)PINDX(ibp_rk4);
 							if(fs < faud_cap){
@@ -6173,6 +6271,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 					}
 				}
 
+				if(vaud_on_l && (size_t)PINDX(ibp_rk4) < vaud_cap)
+					vaud_rate[(size_t)PINDX(ibp_rk4)] = dvb;
 				if(sedov_phase1_on()){
 					/* die holds dE/dt. The kick rebuilds ie from E − kinetic. */
 					ibp_rk4->die = (postype)dte;
@@ -9792,6 +9892,85 @@ static void clamp_dK_rate_limiter(SimParameters *simpar, postype Dtime)
  *  Same RK4 structure as exam2d_vph_rk4_int, but calls
  *  updateDenW2Pressure2DBlend and getAccVoro2DBlend.
  * ================================================================ */
+/* GFS_W2_LINEAR helpers (see gfs_w2lin_on). */
+static long gfs_w2lin_nclip = 0;
+static void gfs_w2lin_start(SimParameters *simpar, treevorostressrk4particletype *sbp, int np,
+		int (*targetBP)(treevorork4particletype*, postype, postype), postype Lx, postype Ly){
+	postype dto = GAS_dtold(simpar);
+	int i;
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	for(i=0;i<np;i++){
+		treevorork4particletype *b = (treevorork4particletype*)(sbp+i);
+		postype Wn = b->w2;
+		postype rate = 0;
+		if(targetBP(b, Lx, Ly) && dto > 0){
+			b->w2hydro = getw2forHydroParticle(simpar, b, dto);
+			applyW2Controls(simpar, b, dto);   /* sets b->w2 = target (<= w2ceil) */
+			postype Wt = b->w2;
+			/* Margin: target <= w2ceil/2, so the ceiling clip in det2d_dpqRK4
+			 * (a weight change that P dV does not see) needs the nearest
+			 * distance to shrink by ~30% within one step. */
+			if(Wt > 0.5*b->w2ceil) Wt = 0.5*b->w2ceil;
+			rate = (Wt - Wn)/dto;
+			postype wm = sqrt((double)(Wn > Wt ? Wn : Wt));
+			postype rmax = 2*b->csound*wm;
+			if(rate >  rmax) rate =  rmax;
+			if(rate < -rmax) rate = -rmax;
+		}
+		b->w2 = Wn;
+		b->w2old = Wn;
+		b->w2hydro = rate;
+	}
+}
+/* W = W_n + cdt*Wdot (W_n in rk4.w2backup), w2old = w2. */
+static void gfs_w2lin_set(treevorostressrk4particletype *sbp, int np, postype cdt){
+	int i; long nc = 0;
+	for(i=0;i<np;i++){
+		postype W = sbp[i].rk4.w2backup + cdt*sbp[i].w2hydro;
+		if(W < 0){ W = 0; nc++; }
+		if(W > sbp[i].w2ceil) nc++;   /* det2d_dpqRK4 will clip it */
+		sbp[i].w2 = W;
+		sbp[i].w2old = W;
+	}
+	gfs_w2lin_nclip += nc;
+}
+/* GFS_VOL_AUDIT: add w*dt*(booked dV/dt) of this stage. */
+static void vaud_stage(treevorostressrk4particletype *sbp, int np, postype wdt){
+	int i;
+	for(i=0;i<np;i++){
+		size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i));
+		if(id < vaud_cap) vaud_book[id] += (double)wdt*vaud_rate[id];
+	}
+}
+/* GFS_VOL_AUDIT: close the previous step against the current tessellation. */
+static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp, int np,
+		int (*targetBP)(treevorork4particletype*, postype, postype), postype Lx, postype Ly){
+	static int st = 0; static double pw_cum = 0, pws_cum = 0;
+	double ra = 0, vs = 0, pw = 0, pws = 0, wb = 0; int i, nres = 0;
+	size_t max_id = 0;
+	for(i=0;i<np;i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id > max_id) max_id = id; }
+	vaud_ensure(max_id);
+	for(i=0;i<np;i++){
+		size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i));
+		double V = (double)sbp[i].volume;
+		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly) && vaud_have[id]){
+			double r = V - vaud_vprev[id] - vaud_book[id];
+			ra += fabs(r); vs += V; nres++;
+			pw += (double)sbp[i].pressure*fabs(r);
+			pws += (double)sbp[i].pressure*r;
+			wb += fabs(vaud_book[id]);
+		}
+		vaud_vprev[id] = V; vaud_book[id] = 0; vaud_have[id] = 1;
+	}
+	if(nres > 0 && MYID(simpar) == 0){
+		st++; pw_cum += pw; pws_cum += pws;
+		fprintf(stderr, "[VAUD] step=%d n=%d res_abs/V=%.3e booked_abs/V=%.3e unbooked_PdV_abs=%.3e signed=%.3e cum_abs=%.3e cum_signed=%.3e w2clip=%ld\n",
+			st, nres, ra/vs, wb/vs, pw, pws, pw_cum, pws_cum, gfs_w2lin_nclip);
+	}
+}
+
 double exam2d_vph_rk4_int_blend(
 		SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
@@ -9897,6 +10076,17 @@ double exam2d_vph_rk4_int_blend(
 			}
 		}
 	}
+	/* GFS_W2_LINEAR (default off): one Wdot per particle for this step. */
+	int w2lin = gfs_w2lin_on() && GAS_Kappa(simpar) > 0 && !sedov_lagvol_on();
+	{
+		static int wl_banner = 0;
+		if(!wl_banner && gfs_w2lin_on() && MYID(simpar) == 0){
+			fprintf(stderr, "[W2LIN] GFS_W2_LINEAR=1: active=%d (kappa>0, no lagvol). W = W_n + c Dt Wdot in stages, exact weight term in the face speed\n", w2lin);
+			wl_banner = 1;
+		}
+	}
+	gfs_w2lin_active = w2lin;
+	if(w2lin) gfs_w2lin_start(simpar, sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* === K1 evaluation === */
 	_t0 = MPI_Wtime();
@@ -9904,6 +10094,7 @@ double exam2d_vph_rk4_int_blend(
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, 1);
 	_t_update += MPI_Wtime() - _t0;
+	if(gfs_vaud_on()) vaud_close(simpar, sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* GFS_ENTROPY_SWITCH / GFS_HALF_LIMIT: remember ie_n and V_n at the
 	 * start of the step. Stage arithmetic never touches these fields. */
 	gfs_es_config();
@@ -9970,6 +10161,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k1K  = sbp[i].stress.dK*Dtime;
 	}
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
+	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(1.0/6.0));
 
 	/* === K2 evaluation === */
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -9986,6 +10178,7 @@ double exam2d_vph_rk4_int_blend(
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+	if(w2lin) gfs_w2lin_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime);
 	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	_t0 = MPI_Wtime();
@@ -10028,6 +10221,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k2K  = sbp[i].stress.dK*Dtime;
 	}
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 2.0/6.0);
+	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(2.0/6.0));
 
 	/* === K3 evaluation === */
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -10044,6 +10238,7 @@ double exam2d_vph_rk4_int_blend(
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+	if(w2lin) gfs_w2lin_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime);
 	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	_t0 = MPI_Wtime();
@@ -10086,6 +10281,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k3K  = sbp[i].stress.dK*Dtime;
 	}
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 2.0/6.0);
+	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(2.0/6.0));
 
 	/* === K4 evaluation === */
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -10102,6 +10298,7 @@ double exam2d_vph_rk4_int_blend(
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+	if(w2lin) gfs_w2lin_set(sbp, VORO_NP(simpar), (postype)1.0*Dtime);
 	if(av_mode >= 1)
 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
 	_t0 = MPI_Wtime();
@@ -10144,6 +10341,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k4K  = sbp[i].stress.dK*Dtime;
 	}
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
+	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(1.0/6.0));
 	_t0 = MPI_Wtime();
 
 	/* === Undo K4 shift and prepare for final combination === */
@@ -10193,6 +10391,11 @@ double exam2d_vph_rk4_int_blend(
 				find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 	}
 
+	/* GFS_W2_LINEAR: end-of-step weights before the volume update. */
+	if(w2lin){
+		sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+		gfs_w2lin_set(sbp, VORO_NP(simpar), Dtime);
+	}
 	/* Update volume & density */
 	exam2dUpdateVol(simpar,paddingAllTreeParticles,find2DNeighborBP, find2DCellBP,mkLinkedList2D);
 
@@ -10207,7 +10410,7 @@ double exam2d_vph_rk4_int_blend(
 			if(GAS_Kappa(simpar) <0){
 				sbp[i].w2 = -GAS_Kappa(simpar);
 			}
-			else if (GAS_Kappa(simpar) >0){
+			else if (GAS_Kappa(simpar) >0 && !w2lin){
 				sbp[i].w2hydro = getw2forHydroParticle(simpar,(treevorork4particletype*)(sbp+i),Dtime);
 				applyW2Controls(simpar, (treevorork4particletype*)(sbp+i), Dtime);
 			}
@@ -10416,6 +10619,7 @@ double exam2d_vph_rk4_int_blend(
 		update_alpha_cd_2d(simpar, Dtime);
 	}
 
+	gfs_w2lin_active = 0;
 	_t_fin = MPI_Wtime() - _t0;
 	{
 		static int _step_timer = 0;

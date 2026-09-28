@@ -222,6 +222,11 @@ typedef struct {
     /* GFS_GEOM_FACE_VEL: geometric face velocity in the work terms
      * on every face (0 = off, default). */
     int    geom_fv;
+    /* GFS_W2_LINEAR active in this RK4 step (exam.c gfs_w2lin_is_active):
+     * the w2old array then carries Wdot = dW/dt and the face speed uses
+     * (Wdot_i - Wdot_j)/(2d) instead of the lagged, c_s-clamped term
+     * (0 = off, default). */
+    int    w2lin;
 } GPUPhysicsParams;
 
 /* ================================================================
