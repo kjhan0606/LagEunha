@@ -216,6 +216,9 @@ typedef struct {
     /* GFS_LAGUERRE_ROTATION: face-rotation correction on Laguerre faces
      * too, about the anchor fact1 (x_j - x_i) (0 = w = 0 faces only). */
     int    laguerre_rot;
+    /* GFS_FACE_CHARGE_LIMIT: cap the whole face pressure with
+     * gfs_pair_charge_limit (0 = off, default). */
+    int    face_charge;
 } GPUPhysicsParams;
 
 /* ================================================================

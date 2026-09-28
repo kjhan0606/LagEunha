@@ -825,6 +825,8 @@ double getAccVoro2DBlend_GPU(
         params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
         const char *lr = getenv("GFS_LAGUERRE_ROTATION");
         params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
+        const char *fc = getenv("GFS_FACE_CHARGE_LIMIT");
+        params.face_charge = (fc && fc[0] && atoi(fc) > 0) ? 1 : 0;
     }
 
     /* --- Launch GPU kernel (all particles) --- */
@@ -1458,6 +1460,24 @@ static void cpu_reference_force_csr(
                 if (p_pair > 0.0) pi_total += p_pair;
             }
 
+            /* GFS_FACE_CHARGE_LIMIT (default off): same cap on the whole
+             * face pressure, see exam.c. */
+            if (P->face_charge && !jbp_is_ghost && pi_total > 0.0) {
+                double uax, uay;
+                if (phase1_cell) {
+                    uax = phase1_vn * phase1_nx; uay = phase1_vn * phase1_ny;
+                } else if (riemann_vstar) {
+                    uax = riemann_vn * riemann_nx; uay = riemann_vn * riemann_ny;
+                } else {
+                    uax = ibp_vx + uradx; uay = ibp_vy + urady;
+                }
+                double s_i = (uax - ibp_vx) * dSx + (uay - ibp_vy) * dSy;
+                double qA  = (jbp_vx - ibp_vx) * dSx + (jbp_vy - ibp_vy) * dSy;
+                double pc = gfs_pair_charge_limit(pi_total, s_i, qA - s_i, P->dtold,
+                    (double)parts->ie[i], (double)parts->ie[j], 6.0);
+                if (pc < pi_total) pi_total = pc;
+            }
+
             if (P->phase1) {
                 double uax, uay;
                 if (phase1_cell) {
@@ -1574,6 +1594,8 @@ double getAccVoro2DBlend_GPU_validate(
         params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
         const char *lr = getenv("GFS_LAGUERRE_ROTATION");
         params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
+        const char *fc = getenv("GFS_FACE_CHARGE_LIMIT");
+        params.face_charge = (fc && fc[0] && atoi(fc) > 0) ? 1 : 0;
     }
 
     double *ref_ax  = (double *)malloc(nbp * sizeof(double));

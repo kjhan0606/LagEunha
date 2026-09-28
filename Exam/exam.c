@@ -79,6 +79,24 @@ static void gfs_es_config(void){
  * the anchor point whose velocity get2dUpqradRk4 returns. For w = 0,
  * fact1 = 1/2 and a is the midpoint. The GPU force path reads the same
  * variable (exam_gpu_extract.c, GPUPhysicsParams.laguerre_rot). */
+/* GFS_FACE_CHARGE_LIMIT=1 (default 0): apply gfs_pair_charge_limit to the
+ * whole face pressure, not only the pair part. A cell that the face sweeps
+ * outward (s_i = (u_face - v_i)·dS > 0) then pays at most ie/6 per step on
+ * that face. Near the Kepler centre the face-centroid rotation term makes a
+ * cold cell expand against a hot neighbour's pressure (P* ~ P_j ~ 100 P_i),
+ * which drains it to the stage floor. The cap is symmetric in i and j
+ * (same P on both ends), so momentum and energy stay pairwise conserved;
+ * it weakens the force between the two cells while it is active. Policy,
+ * so off by default. GPU: GPUPhysicsParams.face_charge. */
+static int gfs_face_charge_on(void){
+	static int on = -1;
+	if(on < 0){
+		const char *s = getenv("GFS_FACE_CHARGE_LIMIT");
+		on = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+	}
+	return on;
+}
+
 static int gfs_laguerre_rotation_on(void){
 	static int on = -1;
 	if(on < 0){
@@ -5776,6 +5794,28 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 #pragma omp atomic
 #endif
 								gfs_pair_face_ends++;
+							}
+						}
+
+						/* GFS_FACE_CHARGE_LIMIT (default off). */
+						if(gfs_face_charge_on() && !jbp_is_ghost && pi_total > 0){
+							double uax, uay;
+							if(phase1_extreme){
+								uax = phase1_vn*phase1_nx; uay = phase1_vn*phase1_ny;
+							} else if(riemann_vstar){
+								uax = riemann_vn*riemann_nx; uay = riemann_vn*riemann_ny;
+							} else {
+								uax = ibp_vx + uradix_ui.x; uay = ibp_vy + uradix_ui.y;
+							}
+							double s_i = (uax - ibp_vx)*dS.x + (uay - ibp_vy)*dS.y;
+							double qA  = (jbp_vx - ibp_vx)*dS.x + (jbp_vy - ibp_vy)*dS.y;
+							double pc = gfs_pair_charge_limit((double)pi_total, s_i, qA - s_i,
+									(double)GAS_dtold(simpar),
+									(double)ibp->ie, (double)jbp->ie, 6.0);
+							if(pc < (double)pi_total){
+								double f = pc / (double)pi_total;
+								p_av_for_heat *= f;
+								pi_total = (postype)pc;
 							}
 						}
 
