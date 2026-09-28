@@ -4283,6 +4283,31 @@ static void kepler_accel(postype x, postype y, postype *ax, postype *ay){
 	*ay += dy * f;
 }
 
+
+/* GFS_E_AUDIT=1: split the RK4 energy change of one step into
+ *   hyd  = sum_k w_k sum_i die_i dt   (face fluxes; 0 if every face pair
+ *          uses one pressure and one face velocity on both ends)
+ *   wg   = sum_k w_k sum_i m v_i.g_i dt (gravity work seen by RK4)
+ * and compare with the actual change of E_hyd and E_pot at the end of the
+ * step: rk_hyd = dE_hyd - hyd - wg - floors, rk_pot = dE_pot + wg. These two
+ * are the RK4 time-discretisation residuals (KE is quadratic in v; the
+ * stage rates cancel pairwise but the final kinetic energy is not their
+ * weighted sum). Diagnostic only. */
+static int gfs_eaud_on(void){
+	static int on = -1;
+	if(on < 0){ const char *s = getenv("GFS_E_AUDIT"); on = (s && atoi(s) > 0) ? 1 : 0; }
+	return on;
+}
+static double gfs_eaud_hyd = 0, gfs_eaud_wg = 0, gfs_eaud_eh0 = 0, gfs_eaud_ep0 = 0;
+static double gfs_eaud_hyd_abs = 0;
+static postype kepler_phi(postype x, postype y);
+static void gfs_eaud_stage(treevorostressrk4particletype *sbp, int np,
+		int (*targetBP)(treevorork4particletype*, postype, postype),
+		postype Lx, postype Ly, postype dt, double w);
+static void gfs_eaud_start(treevorostressrk4particletype *sbp, int np,
+		int (*targetBP)(treevorork4particletype*, postype, postype),
+		postype Lx, postype Ly);
+
 static void kepler_center(postype *cx, postype *cy){
 	const char *cxe = getenv("EUNHA_KEPLER_CX");
 	const char *cye = getenv("EUNHA_KEPLER_CY");
@@ -4306,6 +4331,36 @@ static postype kepler_phi(postype x, postype y){
 	postype r2 = dx*dx + dy*dy + eps*eps;
 	if(!(r2 > (postype)1e-32)) return 0;
 	return -(postype)1.0 / sqrt(r2);
+}
+
+static void gfs_eaud_stage(treevorostressrk4particletype *sbp, int np,
+		int (*targetBP)(treevorork4particletype*, postype, postype),
+		postype Lx, postype Ly, postype dt, double w){
+	int i;
+	double h = 0, ha = 0, g = 0;
+	for(i=0;i<np;i++){
+		if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+		postype gx = 0, gy = 0;
+		kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+		h  += (double)sbp[i].die * (double)dt;
+		ha += fabs((double)sbp[i].die * (double)dt);
+		g  += (double)sbp[i].mass * ((double)sbp[i].vx*gx + (double)sbp[i].vy*gy) * (double)dt;
+	}
+	gfs_eaud_hyd += w*h; gfs_eaud_hyd_abs += w*ha; gfs_eaud_wg += w*g;
+}
+static void gfs_eaud_start(treevorostressrk4particletype *sbp, int np,
+		int (*targetBP)(treevorork4particletype*, postype, postype),
+		postype Lx, postype Ly){
+	int i;
+	double eh = 0, ep = 0;
+	for(i=0;i<np;i++){
+		if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+		double m = (double)sbp[i].mass;
+		eh += (double)sbp[i].ie + 0.5*m*((double)sbp[i].vx*sbp[i].vx + (double)sbp[i].vy*sbp[i].vy);
+		ep += m*(double)kepler_phi(sbp[i].x, sbp[i].y);
+	}
+	gfs_eaud_eh0 = eh; gfs_eaud_ep0 = ep;
+	gfs_eaud_hyd = gfs_eaud_wg = gfs_eaud_hyd_abs = 0;
 }
 
 /* Orbital time step for the central mass. EUNHA_KEPLER_DTETA = eta > 0
@@ -9692,6 +9747,7 @@ double exam2d_vph_rk4_int_blend(
 
 	double _t0, _t_update=0, _t_force=0, _t_post=0, _t_fin=0;
 
+	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* === K1 evaluation === */
 	_t0 = MPI_Wtime();
 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
@@ -9763,6 +9819,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k1ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k1K  = sbp[i].stress.dK*Dtime;
 	}
+	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
 
 	/* === K2 evaluation === */
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -9820,6 +9877,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k2ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k2K  = sbp[i].stress.dK*Dtime;
 	}
+	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 2.0/6.0);
 
 	/* === K3 evaluation === */
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -9877,6 +9935,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k3ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k3K  = sbp[i].stress.dK*Dtime;
 	}
+	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 2.0/6.0);
 
 	/* === K4 evaluation === */
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -9934,6 +9993,7 @@ double exam2d_vph_rk4_int_blend(
 		sbp[i].rk4.k4ie = phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k4K  = sbp[i].stress.dK*Dtime;
 	}
+	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
 	_t0 = MPI_Wtime();
 
 	/* === Undo K4 shift and prepare for final combination === */
@@ -10186,6 +10246,16 @@ double exam2d_vph_rk4_int_blend(
 			 * dEtot*|Etot0| ~ floor_cum + sfl_cum + de_cum (+ es_cum, hl_cum). */
 			sfl_cum += sfl_g;
 			fprintf(stderr, " n_sfl=%d sfl_inj=%.3e sfl_cum=%.3e", sfl_n_g, sfl_g, sfl_cum);
+			if(gfs_eaud_on()){
+				/* 1 rank only (the stage sums are local). */
+				static double rkh_cum = 0, rkp_cum = 0, hyd_cum = 0;
+				double dEh = eh_g - gfs_eaud_eh0, dEp = ep_g - gfs_eaud_ep0;
+				double rkh = dEh - gfs_eaud_hyd - gfs_eaud_wg - fl_g - sfl_g;
+				double rkp = dEp + gfs_eaud_wg;
+				rkh_cum += rkh; rkp_cum += rkp; hyd_cum += gfs_eaud_hyd;
+				fprintf(stderr, " aud_hyd=%.3e aud_habs=%.3e aud_rkh=%.3e aud_rkp=%.3e hyd_cum=%.3e rkh_cum=%.3e rkp_cum=%.3e",
+					gfs_eaud_hyd, gfs_eaud_hyd_abs, rkh, rkp, hyd_cum, rkh_cum, rkp_cum);
+			}
 			fprintf(stderr, "\n");
 			fflush(stderr);
 		}
