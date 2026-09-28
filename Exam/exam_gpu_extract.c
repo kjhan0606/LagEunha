@@ -827,6 +827,10 @@ double getAccVoro2DBlend_GPU(
         params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
         const char *fc = getenv("GFS_FACE_CHARGE_LIMIT");
         params.face_charge = (fc && fc[0] && atoi(fc) > 0) ? 1 : 0;
+        {
+            const char *gv = getenv("GFS_GEOM_FACE_VEL");
+            params.geom_fv = (gv && gv[0] && atoi(gv) > 0) ? 1 : 0;
+        }
     }
 
     /* --- Launch GPU kernel (all particles) --- */
@@ -1445,9 +1449,9 @@ static void cpu_reference_force_csr(
                 /* Charge cap (gfs_pair.h), same as exam.c / exam_gpu.cu. */
                 if (p_pair > 0.0) {
                     double uax, uay;
-                    if (phase1_cell) {
+                    if (phase1_cell && !P->geom_fv) {
                         uax = phase1_vn * phase1_nx; uay = phase1_vn * phase1_ny;
-                    } else if (riemann_vstar) {
+                    } else if (riemann_vstar && !P->geom_fv) {
                         uax = riemann_vn * riemann_nx; uay = riemann_vn * riemann_ny;
                     } else {
                         uax = ibp_vx + uradx; uay = ibp_vy + urady;
@@ -1464,9 +1468,9 @@ static void cpu_reference_force_csr(
              * face pressure, see exam.c. */
             if (P->face_charge && !jbp_is_ghost && pi_total > 0.0) {
                 double uax, uay;
-                if (phase1_cell) {
+                if (phase1_cell && !P->geom_fv) {
                     uax = phase1_vn * phase1_nx; uay = phase1_vn * phase1_ny;
-                } else if (riemann_vstar) {
+                } else if (riemann_vstar && !P->geom_fv) {
                     uax = riemann_vn * riemann_nx; uay = riemann_vn * riemann_ny;
                 } else {
                     uax = ibp_vx + uradx; uay = ibp_vy + urady;
@@ -1480,10 +1484,10 @@ static void cpu_reference_force_csr(
 
             if (P->phase1) {
                 double uax, uay;
-                if (phase1_cell) {
+                if (phase1_cell && !P->geom_fv) {
                     uax = phase1_vn * phase1_nx;
                     uay = phase1_vn * phase1_ny;
-                } else if (riemann_vstar) {
+                } else if (riemann_vstar && !P->geom_fv) {
                     uax = riemann_vn * riemann_nx;
                     uay = riemann_vn * riemann_ny;
                 } else {
@@ -1596,6 +1600,10 @@ double getAccVoro2DBlend_GPU_validate(
         params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
         const char *fc = getenv("GFS_FACE_CHARGE_LIMIT");
         params.face_charge = (fc && fc[0] && atoi(fc) > 0) ? 1 : 0;
+        {
+            const char *gv = getenv("GFS_GEOM_FACE_VEL");
+            params.geom_fv = (gv && gv[0] && atoi(gv) > 0) ? 1 : 0;
+        }
     }
 
     double *ref_ax  = (double *)malloc(nbp * sizeof(double));

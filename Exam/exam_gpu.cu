@@ -349,7 +349,7 @@ void getAccVoro2DBlend_kernel(
     double nu_phys, double prandtl,
     double cd_amax, double blend_theta, double dtold,
     double hyperv_alpha, double hyperv_force_cap,
-    int phase1, int laguerre_rot, int face_charge)
+    int phase1, int laguerre_rot, int face_charge, int geom_fv)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
@@ -908,9 +908,9 @@ void getAccVoro2DBlend_kernel(
              * the work below, s_j = qA - s_i. Same as exam.c. */
             if (p_pair > 0.0) {
                 double uax, uay;
-                if (phase1_cell) {
+                if (phase1_cell && !geom_fv) {
                     uax = phase1_vn * phase1_nx; uay = phase1_vn * phase1_ny;
-                } else if (riemann_vstar) {
+                } else if (riemann_vstar && !geom_fv) {
                     uax = riemann_vn * riemann_nx; uay = riemann_vn * riemann_ny;
                 } else {
                     uax = ibp_vx + uradx; uay = ibp_vy + urady;
@@ -930,9 +930,9 @@ void getAccVoro2DBlend_kernel(
          * pressure, see exam.c. */
         if (face_charge && !jbp_is_ghost && pi_total > 0.0) {
             double uax, uay;
-            if (phase1_cell) {
+            if (phase1_cell && !geom_fv) {
                 uax = phase1_vn * phase1_nx; uay = phase1_vn * phase1_ny;
-            } else if (riemann_vstar) {
+            } else if (riemann_vstar && !geom_fv) {
                 uax = riemann_vn * riemann_nx; uay = riemann_vn * riemann_ny;
             } else {
                 uax = ibp_vx + uradx; uay = ibp_vy + urady;
@@ -1022,10 +1022,10 @@ void getAccVoro2DBlend_kernel(
          * v_i + u_rad. Extreme faces move at the lab-frame Riemann normal speed. */
         if (phase1) {
             double uax, uay;
-            if (phase1_cell) {
+            if (phase1_cell && !geom_fv) {
                 uax = phase1_vn * phase1_nx;
                 uay = phase1_vn * phase1_ny;
-            } else if (riemann_vstar) {
+            } else if (riemann_vstar && !geom_fv) {
                 uax = riemann_vn * riemann_nx;
                 uay = riemann_vn * riemann_ny;
             } else {
@@ -1518,7 +1518,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         params->nu_phys, params->prandtl,
         params->cd_amax, params->blend_theta, params->dtold,
         params->hyperv_alpha, params->hyperv_force_cap,
-        params->phase1, params->laguerre_rot, params->face_charge);
+        params->phase1, params->laguerre_rot, params->face_charge, params->geom_fv);
 
     CUDA_CHECK(cudaGetLastError());
 

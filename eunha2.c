@@ -141,6 +141,10 @@ int FUNC(MAIN)(int argc, char **argv)
 
 	/* Read Simulation Input Parameters */
 	ReadSimulationParameters(fp, &icont, &simpar);
+	{
+		int gfs_kappa_guard(SimParameters *, const char *);
+		gfs_kappa_guard(&simpar, "parameter setup");
+	}
 	fprintf(stderr,"[DBG] after ReadSimulationParameters simmodel=%d\n", SIMMODEL((&simpar))); fflush(stderr);
 
 	if(SIMMODEL( (&simpar) ) == Cosmos) {

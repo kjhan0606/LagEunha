@@ -219,6 +219,9 @@ typedef struct {
     /* GFS_FACE_CHARGE_LIMIT: cap the whole face pressure with
      * gfs_pair_charge_limit (0 = off, default). */
     int    face_charge;
+    /* GFS_GEOM_FACE_VEL: geometric face velocity in the work terms
+     * on every face (0 = off, default). */
+    int    geom_fv;
 } GPUPhysicsParams;
 
 /* ================================================================

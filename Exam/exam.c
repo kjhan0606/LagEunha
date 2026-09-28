@@ -88,6 +88,16 @@ static void gfs_es_config(void){
  * (same P on both ends), so momentum and energy stay pairwise conserved;
  * it weakens the force between the two cells while it is active. Policy,
  * so off by default. GPU: GPUPhysicsParams.face_charge. */
+/* GFS_GEOM_FACE_VEL=1 (default 0): the work and energy terms use the
+ * geometric face velocity (midpoint velocity + rotation term, the velocity
+ * the Voronoi face actually moves with) on every face. HLL/HLLC still
+ * supply p*; their v_n* is no longer used as the face velocity on the
+ * phase1 extreme and riemann_vstar faces. GPU: GPUPhysicsParams.geom_fv. */
+static int gfs_geom_fv_on(void){
+	static int on = -1;
+	if(on < 0){ const char *e = getenv("GFS_GEOM_FACE_VEL"); on = (e && atoi(e) > 0) ? 1 : 0; }
+	return on;
+}
 static int gfs_face_charge_on(void){
 	static int on = -1;
 	if(on < 0){
@@ -4308,6 +4318,32 @@ static void gfs_eaud_start(treevorostressrk4particletype *sbp, int np,
 		int (*targetBP)(treevorork4particletype*, postype, postype),
 		postype Lx, postype Ly);
 
+/* GFS mode (av_mode 5) and Laguerre weights from GAS kappa do not mix.
+ * kappa > 0: hydro-derived weights move the faces and the HLL face flux is
+ * applied on top, so the same physics is counted twice. kappa < 0: a
+ * uniform nonzero w2 silently turns off the face-rotation term. Force
+ * kappa = 0 (w2 = 0 exactly) unless GFS_ALLOW_KAPPA=1 (default 0, for
+ * future experiments). Called after the parameters are read (eunha2.c) and
+ * at the first RK4 blend step. Returns 1 when kappa was reset. */
+int gfs_kappa_guard(SimParameters *simpar, const char *where){
+	const char *e = getenv("GFS_ALLOW_KAPPA");
+	int allow = (e && atoi(e) > 0);
+	if(GAS_AVMODE(simpar) != 5 || GAS_Kappa(simpar) == 0) return 0;
+	if(allow){
+		if(MYID(simpar) == 0)
+			fprintf(stderr, "[KAPPA_GUARD] %s: av_mode=5 with GAS kappa=%g kept (GFS_ALLOW_KAPPA=1). Experimental.\n",
+				where, (double)GAS_Kappa(simpar));
+		return 0;
+	}
+	if(MYID(simpar) == 0)
+		fprintf(stderr, "[KAPPA_GUARD] WARNING %s: av_mode=5 (GFS) with GAS kappa=%g. %s Forcing kappa=0 (w2=0). Set GFS_ALLOW_KAPPA=1 to keep it.\n",
+			where, (double)GAS_Kappa(simpar),
+			GAS_Kappa(simpar) > 0 ? "Hydro Laguerre weights plus the HLL face flux count the same physics twice."
+			                      : "A uniform w2 disables the face-rotation term.");
+	GAS_Kappa(simpar) = 0;
+	return 1;
+}
+
 static void kepler_center(postype *cx, postype *cy){
 	const char *cxe = getenv("EUNHA_KEPLER_CX");
 	const char *cye = getenv("EUNHA_KEPLER_CY");
@@ -4869,6 +4905,78 @@ static void update_alpha_cd_2d(SimParameters *simpar, postype dt){
  * face is seen by both owners, so a shared pair contributes two. */
 long long gfs_pair_face_ends = 0;
 
+/* GFS_FACE_AUDIT=1 (diagnostic, 1 rank CPU blend): record, for every real
+ * face end, the energy flux -p_f u_face.dS that enters dte, and after the
+ * force loop pair the two ends of each face (keyed by particle index).
+ * Energy is conserved only if p_f and u_face are single-valued, i.e. the two
+ * ends sum to zero. Prints [FAUD] per force call: faces paired, ends with
+ * no partner, sum and sum|.| of the mismatch, split by face type. */
+#define FAUD_MAX 48
+static int gfs_faud_on(void){
+	static int on = -1;
+	if(on < 0){ const char *s = getenv("GFS_FACE_AUDIT"); on = (s && atoi(s) > 0) ? 1 : 0; }
+	return on;
+}
+static size_t faud_cap = 0;
+static int *faud_n = NULL;
+static long *faud_j = NULL;
+static double *faud_f = NULL, *faud_p = NULL, *faud_u = NULL;
+static int *faud_fl = NULL;
+static void faud_prepare(treevorork4particletype *bp0, size_t stride, int nbp){
+	size_t mx = 0; int i;
+	for(i=0;i<nbp;i++){
+		treevorork4particletype *b = (treevorork4particletype*)((char*)bp0 + (size_t)i*stride);
+		size_t k = (size_t)PINDX(b);
+		if(k + 1 > mx) mx = k + 1;
+	}
+	if(mx > faud_cap){
+		faud_cap = mx + mx/4 + 16;
+		faud_n  = (int*)realloc(faud_n, faud_cap*sizeof(int));
+		faud_j  = (long*)realloc(faud_j, faud_cap*FAUD_MAX*sizeof(long));
+		faud_f  = (double*)realloc(faud_f, faud_cap*FAUD_MAX*sizeof(double));
+		faud_p  = (double*)realloc(faud_p, faud_cap*FAUD_MAX*sizeof(double));
+		faud_u  = (double*)realloc(faud_u, faud_cap*FAUD_MAX*sizeof(double));
+		faud_fl = (int*)realloc(faud_fl, faud_cap*FAUD_MAX*sizeof(int));
+	}
+	memset(faud_n, 0, faud_cap*sizeof(int));
+}
+/* flags: 1 riemann_vstar (extreme face), 2 phase1 cell-centred HLL,
+ * 4 pair pressure on, 8 pair charge cap bound, 16 face charge cap bound */
+static void faud_match(int call){
+	size_t s; int k, m;
+	long npair = 0, nmiss = 0, nover = 0;
+	double sum = 0, sabs = 0, msum = 0, dmax = 0, fabs_tot = 0;
+	double sabs_fl[5] = {0,0,0,0,0}, sabs_plain = 0;
+	double pmx_i = 0, pmx_j = 0, umx_i = 0, umx_j = 0; int flmx = 0; long imx = -1, jmx = -1;
+	for(s=0;s<faud_cap;s++){
+		if(faud_n[s] > FAUD_MAX){ nover++; }
+		int ns = faud_n[s] < FAUD_MAX ? faud_n[s] : FAUD_MAX;
+		for(k=0;k<ns;k++){
+			size_t a = s*FAUD_MAX + k;
+			long j = faud_j[a];
+			fabs_tot += fabs(faud_f[a]);
+			if(j < 0 || (size_t)j >= faud_cap){ nmiss++; msum += faud_f[a]; continue; }
+			int nj = faud_n[j] < FAUD_MAX ? faud_n[j] : FAUD_MAX, found = -1;
+			for(m=0;m<nj;m++) if(faud_j[(size_t)j*FAUD_MAX + m] == (long)s){ found = m; break; }
+			if(found < 0){ nmiss++; msum += faud_f[a]; continue; }
+			if((long)s > j) continue;
+			size_t b = (size_t)j*FAUD_MAX + found;
+			double d = faud_f[a] + faud_f[b];
+			int fl = faud_fl[a] | faud_fl[b];
+			npair++; sum += d; sabs += fabs(d);
+			int q, any = 0;
+			for(q=0;q<5;q++) if(fl & (1<<q)){ sabs_fl[q] += fabs(d); any = 1; }
+			if(!any) sabs_plain += fabs(d);
+			if(fabs(d) > dmax){ dmax = fabs(d); pmx_i = faud_p[a]; pmx_j = faud_p[b];
+				umx_i = faud_u[a]; umx_j = faud_u[b]; flmx = fl; imx = (long)s; jmx = j; }
+		}
+	}
+	fprintf(stderr, "[FAUD] call=%d faces=%ld sum|f|=%.3e mismatch_sum=%.3e mismatch_abs=%.3e unpaired=%ld unpaired_sum=%.3e over=%ld abs[vstar]=%.2e abs[p1]=%.2e abs[pair]=%.2e abs[paircap]=%.2e abs[facecap]=%.2e abs[plain]=%.2e max=%.3e i=%ld j=%ld fl=%d p=%.6e/%.6e uA=%.6e/%.6e\n",
+		call, npair, fabs_tot, sum, sabs, nmiss, msum, nover,
+		sabs_fl[0], sabs_fl[1], sabs_fl[2], sabs_fl[3], sabs_fl[4], sabs_plain,
+		dmax, imx, jmx, flmx, pmx_i, pmx_j, umx_i, umx_j);
+}
+
 static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postype ymin,
 		postype xmax, postype ymax,
 		postype OrderOfAccuracy, postype Courant, postype Gamma,
@@ -4930,6 +5038,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 	float epsvis = GAS_EPSVIS(simpar);
 
 	int iy;
+	if(gfs_faud_on()) faud_prepare(VORORK4_TBP(simpar), TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d gamma1 before OMP loop mx=%d my=%d call=%d\n",MYID(simpar),mx,my,s_force_call); fflush(stderr); }
 #ifdef _OPENMP
 #pragma omp parallel for reduction(min:Dtime)
@@ -5141,6 +5250,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						int phase1_extreme = 0;
 						postype phase1_vn = 0, phase1_nx = 0, phase1_ny = 0;
 						int riemann_vstar = 0;
+						int faud_flags = 0;
+						const int geom_fv = gfs_geom_fv_on();
 						postype riemann_vn = 0, riemann_nx = 0, riemann_ny = 0;
 						int hard_wall = 0;
 						postype hard_nx = 0, hard_ny = 0;
@@ -5829,22 +5940,27 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							 * will use for the work (ua below), s_j = qA - s_i. */
 							if(p_pair > 0){
 								double uax, uay;
-								if(phase1_extreme){
+								if(phase1_extreme && !geom_fv){
 									uax = phase1_vn*phase1_nx; uay = phase1_vn*phase1_ny;
-								} else if(riemann_vstar){
+								} else if(riemann_vstar && !geom_fv){
 									uax = riemann_vn*riemann_nx; uay = riemann_vn*riemann_ny;
 								} else {
 									uax = ibp_vx + uradix_ui.x; uay = ibp_vy + uradix_ui.y;
 								}
 								double s_i = (uax - ibp_vx)*dS.x + (uay - ibp_vy)*dS.y;
 								double qA  = (jbp_vx - ibp_vx)*dS.x + (jbp_vy - ibp_vy)*dS.y;
+								{
+								postype pp0 = p_pair;
 								p_pair = (postype)gfs_pair_charge_limit(
 										(double)p_pair, s_i, qA - s_i,
 										(double)GAS_dtold(simpar),
 										(double)ibp->ie, (double)jbp->ie, 6.0);
+								if(p_pair < pp0) faud_flags |= 8;
+								}
 							}
 							if(p_pair > 0){
 								pi_total += p_pair;
+								faud_flags |= 4;
 #ifdef _OPENMP
 #pragma omp atomic
 #endif
@@ -5855,9 +5971,9 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						/* GFS_FACE_CHARGE_LIMIT (default off). */
 						if(gfs_face_charge_on() && !jbp_is_ghost && pi_total > 0){
 							double uax, uay;
-							if(phase1_extreme){
+							if(phase1_extreme && !geom_fv){
 								uax = phase1_vn*phase1_nx; uay = phase1_vn*phase1_ny;
-							} else if(riemann_vstar){
+							} else if(riemann_vstar && !geom_fv){
 								uax = riemann_vn*riemann_nx; uay = riemann_vn*riemann_ny;
 							} else {
 								uax = ibp_vx + uradix_ui.x; uay = ibp_vy + uradix_ui.y;
@@ -5869,6 +5985,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 									(double)ibp->ie, (double)jbp->ie, 6.0);
 							if(pc < (double)pi_total){
 								double f = pc / (double)pi_total;
+								faud_flags |= 16;
 								p_av_for_heat *= f;
 								pi_total = (postype)pc;
 							}
@@ -5937,10 +6054,10 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						/* Total energy: ua = v_face = v_i + (v_face - v_i)
 						   ensures dte = die + dke consistency */
 						Voro2D_point ua;
-						if(phase1_extreme){
+						if(phase1_extreme && !geom_fv){
 							ua.x = phase1_vn * phase1_nx;
 							ua.y = phase1_vn * phase1_ny;
-						} else if(riemann_vstar){
+						} else if(riemann_vstar && !geom_fv){
 							ua.x = riemann_vn * riemann_nx;
 							ua.y = riemann_vn * riemann_ny;
 						} else {
@@ -5949,6 +6066,20 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						}
 						dte += -pi_total * Vec2DDotP(&ua, &dS)
 						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
+						if(gfs_faud_on() && !jbp_is_ghost){
+							size_t fs = (size_t)PINDX(ibp_rk4);
+							if(fs < faud_cap){
+								int fk = faud_n[fs]++;
+								if(fk < FAUD_MAX){
+									size_t fa = fs*FAUD_MAX + fk;
+									faud_j[fa] = (long)PINDX((treevorork4particletype*)jbp);
+									faud_f[fa] = -(double)pi_total * (double)Vec2DDotP(&ua, &dS);
+									faud_p[fa] = (double)pi_total;
+									faud_u[fa] = (double)Vec2DDotP(&ua, &dS);
+									faud_fl[fa] = faud_flags | (riemann_vstar ? 1 : 0) | (phase1_extreme ? 2 : 0);
+								}
+							}
+						}
 						/* Volume swept by the Riemann contact. Interior faces cancel. */
 						if(riemann_vstar && sedov_lagvol_on() && lag_sw &&
 								(size_t)PINDX(ibp_rk4) < lag_vt_cap){
@@ -6201,6 +6332,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 			{ fprintf(stderr,"[FORCE_DBG] r%d iy=%d out call=%d\n", MYID(simpar), iy, s_force_call); fflush(stderr); }
 		}
 	}
+	if(gfs_faud_on()) faud_match(s_force_call);
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d delta impl exit Dtime=%g call=%d\n", MYID(simpar), (double)Dtime, s_force_call); fflush(stderr); }
 	return Dtime;
 }
@@ -9747,6 +9879,24 @@ double exam2d_vph_rk4_int_blend(
 
 	double _t0, _t_update=0, _t_force=0, _t_post=0, _t_fin=0;
 
+	{
+		/* av_mode 5 / kappa guard, and clear any w2 the IC or a restart
+		 * already set from the old kappa (CPU and GPU both read w2 here). */
+		static int kg_done = 0;
+		if(!kg_done){
+			kg_done = 1;
+			gfs_kappa_guard(simpar, "RK4 start");
+			if(GAS_AVMODE(simpar) == 5 && GAS_Kappa(simpar) == 0){
+				int nz = 0;
+				for(i=0;i<VORO_NP(simpar);i++){
+					if(sbp[i].w2 != 0 || sbp[i].w2old != 0 || sbp[i].rk4.w2backup != 0) nz++;
+					sbp[i].w2 = 0; sbp[i].w2old = 0; sbp[i].rk4.w2backup = 0;
+				}
+				if(nz > 0)
+					fprintf(stderr, "[KAPPA_GUARD] r%d: cleared nonzero w2 on %d particles (av_mode=5, kappa=0)\n", MYID(simpar), nz);
+			}
+		}
+	}
 	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* === K1 evaluation === */
 	_t0 = MPI_Wtime();
