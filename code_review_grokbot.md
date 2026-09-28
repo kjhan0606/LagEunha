@@ -648,3 +648,99 @@ GFS_LAGUERRE_ROTATION=1   # [LAGROT] 줄이 한 번 찍혀야 함
 - `0ea330b` 다섯 시험의 IC, config, run.slurm, 해석 (Evrard 1D 기준 포함)
 - `8573f55` README (3D 조사, 드라이버 인터페이스, 합격 기준)와 selftest.sh
 - (이 커밋) 이 절
+
+## Grok CLI께: 3D GFS 경로 `Exam/exam3d_gfs.c` (CPU, 실험 단계)
+
+Juhan 확인: "Exam3d" = `Exam/Sedov`(옛 3D 시제품, 3D에서 실패 후 2D로 내려감). 이번에 주 코드에 새 3D GFS 경로를 넣었습니다. `Exam/Sedov`는 면 루프 틀로만 참고했고 물리는 하나도 가져오지 않았습니다 (ie ≥ 0 clamp 없음, 고정 입자 없음, dt는 합산된 전체 가속도로, RK4). **2D 경로는 비트 단위로 그대로입니다.** GPU 3D는 다음 단계입니다.
+
+### 추가/변경한 파일
+
+- 새 파일: `Exam/exam3d_gfs.c` (약 1500줄), `Exam/exam3d_gfs.h`, `Exam/exam3d_main.c` (독립 실행 `lag3d.exe`), `Exam/gfs_riemann.h` (exam.c의 `hll_star_state`, `hllc_face_2d`, `hllc_face_2d_rest_frame`를 `gfs_*` 이름으로 복사, phase1은 인자).
+- `eunha2.c`: `Simulation Model = Hydro3D`이면 `checkarg` 직후 3D 경로로 분기하고 `MPI_Finalize` 후 종료. 다른 모델은 기존 흐름 그대로.
+- `Exam/Makefile`: `EXOBJ += exam3d_gfs.o` (libexam.a), `lag3d.exe` 규칙.
+- `Exam/Tests3D`: `run3d_common.sh`, 다섯 `run.slurm`, `params3d.dat.template`, `flags_base.env`, `README.md` (§1.3, 새 §1.5, "Exam3d push" 문구 삭제).
+- `exam.c`, `gfs_pair.h`, `Voro/`는 건드리지 않았습니다.
+
+### 스위치 (선택 방식)
+
+- 런타임: params의 `Simulation Model = Hydro3D`. 표식 `LAGEUNHA_3D_GFS_V1`을 출력합니다 (`run.slurm`이 이를 검사).
+- 물리는 2D의 av_mode 5를 차원만 바꿔 옮겼습니다: 변 길이 → 면 넓이, 변 중점 → 다각형 넓이 중심, sqrt(V) → cbrt(V), 2×2 → 3×3 Green-Gauss 기울기 (Barth-Jespersen). HLLC 정지좌표계 + MUSCL, extreme face (`SEDOV_PHASE1`, 압력비 > 100), Springel 면 회전 (w = 0은 중점, `GFS_LAGUERRE_ROTATION=1`이면 Laguerre anchor), 상한 쌍압력 + `gfs_pair_work_limit`, RK4 (자체중력과 외력 hook 포함), 같은 에너지 변수와 장부.
+- `Voro3D_FindVC`에서 중심과 모든 이웃의 w2를 명시적으로 넣습니다 (0 = 순수 Voronoi).
+- 환경 변수:
+  - 2D와 같은 의미: `SEDOV_PHASE1`, `GFS_FLOOR_LOG` (`[RK4F]`, `[RK4SF]` 줄), `GFS_DUAL_ENERGY`, `GFS_ENTROPY_SWITCH`/`GFS_HALF_LIMIT`/`GFS_ES_COEF`, `GFS_LAGUERRE_ROTATION`, `HYDRO_TSTOP`, `EUNHA_DUMP_DT`;
+  - 3D 전용:
+    - `GFS3D_PAIR_NSHARE` (기본 16);
+    - `GFS3D_STAGE_FLOOR` (0 = 단계마다 P만 바닥값, 2D GPU 경로와 같음 / 1 = 2D CPU의 ie 재설정, `sfl_cum`에 기록);
+    - `LAG3D_BC` (periodic|reflect|outflow, 축별 가능);
+    - `LAG3D_THETA`, `LAG3D_GRAV_DIRECT`, `LAG3D_MAXSTEPS`;
+    - `LAG3D_PM_GM/X/Y/Z/EPS`, `LAG3D_ACC`.
+- params 제약: av_mode = 5, entropy_mode = 0, kappa ≤ 0 (kappa > 0은 아직 없음).
+
+### 설계 결정
+
+- **3D work-limit 면 수 (nshare = 16):** 2D의 6은 평면 Voronoi의 평균 면 수(오일러 공식)입니다. 3D 평균 면 수는 Poisson 15.54, 정돈된 glass 약 14.5, bcc 14, fcc 12이고, 입방 격자에서 퇴화하지 않은 면은 6개입니다. 16은 이 값들보다 모두 크거나 같아서 전형적인 셀에서 면 예산의 합이 ie를 넘지 않습니다. 32³ Sedov에서 쌍압력을 탄성으로 바꾸면(nshare = 1e30) dE는 3.2e-3이었습니다 (기본값에서는 1.03e-2, 대부분 바닥값).
+- **경계:**
+  - periodic은 link-cell 영상;
+  - reflect는 거울 영상 (셀이 벽면에서 정확히 잘리고, 벽 면은 반사 HLLC 압력만 받고 에너지 플럭스는 0), 벽을 넘은 입자는 스텝 끝에 반사;
+  - outflow는 속도를 복사한 거울 영상, 스텝 끝에 상자 밖 입자를 제거하고 `out_cum`에 기록;
+  - 기본값은 IC의 periodic 플래그를 따르고 (아니면 reflect), params의 `Hydro3D boundary` 또는 `LAG3D_BC`로 바꿉니다.
+- **중력:** CPU에서 Plummer 연화를 쓴 직접 합(N ≤ 20000이면 기본)과 Barnes-Hut 트리(θ = 0.5, monopole)를 구현했습니다. 고립계만 지원합니다 (periodic 축과 함께 쓰면 오류). Epot = ½ Σ m φ.
+- **병렬화:** rank 0만 계산하고 OpenMP를 씁니다. 그래서 `run.slurm`은 `--ntasks=1 --cpus-per-task=32`, `NRANK=1`, 바인딩 끔입니다 (바인딩을 켜면 박스에서 12.2 s, 끄면 1.8 s). MPI 영역 분할은 아직 없습니다.
+- 위상 실패 시 1e-9~1e-7 셀 크기의 jitter로 재시도합니다 (`njit`로 기록, 지금까지 시험에서 0).
+
+### 빌드와 실행
+
+- 클러스터 (기존 Makefile 흐름): 평소처럼 `make` 하면 `exam3d_gfs.o`가 libexam.a에 들어가고 eunha2가 `Hydro3D`를 처리합니다. 독립 실행 파일은 `cd Exam && make lag3d.exe` (MPI/FFTW 불필요; gcc 박스에서는 `make lag3d.exe CC=gcc OPT="-O2 -fopenmp"`).
+- 실행 (Slurm 제출은 Grok CLI/Juhan이 합니다. 저는 제출하거나 취소하지 않았습니다):
+  - `cd Exam/Tests3D/SoundWave3D && sbatch --export=ALL,N=32 run.slurm` (N = 32, 64, 128, boost 런 포함);
+  - `cd Exam/Tests3D/Sedov3D && sbatch --export=ALL,N=64 run.slurm` (그다음 128);
+  - `Evrard3D`, `Noh3D`, `KH3D`도 같은 방식입니다 (각 README 절 참고);
+  - 바이너리 선택: `LAG3D_BIN=<경로>/eunha2` (기본) 또는 `LAG3D_BIN=<경로>/Exam/lag3d.exe`, 실행기 `LAG3D_LAUNCH=mpirun|direct`, 추가 옵션 `LAG3D_MPIRUN_OPTS`.
+- 로그: stdout에 `[E3D] step= t= dt= Ekin= Eint= Epot= Etot= dE_rel= floor_cum= sfl_cum= de_cum= es_cum= hl_cum= out_cum= npair= N= Rmax= njit=`, stderr에 `[RK4E]`. 스냅숏은 `snap_%06d.l3d` (LAG3DV1, VOL 포함, 중력이 있으면 POT 포함)로 t0, dump 간격마다, t_end에 씁니다. 각 `analyze.py`가 그대로 읽습니다.
+
+### 박스에서 확인한 것 (측정값만; 8 스레드, gcc 14, `SEDOV_PHASE1=1`, C = 0.3, 입방 격자)
+
+- **2D 불변:**
+  - `syncheck.sh`: exam.c 287/287 경고 0 오류, exam_gpu_extract.c 0/16 0 오류. 전과 같습니다.
+  - exam.o md5 `a7d63a46…` 전후 동일.
+  - es_unit, ic_test, lagrot, `hll_shear_face.py`, `shear_pair_check.py`, `voronoi_face_velocity_check.py` 출력이 바이트 단위로 같습니다. `laguerre_sod_diag`는 실행 시간(ms) 표기만 다릅니다 (저장소 코드를 쓰지 않는 독립 프로그램).
+  - `exam3d_gfs.c`는 `gcc -Wall -Wextra`에서 경고 0.
+- `Tests3D/selftest.sh`: ALL SELFTESTS OK.
+- **SoundWave3D (A = 1e-6, t = 1):**
+  - 16³/32³/64³에서 L1(ρ)/A = 3.99e-2 / 8.64e-3 / 2.12e-3, 차수 2.21 / 2.02 (맞춤 2.12);
+  - 진폭비 0.9665 / 0.9962 / 0.9996, |dE/E| ≤ 1.2e-13;
+  - analyze PASS;
+  - 32³ boost (v = 1): L1_boost/L1_rest = 0.9999998, |dE/E| = 1.5e-14.
+- **Sedov3D (t = 0.05, ξ0 = 1.15167 → R_an = 0.3475):**
+  - 16³: dE/E0 = 9.8e-5 (바닥값 없음), R_peak 0.357, R_meas 0.418, ρ_peak 1.40;
+  - 32³: dE/E0 = 1.03e-2 (그중 floor_cum 1.01e-2, 장부는 닫힘), R_peak 0.331, R_meas 0.404, ρ_peak 1.77, 비등방성 0.985, 368 스텝, 150 s;
+  - 32³ C = 0.15: dE 2.6e-3, ρ_peak 1.64;
+  - 32³ glass: dE 1.2e-3, R_meas 0.394, ρ_peak 1.79;
+  - 16³ glass: dE 4.1e-5;
+  - 32³ `GFS3D_STAGE_FLOOR=1`: dE 2.2e-2 (sfl 2.19e-2).
+  - 원인: 충격파 바로 뒤에서 ie ≤ 0이 되어 스텝 끝 바닥값이 들어갑니다. 입방 격자에서는 뜨거운 입자 약 90개가 격자 방향으로 약 3셀 앞서 나가서 R_meas가 커집니다 (glass에서는 3개).
+- **Evrard3D:**
+  - n = 16, 균일 배경 (5968 입자): 직접 합 Epot(0) = −0.6594462 (IC 값과 같음), 트리 θ = 0.5는 −0.659604;
+  - t = 0.8에서 dE 2.4e-3 (바닥값 1.4e-3, R ≈ 1.14의 배경 셀), 596 스텝, 292 s. analyze E1, E3 참, E2, E4 거짓 (t = 0.8까지만 돌림);
+  - 진공 + 반사 상자: 40 스텝 (t = 0.41), dE 6.5e-6.
+- **Noh3D, KH3D 16³:** 30 스텝 스모크 이상 없음 (Noh dE 2.9e-6).
+- OpenMPI mpirun으로 `run.slurm`을 끝까지 돌렸습니다 (SoundWave3D, Sedov3D N = 16, EXIT:0, Slurm 없이 직접 실행).
+
+### 클러스터에서 해야 할 것
+
+1. icx/MKL/CUDA 환경에서 전체 eunha2 링크 확인 (박스에는 nvcc/MKL이 없어서 3D 경로는 `lag3d.exe`로만 빌드했습니다. eunha2.c는 mpicc 문법 검사만 했습니다).
+2. SoundWave 128³, Sedov 64³/128³ (에너지, R_shock, ρ_peak의 수렴), Evrard n = 40/64로 t = 3까지, Noh, KH 128×128×32. 추정 시간은 README에 있습니다.
+3. 64³ SoundWave가 박스 8 스레드에서 399 s였으므로, 128³ 이상은 32 스레드라도 오래 걸립니다 (셀마다 Voronoi를 매 단계 새로 만듭니다).
+
+### 열린 결정
+
+- 단계 바닥값: 기본 `GFS3D_STAGE_FLOOR=0` (2D GPU와 같음)을 유지할지.
+- Sedov IC를 입방 격자로 할지 glass로 할지 (glass에서 바닥값 에너지가 약 10배 적음).
+- Sedov 32³에서 바닥값 에너지 ~1%: 받아들일지, 3D에서 추가 대책(ES/dual energy 기본 켜기, 더 작은 C)을 쓸지.
+- nshare 16이 적당한지 (12–16 범위).
+- Evrard 배경 (균일 배경 또는 진공 + 반사 상자).
+- 아직 없는 것: MPI 영역 분할, GPU 3D, kappa > 0, 주기 중력(PM).
+
+### 커밋
+
+- (이 커밋들) 3D GFS 코드 / Tests3D 연결과 문서 / 이 절
