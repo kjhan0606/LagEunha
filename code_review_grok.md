@@ -451,3 +451,25 @@ The switch lets a cell go when `ie_n` exceeds `0.01 m |g| h`. Those cells have o
 `n_pair` reached several hundred on 407215 and about 800–1000 on 407214. The pair impulse is already limited by the internal-energy budget, so a `10^{-3}` hole in one cell is hard to blame on that term alone. The hydro face work is not limited that way.
 
 An internal-energy rule after the step has now been tried four times. The pressure floor, dual energy, the entropy switch, and the half-limit all book the same hole under different names. The crossing moved from `t = 4.59` to `9.54`, `10.31`, `14.04`, and `16.11`. The next change has to limit the face work that digs the hole, not the value written into `ie` afterwards. `av_mode` was 5 and centroid shift was 0, so this is not the LagMFM `E_inv` alias and not the centroid volume change.
+
+---
+
+## 17. c283a54 방식 (1)/(2) 빌드와 GPU/MPI 짧은 실행 (2026-09-29)
+
+**[CODE]** `origin/master`의 `c283a54`를 별도 작업 트리 `/gpfs/kjhan/LagForce/Codex_build_c283a54`에서 `USE_CUDA=1`로 빌드했다. Slurm 빌드 잡 `408460`은 A10 노드에서 `COMPLETED 0:0`이었다. `exam_gpu.cu`를 nvcc로 컴파일했고 바이너리에 `GFS_DYN_W2` 문자열이 있다. `eunha2.exe` SHA256은 `26eae35bc12cf6ef346d07fb64e24a7c9ebbe95204ebfca67a0c6ef6102367f4`이고 실행 로그의 컴파일 시각은 `12:08:08 Sep 29 2026`이다. 아래 모든 실행에 이 바이너리를 사용했다.
+
+**[RUN]** 256² 본실험 A(방식 (1), 보로노이+HLL) 잡 `408511`을 요청대로 `--partition=h200 --gres=gpu:H200:3`, 4랭크, 32G로 제출했다. `syn104`에 배정됐지만 2026-09-29 13:48:42 KST 시작 후 6초 만에 `FAILED 1:0`으로 끝났다. 4개 랭크 모두 `exam_gpu.cu:1311: initialization error`를 출력했고 첫 `Time=` 또는 `[RK4E]` 줄이 없다. Slurm 출력은 H200 NVL 세 장을 열거한다. 이전 노드 상태에는 Xid 119/154와 재부팅 필요 사유가 표시됐었다. 따라서 이번 실패는 수치 발산 판정이 아니라 CUDA 초기화 실패다. 결과 디렉터리는 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_voronoi_hll_Nx256`이다. B1/B2의 256² 본실험은 제출하지 않았다.
+
+**[RUN]** H200 장애와 독립적으로 GPU+MPI 경로를 확인하려고 A10 세 장, 4랭크, 64², `HYDRO_TSTOP=3`으로 동일한 세 설정을 순차 실행했다. Slurm 잡 `408526`은 `COMPLETED 0:0`, S1/B1/B2 각각 `EXIT:0`이었다. 파라미터는 256² A의 406734 기준을 64²로 낮춘 뒤 B1/B2에 `GAS kappa=0.4`, `GAS w2_mode=8`, `GAS w2 power=1`을 넣었다. B1/B2에는 `GFS_ALLOW_KAPPA=1 GFS_LAGUERRE_ROTATION=1`, B2에만 `GFS_W2_LINEAR=1`을 켰다. kappa 유지, LAGROT, B2 W2LIN 활성 배너를 확인했다. 세 설정 모두 RK4, MUSCL, `av_mode=5`, 옛 1/R Kepler IC, `gpu_enabled=1`이다. 로그는 `/gpfs/kjhan/LagForce/Kepler_gpu_mpi_pf64_c283a54/{S1,B1,B2}/log`에 있다.
+
+| 잡 | 방식 | 해상도 | 플래그 | 도달 t | dE t≈1 | dE t≈3 | dE t=10 | dE t=17.8 | floor_cum @t≈3 | sfl_cum @t≈3 | 최소 dt (t) | 첫 \|dE\|>1e-3 | [VAUD] cum |
+|---|---|---|---|---:|---:|---:|---|---|---:|---:|---|---|---|
+| 408526/S1 | (1) | 64² | κ=0 | 3.00133 | 7.440e-7 | 1.074e-5 | 미도달 | 미도달 | 8.279e-6 | 0 | 0.00158954 (3.00133) | 없음, t≤3 | — |
+| 408526/B1 | (2) | 64² | κ=.4, mode8, a=1, LAGROT | 3.00143 | 7.375e-7 | 1.053e-5 | 미도달 | 미도달 | 9.550e-6 | 0 | 0.00156026 (3.00143) | 없음, t≤3 | — |
+| 408526/B2 | (2) | 64² | B1+W2LIN | 3.00086 | 7.153e-7 | 9.895e-6 | 미도달 | 미도달 | 7.707e-6 | 0 | 0.00149890 (3.00086) | 없음, t≤3 | — |
+
+`dE`는 `[RK4E] dEtot/|Etot0|`의 부호 있는 값이다. t≈3에서 `n_pair`는 S1=8, B1=12, B2=4다. `|Etot0|≈8.792664`이므로 t≈3 에너지 드리프트 절댓값은 약 `8.7–9.4e-5`이며 장부의 `floor_cum`은 `7.7–9.6e-6`, `sfl_cum`은 0이다. **[HYP]** floor 장부만으로 이 드리프트를 설명할 수 없다. 여기서 원인을 특정하지 않는다.
+
+Grokbot의 박스 CPU 1랭크 64² Kepler t=3 수치 `(1) 1.5e-4, (2) 1.5e-6`과 달리, 이번 A10 GPU+4랭크에서는 세 방식이 모두 약 `1e-5`로 비슷하다. 같은 IC/파라미터/커밋인지 먼저 맞춰야 하므로 이를 GPU 코드 결함의 증거로 해석하지 않는다. CPU hydro+1랭크 비교 잡 `408534`를 같은 바이너리/IC/64²에서 돌리고 있으며 그 결과를 이어서 기록한다.
+
+**[RUN]** `406515–406519`는 계속 보류한다. 짧은 t=3 결과로 생산 잡 해제 여부를 판정할 수 없다. H200의 CUDA 초기화가 복구되거나 별도 자원이 승인되면 256² A에서 적어도 t=17.8의 에너지 추이를 확인해야 한다. 과거 t≈16.11의 급격한 발산을 고려하면 그 뒤까지 안정성을 살펴야 한다.
