@@ -22,6 +22,7 @@
 #include "exam_gpu.h"
 #include "gfs_pair.h"
 #include "../eunha.h"
+#include "../RkS/mpirks.h"
 
 extern long long gfs_pair_face_ends;
 #include "../Voro/voro.h"
@@ -803,6 +804,48 @@ double getAccVoro2DBlend_GPU(
         gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
         gpu_upload_faces(&g_gpu_ctx, nbp, n_faces);
     } else {
+        /* Diagnostic: refresh MPI padding after GPU tessellation has computed
+         * current-stage gradients for real cells. The original padding was
+         * copied before that kernel and otherwise carries lagged gradients
+         * into the MUSCL Riemann states at rank boundaries. Keep the device
+         * face CSR only when refreshed padding preserves its SoA indices. */
+        const char *sync_env = getenv("GFS_GPU_SYNC_HALO_STATE");
+        if (sync_env && atoi(sync_env) > 0 && NID(simpar) > 1) {
+            void *fresh = NULL;
+            ptrdiff_t n_fresh = 0;
+            size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+            char *old_pad = (char *)VORORK4_TBPP(simpar);
+            MPI_Barrier(MPI_COMM(simpar));
+            ppadding(VORORK4_TBP(simpar), VORO_NP(simpar), &fresh, &n_fresh,
+                TVORORK4_DDINFO(simpar), NDDINFO(simpar), COS_SIMBOX(simpar),
+                HydroGridSize(simpar), &GRIDINFO(simpar), 2);
+            if (n_fresh != npad) {
+                fprintf(stderr, "[HALO_SYNC] rank=%d padding count changed %d -> %ld\n",
+                    MYID(simpar), npad, (long)n_fresh);
+                MPI_Abort(MPI_COMM(simpar), 1);
+            }
+            for (int h = 0; h < npad; h++) {
+                treevorork4particletype *a =
+                    (treevorork4particletype *)(old_pad + (size_t)h*p_size);
+                treevorork4particletype *b =
+                    (treevorork4particletype *)((char *)fresh + (size_t)h*p_size);
+                if (PINDX(a) != PINDX(b) || a->x != b->x || a->y != b->y) {
+                    fprintf(stderr, "[HALO_SYNC] rank=%d padding order changed at %d\n",
+                        MYID(simpar), h);
+                    MPI_Abort(MPI_COMM(simpar), 1);
+                }
+            }
+            my_free(VORORK4_TBPP(simpar));
+            VORORK4_TBPP(simpar) = (treevorork4particletype *)fresh;
+            fillParticleSoA(simpar, &g_gpu_ctx.h_parts, has_stress);
+            gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
+            static int sync_banner = 0;
+            if (!sync_banner) {
+                fprintf(stderr, "[HALO_SYNC] rank=%d refreshed %d padding states after GPU gradients\n",
+                    MYID(simpar), npad);
+                sync_banner = 1;
+            }
+        }
         t3_upload = MPI_Wtime();
     }
 
