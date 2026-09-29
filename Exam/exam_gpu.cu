@@ -347,6 +347,10 @@ void getAccVoro2DBlend_kernel(
     float *__restrict__ dt_out,
     double *__restrict__ vsig_max_out,
     double *__restrict__ vsmoothx_out, double *__restrict__ vsmoothy_out,
+    /* Optional per-face audit output, NULL in ordinary runs. */
+    double *__restrict__ audit_work,
+    double *__restrict__ audit_pressure,
+    double *__restrict__ audit_udotds,
     /* Physics parameters */
     int n_particles,
     int av_mode, int use_muscl,
@@ -390,6 +394,11 @@ void getAccVoro2DBlend_kernel(
     int f_end   = face_offset[i + 1];
 
     for (int f = f_begin; f < f_end; f++) {
+        if (audit_work) {
+            audit_work[f] = 0.0;
+            audit_pressure[f] = 0.0;
+            audit_udotds[f] = 0.0;
+        }
         int j = neighbor_idx[f];
         if (j < 0) continue;
 
@@ -1038,8 +1047,15 @@ void getAccVoro2DBlend_kernel(
                 uax = ibp_vx + uradx;
                 uay = ibp_vy + urady;
             }
-            dte += -pi_total * (uax * dSx + uay * dSy)
+            double udotds = uax * dSx + uay * dSy;
+            double face_work = -pi_total * udotds
                  + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
+            dte += face_work;
+            if (audit_work) {
+                audit_work[f] = face_work;
+                audit_pressure[f] = pi_total;
+                audit_udotds[f] = udotds;
+            }
         }
 
         /* Force: -p·dS + τ·dS */
@@ -1473,8 +1489,24 @@ long long gpu_take_pair_hits(void)
 
 extern "C"
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
+                               int n_total, int mpi_rank,
                                const GPUPhysicsParams *params)
 {
+    static int force_call = 0;
+    static int dump_call = -1;
+    force_call++;
+    if (dump_call < 0) {
+        const char *s = getenv("GFS_GPU_FACE_DUMP_CALL");
+        dump_call = (s && s[0]) ? atoi(s) : 0;
+    }
+    int n_faces = ctx->d_faces.n_faces_total;
+    int do_dump = (dump_call > 0 && force_call == dump_call && n_faces > 0);
+    double *d_audit_work = NULL, *d_audit_pressure = NULL, *d_audit_udotds = NULL;
+    if (do_dump) {
+        CUDA_CHECK(cudaMalloc(&d_audit_work, n_faces * sizeof(double)));
+        CUDA_CHECK(cudaMalloc(&d_audit_pressure, n_faces * sizeof(double)));
+        CUDA_CHECK(cudaMalloc(&d_audit_udotds, n_faces * sizeof(double)));
+    }
     int blockSize = 256;
     int gridSize = (n_particles + blockSize - 1) / blockSize;
 
@@ -1515,6 +1547,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         ctx->d_parts.dt_out,
         ctx->d_parts.vsig_max_out,
         ctx->d_parts.vsmoothx_out, ctx->d_parts.vsmoothy_out,
+        d_audit_work, d_audit_pressure, d_audit_udotds,
         /* Physics */
         n_particles,
         params->av_mode, params->use_muscl,
@@ -1541,6 +1574,64 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         unsigned long long h = 0;
         CUDA_CHECK(cudaMemcpyFromSymbol(&h, d_gfs_pair_hits, sizeof(h)));
         h_gfs_pair_hits = (long long)h;
+    }
+
+    if (do_dump) {
+        size_t bytes = (size_t)n_faces * sizeof(double);
+        double *h_work = (double *)malloc(bytes);
+        double *h_pressure = (double *)malloc(bytes);
+        double *h_udotds = (double *)malloc(bytes);
+        CUDA_CHECK(cudaMemcpy(h_work, d_audit_work, bytes, cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(h_pressure, d_audit_pressure, bytes, cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(h_udotds, d_audit_udotds, bytes, cudaMemcpyDeviceToHost));
+        gpu_download_face_csr(ctx, n_particles, n_faces,
+            ctx->h_faces.face_offset,
+            ctx->h_faces.c1x, ctx->h_faces.c1y,
+            ctx->h_faces.c2x, ctx->h_faces.c2y,
+            ctx->h_faces.neighbor_idx,
+            ctx->h_faces.kp_idx, ctx->h_faces.km_idx,
+            ctx->h_faces.is_ghost);
+        CUDA_CHECK(cudaMemcpy(ctx->h_parts.indx, ctx->d_parts.indx,
+            (size_t)n_total * sizeof(long long), cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(ctx->h_parts.x, ctx->d_parts.x,
+            (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(ctx->h_parts.y, ctx->d_parts.y,
+            (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
+
+        char path[128];
+        snprintf(path, sizeof(path), "face_dump_r%d_call%d.tsv", mpi_rank, force_call);
+        FILE *out = fopen(path, "w");
+        if (!out) {
+            fprintf(stderr, "[FACE_DUMP] rank=%d could not open %s\n", mpi_rank, path);
+            exit(1);
+        }
+        fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\n");
+        long long nrows = 0;
+        for (int i = 0; i < n_particles; i++) {
+            for (int f = ctx->h_faces.face_offset[i];
+                 f < ctx->h_faces.face_offset[i + 1]; f++) {
+                int j = ctx->h_faces.neighbor_idx[f];
+                if (j < 0 || j >= n_total) continue;
+                double x0 = ctx->h_parts.x[i], y0 = ctx->h_parts.y[i];
+                double c1x = ctx->h_faces.c1x[f], c1y = ctx->h_faces.c1y[f];
+                double c2x = ctx->h_faces.c2x[f], c2y = ctx->h_faces.c2y[f];
+                fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
+                    mpi_rank, force_call, i, j,
+                    ctx->h_parts.indx[i], ctx->h_parts.indx[j],
+                    ctx->h_faces.is_ghost[f],
+                    h_pressure[f], h_udotds[f], h_work[f],
+                    c2y-c1y, -(c2x-c1x),
+                    x0+c1x, y0+c1y, x0+c2x, y0+c2y);
+                nrows++;
+            }
+        }
+        fclose(out);
+        fprintf(stderr, "[FACE_DUMP] rank=%d call=%d rows=%lld file=%s\n",
+            mpi_rank, force_call, nrows, path);
+        free(h_work); free(h_pressure); free(h_udotds);
+        CUDA_CHECK(cudaFree(d_audit_work));
+        CUDA_CHECK(cudaFree(d_audit_pressure));
+        CUDA_CHECK(cudaFree(d_audit_udotds));
     }
 
     return (double)(*(float *)ctx->h_cub_min_out);

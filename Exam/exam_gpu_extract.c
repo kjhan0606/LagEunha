@@ -840,7 +840,8 @@ double getAccVoro2DBlend_GPU(
     }
 
     /* --- Launch GPU kernel (all particles) --- */
-    double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, &params);
+    double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, n_total,
+                                               MYID(simpar), &params);
     gfs_pair_face_ends = gpu_take_pair_hits();
 
     double t5_download = MPI_Wtime();
