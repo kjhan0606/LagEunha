@@ -507,3 +507,11 @@ An internal-energy rule after the step has now been tried four times. The pressu
 **[HYP]** (2) B1은 추가로 가중치 변화가 기하/`P dV`에 완전히 기록되지 않는다. B2의 `GFS_W2_LINEAR`는 선형화한 `Wdot` 항을 넣지만 접촉 속도와의 일치는 보장하지 않는다. (3)은 `Wdot`를 선택해 실제 면 속도를 HLL `v*`에 근접시키고 실제 속도로 일을 계산한다는 점에서 고정 질량 라그랑지안 방식의 더 직접적인 *설계 목표*다. 다만 한 셀당 스칼라 `Wdot` 하나로 모든 면의 원하는 속도를 정확히 맞추는 것은 일반적으로 과잉제약이다. 현재 (3)은 LS 잔차와 셀 유효성 한계가 있고, Noh에서 양쪽 셀이 다른 면 기하를 산출했다는 Grokbot 보고가 있어 아직 일관된 구현으로 인정할 수 없다. 지금의 비교 기준선은 (1), 완전한 수학적 해법은 세 선택지 중 검증된 것이 없다. Grokbot 계측에는 `v*_f-w_geo,f`, 양쪽 셀의 동일 면 여부, `dV/dt-ΣA_f w_geo,f`, 그리고 질량/에너지 잔차를 포함하면 좋겠다.
 
 관련 원문: Springel, *Hydrodynamic simulations on a moving Voronoi mesh* (https://arxiv.org/abs/1109.2218); Guillard & Farhat, *On the significance of the geometric conservation law for flow computations on moving meshes* (https://doi.org/10.1016/S0045-7825(00)00173-0). 위의 현 코드 판정은 논문 결론이 아니라 소스와 실행 기록에서 도출한 추론이다.
+
+---
+
+## 19. §18의 고정 질량 정식 관련 정정과 연구 방향 (2026-09-29)
+
+**[CORRECTION]** §18의 “질량 교환 없는 라그랑지안 방식이라면 실제 면의 법선 속도와 유체 접촉 속도를 맞춰야 하고, 맞지 않으면 ALE 방식이 필요하다”는 주장은 철회한다. Heß–Springel의 [Voronoi Particle Hydrodynamics](https://academic.oup.com/mnras/article/406/4/2289/1018040)처럼, 질량을 고정한 입자에 보로노이 체적을 부여하고 체적의 위치 미분으로 압력 힘을 도출하면 면 속도가 입자 속도와 달라도 수학적으로 일관된 보존 정식이 존재한다. ALE는 다른 정합적 선택지다. 현 GFS의 HLL 면 일과 단순 법선 압력 힘이 그 변분 정식 또는 ALE와 정확히 일치하는지는 별도 문제이며, 면 속도 차이만으로 전역 에너지 오차의 원인을 판정할 수 없다.
+
+정확한 면 속도식, 고정 질량 보존 증명, (3)의 최소제곱 해 존재 조건, 그리고 GPU 4랭크를 포함한 계측 순서는 [Docs/gfs_consistency_research.md](Docs/gfs_consistency_research.md)에 기록했다. 이 문서는 §18의 수학적 판단을 대체한다. 현재 256² A 잡 `408573`의 `t=17.8`, `|dE|<10^-3` 판정과 GPU/MPI 오차 원인 분리를 독립적으로 진행한다.
