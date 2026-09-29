@@ -495,3 +495,15 @@ An internal-energy rule after the step has now been tried four times. The pressu
 **Grokbot께 요청:** GPU hydro 4랭크의 초기(t≈1, 바닥값 주입 전) 에너지 차이를 출발점으로 GPU 면 힘/일의 랭크 경계 합산과 ghost/owner 처리를 점검해 달라. 같은 B1 64² 입력에서 1랭크와 4랭크의 RK 단계별 에너지 및 면별 짝 일 합계를 비교하는 계측이 가장 직접적이다. CPU 경로의 `sfl_cum`과 GPU 경로의 `floor_cum`은 적용 단계가 달라 이 둘을 그대로 같은 물리 효과로 취급하지 말아 달라. H200 `408511`의 `exam_gpu.cu:1311`은 `cudaGetDeviceCount` 호출이므로 GPU 초기화/노드 상태 문제로 분리해 달라.
 
 **[RUN]** `406515–406519`는 계속 보류한다. 짧은 t=3 결과로 생산 잡 해제 여부를 판정할 수 없다. H200의 CUDA 초기화가 복구되거나 별도 자원이 승인되면 256² A에서 적어도 t=17.8의 에너지 추이를 확인해야 한다. 과거 t≈16.11의 급격한 발산을 고려하면 그 뒤까지 안정성을 살펴야 한다.
+
+---
+
+## 18. H200 복구 후 A 재시작과 면 속도 일관성 (2026-09-29)
+
+**[RUN]** H200 노드 `syn104`가 다시 Slurm `mixed`, reason `none`으로 표시돼 256² A만 새 디렉터리 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_voronoi_hll_Nx256_H200_retry_20260929`에 복사해 잡 `408573`으로 제출했다. 원래 실패 잡 `408511`의 로그는 보존했다. 바이너리 SHA256 `26eae35bc12cf6ef346d07fb64e24a7c9ebbe95204ebfca67a0c6ef6102367f4`, `--partition=h200 --gres=gpu:H200:3`, 4랭크, 32G, RK4, 256², `HYDRO_TSTOP=177.72`를 재확인했다. `408573`은 14:59:08 KST 시작해 이전의 `cudaGetDeviceCount` 실패 지점을 통과했다. 실행 로그는 네 랭크의 H200 배정과 GPU 테셀레이션을 보여 준다. 약 6분 30초 시점 `t=1.15900`, `dE=1.344e-6`, `floor_cum=sfl_cum=0`, `EXIT` 없음. 이 값은 초기 건전성만 확인하며 t=17.8 판정은 아직 아니다. `406515–406519`는 보류 중이다. Grokbot의 새 계측 코드/지시가 올라오기 전에는 B1/B2 256²를 제출하지 않는다.
+
+**[CODE/CALC]** 면 속도에 관한 해석을 수정한다. 보로노이 면 중심의 기하학적 법선 속도는 p 또는 q의 개별 속도가 아니라 두 생성점의 운동에서 나온다. 중점에서는 `(v_p+v_q)·n/2`이고 면 중심이 중점에서 벗어나면 회전 항이 붙는다. 따라서 `w_face != v_p,v_q` 자체가 오류는 아니다. 그러나 현 av_mode=5 GFS는 셀 질량을 고정하고, 일부 면에서는 `GFS_GEOM_FACE_VEL=0`일 때 HLL `v*`를 압력 일/에너지 식에 쓰는 반면 실제 면 기하는 생성점 속도로 진화한다 (`Exam/exam.c`의 `voronoi_face_rotation`, `phase1_extreme`/`riemann_vstar`, `dte`/`dvb`). 질량 교환 없는 라그랑지안 방식이라면 실제 면의 법선 속도와 유체 접촉 속도를 맞춰야 하고, 맞지 않으면 실제 면 속도 기준의 질량·운동량·에너지 유속을 포함하는 ALE 방식이 필요하다. 그러므로 현재 (1)을 완전한 self-consistent 해법이라고 부를 수 없다.
+
+**[HYP]** (2) B1은 추가로 가중치 변화가 기하/`P dV`에 완전히 기록되지 않는다. B2의 `GFS_W2_LINEAR`는 선형화한 `Wdot` 항을 넣지만 접촉 속도와의 일치는 보장하지 않는다. (3)은 `Wdot`를 선택해 실제 면 속도를 HLL `v*`에 근접시키고 실제 속도로 일을 계산한다는 점에서 고정 질량 라그랑지안 방식의 더 직접적인 *설계 목표*다. 다만 한 셀당 스칼라 `Wdot` 하나로 모든 면의 원하는 속도를 정확히 맞추는 것은 일반적으로 과잉제약이다. 현재 (3)은 LS 잔차와 셀 유효성 한계가 있고, Noh에서 양쪽 셀이 다른 면 기하를 산출했다는 Grokbot 보고가 있어 아직 일관된 구현으로 인정할 수 없다. 지금의 비교 기준선은 (1), 완전한 수학적 해법은 세 선택지 중 검증된 것이 없다. Grokbot 계측에는 `v*_f-w_geo,f`, 양쪽 셀의 동일 면 여부, `dV/dt-ΣA_f w_geo,f`, 그리고 질량/에너지 잔차를 포함하면 좋겠다.
+
+관련 원문: Springel, *Hydrodynamic simulations on a moving Voronoi mesh* (https://arxiv.org/abs/1109.2218); Guillard & Farhat, *On the significance of the geometric conservation law for flow computations on moving meshes* (https://doi.org/10.1016/S0045-7825(00)00173-0). 위의 현 코드 판정은 논문 결론이 아니라 소스와 실행 기록에서 도출한 추론이다.
