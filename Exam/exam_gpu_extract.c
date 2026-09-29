@@ -804,13 +804,14 @@ double getAccVoro2DBlend_GPU(
         gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
         gpu_upload_faces(&g_gpu_ctx, nbp, n_faces);
     } else {
-        /* Diagnostic: refresh MPI padding after GPU tessellation has computed
-         * current-stage gradients for real cells. The original padding was
-         * copied before that kernel and otherwise carries lagged gradients
-         * into the MUSCL Riemann states at rank boundaries. Keep the device
-         * face CSR only when refreshed padding preserves its SoA indices. */
+        /* Refresh MPI padding after GPU tessellation has computed current-stage
+         * gradients for real cells. The original padding was copied before
+         * that kernel and otherwise carries lagged gradients into the MUSCL
+         * Riemann states at rank boundaries. Keep the device face CSR only
+         * when refreshed padding preserves its SoA indices. Setting
+         * GFS_GPU_SYNC_HALO_STATE=0 retains the old path for comparisons. */
         const char *sync_env = getenv("GFS_GPU_SYNC_HALO_STATE");
-        if (sync_env && atoi(sync_env) > 0 && NID(simpar) > 1) {
+        if (NID(simpar) > 1 && (!sync_env || atoi(sync_env) > 0)) {
             void *fresh = NULL;
             ptrdiff_t n_fresh = 0;
             size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
