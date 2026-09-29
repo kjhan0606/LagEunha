@@ -10923,6 +10923,15 @@ double exam2d_vph_rk4_int_blend(
 		}
 		long long npair_l = gfs_pair_face_ends, npair_g = 0;
 		MPI_Allreduce(&npair_l, &npair_g, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM(simpar));
+		/* [RK4E] energies above are global; audit stage sums must have the
+		 * same scope before they are compared. Keep the reduction diagnostic
+		 * only so ordinary runs incur no additional MPI collective. */
+		double eaud_g[5] = {0, 0, 0, 0, 0};
+		if(gfs_eaud_on()){
+			double eaud_l[5] = {gfs_eaud_hyd, gfs_eaud_hyd_abs,
+				gfs_eaud_wg, gfs_eaud_eh0, gfs_eaud_ep0};
+			MPI_Allreduce(eaud_l, eaud_g, 5, MPI_DOUBLE, MPI_SUM, MPI_COMM(simpar));
+		}
 		if(MYID(simpar)==0){
 			static double Et0 = 0, Eh0 = 0, fl_cum = 0, de_cum = 0;
 			static double es_cum = 0, hl_cum = 0, sfl_cum = 0;
@@ -10954,14 +10963,13 @@ double exam2d_vph_rk4_int_blend(
 			sfl_cum += sfl_g;
 			fprintf(stderr, " n_sfl=%d sfl_inj=%.3e sfl_cum=%.3e", sfl_n_g, sfl_g, sfl_cum);
 			if(gfs_eaud_on()){
-				/* 1 rank only (the stage sums are local). */
 				static double rkh_cum = 0, rkp_cum = 0, hyd_cum = 0;
-				double dEh = eh_g - gfs_eaud_eh0, dEp = ep_g - gfs_eaud_ep0;
-				double rkh = dEh - gfs_eaud_hyd - gfs_eaud_wg - fl_g - sfl_g;
-				double rkp = dEp + gfs_eaud_wg;
-				rkh_cum += rkh; rkp_cum += rkp; hyd_cum += gfs_eaud_hyd;
+				double dEh = eh_g - eaud_g[3], dEp = ep_g - eaud_g[4];
+				double rkh = dEh - eaud_g[0] - eaud_g[2] - fl_g - sfl_g;
+				double rkp = dEp + eaud_g[2];
+				rkh_cum += rkh; rkp_cum += rkp; hyd_cum += eaud_g[0];
 				fprintf(stderr, " aud_hyd=%.3e aud_habs=%.3e aud_rkh=%.3e aud_rkp=%.3e hyd_cum=%.3e rkh_cum=%.3e rkp_cum=%.3e",
-					gfs_eaud_hyd, gfs_eaud_hyd_abs, rkh, rkp, hyd_cum, rkh_cum, rkp_cum);
+					eaud_g[0], eaud_g[1], rkh, rkp, hyd_cum, rkh_cum, rkp_cum);
 			}
 			fprintf(stderr, "\n");
 			fflush(stderr);
