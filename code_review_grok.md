@@ -563,3 +563,11 @@ An internal-energy rule after the step has now been tried four times. The pressu
 | GPU 1랭크 | 2.819e-6 | 2.221e-5 | 2.563e-6 | 1.360e-8 | 1.376e-9 |
 
 각 행의 에너지 장부는 출력 반올림 범위에서 닫힌다. GPU 4랭크는 `t≈1.35`부터 `floor_cum=0`인데 `hyd_cum≈9.7e-6`이었다. 따라서 **방식 (1)에도 GPU 4랭크의 전역 면 일 비상쇄가 있으며, B1의 가중치 갱신이 없어도 발생한다.** 새 진단은 GPU+MPI 조합까지 원인을 좁혔지만, 어느 면과 어떤 양쪽 상태가 다른지는 아직 모른다. H200 256² A의 `t=17.8` 문턱을 통과하더라도 이 보존 오차 원인은 별도 해결이 필요하다.
+
+---
+
+## 23. 기존 GPU/CPU 면 비교 진단의 한계 (2026-09-29)
+
+**[CODE/RUN]** `GPU_TESS_COMPARE` 옵션은 원본에서 변수 범위가 맞지 않아 컴파일되지 않았다. 별도 실험용 작업 트리 `/gpfs/kjhan/LagForce/Codex_build_face_compare`에서 범위만 고쳐 잡 `408592`로 빌드했다(바이너리 SHA256 `95de6e5b93d5ee556a5d273f6e6b628aee6c7cb6aba731cebb80eff6cc001c2d`). 그러나 옵션의 `[FACE_CMP]`는 CPU 면 CSR이 현재 단계에서 채워지기 **전**에 비교한다. 첫 호출 `cpu_nfaces=0`은 그 결과이며, 두 번째 호출부터도 직전 CSR과 섞일 수 있다. 이 비교 숫자는 같은 단계의 GPU/CPU 면 차이로 해석할 수 없다.
+
+이 경로는 GPU 힘 계산에 CPU 면을 넘기지만 CPU 단계의 다른 처리도 켠다. 방식 (1) 64² GPU 4랭크 시범 잡 `408593`은 `t≈2.11`에 `sfl_cum=3.366e-4`를 기록해 보통 GPU 경로의 `sfl_cum=0`과 조건이 크게 달라졌다. **[RUN]** 과학적 대조가 성립하지 않아 이 잡만 중지했고 부분 로그는 `/gpfs/kjhan/LagForce/Kepler_cpuface_pf64_S1_03ee986/GPU4_S1/log`에 남겼다. 이 결과로 GPU 면 기하를 원인이라고도, 원인이 아니라고도 판단하지 않는다. 정식 256² H200 A `408573`은 계속 실행 중이다.
