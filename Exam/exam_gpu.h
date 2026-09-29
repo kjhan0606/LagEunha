@@ -248,6 +248,7 @@ void gpu_download_results(GPUContext *ctx, int n_particles);
 
 /* --- Force kernel launch (exam_gpu.cu) --- */
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
+                               int n_total, int mpi_rank,
                                const GPUPhysicsParams *params);
 /* Face-ends inside the pair cutoff on the latest launch. */
 long long gpu_take_pair_hits(void);
