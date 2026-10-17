@@ -47,3 +47,20 @@ class VectorSmoothMassPathTests(unittest.TestCase):
             dy,diag=rhs(0.,state,mass,covariance_factors=L);a=dy[:-4].reshape(-1,20)
             with patch('kinetic_factor_rhs.solve',side_effect=RuntimeError('audit must not solve')):flux,detail=evaluate_smooth_path(0.,state,L,mass,(a[:,:2],a[:,2]))
         self.assertLess(float(np.max(abs(flux))),3e-13);self.assertEqual(detail['generator_defect'],0.)
+
+    def test_potential_exchange_with_frozen_cells_matches_scalar(self):
+        from test_quadratic_velocity_reconstruction import fixture
+        mass,state,L,*_=fixture();rates=np.random.default_rng(39).normal(size=(len(mass),3))*.01
+        frozen=np.arange(len(mass))%3==0;rates[frozen]=0.
+        potential=lambda x:.3*x[:,0]**2+.7*x[:,1]
+        for quadratic in ['0','1']:
+            for smoothing in ['0','1']:
+                env=dict(LAGFORCE_QUADRATIC_VELOCITY=quadratic,LAGFORCE_QUADRATIC_BUDGET='projected',LAGFORCE_VECTOR_QUADRATIC_BUDGET='1',LAGFORCE_KINETIC_SMOOTHING=smoothing)
+                with patch.dict('os.environ',env),patch.dict('os.environ',LAGFORCE_VECTOR_SMOOTH_PATH='0'):
+                    old,do=evaluate_smooth_path(0.,state,L,mass,(rates[:,:2],rates[:,2]),frozen_mask=frozen,potential=potential)
+                with patch.dict('os.environ',env),patch.dict('os.environ',LAGFORCE_VECTOR_SMOOTH_PATH='1'):
+                    new,dn=evaluate_smooth_path(0.,state,L,mass,(rates[:,:2],rates[:,2]),frozen_mask=frozen,potential=potential)
+                np.testing.assert_allclose(new,old,atol=2e-14,rtol=2e-11)
+                np.testing.assert_allclose(dn['potential_mass_rates'],do['potential_mass_rates'],atol=2e-14,rtol=2e-11)
+                self.assertAlmostEqual(dn['active_potential_mass_exchange'],do['active_potential_mass_exchange'],places=13)
+                self.assertAlmostEqual(dn['potential_mass_rates'][~frozen].sum(),dn['active_potential_mass_exchange'],places=13)

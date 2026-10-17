@@ -65,12 +65,14 @@ def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4,frozen_mask
         if np.any(np.asarray(gen)[frozen]!=0) or np.any(np.asarray(z)[frozen]!=0):
             raise ValueError('frozen geometry has nonzero prescribed rates')
         material[frozen]=0.
-    if os.environ.get('LAGFORCE_VECTOR_SMOOTH_PATH','0')=='1' and potential is None:
+    if os.environ.get('LAGFORCE_VECTOR_SMOOTH_PATH','0')=='1':
         from vector_smooth_mass_path import evaluate
-        flux=evaluate(states,edges,x,factors,mass,gen,z,order,model.boundary_velocity)
+        result=evaluate(states,edges,x,factors,mass,gen,z,order,model.boundary_velocity,
+            potential=potential,active=None if frozen_mask is None else ~np.asarray(frozen_mask,dtype=bool))
+        flux,exchange=result if potential is not None else (result,{})
         return flux,dict(generator_defect=float(np.max(abs(gen-material))),
             min_pressure=min(s['P'] for s in states),
-            min_factor_R=min(float(np.linalg.eigvalsh(L@L.T).min()/m) for L,m in zip(factors,mass)),**closure)
+            min_factor_R=min(float(np.linalg.eigvalsh(L@L.T).min()/m) for L,m in zip(factors,mass)),**closure,**exchange)
     from kinetic_speed_smoothing import parameters,face_speed,split
     smoothing,smoothing_length=parameters()
     active=np.ones(N,dtype=bool) if frozen_mask is None else ~np.asarray(frozen_mask,dtype=bool)

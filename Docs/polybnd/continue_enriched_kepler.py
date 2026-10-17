@@ -15,16 +15,25 @@ from audit_enriched_kepler_path import run as audit_path
 from check_kepler_dense_step import simpson
 
 
-def run(source,configuration,dt,end,gravity_scheme='finite'):
+def validation_duration(start,end,validation_end=None):
+    horizon=end if validation_end is None else validation_end
+    if not all(np.isfinite(x) for x in (start,end,horizon)) or not start<end or horizon<end:
+        raise ValueError('finite validation horizon must cover execution interval')
+    return horizon-start
+
+
+def run(source,configuration,dt,end,gravity_scheme='finite',validation_end=None):
     source=Path(source).resolve();configuration=Path(configuration).resolve();folder=Path.cwd()
     data=source.read_bytes();cfg=configuration.read_bytes();initial=json.loads(data)
+    duration=validation_duration(initial['t'],end,validation_end)
     identity=dict(source_sha256=hashlib.sha256(data).hexdigest(),configuration_sha256=hashlib.sha256(cfg).hexdigest(),
         source_manifest_sha256=hashlib.sha256(Path(__file__).with_name('SHA256SUMS').read_bytes()).hexdigest(),dt=dt,end=end,gravity_scheme=gravity_scheme)
+    if validation_end is not None:identity['validation_end']=validation_end
     if Path('identity.json').exists():
         if json.loads(Path('identity.json').read_text())!=identity:raise ValueError('continuation identity changed')
     else:atomic('identity.json',identity)
     if 'potential_moments' not in initial:raise ValueError('continuation requires existing potential moments')
-    if not 0<dt or not initial['t']<end:raise ValueError('invalid interval')
+    if not np.isfinite(dt) or not 0<dt:raise ValueError('invalid timestep')
     configure(json.loads(cfg));cp=json.loads(Path('checkpoint.json').read_text()) if Path('checkpoint.json').exists() else initial
     mass=np.asarray(initial['mass']);a0=np.asarray(initial['state'])[:-4].reshape(-1,20)
     mask=frozen(initial['t'],a0[:,:2]);active=~mask
@@ -60,11 +69,11 @@ def run(source,configuration,dt,end,gravity_scheme='finite'):
         gas_boundary=float(trial['state'][-2]-initial['state'][-2])
         energy=float((a[active,19]-a0[active,19]).sum()+(newU[active]-np.asarray(initial['potential_moments'])[active]).sum())-gas_boundary-new_exchange
         metrics=dict(absolute_mass=float(np.max(new_abs[active]/mass[active])),
-            quadrature_mass=float(np.max(new_quad[active]/mass[active])),rate=(end-initial['t'])*new_peak,
+            quadrature_mass=float(np.max(new_quad[active]/mass[active])),rate=duration*new_peak,
             generator=report['maximum_generator_defect'],energy_over_initial_thermal=abs(energy)/thermal)
         limits=dict(absolute_mass=1e-5,quadrature_mass=1e-7,rate=1e-4,generator=1e-5,energy_over_initial_thermal=1e-5)
         passed=all(metrics[k]<=limits[k] for k in limits) and trial['diagnostics']['stage_mass_flux']<2e-13 and trial['diagnostics']['generator_velocity_defect']==0
-        atomic(sub/'acceptance.json',dict(metrics=metrics,limits=limits,passed=passed,full_validation=False))
+        atomic(sub/'acceptance.json',dict(metrics=metrics,limits=limits,passed=passed,validation_duration=duration,full_validation=False))
         if not passed:raise RuntimeError('enriched continuation gate failed; accepted checkpoint preserved')
         count+=1;absolute,signed,quad=new_abs,new_signed,new_quad;exchange=new_exchange;peak_rate=new_peak
         cp={k:trial[k] for k in ('t','state','mass','factors','potential_moments')}
@@ -72,9 +81,11 @@ def run(source,configuration,dt,end,gravity_scheme='finite'):
             potential_exchange=exchange,peak_relative_mass_rate=peak_rate,last_metrics=metrics)
         atomic('checkpoint.json',cp);print('enriched accepted',count,cp['t'],metrics,flush=True)
     atomic('report.json',dict(completed=True,t=cp['t'],source_t=initial['t'],steps=count,full_validation=False,
+        validation_end=initial['t']+duration,covers_validation_end=bool(cp['t']>=initial['t']+duration-1e-15),
         scope='audited auxiliary continuation; field accuracy and canonical longrun remain separate'))
 
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('source');p.add_argument('configuration');p.add_argument('--dt',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--gravity-scheme',choices=('finite','midpoint'),default='finite')
-    a=p.parse_args();run(a.source,a.configuration,a.dt,a.end,a.gravity_scheme)
+    p.add_argument('--validation-end',type=float)
+    a=p.parse_args();run(a.source,a.configuration,a.dt,a.end,a.gravity_scheme,a.validation_end)

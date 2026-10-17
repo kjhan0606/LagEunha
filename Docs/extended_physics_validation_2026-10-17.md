@@ -5,7 +5,7 @@
 무조향, 원래 셀 질량 고정, 가변 Laguerre 가중치 유지. 기존 승인 경로 보존.
 현재 네 가지 전체 유체 검증이 모두 통과한 상태는 아니다.
 
-## 현재 판정 — 2026-10-17 14:34 갱신
+## 현재 판정 — 2026-10-17 15:16 갱신
 
 | 범위 | 완료에 필요한 범위 | 현재 판정 |
 |---|---|---|
@@ -2191,3 +2191,364 @@ residual−7.76569653e-16, relative5.59052179e-17. Centroid orbital and
 intrinsic components change separately, reinforcing the need to retain
 both. This is conservation evidence for the captured auxiliary interval,
 not a physical-orbit accuracy or canonical-duration certificate.
+
+
+### 14:53 Completed short controls and continued independent 3D audits
+
+RY confirms PA16/32 completed T=.02 with exact original mass arrays and
+both short numerical/physical gates. Field rho/v/P errors improve with
+resolution, but cell density error increases .00358185→.00372952.
+Maximum mean transverse velocity increases .000101883→.000443538, and
+transverse kinetic fraction rises 1.27063e-8→2.38023e-7. These remain
+small but disallow claiming convergence of planar symmetry. Full T=.15
+and the free-affine/cell-width comparisons remain necessary.
+
+RZ angular ledger unit tests:4passed. Actual auxiliary Kepler accepted
+state at t=.016 has boundary-corrected angular residual1.10804e-15,
+relative7.97674e-17. The sampled interval and32² auxiliary resolution
+do not establish canonical192²,100-orbit physical accuracy.
+
+QK8³ fine and QD10³ coarse evolutions now have accepted histories through
+t=.004. Their previous independent audits exited0 at .002. After source
+manifest verification, resumed the existing order6/17-node caches with
+2h bounds (sessions4862/1829,execution_resume_1453.txt). Evolution is not
+restarted. All four full validation requirements remain incomplete.
+
+
+### 14:52 Auxiliary evolved physical-field verification
+
+SA captures OT accepted25-step state at t=.01625 without changing the
+running evolution. Captured input hashes are in capture.json. Order16/24
+field audits use stored potential moments and the original configuration
+(session80552,1h bound, verified PY source manifest). This tests physical
+accuracy independently of the angular/energy ledgers;192² and100orbits
+remain required. Previous history-audit launch names contain1453, but
+the actual receipt times are14:50:59 and14:51:01 KST.
+
+
+### 14:53 Late shock physical checkpoint
+
+SB exited0 at14:53:14. It uses the original immutable MV source and
+configuration on a captured accepted state, t=.12050780244,3336steps.
+Density/velocity/pressure fieldL1=.03067391/.03798597/.03180722;
+cellL1=.01299802/.02434053/.02513830. All are below .05, with
+positive density/pressure and independent reference quadrature difference
+5.66e-16. Original mass arrays match exactly. Max mean transverse
+velocity=.00617572: a planar-symmetry artifact to retain in final and
+resolution comparisons. This partial checkpoint does not completeT=.15.
+
+
+### 14:54 Auxiliary Kepler fields completed
+
+SA exited0 at14:53:39. At t=.01625, order24 relativeL1 rho/v/P is
+.03246639/.0004234936/.0001694117. Order16/24 norm differences are
+1.18490e-5/4.33043e-8/3.33217e-10. Density and pressure remain positive.
+Sampled maximum relative density error47.48255 remains large, so average
+errors do not establish local accuracy. Full canonical and long-duration
+validation remain incomplete. SC(session80105,1h) audits the exact OT
+initial state including its stored potential moments for a matched
+time comparison; older OL input bytes differ and are not assumed equal.
+
+
+### 14:57 Matched physical comparisons
+
+SC exited0. Actual initial midpoint state at.01 has order24 rho/v/P
+L1=.03232857/.0004228463/.0001046351. Compared with SA at.01625,
+all three norms increase; conservation alone does not remove this field
+error. These short auxiliary states cannot establish long-run accuracy.
+
+SD exited0 at14:56:08. Identical original IC, full.15 budgets, same
+physicalt=.0374: area/cell_width step1050/415. Densityfield error
+.02121655/.02112108, velocityfield .03497429/.03520143, pressurefield
+.02576764/.02579600. Both pass current .05 physical thresholds, with
+positive fields and maxmeanvy6.21e-10/5.56e-10. Saved dense paths were
+sampled without evolving again. New width stencil improves progress
+through the observed stiffness region but not every field norm.
+
+PQ32 hit its2h timeout at14:57:16(exit124); originalPID1915180
+was absent. Verified immutable source manifest and resumed saved
+t=.0187177795856,358steps, including existing pending audit caches
+(session75913,2h bound,execution_resume_1458.txt). No accepted path
+is replayed; the short .02 comparison remains incomplete.
+
+
+### 14:58 Independent8³ path progress
+
+NT/or_n8_order6 exited0 at14:57:18 and covers7actualpaths through.014.
+Absolute relative mass2.03458854e-6, nested quadrature8.87175730e-10,
+full.02-scaled peak rate1.75291928e-5, generator1.48474610e-5.
+This remains short ofT=.02; no2D generator threshold is silently
+applied as a3D acceptance rule. SE(session47659,30min bound) now scores
+the saved6³/8³ endpoints at identicalt=.014 using order8/12 field
+quadrature. It reuses existing evolution records without replay.
+
+SE exited0 at14:59:21. At .014 order12,6³→8³ densityL1
+.00321854→.00231613, velocity/amplitudeL1 .04110715→.02335871,
+pressure/amplitude²L1 .05201124→.02555632. Thus6³ pressure fails.05
+and8³ passes this intermediate field threshold. Sampled max vertical
+velocity increases .00190885→.00241845; componentwise convergence
+is not proved. Reference-velocity-relative norms .250266/.142211
+are also retained, avoiding confusion with amplitude-normalized norms.
+Original mass arrays match at both resolutions. Full.02,10³ and
+independent full path/temporal comparisons remain incomplete.
+
+
+### 15:03 Componentwise3D diagnostics
+
+Added component L1/amplitude and resolved field kinetic components to
+3D scoring; physics unchanged. SF3tests passed and actual scores exited0.
+All pre-existing metrics exactly match SE. At.014 order12,6³→8³
+vertical L1/amplitude .000380077→.000291787; vertical resolved kinetic
+2.01743e-8→1.78911e-8. Integrated vertical error decreases despite the
+increased sampled maximum. This is two-resolution evidence, not a
+complete componentwise convergence proof. SG now compares6³/8³/10³ at
+common.004 using saved records and the same verified diagnostic source.
+
+
+### 15:05 Three-resolution component comparison
+
+SG exited0 at15:04:40. At.004 order12,6³/8³/10³ densityL1
+.000940746/.000682323/.000558368, velocityL1/amplitude
+.03862128/.02224328/.01401447, pressureL1/amplitude²
+.04690395/.02138435/.01356275. Vertical componentL1/amplitude
+.000123500/.000099143/.000072321 decreases across all three.
+Resolved vertical kinetic2.15528e-9/2.08047e-9/1.19845e-9 also decreases.
+Sampled maxima remain nonmonotone. Observed rates are stored in JSON;
+velocity is approximately second order here. Different random layouts
+and short time preclude a full-duration asymptotic claim.
+
+Canonical initial audits remain partial:RGorder24 reached19808/36864
+and RVpotential-enriched audit8608/36864 at15:04:52. No official
+canonical evolution or100-orbit completion is claimed.
+
+
+### 15:08 Full-horizon Kepler budget control
+
+Added optional --validation-end to enriched continuation. Rate uses
+(validation_end-original_source_t)*peak_rate, and resume identity binds
+the horizon. Execution completion reports whether it covers that horizon;
+full_validation remains false. Default legacy interval behavior is retained.
+SH6targeted tests passed(exit0): interrupted trial reuse, duration checks,
+mock full-horizon rejection despite passing short absolute mass, immutable
+horizon, energy balance and midpoint source. Running snapshots unchanged.
+This prepares canonical long-horizon gating; it is not a physical trial.
+
+NT/qk_n8fine_order6 exited0 at15:07:26 through.004(4steps). Absolute
+relative mass1.53212837e-7, quadrature3.08588904e-10, rate5.60049561e-6,
+generator3.71289912e-6. Full.02 path coverage still outstanding.
+
+OR8³ reached.016; resumed its completed .014 independent audit
+(session90858,1h,execution_resume_1509.txt), retaining verified source
+and node caches. SI(session87131,30min) compares6³/8³ dt.002/.001
+at identicalt=.004. Original IC arrays are checked equal per resolution;
+cached order6 nodes are bound to actual record hashes. It computes
+physical fields with component diagnostics and accumulated mass defects.
+
+
+### 15:10 Matched temporal and path comparison
+
+SI exited0 at15:10:39. At.004,6³ dt.002/.001 absolute relative mass
+4.71138e-7/1.16812e-7;8³6.17591e-7/1.53213e-7. Both ratios~4.03.
+PressureL1 changes only .046903950→.046903489(6³) and
+.021384349→.021383602(8³); verticalL1 changes very little. Together
+with spatial comparisons this indicates spatial reconstruction dominates
+these short-time physical errors, while temporal mass-path defects
+show second-order reduction. Full-duration conclusions remain pending.
+
+NT/qd_n10_order6 exited0 at15:08:37 through.004(twoactualpaths):
+absolute relative mass1.27274308e-6, quadrature1.18912422e-9,
+rate2.53220234e-5, generator1.18101985e-5. Full.02 not covered.
+
+
+### 15:12 Auxiliary Kepler full-horizon budget limitation
+
+SJ captures current OT state and evaluates100Newtonian periods at
+reference radii.5,1,2, without selecting a new official convention.
+Observed prefix maximum relative mass rate~.00113015 fails the existing
+1e-4 full-duration rate criterion for all three horizons. At r=1 the
+scaled rate is~.7101, despite the short .01-duration metric~1.13e-5
+passing. This is a conservative budget-gate failure, not a measurement
+or prediction of future accumulated physical error. Current auxiliary32
+continuation is not qualified for100orbits; canonical density reconstruction
+and temporal control still require their own evidence. No threshold was
+relaxed and no running trajectory was changed.
+
+SK starts a genuine time-refinement control: same exact OT initial
+state/configuration and potential moments, dt=.000125(twohalfsteps)
+to.01025, versus saved OT firststepdt=.00025. validation_end=.02
+preserves the same .01-duration rate budget despite the short execution
+end. Source SH6tests passed, both SH/PY manifests verified. Bound2h.
+Existing OT trajectory remains intact. This diagnoses temporal errors;
+it does not claim the100-orbit gate has passed.
+
+SKsession28061. OT/PY source-manifest differences reviewed: added
+velocity fit options leave active radial_fixed_mean normal equations
+unchanged; tensor branches are inactive. Other changed files concern
+wave budgeting/environment. Configuration dt is legacy metadata; the
+actual driver dt=.000125 is bound in identity.json.
+
+
+### 15:14 Canonical native quadrature audit complete
+
+QZ exited0 at15:07:39, all36864initialcells. Dedicated report gives
+max independent mass relative1.716125164e-5, nested quadrature
+4.78931309e-14, positive minP2.77777771e-5. Contaminated run.log was
+not used as evidence. Order16 comparison QE is markedly more accurate
+(6.43172734e-12). Neither report constitutes coupled fluid evolution.
+
+RR10³ fine reached.001(firststep); launched NT/rr_n10fine_order6
+independent17-node/order6audit,2hbound. SL snapshots440manifest-listed
+files and runs full regression including new component/horizon tests
+(session61250,20minbound). Existing simulation snapshots remain intact.
+
+SL completed15:15:10:515regressions passed, one existing Sod entropy
+log RuntimeWarning. This covers implementation regression, not the
+four full physical requirements. Completion audit checkpoint hashes
+and statuses refreshed; all four complete flags remain false.
+
+
+### 15:18 Canonical initial global fields and prepared enriched seed
+
+RG exited0 at15:05:46; both16/24 global initial integrals complete.
+Order24 relative rho/v/P L1=.00592905083/1.52765884e-6/5.97970609e-10.
+Sampled maximum relative density37.3427 remains large; initial fields
+do not certify time evolution. SM prepares original36864-cell PK seed
+with potential_moments copied from original reference_potential_moments,
+retaining m/state/factors exactly. Input/output hashes recorded. No
+reference-state repair, new trajectory or canonical evolution was launched.
+RV enriched reconstruction and coupled temporal/path checks remain needed.
+
+NT/or_n8_order6 exited0 at15:17:23 through.016(eightactualpaths),
+absolute relative mass2.32428630e-6. Full.02 remains outstanding.
+
+
+### 15:21 Kepler halfstep accepted
+
+SK firsthalfstep acceptedt=.010125: absolute relative mass1.16037193e-9,
+quadrature2.05378610e-15, common-horizon rate1.84014787e-7, generator
+1.08581671e-7, thermal-normalized energy1.97381694e-10. Secondhalfstep
+continues. Comparing its absolute error directly with the full step would
+compare different physical intervals; wait for .01025. SN comparison
+script prepared, not launched: requires completed SK, identical original
+source/configuration/gravity scheme and common validation horizon. It
+will score both saved endpoints at16/24, compare moment covariance
+(invariant to factor signs), mass/energy gates and angular ledgers.
+
+
+### 15:24 Batched potential-path integration
+
+The smooth-path batched backend previously excluded potential transport.
+Extended it to integrate the same pointwise mass flux timesPhi and retain
+per-cell/active-reservoir exchange with frozen masks. No face/root/physical
+closure change. SO516tests passed(exit0 at15:23:45), one existing Sod
+log warning. New test covers affine/quadratic and smoothed/unsmoothed
+flux with frozen cells and verifies the reservoir sum. SP compares one
+actual saved SK enriched node scalar/batched with explicit source hash,
+flux differences and wall times. No running trajectory was modified.
+
+SP exited0 at15:25:18. Actual enriched midpoint-node scalar/batched
+max massflux difference1.70220e-17, relative mass-rate difference
+6.44958e-16, potentialrate difference1.70220e-17, boundarydifference
+1.17288e-19, generator identical. Single-node wall18.35s/17.34s is
+only~6% improvement; no large full-run speedup is established. Existing
+trajectories and budgets remain unchanged.
+
+
+### 15:28 Kepler matched-time refinement completed
+
+SK exited0 at15:27:20, twohalfsteps tot=.01025. Cumulative absolute
+relative mass2.31858428e-9 vs coarse9.28402863e-9(~4fold reduction);
+rate1.84014787e-7 vs7.35994059e-7, common.01-duration budget.
+Thermal-normalized energy3.94599e-10 vs1.55176e-9. These numerical
+reductions do not establish long-duration or spatial accuracy. SN now
+runs matched16/24 field and angular diagnostics from the saved accepted
+endpoints, after verified source manifest and completed SK receipt.
+
+SNsession82786. SQsession72896 starts third matched timestep control
+(dt=.0000625,foursteps to.01025,validation_end=.02) using identical
+SK initial/configuration bytes and SH/PY sources. This permits a
+three-level state convergence check instead of inferring solution order
+solely from mass-defect reduction.2hbound; no existing run restarted.
+
+
+### 15:32 Kepler physical time-refinement comparison
+
+SN exited0 at15:31:26. At.01025, coarse/fine order24 densityL1
+.03233402508/.03233402543, velocity .000422868464/.000422868474,
+pressure .000107238645/.000107239203: essentially unchanged despite
+~4fold improved path/energy defects. Endpoint state maxdifference
+1.24246e-10, potentialmoment8.59698e-12, factorcovariance2.91211e-13.
+Boundary-corrected relative angular residual1.15331e-16/2.28806e-18.
+Together these indicate spatial closure dominates the current short-time
+field error; further timestep reduction alone does not remove it. SQ
+third timestep remains running for solution self-convergence.
+
+OR8³ reached.018; previous independent audit exited0 through.016.
+Resumed existing node caches(session27481,1hbound,execution_resume_1530.txt)
+for the ninth actual path. MV shock reached.134397965 at15:29:26;
+full.15 and spatial comparisons remain required.
+
+
+### 15:35 Full-horizon vortex geometry control
+
+PZ32current dt~2.33e-5 is constrained by allocated full-horizon mass
+path error; generator defect~2.5e-9 is far below1e-5. Revisited the
+previously implemented geometry_mass_lift method (see2026-10-16note).
+SR(session44919,1hbound) uses PZoriginal rejected firsttrialdt=.00025,
+unchanged raw midpoint moments/factors, and integrates material sites
+plus constrained weights with rtol3e-14/atol1e-15/root1e-16. Independent
+audit differentiates the saved DOP polynomial and uses full10period
+budgets. It does not substitute a fresh root into the audit or replace
+accepted PZ history. This is an integration-method diagnostic, not a
+completed physical or long-time result.
+
+NT/rr_n10fine_order6 exited0 at15:32:14 through.001(oneactualpath):
+absolute relative mass8.17327972e-8, quad2.91914113e-10,
+rate6.34118453e-6, generator2.94693129e-6. Do not compare its
+absolute defect directly with a coarse.002 path as equal-duration data.
+
+
+### 15:40 Geometry path needs quadrature refinement
+
+SR exited0 at15:38:14 after68geometry RHS evaluations,190.37s total.
+For dt=.00025 with full10period budget, massratio.172031,
+rate6.50686e-6, generator2.66901e-8, positive pressure.694188.
+But17-node signed/absolute quadrature ratios1.73623/8.16872 fail the
+quadrature gate. No acceptance or long-time claim. Refine(session81251,
+1hbound) retains original17nodes on exact1024lattice, adds nested
+33/65/... samples as needed, and audits the same saved polynomial.
+Original report and source hashes retained; no geometry reintegration.
+
+NT/or_n8_order6 exited0 at15:38:12 through.018(nineactualpaths).
+Full.02 still pending.
+
+
+### 15:42 Continued independent histories
+
+QK8³fine reached.006(sixsteps) and QD10³coarse .006(threesteps).
+Verified previous audits exited0 through.004 and source manifest;
+resumed existing caches for new paths(session89994/61057,2hbounds,
+execution_resume_1542.txt). SR33nodes massratio.211702 and generator
+3.63588e-8 remain within limits, but quadrature ratio3.96713 does not.
+Refinement continues on the same saved polynomial, with no threshold
+change or accepted evolution replay.
+
+
+### 15:45 Refined geometry path passed and evolution control started
+
+SR refinement exited0 at15:44:03.129nodes: massratio.224760,
+rate1.73496e-5, generator7.08491e-8, quadratureratio.496657,
+positive pressure and nonnegative factor. All sampled path gates pass
+for this single rejected-original trial after geometry integration.
+No full physical/time-convergence claim. ST(session12241,3hbound)
+starts separate32² evolution from exact original PZ IC, material geometry
+ODE rtol3e-14/atol1e-15/root1e-16,maxdt.001,physical_path controller,
+full10period budget and intermediate.01 scoring. Existing PZ remains
+the same-model baseline; original accepted histories untouched.
+
+SS tested same-horizon extension helper:2tests and7subtests pass.
+Requires terminal success, numerical/physical gates, no pending commit,
+matching input hashes, same full-duration budget. Only execution end
+and config identities change; all initial/state/counters/accumulations
+remain equal, old accepted paths remain in their original directory.
+Not applied before a completed passing source exists.

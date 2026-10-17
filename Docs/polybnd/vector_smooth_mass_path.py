@@ -24,7 +24,7 @@ def field_samples(states,factors,mass,owner,points):
     return rho,mean,samples
 
 
-def evaluate(states,edges,sites,factors,mass,gen,z,order,boundary_velocity):
+def evaluate(states,edges,sites,factors,mass,gen,z,order,boundary_velocity,potential=None,active=None):
     N=len(states);sites=np.asarray(sites,float);gen=np.asarray(gen);z=np.asarray(z);mass=np.asarray(mass)
     i=np.array([e[0] for e in edges],int);j=np.array([e[1] for e in edges],int);internal=j>=0
     start=np.array([e[2] for e in edges]);end=np.array([e[3] for e in edges]);normal=np.array([e[4] for e in edges]);length=np.array([e[5] for e in edges])
@@ -46,4 +46,14 @@ def evaluate(states,edges,sites,factors,mass,gen,z,order,boundary_velocity):
     flux=.25*(rl*np.sum(plus,axis=1)+rr*np.sum(minus,axis=1));edge_flux=length*np.sum(w[None,:]*flux.reshape(-1,order),axis=1)
     # Retain the scalar edge accumulation order: left then right per edge.
     owners=np.column_stack([i,j]).ravel();values=np.column_stack([edge_flux,-edge_flux]).ravel();valid=owners>=0;residual=np.zeros(N);np.add.at(residual,owners[valid],values[valid])
-    return -residual
+    if potential is None:return -residual
+    phi=np.asarray(potential(points))
+    if phi.shape!=(len(points),) or not np.isfinite(phi).all():raise ValueError('invalid potential samples')
+    active=np.ones(N,dtype=bool) if active is None else np.asarray(active,dtype=bool)
+    if active.shape!=(N,):raise ValueError('invalid active-cell mask')
+    potential_flux=length*np.sum(w[None,:]*(flux*phi).reshape(-1,order),axis=1)
+    potential_values=np.column_stack([-potential_flux,potential_flux]).ravel()
+    potential_rates=np.zeros(N);np.add.at(potential_rates,owners[valid],potential_values[valid])
+    sign=-active[i].astype(int);sign[internal]+=active[j[internal]].astype(int)
+    exchange=sum(float(s*v) for s,v in zip(sign,potential_flux))
+    return -residual,dict(active_potential_mass_exchange=exchange,potential_mass_rates=potential_rates)

@@ -31,15 +31,23 @@ def initial_raw(poly,amplitude,order):
     return pack(*(d[k] for k in ('m','q','Q','p','D','Pi','E'))),d['residual_factor']
 
 
+def velocity_component_integrals(numerical,reference,density,weights,amplitude):
+    """Component L1/amplitude and resolved field kinetic energy (excludes Pi residual)."""
+    if not np.isfinite(amplitude) or amplitude<=0:raise ValueError('positive amplitude required')
+    return weights@abs(numerical-reference)/amplitude, .5*(weights*density)@(numerical**2)
+
+
 def score(geo,sites,weights,raw,amplitude):
     polys,_,_=geo.build(sites,weights);states=[decode(p,r) for p,r in zip(polys,raw)];pressure,_=prepare(states,polys);rows=[]
     for order in (8,12):
-        errors=np.zeros(3);denom=0.;minimum=np.full(2,np.inf);max_vz=0.
+        errors=np.zeros(3);denom=0.;minimum=np.full(2,np.inf);max_vz=0.;component_error=np.zeros(3);resolved_kinetic=np.zeros(3)
         for i,(poly,s) in enumerate(zip(polys,states)):
             x,w=quadrature(poly,order);rho,v,P=fields(x,amplitude);rn=s['density'].value(x);vn=s['v']+(x-s['c'])@s['B'].T;pn=value(pressure[i],x)
             errors+=w@np.column_stack([abs(rn-rho),np.linalg.norm(vn-v,axis=1)/amplitude,abs(pn-P)/amplitude**2]);denom+=w@np.linalg.norm(v,axis=1)
+            ce,ke=velocity_component_integrals(vn,v,rn,w,amplitude);component_error+=ce;resolved_kinetic+=ke
             minimum=np.minimum(minimum,[rn.min(),pn.min()]);max_vz=max(max_vz,float(np.max(abs(vn[:,2]))))
-        rows.append(dict(order=order,density_L1=float(errors[0]),velocity_L1=float(errors[1]),pressure_L1=float(errors[2]),velocity_reference_relative_L1=float(errors[1]*amplitude/denom),min_density=float(minimum[0]),min_pressure=float(minimum[1]),max_vertical_velocity_sampled=max_vz))
+        rows.append(dict(order=order,density_L1=float(errors[0]),velocity_L1=float(errors[1]),pressure_L1=float(errors[2]),velocity_reference_relative_L1=float(errors[1]*amplitude/denom),min_density=float(minimum[0]),min_pressure=float(minimum[1]),max_vertical_velocity_sampled=max_vz,
+            velocity_component_L1_over_amplitude=component_error.tolist(),resolved_field_kinetic_components=resolved_kinetic.tolist()))
     return rows
 
 
