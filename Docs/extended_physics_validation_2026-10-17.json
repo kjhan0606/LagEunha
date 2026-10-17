@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-17T12:01:52.065149+09:00",
+  "updated_at": "2026-10-17T12:49:03.575510+09:00",
   "request": "Validate shocks, long time, 3D, Kepler",
   "constraints": [
     "unsteered generators",
@@ -51,7 +51,58 @@
     "whole_interval_gate_audit": "/gpfs/kjhan/LagForce/Codex_MU_global_gate_accounting_20261017/prefix_audit.json",
     "whole_interval_time_control": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
     "whole_interval_status": "Independent tensor/reflected n16 control launched using T=.15 budget allocation from t0 and original identical IC. Short T=.02 accepted prefixes retained separately; their normalized rate peaks exceed1e-4 after duration retargeting.",
-    "status": "Short Sod32 P2 T=.02 passed. Long T=.15 not completed; tensor/reflected and original comparisons retained."
+    "status": "Short Sod32 P2 T=.02 passed. Long T=.15 not completed; tensor/reflected and original comparisons retained.",
+    "latest_whole_interval_progress": {
+      "observed_at": "2026-10-17T12:10:40.177230+09:00",
+      "t": 0.06351439224256443,
+      "steps": 1405,
+      "target": 0.15,
+      "previous_P4_failure_time": 0.06261794533199819,
+      "passed_previous_failure_time": true,
+      "completed": false
+    },
+    "long_n16_intermediate_score": {
+      "root": "/gpfs/kjhan/LagForce/Codex_PG_long_shock_progress_20261017",
+      "result": {
+        "t": 0.07091957712347767,
+        "amplitude": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.020411577421217644,
+          "velocity_cell": 0.03727896425790356,
+          "density_cell": 0.009086714372269185,
+          "pressure_field": 0.024712614827916105,
+          "velocity_field": 0.04784140475864379,
+          "density_field": 0.027472321382083387,
+          "energy_cell": 0.025471268345741746
+        },
+        "reference_quadrature_difference": 5.124074992438055e-16,
+        "reference_global_mass_relative": 3.9474596431116685e-16,
+        "density_min": 0.11099009073065438,
+        "pressure_min": 0.06271322868256315,
+        "integrated_entropy": 0.07468819669175461,
+        "reference_valid": true,
+        "checkpoint_sha256": "627ebefe65ee66d4d75b5ec1fb06b6b8d1c9df73f54625242e30df0d364730f0",
+        "mass_array_exact": true,
+        "steps": 1666,
+        "target": 0.15,
+        "intermediate_only": true,
+        "max_mean_transverse_velocity": 0.007186064326977687,
+        "transverse_kinetic": 1.5417542597008158e-07
+      }
+    },
+    "whole_interval_n32": {
+      "root": "/gpfs/kjhan/LagForce/Codex_PH_sod32_tensor_whole_interval_20261017",
+      "session": 29011,
+      "status": "launched",
+      "target": 0.15,
+      "source_receipt": {
+        "physics_source": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
+        "configuration_source": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod32/simple_wave_config.json",
+        "target": 0.15,
+        "n": 32,
+        "reason": "Higher-resolution long-shock accuracy control, full-duration budget from t0."
+      }
+    }
   },
   "long_time": {
     "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
@@ -60,7 +111,40 @@
     "ultimate_target": "10 central vortex periods, conditional on shorter accuracy gates",
     "status": "Resumed at11:58 after verified timeout; ten-central-period requirement remains incomplete.",
     "progress_audit": "/gpfs/kjhan/LagForce/Codex_KS_vortex_progress_audit_20261017_083145",
-    "resume_receipt": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456/resume_0957_receipt.json"
+    "resume_receipt": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456/resume_0957_receipt.json",
+    "latest_progress_score": {
+      "root": "/gpfs/kjhan/LagForce/Codex_PF_vortex_progress_20261017",
+      "result": {
+        "t": 0.15587670642387452,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.00026852101161150497,
+          "velocity_cell": 0.0004058998549717371,
+          "density_cell": 0.0001930402862133229,
+          "pressure_field": 0.0003592077406567415,
+          "velocity_field": 0.0006514755137795119,
+          "density_field": 0.0013012749334776177,
+          "energy_cell": 0.00042600033714028374
+        },
+        "density_min": 0.9426435627938777,
+        "pressure_min": 0.6851327581964896,
+        "reference_quadrature_difference": 1.9378616207253703e-11,
+        "reference_global_mass_relative": 6.661338147750941e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move.",
+        "checkpoint_sha256": "bd3569e7e648d978bf4bcdbb8fb187e459f3f6c2ada9c70c8b4673ff9edcb017",
+        "mass_array_exact": true,
+        "steps": 1026,
+        "target": 0.2,
+        "intermediate_only": true,
+        "central_period": 1.0468597915605091,
+        "elapsed_central_periods": 0.14889931553442873,
+        "ten_period_target": 10.468597915605091
+      },
+      "scope": "Intermediate physical-field and exact mass-array checks; historical whole-interval rate-budget audit and 10 periods remain separate."
+    }
   },
   "three_dimensions": {
     "root": "/gpfs/kjhan/LagForce/Codex_KF_3d_release_validation_20261017_081119",
@@ -130,7 +214,7 @@
   "kepler": {
     "root": "/gpfs/kjhan/LagForce/Codex_JZ_kepler_force_orbit_gate_20261017_080122",
     "status": "Auxiliary saved-state enriched-density/midpoint-gravity trials improve energy consistency; whole-path and continuation checks in progress. Canonical192 squared100-orbit fluid validation not done.",
-    "canonical": "unchanged 192\u00b2 nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
+    "canonical": "unchanged 192² nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
     "control_is_disk_validation": false,
     "gravity_component_root": "/gpfs/kjhan/LagForce/Codex_KH_gravity_source_validation_20261017_081402",
     "potential_component_root": "/gpfs/kjhan/LagForce/Codex_KZ_kepler_potential_validation_20261017_084619",
@@ -312,15 +396,15 @@
       "covers_target": false
     },
     "latest_NS_prefix": {
-      "t": 0.006,
+      "t": 0.02,
       "target": 0.02,
-      "steps": 3,
-      "covers_target": false,
-      "captured_checkpoint_sha256": "a1ef042dd78a555472c12e3a99f0599b51062a0744fcaebc1362fc06736a9687",
-      "max_absolute_relative_mass": 6.91521281720332e-07,
-      "max_signed_relative_mass": 6.870421390809171e-07,
-      "max_prefix_signed_relative_mass": 6.870421390809171e-07,
-      "summed_nested_quadrature_difference": 3.729629647506979e-09,
+      "steps": 10,
+      "covers_target": true,
+      "captured_checkpoint_sha256": "18e6f81a6aaade72f32a3d682122e3af0ae86045380cbb9a41a0d434bbef65c2",
+      "max_absolute_relative_mass": 2.0760992592248604e-06,
+      "max_signed_relative_mass": 2.0642312545186393e-06,
+      "max_prefix_signed_relative_mass": 2.0642312545186393e-06,
+      "summed_nested_quadrature_difference": 3.729855095958612e-09,
       "duration_scaled_peak_rate": 9.156319815621938e-06,
       "maximum_generator_path_defect": 1.724891930296457e-05,
       "full_validation": false,
@@ -342,6 +426,44 @@
       "summed_nested_quadrature_difference": 1.1560017922157524e-09,
       "duration_scaled_peak_rate": 3.872029487927913e-06,
       "maximum_generator_path_defect": 4.314414158879121e-06,
+      "full_validation": false,
+      "note": "Nested numerical quadrature estimates, not continuum enclosures; physical errors and other gates remain separate."
+    },
+    "latest_NX_prefix": {
+      "t": 0.007,
+      "target": 0.02,
+      "steps": 7,
+      "covers_target": false,
+      "captured_checkpoint_sha256": "46b48722ad7f841714e2efdbbbe064d66c1a2feab7a4099f99f9cb4b77ff33c9",
+      "max_absolute_relative_mass": 1.9783566850950028e-07,
+      "max_signed_relative_mass": 1.969883243832057e-07,
+      "max_prefix_signed_relative_mass": 1.969883243832057e-07,
+      "summed_nested_quadrature_difference": 1.1583970192065663e-09,
+      "duration_scaled_peak_rate": 3.872029487927913e-06,
+      "maximum_generator_path_defect": 4.314414158879121e-06,
+      "full_validation": false,
+      "note": "Nested numerical quadrature estimates, not continuum enclosures; physical errors and other gates remain separate."
+    },
+    "active_resume": {
+      "observed_at": "2026-10-17T12:26:19.673166+09:00",
+      "NS_session": 60502,
+      "NX_session": 52849,
+      "OR_n8_session": 48201,
+      "receipt_name": "execution_resume_1225.txt",
+      "method": "Retain completed quadrature nodes; audit only newly accepted paths."
+    },
+    "OR_n8_first_step": {
+      "t": 0.002,
+      "target": 0.02,
+      "steps": 1,
+      "covers_target": false,
+      "captured_checkpoint_sha256": "44da2ce9f59897b268de627ea94e4a165396111412adcc093de58cfd5a3d7268",
+      "max_absolute_relative_mass": 3.154845035253109e-07,
+      "max_signed_relative_mass": 3.154845035253109e-07,
+      "max_prefix_signed_relative_mass": 3.154845035253109e-07,
+      "summed_nested_quadrature_difference": 8.862164537905577e-10,
+      "duration_scaled_peak_rate": 9.69049822319711e-06,
+      "maximum_generator_path_defect": 1.4847460998584916e-05,
       "full_validation": false,
       "note": "Nested numerical quadrature estimates, not continuum enclosures; physical errors and other gates remain separate."
     }
@@ -1412,10 +1534,50 @@
   "midpoint_path_continuation": {
     "root": "/gpfs/kjhan/LagForce/Codex_OQ_midpoint_path_continuation_20261017",
     "targeted_passed": 5,
-    "status": "two actual midpoint trial path audits running; continuation prepared",
+    "status": "both single-step path audits completed; actual continuation runs in OT",
     "changes": [
       "explicit gravity scheme in continuation identity",
       "dense endpoint density/potential moment consistency checks"
+    ],
+    "results": [
+      {
+        "case": "dt00025",
+        "path": {
+          "identity": {
+            "trial_sha256": "25298f26b7b01b089fbf50c59860201df44ac8af6c3a833fd947238729260318",
+            "configuration_sha256": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+            "source_manifest_sha256": "ef94e90e5e42afafe18592191a90f8ad789e8bd3c3659639edc811f73552a080"
+          },
+          "dt": 0.00025,
+          "absolute_relative_mass": 9.284028626048452e-09,
+          "signed_relative_mass": 9.28402862573938e-09,
+          "nested_difference": 6.208323583722755e-15,
+          "maximum_generator_defect": 4.345685911122388e-07,
+          "integrated_potential_boundary": -4.8504386415417354e-11,
+          "full_validation": false,
+          "scope": "single saved hydro subflow; no root solve at audit nodes"
+        },
+        "independent_boundary_energy_residual": -1.301093452319551e-12
+      },
+      {
+        "case": "dt000125",
+        "path": {
+          "identity": {
+            "trial_sha256": "47c5afed47ccc52c72a9fc3a433871d2969d81b3fc746a92d72765449be70506",
+            "configuration_sha256": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+            "source_manifest_sha256": "ef94e90e5e42afafe18592191a90f8ad789e8bd3c3659639edc811f73552a080"
+          },
+          "dt": 0.000125,
+          "absolute_relative_mass": 1.1603719250291248e-09,
+          "signed_relative_mass": 1.1603719248656886e-09,
+          "nested_difference": 2.0537860990314667e-15,
+          "maximum_generator_defect": 1.0858167054372814e-07,
+          "integrated_potential_boundary": -2.4621499159246802e-11,
+          "full_validation": false,
+          "scope": "single saved hydro subflow; no root solve at audit nodes"
+        },
+        "independent_boundary_energy_residual": -1.6549740553616774e-13
+      }
     ]
   },
   "JU_timeout_resume_1158": {
@@ -1500,7 +1662,2251 @@
     "t": 0.004,
     "coarse_saved_step": 2,
     "fine_saved_step": 4,
-    "status": "running",
-    "scope": "read-only physical field comparison; no evolution replay"
+    "status": "completed",
+    "scope": "read-only physical field comparison; no evolution replay",
+    "result": {
+      "t": 0.004,
+      "scores": [
+        {
+          "label": "coarse",
+          "dt": 0.002,
+          "input_sha256": "9c54d5cbba4b35eb9634ab8d9c1de4c7426a900de90748ab65c22ce62d588f35",
+          "fields": [
+            {
+              "order": 8,
+              "density_L1": 0.0009407835474868146,
+              "velocity_L1": 0.03861216312096783,
+              "pressure_L1": 0.046887465684575975,
+              "velocity_reference_relative_L1": 0.2350764646855622,
+              "min_density": 0.9843328109143331,
+              "min_pressure": 0.9370892335586467,
+              "max_vertical_velocity_sampled": 0.0005931026286167419
+            },
+            {
+              "order": 12,
+              "density_L1": 0.0009407463530499453,
+              "velocity_L1": 0.038621283323351775,
+              "pressure_L1": 0.046903950070859096,
+              "velocity_reference_relative_L1": 0.2351321215463764,
+              "min_density": 0.9840100087879444,
+              "min_pressure": 0.9369694743436793,
+              "max_vertical_velocity_sampled": 0.0006025170171111785
+            }
+          ]
+        },
+        {
+          "label": "fine",
+          "dt": 0.001,
+          "input_sha256": "2e21a32f894aa4ac5783a8abf42b25f6d109a400b32403f8a76d957a4b303e51",
+          "fields": [
+            {
+              "order": 8,
+              "density_L1": 0.0009407967956886045,
+              "velocity_L1": 0.03861234913084219,
+              "pressure_L1": 0.046886420528923126,
+              "velocity_reference_relative_L1": 0.2350775989558817,
+              "min_density": 0.9843319407179117,
+              "min_pressure": 0.9370891578712968,
+              "max_vertical_velocity_sampled": 0.0005932540905579216
+            },
+            {
+              "order": 12,
+              "density_L1": 0.0009407595214715149,
+              "velocity_L1": 0.03862146750194173,
+              "pressure_L1": 0.04690348945422077,
+              "velocity_reference_relative_L1": 0.2351332436812986,
+              "min_density": 0.9840091163770882,
+              "min_pressure": 0.9369694015084264,
+              "max_vertical_velocity_sampled": 0.0006026722552901935
+            }
+          ]
+        }
+      ],
+      "maximum_raw_difference": 2.0876890228496356e-09,
+      "maximum_site_difference": 1.6311598405316374e-08,
+      "full_validation": false
+    }
+  },
+  "midpoint_multistep_continuation": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OT_midpoint_kepler_continuation_20261017/n32",
+    "verified_live_pid": 1850161,
+    "observed_at": "2026-10-17T12:12:47.470450+09:00",
+    "target": 0.02,
+    "dt": 0.00025,
+    "accepted_seed_t": 0.01025,
+    "accepted_seed_steps": 1,
+    "seed_receipt": {
+      "source_trial": "/gpfs/kjhan/LagForce/Codex_OP_midpoint_coupled_kepler_20261017/dt00025/trial.json",
+      "source_sha256": "25298f26b7b01b089fbf50c59860201df44ac8af6c3a833fd947238729260318",
+      "path_audit": "/gpfs/kjhan/LagForce/Codex_OQ_midpoint_path_continuation_20261017/dt00025/report.json",
+      "initial_source": "/gpfs/kjhan/LagForce/Codex_OA_density_quadrature_controls_20261017/q16_dt00025/source.json",
+      "purpose": "reuse completed first enriched midpoint step and carry all cellwise path accumulators; targetT=.02 budgets measured fromt=.01",
+      "accepted_t": 0.01025,
+      "energy_after_independent_exchange": -1.301093452319551e-12,
+      "metrics": {
+        "absolute_mass": 9.284028626048452e-09,
+        "quadrature_mass": 6.208323583722755e-15,
+        "rate": 7.359940589973726e-07,
+        "generator": 4.345685911122388e-07,
+        "energy_over_initial_thermal": 1.5517586442845983e-09
+      }
+    },
+    "scope": "Auxiliary n32 enriched midpoint continuation. Original masses, accepted first trial and cellwise path budgets preserved. Not canonical 192²/100-orbit proof.",
+    "accepted_t": 0.011000000000000001,
+    "accepted_steps": 4,
+    "latest_acceptance": {
+      "metrics": {
+        "absolute_mass": 2.772630763959114e-08,
+        "quadrature_mass": 2.5774663380163606e-10,
+        "rate": 7.359940589973726e-07,
+        "generator": 4.375519198074329e-07,
+        "energy_over_initial_thermal": 4.662559818335314e-09
+      },
+      "limits": {
+        "absolute_mass": 1e-05,
+        "quadrature_mass": 1e-07,
+        "rate": 0.0001,
+        "generator": 1e-05,
+        "energy_over_initial_thermal": 1e-05
+      },
+      "passed": true,
+      "full_validation": false
+    }
+  },
+  "sod32_reflection_completion": {
+    "root": "/gpfs/kjhan/LagForce/Codex_MH_reflected_sod_controls_20261017/n32",
+    "report": {
+      "completed": true,
+      "problem": "sod_gamma5_3",
+      "n": 32,
+      "amplitude": 1.0,
+      "t": 0.02,
+      "source_time": 0.0,
+      "steps": 388,
+      "rejected": 37,
+      "numerical_passed": true,
+      "adaptive_path_quadrature": true,
+      "physical_accuracy_passed": true,
+      "final_score": {
+        "t": 0.02,
+        "amplitude": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.006067607688144478,
+          "velocity_cell": 0.004770363928538533,
+          "density_cell": 0.0037663662736898912,
+          "pressure_field": 0.012431921988994588,
+          "velocity_field": 0.017619855998800067,
+          "density_field": 0.01073227184875557,
+          "energy_cell": 0.010538940145852955
+        },
+        "reference_quadrature_difference": 4.651803302366947e-16,
+        "reference_global_mass_relative": 5.921189464667503e-16,
+        "density_min": 0.10907811632323322,
+        "pressure_min": 0.037919982078772216,
+        "integrated_entropy": 0.07252782735252433,
+        "reference_valid": true
+      },
+      "peak": {
+        "rate": 3.43670439488548e-05,
+        "generator": 8.525922803783153e-06,
+        "ledger": 1.0373104285255064e-16,
+        "stage_mass": 1.9627660906079356e-13,
+        "min_pressure": 0.08542516393442685,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 388,
+        "pressure_limited_cells_max": 32,
+        "pressure_positivity_scale_min": 0.5744616251346166
+      },
+      "integrated_absolute_mass_defect": 2.7533948291602895e-06,
+      "quadrature_mass_difference": 4.977969367955175e-10,
+      "config": {
+        "n": 32,
+        "amplitude": 1.0,
+        "end": 0.02,
+        "max_dt": 0.0005,
+        "physical_goal": 0.05,
+        "path_mass_budget": 1e-05,
+        "path_quadrature_budget": 1e-07,
+        "path_rate_budget": 0.0001,
+        "generator_path_budget": 1e-05,
+        "mass_root_backend": "vector_sparse",
+        "velocity_reconstruction": "quadratic_budget_projected",
+        "kinetic_smoothing_coefficient": 1.0,
+        "kinetic_smoothing_length": 1.0,
+        "geometry_path": "quadratic_midpoint",
+        "geometry_step_controller": "combined",
+        "dense_moment_arithmetic": "longdouble",
+        "path_sample_lattice": 1024,
+        "path_save_batch": 8,
+        "adaptive_path_quadrature": true,
+        "note": "Independent corrected reflective-wall pressure reconstruction control. Reuses identical original t0 IC, no old RHS or evolved state reset. Original unreflected trajectories and failures retained. Same fixed masses, no steering, unchanged error budgets.",
+        "problem": "sod_gamma5_3",
+        "pressure_reconstruction": "quadratic_cell_mean",
+        "pressure_polynomial_degree": 2,
+        "quadratic_budget_backend": "batched",
+        "physical_goals": {},
+        "resolve_mass_quadrature_before_reject": false,
+        "pressure_evaluation_backend": "monomial",
+        "mass_path_evaluation_backend": "cell_batched",
+        "moment_flux_evaluation_backend": "batched",
+        "power_cell_evaluation_backend": "seeded_active",
+        "pressure_reflection_y": "0,1",
+        "preserved_initial_state": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341/initial_state.json",
+        "preserved_initial_state_sha256": "d1d51fde717880e316d2b868e46cd5253e84b869bce0f9a3a0a8cecc9e2e4f02",
+        "preserved_source_config": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341/simple_wave_config.json",
+        "preserved_source_config_sha256": "ba9cc1ad032fc1adf642e193d7ca5baec81cc5b722716a9aa53be06bb7499fb4"
+      },
+      "seconds": 855.0827951338142,
+      "path_workers": 4,
+      "note": "sod_gamma5_3 exact Euler reference used only at initialization/scoring. Continuous positive density from numerical six moments; current Sylvester positive midpoint factors. Fixed original mass, material generators. New physical-error allocation for this benchmark; old5e-11 contact budget unchanged. Sampled dense-path quadrature evidence, not a continuous-time bound.",
+      "signed_quadrature_absolute_sum": 1.922733634961875e-09,
+      "absolute_quadrature_absolute_sum": 9.577313271143445e-09
+    },
+    "transverse_comparison": [
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341",
+        "t": 0.02,
+        "max_cell_mean_vy": 0.21259947560440923,
+        "mass_mean_absolute_vy": 0.00021412924095765335,
+        "transverse_kinetic": 1.3304255455414929e-05,
+        "max_transverse_rms": 0.2984850237826677
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_MH_reflected_sod_controls_20261017/n32",
+        "t": 0.02,
+        "max_cell_mean_vy": 0.0014733383186282794,
+        "mass_mean_absolute_vy": 1.043217156610732e-05,
+        "transverse_kinetic": 3.0477576747727364e-07,
+        "max_transverse_rms": 0.012311194029934523
+      }
+    ],
+    "scope": "Short T=.02 only; long T=.15 remains incomplete."
+  },
+  "three_dimensional_initial_representation": {
+    "observed_at": "2026-10-17T12:10:40.177230+09:00",
+    "n6": {
+      "order": 12,
+      "density_L1": 2.3475331616999104e-12,
+      "velocity_L1": 0.037705605433909536,
+      "pressure_L1": 0.0453565844624011,
+      "velocity_reference_relative_L1": 0.22955734074920298,
+      "min_density": 0.9999999999442417,
+      "min_pressure": 0.9378262576784238,
+      "max_vertical_velocity_sampled": 0.0
+    },
+    "n8": {
+      "order": 12,
+      "density_L1": 5.7836722289239075e-12,
+      "velocity_L1": 0.021919117242597198,
+      "pressure_L1": 0.020442143484262213,
+      "velocity_reference_relative_L1": 0.13344684317391795,
+      "min_density": 0.9999999998712651,
+      "min_pressure": 0.9151718882150426,
+      "max_vertical_velocity_sampled": 0.0
+    },
+    "two_resolution_velocity_order": 1.8855870111696313,
+    "limitation": "Two resolutions indicate initial spatial representation trend only. Does not prove evolved convergence or eliminate later instability."
+  },
+  "kepler_radial_density_diagnostic": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OV_kepler_radial_density_20261017",
+    "source": {
+      "source": "/gpfs/kjhan/LagForce/Codex_OT_midpoint_kepler_continuation_20261017/n32/checkpoint.json",
+      "sha256": "badebf9c0c0dddb7342ad31a3c94be318fddb26c46f0e2657641adf4752345d1",
+      "t": 0.0105,
+      "steps": 2
+    },
+    "orders": [
+      16,
+      24
+    ],
+    "sessions": [
+      7374,
+      5634
+    ],
+    "status": "all four comparisons completed",
+    "scope": "Fixed radial bands cover the full r<2.5 domain; no acceptance region is excluded.",
+    "reports": {
+      "16": {
+        "t": 0.0105,
+        "order": 16,
+        "input_sha256": "badebf9c0c0dddb7342ad31a3c94be318fddb26c46f0e2657641adf4752345d1",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.636172512351932,
+            "reference_mass": 0.0063617251235193245,
+            "numerical_mass": 0.0064529063570577,
+            "absolute_density_error": 0.00019618167411411183,
+            "minimum_density": 0.00954540662849671,
+            "maximum_relative_density_error": 9.796638639927282,
+            "worst": {
+              "cell": 37,
+              "point": [
+                2.5503173150251484,
+                3.016896116094949
+              ],
+              "density": 0.10796638639927282,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.31415926535897976,
+            "reference_mass": 0.16642587082391974,
+            "numerical_mass": 0.14387761603849225,
+            "absolute_density_error": 0.07994799481989455,
+            "minimum_density": 0.00976624040694814,
+            "maximum_relative_density_error": 44.50191514024729,
+            "worst": {
+              "cell": 36,
+              "point": [
+                2.5294288076705236,
+                3.1684841875898497
+              ],
+              "density": 0.4550191514024729,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.99557428756427,
+            "reference_mass": 10.99557428756427,
+            "numerical_mass": 11.019814819639462,
+            "absolute_density_error": 0.05373149357186394,
+            "minimum_density": 0.5069655159376134,
+            "maximum_relative_density_error": 1.8086058641630691,
+            "worst": {
+              "cell": 369,
+              "point": [
+                4.090920372951873,
+                1.389992690708559
+              ],
+              "density": 2.808605864163069,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359144,
+            "reference_mass": 0.6268262742075035,
+            "numerical_mass": 0.6264103721640708,
+            "absolute_density_error": 0.23953375668724566,
+            "minimum_density": 0.025964837214739016,
+            "maximum_relative_density_error": 47.41074484544733,
+            "worst": {
+              "cell": 406,
+              "point": [
+                1.5906766413240296,
+                4.419088845495302
+              ],
+              "density": 0.48410744845447334,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.4324109582251,
+            "reference_mass": 0.06432410958225103,
+            "numerical_mass": 0.06295664756109653,
+            "absolute_density_error": 0.010225559636073916,
+            "minimum_density": 9.106221101396036e-05,
+            "maximum_relative_density_error": 5.266330882272386,
+            "worst": {
+              "cell": 356,
+              "point": [
+                1.7931169070791029,
+                1.3429113783852156
+              ],
+              "density": 0.06266330882272386,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.03234829373606991,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      },
+      "24": {
+        "t": 0.0105,
+        "order": 24,
+        "input_sha256": "badebf9c0c0dddb7342ad31a3c94be318fddb26c46f0e2657641adf4752345d1",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519317,
+            "reference_mass": 0.006361725123519331,
+            "numerical_mass": 0.006452906357057698,
+            "absolute_density_error": 0.00019619702686265262,
+            "minimum_density": 0.009545410223139445,
+            "maximum_relative_density_error": 9.79665563202532,
+            "worst": {
+              "cell": 37,
+              "point": [
+                2.5503172588288407,
+                3.01689471658593
+              ],
+              "density": 0.1079665563202532,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.31415926535897903,
+            "reference_mass": 0.16642587082391913,
+            "numerical_mass": 0.14387761603849233,
+            "absolute_density_error": 0.07994799491165319,
+            "minimum_density": 0.009766229397175008,
+            "maximum_relative_density_error": 44.59447298724413,
+            "worst": {
+              "cell": 36,
+              "point": [
+                2.5293848228759055,
+                3.1686460353925487
+              ],
+              "density": 0.45594472987244133,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.995574287564278,
+            "reference_mass": 10.995574287564278,
+            "numerical_mass": 11.01981481963946,
+            "absolute_density_error": 0.053727566020490926,
+            "minimum_density": 0.503027568107829,
+            "maximum_relative_density_error": 1.8108546418579547,
+            "worst": {
+              "cell": 346,
+              "point": [
+                1.0602489751956876,
+                2.8602207823102734
+              ],
+              "density": 2.8108546418579547,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359148,
+            "reference_mass": 0.6268262742075036,
+            "numerical_mass": 0.6264103721640712,
+            "absolute_density_error": 0.23942356614148813,
+            "minimum_density": 0.025963559674338697,
+            "maximum_relative_density_error": 47.41346597616584,
+            "worst": {
+              "cell": 406,
+              "point": [
+                1.590677410671732,
+                4.419088076607866
+              ],
+              "density": 0.4841346597616584,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.432410958225104,
+            "reference_mass": 0.06432410958225104,
+            "numerical_mass": 0.06295664756109653,
+            "absolute_density_error": 0.010220450617072755,
+            "minimum_density": 8.941559624570759e-05,
+            "maximum_relative_density_error": 5.266724667527264,
+            "worst": {
+              "cell": 356,
+              "point": [
+                1.7931179880713977,
+                1.3429128665686967
+              ],
+              "density": 0.06266724667527264,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.032338241748354236,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      },
+      "initial16": {
+        "t": 0.01,
+        "order": 16,
+        "input_sha256": "6e3cecbd8784e1be1d71dafe152a94518f4c22e4b39c9846f3b924517c5e6883",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519323,
+            "reference_mass": 0.006361725123519324,
+            "numerical_mass": 0.006450623049945179,
+            "absolute_density_error": 0.00018983992965982636,
+            "minimum_density": 0.00954905877938684,
+            "maximum_relative_density_error": 9.833732874052204,
+            "worst": {
+              "cell": 37,
+              "point": [
+                2.5503697024587306,
+                3.0182325221688964
+              ],
+              "density": 0.10833732874052204,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.31415926535897926,
+            "reference_mass": 0.16642587082391916,
+            "numerical_mass": 0.14389654698276866,
+            "absolute_density_error": 0.07993424886434548,
+            "minimum_density": 0.009786656793505228,
+            "maximum_relative_density_error": 44.57574919717378,
+            "worst": {
+              "cell": 36,
+              "point": [
+                2.529659844081449,
+                3.16912956123652
+              ],
+              "density": 0.45575749197173776,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.995574287564269,
+            "reference_mass": 10.995574287564269,
+            "numerical_mass": 11.019786015287929,
+            "absolute_density_error": 0.0536244525365998,
+            "minimum_density": 0.5065899892922293,
+            "maximum_relative_density_error": 1.8102028468163343,
+            "worst": {
+              "cell": 346,
+              "point": [
+                1.0602049493620989,
+                2.8605989591197756
+              ],
+              "density": 2.8102028468163343,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359161,
+            "reference_mass": 0.6268262742075039,
+            "numerical_mass": 0.6264216506088818,
+            "absolute_density_error": 0.23953247242394768,
+            "minimum_density": 0.02595465005716662,
+            "maximum_relative_density_error": 47.404450041358636,
+            "worst": {
+              "cell": 406,
+              "point": [
+                1.5909148718334314,
+                4.419325396904773
+              ],
+              "density": 0.4840445004135864,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.432410958225099,
+            "reference_mass": 0.064324109582251,
+            "numerical_mass": 0.06295751341182663,
+            "absolute_density_error": 0.010223983459649325,
+            "minimum_density": 9.091412489514276e-05,
+            "maximum_relative_density_error": 5.268948640735775,
+            "worst": {
+              "cell": 356,
+              "point": [
+                1.792837472973982,
+                1.3431149299778133
+              ],
+              "density": 0.06268948640735775,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.03233733298388548,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      },
+      "initial24": {
+        "t": 0.01,
+        "order": 24,
+        "input_sha256": "6e3cecbd8784e1be1d71dafe152a94518f4c22e4b39c9846f3b924517c5e6883",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519321,
+            "reference_mass": 0.006361725123519324,
+            "numerical_mass": 0.006450623049945181,
+            "absolute_density_error": 0.00018985650579591992,
+            "minimum_density": 0.009548893747198178,
+            "maximum_relative_density_error": 9.834496759852367,
+            "worst": {
+              "cell": 37,
+              "point": [
+                2.5503671654601603,
+                3.0181735771364933
+              ],
+              "density": 0.10834496759852368,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.3141592653589794,
+            "reference_mass": 0.16642587082391963,
+            "numerical_mass": 0.14389654698276874,
+            "absolute_density_error": 0.07993424881892953,
+            "minimum_density": 0.009786648050296684,
+            "maximum_relative_density_error": 44.667985438289286,
+            "worst": {
+              "cell": 36,
+              "point": [
+                2.5295871783524624,
+                3.169210369302303
+              ],
+              "density": 0.4566798543828929,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.99557428756427,
+            "reference_mass": 10.99557428756427,
+            "numerical_mass": 11.019786015287917,
+            "absolute_density_error": 0.05362117133816414,
+            "minimum_density": 0.5027294989411103,
+            "maximum_relative_density_error": 1.8122312317084521,
+            "worst": {
+              "cell": 346,
+              "point": [
+                1.0602226233512113,
+                2.86060719697284
+              ],
+              "density": 2.812231231708452,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359157,
+            "reference_mass": 0.6268262742075043,
+            "numerical_mass": 0.6264216506088824,
+            "absolute_density_error": 0.23942193433860937,
+            "minimum_density": 0.025953372495489267,
+            "maximum_relative_density_error": 47.4071705494087,
+            "worst": {
+              "cell": 406,
+              "point": [
+                1.5909156409146972,
+                4.419324627751806
+              ],
+              "density": 0.48407170549408696,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.432410958225101,
+            "reference_mass": 0.06432410958225103,
+            "numerical_mass": 0.06295751341182668,
+            "absolute_density_error": 0.010218881058596588,
+            "minimum_density": 8.92695561121035e-05,
+            "maximum_relative_density_error": 5.269342437215925,
+            "worst": {
+              "cell": 356,
+              "point": [
+                1.7928385545438505,
+                1.3431164182333302
+              ],
+              "density": 0.06269342437215925,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.032327306841880094,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      }
+    },
+    "normalization_checks": {
+      "16": {
+        "volume_error": -1.0658141036401503e-14,
+        "reference_mass_error": -3.552713678800501e-15,
+        "jump_band_error_fraction": 0.8327753276992066
+      },
+      "24": {
+        "volume_error": 0.0,
+        "reference_mass_error": 1.7763568394002505e-15,
+        "jump_band_error_fraction": 0.8327468701602587
+      },
+      "initial16": {
+        "volume_error": -1.0658141036401503e-14,
+        "reference_mass_error": -7.105427357601002e-15,
+        "jump_band_error_fraction": 0.8330184055199126
+      },
+      "initial24": {
+        "volume_error": -1.0658141036401503e-14,
+        "reference_mass_error": -3.552713678800501e-15,
+        "jump_band_error_fraction": 0.8329884410816863
+      }
+    }
+  },
+  "MV_timeout_resume_1217": {
+    "receipt": {
+      "time": "2026-10-17T12:17:42.047663+09:00",
+      "reason": "timeout124 confirmed and original PID1715438 absent",
+      "checkpoint_sha256": "254aa4b78d48fecd46756f8aac77bdfe0952b68aa70ae1c76516f2e2616255e9",
+      "t": 0.06536576900949487,
+      "steps": 1469,
+      "verified_files": 386,
+      "pending_data_preserved": true
+    },
+    "session": 65744,
+    "log": "run_resume_1217.log"
+  },
+  "sod32_tensor_completion": {
+    "report": {
+      "completed": true,
+      "problem": "sod_gamma5_3",
+      "n": 32,
+      "amplitude": 1.0,
+      "t": 0.02,
+      "source_time": 0.0,
+      "steps": 390,
+      "rejected": 35,
+      "numerical_passed": true,
+      "adaptive_path_quadrature": true,
+      "physical_accuracy_passed": true,
+      "final_score": {
+        "t": 0.02,
+        "amplitude": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.005924917172306881,
+          "velocity_cell": 0.004814478594446334,
+          "density_cell": 0.0036955900044889924,
+          "pressure_field": 0.012432669273847391,
+          "velocity_field": 0.01775291070779534,
+          "density_field": 0.010708525998649715,
+          "energy_cell": 0.010372056856605982
+        },
+        "reference_quadrature_difference": 4.541604315929162e-16,
+        "reference_global_mass_relative": 5.921189464667503e-16,
+        "density_min": 0.10767474885301144,
+        "pressure_min": 0.03997615965111842,
+        "integrated_entropy": 0.07262633579349045,
+        "reference_valid": true
+      },
+      "peak": {
+        "rate": 4.2190425906111154e-05,
+        "generator": 9.866480687724735e-06,
+        "ledger": 1.3877787807814457e-16,
+        "stage_mass": 1.998003487070838e-13,
+        "min_pressure": 0.08518032701713905,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 390,
+        "pressure_limited_cells_max": 32,
+        "pressure_positivity_scale_min": 0.6095322667924705
+      },
+      "integrated_absolute_mass_defect": 2.9422166558679033e-06,
+      "quadrature_mass_difference": 3.5103855455878417e-10,
+      "config": {
+        "n": 32,
+        "amplitude": 1.0,
+        "end": 0.02,
+        "max_dt": 0.0005,
+        "physical_goal": 0.05,
+        "path_mass_budget": 1e-05,
+        "path_quadrature_budget": 1e-07,
+        "path_rate_budget": 0.0001,
+        "generator_path_budget": 1e-05,
+        "mass_root_backend": "vector_sparse",
+        "velocity_reconstruction": "quadratic_budget_projected",
+        "kinetic_smoothing_coefficient": 1.0,
+        "kinetic_smoothing_length": 1.0,
+        "geometry_path": "quadratic_midpoint",
+        "geometry_step_controller": "combined",
+        "dense_moment_arithmetic": "longdouble",
+        "path_sample_lattice": 1024,
+        "path_save_batch": 8,
+        "adaptive_path_quadrature": true,
+        "note": "Independent tensor-product free-intercept pressure fit with reflected y walls, original thermal-energy mean restored exactly. Same original Sod t0 arrays and unchanged mass/path/physical budgets. Compare against original and reflected radial fixed-mean models; prior trajectories preserved.",
+        "problem": "sod_gamma5_3",
+        "pressure_reconstruction": "quadratic_cell_mean",
+        "pressure_polynomial_degree": 2,
+        "quadratic_budget_backend": "batched",
+        "physical_goals": {},
+        "resolve_mass_quadrature_before_reject": false,
+        "pressure_evaluation_backend": "monomial",
+        "mass_path_evaluation_backend": "cell_batched",
+        "moment_flux_evaluation_backend": "batched",
+        "power_cell_evaluation_backend": "seeded_active",
+        "pressure_reflection_y": "0,1",
+        "preserved_initial_state": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341/initial_state.json",
+        "preserved_initial_state_sha256": "d1d51fde717880e316d2b868e46cd5253e84b869bce0f9a3a0a8cecc9e2e4f02",
+        "preserved_source_config": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341/simple_wave_config.json",
+        "preserved_source_config_sha256": "ba9cc1ad032fc1adf642e193d7ca5baec81cc5b722716a9aa53be06bb7499fb4",
+        "pressure_fit": "tensor_free_mean"
+      },
+      "seconds": 1060.7168961185962,
+      "path_workers": 4,
+      "note": "sod_gamma5_3 exact Euler reference used only at initialization/scoring. Continuous positive density from numerical six moments; current Sylvester positive midpoint factors. Fixed original mass, material generators. New physical-error allocation for this benchmark; old5e-11 contact budget unchanged. Sampled dense-path quadrature evidence, not a continuous-time bound.",
+      "signed_quadrature_absolute_sum": 4.3570728684834644e-10,
+      "absolute_quadrature_absolute_sum": 8.13911725871464e-09
+    },
+    "transverse_resolution": [
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+        "t": 0.02,
+        "max_cell_mean_vy": 0.0001739633304707325,
+        "mass_mean_absolute_vy": 3.534791356345929e-06,
+        "transverse_kinetic": 1.31568444437373e-10,
+        "max_transverse_rms": 0.000268757080568111
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod32",
+        "t": 0.02,
+        "max_cell_mean_vy": 0.0008733985705246142,
+        "mass_mean_absolute_vy": 7.67437114242505e-06,
+        "transverse_kinetic": 1.6569069524695776e-09,
+        "max_transverse_rms": 0.0013244237388311095
+      }
+    ],
+    "selected_history": [
+      {
+        "step": 1,
+        "t": 7.8125e-06,
+        "sha256": "11edf206dc79d73d5b6d4a24d7a83d1c26d8bc006bcd6d068bd18f1dc7da08a5",
+        "maximum_mean_vy": 2.636779683484747e-19,
+        "worst_cell": 784,
+        "site": [
+          0.5156250017406496,
+          0.765625
+        ],
+        "transverse_kinetic": 8.387977432229596e-37,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 9.769962616701379e-15,
+            "total_transverse_kinetic_rate": 0.0
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 3.3750779948604765e-14,
+            "total_transverse_kinetic_rate": -1.5995543199179134e-34
+          }
+        ]
+      },
+      {
+        "step": 10,
+        "t": 0.00038406982010044747,
+        "sha256": "d35d1545bc3447fab031101d2bdc74cfb3118c64043f38de64c01c8d807a8217",
+        "maximum_mean_vy": 1.1029467599579168e-09,
+        "worst_cell": 48,
+        "site": [
+          0.5156291957262156,
+          0.04687500000009778
+        ],
+        "transverse_kinetic": 3.803527550339492e-21,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 5.758980757381387e-06,
+            "total_transverse_kinetic_rate": 1.900900405016343e-17
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 7.586466140629967e-06,
+            "total_transverse_kinetic_rate": 3.767083709526049e-17
+          }
+        ]
+      },
+      {
+        "step": 50,
+        "t": 0.0038013074248861092,
+        "sha256": "bdea4db303adbf7ace4913868a5605453a093204d4a18d56119c4c410c782d4c",
+        "maximum_mean_vy": 6.775117960894799e-06,
+        "worst_cell": 17,
+        "site": [
+          0.5468297946661368,
+          0.015625005813574098
+        ],
+        "transverse_kinetic": 7.011139848676886e-14,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 0.0056069869425013205,
+            "total_transverse_kinetic_rate": 1.1116139570351896e-10
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 0.005830584013298458,
+            "total_transverse_kinetic_rate": 1.2266140595679394e-10
+          }
+        ]
+      },
+      {
+        "step": 100,
+        "t": 0.007615733818465002,
+        "sha256": "38f1e8fd69ef5c530f0a622ab8a9d51fc9df7697301338a5bbe103cc3ac383e8",
+        "maximum_mean_vy": 7.562788168895275e-05,
+        "worst_cell": 17,
+        "site": [
+          0.5466743743725482,
+          0.01562512712717537
+        ],
+        "transverse_kinetic": 7.374120361634277e-12,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 0.032642826747888556,
+            "total_transverse_kinetic_rate": 5.367331165290224e-09
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 0.03290116161115447,
+            "total_transverse_kinetic_rate": 5.453773888066172e-09
+          }
+        ]
+      },
+      {
+        "step": 200,
+        "t": 0.01337615164358787,
+        "sha256": "8bd6cc601d7946ca185277376e97adca493e5862b663b8b59f6ddf0d9a8684a7",
+        "maximum_mean_vy": 0.0003981036937419289,
+        "worst_cell": 17,
+        "site": [
+          0.5464314998243758,
+          0.0156263378673833
+        ],
+        "transverse_kinetic": 1.429101067033018e-10,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 0.0853831223727629,
+            "total_transverse_kinetic_rate": 6.49755307612129e-08
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 0.08611858760482761,
+            "total_transverse_kinetic_rate": 6.588492432381058e-08
+          }
+        ]
+      },
+      {
+        "step": 300,
+        "t": 0.017559209519770153,
+        "sha256": "108c73a30e0823834a868a51c163e5f2e9b3709246c462b12a9b4cdd656b7ac5",
+        "maximum_mean_vy": 0.0007100644475245892,
+        "worst_cell": 17,
+        "site": [
+          0.5466489237510271,
+          0.015628584649418742
+        ],
+        "transverse_kinetic": 9.32420838930267e-10,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 0.1202632848148872,
+            "total_transverse_kinetic_rate": 3.272503787014076e-07
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 0.11976818258201176,
+            "total_transverse_kinetic_rate": 3.275179576048363e-07
+          }
+        ]
+      },
+      {
+        "step": 390,
+        "t": 0.02,
+        "sha256": "c08feb2b80658c4c55f3480f7e316df11e440fea10bee671dee39d0f4bfe9f68",
+        "maximum_mean_vy": 0.0008733985705246142,
+        "worst_cell": 17,
+        "site": [
+          0.5471162943078481,
+          0.01563050362105369
+        ],
+        "transverse_kinetic": 1.6569069524695776e-09,
+        "rates": [
+          {
+            "stage": "d0",
+            "max_transverse_acceleration": 0.3067245227919671,
+            "total_transverse_kinetic_rate": 2.706745258065317e-07
+          },
+          {
+            "stage": "dm",
+            "max_transverse_acceleration": 0.30844573353732235,
+            "total_transverse_kinetic_rate": 2.713641878745124e-07
+          }
+        ]
+      }
+    ],
+    "limitation": "Transverse error grows near bottom wall and increases with spatial resolution; short global L1 pass does not certify planar invariance."
+  },
+  "kepler_radial_resolution": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OW_kepler_radial_resolution_20261017",
+    "source_receipt": {
+      "states": [
+        {
+          "n": 32,
+          "t": 0.01,
+          "source": "/gpfs/kjhan/LagForce/Codex_NJ_kepler_T001_fields_20261017/n32_coarse",
+          "sha256": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379"
+        },
+        {
+          "n": 64,
+          "t": 0.01,
+          "source": "/gpfs/kjhan/LagForce/Codex_NJ_kepler_T001_fields_20261017/n64_coarse",
+          "sha256": "293fa5e45d9d81128c740455b99c3d34c17d89a14c71c7dde190965ee19406bb"
+        }
+      ],
+      "scope": "Read-only original closure at equal time, independent of the newer enriched midpoint control."
+    },
+    "sessions": [
+      4368,
+      15293,
+      40781,
+      58195
+    ],
+    "status": "completed",
+    "scope": "Original density closure n32/n64 at same t=.01; distinct from enriched midpoint evolution.",
+    "reports": {
+      "n32_q16": {
+        "t": 0.01,
+        "order": 16,
+        "input_sha256": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519323,
+            "reference_mass": 0.006361725123519324,
+            "numerical_mass": 0.006450623055371297,
+            "absolute_density_error": 0.00018983993505004688,
+            "minimum_density": 0.009549058779480807,
+            "maximum_relative_density_error": 9.8337373716499,
+            "worst": {
+              "cell": 37,
+              "point": [
+                2.5503697024587306,
+                3.0182325221688964
+              ],
+              "density": 0.108337373716499,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.31415926535897926,
+            "reference_mass": 0.16642587082391916,
+            "numerical_mass": 0.1438965494995004,
+            "absolute_density_error": 0.07993425525931822,
+            "minimum_density": 0.009786656793419227,
+            "maximum_relative_density_error": 44.57577270167001,
+            "worst": {
+              "cell": 36,
+              "point": [
+                2.529659844081449,
+                3.16912956123652
+              ],
+              "density": 0.45575772701670014,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.995574287564269,
+            "reference_mass": 10.995574287564269,
+            "numerical_mass": 11.019786009315048,
+            "absolute_density_error": 0.05362442972889721,
+            "minimum_density": 0.5065900346618637,
+            "maximum_relative_density_error": 1.8102025036536884,
+            "worst": {
+              "cell": 346,
+              "point": [
+                1.0602049493620989,
+                2.8605989591197756
+              ],
+              "density": 2.8102025036536884,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359161,
+            "reference_mass": 0.6268262742075039,
+            "numerical_mass": 0.6264213014287654,
+            "absolute_density_error": 0.2395318655649635,
+            "minimum_density": 0.025964124048754828,
+            "maximum_relative_density_error": 47.404114373518865,
+            "worst": {
+              "cell": 406,
+              "point": [
+                1.5909148718334314,
+                4.419325396904773
+              ],
+              "density": 0.4840411437351887,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.432410958225099,
+            "reference_mass": 0.064324109582251,
+            "numerical_mass": 0.06295744397327437,
+            "absolute_density_error": 0.01022416091898201,
+            "minimum_density": 9.091375058715785e-05,
+            "maximum_relative_density_error": 5.2689770064139365,
+            "worst": {
+              "cell": 356,
+              "point": [
+                1.792837472973982,
+                1.3431149299778133
+              ],
+              "density": 0.06268977006413937,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.03233729539321724,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      },
+      "n32_q24": {
+        "t": 0.01,
+        "order": 24,
+        "input_sha256": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519321,
+            "reference_mass": 0.006361725123519324,
+            "numerical_mass": 0.006450623055371289,
+            "absolute_density_error": 0.00018985651118626085,
+            "minimum_density": 0.009548893747291651,
+            "maximum_relative_density_error": 9.834501261033303,
+            "worst": {
+              "cell": 37,
+              "point": [
+                2.5503671654601603,
+                3.0181735771364933
+              ],
+              "density": 0.10834501261033304,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.3141592653589794,
+            "reference_mass": 0.16642587082391963,
+            "numerical_mass": 0.1438965494995005,
+            "absolute_density_error": 0.07993425521390232,
+            "minimum_density": 0.009786648050210688,
+            "maximum_relative_density_error": 44.668008847449826,
+            "worst": {
+              "cell": 36,
+              "point": [
+                2.5295871783524624,
+                3.169210369302303
+              ],
+              "density": 0.45668008847449826,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.99557428756427,
+            "reference_mass": 10.99557428756427,
+            "numerical_mass": 11.01978600931505,
+            "absolute_density_error": 0.053621148435724485,
+            "minimum_density": 0.502729544326514,
+            "maximum_relative_density_error": 1.8122308878285005,
+            "worst": {
+              "cell": 346,
+              "point": [
+                1.0602226233512113,
+                2.86060719697284
+              ],
+              "density": 2.8122308878285005,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359157,
+            "reference_mass": 0.6268262742075043,
+            "numerical_mass": 0.6264213014287656,
+            "absolute_density_error": 0.23942134679567378,
+            "minimum_density": 0.025962846308577845,
+            "maximum_relative_density_error": 47.4068348421883,
+            "worst": {
+              "cell": 406,
+              "point": [
+                1.5909156409146972,
+                4.419324627751806
+              ],
+              "density": 0.484068348421883,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.432410958225101,
+            "reference_mass": 0.06432410958225103,
+            "numerical_mass": 0.0629574439732744,
+            "absolute_density_error": 0.010219063999533845,
+            "minimum_density": 8.926918678158331e-05,
+            "maximum_relative_density_error": 5.269370802928203,
+            "worst": {
+              "cell": 356,
+              "point": [
+                1.7928385545438505,
+                1.3431164182333302
+              ],
+              "density": 0.06269370802928204,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.032327271334174096,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      },
+      "n64_q16": {
+        "t": 0.01,
+        "order": 16,
+        "input_sha256": "293fa5e45d9d81128c740455b99c3d34c17d89a14c71c7dde190965ee19406bb",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519326,
+            "reference_mass": 0.006361725123519324,
+            "numerical_mass": 0.005752250033150671,
+            "absolute_density_error": 0.0006369777208474879,
+            "minimum_density": 0.00011711049831932535,
+            "maximum_relative_density_error": 0.9882889501680675,
+            "worst": {
+              "cell": 63,
+              "point": [
+                2.5900776320098458,
+                2.985437383524302
+              ],
+              "density": 0.00011711049831932535,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.3141592653589794,
+            "reference_mass": 0.16642587082391963,
+            "numerical_mass": 0.16716066154592538,
+            "absolute_density_error": 0.0301549413605386,
+            "minimum_density": 0.001960293092767186,
+            "maximum_relative_density_error": 48.29749890874904,
+            "worst": {
+              "cell": 86,
+              "point": [
+                2.950097205910861,
+                3.497501911335491
+              ],
+              "density": 0.49297498908749043,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.995574287564283,
+            "reference_mass": 10.995574287564283,
+            "numerical_mass": 10.994797955044216,
+            "absolute_density_error": 0.04698268153384489,
+            "minimum_density": 0.5157322389231621,
+            "maximum_relative_density_error": 0.4842677610768379,
+            "worst": {
+              "cell": 1409,
+              "point": [
+                3.790975358629335,
+                4.738791482947136
+              ],
+              "density": 0.5157322389231621,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359155,
+            "reference_mass": 0.6268262742075034,
+            "numerical_mass": 0.6274824930742018,
+            "absolute_density_error": 0.19214346153223227,
+            "minimum_density": 0.009944674426013747,
+            "maximum_relative_density_error": 43.240884270071774,
+            "worst": {
+              "cell": 1429,
+              "point": [
+                2.0369330420447165,
+                4.752855543054148
+              ],
+              "density": 0.44240884270071773,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.4324109582249775,
+            "reference_mass": 0.06432410958224984,
+            "numerical_mass": 0.06431897528762022,
+            "absolute_density_error": 9.505243752919611e-05,
+            "minimum_density": 0.008727117737133243,
+            "maximum_relative_density_error": 0.1436495116105776,
+            "worst": {
+              "cell": 2292,
+              "point": [
+                5.4776010410712015,
+                3.2006975099159813
+              ],
+              "density": 0.011436495116105776,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.0227676407342198,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      },
+      "n64_q24": {
+        "t": 0.01,
+        "order": 24,
+        "input_sha256": "293fa5e45d9d81128c740455b99c3d34c17d89a14c71c7dde190965ee19406bb",
+        "bands": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.45,
+            "volume": 0.6361725123519325,
+            "reference_mass": 0.006361725123519324,
+            "numerical_mass": 0.005752250033150673,
+            "absolute_density_error": 0.0006369796984584452,
+            "minimum_density": 0.00011595823074231787,
+            "maximum_relative_density_error": 0.9884041769257682,
+            "worst": {
+              "cell": 63,
+              "point": [
+                2.590194793949937,
+                2.985439126796383
+              ],
+              "density": 0.00011595823074231787,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.45,
+            "r_max": 0.55,
+            "volume": 0.3141592653589795,
+            "reference_mass": 0.16642587082391963,
+            "numerical_mass": 0.16716066154592535,
+            "absolute_density_error": 0.030155506952999733,
+            "minimum_density": 0.0019324803697757743,
+            "maximum_relative_density_error": 48.30375993886342,
+            "worst": {
+              "cell": 86,
+              "point": [
+                2.9500970550259016,
+                3.497503140153645
+              ],
+              "density": 0.49303759938863423,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 0.55,
+            "r_max": 1.95,
+            "volume": 10.995574287564287,
+            "reference_mass": 10.995574287564287,
+            "numerical_mass": 10.994797955044218,
+            "absolute_density_error": 0.046974583518373234,
+            "minimum_density": 0.513343641789052,
+            "maximum_relative_density_error": 0.486656358210948,
+            "worst": {
+              "cell": 1343,
+              "point": [
+                2.209067554444609,
+                1.2613132226466983
+              ],
+              "density": 0.513343641789052,
+              "reference": 1.0
+            }
+          },
+          {
+            "r_min": 1.95,
+            "r_max": 2.05,
+            "volume": 1.2566370614359164,
+            "reference_mass": 0.6268262742075036,
+            "numerical_mass": 0.6274824930742012,
+            "absolute_density_error": 0.1922214228444638,
+            "minimum_density": 0.00994453315125355,
+            "maximum_relative_density_error": 43.24108356901403,
+            "worst": {
+              "cell": 1429,
+              "point": [
+                2.03693309179125,
+                4.752855452568342
+              ],
+              "density": 0.4424108356901403,
+              "reference": 0.01
+            }
+          },
+          {
+            "r_min": 2.05,
+            "r_max": 2.5,
+            "volume": 6.432410958224976,
+            "reference_mass": 0.06432410958224986,
+            "numerical_mass": 0.06431897528762023,
+            "absolute_density_error": 9.504892144363228e-05,
+            "minimum_density": 0.00872623685596973,
+            "maximum_relative_density_error": 0.14376877760909035,
+            "worst": {
+              "cell": 2292,
+              "point": [
+                5.4775596322760975,
+                3.200694155605934
+              ],
+              "density": 0.011437687776090904,
+              "reference": 0.01
+            }
+          }
+        ],
+        "whole_domain_relative_L1": 0.022773579203623846,
+        "full_validation": false,
+        "scope": "Radial diagnostic only; no region removed from full-domain error."
+      }
+    }
+  },
+  "velocity_fit_symmetry": {
+    "original": [
+      {
+        "step": 1,
+        "t": 7.8125e-06,
+        "input_sha256": "11edf206dc79d73d5b6d4a24d7a83d1c26d8bc006bcd6d068bd18f1dc7da08a5",
+        "maxima": {
+          "vx_vertical_difference": 1.2408370932785458e-19,
+          "vx_vertical_curvature": 4.939444622176506e-08,
+          "P_vertical_difference": 2.220446049250313e-16,
+          "P_vertical_curvature": 4.440892098500626e-16
+        },
+        "worst_cells": [
+          1008,
+          48,
+          15,
+          143
+        ],
+        "worst_sites": [
+          [
+            0.5156250017406496,
+            0.984375
+          ],
+          [
+            0.5156250017406496,
+            0.046875
+          ],
+          [
+            0.4843750007436124,
+            0.015625
+          ],
+          [
+            0.4843750007436124,
+            0.140625
+          ]
+        ],
+        "max_pressure_column_spread": 1.7763568394002505e-15
+      },
+      {
+        "step": 10,
+        "t": 0.00038406982010044747,
+        "input_sha256": "d35d1545bc3447fab031101d2bdc74cfb3118c64043f38de64c01c8d807a8217",
+        "maxima": {
+          "vx_vertical_difference": 8.879777857164145e-12,
+          "vx_vertical_curvature": 2.0680798015685574e-05,
+          "P_vertical_difference": 1.4760009436898258e-08,
+          "P_vertical_curvature": 1.5739867187392065e-09
+        },
+        "worst_cells": [
+          17,
+          143,
+          46,
+          975
+        ],
+        "worst_sites": [
+          [
+            0.54687464743933,
+            0.015625000000056805
+          ],
+          [
+            0.4843768100906083,
+            0.14062499999999808
+          ],
+          [
+            0.4531248693590572,
+            0.046874999999956424
+          ],
+          [
+            0.48437680814985534,
+            0.9531249999999896
+          ]
+        ],
+        "max_pressure_column_spread": 3.379038211459573e-07
+      },
+      {
+        "step": 50,
+        "t": 0.0038013074248861092,
+        "input_sha256": "bdea4db303adbf7ace4913868a5605453a093204d4a18d56119c4c410c782d4c",
+        "maxima": {
+          "vx_vertical_difference": 5.921904969112112e-07,
+          "vx_vertical_curvature": 0.0013705103959746542,
+          "P_vertical_difference": 3.2862458970023267e-06,
+          "P_vertical_curvature": 4.4496735729371295e-07
+        },
+        "worst_cells": [
+          1009,
+          977,
+          49,
+          17
+        ],
+        "worst_sites": [
+          [
+            0.5468297946661298,
+            0.9843749941864259
+          ],
+          [
+            0.546823878741684,
+            0.9531249972531445
+          ],
+          [
+            0.5468238787416917,
+            0.04687500274685544
+          ],
+          [
+            0.5468297946661368,
+            0.015625005813574098
+          ]
+        ],
+        "max_pressure_column_spread": 8.358173919065237e-05
+      }
+    ],
+    "tensor": [
+      {
+        "step": 1,
+        "t": 7.8125e-06,
+        "input_sha256": "11edf206dc79d73d5b6d4a24d7a83d1c26d8bc006bcd6d068bd18f1dc7da08a5",
+        "maxima": {
+          "vx_vertical_difference": 1.2421274950341285e-19,
+          "vx_vertical_curvature": 3.923954726611909e-15,
+          "P_vertical_difference": 2.220446049250313e-16,
+          "P_vertical_curvature": 4.440892098500626e-16
+        },
+        "worst_cells": [
+          1008,
+          16,
+          15,
+          143
+        ],
+        "worst_sites": [
+          [
+            0.5156250017406496,
+            0.984375
+          ],
+          [
+            0.5156250017406496,
+            0.015625
+          ],
+          [
+            0.4843750007436124,
+            0.015625
+          ],
+          [
+            0.4843750007436124,
+            0.140625
+          ]
+        ],
+        "max_pressure_column_spread": 1.7763568394002505e-15
+      },
+      {
+        "step": 10,
+        "t": 0.00038406982010044747,
+        "input_sha256": "d35d1545bc3447fab031101d2bdc74cfb3118c64043f38de64c01c8d807a8217",
+        "maxima": {
+          "vx_vertical_difference": 8.820889136644723e-12,
+          "vx_vertical_curvature": 3.6224549289018415e-09,
+          "P_vertical_difference": 1.4760009436898258e-08,
+          "P_vertical_curvature": 1.5739867187392065e-09
+        },
+        "worst_cells": [
+          17,
+          1010,
+          46,
+          975
+        ],
+        "worst_sites": [
+          [
+            0.54687464743933,
+            0.015625000000056805
+          ],
+          [
+            0.5781248414922746,
+            0.9843750000000308
+          ],
+          [
+            0.4531248693590572,
+            0.046874999999956424
+          ],
+          [
+            0.48437680814985534,
+            0.9531249999999896
+          ]
+        ],
+        "max_pressure_column_spread": 3.379038211459573e-07
+      },
+      {
+        "step": 50,
+        "t": 0.0038013074248861092,
+        "input_sha256": "bdea4db303adbf7ace4913868a5605453a093204d4a18d56119c4c410c782d4c",
+        "maxima": {
+          "vx_vertical_difference": 5.791949252421892e-07,
+          "vx_vertical_curvature": 3.818266335166775e-05,
+          "P_vertical_difference": 3.2862458970023267e-06,
+          "P_vertical_curvature": 4.4496735729371295e-07
+        },
+        "worst_cells": [
+          1009,
+          1010,
+          49,
+          17
+        ],
+        "worst_sites": [
+          [
+            0.5468297946661298,
+            0.9843749941864259
+          ],
+          [
+            0.5781109433859949,
+            0.9843750026438496
+          ],
+          [
+            0.5468238787416917,
+            0.04687500274685544
+          ],
+          [
+            0.5468297946661368,
+            0.015625005813574098
+          ]
+        ],
+        "max_pressure_column_spread": 8.358173919065237e-05
+      }
+    ],
+    "targeted_passed": 20,
+    "tensor_mode_existing_tests_passed": 17,
+    "regression_status": "491 passed normal and reverse",
+    "control_root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017",
+    "control_status": "launched",
+    "scope": "Read-only reconstruction comparison; evolved symmetry improvement requires separate controls.",
+    "control_sessions": {
+      "n16": 81887,
+      "n32": 37229
+    },
+    "reverse_session": 48629,
+    "equal_time_evolution": {
+      "root": "/gpfs/kjhan/LagForce/Codex_PD_sod_equal_time_symmetry_20261017",
+      "result": {
+        "t": 0.004,
+        "rows": [
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+            "t": 0.004,
+            "step": 28,
+            "s": 0.5406793343400932,
+            "trial_sha256": "791669504b9f8d84bc4e0d91c614a6e4698cd5c6d860d52697a7ff18c0f57773",
+            "max_mean_vy": 6.476903176508315e-07,
+            "worst_site": [
+              0.5937275607674831,
+              0.9687499994706159
+            ],
+            "transverse_kinetic": 4.13371889509586e-15,
+            "min_transverse_second_moment": 2.184702991181349e-31
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod16",
+            "t": 0.004,
+            "step": 27,
+            "s": 0.8971925567242148,
+            "trial_sha256": "98a6e171c4d358264a43981e8e27706ee28f8aaf0bc0a68223554363231dfc97",
+            "max_mean_vy": 6.481340847965213e-07,
+            "worst_site": [
+              0.5937277574169264,
+              0.03125000051790809
+            ],
+            "transverse_kinetic": 7.884541404924855e-15,
+            "min_transverse_second_moment": 1.1945889301495808e-31
+          }
+        ],
+        "full_validation": false,
+        "scope": "Equal-time dense saved-state diagnostic, no evolution or modified states."
+      },
+      "selection_test_passed": true,
+      "conclusion": "No reduction of maximum transverse mean velocity at t=.004; reconstructed curvature improvement alone does not establish evolved symmetry improvement."
+    },
+    "n16_completion": {
+      "report": {
+        "completed": true,
+        "problem": "sod_gamma5_3",
+        "n": 16,
+        "amplitude": 1.0,
+        "t": 0.02,
+        "source_time": 0.0,
+        "steps": 127,
+        "rejected": 11,
+        "numerical_passed": true,
+        "numerical_gate_details": {
+          "integrated_mass_and_quadrature": true,
+          "path_rate": true,
+          "generator_path": true,
+          "ledger": true,
+          "stage_mass": true,
+          "positive_pressure": true,
+          "positive_factor": true
+        },
+        "adaptive_path_quadrature": true,
+        "physical_accuracy_passed": true,
+        "final_score": {
+          "t": 0.02,
+          "amplitude": 1.0,
+          "errors_over_amplitude": {
+            "pressure_cell": 0.00619679888620369,
+            "velocity_cell": 0.012750410663591113,
+            "density_cell": 0.003581848825028933,
+            "pressure_field": 0.022281445861044958,
+            "velocity_field": 0.029387122140030565,
+            "density_field": 0.013207470260267286,
+            "energy_cell": 0.010184971947803805
+          },
+          "reference_quadrature_difference": 4.461220889234729e-16,
+          "reference_global_mass_relative": 5.921189464667503e-16,
+          "density_min": 0.11170509491803825,
+          "pressure_min": 0.052886685431238166,
+          "integrated_entropy": 0.07239132667303831,
+          "reference_valid": true
+        },
+        "peak": {
+          "rate": 2.5853380831031632e-05,
+          "generator": 9.855302600036194e-06,
+          "ledger": 4.130810277169772e-17,
+          "stage_mass": 1.9753939829006706e-13,
+          "min_pressure": 0.08684961646148795,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 127,
+          "pressure_limited_cells_max": 16,
+          "pressure_positivity_scale_min": 0.6095322667924705
+        },
+        "integrated_absolute_mass_defect": 2.8008772961088102e-06,
+        "quadrature_mass_difference": 7.058905674303362e-10,
+        "config": {
+          "n": 16,
+          "amplitude": 1.0,
+          "end": 0.02,
+          "max_dt": 0.0005,
+          "physical_goal": 0.05,
+          "path_mass_budget": 1e-05,
+          "path_quadrature_budget": 1e-07,
+          "path_rate_budget": 0.0001,
+          "generator_path_budget": 1e-05,
+          "mass_root_backend": "vector_sparse",
+          "velocity_reconstruction": "quadratic_budget_projected",
+          "kinetic_smoothing_coefficient": 1.0,
+          "kinetic_smoothing_length": 1.0,
+          "geometry_path": "quadratic_midpoint",
+          "geometry_step_controller": "combined",
+          "dense_moment_arithmetic": "longdouble",
+          "path_sample_lattice": 1024,
+          "path_save_batch": 8,
+          "adaptive_path_quadrature": true,
+          "note": "Independent velocity tensor/free-intercept fit control. Same initial physical arrays and covariance budget, pressure model, fixed masses, material generators and error thresholds. Earlier trajectories retained.",
+          "problem": "sod_gamma5_3",
+          "pressure_reconstruction": "quadratic_cell_mean",
+          "pressure_polynomial_degree": 2,
+          "quadratic_budget_backend": "batched",
+          "physical_goals": {},
+          "resolve_mass_quadrature_before_reject": false,
+          "pressure_evaluation_backend": "monomial",
+          "mass_path_evaluation_backend": "cell_batched",
+          "moment_flux_evaluation_backend": "batched",
+          "power_cell_evaluation_backend": "seeded_active",
+          "pressure_reflection_y": "0,1",
+          "preserved_initial_state": "/gpfs/kjhan/LagForce/Codex_KI_sod16_quadratic_pressure_20261017_081427/initial_state.json",
+          "preserved_initial_state_sha256": "32e13388006c6468db0437c4d34e5b60877500ddceb9cad2be7be9e442ce6e47",
+          "preserved_source_config": "/gpfs/kjhan/LagForce/Codex_KI_sod16_quadratic_pressure_20261017_081427/simple_wave_config.json",
+          "preserved_source_config_sha256": "6b161dced3bf975ac0a6889fd89adad2d7fb999055ea874799f42ac040878d53",
+          "pressure_fit": "tensor_free_mean",
+          "velocity_fit": "tensor_free_mean"
+        },
+        "seconds": 629.015169005841,
+        "path_workers": 4,
+        "note": "sod_gamma5_3 exact Euler reference used only at initialization/scoring. Continuous positive density from numerical six moments; current Sylvester positive midpoint factors. Fixed original mass, material generators. New physical-error allocation for this benchmark; old5e-11 contact budget unchanged. Sampled dense-path quadrature evidence, not a continuous-time bound.",
+        "signed_quadrature_absolute_sum": 7.810993435389162e-10,
+        "absolute_quadrature_absolute_sum": 1.2280955588978172e-08
+      },
+      "comparison": [
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+          "t": 0.02,
+          "max_cell_mean_vy": 0.0001739633304707325,
+          "mass_mean_absolute_vy": 3.534791356345929e-06,
+          "transverse_kinetic": 1.31568444437373e-10,
+          "max_transverse_rms": 0.000268757080568111
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod16",
+          "t": 0.02,
+          "max_cell_mean_vy": 0.00010188276496917271,
+          "mass_mean_absolute_vy": 3.233739769931464e-06,
+          "transverse_kinetic": 7.377543911771672e-11,
+          "max_transverse_rms": 0.0001538135700898439
+        }
+      ],
+      "scope": "T=.02 n16 only; n32 convergence and long-time repair unproven."
+    },
+    "early_equal_time_spatial": {
+      "root": "/gpfs/kjhan/LagForce/Codex_PL_sod_velocity_fit_early_resolution_20261017",
+      "result": {
+        "t": 0.003,
+        "rows": [
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+            "t": 0.003,
+            "step": 22,
+            "s": 0.5897698750878021,
+            "trial_sha256": "f9bccbe7fabe07a8901caa7e3277328defb90fc3d0bc5312bfc8f3845887a50d",
+            "max_mean_vy": 2.6110992765401027e-07,
+            "worst_site": [
+              0.5313772235642525,
+              0.9062499998019361
+            ],
+            "transverse_kinetic": 6.634625191042281e-16,
+            "min_transverse_second_moment": 5.69501924105642e-33
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod16",
+            "t": 0.003,
+            "step": 22,
+            "s": 0.312334530571663,
+            "trial_sha256": "f45306639f25fc39ce082b1f6910a815b66cfd808e87896e65b1c1e23cb9c837",
+            "max_mean_vy": 2.435961108238328e-07,
+            "worst_site": [
+              0.5313769634094834,
+              0.9062499998108723
+            ],
+            "transverse_kinetic": 1.1085060951785915e-15,
+            "min_transverse_second_moment": 3.0449453293036368e-33
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod32",
+            "t": 0.003,
+            "step": 42,
+            "s": 0.2541287512932614,
+            "trial_sha256": "b6165b1e8e0eda647c604b237226afb53216139785cfa43a2918ad1f7b7ae1f6",
+            "max_mean_vy": 3.058828872937551e-06,
+            "worst_site": [
+              0.5468480081820709,
+              0.9843749979463801
+            ],
+            "transverse_kinetic": 1.2678892830233537e-14,
+            "min_transverse_second_moment": 5.1445002981005204e-37
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod32",
+            "t": 0.003,
+            "step": 45,
+            "s": 0.7744254495799631,
+            "trial_sha256": "c6005138caaa48e9ba68c0c4dda94eb83be855cd959a9c48fc8f77ace6a1d369",
+            "max_mean_vy": 2.96911375608804e-06,
+            "worst_site": [
+              0.5468483278926927,
+              0.015625002000891376
+            ],
+            "transverse_kinetic": 2.3163009109540465e-14,
+            "min_transverse_second_moment": 5.963073171350762e-38
+          }
+        ],
+        "full_validation": false,
+        "scope": "Equal-time dense saved-state diagnostic, no evolution or modified states."
+      },
+      "conclusion": "Small maximum-mean-velocity improvement but transverse kinetic energy increases; no demonstrated spatial symmetry convergence."
+    }
+  },
+  "split_3d_spatial_comparison": {
+    "root": "/gpfs/kjhan/LagForce/Codex_PB_3d_spatial_fields_20261017",
+    "session": 56671,
+    "t": 0.002,
+    "resolutions": [
+      6,
+      8
+    ],
+    "status": "completed",
+    "scope": "Saved first endpoints with original masses at equal physical time.",
+    "result": {
+      "t": 0.002,
+      "rows": [
+        {
+          "n": 6,
+          "dt": 0.002,
+          "input_sha256": "717c2133bd97538761f135757832f0af09f6a3b4a661f010bf8010753015d8bc",
+          "configuration": {
+            "n": 6,
+            "dt": 0.002,
+            "end": 0.02,
+            "amplitude": 0.3,
+            "pressure_model": "quadratic",
+            "velocity_model": "affine",
+            "face_integration": "split",
+            "face_order": 4
+          },
+          "initial_fields": [
+            {
+              "order": 8,
+              "density_L1": 2.3489580363276732e-12,
+              "velocity_L1": 0.03769623184200729,
+              "pressure_L1": 0.045330454237999786,
+              "velocity_reference_relative_L1": 0.22950014140572655,
+              "min_density": 0.9999999999455766,
+              "min_pressure": 0.937942752350776,
+              "max_vertical_velocity_sampled": 0.0
+            },
+            {
+              "order": 12,
+              "density_L1": 2.3475331616999104e-12,
+              "velocity_L1": 0.037705605433909536,
+              "pressure_L1": 0.0453565844624011,
+              "velocity_reference_relative_L1": 0.22955734074920298,
+              "min_density": 0.9999999999442417,
+              "min_pressure": 0.9378262576784238,
+              "max_vertical_velocity_sampled": 0.0
+            }
+          ],
+          "evolved_fields": [
+            {
+              "order": 8,
+              "density_L1": 0.0004730718721646028,
+              "velocity_L1": 0.03813973707683384,
+              "pressure_L1": 0.04605551480814594,
+              "velocity_reference_relative_L1": 0.2322002656774435,
+              "min_density": 0.9920471198847804,
+              "min_pressure": 0.9375064866619784,
+              "max_vertical_velocity_sampled": 0.0003026958048629783
+            },
+            {
+              "order": 12,
+              "density_L1": 0.00047303725837808275,
+              "velocity_L1": 0.0381493750391039,
+              "pressure_L1": 0.046082011235215686,
+              "velocity_reference_relative_L1": 0.2322590759936045,
+              "min_density": 0.9918824429573616,
+              "min_pressure": 0.9373883411392697,
+              "max_vertical_velocity_sampled": 0.00030751068666358926
+            }
+          ]
+        },
+        {
+          "n": 8,
+          "dt": 0.002,
+          "input_sha256": "461ac557ca800721cc458c6374123fc8f58ca4cd8c4fd3b3d5304cec57894bb4",
+          "configuration": {
+            "n": 8,
+            "dt": 0.002,
+            "end": 0.02,
+            "amplitude": 0.3,
+            "pressure_model": "quadratic",
+            "velocity_model": "affine",
+            "face_integration": "split",
+            "face_order": 4
+          },
+          "initial_fields": [
+            {
+              "order": 8,
+              "density_L1": 5.784390368554297e-12,
+              "velocity_L1": 0.021916827936130076,
+              "pressure_L1": 0.020437530718755054,
+              "velocity_reference_relative_L1": 0.13343288453207156,
+              "min_density": 0.9999999998776867,
+              "min_pressure": 0.9152666917003729,
+              "max_vertical_velocity_sampled": 0.0
+            },
+            {
+              "order": 12,
+              "density_L1": 5.7836722289239075e-12,
+              "velocity_L1": 0.021919117242597198,
+              "pressure_L1": 0.020442143484262213,
+              "velocity_reference_relative_L1": 0.13344684317391795,
+              "min_density": 0.9999999998712651,
+              "min_pressure": 0.9151718882150426,
+              "max_vertical_velocity_sampled": 0.0
+            }
+          ],
+          "evolved_fields": [
+            {
+              "order": 8,
+              "density_L1": 0.0003438244884226062,
+              "velocity_L1": 0.022062239412114132,
+              "pressure_L1": 0.02082333731262043,
+              "velocity_reference_relative_L1": 0.1343181704065605,
+              "min_density": 0.9925066449825846,
+              "min_pressure": 0.9151549396902335,
+              "max_vertical_velocity_sampled": 0.00040145867098196556
+            },
+            {
+              "order": 12,
+              "density_L1": 0.00034381572214753955,
+              "velocity_L1": 0.02206575086798555,
+              "pressure_L1": 0.02082598765035091,
+              "velocity_reference_relative_L1": 0.13433956995397614,
+              "min_density": 0.9923496467721236,
+              "min_pressure": 0.9150623521592232,
+              "max_vertical_velocity_sampled": 0.0004055818806365011
+            }
+          ]
+        }
+      ],
+      "full_validation": false,
+      "scope": "Equal-time saved-endpoint spatial comparison; no evolution or cross-mesh array subtraction."
+    }
+  },
+  "equal_time_3d_mass_refinement": {
+    "root": "/gpfs/kjhan/LagForce/Codex_PE_3d_equal_time_mass_20261017",
+    "result": {
+      "rows": [
+        {
+          "t": 0.002,
+          "coarse": {
+            "t": 0.002,
+            "steps": 1,
+            "absolute_mass": 2.443164776371481e-07,
+            "signed_mass": 2.2512958096887738e-07,
+            "nested_difference": 3.728855485943287e-09
+          },
+          "fine": {
+            "t": 0.002,
+            "steps": 2,
+            "absolute_mass": 6.059613566487908e-08,
+            "signed_mass": 5.573797641006581e-08,
+            "nested_difference": 1.1571763822854762e-09
+          },
+          "absolute_mass_ratio": 4.031882148200278
+        },
+        {
+          "t": 0.004,
+          "coarse": {
+            "t": 0.004,
+            "steps": 2,
+            "absolute_mass": 4.711381806747036e-07,
+            "signed_mass": 4.5102069639072863e-07,
+            "nested_difference": 3.729298686182902e-09
+          },
+          "fine": {
+            "t": 0.004,
+            "steps": 4,
+            "absolute_mass": 1.1681249571894461e-07,
+            "signed_mass": 1.1261407254188237e-07,
+            "nested_difference": 1.1583462731301722e-09
+          },
+          "absolute_mass_ratio": 4.033285803671897
+        },
+        {
+          "t": 0.006,
+          "coarse": {
+            "t": 0.006,
+            "steps": 3,
+            "absolute_mass": 6.91521281720332e-07,
+            "signed_mass": 6.870421390809171e-07,
+            "nested_difference": 3.729629647506979e-09
+          },
+          "fine": {
+            "t": 0.006,
+            "steps": 6,
+            "absolute_mass": 1.7204136813035573e-07,
+            "signed_mass": 1.711940240080509e-07,
+            "nested_difference": 1.1583961054984735e-09
+          },
+          "absolute_mass_ratio": 4.019505827205271
+        }
+      ],
+      "full_validation": false,
+      "scope": "Equal-time cached mass-path estimates; physical-field accuracy separate."
+    }
+  },
+  "split_3d_n6_completed": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6",
+    "result": {
+      "completed": true,
+      "n": 6,
+      "t": 0.02,
+      "dt": 0.002,
+      "amplitude": 0.3,
+      "initial": [
+        {
+          "order": 8,
+          "density_L1": 2.3489580363276732e-12,
+          "velocity_L1": 0.03769623184200729,
+          "pressure_L1": 0.045330454237999786,
+          "velocity_reference_relative_L1": 0.22950014140572655,
+          "min_density": 0.9999999999455766,
+          "min_pressure": 0.937942752350776,
+          "max_vertical_velocity_sampled": 0.0
+        },
+        {
+          "order": 12,
+          "density_L1": 2.3475331616999104e-12,
+          "velocity_L1": 0.037705605433909536,
+          "pressure_L1": 0.0453565844624011,
+          "velocity_reference_relative_L1": 0.22955734074920298,
+          "min_density": 0.9999999999442417,
+          "min_pressure": 0.9378262576784238,
+          "max_vertical_velocity_sampled": 0.0
+        }
+      ],
+      "final": [
+        {
+          "order": 8,
+          "density_L1": 0.004549700149634603,
+          "velocity_L1": 0.042639454463012864,
+          "pressure_L1": 0.05554757510741543,
+          "velocity_reference_relative_L1": 0.2595952211746123,
+          "min_density": 0.9306086271978716,
+          "min_pressure": 0.9344267965138752,
+          "max_vertical_velocity_sampled": 0.0025354999542732464
+        },
+        {
+          "order": 12,
+          "density_L1": 0.004549496679576612,
+          "velocity_L1": 0.04264257117553221,
+          "pressure_L1": 0.055557248670710345,
+          "velocity_reference_relative_L1": 0.25961432133522927,
+          "min_density": 0.9292316172711171,
+          "min_pressure": 0.934296223483202,
+          "max_vertical_velocity_sampled": 0.002574592692622564
+        }
+      ],
+      "physical_goal": 0.05,
+      "physical_passed": false,
+      "mass_exact": true,
+      "stage_mass_peak": 1.7732344902049928e-13,
+      "energy_ledger_error": 0.0,
+      "dense_records_saved": 10,
+      "dense_path_certified": false,
+      "seconds": 5439.038084194064
+    },
+    "status": "Evolution and full interval path audit completed; physical pressure L1 failed, full 3D validation incomplete.",
+    "final_audit_session": 72933,
+    "final_independent_path": {
+      "t": 0.02,
+      "target": 0.02,
+      "steps": 10,
+      "covers_target": true,
+      "captured_checkpoint_sha256": "18e6f81a6aaade72f32a3d682122e3af0ae86045380cbb9a41a0d434bbef65c2",
+      "max_absolute_relative_mass": 2.0760992592248604e-06,
+      "max_signed_relative_mass": 2.0642312545186393e-06,
+      "max_prefix_signed_relative_mass": 2.0642312545186393e-06,
+      "summed_nested_quadrature_difference": 3.729855095958612e-09,
+      "duration_scaled_peak_rate": 9.156319815621938e-06,
+      "maximum_generator_path_defect": 1.724891930296457e-05,
+      "full_validation": false,
+      "note": "Nested numerical quadrature estimates, not continuum enclosures; physical errors and other gates remain separate."
+    }
+  },
+  "canonical_kepler_initialization": {
+    "validation_root": "/gpfs/kjhan/LagForce/Codex_PJ_kepler_initial_cache_validation_20261017",
+    "status": "official192 geometry completed; physical moment chunks accumulating",
+    "session": 1521,
+    "official_n": 192,
+    "scope": "Initial physical-moment integration only; density reconstruction and100-orbit evolution remain separate.",
+    "features": [
+      "Preserve completed cell chunks across resume",
+      "Validate source manifest and site identity",
+      "Independent16/24 physical moment quadrature comparison",
+      "Reference potential diagnostic distinct from evolved potential moments"
+    ],
+    "validation": {
+      "cells": 246,
+      "resume_matches_direct_exactly": true,
+      "first_chunk_preserved": true,
+      "full_validation": false
+    },
+    "official_root": "/gpfs/kjhan/LagForce/Codex_PK_canonical192_initial_20261017/n192",
+    "official_session": 35559,
+    "reverse_status": "493 passed",
+    "observed_completed_cells_at_least": 768,
+    "total_cells": 36864
+  },
+  "sod_mass_root_sensitivity": {
+    "root": "/gpfs/kjhan/LagForce/Codex_PM_sod_mass_root_sensitivity_20261017",
+    "result": {
+      "t": 0.00038406982010044747,
+      "source_sha256": "d35d1545bc3447fab031101d2bdc74cfb3118c64043f38de64c01c8d807a8217",
+      "rows": [
+        {
+          "tolerance": 2e-13,
+          "mass_residual": 3.966306221773391e-19,
+          "iterations": [
+            12
+          ],
+          "max_transverse_acceleration": 1.0812175723543964e-05,
+          "transverse_kinetic_rate": 7.950311740601968e-17,
+          "residual_covariance_y_rate": 4.4796239603058165e-21,
+          "incoming_y_source": 4.479681696522476e-21
+        },
+        {
+          "tolerance": 2e-15,
+          "mass_residual": 3.966306221773391e-19,
+          "iterations": [
+            12
+          ],
+          "max_transverse_acceleration": 1.0812175723543964e-05,
+          "transverse_kinetic_rate": 7.950311740601968e-17,
+          "residual_covariance_y_rate": 4.4796239603058165e-21,
+          "incoming_y_source": 4.479681696522476e-21
+        }
+      ],
+      "max_transverse_acceleration_change": 0.0,
+      "max_weight_rate_change": 0.0,
+      "full_validation": false,
+      "scope": "Read-only saved-state RHS sensitivity; no time evolution or state repair."
+    },
+    "conclusion": "Tightening2e-13 to2e-15 changes neither RHS nor weight rates at this saved state; both achieve3.97e-19 residual. This local test does not exclude accumulated sensitivity elsewhere."
   }
 }

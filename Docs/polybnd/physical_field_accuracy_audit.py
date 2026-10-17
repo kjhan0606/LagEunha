@@ -25,8 +25,10 @@ def environment(cfg):
     geometry=cfg.get('power_cell_evaluation_backend','active')
     if geometry not in ('active','seeded_active','exhaustive'):raise ValueError('unsupported audit power cell backend')
     reflection=cfg.get('pressure_reflection_y','')
+    velocity_fit=cfg.get('velocity_fit','radial_fixed_mean')
+    if velocity_fit not in ('radial_fixed_mean','tensor_free_mean','tensor_free_affine'):raise ValueError('unsupported audit velocity fit')
     return dict(LAGFORCE_DENSITY_QUADRATURE_ORDER=str(density_order),LAGFORCE_PRESSURE_FIT=cfg.get('pressure_fit','radial_fixed_mean'),LAGFORCE_PRESSURE_REFLECT_Y=reflection,LAGFORCE_QUADRATIC_VELOCITY='0' if name=='affine' else '1',LAGFORCE_QUADRATIC_BUDGET=modes.get(name,'dominant'),
-        LAGFORCE_QUADRATIC_PRESSURE='0' if pressure=='linear' else '1',LAGFORCE_PRESSURE_DEGREE=str(degrees[pressure]),
+        LAGFORCE_VELOCITY_FIT=velocity_fit,LAGFORCE_QUADRATIC_PRESSURE='0' if pressure=='linear' else '1',LAGFORCE_PRESSURE_DEGREE=str(degrees[pressure]),
         LAGFORCE_FAST_PRESSURE_POLYNOMIAL='1' if cfg.get('pressure_evaluation_backend','monomial')=='horner' else '0',
         LAGFORCE_ACTIVE_POWER_CELLS='0' if geometry=='exhaustive' else '1',LAGFORCE_SEEDED_POWER_CELLS='1' if geometry=='seeded_active' else '0',
         LAGFORCE_VECTOR_SMOOTH_PATH='1' if cfg.get('mass_path_evaluation_backend','scalar')=='cell_batched' else '0',LAGFORCE_VECTOR_MOMENT_FLUX='1' if cfg.get('moment_flux_evaluation_backend','scalar')=='batched' else '0',

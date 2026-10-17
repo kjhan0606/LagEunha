@@ -9,6 +9,31 @@ import numpy as np
 import os
 
 
+def fit_mode():
+    name=os.environ.get('LAGFORCE_VELOCITY_FIT','radial_fixed_mean')
+    if name not in ('radial_fixed_mean','tensor_free_mean','tensor_free_affine'):
+        raise ValueError('unknown velocity fit')
+    return name
+
+
+def curvature_fit(design,target,weight,mode,zmean=None):
+    if mode=='radial_fixed_mean':
+        return np.linalg.solve(design.T@(weight[:,None]*design)+1e-10*np.eye(3),
+            design.T@(weight[:,None]*target))
+    if mode not in ('tensor_free_mean','tensor_free_affine'):raise ValueError('unknown velocity fit')
+    nuisance=np.ones((len(design),1))
+    if mode=='tensor_free_affine':
+        if zmean is None or np.shape(zmean)!=(len(design),2):raise ValueError('free affine fit requires neighbor coordinates')
+        nuisance=np.column_stack([nuisance,zmean])
+    matrix=np.sqrt(weight)[:,None]*np.column_stack([nuisance,design]);columns=matrix.shape[1]
+    augmented=np.vstack([matrix,np.sqrt(1e-10)*np.eye(columns)])
+    rhs=np.vstack([np.sqrt(weight)[:,None]*target,np.zeros((columns,2))])
+    # Discard fitted constant/linear nuisance terms. The reconstructed
+    # affine part remains prescribed by stored p,D; only curvature uses
+    # this fit through the existing density-orthogonal basis.
+    return np.linalg.lstsq(augmented,rhs,rcond=None)[0][nuisance.shape[1]:]
+
+
 def closure_name():
     mode=os.environ.get('LAGFORCE_QUADRATIC_BUDGET','dominant')
     if mode=='dominant':return 'quadratic_budget_continuous'
@@ -123,6 +148,7 @@ def covariance_budget(L,mass,candidate,gram_factor):
 
 def prepare(states,cells,edges,mass,factors):
     N=len(states)
+    fit_name=fit_mode()
     centers=np.asarray([s['c'] for s in states]);means=np.asarray([s['v'] for s in states])
     second=np.asarray([s['raw'][3:7].reshape(2,2)/m for s,m in zip(states,mass)])
     active=rank_deficient=0;split_error=orthogonal_error=0.;fractions=[];prepared=[]
@@ -132,6 +158,9 @@ def prepare(states,cells,edges,mass,factors):
         center=s['c'];scale=np.sqrt(s['density'].area)
         radius=np.linalg.norm(centers-center,axis=1)/(3*scale)
         ids=np.flatnonzero((radius<1)&(np.arange(N)!=i))
+        if fit_name.startswith('tensor_free_'):
+            from pressure_fit_stencil import tensor_stencil
+            ids,tensor_weight=tensor_stencil(centers,center,scale,3.)
         if len(ids)<3:rank_deficient+=1
         points=s['density'].points;prob=s['density'].weighted_mass/m
         z=(points-center)/scale;X=np.column_stack([np.ones(len(z)),z])
@@ -148,8 +177,8 @@ def prepare(states,cells,edges,mass,factors):
         # Wendland C2 weights vanish continuously at the patch boundary.
         # A fixed positive ridge also makes deficient boundary fits unique.
         r=radius[ids];weight=(1-r)**4*(1+4*r)
-        normal=design.T@(weight[:,None]*design)+1e-10*np.eye(3)
-        fit=np.linalg.solve(normal,design.T@(weight[:,None]*target))
+        if fit_name.startswith('tensor_free_'):weight=tensor_weight
+        fit=curvature_fit(design,target,weight,fit_name,zmean=zmean)
         orthogonal_error=max(orthogonal_error,float(np.max(abs(X.T@(prob[:,None]*psi)))))
         prepared.append((i,L,m,R,norm,center,scale,projection,fit.T,gram_factor))
     batched=budget_backend_name()=='batched'
@@ -168,6 +197,6 @@ def prepare(states,cells,edges,mass,factors):
         fractions.append(float(np.trace(resolved)/np.trace(R)))
     if split_error>1e-9 or orthogonal_error>1e-10:
         raise RuntimeError('quadratic velocity moment budget failed: '+str(dict(split_error=split_error,orthogonal_error=orthogonal_error)))
-    return dict(velocity_quadratic_cells=active,velocity_quadratic_rank_deficient=rank_deficient,
+    return dict(velocity_fit=fit_name,velocity_quadratic_cells=active,velocity_quadratic_rank_deficient=rank_deficient,
         velocity_quadratic_covariance_split_error=split_error,velocity_quadratic_orthogonality_error=orthogonal_error,
         velocity_quadratic_max_resolved_fraction=max(fractions,default=0.),velocity_quadratic_budget_backend='batched' if batched else 'scalar')

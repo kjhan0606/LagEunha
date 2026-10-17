@@ -1068,3 +1068,299 @@ OS reads preserved NSstep2/NXstep4 endpoints at identical t=.004, verifies
 original mass arrays match, and computes physical reference scores at volume
 orders8/12 for both. It also records raw/site differences and source hashes.
 This comparison reuses saved endpoints without evolving either trajectory.
+
+### 12:09 Independent midpoint path results and completed Sod32 reflection comparison
+
+OQ both saved midpoint paths completed (exit0). At dt=.00025/.000125,
+independently integrated potential-boundary energy residuals are
+-1.3010934523e-12/-1.6549740554e-13. Absolute relative mass-path defects are
+9.284028626e-9/1.160371925e-9. This approximately eightfold local reduction
+supports the time refinement result; it is not a long-time convergence proof.
+OT actual n32 continuation is live (PID1850161 observed12:07:44), seeded from
+the already completed .01025 trial and its cellwise path accumulators, with
+original source .01 and full target .02. No first-step replay or budget reset.
+
+OS completed equal-time t=.004 n6 comparison. Volume-order12 density/v/P
+amplitude-normalized L1 values for dt=.002 are .00094074635/.0386212833/
+.0469039501; dt=.001 gives .00094075952/.0386214675/.0469034895.
+Velocity reference-relative L1 remains .235132/.235133. Time refinement does
+not materially improve this spatial reconstruction error; OR n8 remains
+needed. NS independent path audit covers .012 (6steps), absolute relative
+mass1.2974242e-6; NX covers .004 (4steps),1.1681250e-7. Different-time values
+are not a temporal convergence ratio. Neither covers target .02 yet.
+
+MH n32 completed T=.02,388steps,37rejections,exit0 at12:07:46. Existing
+numerical/physical L1 gates passed; density/v/P field errors are
+.01073227185/.01761985600/.01243192199. OU read-only saved-endpoint comparison
+shows original P2 max mean |vy|=.21259948 versus reflected .0014733383;
+transverse kinetic1.3304255e-5 versus3.0477577e-7. Reflected internal transverse
+RMS .01231119 remains. Original n16/n32 max mean |vy|=.06197/.21260 worsens
+with resolution, while reflected .000773/.001473 also fails a monotone
+pointwise decrease: integrated L1 passage alone does not establish planar
+invariance. Tensor-pressure n32 comparison remains necessary. No acceptance
+tolerances were changed. Long shock .15, ten vortex periods, full nonlinear3D
+and canonical Kepler192²/100orbits all remain incomplete.
+
+
+### 12:11 Initial 3D representation and new independent path coverage
+
+Initial order12 reference-relative velocity errors are .22955734 (n6) and
+.13344684 (n8), already present before any evolution. Amplitude-normalized
+velocity errors .03770561/.02191912 imply a two-resolution slope about1.89.
+This diagnoses a substantial initial affine-reconstruction contribution, not
+a proven evolved convergence order. Initial pressure errors .04535658/.02044214
+also decrease. The evolved t=.004 n6 velocity error .23513 includes this
+initial error; attributing all of it to time integration would be incorrect.
+
+NS/NX independent order6 dense-path audits resumed after previous exit0,
+reusing completed node caches (sessions94176/67255, execution_resume_1210.txt).
+NS fluid checkpoint .014,7steps and NX .006,6steps were observed beforehand.
+The MV long-shock calculation reached .06324772,1397steps and thus passed the
+prior P4 failure time .06261795; this is progress, not completion of T=.15.
+
+
+### 12:13 First additional enriched midpoint step accepted
+
+OT reached t=.0105 with two accepted steps; original first-step state and
+accumulators were retained. Cumulative absolute relative mass1.85288243e-8,
+nested quadrature difference2.57746261e-10, full-target-scaled rate7.35994e-7,
+latest generator defect4.36049e-7, energy/initialthermal3.10126e-9 all satisfy
+the unchanged auxiliary continuation gates. These do not prove field accuracy.
+OV captures this checkpoint byte-for-byte and evaluates density errors in
+fixed radial bands [0,.45,.55,1.95,2.05,2.5], at independent orders16/24.
+All bands contribute to the full-domain norm. This localizes density errors
+near both jumps versus the bulk disk without masking them from acceptance.
+MV shock t=.0643550,1429steps; JU vortex t=.1510875,976steps. MK tensor Sod32
+t=.0193792,373steps. Full four-part validation remains incomplete.
+
+### 12:16 Radial density comparison completed
+
+OV evaluated the unchanged captured t=.01/.0105 enriched states at orders16/24.
+All five radial bands sum to the analytic area pi*6.25 and reference mass
+pi*3.775 within1.1e-14; full-domain L1 equals the sum of band absolute errors
+normalized by total reference mass. This checks coverage and normalization,
+not the numerical solution's pointwise accuracy.
+
+Order24 full-domain density L1 .03232730684 -> .03233824175. The two jump bands
+(.45,.55) and(1.95,2.05) contain83.27% of the evolved absolute density error.
+Band-local relative L1 errors at .0105: inner background3.084%, inner jump48.04%,
+disk interior .4886%, outer jump38.20%, outer background15.89%.
+The outer minimum density8.94156e-5 is far below physical background.01.
+The starting state already has minimum8.92696e-5 and outer-background L1
+15.8865%; the new two-step midpoint evolution does not originate that error.
+It also does not repair it. Order16/24 full-domain L1 differ1.0052e-5; sampled
+extrema depend on quadrature points and are not rigorous continuum bounds.
+No band was omitted from acceptance or the full-domain norm.
+
+12:17 MV timeout124 confirmed at12:16:31 and original PID1715438 absent.
+All386 immutable source manifest files matched. Resumed t=.0653657690,
+1469steps with checkpoint and pending caches preserved, session65744,
+execution_resume_1217.txt/run_resume_1217.log/resume_1217_receipt.json.
+This resumes the original T=.15 budgeted run, without restarting from t0.
+
+
+### Tensor Sod32 completed; remaining wall-localized transverse growth
+
+MK/sod32 completed T=.02,390steps,exit0 at12:18:20. Existing numerical and
+physical gates passed: density/v/P field L1=.010708526/.017752911/.012432669,
+absolute relative mass-path defect2.94221666e-6. OX read-only endpoint audit
+shows max mean |vy| increases n16->n32 from1.73963e-4 to8.73399e-4 and
+transverse kinetic1.31568e-10 to1.65691e-9. These remain far below uncorrected
+P2 but do not establish pointwise symmetry convergence.
+
+OX sampled accepted archives1,10,50,100,200,300,390 with original masses,
+accepted commit states and hashes verified. First-step max |vy|2.64e-19;
+step10 1.10e-9; step50 6.78e-6; final8.73e-4. Fromstep50 onward the worst
+cell17 is at y~.015625 (bottom wall), x~.547. Final maximum transverse
+acceleration~.3084. This localizes growth but does not yet distinguish
+reconstruction/boundary/flux/time error. No evolved state was repaired.
+
+OW launches identical radial density diagnostics on original n32/n64 saved
+states at equal physical t=.01, orders16/24, with unchanged original closure
+configurations. No new trajectories or enriched/original mixing. Full physical
+validation remains incomplete; new comparisons do not change acceptance goals.
+
+### Velocity curvature diagnosis and explicit tensor fit alternative
+
+OY saved-step1 has longitudinal velocity's artificial transverse curvature
+4.93944e-8 while pressure curvature4.44e-16 and column pressure spread1.78e-15.
+Step10 velocity curvature2.06808e-5 precedes substantial later pressure/mean-vy
+error. This identifies a reconstruction defect, without claiming that it is
+the only source of subsequent transverse growth.
+
+An explicit velocity_fit=tensor_free_mean option replaces the candidate fit
+with separable weights and a free intercept. The intercept is discarded; the
+same density-orthogonal basis and existing covariance budget retain stored
+m,p,D,Pi. Default radial_fixed_mean formula is bit-identical. No steering,
+state projection or modified mass is introduced. OZ targeted20 tests and all17
+existing velocity tests with the new mode passed. Full default regression
+is running. OZ same saved step1 transverse curvature falls to3.92395e-15;
+step10 to3.62245e-9; step50 to3.81827e-5. Existing evolved pressure errors are
+unchanged in this read-only comparison. PA n16/n32 independent controls are
+prepared from original byte-verified t0 arrays; launch awaits full regression.
+
+OW original n32/n64 same-time radial audit completed at orders16/24. Order24
+full density L1 .03232727 -> .02277358. Outer-background band relative L1
+.158868 -> .00147766 improves strongly, but inner-background .0298436 ->
+.100127 worsens; min inner density at n64 is .000115958 versus physical .01.
+Disk-interior error .00487661 -> .00427214 decreases only slightly. All bands
+still contribute to the full norm. Added polar splits change quadrature of
+absolute error compared with earlier unsplit radial scorer; these are sampled
+numerical estimates, not uniform convergence or continuum error bounds.
+
+OZ491 normal regressions passed. PA independent n16/n32 controls launched
+(sessions81887/37229) with original t0 physical arrays and explicit new
+velocity_fit setting. Reverse-order suite is running (48629). Earlier MK/MV
+trajectories continue unchanged; PA is a distinct model comparison, not their
+restart. Long shock/long vortex/full3D/canonical Kepler remain incomplete.
+
+
+### 12:27 3D spatial comparison and refreshed dense-path audits
+
+OZ491 reverse-order regressions also passed. PA n16/n32 accepted their first
+steps with the explicitly selected tensor velocity fit; evolution comparisons
+remain pending. OT enriched midpoint Kepler reached .01075,3accepted steps:
+cumulative absolute relative mass2.77263e-8, energy/initialthermal4.66256e-9.
+
+NS fluid t=.018,9steps; NX t=.007,7steps; OR n8 firststep t=.002 available.
+Previous NS/NX audit exit0 receipts confirmed before resuming. Independent
+order6 audits now capture these prefixes, reuse all completed node caches,
+and add the first OR n8 path (sessions60502/52849/48201). PB compares physical
+fields of original NS/OR firststep endpoints at equal t=.002, verifying each
+mesh's original masses separately. Cross-resolution arrays are not subtracted.
+Full four-part physics validation is still incomplete.
+
+PB completed. At equal t=.002, order12 n6->n8 density/v/P amplitude-normalized
+L1 .000473037/.038149375/.046082011 -> .000343816/.022065751/.020825988.
+Velocity reference-relative L1 .232259 -> .134340 decreases. Sampled maximum
+vertical velocity .000307511 -> .000405582 increases, so this comparison
+supports early integral-error reduction but not uniform transverse symmetry
+convergence. First-step dense-path n8 audit remains separate and running.
+
+
+### 12:29 Equal-time evolved symmetry does not yet improve
+
+PC initial comparison failed safely because its binary selector treated
+accepted report t as a start time; report t is the endpoint while record t
+is the start. PD corrects this selection and adds a passing regression for
+unequal step widths and exact endpoints. No simulation states were changed.
+
+At identical t=.004 using preserved accepted longdouble dense extensions:
+MK n16 max mean |vy|6.47690318e-7, transverse kinetic4.13372e-15; PA tensor
+velocity n16 max mean |vy|6.48134085e-7, transverse kinetic7.88454e-15.
+There is no demonstrated evolved-symmetry benefit at this time despite the
+large reduction of reconstructed transverse curvature on earlier saved states.
+The new mode remains explicit and experimental; default physics is unchanged.
+Both full short comparisons continue. Additional sources or amplification of
+transverse error remain unresolved. This result is evidence against treating
+the candidate fit alone as a completed symmetry repair.
+
+
+### 12:32 Reused 3D path convergence evidence and long-vortex field audit
+
+PE verifies identical original n6 physical arrays, audit identities and exact
+saved-record hashes, then accumulates cached per-cell absolute/signed fluxes
+at identical times. Coarse dt=.002 versus fine dt=.001 absolute mass ratios
+at t=.002/.004/.006 are4.03188/4.03329/4.01951. At .006 defects are
+6.91521e-7/1.72041e-7, nested differences3.72963e-9/1.15840e-9. This supports
+early second-order accumulated path-error reduction, not full-interval or
+physical-field completion. No previous quadrature or fluid step was replayed.
+
+PF independently scores captured JU t=.1558767064,1026steps against the
+stationary reference using its immutable source configuration. Density/v/P
+normalized field L1=.001301275/.000651476/.000359208; minimum density.942644,
+minimum pressure.685133. Original mass array matches exactly, reference
+quadrature difference1.94e-11 and reference total-mass error6.66e-16.
+Ten central vortex periods and historical full-duration path accounting remain
+unverified; this is an intermediate field audit only.
+
+
+### 12:34 Nonlinear split-face n6 evolution completed; pressure gate failed
+
+NS reached T=.02,10accepted steps. Order12 density/v/P normalized L1:
+.004549497/.042642571/.055557249. Pressure exceeds the unchanged .05 goal,
+so physical_passed=false. Original mass array exact, max stage mass flux
+1.77323e-13, energy ledger error0. Reference-relative velocity error.259614;
+maximum sampled vertical velocity.00257459. Completion of evolution is not
+completion or passage of the full 3D validation.
+
+Independent NS order6 audit completed through .018 with absolute relative
+mass1.90362e-6; after its exit0, finalstep audit started (72933) reusing nodes
+for all9earlier steps. OR n8 first-path audit completed at t=.002: absolute
+relative mass3.154845e-7, quadrature difference8.86216e-10, normalized peak
+rate9.69050e-6, generator path defect1.48475e-5. This is a first-step prefix,
+not coverage of .02. Ongoing NX time refinement and OR spatial refinement
+remain required. All failed/narrow results are retained with their scope.
+
+
+### 12:36 Long-shock refinement and tensor-velocity n16 endpoint
+
+PG captured MV t=.07091958,1666steps: density/v/P field L1
+.02747232/.04784140/.02471261. Velocity approaches .05 target; original mass
+array exact. Mean transverse maximum.00718606, transverse kinetic1.54175e-7.
+This is an intermediate score, not completion of .15. PH starts the independent
+n32 resolution control with whole T=.15 budgets from t0 and established
+pressure-tensor/radial-velocity physics from MV, original n32 physical IC.
+All prior short trajectories remain preserved. Session29011, timeout4h.
+
+PA n16 completed .02 at12:35:06,127steps,exit0, numerical and L1 gates passed.
+Density/v/P errors .01320747/.02938712/.02228145; absolute relative path mass
+2.80088e-6. PI compares actual endpoints: max mean |vy| .0001739633 ->
+.0001018828 (41.4% lower), transverse kinetic1.31568e-10 ->7.37754e-11
+(43.9% lower). This later-time modest benefit contrasts with the nearly equal
+.004 diagnostic, but does not establish exact planar invariance or improved
+spatial convergence. PA n32 remains running; default model stays unchanged.
+
+NS final independent order6 audit completed T=.02,10steps,covers_target=true.
+Absolute relative mass2.07609926e-6, signed2.06423125e-6, nested quadrature
+difference3.72985510e-9, duration-scaled peak9.15631982e-6, generator path
+defect1.72489193e-5. All10actual saved paths are covered; this does not
+reverse the pressure L1 failure or establish continuum enclosures.
+
+
+### 12:42 Canonical192 initial integration launched with resumable chunks
+
+Added initialize_kepler_cached.py: immutable source/site identity, cached
+geometry and physical moment integrations in32-cell chunks, independent
+order16/24 initial quadrature check, and no overwrite of different initial
+states. It performs no fluid evolution. Reference potential integrals are
+stored under reference_potential_moments, distinct from evolved enriched U.
+
+PJ cache unit test passed. Actual n16(246cells) stop after32/resume preserves
+the first chunk and yields bit-identical mass/state/factors to a direct
+unchunked integration of all cells.493 normal regressions passed; reverse
+running. PK starts official n192 initial integration with the unchanged ring
+layout and physical fields, source manifest verified, one CPU thread on
+lageunha, timeout4h, session35559. Completed chunks survive timeouts. Density
+reconstruction gates, time evolution, and100orbits are not certified by this
+initial-only calculation. All original completion requirements remain active.
+
+
+### 12:46 Early transverse resolution comparison remains inconclusive
+
+PJ493 reverse regressions passed. PK official192 process1896632 was verified
+live during initial geometry construction; no initial integration completion
+claim is made. PL uses preserved dense trajectories at exactly t=.003:
+old/new velocity-fit n16 max mean |vy|2.61110e-7/2.43596e-7; n32
+3.05883e-6/2.96911e-6. Transverse kinetic old/new n16
+6.63463e-16/1.10851e-15; n32 1.26789e-14/2.31630e-14.
+The small maximum-mean improvement coexists with larger transverse kinetic
+energy, and the finer mesh has larger symmetry error. The optional fit is not
+a verified symmetry repair. Same physical time, archived-record hashes, and
+original mass arrays are checked; no fluid evolution was replayed.
+
+
+### 12:48 Saved-state mass-root tolerance sensitivity
+
+PM evaluates the same accepted MK/sod32 step10 endpoint t=.00038406982 with
+mass-root tolerances2e-13 and2e-15 in an isolated read-only process. Both
+converge in12iterations to3.96631e-19 residual; derivative and weight rates
+are identical. Maximum transverse acceleration remains1.08121757e-5,
+transverse kinetic rate7.95031e-17, residual-covariance y rate4.47962e-21.
+No physical state or production solver tolerance was changed. The root's
+stopping tolerance alone does not explain this instantaneous transverse force;
+this is not an exclusion of cumulative error at every earlier state.
+
+PK canonical192 geometry completed and began persisting32-cell integration
+chunks; at least768/36864 cells observed. Existing initial and control work
+is retained, and completed chunks will be reused on any required resume.
