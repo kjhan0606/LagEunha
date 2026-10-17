@@ -9,7 +9,7 @@ from moment_state_3d import decode,unpack,face_flux,ALPHA
 from euler_star_pressure import star
 
 
-def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,face_order=4,pressure_reconstruction='constant',audit_geometry_rates=None):
+def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,face_order=4,pressure_reconstruction='constant',audit_geometry_rates=None,face_integration='point'):
     x=np.asarray(sites);raw=np.asarray(raw);N=len(x);mass=raw[:,0]
     polys,faces,gdiag=geometry.build(x,weights,bounds,face_order)
     states=[decode(poly,r) for poly,r in zip(polys,raw)]
@@ -48,6 +48,37 @@ def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,fa
         gen=np.asarray(audit_geometry_rates[0]);prescribed_z=np.asarray(audit_geometry_rates[1])
         if gen.shape!=(N,3) or prescribed_z.shape!=(N,) or not np.isfinite(gen).all() or not np.isfinite(prescribed_z).all():raise ValueError('invalid 3D diagnostic geometry rates')
     boundary_velocity=(lambda point:np.zeros(3)) if boundary_velocity is None else boundary_velocity
+    if face_integration not in ('point','split'):raise ValueError('unknown face integration')
+    if face_integration=='split':
+        from split_face_mass_3d import solve as solve_split
+        from split_face_rules_3d import rule
+        if audit_geometry_rates is None:
+            split_z,split_diag=solve_split(geometry,x,weights,raw,factors,gen,order=face_order,bounds=bounds)
+        else:split_z=prescribed_z;split_diag=dict(iterations=0)
+        split_faces=[]
+        for face in faces:
+            i,j,n=face['i'],face['j'],face['normal']
+            if j<0:
+                if any(float(boundary_velocity(p)@n)!=0. for p in np.vstack([face['vertices'],face['points']])):
+                    raise ValueError('split face mode currently requires fixed reflecting walls')
+                def wall_speeds(points):
+                    mean=states[i]['v']+(points-states[i]['c'])@states[i]['B'].T
+                    samples=mean[:,None,:]+(ALPHA@factors[i].T/np.sqrt(mass[i]))[None,:,:]
+                    return samples@n
+                points,fw=rule(face['vertices'],n,wall_speeds,face_order)
+                split_faces.append(dict(face,points=points,weights=fw));continue
+            delta=x[j]-x[i];distance=np.linalg.norm(delta)
+            def speeds(points):
+                wn=(delta@gen[j]-(points-x[i])@(gen[j]-gen[i])+.5*(split_z[i]-split_z[j]))/distance
+                values=[]
+                for k in (i,j):
+                    mean=states[k]['v']+(points-states[k]['c'])@states[k]['B'].T
+                    samples=mean[:,None,:]+(ALPHA@factors[k].T/np.sqrt(mass[k]))[None,:,:]
+                    values.append(samples@n-wn[:,None])
+                return np.concatenate(values,axis=1)
+            points,fw=rule(face['vertices'],n,speeds,face_order)
+            split_faces.append(dict(face,points=points,weights=fw))
+        faces=split_faces
     records=[]
     for f in faces:
         i,j,n=f['i'],f['j'],f['normal'];d=np.linalg.norm(x[j]-x[i]) if j>=0 else 0.
@@ -71,7 +102,11 @@ def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,fa
                 deriv=rl/6*np.where(sl>0,1.,np.where(sl<0,0.,.5)).sum()+rr/6*np.where(sr<0,1.,np.where(sr>0,0.,.5)).sum()
                 c=scale*deriv/(2*d);jac[i,i]+=c;jac[j,j]+=c;jac[i,j]-=c;jac[j,i]-=c
         return residual,jac,values
-    if audit_geometry_rates is not None:
+    if face_integration=='split':
+        z=split_z;residual,_,values=evaluate(z);norm=max(abs(residual));iteration=split_diag['iterations']
+        if audit_geometry_rates is None and norm>=2e-13:
+            raise RuntimeError('split shared-face mass quadrature disagrees with root')
+    elif audit_geometry_rates is not None:
         z=prescribed_z;residual,_,values=evaluate(z);norm=max(abs(residual));iteration=0
     else:
         z=np.zeros(N)
@@ -102,4 +137,4 @@ def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,fa
         dr[i,1:4]+=p;dr[i,4:13]+=(D+D.T).ravel();dr[i,16:25]+=(Pi+PV*np.eye(3)).ravel()
         H[i]+=PV*np.eye(3);A=np.linalg.solve(s['S'],H[i]).T;a0=F[i]/m-A@s['c']
         dr[i,25:34]+=(np.outer(a0,p)+np.outer(p,a0)+A@D+D.T@A.T).ravel()
-    return dr,gen,z,dict(**gdiag,**pressure_diag,mass_flux=float(norm),ledger=ledger,weight_iterations=iteration,cov_linearization_factors=factors,cov_A=[-s['B'] for s in states],cov_K=K,cov_Qfactor=[np.concatenate(v,axis=1) if v else np.zeros((3,0)) for v in incoming],mass_rates=dr[:,0].copy(),mass_root_solved=audit_geometry_rates is None,generator_velocity_defect=float(np.max(abs(gen-material_gen))),pressure_model=pressure_reconstruction+'_exact_euler_star')
+    return dr,gen,z,dict(**gdiag,**pressure_diag,mass_flux=float(norm),ledger=ledger,weight_iterations=iteration,cov_linearization_factors=factors,cov_A=[-s['B'] for s in states],cov_K=K,cov_Qfactor=[np.concatenate(v,axis=1) if v else np.zeros((3,0)) for v in incoming],mass_rates=dr[:,0].copy(),mass_root_solved=audit_geometry_rates is None,generator_velocity_defect=float(np.max(abs(gen-material_gen))),pressure_model=pressure_reconstruction+'_exact_euler_star',face_integration=face_integration)

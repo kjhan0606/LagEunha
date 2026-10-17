@@ -47,7 +47,7 @@ def sample_record_file(path,expected_digest,mass,s):
     return sample_record(_record_cache,mass,s)
 
 
-def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4):
+def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4,frozen_mask=None,potential=None):
     a=np.asarray(state)[:-4].reshape(-1,20);mass=np.asarray(mass);N=len(mass)
     x=np.asarray(a[:,:2],dtype=float);weights=np.asarray(a[:,2],dtype=float)
     cells,edges=model.geometry(x,weights,t)
@@ -58,7 +58,13 @@ def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4):
         from quadratic_velocity_reconstruction import prepare,velocity_samples
         closure=prepare(states,cells,edges,mass,factors)
     gen,z=geometry_rates;material=np.asarray([model.velocity(s,x) for s,x in zip(states,x)])
-    if os.environ.get('LAGFORCE_VECTOR_SMOOTH_PATH','0')=='1':
+    if frozen_mask is not None:
+        frozen=np.asarray(frozen_mask,dtype=bool)
+        if frozen.shape!=(N,):raise ValueError('invalid frozen-cell mask')
+        if np.any(np.asarray(gen)[frozen]!=0) or np.any(np.asarray(z)[frozen]!=0):
+            raise ValueError('frozen geometry has nonzero prescribed rates')
+        material[frozen]=0.
+    if os.environ.get('LAGFORCE_VECTOR_SMOOTH_PATH','0')=='1' and potential is None:
         from vector_smooth_mass_path import evaluate
         flux=evaluate(states,edges,x,factors,mass,gen,z,order,model.boundary_velocity)
         return flux,dict(generator_defect=float(np.max(abs(gen-material))),
@@ -66,6 +72,8 @@ def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4):
             min_factor_R=min(float(np.linalg.eigvalsh(L@L.T).min()/m) for L,m in zip(factors,mass)),**closure)
     from kinetic_speed_smoothing import parameters,face_speed,split
     smoothing,smoothing_length=parameters()
+    active=np.ones(N,dtype=bool) if frozen_mask is None else ~np.asarray(frozen_mask,dtype=bool)
+    potential_exchange=0.
     g,w=np.polynomial.legendre.leggauss(order);g=(g+1)/2;w=w/2;residual=np.zeros(N)
     for i,j,start,end,n,length in edges:
         points=start+g[:,None]*(end-start)
@@ -90,6 +98,14 @@ def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4):
         else:flux=.25*(rl*np.maximum(sl,0.).sum(1)+rr*np.minimum(sr,0.).sum(1))
         value=float(length*(w@flux));residual[i]+=value
         if j>=0:residual[j]-=value
-    return -residual,dict(generator_defect=float(np.max(abs(gen-material))),
+        if potential is not None:
+            sign=-int(active[i])+(int(active[j]) if j>=0 else 0)
+            if sign:
+                phi=np.asarray(potential(points))
+                if phi.shape!=(len(points),) or not np.isfinite(phi).all():raise ValueError('invalid potential samples')
+                potential_exchange+=sign*float(length*(w@(flux*phi)))
+    diag=dict(generator_defect=float(np.max(abs(gen-material))),
         min_pressure=min(s['P'] for s in states),
         min_factor_R=min(float(np.linalg.eigvalsh(L@L.T).min()/m) for L,m in zip(factors,mass)),**closure)
+    if potential is not None:diag['active_potential_mass_exchange']=potential_exchange
+    return -residual,diag

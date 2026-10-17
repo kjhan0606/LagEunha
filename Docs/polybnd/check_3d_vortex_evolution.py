@@ -43,8 +43,9 @@ def score(geo,sites,weights,raw,amplitude):
     return rows
 
 
-def run(library,n,dt,end,amplitude):
+def run(library,n,dt,end,amplitude,face_integration='point',face_order=3):
     cfg=dict(n=n,dt=dt,end=end,amplitude=amplitude,pressure_model='quadratic',velocity_model='affine')
+    if face_integration!='point' or face_order!=3:cfg.update(face_integration=face_integration,face_order=face_order)
     if Path('configuration.json').exists():
         if json.loads(Path('configuration.json').read_text())!=cfg:raise ValueError('configuration mismatch')
     else:atomic('configuration.json',cfg)
@@ -72,7 +73,7 @@ def run(library,n,dt,end,amplitude):
             for k,v in dict(sites=sites,weights=weights,raw=raw,factors=L).items():np.testing.assert_array_equal(record[k],v)
             next_sites=endpoint['sites'];next_weights=endpoint['weights'];next_raw=endpoint['raw'];nextL=endpoint['factors'];increment=endpoint['ledger'];stage_mass=float(endpoint['stage_mass'])
         else:
-            next_sites,next_weights,next_raw,nextL,d=step(geo,t,sites,weights,raw,L,h,bounds,lambda p:np.zeros(3),pressure_reconstruction='quadratic',return_record=True)
+            next_sites,next_weights,next_raw,nextL,d=step(geo,t,sites,weights,raw,L,h,bounds,lambda p:np.zeros(3),pressure_reconstruction='quadratic',return_record=True,face_integration=face_integration,face_order=face_order)
             increment=d['ledger_increment'];stage_mass=d['stage_mass_flux'];save(path,d['dense_record'],dict(sites=next_sites,weights=next_weights,raw=next_raw,factors=nextL,ledger=increment,stage_mass=stage_mass))
         np.testing.assert_array_equal(next_raw[:,0],mass)
         if stage_mass>=2e-13:raise RuntimeError('3D stage mass gate failed')
@@ -83,4 +84,4 @@ def run(library,n,dt,end,amplitude):
     atomic('vortex_3d_report.json',report);print(json.dumps(report),flush=True)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('library');p.add_argument('--n',type=int,required=True);p.add_argument('--dt',type=float,default=.002);p.add_argument('--end',type=float,default=.02);p.add_argument('--amplitude',type=float,default=.3);a=p.parse_args();run(a.library,a.n,a.dt,a.end,a.amplitude)
+    p=argparse.ArgumentParser();p.add_argument('library');p.add_argument('--n',type=int,required=True);p.add_argument('--dt',type=float,default=.002);p.add_argument('--end',type=float,default=.02);p.add_argument('--amplitude',type=float,default=.3);p.add_argument('--face-integration',choices=['point','split'],default='point');p.add_argument('--face-order',type=int,default=3);a=p.parse_args();run(a.library,a.n,a.dt,a.end,a.amplitude,a.face_integration,a.face_order)

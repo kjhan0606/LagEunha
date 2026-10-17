@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-17T10:29:32.691041",
+  "updated_at": "2026-10-17T11:18:13.028082",
   "request": "Validate shocks, long time, 3D, Kepler",
   "constraints": [
     "unsteered generators",
@@ -193,10 +193,147 @@
   "active_status_receipt": "/gpfs/kjhan/LagForce/Codex_KX_extended_review_20261017_083534/active_status.json",
   "historical_extension_accounting_review": "Existing immutable duration-extension runs must have historical normalized rate peaks retargeted before any whole-interval numerical pass claim. Final numerical_gates now includes all stored rate/generator/state peaks explicitly; prior integrated-only flags are insufficient for this claim.",
   "latest_regression": {
-    "bundle": "/gpfs/kjhan/LagForce/Codex_MX_3d_vortex_validation_20261017",
-    "normal": 451,
-    "reverse": 451,
+    "bundle": "/gpfs/kjhan/LagForce/Codex_NT_3d_history_audit_20261017",
+    "normal": 469,
+    "reverse": 469,
     "passed": true
   },
-  "nonlinear_3d_vortex_status": "Driver and lossless dense-record serialization tested; n6/n8 evolution not yet launched at commit preparation"
+  "nonlinear_3d_vortex_status": "MX point n8 T=.02 completed, amplitude-normalized field goals passed; mass path not certified. NS split n6 running.",
+  "next_interval_kepler": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NA_kepler_next_interval_20261017",
+    "source_time": 0.001,
+    "target": 0.01,
+    "status": "launched",
+    "cases": [
+      "n32 dt=.0001",
+      "n32 dt=.001",
+      "n64 dt=.001"
+    ]
+  },
+  "new_audit_tests": {
+    "passed": 5,
+    "root": "/gpfs/kjhan/LagForce/Codex_MZ_saved_dense_audit_20261017"
+  },
+  "halfstage_sod_diagnosis": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NB_halfstage_sod_diagnosis_20261017",
+    "vacuum": false,
+    "exact_star_pressure": 0.02159340134928681,
+    "large_transverse_velocity": true
+  },
+  "kepler_T001_n64_L1": {
+    "density": 0.02259628024781092,
+    "velocity": 4.970732184020363e-05,
+    "pressure": 1.9015800571137245e-06
+  },
+  "fixed_mass_dense_audit": {
+    "face_order4": "MZ running",
+    "face_order3": "NC running",
+    "full_path_certified": false
+  },
+  "kepler_dense_step_controls": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NE_kepler_dense_step_controls_20261017",
+    "source_time": 0.01,
+    "dt": [
+      0.001,
+      0.0005,
+      0.00025
+    ],
+    "status": "three trial audits completed",
+    "endpoint_accepted": false,
+    "absolute_relative_mass_defect": [
+      9.604402108319404e-07,
+      4.687559366172396e-08,
+      5.849641453108195e-09
+    ],
+    "whole_history_certified": false
+  },
+  "3d_face_quadrature_status": {
+    "order3_absolute_defect": 8.591805705601187e-07,
+    "order4_absolute_defect": 1.3745563207903842e-05,
+    "converged": false,
+    "followup": "/gpfs/kjhan/LagForce/Codex_NH_3d_face_order_convergence_20261017",
+    "split_relative_rates": [
+      0.004875259097336571,
+      0.004875259097336238,
+      0.004875259097336047
+    ],
+    "diagnosis": "Unsplit order3 mass root misses nonzero continuum face residual; split orders3/4/6 agree on saved initial state",
+    "next": "consistent split weight root and moment flux integration"
+  },
+  "kepler_path_refinement": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NF_kepler_path_refinement_20261017",
+    "nodes": 33,
+    "reused_per_case": 17,
+    "complete": true,
+    "endpoint_anomaly_under_investigation": true
+  },
+  "kepler_T01_field_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NJ_kepler_T001_fields_20261017",
+    "actual_time": 0.01,
+    "status": "NN n32/n64 completed with refined polar quadrature"
+  },
+  "split_3d_root": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NL_split_weight_root_20261017",
+    "iterations": 3,
+    "order6_absolute_residual": 1.860289016506324e-15,
+    "order6_relative_residual": 4.032832985159935e-13,
+    "moment_rhs_integrated": false
+  },
+  "shared_split_3d_rhs": {
+    "mode": "optional split",
+    "root": "/gpfs/kjhan/LagForce/Codex_NP_shared_split_rhs_retry_20261017",
+    "status": "NQ n6 nonlinear vortex quadratic-pressure mass/ledger/covariance gates passed",
+    "time_evolution_connected": true,
+    "ledger_error_bound": 2.34e-15,
+    "covariance_identity_error_bound": 5.14e-17
+  },
+  "split_3d_time_evolution": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6",
+    "status": "running",
+    "initial_arrays_same_as_MX": true,
+    "dt": 0.002,
+    "target": 0.02,
+    "face_order": 4,
+    "dense_records_saved_each_step": true,
+    "full_path_certified": false
+  },
+  "history_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NT_3d_history_audit_20261017",
+    "targeted_tests": 7,
+    "stationary_actual_path_and_cache_reuse_passed": true,
+    "nonlinear_full_history_completed": false,
+    "NS_first_step": {
+      "t": 0.002,
+      "absolute_relative_mass": 2.443164776371481e-07,
+      "temporal_quadrature_difference": 3.728855485943287e-09,
+      "duration_scaled_rate": 9.156319815621938e-06,
+      "generator_path_defect": 1.724891930296457e-05,
+      "covers_target": false
+    }
+  },
+  "n8_baseline_mass_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NU_n8_baseline_mass_audit_20261017",
+    "relative_rate_start": 0.007778775468310845,
+    "relative_rate_end": 0.007981507286457596,
+    "orders4_and6_agree": true,
+    "full_validation": false
+  },
+  "potential_exchange": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NV_potential_exchange_20261017",
+    "targeted_tests_passed": 5,
+    "full_energy_ledger_integrated": false,
+    "scope": "single saved split trials; whole-run energy verification incomplete",
+    "single_step_energy_ledger_implemented": true
+  },
+  "split_3d_time_refinement": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NX_split_vortex_time_refinement_20261017/n6",
+    "dt": 0.001,
+    "target": 0.02,
+    "status": "running"
+  },
+  "energy_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NW_kepler_energy_audit_20261017",
+    "status": "three trials running; shared initial potential reused",
+    "full_validation": false
+  }
 }

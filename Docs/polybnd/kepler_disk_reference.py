@@ -52,7 +52,7 @@ def polar_rule(poly,order=16,radii=(.25,.5,2.)):
         # r=b/(n.direction). Resolve it geometrically around both denominator
         # zeros; increasing one global Gauss order misses this layer.
         angular_scale=abs(bound)/(length*radius_extent)
-        if 0.<angular_scale<1e-4:
+        if 0.<angular_scale<1e-2:
             offsets=angular_scale*2.**np.arange(0,int(np.ceil(np.log2(1/angular_scale)))+1)
             for pole in (direction-np.pi/2,direction+np.pi/2):
                 for offset in offsets:

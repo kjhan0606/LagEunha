@@ -456,3 +456,280 @@ KV 원래 n32 T=.02 비교, MH n32 반사벽 비교, MK n32 tensor 비교는 각
 - KL 기존 P4 Sod16 연장 시험은 10:19:26에 exit 1로 종료했다. 마지막 승인 상태는 t=.06261794533199819, 1573단계이며 half-stage HLLC의 nonpositive star pressure가 원인이다. timeout 또는 성공으로 분류하지 않는다. 기존 checkpoint와 결과를 보존한다.
 - 새 3D 비선형 와류 실행기와 실제 dense record의 무손실 NPZ 저장/복구를 추가했다. MX n6/n8 진화 시험은 이 기록 시점에 아직 시작하지 않았다. 저장 경로 전체의 독립 mass audit도 남아 있다.
 - 충격파 장시간, 3D 비선형, 장시간 케플러 물리 검증은 미완료다. 회귀검사 통과는 이들 물리 검증의 완료를 의미하지 않는다.
+
+### 10:35 후속 검증
+
+MO 3D 음향파 n8, dt=.001이 T=.02에 완료(exit0). 진폭 정규화 L1은
+rho=.00629938395, v=.01099444769, P=.02667693760으로 모두 .05 미만이다.
+원래 mass 배열은 정확히 유지, energy ledger error=2.22e-16이다.
+이 실행의 stage mass 값2e-13은 과거 prefix를 포함한 상한이며 측정 peak가 아니다.
+전체 dense path는 아직 인증하지 않았다.
+
+MM/MW 케플러 n32 dt1e-5/1e-4와 n64 dt1e-4가 모두 T=.001 완료.
+MY는 해당 endpoint를 별도로 복사하여16/24차 field audit를 진행한다.
+n32 두 dt의 최대 상태 차이9.969e-11, 고정질량 배열은 동일하다.
+24차 상대L1(n32 fine/coarse): density .03198107952/.03198107919,
+v .000422040992/.000422040982, P1.06080049e-5/1.06072491e-5.
+짧은 구간의 시간간격 민감도는 작지만 장시간 궤도 검증은 미완료다.
+NA에서 기존 T=.001 상태를 이어서 T=.01까지 n32 dt1e-4/1e-3와
+n64 dt1e-3 독립 비교를 시작했다. 각 단계 checkpoint와 frozen/mass/steering gate 유지.
+
+MX n6/n8 비선형 3D 와류는10:31:37에 시작했다. n6 첫단계T=.002와
+실제 dense record를 저장했다. MZ는 해당 기록의 prescribed geometry
+derivative로17node mass audit를 시작했다. mass-root를 재해결하지 않는다.
+감사 코드는 node별 checkpoint와 입력/소스/library hash를 기록한다.
+새 Simpson 적분 검사와 기존 dense path/직렬화 검사5개 통과.
+전체 물리 검증의 완료 판정은 보류한다.
+
+### 10:36 실패 진단 및 공간 비교
+
+NB는 KL의 승인 checkpoint, source_rhs 및 당시 dt를 복사하고 hash를 확인하여
+실패한 half-stage를 복원했다. t=.06262489138, face232–248,
+위치(.5605422,.9385684)에서 HLLC의 nonpositive star pressure를 재현했다.
+속도차1.15146은 진공 임계5.75392 미만이고 exact star pressure=.02159340135>0.
+좌/우 횡속도 .47949/1.65841로 이미 심각한 비물리 횡방향 운동이 있다.
+따라서 solver 실패와 공간 재구성/진화의 횡방향 오차를 구분하며,
+exact solver 하나로 해당 원래 모델이 검증됐다고 주장하지 않는다.
+진단원본: /gpfs/kjhan/LagForce/Codex_NB_halfstage_sod_diagnosis_20261017.
+
+MY n64 T=.001 field audit도 완료.24차 relative L1은
+rho=.02259628025,v=4.97073218e-5,P=1.90158006e-6.
+n32 값 .03198107919/.000422040982/1.06072491e-5보다 작다.
+짧은 시간의 두 해상도 비교이며 공식192²100궤도의 증거가 아니다.
+NA n32 dt=.001은 T=.01까지 종료(exit0), 작은 dt 및 n64는 진행 중이다.
+
+KV 기존 n32 Sod는10:33:48 timeout124, t=.01746306122에서 중단됐다.
+PID1588567 종료 확인 후 같은 디렉토리/설정의 checkpoint와 pending을 유지하여
+재개했다. resume_1034_receipt.json에 원본 hash, 별도 실행 로그를 기록했다.
+
+MX n6/n8은 각각t=.006/.002 진행. MZ 감사는 face-order4의 독립 고차
+면 적분을 사용하며, 실제 진화는 order3이다. NC는 face-order를 명시적으로
+설정하고 identity에도 넣어 동일 기록의 order3 검사를 시작했다. 두 결과를
+비교하여 면 적분 오차와 실제 경로의 질량 오차를 구분한다. 아직 첫 기록의
+감사도 진행 중이므로 전체 경로 통과를 주장하지 않는다.
+
+### 케플러 분할 적분 경로 기록 추가
+
+ND는 gravity_coupled_2d의 선택적 hydro_record 기록을 추가했다. 기본 수치
+결과는 그대로이며 기록 유무의 배열 동일성을 검사했다. frozen mask가 양
+RK 단계에서 같은 경우에만 dense extension을 허용한다. mask 전환은 명시적
+실패로 남긴다. 기록된 geometry derivative를 그대로 사용하는 mass-only
+검사는 frozen generator/weight rates=0을 요구하며 root를 다시 풀지 않는다.
+기록은 첫 중력 kick 이후부터 둘째 kick 직전의 실제 유체 subflow이다.
+중력 kick은 density moments/geometry를 바꾸지 않는다. 이 검사는 전체
+퍼텐셜 에너지/경계 교환 장부를 대신하지 않는다.
+
+ND 정순456개 회귀 통과(45.963초), 역순 진행. NE는 보존된 n32 T=.01
+상태에서 dt=.001/.0005/.00025 독립 trial을 실행하며 실제 경로17node
+적분과9node 비교를 저장한다. trial endpoint는 자동 승인 checkpoint로
+승격하지 않는다. 각 node를 저장하여 중단 후 동일 계산을 재사용한다.
+
+이 시점 비교 진행: JU 장시간 와류t=.1173277, MV whole-interval Sod
+t=.0278209, KV 기존 n32 t=.0177286, MH 반사벽 n32 t=.0097679,
+MK tensor sod32 t=.0084588. MK 하위폴더 이름은 n32가 아니라 sod32다.
+
+### 10:41 케플러 실제 유체 경로 결과
+
+NE 세 trial 모두 계산 완료. dt=.001/.0005/.00025에서 활성 셀의
+최대 적분 absolute 상대 mass defect는 각각9.6044e-7/4.6876e-8/5.8496e-9,
+최대 상대 mass rate는 .00379573/.000192494/4.79843e-5이다.
+최대 generator interpolation defect는6.8545e-6/1.7096e-6/4.2689e-7.
+17node와9node 적분 차이는1.0325e-9/5.1609e-10/7.9523e-16.
+작은 두 dt의 누적 오차는 약8배 감소하지만 큰 dt까지 단일 수렴차수를
+단정하지 않는다. quadrature/topology 민감도 추가 검사가 필요하다.
+endpoint time 비교만으로 내부 mass path를 통과시킬 수 없음이 확인됐다.
+이 결과는 한 hydro subflow의 진단이며 전체 과거 구간 인증/공식100궤도
+통과 또는 trial endpoint의 자동 승인을 의미하지 않는다.
+ND456개 역순 검사도 통과(45.103초).
+
+### 3D 비선형 첫 완료와 적분 정밀화
+
+MX n6 T=.02 완료(exit0), pressure normalized L1=.0555262>.05로 물리 gate
+실패. density=.00453980, velocity/amplitude=.0426413이나 velocity의 참조
+적분 대비 상대L1은 .259607이다. 질량 배열 정확 유지와 energy ledger0은
+물리 정확도 통과를 대신하지 않는다. n8은 계속 진행한다.
+
+첫 n6 실제 경로의 mass audit에서 면order3(NC)/order4(MZ) 적분 absolute
+relative defect는8.59181e-7/1.37456e-5로 일치하지 않았다. 실제 진화의
+면order3 수렴이 미검증이며 face quadrature 오차를 분리해야 한다.
+NG에서 pressure traction/공분산 미분을 제외한 독립 mass-only evaluator를
+구현하고 실제 기록 s=0,.5,1의 기존 full RHS mass rate와 비교했다.
+최대 절대 차이4.0e-18, 질량 정규화 차이8.6e-16 이하, 각 평가2.3–2.6초.
+이것은 해당 세 표본의 동등성 증거이며 모든 상태 동등성의 증명은 아니다.
+NH에서 동일기록의 면order3/4/6/8/12 수렴을 검사 중이다.
+
+NF는 NE의17개 값을 그대로 재사용하여33node 적분 완료. 세dt absolute
+relative defect9.603745e-7/4.687559e-8/5.849642e-9로 주요 결론은 유지됐다.
+중간dt의 worst quadrature-difference cell29는 끝점에서 상대 유량이
+직전1.257e-5에서 -3.658e-5로 급변했다. 끝점 근접 추가 표본을 검사 중이며
+원인을 단정하지 않는다. 모든 정밀화는 기존 계산/표본을 보존했다.
+
+### 10:49 3D 면 적분 원인 확인
+
+NH의 동일 초기 상태/기존 weight-rate에서 unsplit 면order3/4/6/8/12의
+최대 상대 mass rate는 약0/.0070062/.0062481/.0053061/.0049680이었다.
+NI는 아핀 속도 표본의 face-relative speed가0인 직선으로 실제 face
+polygon을 분할하여 각 양/음 부분을 독립 양의 적분했다. 분할order3/4/6
+결과는 .004875259097336571/.004875259097336238/.004875259097336047로
+일치했다. 압력항은 mass equation에 없으며, 참조장을 주입하거나
+weight-rate를 다시 풀지 않은 비교다.
+
+따라서 기존 order3 mass root의0 잔차는 이 상태에서 면 적분 오차에
+의존한다. 이전 stage gate만으로 연속 면 유량 보존을 주장할 수 없다.
+다음은 split 적분과 그 Jacobian으로 weight root를 비교하고, 같은 적분을
+다른 모멘트 flux에도 일관되게 연결하는 것이다. 현재 진화 코드는 아직
+변경하지 않았고 기존 n8 실행은 baseline 증거로 보존한다.
+NI의 선형 양/음 부분 해석적 적분과 경계/영속도2개 검사는 통과했다.
+NG mass-only evaluator의 실제3개 표본 일치와 함께 독립 진단에 사용했다.
+
+케플러 끝점 근접 probe에서 cell29 유량은 s=.99에서2.184e-6,
+s=.9999에서-3.619e-5, s=1-1e-8에서-3.657669e-5, s=1에서
+-3.657672e-5다. 정확한 끝점만의 불연속이 아니라 짧은 구간의 빠른
+변화가 관측됐다. 이것의 공간 재구성/geometry 원인은 아직 미확정이다.
+
+NA n64도 T=.01 완료, NJ에서 n32/n64 실제 field error 감사 중이다.
+NK는 최신 소스 전체의 정순·역순 회귀를 실행 중이다.
+
+### 10:53 分割 면 적분 weight root 검증
+
+NL은 동일 n6 초기 상태, 동일 물질 생성점 속도, 동일 원래 질량/모멘트에서
+부호 분할 face integral과 그 Jacobian으로 weight-rate만 풀었다.
+기존 rate에서 시작한 최대 절대 flux는2.22037e-5→1.25516e-6→2.70530e-10
+→1.86038e-15로 Newton3회에 감소했다. 독립order6 재평가도1.86029e-15,
+질량 정규화 잔차4.03283e-13이다. gauge를 맞춘 weight-rate 최대 변화는
+8.07583e-5. 물질 생성점 속도와 고정질량은 변경하지 않았다.
+
+이는 기존 적분 오차를 weight-rate의 올바른 제약식 풀이로 줄일 수 있다는
+한 상태의 증거다. 아직 split kinetic moment flux를 진화 RHS에 연결하지
+않았다. 기존 mode3진화가 이 결과로 소급 검증되는 것도 아니다.
+Jacobian 유한차분/상수 gauge/쌍별 질량 보존/root 수렴과 해석적 face
+적분 검사5개 통과. 다음 필수 작업은 같은 분할 적분의 운동량·D·Pi·E와
+양의 covariance factor 소스 연결이다.
+
+NJ field audit는 n32/n64 모두 독립 polygon area gate에서 실패했다.
+NM에서 문제 polygon을 보존: angular scale1.53e-4 및1.58e-4의 면이
+이전 graded-angle 적용 범위(<1e-4) 밖에 있었다. 기존 적분16/24/32차
+실패,64차 통과를 확인했다. 적용범위를1e-2로 넓혀 좁은 각도구간을
+분할했고, 실제 n32 polygon의16/24/32차 area error<2e-10 및 양의
+weights를 검사했다. 면적 gate를 완화하지 않았다. NN은 같은 저장된
+T=.01 상태의 field audit 및 전체회귀를 진행 중이다. 진화 재시작이 아니다.
+NK460개 정순/역순 회귀는 모두 통과했다.
+
+### 10:58 공유 split moment RHS와 케플러 field 결과
+
+NN464개 정순/역순 검사는 통과했다. T=.01 field audit도 두 해상도 완료.
+24차 relative L1(n32/n64)은 rho .03232853558/.02278131067,
+질량가중v .000422846085/4.97404848e-5, P .000104635112/2.13475436e-5.
+이 결과는 짧은 시간의 공간 비교이며 공식100궤도 검증은 아니다.
+NA n32 작은dt=.0001도T=.01 완료하여 동일 endpoint 시간 비교가 가능하다.
+
+kinetic_moment_rhs_3d에 선택적 face_integration='split'을 추가했다.
+각 내부 공유 면을 양쪽12개 velocity-sample 상대속도의0선으로 나누고,
+모든 모멘트/압력 traction/공분산 source를 같은 양의 quadrature로 계산한다.
+fixed reflecting wall도 표본 부호로 분할한다. 움직이는 normal wall은
+아직 split mode에서 명시적으로 거부한다. 기본point 모드는 유지했다.
+
+NO의 실제8셀 정적 RHS 검사에서 coincident cuts가 만든 정확히 zero-area
+fan triangle 때문에 예외가 발생했다. NP에서는 split piece의 정확한
+zero-area triangle만 제외하며 작은 양의 면적은 버리지 않는다.
+중복 절단선과 zero-area piece에 대한 검사 추가 후 동일8셀 보존식/공분산
+검사를 다시 실행 중이다. 시간진화에는 아직 연결하지 않았다.
+
+NP의 실제8셀 검사 통과: order3/4에서 mass flux≈8e-18, 독립order6
+평가도8.6e-18 이하. 운동량/에너지/각운동량 ledger error<2.34e-15,
+raw covariance 미분과 primary factor 소스식의 차이<5.14e-17.
+7개 targeted 검사도 통과했다. NQ는 NL의 기존 split root를 재사용하여
+실제 n6 nonlinear vortex의 quadratic pressure RHS를 검사 중이다.
+
+NA n32 T=.01 시간간격 비교: dt=.0001/.001 최대 상태 차이9.366e-8,
+생성점 위치 차이9.368e-8, 셀 평균 속도 차이3.0243e-6. 원래 질량 배열
+정확히 동일. 이 endpoint 민감도가 전체 dense path 인증을 대체하지 않는다.
+
+### 11:03 split 3D 시간적분 시작
+
+NQ 실제 n6 nonlinear vortex quadratic-pressure RHS 검사 통과:
+mass=1.86125e-15, ledger=3.46885e-15, covariance identity=5.96918e-16,
+generator defect=0. NL root를 그대로 재사용한 독립 공유모멘트 적분 검사다.
+
+moment_evolution_3d의 두 RHS 단계에 선택적 split mode를 연결했다.
+dense record는 face integration/order/pressure reconstruction을 저장하고
+무손실 NPZ 복구와 후속 audit에 전달한다. 기본point+order3 config는
+그대로 유지하여 과거 checkpoint 식별을 바꾸지 않았다. NR 정순467개
+검사 통과, 역순 검사 진행 중. NS 실제8셀 split time step은 fixed mass
+정확, stage residual1.38636e-16, energy ledger0, dense endpoint 일치 통과.
+
+NS/n6은 기존 MX/n6의 원래t0 sites/weights/raw/factors/mass를 정확히
+동일하게 복사하고 provenance hash를 남긴 독립 face-integration 비교다.
+재초기화 적분을 하지 않고 기존 IC/initial score를 재사용한다.
+face integration만 split/order4로 명시하고 dt=.002,T=.02를 유지했다.
+11:02:47경 시작,2h 실행 제한 및 단계별checkpoint/dense NPZ 저장.
+기존 point-mode 승인 prefix/전체 결과는 보존한다. 이 실행 완료와
+전체 dense mass path 검사가 끝나기 전에는 새3D 방식 통과로 분류하지 않는다.
+
+### 전체3D 경로 누적 감사 준비
+
+NT의 audit_3d_history는 시작시점 checkpoint를 캡처하고 그 승인 단계의
+모든 dense NPZ를 순서대로 읽는다. 시간/상태 연결, 원래 mass 배열의
+정확한 일치, 최종 checkpoint 일치를 확인한다. root를 다시 풀지 않고
+분할 면 적분으로 각 node의 실제 유량을 평가한다. 셀별 signed/absolute
+오차를 먼저 시간누적하며, duration-scaled rate는 항상 설정의 전체
+목표기간으로 정규화한다. prefix만 존재하면 목표기간을 완료했다고
+표시하지 않는다. node cache는 source/library/record/config hash로 고정한다.
+
+누적회계/연결/고정질량 검사와 split tests7개 통과. 실제1셀 정지 유체의
+저장된 time step을 감사하고 두번째 호출에서 evaluator를 강제로 실패하게
+해도 모든node cache가 재사용되어 동일report를 얻었다. 이 stationary
+검사는 경로 감사 구현의 검사이며 nonlinear3D 물리 검증을 대신하지 않는다.
+NT 전체 회귀 진행 중, 직전NR467개 정순/역순은 모두 통과했다.
+
+MX 기존point 방식 n8은T=.02 완료. 12차 field L1은 density=.00325169,
+velocity/amplitude=.0241335, pressure/amplitude²=.0286741로 해당
+정규화 기준을 통과했다. 속도의 참조 적분 대비 L1은 .146928이며,
+면 적분 mass 제약의 수렴은 별도다. NU는 n8 첫실제경로의 시작/끝
+유량을 split order4/6으로 검사 중이다. 기존point 결과를 새split 방식
+검증으로 혼동하지 않는다. NS의split n6 진화는 계속 진행 중이다.
+
+### 11:11 baseline n8 독립 mass audit와 potential 교환 항
+
+NU 완료: 기존point n8 첫 경로의 s=0 split order4/6 상대 mass rate는
+.007778775468310845/.007778775468310694, s=1은
+.007981507286457596/.007981507286456833이다. 절대 flux는 각각
+1.50359e-5/1.54277e-5. 물리장 오차가 n6보다 감소했어도 면 적분에
+의존한 mass root 문제가 해소된 것은 아니다. 따라서 MX n8의 field
+pass만으로 전체3D 통과를 선언하지 않는다.
+
+NT469개 정순/역순 검사 모두 통과. split n6 NS는 실제 계산 중이며
+아직 첫 승인 checkpoint를 기다리는 상태다. 승인되지 않은 경로를
+전체 history 감사 대상으로 사용하지 않는다.
+
+smooth_mass_path에 선택적 potential callback을 추가하여 active–frozen
+면 및 외벽에서 같은 mass flux의 Φ-weighted incoming 교환량을 구한다.
+내부 active–active 면은 두 셀에서 정확히 상쇄한다. 기존potential 없는
+계산 경로는 유지한다. NV에서 상수Φ의 교환량=Φ×active mass flux,
+내부면상쇄 및 기존gravity dense tests5개를 통과했다. 아직 이 항을
+전체 potential-energy ledger 검증에 연결한 것은 아니다. 다음에는
+동일 saved trial의 Δ(Egas+Uactive)에서 gas boundary ledger와 시간적분된
+potential mass exchange를 빼고, 독립16/24차 U적분 차이를 함께 검사한다.
+
+### 11:18 첫split 경로 결과와 전체 energy ledger 검사
+
+NS 첫 승인단계t=.002의 독립split order6,17node 감사 완료.
+absolute 누적 상대mass defect2.44316e-7, signed2.25130e-7,
+nested temporal quadrature difference3.72886e-9, 전체T=.02로
+정규화한 peak relative rate9.15632e-6이다. generator interpolation
+defect1.72489e-5이며, 이를 stage별 실제 조향과 구분한다(stage 조향0).
+전체10단계 중1단계 결과이므로 covers_target=false를 유지했다.
+NX는 동일split 물리소스와 같은 원래초기 배열, 같은T=.02에서
+dt=.001로 시간세분화 비교를 시작했다. NS dt=.002는 계속 보존/진행한다.
+
+NW는 저장된NE trial 세개에서 실제 hydro subflow의 potential mass
+exchange를17node로 적분하고 active Egas+U 변화를 평가한다.
+U는 polar16/24차 비교, node마다 원래mass audit flux와의 일치 검사,
+frozen mask 전환 금지, frozen raw 배열 보존 검사를 포함한다.
+모든 에너지 보정 없이 Δ(Egas+U)−gas_boundary_exchange−potential_mass_exchange
+잔차를 기록한다. cold disk의 initial thermal energy로 나눈 잔차도 별도 출력한다.
+
+공통initial U를 먼저 한 번 계산한 뒤 hash가 같은 경우만 세 trial에서
+재사용한다. 노드/cell 적분은 checkpoint 가능하다. 대상은t=.01의
+단일trial 세개이며 전체과거구간 에너지 보존을 소급 인증하지 않는다.
+NW targeted4개 검사 통과 후 독립세trial 감사를 진행 중이다.

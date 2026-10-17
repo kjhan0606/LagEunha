@@ -21,17 +21,18 @@ def rebuild(raw,factors):
     return out
 
 
-def step(geometry,t,sites,weights,raw,factors,dt,bounds,boundary_velocity,face_order=3,pressure_reconstruction='constant',return_record=False):
+def step(geometry,t,sites,weights,raw,factors,dt,bounds,boundary_velocity,face_order=3,pressure_reconstruction='constant',return_record=False,face_integration='point'):
     if not dt>0:raise ValueError('positive step required')
-    dr,dx,dw,d0=rhs(geometry,sites,weights,raw,factors,bounds(t),boundary_velocity,face_order,pressure_reconstruction)
+    dr,dx,dw,d0=rhs(geometry,sites,weights,raw,factors,bounds(t),boundary_velocity,face_order,pressure_reconstruction,face_integration=face_integration)
     halfL=advance_factors_sylvester(factors,d0,dt/2)
     halfraw=raw+dt/2*dr;halfraw[:,0]=raw[:,0];halfraw=rebuild(halfraw,halfL)
-    dh,vh,zh,dm=rhs(geometry,sites+dt/2*dx,weights+dt/2*dw,halfraw,halfL,bounds(t+dt/2),boundary_velocity,face_order,pressure_reconstruction)
+    dh,vh,zh,dm=rhs(geometry,sites+dt/2*dx,weights+dt/2*dw,halfraw,halfL,bounds(t+dt/2),boundary_velocity,face_order,pressure_reconstruction,face_integration=face_integration)
     nextL=advance_factors_sylvester(factors,dm,dt)
     nextraw=raw+dt*dh;nextraw[:,0]=raw[:,0];nextraw=rebuild(nextraw,nextL)
     diagnostics=dict(ledger_increment=dt*dm['ledger'],stage_mass_flux=max(d0['mass_flux'],dm['mass_flux']),generator_velocity_defect=0.,raw_Pi_completion=float(np.max(abs(nextraw[:,25:34]-(raw+dt*dh)[:,25:34]))))
     if return_record:
         diagnostics['dense_record']=dict(t=t,dt=dt,sites=sites.copy(),weights=weights.copy(),raw=raw.copy(),factors=np.asarray(factors).copy(),dx0=dx,dw0=dw,dr0=dr,dxmid=vh,dwmid=zh,drmid=dh,diag_mid=dm)
+        diagnostics['dense_record'].update(face_integration=face_integration,face_order=face_order,pressure_reconstruction=pressure_reconstruction)
     return sites+dt*vh,weights+dt*zh,nextraw,np.array(nextL),diagnostics
 
 
