@@ -1,0 +1,83 @@
+erase
+
+ctype white
+
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+
+
+location 5000 30000 5000 13000
+limits -0.05 1.05 0 1.05
+#limits x r
+expand 1.01
+lweight 3
+box
+
+expand 1.2
+xlabel x
+ylabel \rho
+
+
+ctype white
+connect x r
+
+
+ptype 4 0
+
+ctype green
+data sod.out
+read { x 1 d 3}
+points x d
+
+
+ctype white
+location 5000 30000 13000 21000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 0 1.05
+#limits x p
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel Pressure
+
+
+ctype white
+connect x p
+
+
+
+ctype green
+data sod.out
+read { x 1 p 4}
+points x p
+
+
+
+ctype white
+location 5000 30000 21000 29000
+data anal.dat
+read { x 1 r 2 p 3 v 4}
+limits -0.05 1.05 -0.1 1.1
+#limits x v
+expand 1.01
+lweight 3
+box 0 2  0 0
+
+expand 1.2
+#xlabel x
+ylabel velocity
+
+
+ctype white
+connect x v
+
+
+
+ctype green
+data sod.out
+read { x 1 v 2}
+points x v

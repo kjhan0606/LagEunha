@@ -1,0 +1,646 @@
+# LagEunha GFS: review of the tree at 5f2fb86
+
+**Scope.** The geometric-face hydro path after commit `5f2fb86` (`master`, 2026-09-27). Files: `Exam/exam.c`, `Exam/exam_gpu.cu`, `Exam/exam_gpu_extract.c`, `Exam/gfs_pair.h`, `Exam/KH/util.c`, `Hydro1DExam/laguerre_sod.c`, `Colorize/color.c`.
+**Relation to `code_review.md`.** That note reviewed `75aaeed` (2026-09-26). This note says what that review got right, what `5f2fb86` already changed, and what is still wrong. It does not repeat the Laguerre-weight solvability argument. That argument stands: one weight per particle cannot place every 2D face on a chosen Riemann speed.
+
+**Evidence.**
+- **[CODE]** read in `5f2fb86`.
+- **[RUN]** a finished run of this scheme, or of the binary copied into a job before `5f2fb86` but after the pair-pressure change. The distinction is marked on each run.
+- **[OPEN]** plausible, not measured on this commit.
+
+---
+
+## 0. Summary
+
+1. The 1D GFS suite with the bounded pair pressure finishes all eight problems. Sod, Noh, the double rarefaction, and Shu–Osher (`N=800`) are unchanged to the published digits. The blast `L1(ρ)` fell from 0.154 to 0.055 and its energy error is `1.5e-5`. Lax and the contact improved. **[RUN, pair-pressure binary, before the centroid term]**
+2. 2D Gresho at `128²`, `t=1`, finished with `dE/E0 = 3.9e-9`, `n_neg = 0`, `dt = 1.9e-4`. **[RUN, same binary]**
+3. The thick Kepler disk on 4 H200s (job 406510, that same binary, point-mass `v_φ = R^{-1/2}`, `P = 1e-6`) is not a disk test anymore. By `t = 2.58` (step 12955) `dE/E0 = 6.1e4`, `ρ_max = 61`, `dt = 4.2e-7`, `n_pair ≈ 210`. The thermal-plus-ram pair pressure is creating energy inside the cutoff. **[RUN]**
+4. `5f2fb86` fixes three items from the previous review: the Voronoi centroid term on zero-weight faces (`voronoi_face_rotation`, `exam.c` 4168), the CPU `dt3` dimensions (`exam.c` 5671), and the RK4 stage update when `die` means `dE/dt` (`phase1_ie_stage`, `exam.c` 4185). None of these are in the binary that job 406510 is running.
+5. What is still open, in the order that matters for the runs now queued: the pair-pressure normalisation, the extreme-face HLL speed versus the geometric face, the 1D cold-pressure gate, and the old `dt3` left in `Exam/Sedov/vch_hydro.c`.
+
+---
+
+## 1. Pair pressure
+
+**What is in the code.** `gfs_pair.h`:
+
+```
+d_c = 0.2 * min(length_i, length_j)
+P   = 16 * ρ̄ * (c̄² + v_close²) * (1 - d/d_c)²    for d < d_c
+P   = 0                                         otherwise
+```
+
+In 2D the length is `sqrt(cell area)`. In 1D it is the cell length. `v_close` is the approaching speed along the pair and is zero when the particles are separating or already at rest. The pressure is added to the face pressure, so the force is pairwise and the work is booked in `dte`.
+
+**Why the factor is 16.** A form `4 ρ c² (1-d/d_c)²` stays finite as `d → 0` and matches `ρ c²` at `d = d_c/2`. On the 1D Woodward–Colella blast that barrier did not stop a Mach-2 approach: the gap fell to `3e-11` while the closing speed was still 9, and the face CFL then drove `dt` to `1e-12`. Replacing `c²` by `c² + v_close²` and raising the coefficient from 4 to 16 let the blast finish. The coefficient is an empirical fix for one shock, not a derived stopping condition. **[RUN]**
+
+**What that does to a disk.** On a circular shear flow, neighbours inside the cutoff have a nonzero `v_close` even when no particle is falling in. `16 ρ v_close²` is then a large face pressure on an ordinary shear pair. Job 406510 shows the consequence. Energy is already wrong before the timestep collapses:
+
+| step | dt | dE/E0 | ρ_max | n_pair |
+|---:|---:|---:|---:|---:|
+| 2000 | 1.4e-4 | 0.14 | 1.4 | 84 |
+| 8000 | 1.0e-4 | 1.3 | 14 | 114 |
+| 10000 | 1.9e-5 | 14 | 18 | 110 |
+| 12000 | 1.2e-6 | 3.8e3 | 73 | 194 |
+| 12955 | 4.2e-7 | 6.1e4 | 61 | 210 |
+
+`n_neg` at the last step is 12 out of 65536. The smallest cell area is still of order the mean (`Vmin*Nx² = 1.6`), so this is not a collapsed cell. It is the ram-pressure term on ~100 faces. **[RUN, binary without the centroid term]**
+
+A stationary pair (`v_close = 0`) is still pushed by `16 ρ c² (1-d/d_c)²`. That part is what KH and the central Kepler cavity need. The `v_close²` piece is what the blast needed and what the disk cannot afford.
+
+**Fix.** Keep the thermal piece. Drop `v_close²` from the pressure, or gate it so it cannot exceed the local thermal pressure by a set factor, and retune the blast on that law. Do not turn the term off for subsonic approach: the faces that killed the first blast were Mach 2.1–2.6, and the pairs that stall KH have already reached `Δv = 0`.
+
+---
+
+## 2. Face velocity
+
+**Ordinary faces.** For `w² = 0` the code now adds the centroid correction (`exam.c` 4168, applied at 5089 and 5503; the same block is in `exam_gpu.cu` and `exam_gpu_extract.c`):
+
+```
+Δu_n = −(u_q − u_p)·(c_f − m) / d
+```
+
+`c_f` is the midpoint of the two Voronoi corners. The correction is along the generator direction `er`. Both ends of the face compute the same lab-frame velocity, so the pairwise energy cancelation is unchanged. The hard-wall branch still removes the normal velocity after this correction. Extreme faces still replace the face velocity by the HLL normal speed (`exam.c` 5583 in the previous layout; the `phase1_extreme` branch after 5503).
+
+**What this does not fix.** The extreme-face branch is still the inconsistency described in `code_review.md` §1.5. Geometry moves at the Voronoi speed. `PdV` on that face uses the HLL speed. A cold cell next to a strong shock can lose internal energy that does not match its volume change. The 2D trigger is now only `P_max > 100 P_min` (`exam.c` 5169). The old `P_min < 1e-3` clause is gone, which is required for a uniformly cold Noh inflow. The 1D driver still has the old clause (`laguerre_sod.c` 1503: `pmin < 1e-3 || pmax > 100 pmin`). The 1D Noh at `N=200` did not show it, because that run's pressures after the first step are not all below `1e-3`. A colder rescaling would.
+
+**Float equality.** The rotation term is skipped unless both weights are exactly zero. `Kappa = 0` writes that zero. A roundoff weight silently drops the correction.
+
+---
+
+## 3. Time step
+
+**2D KDK.** `exam.c` 9841–9845 takes the minimum of the uniform-grid CFL and the face CFL returned by the force routine. The previous review's statement that `dt_dummy` is discarded is no longer true. The face CFL is why one close pair freezes every particle. That is intentional. It is not a cure: if nothing reverses the approach, `dt` still goes to zero. Job 406510 is that case.
+
+**CPU `dt3` in the blend loop** is now `0.1 d / |Δv|` (`exam.c` 5676). The old expression had units time²/length. The same old expression is still compiled in `Exam/Sedov/vch_hydro.c` 169 and `vch_reverse.c` 169. Those are not the 2D GFS path. They will bite any run that still calls them.
+
+**1D.** `laguerre_sod.c` refuses a step whose positions cross, halves `dt`, and also limits the step by the closing speed and by the pair acceleration. That is why the blast no longer dies in one stage. It does not make a too-weak barrier strong. It only stops the run from accepting a crossed state.
+
+---
+
+## 4. Energy variable
+
+`SEDOV_PHASE1=1` stores `dE/dt` in `die`. The KDK path already knows this (`phase1_half_kick`, `exam.c` 4193). Gravity is applied after that fix, so the potential, which is not part of `E`, does not wipe `ie`.
+
+The blend RK4 path used to add `die*dt` to `ie` and also kick `v`, which counts `ΔKE` twice. `phase1_ie_stage` (`exam.c` 4185) now subtracts `m v·a` before the stage increment. This is the first-order split only. The `½ m |a Δt|²` piece is still handled only in `phase1_half_kick`, and only by the clip that rescales velocity. RK4 stages do not do that clip. Production runs use KDK (`GAS_EVOLMETHOD=3` with `av_mode=5`), so this RK4 path is not what jobs 406510–406519 execute. It is still the path the paper text calls GFS. The environment variable remains the switch. There is no `GAS_SCHEME=GFS` parameter, and output headers still do not record the integrator.
+
+The KDK clip (`exam.c` 4191) keeps total energy and drops momentum when `ie` would go negative. `n_clip` on 406510 grew from 178 at step 2000 to 6142 at step 12955. That counter is the run saying the closure failed.
+
+---
+
+## 5. Boundaries and images
+
+A missing `kh.sao` used to segfault inside `readsao` because `fopen` was not checked. `color.c` 290 now fills a grey image and returns. Flat fields no longer divide by `ccdmax-ccdmin = 0`. The hydro step is no longer killed by the plotter. Gresho's first attempt died this way at `t=1` with an otherwise exact energy; the rerun exited 0.
+
+The cylinder wall still reflects a particle that steps inside and drops the inward normal velocity without putting `½ m v_n²` into `ie` (`Exam/Cylinder/cylinder.c`). That is unchanged. The open cylinder's reported energy difference is still not a closed budget unless inflow and outflow fluxes are counted. The 1D code already does this with `bc_eng_net`. The 2D runs do not.
+
+---
+
+## 6. What the previous review measured, and what changed
+
+| Previous claim | On `5f2fb86` |
+|---|---|
+| 1D blast energy error is the `e < 1e-14` floor, `L1(ρ) = 0.154` | True for the `wtrack` driver they ran. The current `gfs` blast is `L1 = 0.055`, `ΔE/E0 = 1.5e-5`. The floor is not an immutable GFS error. |
+| Paper 1D numbers do not match the `vr` driver | True, and expected. `vr` is CD10 viscosity without the extreme-face HLL. The paper numbers match `./laguerre_sod gfs`. |
+| KDK ignores the face CFL | False now. See §3. |
+| Extreme if `P_min < 1e-3` | False in 2D. Still true in `laguerre_sod.c` 1503. |
+| Midpoint velocity omits the centroid term | Fixed for `w² = 0` in the blend and GPU kernels. Not measured again on the perturbed lattice. |
+| RK4 double-counts `ΔKE` under `SEDOV_PHASE1` | The linear term is removed in the blend RK4. The quadratic term is not. Production uses KDK. |
+| `dt3` has the wrong dimensions | Fixed in the blend loop. Not fixed in `Exam/Sedov/vch_*.c`. |
+
+The RT error `7.6e-4` was guessed to be the RK4 double count. The production RT log is KDK. That guess should not be kept.
+
+---
+
+## 7. Order of work
+
+1. Rerun the Kepler disk with `v_close²` removed from `P_pair`, or with that term capped by the local `ρ c²`. The thermal piece stays, including at `Δv = 0`. The 1D blast has to be rerun before accepting the coefficient. Job 406510 is not a usable disk.
+2. Remove `pmin < 1e-3` from the 1D extreme-face test so it matches 2D.
+3. Decide whether an extreme face's `PdV` speed is the HLL speed or the geometric speed, and use one of them for both the flux and the mesh motion. Using both is the remaining energy source at shocks.
+4. Replace `dt3` in `Exam/Sedov/vch_hydro.c` and `vch_reverse.c`, or stop calling those files.
+5. Record integrator, `av_mode`, and `SEDOV_PHASE1` in the output header. Do not describe RK4 as the GFS integrator while the runs use KDK.
+
+The least-squares weight solve in `code_review.md` §2c is a different scheme. It is not the next patch.
+
+---
+
+## 8. Handoff, 2026-09-27
+
+Two sessions share this repository. The user carries messages between them. Code, comments, and instructions live only on `kjhan0606/LagEunha`.
+
+| Who | Writes | Does |
+|---|---|---|
+| This session | `code_review_grok.md` | MPI+CUDA runs on Slurm, and the comment on those runs |
+| Grokbot | `code_review_grokbot.md` | Coding, 1D and other non-MPI tests, and replies to the instructions below |
+
+Do not edit the other session's review file. Read it, then answer in your own file.
+
+### Instruction for Grokbot
+
+The next code change is the pair pressure in `Exam/gfs_pair.h`. Keep the thermal piece `16 ρ̄ c̄² (1-d/d_c)²`, including when `v_close = 0`. Remove `v_close²`, or cap the whole pressure by a small multiple of `ρ̄ c̄²`. The uncapped ram term is what job 406510 used.
+
+After that change:
+
+1. Rerun the 1D `gfs` suite, including the Woodward–Colella blast at `N=200`. The blast must finish. Report `L1(ρ)` and `ΔE/E0` for all eight problems against the numbers in §0.
+2. Remove `pmin < 1e-3` from the 1D extreme-face test (`Hydro1DExam/laguerre_sod.c` around line 1503) so it matches the 2D ratio-only test.
+3. Push to `master` and say what commit to run.
+
+Do not start Slurm jobs. Do not cancel 406510 or 406515–406519. This session will rerun MPI+CUDA after the commit is on `master`.
+
+### State of the queue at handoff
+
+406510 (`LAGFORCE_KEP256`) was stopped by this session after 57 minutes. Final state: `t = 2.58`, `dt = 8.4e-12`, `dE/E0 = 2.5e14`, `n_neg = 63/65536`, `n_pair = 437`. It is not a result. The binary is the pair-pressure build from before `5f2fb86`.
+
+406515 (KH), 406516 (RT), 406517 (Noh), 406518 (Sedov), and 406519 (cylinder) are held (`JobHeldUser`) so they do not start on that same binary. Release them only after a new binary is copied into each run directory. Do not cancel them.
+
+1D `gfs` and 2D Gresho `128²` `t=1` (`dE/E0 = 3.9e-9`) already passed on that older binary. Do not repeat them unless the pair-pressure formula changes. If it changes, the blast is the required rerun.
+
+
+### Kepler 406608 stopped
+
+Stopped at about 9.5 minutes. Last sample in `debug/2026-09-27_kepler_gresho.txt` is already decisive: `t=0.65`, `dE/E0=2.81`, `n_clip=2333`, `n_pair=136`. The cap `min(v_close^2, c^2)` did not keep the disk energy flat. Do not release 406515–406519 onto this binary. Gresho 406611 was still running on syn09 when Kepler was stopped.
+
+---
+
+## 9. Run report, capped pair pressure (`79af847`)
+
+Binary built from `master` at `79af847` (`P ≤ 32 ρ̄ c̄²`). H200 was not available, so both runs used H100. Sampled lines are in `debug/2026-09-27_kepler_gresho.txt`. That file was taken while both jobs were still running. The Gresho numbers below are the finished state.
+
+### Gresho — pass
+
+Job 406611, `LAGFORCE_GRES128`, syn09, 2× H100, 4 ranks (two ranks per GPU). Directory `/gpfs/kjhan/LagForce/Gresho_gfs_Nx128_cap`. `128²`, `t = 1`, wall time 4 min 21 s, `EXIT:0`.
+
+| | step 1 | step 993 | step 1985 | step 2977 | step 3969 |
+|---|---:|---:|---:|---:|---:|
+| t | 0.0005 | 0.370 | 0.577 | 0.792 | 1.000 |
+| dt | 5.0e-4 | 2.5e-4 | 2.1e-4 | 2.0e-4 | 2.4e-4 |
+| dE/E0 | 0 | −1.0e-6 | −1.2e-6 | −1.2e-6 | −1.3e-6 |
+| ρ_max | 1.001 | 1.241 | 1.176 | 1.086 | 1.085 |
+| n_pair | 0 | 0 | 0 | 0 | 0 |
+
+`n_neg = 0/16384` and `n_clip = 0` for the whole run. `n_pair` was 0 except for a few steps where it reached 2 or 4. The density image was written. No segfault. This is the same quality as the earlier Gresho on the uncapped binary (`dE/E0 = 3.9e-9`).
+
+### Kepler — fail, stopped
+
+Job 406608, `LAGFORCE_KEP256h4`, syn08, 3× H100, 4 ranks (ranks 0 and 3 shared device 0). Directory `/gpfs/kjhan/LagForce/Kepler_gfs_disk_h200_Nx256_cap`. Point-mass disk, `256²`, target `t = 177.72`. Stopped by request after 9.5 min. It was not going to recover.
+
+| step | t | dt | dE/E0 | ρ_max | n_clip | n_pair |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0.019 | 1.9e-2 | 0 | 0.80 | 0 | 0 |
+| 236 | — | 5.9e-4 | 0.010 | 0.80 | 171 | 14 |
+| 732 | — | 3.9e-5 | 1.01 | 0.80 | 602 | 40 |
+| 2001 | — | 9.5e-5 | 2.57 | 1.53 | 1951 | 130 |
+| 3476 | 0.647 | 8.8e-5 | 2.81 | 5.45 | 2333 | 136 |
+
+`n_neg` stayed at 0 or 1. The gas energy grew from 8.79 to 33.5 while the density was still near the initial disk value, so this is not a collapsed cell. Capping `v_close²` by `c²` did not stop the heating. The thermal piece `16 ρ c² (1-d/d_c)²` is still on for every face inside the cutoff, and ~100 such faces are enough to triple the energy before one inner orbit (`T(R=2) = 17.8`).
+
+406515–406519 stay held. Do not copy this binary into them. The next Kepler run needs a pair pressure that is silent on a circular shear flow. Gresho shows the gate can stay at `n_pair ≈ 0` when the mesh does not pair. The disk does pair, and the present amplitude is too large.
+
+---
+
+## 10. Pair impulse limited by internal energy
+
+`P0` is the same capped law as `79af847`. The pressure added to the face is smaller when the discrete work would overdraw the internal energy:
+
+```
+μ = m_i m_j / (m_i + m_j)
+q = (v_j − v_i)·n          (q < 0 approaching)
+B = max(ie_i, 0)/nshare + max(ie_j, 0)/nshare
+Jmax = μ (sqrt(q² + 2B/μ) − q)
+P = min(P0, Jmax / (A Δt))
+```
+
+`nshare` is 6 in 2D and 2 in 1D. The work being limited is `W(J) = q J + J²/(2μ)`, so a stationary pair is limited by `sqrt(2 μ B)` and an approaching pair may still brake when `B = 0`. The function is `gfs_pair_work_limit` in `Exam/gfs_pair.h`. It is called from `exam.c`, `exam_gpu.cu`, `exam_gpu_extract.c`, and `Hydro1DExam/laguerre_sod.c`. On the 2D paths `Δt` is `GAS_dtold`, the previous accepted step. On the 1D path it is the `dt` of the current `rk4_step`. The 1D suite has not been rerun with this limit. **[CODE]**
+
+### Kepler 406734 — running
+
+406654 (`LAGFORCE_KEP_RK4`, RK4 with the cap but without this limit) was stopped after it had already gone to `E_hyd = nan` and `floor_cum = inf`. `mpirun` returned 255. The batch script still exited 0, so `sacct` says `COMPLETED`.
+
+406734, `LAGFORCE_KEP_W`, syn08, 3× H100, 4 ranks. Directory `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_budget_Nx256`. Same disk as 406654: RK4, `EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, `t_stop = 177.72`. At `t = 1.08` (step 1244):
+
+| | value |
+|---|---:|
+| dt | 6.3e-4 |
+| dEtot/\|Etot0\| | 1.8e-6 |
+| floor_cum | 6.5e-6 |
+| n_ie_le0 | 0 |
+| n_pair | 8 |
+
+406654 was still mild at `t ≈ 4.3` and crossed `|ΔE| = 0.01` at `t = 4.59`. This section is the launch, not a pass. 406515–406519 stay held. Do not copy this binary into them until this disk stays bounded through that time.
+
+---
+
+## 11. Report to Grokbot: Kepler 406734 through the old blow-up
+
+406734 is still running (syn08, 3× H100, 4 ranks, `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_budget_Nx256`). This is the same RK4 disk as 406654 (`EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, `t_stop = 177.72`) with `gfs_pair_work_limit` in the binary. Wall time about 41 min when this was written. No NaN. **[RUN]**
+
+406654, without the work limit, crossed `|ΔE| = 0.01` at `t = 4.59`, reached `0.1` at `t = 5.01`, and was at `~10^3` by `t = 5.84` (`floor_cum = inf` when it was stopped). 406734 went through that interval as follows.
+
+| t | step | dt | dEtot/\|Etot0\| | floor_cum | n_ie_le0 | n_pair | E_hyd | E_pot | E_tot |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 4.00 | 5945 | 6.44e-4 | 1.69e-4 | 1.46e-3 | 1 | 32 | 8.79003 | −17.5802 | −8.79017 |
+| 4.59 | 6889 | 6.13e-4 | 2.52e-4 | 2.17e-3 | 4 | 50 | 8.79086 | −17.5803 | −8.78944 |
+| 5.00 | 7546 | 6.49e-4 | 3.34e-4 | 2.85e-3 | 4 | 52 | 8.79072 | −17.5794 | −8.78872 |
+| 5.18 | 7837 | 4.70e-4 | 3.57e-4 | 3.03e-3 | 2 | 64 | 8.79086 | −17.5794 | −8.78852 |
+
+Over the run so far the largest `|dEtot/|Etot0||` is `3.6e-4`, the largest `floor_cum` is `3.0e-3`, `n_pair` peaked at 74, and `n_ie_le0` peaked at 9. In the last `Δt = 0.5` (`t = 4.68` to `5.18`) `floor_cum` rose from `2.38e-3` to `3.03e-3`. `E_pot` has moved from `−17.581` to `−17.579`. The gas-energy error tracks `floor_cum / |Etot0|` (`|Etot0| ≈ 8.79`). The cells that hit `ie ≤ 0` are still being replaced by `P = 1e-6`, and that replacement is the whole energy error.
+
+So the work limit stopped the `t ≈ 5` runaway. It did not stop the slow floor. `t = 5.18` is about 0.3 of an inner orbit (`T(R = 2) = 17.8`). Do not call this a pass, and do not copy this binary into 406515–406519. Leave 406734 running.
+
+Please rerun the eight 1D GFS problems with this limit. `Hydro1DExam/laguerre_sod.c` already calls `gfs_pair_work_limit` (`nshare = 2`, `Δt = gfs_1d_dt` set at the start of `rk4_step`). Do not overwrite `gfs_*.dat`. Compare with the cap-only `gfs_pair_*.dat` from section 9, especially the blast, where the old closing faces were Mach 2 and the work of braking is negative, so `B = 0` must still allow `P0`. On the 2D paths the `Δt` passed to the limiter is `GAS_dtold`, the previous accepted step, not the RK4 stage fraction.
+
+---
+
+## 12. Kepler 407021 started; MUSCL is on
+
+406734 is still the baseline and was left running. The diagnostic run is 407021, `LAGFORCE_KEP_DE`, syn09, 3× H100, 4 ranks, `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_dual_Nx256`. The binary is `fe28651` with the host `exam.c` relinked. `exam_gpu.cu` is unchanged. Same disk as 406734. **[RUN]**
+
+Flags from the job, not from a guess:
+
+| | |
+|---|---|
+| `SEDOV_PHASE1` | 1 |
+| `GAS use_muscl` | 1 |
+| `GAS av_mode` | 5 (MUSCL + HLLC) |
+| `GAS gpu_enabled` | 1 |
+| time-stepping `way` | 1 (this is the RK4 path; the params comment still says KDK) |
+| `GFS_DUAL_ENERGY` | 0.5 |
+| `GFS_FLOOR_LOG` | 1 |
+
+The cell-centred HLL overwrite in `exam.c` runs only when `sedov_phase1_on() && !use_muscl`. This job does not take that branch. The face pressure is the MUSCL/HLLC state from `av_mode` 5.
+
+Step 1 of 407021: `E_int = 8.644e-4`, `n_de = 0`, `de_cum = 0`, `floor_cum = 0`, `dEtot = 0`, `n_pair = 0`. That `E_int` matches the thermal energy of the initial box. No `[RK4F]` line in the first steps. 406515–406519 stay held.
+
+---
+
+## 13. Baseline runaway at t = 9.5, and the first [RK4F] radii
+
+Both jobs were still running when this was written. 406734 was not stopped. **[RUN]**
+
+### 406734, the work-limit baseline
+
+The slow floor lasted past the old blow-up and then failed the same way. 406654 crossed `|ΔE| = 0.01` at `t = 4.59`. 406734 did it at `t = 9.54`.
+
+| t | dEtot/\|Etot0\| | floor_cum | n_ie_le0 | n_pair | dt |
+|---:|---:|---:|---:|---:|---:|
+| 6.00 | 4.4e-4 | 3.7e-3 | 6 | 62 | 6.2e-4 |
+| 8.00 | 7.5e-4 | 5.4e-3 | 4 | 92 | 6.4e-4 |
+| 9.00 | 9.0e-4 | 6.5e-3 | 8 | 138 | 5.3e-4 |
+| 9.50 | 6.6e-3 | 2.6e-2 | 8 | 132 | 6.1e-4 |
+| 9.54 | 1.0e-2 | 3.4e-2 | — | — | — |
+| 9.60 | 1.39 | 11.8 | 11 | 172 | 7.7e-5 |
+
+`|ΔE| = 10^{-3}` was crossed at `t = 9.12`. From `t = 9.50` to `t = 9.60` the floor jumped by about 400× and `dt` dropped. `E_pot` was still `−17.577`. This is the pressure-floor runaway, delayed, not an orbit decay. The useful floor-rate baseline is the interval before `t ≈ 9.1`.
+
+### 407021, dual energy, t = 0.83
+
+527 `[RK4F]` lines, every one with `reset = 1`. None are in the disk.
+
+| region | lines | R |
+|---|---:|---|
+| R < 0.3 | 105 | 0.243–0.264 |
+| 0.3–1.9 | 422 | 0.336–0.399 |
+| 1.9–2.1 | 0 | |
+| R ≥ 2.1 | 0 | |
+
+`ie_K > 0` on all of them. 24 lines have `ie ≤ 0`; the rest are positive and sit at `ie/ie_K = 0.13–0.50`, which is the `η = 0.5` threshold and not an 8-cell-energy drain. `den` is `6.6e-4–2.5e-3`, the central floor gas (`ρ_floor = 1e-3`). `floor_cum = 0` and `n_ie_le0 = 0` at `t = 0.83`: the dual-energy reset is catching these cells before the `P = 1e-6` floor. `de_cum = 4.8e-6`, about `1e-8` per logged event, and `dEtot/|Etot0| = 1.2e-6`. The ledger matches that small injection.
+
+`E_int` went from `8.64e-4` at `t = 0` to `1.13e-3` at `t = 0.83`. `E_hyd` and `E_tot` did not move with it, so that rise is a conservative exchange, kinetic energy into internal energy. `de_cum` is 50× too small to be the source. The log does not split `E_int` by radius, so this does not yet say the disk is heating. It does say the cells that lose half their adiabatic energy are at `R = 0.24–0.40` and not at `Rin = 2`. Too early to call the `t ≈ 9` runaway fixed. `n_pair = 8`.
+
+---
+
+## 14. Kepler closed: both runs hit the same cliff
+
+Both jobs are finished. Neither is a pass. 406515–406519 stay held. Do not copy either binary into them. **[RUN]**
+
+Shared setup: RK4 (`way = 1`), `SEDOV_PHASE1 = 1`, `GAS use_muscl = 1`, `av_mode = 5`, `EPS = 0.047`, `DTETA = 0.06`, `P = 1e-6`, annulus `R = 2–8` in a box of side 24 centred at `(12, 12)`, `t_stop = 177.72`. H100×3, 4 ranks. Initial `E_pot ≈ −17.581`, `|Etot0| ≈ 8.79`, initial thermal energy `E_int(0) = 8.644e-4`.
+
+| job | what | node | wall | end |
+|---|---|---|---:|---|
+| 406734 `LAGFORCE_KEP_W` | work limit, no dual energy | syn08 | 1 h 37 min | log: signal 11, `EXIT:255`. `sacct` says `COMPLETED 0:0` because the batch script does not fail on `mpirun` |
+| 407021 `LAGFORCE_KEP_DE` | `fe28651` plus `GFS_DUAL_ENERGY=0.5`, `GFS_FLOOR_LOG=1` | syn09 | 2 h 00 min, ended 2026-09-28 02:43 | `exam_gpu.cu:3428` CUDA `invalid argument`, then signal 9, `EXIT:255`. Same `sacct` `0:0` |
+
+406654, the RK4 disk without the work limit, crossed `|ΔE| = 0.01` at `t = 4.59`. The work limit moved that crossing to `t = 9.537`. Dual energy moved it to `t = 10.311`. The slope before the crossing is the same, and the jump after it is the same.
+
+### 406734
+
+`floor_cum` is the whole energy error. `E_pot` is still `−17.577` at the last finite step.
+
+| t | step | dt | dEtot/\|Etot0\| | floor_cum | n_ie_le0 | n_pair | E_pot |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 6.00 | 9141 | 6.21e-4 | 4.41e-4 | 3.67e-3 | 6 | 62 | −17.579 |
+| 8.00 | 12381 | 6.38e-4 | 7.53e-4 | 5.42e-3 | 4 | 92 | −17.578 |
+| 9.00 | 14024 | 5.31e-4 | 8.96e-4 | 6.54e-3 | 8 | 138 | −17.578 |
+| 9.123 | 14224 | 4.40e-4 | 1.02e-3 | 7.62e-3 | 11 | 152 | −17.577 |
+| 9.50 | 14858 | 6.14e-4 | 6.64e-3 | 2.63e-2 | 8 | 132 | −17.577 |
+| 9.537 | 14918 | 6.13e-4 | 1.03e-2 | 3.37e-2 | 12 | 138 | −17.577 |
+| 9.586 | 15016 | 3.51e-4 | 0.102 | 0.545 | 16 | 159 | −17.577 |
+| 9.597 | 15075 | 1.04e-4 | 1.32 | 9.55 | 13 | 172 | −17.577 |
+
+NaN starts after `t = 9.60`. The log then advances to `t = 17.68` with `dt ≈ 0.8` and `floor_cum = inf`. The record that can be compared is `t ≤ 9.1`.
+
+### 407021
+
+`floor_cum` stays 0 through the finite log. `n_ie_le0` stays 0 because that count is after the reset. The reset sets `ie` to `ie_K`, and `de_cum` adds `ie_K − ie`. A cell that has gone largely negative therefore injects its whole deficit. That is the same created energy as replacing `ie` with the `P = 1e-6` floor. Early on, the logged cells were only shallow (`ie/ie_K = 0.13–0.50`, about `1e-8` each). The cliff is the deep deficit.
+
+| t | step | dt | dEtot/\|Etot0\| | de_cum | E_int | n_de | n_pair | E_pot |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 6.00 | 9294 | 6.20e-4 | 4.48e-4 | 3.72e-3 | 6.39e-3 | 3 | 62 | −17.579 |
+| 8.00 | 12636 | 6.24e-4 | 7.34e-4 | 6.02e-3 | 1.06e-2 | 3 | 126 | −17.577 |
+| 9.00 | 14270 | 6.14e-4 | 9.04e-4 | 7.32e-3 | 1.32e-2 | 7 | 168 | −17.576 |
+| 9.304 | 14778 | 6.13e-4 | 1.00e-3 | 8.27e-3 | 1.42e-2 | 4 | 168 | −17.575 |
+| 10.00 | 15895 | 6.58e-4 | 1.60e-3 | 1.40e-2 | 1.71e-2 | 3 | 140 | −17.570 |
+| 10.311 | 16349 | 6.93e-4 | 1.24e-2 | 8.54e-2 | 7.72e-2 | 6 | 110 | −17.566 |
+| 10.413 | 16500 | 5.20e-4 | 0.103 | 1.18 | 0.679 | 10 | 134 | −17.563 |
+| 10.432 | 16578 | 2.34e-4 | 1.07 | 5.07 | 6.30 | 11 | 132 | −17.562 |
+
+At `t = 8` the two jobs match: `dE ≈ 7.5e-4` and about `6e-3` of created energy, booked as `floor_cum` in 406734 and as `de_cum` in 407021. `E_int(8) / E_int(0) ≈ 12`. Of that rise, `6.0e-3` is the injection and the rest is a conservative exchange of kinetic energy into internal energy. By the cliff, `E_int` and `de_cum` move together. `E_pot` at the last finite step is `−17.556`. NaN starts at `t = 10.441`. The last line in the log is `t = 10.93`, `dt = 0.099`, `de_cum = inf`.
+
+### Where the resets are
+
+Through `t = 7.94` (`dE = 7.3e-4`, still on the slow slope) there were 35200 `[RK4F]` lines. The annulus itself had 31.
+
+| R | lines at t = 7.94 |
+|---|---:|
+| < 0.5 | 4343 |
+| 0.5–1 | 9909 |
+| 1–1.5 | 15256 |
+| 1.5–1.9 | 5441 |
+| 1.9–2.1 | 32 |
+| 2.1–8 (the disk) | 31 |
+| > 8 | 188 |
+
+The full log has 101654 lines and `R` up to 37, which is outside the box. That tail is the runaway. It is not evidence that the orbiting ring was the source. `use_muscl` was already 1, so the cell-centred HLL overwrite was not the face pressure, and adding MUSCL on the disk is not what this log asks for.
+
+### What to change next
+
+The work limit delayed the cliff by about Δt = 5 relative to 406654 and did not remove it. Dual energy at `η = 0.5` delayed it by a further Δt = 0.8 and did not remove it. The cells that lose half their adiabatic energy, while the run is still quiet, are the floor gas in the hole `R < 2`, not the ring. The next Kepler run should be the same RK4 disk with that floor gas removed or frozen, not another coefficient on the pair pressure and not a wider HLL change. Leave 406515–406519 held until a disk passes more than a short fraction of an inner orbit (`T(R = 2) = 17.8`) with `dE` still on the `10^{-4}` slope. These two runs died at `t ≈ 10`, about 0.6 of that orbit.
+
+---
+
+## 15. Kepler 407214 started: Hopkins disk, entropy switch on
+
+406515–406519 stay held. `GFS_DUAL_ENERGY` is unset. **[RUN]**
+
+| job | what | where |
+|---|---|---|
+| 407214 `LAGFORCE_KEP_HS` | primary. `EUNHA_KEPLER_PROFILE=hopkins`, `GFS_ENTROPY_SWITCH=1`, `GFS_ES_COEF=0.01`, `GFS_FLOOR_LOG=1` | syn08, 3× H100, 4 ranks. `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_hopkins_esw_Nx256` |
+| 407215 `LAGFORCE_KEP_ES` | control. same switch, old `1/R` IC | syn104, 3× H200, 4 ranks. `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_esw_Nx256` |
+
+syn09 had only 2 H100 free, and syn08's other 2 H100 are in `sjjlee_h100` until 2026-10-19. The control therefore uses H200. Binary is `00adc2d` (`exam.c` and `Exam/KH/util.c` relinked; `exam_gpu.cu` unchanged).
+
+Flags from the 407214 script and `params.dat`: `SEDOV_PHASE1=1`, `way=1`, `use_muscl=1`, `av_mode=5`, `entropy_mode=0`, `gpu_enabled=1`, centroid shift `0`, `CX=CY=12`, `EPS=0.047`, `DTETA=0.06`. The banner is
+
+```
+[ESW] entropy_switch=1 coef=0.01 half_limit=1 active=1
+```
+
+Step 1 matches the IC harness: `E_hyd = 21.459`, `E_pot = −42.928`, `E_tot = −21.469`, `E_int = 8.641e-4`. `n_es = 25528` (the estimate was about 25500). `n_half = 0`, `floor_cum = 0`, `n_ie_le0 = 0`, `es_de = −3.4e-6`. The switch is removing a little heating, not topping cells up.
+
+407215 step 1 is the old disk: `E_hyd = 8.790`, `E_pot = −17.581`, `E_tot = −8.792`, `E_int = 8.640e-4`, `n_es = 23156`, `n_half = 0`, `es_de = −3.8e-7`. Same banner, `active = 1`.
+
+---
+
+## 16. Both entropy-switch Keplers died. The half-limit pays the hole
+
+Received `c6d6a81`. `GFS_LAGUERRE_ROTATION` and `Exam/Tests3D` are in the tree. Neither has been run. 406515–406519 stay held. **[RUN]**
+
+Exam3d is not in the places searched: `/home/kjhan/Eunha.A1`, `/home/kjhan/BACKUP/Eunha.A1`, `/home/kjhan/BackUP`, `/gpfs/kjhan/LagForce`, and the local LagEunha history (only `figs/Fig/exam3d.eps`). It was not pushed. Tests3D was not submitted. A path for Exam3d is needed before that driver can go into the repository.
+
+### What finished
+
+| job | IC | wall | `|ΔE| = 10^{-3}` | `|ΔE| = 10^{-2}` | `|ΔE| = 1` | end |
+|---|---|---:|---:|---:|---:|---|
+| 407215 `LAGFORCE_KEP_ES` | old `1/R` | 2 h 37 min | t = 13.091 | t = 14.038 | t = 14.306 | signal 9, `EXIT:255`. `sacct` `COMPLETED 0:0` |
+| 407214 `LAGFORCE_KEP_HS` | Hopkins | 3 h 26 min | t = 15.383 | t = 16.110 | t = 16.134 | signal 9, `EXIT:255`. Same `sacct` |
+
+For comparison: 406654 (no work limit) crossed `0.01` at `t = 4.59`, 406734 (work limit) at `t = 9.54`, 407021 (dual energy `η = 0.5`) at `t = 10.31`. The switch moved the crossing to `14.04` and `16.11`. It did not remove it. `T(R = 2) = 17.8`, so 407214 died at about 0.91 of an inner orbit. Not a pass.
+
+`floor_cum` stayed 0. `E_pot` at the `dE = 1` line was still `−17.56` (407215) and `−42.92` (407214). The orbit did not fall in.
+
+At the `0.01` crossing:
+
+| | t | dE | es_cum | hl_cum | E_int |
+|---|---:|---:|---:|---:|---:|
+| 407215 | 14.04 | 1.10e-2 | +1.32e-2 | 5.45e-2 | 8.43e-2 |
+| 407214 | 16.11 | 1.23e-2 | −1.89e-2 | 0.410 | 0.103 |
+
+`dE × |Etot0|` tracks `es_cum + hl_cum`. The jump from `0.01` to `1` is `Δt ≈ 0.03`, and in that interval `hl_cum` goes from `0.054` to `5.56` (407215) and from `0.41` to `32` (407214). The half-limit is the term that runs away. On the step where 407215 crossed `0.01`, `n_half = 1` and `hl_de = 7.3e-3`. One cell. A cell's initial internal energy is about `10^{-8}`.
+
+### Why the half-limit does that
+
+The final correction is once per step:
+
+```c
+if (gfs_es_on && coef * m * |g| * sqrt(V) > max(0.5*ie_n, ie_E)) {
+    ie1 = ie_n * (V_n/V)^(γ-1);     /* booked as es_de = ie1 - ie_E */
+}
+if (gfs_half_on && ie1 < 0.5*ie_n) {
+    hl_de += 0.5*ie_n - ie1;        /* then ie1 = 0.5*ie_n */
+}
+```
+
+`hl_de = 0.5*ie_n − ie_E` when the cell was not switched. If the energy equation has driven `ie_E` to a large negative number, the half-limit writes a cheque for the whole hole, not for half a thermal energy. The face force has already changed the kinetic energy. Putting the internal energy back does not undo that, so the total energy rises by about `|ie_E|`.
+
+The unit test bounded the injection by asking for `−2 ie_n` every step, after which `ie` halves and the next request shrinks. A face does not ask for a multiple of `ie`. One face can deposit a macroscopic `ΔE` in one step. `hl_de = 7.3e-3` on a single cell is that deposit.
+
+A switched cell does not take this path. A deep hole in a cold cell is booked in `es_de`, because the switch runs first and sets the adiabatic value. Early on, `es_cum` was negative: the switch was throwing away heating the energy equation wanted. That is why the cliff moved from `t ≈ 10` to `t ≈ 14–16`, and why Hopkins, with `n_es` stuck near 25500, lasted about `Δt = 2` longer than the old disk. `n_es` on 407214 was still about 25400 at the `dE = 1` line.
+
+The switch lets a cell go when `ie_n` exceeds `0.01 m |g| h`. Those cells have only the half-limit left. The half-limit has no gravity test and no cap against the face work. `E_int` was already tens of times `8.6e-4` before `hl_cum` overtook `es_cum`. The injected energy raises the pressure, the next face work digs a deeper hole, and the half-limit pays it. That is the feedback loop, on the half-limit side.
+
+`n_pair` reached several hundred on 407215 and about 800–1000 on 407214. The pair impulse is already limited by the internal-energy budget, so a `10^{-3}` hole in one cell is hard to blame on that term alone. The hydro face work is not limited that way.
+
+An internal-energy rule after the step has now been tried four times. The pressure floor, dual energy, the entropy switch, and the half-limit all book the same hole under different names. The crossing moved from `t = 4.59` to `9.54`, `10.31`, `14.04`, and `16.11`. The next change has to limit the face work that digs the hole, not the value written into `ie` afterwards. `av_mode` was 5 and centroid shift was 0, so this is not the LagMFM `E_inv` alias and not the centroid volume change.
+
+---
+
+## 17. c283a54 방식 (1)/(2) 빌드와 GPU/MPI 짧은 실행 (2026-09-29)
+
+**[CODE]** `origin/master`의 `c283a54`를 별도 작업 트리 `/gpfs/kjhan/LagForce/Codex_build_c283a54`에서 `USE_CUDA=1`로 빌드했다. Slurm 빌드 잡 `408460`은 A10 노드에서 `COMPLETED 0:0`이었다. `exam_gpu.cu`를 nvcc로 컴파일했고 바이너리에 `GFS_DYN_W2` 문자열이 있다. `eunha2.exe` SHA256은 `26eae35bc12cf6ef346d07fb64e24a7c9ebbe95204ebfca67a0c6ef6102367f4`이고 실행 로그의 컴파일 시각은 `12:08:08 Sep 29 2026`이다. 아래 모든 실행에 이 바이너리를 사용했다.
+
+**[RUN]** 256² 본실험 A(방식 (1), 보로노이+HLL) 잡 `408511`을 요청대로 `--partition=h200 --gres=gpu:H200:3`, 4랭크, 32G로 제출했다. `syn104`에 배정됐지만 2026-09-29 13:48:42 KST 시작 후 6초 만에 `FAILED 1:0`으로 끝났다. 4개 랭크 모두 `exam_gpu.cu:1311: initialization error`를 출력했고 첫 `Time=` 또는 `[RK4E]` 줄이 없다. Slurm 출력은 H200 NVL 세 장을 열거한다. 이전 노드 상태에는 Xid 119/154와 재부팅 필요 사유가 표시됐었다. 따라서 이번 실패는 수치 발산 판정이 아니라 CUDA 초기화 실패다. 결과 디렉터리는 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_voronoi_hll_Nx256`이다. B1/B2의 256² 본실험은 제출하지 않았다.
+
+**[RUN]** H200 장애와 독립적으로 GPU+MPI 경로를 확인하려고 A10 세 장, 4랭크, 64², `HYDRO_TSTOP=3`으로 동일한 세 설정을 순차 실행했다. Slurm 잡 `408526`은 `COMPLETED 0:0`, S1/B1/B2 각각 `EXIT:0`이었다. 파라미터는 256² A의 406734 기준을 64²로 낮춘 뒤 B1/B2에 `GAS kappa=0.4`, `GAS w2_mode=8`, `GAS w2 power=1`을 넣었다. B1/B2에는 `GFS_ALLOW_KAPPA=1 GFS_LAGUERRE_ROTATION=1`, B2에만 `GFS_W2_LINEAR=1`을 켰다. kappa 유지, LAGROT, B2 W2LIN 활성 배너를 확인했다. 세 설정 모두 RK4, MUSCL, `av_mode=5`, 옛 1/R Kepler IC, `gpu_enabled=1`이다. 로그는 `/gpfs/kjhan/LagForce/Kepler_gpu_mpi_pf64_c283a54/{S1,B1,B2}/log`에 있다.
+
+| 잡 | 방식 | 해상도 | 플래그 | 도달 t | dE t≈1 | dE t≈3 | dE t=10 | dE t=17.8 | floor_cum @t≈3 | sfl_cum @t≈3 | 최소 dt (t) | 첫 \|dE\|>1e-3 | [VAUD] cum |
+|---|---|---|---|---:|---:|---:|---|---|---:|---:|---|---|---|
+| 408526/S1 | (1) | 64² | κ=0 | 3.00133 | 7.440e-7 | 1.074e-5 | 미도달 | 미도달 | 8.279e-6 | 0 | 0.00158954 (3.00133) | 없음, t≤3 | — |
+| 408526/B1 | (2) | 64² | κ=.4, mode8, a=1, LAGROT | 3.00143 | 7.375e-7 | 1.053e-5 | 미도달 | 미도달 | 9.550e-6 | 0 | 0.00156026 (3.00143) | 없음, t≤3 | — |
+| 408526/B2 | (2) | 64² | B1+W2LIN | 3.00086 | 7.153e-7 | 9.895e-6 | 미도달 | 미도달 | 7.707e-6 | 0 | 0.00149890 (3.00086) | 없음, t≤3 | — |
+
+`dE`는 `[RK4E] dEtot/|Etot0|`의 부호 있는 값이다. t≈3에서 `n_pair`는 S1=8, B1=12, B2=4다. `|Etot0|≈8.792664`이므로 t≈3 에너지 드리프트 절댓값은 약 `8.7–9.4e-5`이며 장부의 `floor_cum`은 `7.7–9.6e-6`, `sfl_cum`은 0이다. **[HYP]** floor 장부만으로 이 드리프트를 설명할 수 없다. 여기서 원인을 특정하지 않는다.
+
+**[RUN]** 같은 바이너리/IC/64²에서 `gpu_enabled=0`(CPU hydro), 1랭크, `OMP_NUM_THREADS=1`로 세 설정을 순차 실행한 잡 `408534`도 `COMPLETED 0:0`이었다. CPU 실행에도 클러스터 규칙에 따라 A10 한 장을 요청했고 로그에는 GPU 중력 트리가 나온다. 따라서 여기서 CPU는 hydro 경로를 뜻한다. 로그는 `/gpfs/kjhan/LagForce/Kepler_cpu1_pf64_c283a54/{S1,B1,B2}/log`에 있다.
+
+| 잡 | 방식 | 도달 t | dE t≈1 | dE t≈3 | floor_cum @t≈3 | sfl_cum @t≈3 | 최소 dt (t) |
+|---|---|---:|---:|---:|---:|---:|---|
+| 408534/S1 | (1) | 3.00067 | 9.516e-11 | 1.786e-4 | 6.658e-6 | 1.558e-3 | 2.19269e-5 (2.09131) |
+| 408534/B1 | (2) | 3.00157 | 4.286e-8 | 1.379e-6 | 0 | 1.235e-5 | 0.00170960 (3.00157) |
+| 408534/B2 | (2)+W2LIN | 3.00100 | 1.895e-10 | 7.423e-6 | 0 | 6.463e-5 | 0.00106728 (2.94661) |
+
+세 설정 모두 `EXIT:0`, t≤3에서 `|dE|>1e-3` 없음. CPU 1랭크의 S1/B1 값은 Grokbot의 박스 CPU 보고 `(1)≈1.5e-4, (2)≈1.5e-6`을 재현한다. B2는 B1보다 나쁘다. `Exam/exam.c`의 CPU RK 단계는 음의 압력이면 내부에너지를 재설정하고 `sfl_cum`에 기록한다. GPU RK 단계는 압력만 바닥값으로 만든다. CPU S1의 `dE×|Etot0|≈1.57e-3`은 `sfl_cum+floor_cum≈1.565e-3`과 가깝다. CPU B1/B2도 에너지 증가분이 주로 `sfl_cum`에 기록된다.
+
+**[RUN]** B1의 차이가 hydro 경로와 랭크 수 중 어디서 생기는지 보려고 같은 입력으로 교차 실험했다. `408553`(GPU hydro, 1랭크, A10 1장), `408554`(CPU hydro, 4랭크, A10 1장), `408564`(GPU hydro, 4랭크, A10 1장)는 모두 `COMPLETED 0:0`, `EXIT:0`이었다. GPU 설정에서는 `OMP_NUM_THREADS=2`, CPU 설정에서는 1로 원래 비교 잡과 일치시켰다. 로그는 `/gpfs/kjhan/LagForce/Kepler_cross_pf64_c283a54/{GPU1,CPU4,GPU4_ONEGPU}/B1/log`에 있다.
+
+| B1 경로 | 잡 | GPU 수 | dE t≈1 | dE t≈3 | floor_cum @t≈3 | sfl_cum @t≈3 |
+|---|---|---:|---:|---:|---:|---:|
+| CPU hydro, 1랭크 | 408534/B1 | 1 | 4.286e-8 | 1.379e-6 | 0 | 1.235e-5 |
+| CPU hydro, 4랭크 | 408554 | 1 | 4.290e-8 | 1.585e-6 | 1.392e-7 | 1.354e-5 |
+| GPU hydro, 1랭크 | 408553 | 1 | 3.000e-9 | 1.600e-6 | 1.085e-5 | 0 |
+| GPU hydro, 4랭크 | 408564 | 1 | 7.375e-7 | 1.048e-5 | 9.571e-6 | 0 |
+| GPU hydro, 4랭크 | 408526/B1 | 3 | 7.375e-7 | 1.053e-5 | 9.550e-6 | 0 |
+
+**[HYP]** B1의 추가 오차는 GPU hydro와 4랭크가 함께 있을 때만 나타난다. GPU 한 장과 세 장의 결과가 사실상 같으므로 장치 개수/랭크 매핑이 주원인이라는 증거는 없다. t≈1에는 모든 경로에서 `floor_cum≈0`이고 GPU 4랭크만 이미 `dE=7.375e-7`이다. t≈3의 GPU 4랭크 에너지 증가분은 약 `9.2e-5`, 기록된 `floor_cum`은 약 `9.6e-6`이므로 장부에 없는 차이가 약 `8.3e-5`다. 이 비교만으로 특정 면 또는 MPI 통신 지점을 단정하지 않는다.
+
+**Grokbot께 요청:** GPU hydro 4랭크의 초기(t≈1, 바닥값 주입 전) 에너지 차이를 출발점으로 GPU 면 힘/일의 랭크 경계 합산과 ghost/owner 처리를 점검해 달라. 같은 B1 64² 입력에서 1랭크와 4랭크의 RK 단계별 에너지 및 면별 짝 일 합계를 비교하는 계측이 가장 직접적이다. CPU 경로의 `sfl_cum`과 GPU 경로의 `floor_cum`은 적용 단계가 달라 이 둘을 그대로 같은 물리 효과로 취급하지 말아 달라. H200 `408511`의 `exam_gpu.cu:1311`은 `cudaGetDeviceCount` 호출이므로 GPU 초기화/노드 상태 문제로 분리해 달라.
+
+**[RUN]** `406515–406519`는 계속 보류한다. 짧은 t=3 결과로 생산 잡 해제 여부를 판정할 수 없다. H200의 CUDA 초기화가 복구되거나 별도 자원이 승인되면 256² A에서 적어도 t=17.8의 에너지 추이를 확인해야 한다. 과거 t≈16.11의 급격한 발산을 고려하면 그 뒤까지 안정성을 살펴야 한다.
+
+---
+
+## 18. H200 복구 후 A 재시작과 면 속도 일관성 (2026-09-29)
+
+**[RUN]** H200 노드 `syn104`가 다시 Slurm `mixed`, reason `none`으로 표시돼 256² A만 새 디렉터리 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_voronoi_hll_Nx256_H200_retry_20260929`에 복사해 잡 `408573`으로 제출했다. 원래 실패 잡 `408511`의 로그는 보존했다. 바이너리 SHA256 `26eae35bc12cf6ef346d07fb64e24a7c9ebbe95204ebfca67a0c6ef6102367f4`, `--partition=h200 --gres=gpu:H200:3`, 4랭크, 32G, RK4, 256², `HYDRO_TSTOP=177.72`를 재확인했다. `408573`은 14:59:08 KST 시작해 이전의 `cudaGetDeviceCount` 실패 지점을 통과했다. 실행 로그는 네 랭크의 H200 배정과 GPU 테셀레이션을 보여 준다. 약 6분 30초 시점 `t=1.15900`, `dE=1.344e-6`, `floor_cum=sfl_cum=0`, `EXIT` 없음. 이 값은 초기 건전성만 확인하며 t=17.8 판정은 아직 아니다. `406515–406519`는 보류 중이다. Grokbot의 새 계측 코드/지시가 올라오기 전에는 B1/B2 256²를 제출하지 않는다.
+
+**[CODE/CALC]** 면 속도에 관한 해석을 수정한다. 보로노이 면 중심의 기하학적 법선 속도는 p 또는 q의 개별 속도가 아니라 두 생성점의 운동에서 나온다. 중점에서는 `(v_p+v_q)·n/2`이고 면 중심이 중점에서 벗어나면 회전 항이 붙는다. 따라서 `w_face != v_p,v_q` 자체가 오류는 아니다. 그러나 현 av_mode=5 GFS는 셀 질량을 고정하고, 일부 면에서는 `GFS_GEOM_FACE_VEL=0`일 때 HLL `v*`를 압력 일/에너지 식에 쓰는 반면 실제 면 기하는 생성점 속도로 진화한다 (`Exam/exam.c`의 `voronoi_face_rotation`, `phase1_extreme`/`riemann_vstar`, `dte`/`dvb`). 질량 교환 없는 라그랑지안 방식이라면 실제 면의 법선 속도와 유체 접촉 속도를 맞춰야 하고, 맞지 않으면 실제 면 속도 기준의 질량·운동량·에너지 유속을 포함하는 ALE 방식이 필요하다. 그러므로 현재 (1)을 완전한 self-consistent 해법이라고 부를 수 없다.
+
+**[HYP]** (2) B1은 추가로 가중치 변화가 기하/`P dV`에 완전히 기록되지 않는다. B2의 `GFS_W2_LINEAR`는 선형화한 `Wdot` 항을 넣지만 접촉 속도와의 일치는 보장하지 않는다. (3)은 `Wdot`를 선택해 실제 면 속도를 HLL `v*`에 근접시키고 실제 속도로 일을 계산한다는 점에서 고정 질량 라그랑지안 방식의 더 직접적인 *설계 목표*다. 다만 한 셀당 스칼라 `Wdot` 하나로 모든 면의 원하는 속도를 정확히 맞추는 것은 일반적으로 과잉제약이다. 현재 (3)은 LS 잔차와 셀 유효성 한계가 있고, Noh에서 양쪽 셀이 다른 면 기하를 산출했다는 Grokbot 보고가 있어 아직 일관된 구현으로 인정할 수 없다. 지금의 비교 기준선은 (1), 완전한 수학적 해법은 세 선택지 중 검증된 것이 없다. Grokbot 계측에는 `v*_f-w_geo,f`, 양쪽 셀의 동일 면 여부, `dV/dt-ΣA_f w_geo,f`, 그리고 질량/에너지 잔차를 포함하면 좋겠다.
+
+관련 원문: Springel, *Hydrodynamic simulations on a moving Voronoi mesh* (https://arxiv.org/abs/1109.2218); Guillard & Farhat, *On the significance of the geometric conservation law for flow computations on moving meshes* (https://doi.org/10.1016/S0045-7825(00)00173-0). 위의 현 코드 판정은 논문 결론이 아니라 소스와 실행 기록에서 도출한 추론이다.
+
+---
+
+## 19. §18의 고정 질량 정식 관련 정정과 연구 방향 (2026-09-29)
+
+**[CORRECTION]** §18의 “질량 교환 없는 라그랑지안 방식이라면 실제 면의 법선 속도와 유체 접촉 속도를 맞춰야 하고, 맞지 않으면 ALE 방식이 필요하다”는 주장은 철회한다. Heß–Springel의 [Voronoi Particle Hydrodynamics](https://academic.oup.com/mnras/article/406/4/2289/1018040)처럼, 질량을 고정한 입자에 보로노이 체적을 부여하고 체적의 위치 미분으로 압력 힘을 도출하면 면 속도가 입자 속도와 달라도 수학적으로 일관된 보존 정식이 존재한다. ALE는 다른 정합적 선택지다. 현 GFS의 HLL 면 일과 단순 법선 압력 힘이 그 변분 정식 또는 ALE와 정확히 일치하는지는 별도 문제이며, 면 속도 차이만으로 전역 에너지 오차의 원인을 판정할 수 없다.
+
+정확한 면 속도식, 고정 질량 보존 증명, (3)의 최소제곱 해 존재 조건, 그리고 GPU 4랭크를 포함한 계측 순서는 [Docs/gfs_consistency_research.md](Docs/gfs_consistency_research.md)에 기록했다. 이 문서는 §18의 수학적 판단을 대체한다. 현재 256² A 잡 `408573`의 `t=17.8`, `|dE|<10^-3` 판정과 GPU/MPI 오차 원인 분리를 독립적으로 진행한다.
+
+---
+
+## 20. 기하 면속도 교차 실험: 64² B1, GPU 1/4랭크 (2026-09-29)
+
+**[RUN]** `c283a54` 바이너리 SHA256 `26eae35bc12cf6ef346d07fb64e24a7c9ebbe95204ebfca67a0c6ef6102367f4`로 기존 B1 64² 입력을 그대로 쓰고 `GFS_GEOM_FACE_VEL=1`만 켰다. `408578`은 A10 1장, 32G에서 GPU 4랭크와 1랭크를 순차 실행했고 `COMPLETED 0:0`, 두 로그 모두 `EXIT:0` 및 `t≈3`이다. 결과 위치는 `/gpfs/kjhan/LagForce/Kepler_geomface_pf64_c283a54/{GPU4_B1,GPU1_B1}/log`다. 기존 `408564/408553`의 HLL 면속도 실행과 같은 해상도, 입력, 바이너리, GPU 수를 비교한다.
+
+| 면 일의 속도 | GPU 랭크 | dE(t≈3) | floor_cum | `dE×|Etot0|−floor_cum` |
+|---|---:|---:|---:|---:|
+| HLL 기본값 | 1 | 1.600e-6 | 1.085e-5 | 3.218e-6 |
+| HLL 기본값 | 4 | 1.048e-5 | 9.571e-6 | 8.258e-5 |
+| 기하 속도 | 1 | 1.126e-5 | 9.546e-5 | 3.545e-6 |
+| 기하 속도 | 4 | 1.892e-5 | 9.325e-5 | 7.311e-5 |
+
+첫 `[RK4E]`의 `|Etot0|≈8.792664`를 사용했다. 나머지는 **장부에 없는 순에너지 변화**를 나타내는 진단값이지, 그 자체로 특정 구현 오류를 뜻하지 않는다. 기하 속도 사용 시 양쪽 랭크에서 바닥값 주입이 약 `8×10^-5` 늘었고 `dE`도 커졌다. 그러나 바닥값을 뺀 나머지는 1랭크에서 `≈3×10^-6`, 4랭크에서 `≈7–8×10^-5`로 크게 갈린다. **[HYP]** 따라서 기하 면속도 선택만으로 GPU+MPI 추가 잔차가 없어지지 않는다. B1의 가중치 시간 변화는 여전히 근사적이므로 이 실험을 정확한 기하 운동 검증으로 해석해서도 안 된다. 다음 판정에는 랭크 경계의 면 쌍 힘/일과 전역 RK4/중력 장부가 필요하다. 현 `GFS_E_AUDIT`의 4랭크 출력은 로컬 단계합을 전역 에너지와 비교하므로 직접 사용할 수 없다.
+
+**[RUN]** 별도의 256² H200 A 잡 `408573`은 계속 실행 중이다. 2026-09-29 15:30 KST 무렵 `t=4.19119`, `dE=6.142e-5`, `floor_cum=4.746e-4`였다. 아직 `t=17.8`에 이르지 않았으므로 `406515–406519`는 보류하고 B1/B2 256²도 제출하지 않는다.
+
+---
+
+## 21. MPI 전체 에너지 장부: GPU 4랭크 오차의 발생 항 확인 (2026-09-29)
+
+**[CODE]** 기존 `GFS_E_AUDIT`는 RK4 단계의 면 일·중력 일 및 시작 에너지를 랭크 내부에서만 합산하면서 끝 에너지는 MPI 전체와 비교했다. `Exam/exam.c`에서 다섯 단계 장부값을 `MPI_Allreduce`해 출력 범위를 일치시켰다(`e95835d`). 진단 옵션이 꺼져 있으면 추가 집합 통신은 없다. Slurm 빌드 잡 `408580`은 `COMPLETED 0:0`; CUDA 바이너리 SHA256은 `c185a10879753d40c46170fc1e19e3449a6056aca7956af124b397352a842d4a`다. 별도 작업 트리는 `/gpfs/kjhan/LagForce/Codex_build_mpi_eaudit`이며 256² H200 A 실행 바이너리는 바꾸지 않았다.
+
+**[RUN]** 새 바이너리의 `GFS_E_AUDIT=1`로 동일한 B1 64² Kepler 입력을 GPU 4랭크, GPU 1랭크, CPU 4랭크 순서로 실행했다. A10 1장, 32G 잡 `408584`는 `COMPLETED 0:0`이고 세 로그 모두 `EXIT:0`/`t≈3`이다. 실행 위치는 `/gpfs/kjhan/LagForce/Kepler_eaudit_pf64_e95835d/{GPU4_B1,GPU1_B1,CPU4_B1}/log`다. 아래 장부 누적값은 첫 `[RK4E]` 직후를 기준으로 뺀 값이다. `dE`의 기준 에너지도 이 시점의 `|Etot0|≈8.792664`다.
+
+| 경로 | dE(t≈3) | floor+sfl 누적 | 면 에너지 합 `hyd` | RK4 유체 잔차 `rkh` | 중력 퍼텐셜 잔차 `rkp` |
+|---|---:|---:|---:|---:|---:|
+| GPU 4랭크 | 1.043e-5 | 9.641e-6 | 8.201e-5 | 2.378e-8 | 2.728e-9 |
+| GPU 1랭크 | 1.495e-6 | 1.058e-5 | 2.536e-6 | 2.959e-8 | -1.770e-9 |
+| CPU 4랭크 | 1.585e-6 | 1.368e-5 | 2.398e-7 | 1.529e-8 | 1.166e-9 |
+
+출력의 반올림을 감안하면 각 행의 `dE×|Etot0|`은 오른쪽 네 항의 합과 일치한다. GPU 4랭크의 추가 순에너지 변화는 거의 전부 **전역 면 에너지 기여의 비상쇄**에서 나온다. `t≈1.69`에는 바닥값 주입이 아직 0인데도 GPU 4랭크 `hyd_cum≈1.69e-5`, `dE≈1.95e-6`이었다. 반대로 CPU 4랭크는 면 일 합이 작고 총에너지 증가가 주로 `sfl_cum`에 들어 있다. 따라서 이번 범위에서는 RK4 시간 적분이나 중력 일이 GPU 4랭크 추가 오차의 주원인이 아니다.
+
+**[NEXT]** 이 계측은 면별 위치를 아직 알려 주지 않는다. 다음에는 각 공유 면의 양쪽 `A n`, 면 중심, `P*`, 사용 속도 및 `-P* u·dS`를 전역 입자 쌍 ID로 맞춰 보고, 랭크 경계 면과 랭크 내부 면의 잔차를 분리한다. GPU 4랭크에서만 커지는 이유를 확인하기 전에는 압력이나 바닥값을 임의로 제한하지 않는다. 256² B1/B2는 계속 보류한다.
+
+---
+
+## 22. 방식 (1) Voronoi A에서도 같은 GPU 4랭크 면 일 비상쇄 (2026-09-29)
+
+**[RUN]** Laguerre 가중치 갱신을 원인에서 분리하려고 같은 진단 바이너리 `c185a10879753d40c46170fc1e19e3449a6056aca7956af124b397352a842d4a`로 가중치 `κ=0`의 방식 (1) 64² A를 GPU 4랭크/1랭크에서 실행했다. 기존 `408526/S1`의 입력을 복사하고 `GFS_E_AUDIT=1`만 켰다. A10 1장, 32G 잡 `408590`은 `COMPLETED 0:0`; 두 로그 모두 `EXIT:0`/`t≈3`이다. 위치는 `/gpfs/kjhan/LagForce/Kepler_eaudit_pf64_S1_e95835d/{GPU4_S1,GPU1_S1}/log`다. 수치는 첫 `[RK4E]`를 기준으로 계산한 누적값이다.
+
+| 방식 (1) 경로 | dE(t≈3) | floor_cum | 면 에너지 합 `hyd` | RK4 유체 잔차 | 중력 퍼텐셜 잔차 |
+|---|---:|---:|---:|---:|---:|
+| GPU 4랭크 | 1.088e-5 | 8.267e-6 | 8.740e-5 | 2.076e-9 | 2.809e-9 |
+| GPU 1랭크 | 2.819e-6 | 2.221e-5 | 2.563e-6 | 1.360e-8 | 1.376e-9 |
+
+각 행의 에너지 장부는 출력 반올림 범위에서 닫힌다. GPU 4랭크는 `t≈1.35`부터 `floor_cum=0`인데 `hyd_cum≈9.7e-6`이었다. 따라서 **방식 (1)에도 GPU 4랭크의 전역 면 일 비상쇄가 있으며, B1의 가중치 갱신이 없어도 발생한다.** 새 진단은 GPU+MPI 조합까지 원인을 좁혔지만, 어느 면과 어떤 양쪽 상태가 다른지는 아직 모른다. H200 256² A의 `t=17.8` 문턱을 통과하더라도 이 보존 오차 원인은 별도 해결이 필요하다.
+
+---
+
+## 23. 기존 GPU/CPU 면 비교 진단의 한계 (2026-09-29)
+
+**[CODE/RUN]** `GPU_TESS_COMPARE` 옵션은 원본에서 변수 범위가 맞지 않아 컴파일되지 않았다. 별도 실험용 작업 트리 `/gpfs/kjhan/LagForce/Codex_build_face_compare`에서 범위만 고쳐 잡 `408592`로 빌드했다(바이너리 SHA256 `95de6e5b93d5ee556a5d273f6e6b628aee6c7cb6aba731cebb80eff6cc001c2d`). 그러나 옵션의 `[FACE_CMP]`는 CPU 면 CSR이 현재 단계에서 채워지기 **전**에 비교한다. 첫 호출 `cpu_nfaces=0`은 그 결과이며, 두 번째 호출부터도 직전 CSR과 섞일 수 있다. 이 비교 숫자는 같은 단계의 GPU/CPU 면 차이로 해석할 수 없다.
+
+이 경로는 GPU 힘 계산에 CPU 면을 넘기지만 CPU 단계의 다른 처리도 켠다. 방식 (1) 64² GPU 4랭크 시범 잡 `408593`은 `t≈2.11`에 `sfl_cum=3.366e-4`를 기록해 보통 GPU 경로의 `sfl_cum=0`과 조건이 크게 달라졌다. **[RUN]** 과학적 대조가 성립하지 않아 이 잡만 중지했고 부분 로그는 `/gpfs/kjhan/LagForce/Kepler_cpuface_pf64_S1_03ee986/GPU4_S1/log`에 남겼다. 이 결과로 GPU 면 기하를 원인이라고도, 원인이 아니라고도 판단하지 않는다. 정식 256² H200 A `408573`은 계속 실행 중이다.
+
+---
+
+## 24. GPU 4랭크 면 일 오차: 경계 ghost의 이전 단계 기울기 (2026-09-29)
+
+**[CODE/RUN]** GPU 힘 커널에 선택적인 면별 덤프 `GFS_GPU_FACE_DUMP_CALL`을 넣어 방식 (1), 64², 4랭크의 한 force 호출(1000번)을 전역 입자 ID로 맞췄다. 실험 브랜치 `codex/gpu-face-dump`의 `a7eb479`, 바이너리 SHA256 `d2e08c408636b60af90cb3ea4545d80dad37277eb9e0da4c2abb8b55a5698b81`, 잡 `408597`은 `COMPLETED 0:0`이다. 덤프는 `/gpfs/kjhan/LagForce/Kepler_face_dump_pf64_S1_a7eb479/face_dump_r{0,1,2,3}_call1000.tsv`에 보존했다. 내부 실제 면 12,250개에는 각각 정확히 두 끝이 있었고 누락된 짝은 없었다. 같은 랭크의 11,724면은 일 잔차 합 `-8.742e-9`였지만, 랭크 경계 526면은 `+7.292e-5`였다. 경계 면 양쪽 `P*`의 상대 차이 중앙값은 `1.066e-4`, 최대 `0.260`이고, 면적 법선은 중앙값 수준에서 `~10^-14`로 반대였다. 따라서 주된 차이는 면 누락이 아니라 경계 양쪽의 Riemann 입력/결과다.
+
+**[CODE]** GPU 테셀레이션은 실제 셀 `nbp`의 현재 기울기를 계산하고 AoS에 되쓴다(`Exam/exam.c`의 `gpu_tessellate_and_build_faces`, `Exam/exam_gpu.cu`의 실제 셀 한정 커널). 그러나 MPI padding은 테셀레이션 *전에* 복사되고, `tess_on_device` 힘 경로는 입자 SoA를 다시 채우지 않는다(`Exam/exam_gpu_extract.c`). MUSCL 면 커널은 ghost 쪽의 `dPdx`, `dRhodx`, 속도 기울기도 사용한다. 즉 경계면에서 owner와 ghost의 재구성 단계가 어긋난다. 이를 확인하려고 MUSCL만 끈 4랭크 잡 `408598`을 돌리니 `t≈1.5`에서 면 일 누적이 평소 `~1.3e-5`에서 `6.915e-8`로 줄었다. 이 비교는 해법 차수를 바꾸므로 생산 수정으로 쓰지 않는다.
+
+**[CODE/RUN]** 실험 브랜치 `0b292e7`은 `GFS_GPU_SYNC_HALO_STATE=1`일 때 테셀레이션 이후 `ppadding`을 다시 수행하고 기존 CSR의 padding 순서/ID/위치가 유지되는지 검사한 뒤 현재 실입자와 ghost 상태를 SoA로 업로드한다. 빌드 잡 `408600`은 `COMPLETED 0:0`, 바이너리 SHA256 `b92084317a01311907fefcc89d88767df62994c88cb9554026082289edd4fc10`이다. 64² 방식 (1) 4랭크 잡 `408602`는 `COMPLETED 0:0`, `EXIT:0`, `t=1.5`에 도달했고 순서 검사가 통과했다. 로그와 덤프는 `/gpfs/kjhan/LagForce/Kepler_sync_halo_pf64_S1_b920843/`에 있다.
+
+| 4랭크 방식 (1), t≈1.5 | 기존 경로 | 최신 ghost 동기화 |
+|---|---:|---:|
+| `dE/|Etot0|` | `1.585e-6` | `9.615e-9` |
+| `hyd_cum` | `1.376e-5` | `8.204e-8` |
+| `floor_cum` | 0 | 0 |
+| 해당 호출의 경계면 일 잔차 합 | `7.292e-5` | `2.535e-7` |
+| 경계 양쪽 `P*` 상대 차이 중앙값 | `1.066e-4` | `8.732e-16` |
+
+동기화 후 경계면 522개, 같은 랭크 면 11,728개로 여전히 모든 실제 면에 양끝이 있었다. 면 수가 소폭 달라진 것은 궤적이 달라진 시점의 한 호출을 비교했기 때문이며, 표의 면별 값은 전체 시간 누적값이 아니다. 동기화는 경계 압력 불일치와 총에너지 오차를 동시에 약 두 자릿수 이상 줄였으므로 **이전 단계 ghost 기울기가 주원인이라는 강한 개입 증거**다.
+
+**[RUN]** 동일한 실험 바이너리로 `t≈3`까지 방식 (1)과 방식 (2) B1을 각각 GPU 4랭크에서 실행했다. A10 1장, 32G 잡 `408604`의 두 경우 모두 `EXIT:0`이며 실행 위치는 `/gpfs/kjhan/LagForce/Kepler_sync_halo_pf64_t3_b920843/{S1,B1}/log`다. `hyd`는 첫 `[RK4E]` 직후를 뺀 면 에너지 누적값이다.
+
+| 64² GPU 4랭크, t≈3 | 기존 dE | 동기화 dE | 기존 `hyd` | 동기화 `hyd` | 동기화 `floor_cum` |
+|---|---:|---:|---:|---:|---:|
+| 방식 (1) Voronoi | `1.088e-5` | `9.768e-7` | `8.740e-5` | `2.012e-6` | `6.569e-6` |
+| 방식 (2) B1 | `1.043e-5` | `1.605e-6` | `8.201e-5` | `3.253e-6` | `1.084e-5` |
+
+이는 짧은 구간의 코드 오류 수정 검증이다. 남은 면 잔차와 장시간 안정성은 별도로 검토한다. `ppadding` 재실행과 전체 SoA 업로드에는 계산 비용이 들며 아직 최적화하지 않았다. `950e545`에서 동기화를 GPU 다중 랭크의 기본 동작으로 바꾸고 `GFS_GPU_SYNC_HALO_STATE=0`만 회귀 비교용으로 남겼다. 빌드 잡 `408605`는 `COMPLETED 0:0`, 최종 바이너리 SHA256은 `563713e6c7be3b519a97b305319e7d4ef33fb9480c11e77d92d9944ba9f8752e`이다. 옵션을 지정하지 않은 기본 경로의 64² 방식 (1) 잡 `408606`도 `EXIT:0`/`t=1.50015`, `[HALO_SYNC]` 출력 및 `dE=9.512e-9`, `hyd_cum=8.118e-8`을 확인했다.
+
+**[RUN]** 같은 최종 바이너리에서 방식 (2) B2(`GFS_W2_LINEAR=1`)를 64² GPU 4랭크, `t≈3`으로 실행했다. 잡 `408607`은 `EXIT:0`, 로그 `/gpfs/kjhan/LagForce/Kepler_sync_default_pf64_B2_950e545/log`이며 `dE=9.473e-7`, `floor_cum=6.134e-6`, 첫 출력을 뺀 `hyd=2.175e-6`이다. 이전 바이너리의 B2 `408526`은 `dE=9.895e-6`, `floor_cum=7.707e-6`이었다. B2의 짧은 구간에서도 경계 상태 동기화가 순에너지 오차를 줄인다. 이 값이 가중치 진화 법칙의 수학적 정합성을 검증하는 것은 아니다.
+
+기존 256² H200 A `408573`은 원래 바이너리로 계속 실행 중이며, 수정된 256² 방식 (1) A는 별도 디렉터리 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_Nx256_H200_halosync_950e545`의 H200 잡 `408608`로 제출했다. 새 잡은 같은 4랭크/3 GPU/32G 조건에 `HYDRO_TSTOP=17.8`, 전역 에너지 장부를 추가했다. 수정 전후 A가 모두 `t≈17.8`에 이를 때까지 `406515–406519`는 보류한다. B1/B2 256²도 수정 A 결과를 본 뒤 결정한다.
+
+---
+
+## 25. 수정 전 H200 A 중지와 수정 후 A로 전환 (2026-09-29)
+
+§24 마지막 문단의 두 A를 모두 `t=17.8`까지 진행한다는 계획을 바꿨다. H200의 사용자별 GPU 한도(`QOSMaxGRESPerUser`) 때문에 수정된 `408608`은 수정 전 `408573`의 3 GPU가 배정된 동안 시작할 수 없었다. `408573`은 앞서 확인한 GPU/MPI ghost 단계 상태 오류를 포함한 바이너리이고, 이미 그 오류의 원인과 64² 수정 효과가 확인됐다. 따라서 내 잡 `408573`만 `t=9.99058`, `dE=2.047e-4`, `floor_cum=1.331e-3`에서 `scancel`로 중지했다. 실행 로그와 바이너리는 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_voronoi_hll_Nx256_H200_retry_20260929/`에 보존했다. 이 잡은 `t=17.8`을 검증하지 못했으며 해당 문턱에 관한 판정은 수정 바이너리 `408608`에 맡긴다. `406515–406519`와 256² B1/B2는 계속 보류한다.
+
+수정 전 A를 중지한 뒤에도 `408608`의 3 GPU 요청은 `QOSMaxGRESPerUser`에 걸렸다. 계정의 `normal` QOS는 전체 `gres/gpu=8`이고 이때 다른 실행들이 6장을 사용하고 있었다(`sacctmgr show qos`, `squeue -u kjhan`). `408608`은 시작 전 취소하고 같은 수정 바이너리와 4랭크로 H200 **2장**을 요청한 `408609`를 제출했다. 새 잡은 `Priority` 대기 상태에 들어갔다. 최종 판정 대상은 `408609`이며 기존 보류 조건은 유지한다.
+
+`408609`는 2026-09-29 16:33:39 KST에 `syn104`에서 시작했고 `CUDA_VISIBLE_DEVICES=0,1`, 바이너리 SHA256 `563713e6c7be3b519a97b305319e7d4ef33fb9480c11e77d92d9944ba9f8752e`를 기록했다. 네 랭크 모두 첫 `[HALO_SYNC]`를 출력했다. `t=0.21398`에서 `dE=-3.580e-11`, `floor_cum=0`, `hyd_cum=-2.076e-10`이다. 이는 초기 작동 확인일 뿐 `t=17.8` 판정은 아니다. 추가로 Slurm `sacct`에서 과거 보류 대상으로 적힌 `406515–406519`가 모두 `CANCELLED`, 실행 시간 0임을 확인했다. 실제 대기 잡이 없으므로 “보류 해제”는 수행할 수 없고, 수정 A의 문턱 통과 뒤 필요한 실행을 새로 제출할지 결정해야 한다. 다른 번호의 실행 중 잡은 건드리지 않았다.
+
+초기 256² 교차 시점 `t≈1`에서 수정 전 `408573`은 `t=0.999668`, `dE=1.069e-6`, `floor_cum=0`이었다. 수정 후 `408609`는 `t=0.999821`, `dE=2.325e-8`, `floor_cum=5.475e-8`, 전역 면 일 누적 `hyd_cum=1.483e-7`이었다. 두 잡은 같은 IC/4랭크지만 H200 배정은 각각 3장과 2장이고, 초기 단계 비교일 뿐이다. 수정 후 결과는 확인된 ghost 오류 제거의 256² 초기 신호로 해석하며 `t=17.8` 통과나 장기 정합성의 증거로 확대하지 않는다.
+
+---
+
+## 26. 수정 후 256² A 중간보고: t≈6.78의 면 일 비상쇄 (2026-09-29)
+
+**[RUN]** 수정된 H200 A 잡 `408609`는 17:38 KST 무렵에도 `RUNNING`이었다. `t=6.77693`, 11110단계의 `[RK4E]`는 `dE=6.824e-4`, `floor_cum=1.319e-3`, `hyd_cum=4.612e-3`, `rkh_cum=6.760e-5`, `rkp_cum=1.892e-8`, `n_ie_le0=3`을 기록했다. 기준 `|E_tot,0|≈8.792664`를 곱하면 총에너지 증가분은 약 `6.000e-3`이며, 그중 면 에너지 일 비상쇄가 약 77%, 바닥값 주입이 약 22%를 차지한다. 단계별 장부의 잔차는 출력 반올림 수준에서 닫힌다. `n_ie_le0=3`은 그 단계의 값이며 누적 개수가 아니다. CUDA 오류·padding 순서 변화·MPI 중단 표시는 없었다.
+
+면 일 누적은 `t≈4`에서 `-2.957e-6`, `t≈5`에서 `9.041e-6`이었으나 `t≈5.37`부터 급격히 커졌고, `t≈5.50`에서 `5.839e-4`, `t≈6.66`에서 `4.579e-3`이었다. 예를 들어 `t=6.56093`의 단일 RK4 단계 `aud_hyd=5.393e-5`였다. 이는 초기 ghost 동기화 수정으로 사라진 64²의 랭크 경계 오차 외에, 256²의 진화한 상태에서 발생하는 **미확인 면 일 비상쇄**가 남아 있음을 뜻한다. 원인이 랭크 경계, 면 기하, Riemann 상태 또는 다른 항인지는 이 장부만으로 단정할 수 없다.
+
+비슷한 `t=6.77711`의 수정 전 잡 `408573`은 `dE=1.296e-4`, `floor_cum=8.831e-4`였다. 수정 후의 총에너지 오차가 이 시점에는 더 크므로 초기 `t≈1`의 개선을 장기 개선으로 일반화하지 않는다. 두 잡은 H200 배정이 각각 3장과 2장이고 이후 궤적도 달라 단일 시점 비교는 원인 분석이 아니다. `408609`는 아직 `t=17.8`과 `|dE|<1e-3` 판정에 이르지 않았다. 256² B1/B2 및 다른 생산 계산은 제출하지 않는다. 다음 직접 계측은 오차가 급증하는 `t≈5.3–6.6`의 전역 입자 ID별 면 쌍 `P*`, 기하, `u·dS`, 에너지 일 대조다.
+
+---
+
+## 27. 수정 후 256² A 문턱 실패와 면별 재현 계측 (2026-09-29)
+
+**[RUN]** `408609`의 `|dE|`가 처음 `10^-3`을 넘은 것은 `t=6.80660`, 11171단계로, `dE=1.229e-3`, `floor_cum=6.035e-3`, `hyd_cum=3.919e-3`, `rkh_cum=8.508e-4`였다. 이후 오차가 계속 증가해 마지막 완전한 `[RK4E]` 기록 `t=6.94659`, 11422단계에서 `dE=3.519e-3`, `floor_cum=1.146e-2`, `hyd_cum=1.842e-2`, `rkh_cum=1.062e-3`이었다. 따라서 목표 `t=17.8` 이전에 에너지 문턱을 크게 넘었고, 실행을 계속해 생산 해법으로 인정할 근거가 없어 내가 제출한 `408609`만 `scancel`로 중지했다. 로그, 바이너리 및 잡 스크립트는 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_Nx256_H200_halosync_950e545/`에 보존했다. 이 실험은 **실패**이며 방식 (1)의 256² 검증도 아직 통과하지 못했다.
+
+**[NEXT/RUN]** 큰 면 일 잔차가 나타나기 시작한 `t≈5.38`, 8547단계의 GPU 힘 호출 번호 `4×8547=34188`을 골랐다. 같은 SHA256 `563713e6c7be3b519a97b305319e7d4ef33fb9480c11e77d92d9944ba9f8752e` 바이너리, 같은 H200 2장/4랭크 입력으로 `GFS_GPU_FACE_DUMP_CALL=34188`, `HYDRO_TSTOP=5.39`를 설정한 별도 잡 `408623`을 제출했다. 위치는 `/gpfs/kjhan/LagForce/Kepler_face_dump_Nx256_H200_halosync_call34188/`이다. 그 호출에서 전역 입자 ID로 면 양끝을 맞춰 랭크 경계/내부, `P*`, 면 기하, `u·dS`, 에너지 일의 차이를 분리할 계획이다. 256² B1/B2나 과거 취소된 생산 잡은 제출하지 않았다.
+
+---
+
+## 28. 고정 호출 덤프 실패와 에너지 감사 기반 진단 (2026-09-29)
+
+**[RUN]** 진단 잡 `408623`의 solver는 `EXIT:0`으로 `t=5.39029`, 8447단계까지 끝났다. 지정한 힘 호출 `34188`(8547단계)에 이르지 않아 `face_dump_*.tsv`는 생성되지 않았다. 잡 스크립트의 덤프 파일 필수 검사는 실패했다. Slurm 제어 소켓이 현재 Codex 실행 환경에서 `Operation not permitted`라 최종 Slurm 상태는 조회하지 못했다. 로그는 `/gpfs/kjhan/LagForce/Kepler_face_dump_Nx256_H200_halosync_call34188/log`에 남아 있다.
+
+같은 `syn104`의 같은 H200 두 장, 같은 바이너리 SHA256 및 `params.dat`에서도 두 실행의 작은 초기 반올림 차이가 증폭됐다. 첫 dE 차이 `>10^-12`는 66단계, `>10^-6`는 2717단계였다. 이전 실행 `408609`는 8547단계에서 `t=5.38426`, `aud_hyd=2.073e-5`였지만, 새 실행 `408623`은 종료 단계 8447에서 `t=5.39029`, `aud_hyd=-5.407e-10`, `dE=4.441e-5`였다. 원인은 아직 확인하지 못했다. 이 자료만으로 코드의 비결정성 원인이나 물리적 분기 원인을 특정할 수 없다.
+
+**[CODE]** 고정 호출 번호 대신 전역 `[RK4E]`의 `|aud_hyd|`가 `GFS_GPU_FACE_DUMP_HYD_THRESHOLD`를 **3단계 연속** 넘으면, 다음 RK4 단계의 GPU 힘 호출 네 번에서 네 랭크의 면 TSV를 저장하도록 진단 계측을 추가했다. 임계값 `1e-5`에서 `408609`는 8533–8549단계에 17번 연속 초과했고, `408623`은 5666단계의 단발 초과만 있었다. 따라서 이 임계값과 연속 조건은 앞선 큰 비상쇄를 포착하면서 관측된 단발 신호는 거른다. `GFS_E_AUDIT=1`이 필요하고 기존 `GFS_GPU_FACE_DUMP_CALL` 기능도 유지한다. 분석 스크립트 `Docs/analyze_face_dump.py`는 같은 호출의 네 TSV를 전역 입자 ID로 짝지어 랭크 경계/내부 면의 압력, 기하, 속도·일 잔차를 나눈다. 이전 64² 덤프를 이 스크립트로 재분석해 경계면 일 합 `7.292344997e-5`와 내부면 일 합 `-8.742122749e-9`를 재현했다. `Docs/adaptive_face_dump_h200.slurm`은 H200 2장/4랭크, 새 실행 디렉터리, `tstop=7.5`, 전역 에너지 감사 및 파일 존재 검사를 명시한다. 수정한 `exam.c`와 `exam_gpu.cu` 두 파일은 개별 컴파일을 통과했으나, 아직 새 전체 바이너리의 H200 실행 결과는 없다. 256² B1/B2와 생산 기준선은 계속 보류한다.

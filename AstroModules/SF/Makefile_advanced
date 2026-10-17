@@ -1,0 +1,61 @@
+# Makefile for Star Formation Module (Advanced Version)
+
+CC = gcc
+CFLAGS = -Wall -Wextra -O2 -std=c99
+LDFLAGS = -lm
+
+# Targets
+TARGET_BASIC = star_formation_example
+TARGET_ADVANCED = star_formation_advanced_example
+TARGETS = $(TARGET_BASIC) $(TARGET_ADVANCED)
+
+# Source files
+SOURCES_BASIC = star_formation_example.c
+SOURCES_ADVANCED = star_formation_advanced_example.c
+
+# Headers
+HEADERS_BASIC = star_formation.h
+HEADERS_ADVANCED = star_formation_advanced.h
+
+# Object files
+OBJECTS_BASIC = $(SOURCES_BASIC:.c=.o)
+OBJECTS_ADVANCED = $(SOURCES_ADVANCED:.c=.o)
+
+# Default target - build both
+all: $(TARGETS)
+
+# Build basic version
+$(TARGET_BASIC): $(OBJECTS_BASIC)
+	$(CC) $(OBJECTS_BASIC) -o $(TARGET_BASIC) $(LDFLAGS)
+
+# Build advanced version
+$(TARGET_ADVANCED): $(OBJECTS_ADVANCED)
+	$(CC) $(OBJECTS_ADVANCED) -o $(TARGET_ADVANCED) $(LDFLAGS)
+
+# Compile basic source files
+star_formation_example.o: star_formation_example.c $(HEADERS_BASIC)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compile advanced source files
+star_formation_advanced_example.o: star_formation_advanced_example.c $(HEADERS_ADVANCED)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Run basic example
+run-basic: $(TARGET_BASIC)
+	./$(TARGET_BASIC)
+
+# Run advanced example
+run-advanced: $(TARGET_ADVANCED)
+	./$(TARGET_ADVANCED)
+
+# Run both examples
+run: run-basic run-advanced
+
+# Clean build artifacts
+clean:
+	rm -f $(OBJECTS_BASIC) $(OBJECTS_ADVANCED) $(TARGETS)
+
+# Rebuild everything
+rebuild: clean all
+
+.PHONY: all run-basic run-advanced run clean rebuild

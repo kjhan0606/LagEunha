@@ -1,0 +1,65 @@
+# Kepler 406608 LAGFORCE_KEP256h4  H100x3 nrank=4  binary 79af847 capped pair pressure
+source: /gpfs/kjhan/LagForce/Kepler_gfs_disk_h200_Nx256_cap/log
+extracted: 2026-09-27 21:34 KST
+
+## GPU bind
+[GPU] rank 1 -> device 1/3: NVIDIA H100 NVL (95320 MB)
+[GPU] rank 2 -> device 2/3: NVIDIA H100 NVL (95320 MB)
+[GPU] rank 3 -> device 0/3: NVIDIA H100 NVL (95320 MB)
+[GPU] rank 0 -> device 0/3: NVIDIA H100 NVL (95320 MB)
+
+## Time lines
+Time= 0.0186899  step= 1  dt= 0.0186899
+Time= 0.647283  step= 3476  dt= 8.77296e-05
+n_time_lines=3476
+
+## PHASE1 samples (step dt rho_max E dE/E0 n_neg/n n_clip n_pair)
+     1  1.869e-02  8.034e-01 8.792453e+00    0.000e+00 0/65536 clip=0 pair=0
+     2  1.368e-02  8.034e-01 8.792395e+00   -6.562e-06 0/65536 clip=0 pair=0
+     3  1.560e-02  8.034e-01 8.792380e+00   -8.322e-06 0/65536 clip=0 pair=0
+   236  5.891e-04  8.035e-01 8.881807e+00    1.016e-02 1/65536 clip=171 pair=14
+   401  2.546e-04  8.035e-01 9.555141e+00    8.674e-02 4/65536 clip=231 pair=24
+   486  1.598e-04  8.035e-01 9.674708e+00    1.003e-01 5/65536 clip=250 pair=36
+   732  3.874e-05  8.035e-01 1.766339e+01    1.009e+00 3/65536 clip=602 pair=40
+   801  4.703e-05  8.035e-01 2.485368e+01    1.827e+00 6/65536 clip=939 pair=60
+  1201  6.557e-05  8.035e-01 3.018629e+01    2.433e+00 0/65536 clip=1870 pair=50
+  1601  6.713e-05  8.219e-01 3.094835e+01    2.520e+00 0/65536 clip=1928 pair=126
+  2001  9.457e-05  1.534e+00 3.138967e+01    2.570e+00 2/65536 clip=1951 pair=130
+  2401  7.651e-05  2.175e+00 3.166375e+01    2.601e+00 0/65536 clip=2104 pair=138
+  2801  5.571e-05  2.938e+00 3.216485e+01    2.658e+00 0/65536 clip=2177 pair=148
+  3201  3.482e-05  4.638e+00 3.288851e+01    2.741e+00 0/65536 clip=2249 pair=158
+  3475  8.759e-05  5.440e+00 3.346343e+01    2.806e+00 1/65536 clip=2331 pair=140
+  3476  8.773e-05  5.451e+00 3.346376e+01    2.806e+00 1/65536 clip=2333 pair=136
+n_phase=3476
+
+
+# Gresho 406611 LAGFORCE_GRES128  H100x2 nrank=4  binary 79af847  target t=1
+source: /gpfs/kjhan/LagForce/Gresho_gfs_Nx128_cap/log
+extracted: 2026-09-27 21:34 KST
+
+## GPU bind
+[GPU] rank 2 -> device 0/2: NVIDIA H100 NVL (95320 MB)
+[GPU] rank 3 -> device 1/2: NVIDIA H100 NVL (95320 MB)
+[GPU] rank 0 -> device 0/2: NVIDIA H100 NVL (95320 MB)
+[GPU] rank 1 -> device 1/2: NVIDIA H100 NVL (95320 MB)
+
+## Time lines
+Time= 0.000502053  step= 1  dt= 0.000502053
+Time= 0.667711  step= 2374  dt= 0.000198967
+n_time_lines=2374
+
+## PHASE1 samples (step dt rho_max E dE/E0 n_neg/n n_clip n_pair)
+     1  5.021e-04  1.001e+00 8.616997e+00    0.000e+00 0/16384 clip=0 pair=0
+     2  5.013e-04  1.001e+00 8.616997e+00   -4.889e-09 0/16384 clip=0 pair=0
+     3  5.013e-04  1.001e+00 8.616997e+00   -7.672e-09 0/16384 clip=0 pair=0
+   301  5.013e-04  1.001e+00 8.616995e+00   -2.781e-07 0/16384 clip=0 pair=0
+   601  3.123e-04  1.179e+00 8.616993e+00   -5.643e-07 0/16384 clip=0 pair=0
+   901  1.785e-04  1.251e+00 8.616989e+00   -1.027e-06 0/16384 clip=0 pair=4
+  1201  2.040e-04  1.502e+00 8.616988e+00   -1.037e-06 0/16384 clip=0 pair=0
+  1501  1.955e-04  1.266e+00 8.616988e+00   -1.105e-06 0/16384 clip=0 pair=2
+  1801  2.149e-04  1.082e+00 8.616988e+00   -1.139e-06 0/16384 clip=0 pair=0
+  2101  2.540e-04  1.098e+00 8.616987e+00   -1.199e-06 0/16384 clip=0 pair=0
+  2373  1.990e-04  1.095e+00 8.616987e+00   -1.231e-06 0/16384 clip=0 pair=2
+  2374  1.990e-04  1.095e+00 8.616987e+00   -1.231e-06 0/16384 clip=0 pair=2
+n_phase=2374
+

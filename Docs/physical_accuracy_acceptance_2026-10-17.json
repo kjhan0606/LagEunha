@@ -1,0 +1,781 @@
+{
+  "updated_at": "2026-10-17 01:55:24 KST",
+  "scope_complete": true,
+  "verification_scope": "Established L1 physical accuracy targets for smooth2D nonlinear simple wave and compact stationary Euler vortex at T=.05; independent temporal/spatial/moment/energy checks. No claim of general PDE well-posedness, shocks, long-time stability,3D or Kepler validation.",
+  "constraints": {
+    "no_generator_steering": true,
+    "original_cell_mass_arrays_fixed": true,
+    "time_dependent_Laguerre_weights": true
+  },
+  "cases": [
+    {
+      "label": "P2_wave32",
+      "root": "/gpfs/kjhan/LagForce/Codex_GY_quadratic_pressure_nonlinear_simple_wave_n32_20261016_221456",
+      "n": 32,
+      "problem": "nonlinear_simple_wave",
+      "t": 0.05,
+      "pressure_reconstruction": "quadratic_cell_mean",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 0.02,
+        "velocity": 0.02,
+        "pressure": 0.02
+      },
+      "physical_goals": {
+        "density": 0.01,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.009304815040663933,
+        "velocity": 0.0027680532766859935,
+        "pressure": 0.003669766637101719
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.25898710135187075,
+        "velocity": 0.032397733454152505,
+        "pressure": 0.042433973188005236
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 64,
+      "rejected": 2,
+      "path_absolute_mass_defect": 6.517106020622503e-07,
+      "numerical_peak": {
+        "rate": 2.853083150605696e-06,
+        "generator": 1.9425932529307244e-06,
+        "ledger": 9.540979117872439e-18,
+        "stage_mass": 4.705776241765991e-17,
+        "min_pressure": 0.5998997991219313,
+        "min_factor_R": 0.0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 7.487488316413876e-12,
+        "momentum": 9.687284810635121e-14,
+        "mixed_moment": 3.111657422289844e-13,
+        "kinetic_tensor": 1.2150648001237255e-13
+      },
+      "high_quadrature_total_energy_relative_identity_error": 9.818832395810962e-16,
+      "high_quadrature_kinetic_relative_identity_error": 5.66987776886406e-15,
+      "unresolved_fraction_of_reference_kinetic_energy": 5.154186267859937e-05,
+      "entropy_relative_norms": {
+        "L1": 0.0003294721436353753,
+        "L2": 0.0006932130931296166,
+        "maximum_sampled": 0.008338483301546296
+      },
+      "checkpoint_sha256": "7c0620ea111a690e1a764a051eda7c57a6e1329d48b91d31245c9d9b26a44f3d",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JI_high_quadrature_moment_identity_audit_20261017_012353/physical_field_accuracy_audit_report.json"
+    },
+    {
+      "label": "P2_wave64",
+      "root": "/gpfs/kjhan/LagForce/Codex_HK_quadratic_pressure_wave_n64_20261016_223131",
+      "n": 64,
+      "problem": "nonlinear_simple_wave",
+      "t": 0.05,
+      "pressure_reconstruction": "quadratic_cell_mean",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 0.02,
+        "velocity": 0.02,
+        "pressure": 0.02
+      },
+      "physical_goals": {
+        "density": 0.01,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.002895956981173925,
+        "velocity": 0.0005162439587783784,
+        "pressure": 0.0005849894600779784
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.09338589619892756,
+        "velocity": 0.00957233938090939,
+        "pressure": 0.006503713683464474
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 63,
+      "rejected": 2,
+      "path_absolute_mass_defect": 7.614228267151256e-07,
+      "numerical_peak": {
+        "rate": 3.324763275561881e-06,
+        "generator": 1.6534156951804324e-06,
+        "ledger": 1.4958443861111968e-17,
+        "stage_mass": 1.8552374877682358e-13,
+        "min_pressure": 0.5999818021850689,
+        "min_factor_R": 0.0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 4.1491012854143114e-11,
+        "momentum": 5.135632812448578e-15,
+        "mixed_moment": 2.836146808716845e-13,
+        "kinetic_tensor": 1.5279735990283726e-14
+      },
+      "high_quadrature_total_energy_relative_identity_error": 7.364124296858222e-16,
+      "high_quadrature_kinetic_relative_identity_error": 1.525125652133372e-15,
+      "unresolved_fraction_of_reference_kinetic_energy": 3.145749191763848e-06,
+      "entropy_relative_norms": {
+        "L1": 9.611901489200535e-05,
+        "L2": 0.00023085352194478513,
+        "maximum_sampled": 0.003124297478361515
+      },
+      "checkpoint_sha256": "1a68fcafc2982433678e725e425f1a0c1fa3117b7563627d815ce77978f0e987",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JI_high_quadrature_moment_identity_audit_20261017_012353/physical_field_accuracy_audit_report.json"
+    },
+    {
+      "label": "P2_vortex32",
+      "root": "/gpfs/kjhan/LagForce/Codex_HW_numerical_acceleration_n32_20261016_225846",
+      "n": 32,
+      "problem": "steady_vortex",
+      "t": 0.05,
+      "pressure_reconstruction": "quadratic_cell_mean",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 1.0,
+        "velocity": 0.5,
+        "pressure": 0.3152032964677642
+      },
+      "physical_goals": {
+        "density": 0.001,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.0005306328217109572,
+        "velocity": 0.00038635585379539827,
+        "pressure": 0.0007207528144484943
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.04323742785085116,
+        "velocity": 0.005584061787546014,
+        "pressure": 0.01856143813167608
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 228,
+      "rejected": 64,
+      "path_absolute_mass_defect": 5.5672499404660495e-06,
+      "numerical_peak": {
+        "rate": 6.59887870867881e-05,
+        "generator": 1.871969166677978e-06,
+        "ledger": 6.228486091500037e-17,
+        "stage_mass": 1.875853801718702e-13,
+        "min_pressure": 0.6941875710827357,
+        "min_factor_R": 0.0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 6.87932788946832e-12,
+        "momentum": 8.081256770363561e-14,
+        "mixed_moment": 3.449265233320562e-13,
+        "kinetic_tensor": 1.0604425647221758e-13
+      },
+      "high_quadrature_total_energy_relative_identity_error": 1.4878173183681658e-16,
+      "high_quadrature_kinetic_relative_identity_error": 5.377723719535218e-15,
+      "unresolved_fraction_of_reference_kinetic_energy": 1.378478777353821e-05,
+      "entropy_relative_norms": {
+        "L1": 0.0009416444708860442,
+        "L2": 0.0023366593017346664,
+        "maximum_sampled": 0.08175434502421153
+      },
+      "checkpoint_sha256": "615e15f023f364268bc98b4be2965b3fcc4c1b4cf6f50ab12b7651a955308da6",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JI_high_quadrature_moment_identity_audit_20261017_012353/physical_field_accuracy_audit_report.json"
+    },
+    {
+      "label": "P4_wave32",
+      "root": "/gpfs/kjhan/LagForce/Codex_II_degree4_nonlinear_simple_wave_n32_20261016_234538",
+      "n": 32,
+      "problem": "nonlinear_simple_wave",
+      "t": 0.05,
+      "pressure_reconstruction": "polynomial_cell_mean_degree4",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 0.02,
+        "velocity": 0.02,
+        "pressure": 0.02
+      },
+      "physical_goals": {
+        "density": 0.01,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.0073958353955369755,
+        "velocity": 0.002153760704338819,
+        "pressure": 0.002356177687826068
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.23414253472302526,
+        "velocity": 0.03041975356804405,
+        "pressure": 0.02660088880382383
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 64,
+      "rejected": 2,
+      "path_absolute_mass_defect": 6.346427230477245e-07,
+      "numerical_peak": {
+        "rate": 3.5289145449022858e-06,
+        "generator": 1.9481473641762975e-06,
+        "ledger": 1.0313487476639193e-17,
+        "stage_mass": 4.0526291361382e-18,
+        "min_pressure": 0.5999149683786719,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 64,
+        "pressure_limited_cells_max": 0,
+        "pressure_positivity_scale_min": 1.0,
+        "pressure_deficient_stencil_cells_max": 0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 8.468565189633973e-12,
+        "momentum": 8.332672376796802e-14,
+        "mixed_moment": 3.1865106784316834e-13,
+        "kinetic_tensor": 8.988967287147516e-14
+      },
+      "high_quadrature_total_energy_relative_identity_error": 1.1046186445287332e-15,
+      "high_quadrature_kinetic_relative_identity_error": 1.300112379934076e-14,
+      "unresolved_fraction_of_reference_kinetic_energy": 5.1409313327181965e-05,
+      "entropy_relative_norms": {
+        "L1": 0.00024997198147649034,
+        "L2": 0.000541542950231959,
+        "maximum_sampled": 0.008158928489110928
+      },
+      "checkpoint_sha256": "2bd403d63a9434b870e23ae4d382409835fc67de7e0827954556f3718b5faa24",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JI_high_quadrature_moment_identity_audit_20261017_012353/physical_field_accuracy_audit_report.json"
+    },
+    {
+      "label": "P4_vortex32",
+      "root": "/gpfs/kjhan/LagForce/Codex_JB_combined_kernel_resume_n32_20261017_005828",
+      "n": 32,
+      "problem": "steady_vortex",
+      "t": 0.05,
+      "pressure_reconstruction": "polynomial_cell_mean_degree4",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 1.0,
+        "velocity": 0.5,
+        "pressure": 0.3152032964677642
+      },
+      "physical_goals": {
+        "density": 0.001,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.0003769485537274365,
+        "velocity": 0.0002956100125931408,
+        "pressure": 0.0003067594753822642
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.01394127690405944,
+        "velocity": 0.004999153554478427,
+        "pressure": 0.006460574460339823
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 240,
+      "rejected": 76,
+      "path_absolute_mass_defect": 5.20870642932518e-06,
+      "numerical_peak": {
+        "rate": 8.258179657839559e-05,
+        "generator": 1.931831090123959e-06,
+        "ledger": 6.410938226524592e-17,
+        "stage_mass": 8.096717469662645e-14,
+        "min_pressure": 0.6941875710827357,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 240,
+        "pressure_limited_cells_max": 0,
+        "pressure_positivity_scale_min": 1.0,
+        "pressure_deficient_stencil_cells_max": 0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 8.374528391877727e-12,
+        "momentum": 1.0554465491313428e-13,
+        "mixed_moment": 3.6166970544325964e-13,
+        "kinetic_tensor": 1.0808781778566046e-13
+      },
+      "high_quadrature_total_energy_relative_identity_error": 0.0,
+      "high_quadrature_kinetic_relative_identity_error": 6.2926966557214674e-15,
+      "unresolved_fraction_of_reference_kinetic_energy": 1.3690668779758424e-05,
+      "entropy_relative_norms": {
+        "L1": 0.0006455443134355452,
+        "L2": 0.001399298897437041,
+        "maximum_sampled": 0.025307975045422815
+      },
+      "checkpoint_sha256": "c866ea5a447c338731e8d5498a25003edb319bb9ef0ccc9c402323a7a8461393",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JO_final_degree4_field_audit_20261017_013853/physical_field_accuracy_audit_report.json"
+    },
+    {
+      "label": "P4_wave64",
+      "root": "/gpfs/kjhan/LagForce/Codex_JC_combined_kernel_resume_n64_20261017_005828",
+      "n": 64,
+      "problem": "nonlinear_simple_wave",
+      "t": 0.05,
+      "pressure_reconstruction": "polynomial_cell_mean_degree4",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 0.02,
+        "velocity": 0.02,
+        "pressure": 0.02
+      },
+      "physical_goals": {
+        "density": 0.01,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.002349908395701806,
+        "velocity": 0.0003824682223584614,
+        "pressure": 0.00035261666909637784
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.06360929699447126,
+        "velocity": 0.008455043031199589,
+        "pressure": 0.0030136801029811977
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 63,
+      "rejected": 2,
+      "path_absolute_mass_defect": 7.549717403655316e-07,
+      "numerical_peak": {
+        "rate": 3.5667240109303384e-06,
+        "generator": 1.6802927719113125e-06,
+        "ledger": 1.4782187973391304e-17,
+        "stage_mass": 1.962756245967506e-13,
+        "min_pressure": 0.5999887875187628,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 63,
+        "pressure_limited_cells_max": 0,
+        "pressure_positivity_scale_min": 1.0,
+        "pressure_deficient_stencil_cells_max": 0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 3.499700675466101e-11,
+        "momentum": 4.011852081573224e-15,
+        "mixed_moment": 2.3499734272464076e-13,
+        "kinetic_tensor": 1.8496457843006693e-14
+      },
+      "high_quadrature_total_energy_relative_identity_error": 1.7182956692669182e-15,
+      "high_quadrature_kinetic_relative_identity_error": 4.5735187264903354e-15,
+      "unresolved_fraction_of_reference_kinetic_energy": 3.145052893453651e-06,
+      "entropy_relative_norms": {
+        "L1": 7.70882356760844e-05,
+        "L2": 0.00020078764535623545,
+        "maximum_sampled": 0.0021062511565075326
+      },
+      "checkpoint_sha256": "a1d0de29118cc11160e4c904b2c8bea3b95ddec3293909a78096b372fc4b15b7",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JO_final_degree4_field_audit_20261017_013853/physical_field_accuracy_audit_report.json"
+    },
+    {
+      "label": "P2_wave32_finer_time",
+      "root": "/gpfs/kjhan/LagForce/Codex_JK_global_timecap_wave32_20261017_011418",
+      "n": 32,
+      "problem": "nonlinear_simple_wave",
+      "t": 0.04999999999999992,
+      "pressure_reconstruction": "quadratic_cell_mean",
+      "time_integrator": "positive midpoint RK2/Sylvester",
+      "density_reconstruction": "positive exponential quadratic matching m,q,Q",
+      "velocity_reconstruction": "quadratic_budget_projected",
+      "kinetic_smoothing_coefficient": 1.0,
+      "physical_scales": {
+        "density": 0.02,
+        "velocity": 0.02,
+        "pressure": 0.02
+      },
+      "physical_goals": {
+        "density": 0.01,
+        "velocity": 0.01,
+        "pressure": 0.01
+      },
+      "higher_quadrature_L1": {
+        "density": 0.009303490753701356,
+        "velocity": 0.0027687844817726494,
+        "pressure": 0.0036676940913891566
+      },
+      "sampled_maximum_over_scale": {
+        "density": 0.25901746884486876,
+        "velocity": 0.032395637710414885,
+        "pressure": 0.04241257374102969
+      },
+      "all_L1_audits_passed": true,
+      "fixed_original_mass_array_exact": true,
+      "accepted_steps": 125,
+      "rejected": 0,
+      "path_absolute_mass_defect": 1.6767707745169444e-07,
+      "numerical_peak": {
+        "rate": 1.2004152205508293e-06,
+        "generator": 8.783775619098516e-07,
+        "ledger": 1.9081958235744878e-17,
+        "stage_mass": 4.702091648445435e-17,
+        "min_pressure": 0.5998999246944926,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 125,
+        "pressure_limited_cells_max": 0,
+        "pressure_positivity_scale_min": 1.0
+      },
+      "high_quadrature_reconstruction_identities": {
+        "density_moments": 1.0176371468280811e-11,
+        "momentum": 9.486776012068278e-14,
+        "mixed_moment": 3.231853849011428e-13,
+        "kinetic_tensor": 1.2937678854808983e-13
+      },
+      "high_quadrature_total_energy_relative_identity_error": 2.45470809895274e-16,
+      "high_quadrature_kinetic_relative_identity_error": 3.6777555143438516e-15,
+      "unresolved_fraction_of_reference_kinetic_energy": 5.153961489830591e-05,
+      "entropy_relative_norms": {
+        "L1": 0.0003294379409840569,
+        "L2": 0.000693163706933705,
+        "maximum_sampled": 0.008339064101037574
+      },
+      "checkpoint_sha256": "32efae635e74dce07caea13d495e1d08d2962536bb540c36d5d0498567c4cb65",
+      "audit_report": "/gpfs/kjhan/LagForce/Codex_JQ_fine_timecap_field_audit_20261017_014934/physical_field_accuracy_audit_report.json"
+    }
+  ],
+  "related_regression_tests_passed": 233,
+  "validated_source_snapshot": "/gpfs/kjhan/LagForce/Codex_JM_overlap_comparison_validation_20261017_013139",
+  "live_evolution_source_snapshot": "/gpfs/kjhan/LagForce/Codex_JA_combined_kernel_resume_validation_20261017_005550",
+  "time_order_reports": {
+    "P2_initial": {
+      "report": "/gpfs/kjhan/LagForce/Codex_IB_quadratic_pressure_initial_time_analysis_20261016_232414/simple_wave_time_analysis.json",
+      "orders": {
+        "density": 1.9794387462770315,
+        "velocity": 2.0114636829663914,
+        "pressure": 1.9856401039388163
+      },
+      "actual_steps": [
+        10,
+        20,
+        40
+      ],
+      "actual_dt": [
+        0.0001,
+        5e-05,
+        2.5e-05
+      ]
+    },
+    "P2_early": {
+      "report": "/gpfs/kjhan/LagForce/Codex_HG_quadratic_pressure_time_analysis_20261016_222751/simple_wave_time_analysis.json",
+      "orders": {
+        "density": 1.9743601709864553,
+        "velocity": 2.0027544475401275,
+        "pressure": 2.000909821456508
+      },
+      "actual_steps": [
+        10,
+        20,
+        40
+      ],
+      "actual_dt": [
+        0.0001,
+        5e-05,
+        2.5e-05
+      ]
+    },
+    "P2_late": {
+      "report": "/gpfs/kjhan/LagForce/Codex_HP_quadratic_pressure_late_time_analysis_20261016_225436/simple_wave_time_analysis.json",
+      "orders": {
+        "density": 1.9262374514751774,
+        "velocity": 2.0001837200259103,
+        "pressure": 2.000404937397982
+      },
+      "actual_steps": [
+        10,
+        20,
+        40
+      ],
+      "actual_dt": [
+        0.00010000000000000009,
+        5.000000000000004e-05,
+        2.500000000000002e-05
+      ]
+    },
+    "P4_late": {
+      "report": "/gpfs/kjhan/LagForce/Codex_IR_degree4_late_time_analysis_20261017_002942/simple_wave_time_analysis.json",
+      "orders": {
+        "density": 1.9345700897516769,
+        "velocity": 2.000262531755999,
+        "pressure": 2.0003545973047427
+      },
+      "actual_steps": [
+        10,
+        20,
+        40
+      ],
+      "actual_dt": [
+        0.00010000000000000009,
+        5.000000000000004e-05,
+        2.500000000000002e-05
+      ]
+    },
+    "P4_equivalent_kernels": {
+      "report": "/gpfs/kjhan/LagForce/Codex_JG_equivalent_kernel_time_analysis_20261017_010612/simple_wave_time_analysis.json",
+      "orders": {
+        "density": 1.9358284398991554,
+        "velocity": 2.000261604690553,
+        "pressure": 2.0003291393299802
+      },
+      "actual_steps": [
+        10,
+        20,
+        40
+      ],
+      "actual_dt": [
+        0.00010000000000000009,
+        5.000000000000004e-05,
+        2.500000000000002e-05
+      ]
+    }
+  },
+  "whole_interval_timecap_comparison": {
+    "report": "/gpfs/kjhan/LagForce/Codex_JN_global_timecap_field_comparison_20261017_014934/physical_budget_comparison_report.json",
+    "overlap_report": "/gpfs/kjhan/LagForce/Codex_JN_global_timecap_field_comparison_20261017_014934/physical_overlap_sensitivity_report.json",
+    "probe_differences_over_scale": {
+      "density": 5.275562809056532e-06,
+      "velocity": 4.321391377525885e-06,
+      "pressure": 4.4596133511865415e-06
+    },
+    "conditional_sensitivity_upper_estimate": {
+      "density": 1.7948872651368808e-05,
+      "velocity": 4.589537930810526e-06,
+      "pressure": 1.2114905071268175e-05
+    },
+    "maximum_conditional_fraction_of_L1_goal": 0.0017948872651368808,
+    "different_cell_label_area": 1.2321947232513577e-07
+  },
+  "density_probe_distributions": [
+    {
+      "label": "P2_wave32",
+      "points": 262144,
+      "density_scale": 0.02,
+      "quantile_levels": [
+        0.5,
+        0.9,
+        0.95,
+        0.99,
+        0.999
+      ],
+      "density_error_quantiles_over_benchmark_scale": [
+        0.0008053688837272865,
+        0.029565221944852792,
+        0.04218389851996074,
+        0.07919901275814857,
+        0.14490203801117557
+      ],
+      "maximum_density_error_over_benchmark_scale": 0.24969363044190507,
+      "maximum_density_error_over_background": 0.004993872608838101,
+      "probe_fraction_with_density_error_above_one_percent_background": 0.0,
+      "probe_fraction_with_density_error_above_one_percent_benchmark_scale": 0.2773017883300781,
+      "probe_file_sha256": "31a98ba15290f2722f88765a492a0b62088e7a0c4521852527e7efb4f0b846da",
+      "sample_count_above_one_percent_background": 0
+    },
+    {
+      "label": "P2_wave64",
+      "points": 262144,
+      "density_scale": 0.02,
+      "quantile_levels": [
+        0.5,
+        0.9,
+        0.95,
+        0.99,
+        0.999
+      ],
+      "density_error_quantiles_over_benchmark_scale": [
+        6.813102433333995e-05,
+        0.009443349485040999,
+        0.015332523759786748,
+        0.030489562106685752,
+        0.0516797765744146
+      ],
+      "maximum_density_error_over_benchmark_scale": 0.07807573457716543,
+      "maximum_density_error_over_background": 0.0015615146915433087,
+      "probe_fraction_with_density_error_above_one_percent_background": 0.0,
+      "probe_fraction_with_density_error_above_one_percent_benchmark_scale": 0.09373092651367188,
+      "probe_file_sha256": "53a6a788bd9b8d491e1b8ec495589cb8d6b9cfe8c54f56a6d887cb2713bad302",
+      "sample_count_above_one_percent_background": 0
+    },
+    {
+      "label": "P2_vortex32",
+      "points": 262144,
+      "density_scale": 1.0,
+      "quantile_levels": [
+        0.5,
+        0.9,
+        0.95,
+        0.99,
+        0.999
+      ],
+      "density_error_quantiles_over_benchmark_scale": [
+        1.3821495528421046e-05,
+        0.001674033993572155,
+        0.0025297588063758706,
+        0.005374018388638874,
+        0.010844837649447669
+      ],
+      "maximum_density_error_over_benchmark_scale": 0.03596706347689749,
+      "maximum_density_error_over_background": 0.03596706347689749,
+      "probe_fraction_with_density_error_above_one_percent_background": 0.00124359130859375,
+      "probe_fraction_with_density_error_above_one_percent_benchmark_scale": 0.00124359130859375,
+      "probe_file_sha256": "43ca489c643095aed117b153712661b0edd1cc27531a88f863bf5921778332ba",
+      "sample_count_above_one_percent_background": 326
+    },
+    {
+      "label": "P4_wave32",
+      "points": 262144,
+      "density_scale": 0.02,
+      "quantile_levels": [
+        0.5,
+        0.9,
+        0.95,
+        0.99,
+        0.999
+      ],
+      "density_error_quantiles_over_benchmark_scale": [
+        0.0011090008710190613,
+        0.02295223661399337,
+        0.03526380489693383,
+        0.06368134805179908,
+        0.1165381379038187
+      ],
+      "maximum_density_error_over_benchmark_scale": 0.20003214732339236,
+      "maximum_density_error_over_background": 0.004000642946467847,
+      "probe_fraction_with_density_error_above_one_percent_background": 0.0,
+      "probe_fraction_with_density_error_above_one_percent_benchmark_scale": 0.22679901123046875,
+      "probe_file_sha256": "a688e2be04343fc120312faa6fdab61fd09c32e664184c921bf38130df67df21",
+      "sample_count_above_one_percent_background": 0
+    },
+    {
+      "label": "P4_vortex32",
+      "points": 262144,
+      "density_scale": 1.0,
+      "quantile_levels": [
+        0.5,
+        0.9,
+        0.95,
+        0.99,
+        0.999
+      ],
+      "density_error_quantiles_over_benchmark_scale": [
+        1.8110327253795244e-05,
+        0.001234128042221561,
+        0.001829655399601504,
+        0.0032841490839378724,
+        0.005668548802944084
+      ],
+      "maximum_density_error_over_benchmark_scale": 0.011514246916439874,
+      "maximum_density_error_over_background": 0.011514246916439874,
+      "probe_fraction_with_density_error_above_one_percent_background": 2.6702880859375e-05,
+      "probe_fraction_with_density_error_above_one_percent_benchmark_scale": 2.6702880859375e-05,
+      "probe_file_sha256": "2247a51917ea8d3b9037ec1b938f0049aa2cbb1934e958fe76e93600364639ca",
+      "sample_count_above_one_percent_background": 7
+    },
+    {
+      "label": "P4_wave64",
+      "points": 262144,
+      "density_scale": 0.02,
+      "quantile_levels": [
+        0.5,
+        0.9,
+        0.95,
+        0.99,
+        0.999
+      ],
+      "density_error_quantiles_over_benchmark_scale": [
+        4.805464008383886e-05,
+        0.007648431041604744,
+        0.01450321028896417,
+        0.028131404698500236,
+        0.04333984381087277
+      ],
+      "maximum_density_error_over_benchmark_scale": 0.057486102326909094,
+      "maximum_density_error_over_background": 0.0011497220465381819,
+      "probe_fraction_with_density_error_above_one_percent_background": 0.0,
+      "probe_fraction_with_density_error_above_one_percent_benchmark_scale": 0.07984161376953125,
+      "probe_file_sha256": "d04373a56210f128be3587b8d0dcb4a6a4797631c6545d8a31df52f05d27ead4",
+      "sample_count_above_one_percent_background": 0
+    }
+  ],
+  "continuation_evidence": [
+    {
+      "prepared": true,
+      "source": "/gpfs/kjhan/LagForce/Codex_IJ_degree4_steady_vortex_n32_20261016_234538",
+      "source_time": 0.02565318431017644,
+      "steps": 133,
+      "rejected": 47,
+      "all_accepted_arrays_and_accumulators_unchanged": true,
+      "source_pending_commit_completed": false,
+      "pending_fluid_stages_reused": true,
+      "pending_sample_cache_reused": true,
+      "source_files_sha256": {
+        "initial_state.json": "319a2013ab20428732278c1915102d19426084865f0044ef72e290769f2d91ee",
+        "initial_score.json": "078fe8cb37c46e4b93708987b255132ce7dc96bc1c0d8c79248a3bf223069154",
+        "checkpoint.json": "91d9d7838cc4f72d8479fd98ee80bb4ac846e9238d54a4f3b5e5a4c90f38c6e9",
+        "source_rhs.json": "bbbb0b9fa440e307eedd509e8dc33e3ed3f837b282aade708591c0ff1bfcf303",
+        "pending.json": "37df61e468fc669177c67e770835415e816756ec9512e39fb50aa5f03d9f3310",
+        "pending_samples.json": "e2550fe5c35167e31790cba775bdcb2f336bc1edd6bb04d90b6264239d008929"
+      },
+      "config_sha256": "ddb373fa92ac1c407a5b7a17b51ac39912b602573e20a61327493983bb780ae2",
+      "physical_model_and_budgets_unchanged": true,
+      "numerical_backend_changes": {
+        "quadratic_budget_backend": "batched",
+        "pressure_evaluation_backend": "horner",
+        "mass_path_evaluation_backend": "cell_batched",
+        "moment_flux_evaluation_backend": "batched",
+        "power_cell_evaluation_backend": "seeded_active"
+      },
+      "note": "Equivalent computational kernels only: same geometry constraints, pressure polynomial, positive samples and shared moment products. Native mass-quadrature rejection policy remains unchanged by default. Original archives are referenced, not recopied."
+    },
+    {
+      "prepared": true,
+      "source": "/gpfs/kjhan/LagForce/Codex_IK_degree4_wave_n64_20261016_235151",
+      "source_time": 0.024575439234841127,
+      "steps": 31,
+      "rejected": 2,
+      "all_accepted_arrays_and_accumulators_unchanged": true,
+      "source_pending_commit_completed": false,
+      "pending_fluid_stages_reused": true,
+      "pending_sample_cache_reused": false,
+      "source_files_sha256": {
+        "initial_state.json": "4d78d6a6450c0ed538f866ba09fe27eb7746335a0455959704ff83e2c6c81284",
+        "initial_score.json": "84b1a0d1d71eee60571dccc54a4b454c534a16f56be1c38586598e87c410a46d",
+        "checkpoint.json": "8217d77b8fd95460d437e4407e8accdbc836384a2f51f1c7d7db3d1c62ded96a",
+        "source_rhs.json": "f38d25af9974965a9d2d1248744438b56f1271bb14417f0c0abef95122297504",
+        "pending.json": "36834a26d9bc4eab9e5d1abeae927a78f734f6f162f45f9ef36d7f3986b71b5a"
+      },
+      "config_sha256": "eefd65112fb7336bbb113debee33c11266fb1f83c4fd50e419b10e085c4137cf",
+      "physical_model_and_budgets_unchanged": true,
+      "numerical_backend_changes": {
+        "quadratic_budget_backend": "batched",
+        "pressure_evaluation_backend": "horner",
+        "mass_path_evaluation_backend": "cell_batched",
+        "moment_flux_evaluation_backend": "batched",
+        "power_cell_evaluation_backend": "seeded_active"
+      },
+      "note": "Equivalent computational kernels only: same geometry constraints, pressure polynomial, positive samples and shared moment products. Native mass-quadrature rejection policy remains unchanged by default. Original archives are referenced, not recopied."
+    }
+  ],
+  "figures_root": "/gpfs/kjhan/LagForce/Codex_JP_final_accuracy_figures_20261017_014051",
+  "historical_strict_incomplete_branches_not_reclassified": true,
+  "git_push_performed": false,
+  "grokbot_contact_performed": false,
+  "global_shared_context_modified": false
+}

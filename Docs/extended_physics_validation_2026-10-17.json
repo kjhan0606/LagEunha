@@ -1,0 +1,202 @@
+{
+  "updated_at": "2026-10-17T10:29:32.691041",
+  "request": "Validate shocks, long time, 3D, Kepler",
+  "constraints": [
+    "unsteered generators",
+    "original fixed cell masses",
+    "time dependent weights allowed",
+    "preserve approved prefixes"
+  ],
+  "shock": {
+    "reference": "Sod states rhoL1/rhoR.125, PL1/PR.1, gamma5/3, x.5 unit square",
+    "first_interval": 0.02,
+    "target_interval": 0.15,
+    "L1_goal": 0.05,
+    "roots": [
+      "/gpfs/kjhan/LagForce/Codex_JX_sod_n8_20261017_075748",
+      "/gpfs/kjhan/LagForce/Codex_JX_sod_n16_20261017_075748"
+    ],
+    "n8": "numerical pass, velocity L1 .0916667 fails physical goal",
+    "n16": "P4 T=.02 passed; extension failed at t=.06261794533199819, half-stage HLLC nonpositive star pressure, exit 1",
+    "n8_extension": "HLLC failed on accepted t=.0541331756974829 at right wall; exact Riemann state is nonvacuum with positive pressure",
+    "p2_n8": "T=.02 velocity L1 .0594079 fails goal .05",
+    "p2_n16": "T=.02 numerical and physical gates passed; fields rho=.01352967, velocity=.02967412, pressure=.02200046",
+    "failure_root": "/gpfs/kjhan/LagForce/Codex_KN_sod_failure_diagnosis_20261017_082240",
+    "exact_star_validation": "/gpfs/kjhan/LagForce/Codex_KO_exact_star_validation_20261017_082430",
+    "exact_rhs_check": "/gpfs/kjhan/LagForce/Codex_KP_exact_pressure_saved_rhs_20261017_082938",
+    "exact_solver_diagnostic_continuation": "/gpfs/kjhan/LagForce/Codex_KQ_exact_pressure_continuation_20261017_083011",
+    "n16_extension": "/gpfs/kjhan/LagForce/Codex_KL_sod16_extension_20261017_081923",
+    "p2_n16_root": "/gpfs/kjhan/LagForce/Codex_KI_sod16_quadratic_pressure_20261017_081427",
+    "p2_n16_extension": "/gpfs/kjhan/LagForce/Codex_KU_sod16_p2_extension_20261017_083340",
+    "p2_n32_resolution": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341",
+    "exact_solver_diagnostic_result": "Reached T=.06; numerical passed, physical failed: velocity .07421349 and pressure .07808265 > .05",
+    "independent_n16_p4": "/gpfs/kjhan/LagForce/Codex_KR_sod16_independent_audit_20261017_083032",
+    "independent_n16_p2": "/gpfs/kjhan/LagForce/Codex_KW_sod16_p2_independent_audit_20261017_083408",
+    "p2_n16_extension_status": "FAILED at accepted t=.04841389062313528: nonpositive HLLC star pressure. Exact Euler pstar=.07231228340936251, nonvacuum. Saved state preserved.",
+    "p2_n16_extension_failure_audit": "/gpfs/kjhan/LagForce/Codex_LZ_polar_local_area_20261017/sod16_failure",
+    "transverse_symmetry_audit": "/gpfs/kjhan/LagForce/Codex_MB_sod_transverse_audit_20261017/report.json",
+    "transverse_warning": "At T=.02 max cell mean |vy|=.06197 (P2), .09262 (P4); later .34578 (P2) and .46826 (P4). Integral L1 gates alone do not establish planar symmetry.",
+    "initial_symmetry_diagnosis": "/gpfs/kjhan/LagForce/Codex_ME_sod_initial_symmetry_20261017/report.json",
+    "reflection_initial_validation": "/gpfs/kjhan/LagForce/Codex_MG_pressure_reflection_20261017/reflected/report.json",
+    "reflection_controls": "/gpfs/kjhan/LagForce/Codex_MH_reflected_sod_controls_20261017",
+    "reflection_status": "Independent n16/n32 corrected wall-pressure controls launched from byte-identical original t0 IC; old trajectories retained, budgets unchanged. Initial spurious transverse acceleration6.13/9.20 reduced to3.11e-15/1.60e-14.",
+    "reflection_internal_curvature_audit": "/gpfs/kjhan/LagForce/Codex_MI_reflection_curvature_20261017/report.json",
+    "reflection_limitation": "Even reflection removes initial cell-mean transverse force but leaves spurious internal pressure curvature .00756/.01030 and Dyy rates3.08e-5/4.11e-5 for P2/P4. Not a complete planar-invariance repair. Need reconstruction consistency work.",
+    "tensor_fit_initial_gate": "/gpfs/kjhan/LagForce/Codex_MJ_tensor_pressure_gate_20261017/report.json",
+    "tensor_fit_controls": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017",
+    "tensor_fit_status": "Explicit tensor weights/free intercept fit with original cell mean restored. Initial y pressure curvature <=2.22e-16 and Dyy <=3.73e-17. n16/n32 independent identical-IC controls launched, long evolution unproven.",
+    "reflected_n16_endpoint": "Completed T=.02: numerical and established L1 passed. max mean vy .0007730 vs original .0619734, but internal transverse RMS .01055 remains.",
+    "reflection_endpoint_audit": "/gpfs/kjhan/LagForce/Codex_MR_sod_reflection_endpoint_20261017/report.json",
+    "tensor_n16_endpoint": "T=.02 completed, numerical and L1 passed: density .01318826, velocity .02942935, pressure .02225530. max mean vy .0001739633, transverse kinetic1.31568e-10; remaining symmetry error nonzero.",
+    "whole_interval_gate_audit": "/gpfs/kjhan/LagForce/Codex_MU_global_gate_accounting_20261017/prefix_audit.json",
+    "whole_interval_time_control": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
+    "whole_interval_status": "Independent tensor/reflected n16 control launched using T=.15 budget allocation from t0 and original identical IC. Short T=.02 accepted prefixes retained separately; their normalized rate peaks exceed1e-4 after duration retargeting."
+  },
+  "long_time": {
+    "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+    "source_time": 0.05,
+    "first_target": 0.2,
+    "ultimate_target": "10 central vortex periods, conditional on shorter accuracy gates",
+    "status": "Original2h timeout exit124 at t=.09939543512386753,582steps. PID absent verified. Same immutable code/config/pending caches resumed; subsequent accepted steps confirmed.",
+    "progress_audit": "/gpfs/kjhan/LagForce/Codex_KS_vortex_progress_audit_20261017_083145",
+    "resume_receipt": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456/resume_0957_receipt.json"
+  },
+  "three_dimensions": {
+    "root": "/gpfs/kjhan/LagForce/Codex_KF_3d_release_validation_20261017_081119",
+    "status": "N8 quadratic pressure acoustic T=.02 dt=.002 passed established three L1 goals. dt=.001 sensitivity still running; dense-path mass and nonlinear3D gates incomplete.",
+    "limits": "Vertex3D stores three incident faces; non-simple cut-through-existing-vertex cases explicitly rejected",
+    "capacity_root": "/gpfs/kjhan/LagForce/Codex_KD_3d_fixed_mass_geometry_20261017_080749",
+    "contracts_root": "/gpfs/kjhan/LagForce/Codex_KK_3d_weight_capacity_contracts_20261017_081900",
+    "hllc_component_root": "/gpfs/kjhan/LagForce/Codex_KM_dimension_flux_validation_20261017_082110",
+    "density_component_root": "/gpfs/kjhan/LagForce/Codex_KY_3d_density_validation_20261017_084443",
+    "moment_state_component_root": "/gpfs/kjhan/LagForce/Codex_LA_3d_moment_state_20261017_084751",
+    "moment_state_component_status": "35-component affine state recovery and face flux tests passed; geometry/time coupling remains",
+    "coupled_rhs_root": "/gpfs/kjhan/LagForce/Codex_LB_3d_coupled_rhs_20261017_085255",
+    "midpoint_root": "/gpfs/kjhan/LagForce/Codex_LC_3d_midpoint_evolution_20261017_085457",
+    "acoustic_root": "/gpfs/kjhan/LagForce/Codex_LD_3d_acoustic_20261017_085723",
+    "acoustic_coarse_status": "completed, physical failed: normalized pressure L1 .1419404 > .05; dense path uncertified",
+    "acoustic_refinements": [
+      "/gpfs/kjhan/LagForce/Codex_LE_3d_acoustic_n3_20261017_085851",
+      "/gpfs/kjhan/LagForce/Codex_LF_3d_acoustic_n4_20261017_085851",
+      "/gpfs/kjhan/LagForce/Codex_LG_3d_acoustic_n6_20261017_085851"
+    ],
+    "linear_pressure_rhs_error": 6.140921104957897e-16,
+    "linear_refinements_status": "N3 dt.001,N4 dt.002,N6 dt.002 completed; pressure L1 .141924/.099575/.061160 all fail .05",
+    "quadratic_coarse_root": "/gpfs/kjhan/LagForce/Codex_LI_3d_quadratic_pressure_20261017_090509",
+    "quadratic_coarse_status": "N3 T.02 pressure .177680 and velocity .061524 fail; original failure retained",
+    "initial_pressure_audit": "/gpfs/kjhan/LagForce/Codex_LK_3d_initial_reconstruction_20261017_090733",
+    "quadratic_refinements": [
+      "/gpfs/kjhan/LagForce/Codex_LL_3d_quadratic_n6_20261017_090928",
+      "/gpfs/kjhan/LagForce/Codex_LM_3d_quadratic_n8_20261017_090928",
+      "/gpfs/kjhan/LagForce/Codex_LN_3d_quadratic_n8_20261017_090928"
+    ],
+    "resume_validation": "/gpfs/kjhan/LagForce/Codex_LY_complete_bundle_20261017_094117/resume_check/uninterrupted_equivalence.json",
+    "resume_status": "LN exited124 at10:09:42; original PID1631545 absent. MO resumed accepted t=.015000000000000006 with identical8physics/library hashes and validated resume driver. Original IC/ledger retained.",
+    "n8_dt002_result": {
+      "root": "/gpfs/kjhan/LagForce/Codex_LM_3d_quadratic_n8_20261017_090928",
+      "pressure_model": "quadratic",
+      "completed": true,
+      "n": 8,
+      "t": 0.02,
+      "dt": 0.002,
+      "amplitude": 1e-05,
+      "initial": {
+        "density_L1": 0.0008602566957886494,
+        "velocity_L1": 0.0,
+        "pressure_L1": 0.025162788684994275,
+        "min_density": 0.9999899833744247,
+        "min_pressure": 0.9999833992500811
+      },
+      "final": {
+        "density_L1": 0.006305972395495773,
+        "velocity_L1": 0.01099083723056816,
+        "pressure_L1": 0.026678226288099176,
+        "min_density": 0.9999898834188855,
+        "min_pressure": 0.9999836582741436
+      },
+      "stage_mass_flux": 1.6281238053237945e-13,
+      "mass_exact": true,
+      "energy_ledger_error": 4.440892098500626e-16,
+      "physical_goal": 0.05,
+      "physical_passed": true,
+      "dense_path_certified": false,
+      "seconds": 2225.600813159719
+    },
+    "dense_path_control": "/gpfs/kjhan/LagForce/Codex_MN_3d_dense_path_20261017/dense_mass_path_report.json",
+    "dense_path_control_status": "Actual C nonuniform 8-cell one-step controls: integrated relative defects8.479e-7,1.050e-7,1.304e-8 for dt.01,.005,.0025. Audit does not re-solve geometry rates; full acoustic history remains uncertified.",
+    "prepared_resume": "/gpfs/kjhan/LagForce/Codex_MO_3d_acoustic_n8_resume_20261017"
+  },
+  "kepler": {
+    "root": "/gpfs/kjhan/LagForce/Codex_JZ_kepler_force_orbit_gate_20261017_080122",
+    "status": "Auxiliary n32 and n64 first coupled fluid steps passed after distinct initialization/inactive-face fixes. First-step field audits ongoing; canonical192 squared100-orbit test incomplete.",
+    "canonical": "unchanged 192² nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
+    "control_is_disk_validation": false,
+    "gravity_component_root": "/gpfs/kjhan/LagForce/Codex_KH_gravity_source_validation_20261017_081402",
+    "potential_component_root": "/gpfs/kjhan/LagForce/Codex_KZ_kepler_potential_validation_20261017_084619",
+    "potential_component_status": "415 regression tests passed; actual C acceleration agrees at153 positions to4.44e-15; potential integral and gradient tests passed",
+    "gravity_state_root": "/gpfs/kjhan/LagForce/Codex_LH_gravity_state_coupling_20261017_090208",
+    "gravity_fluid_root": "/gpfs/kjhan/LagForce/Codex_LJ_gravity_fluid_coupling_20261017_090601",
+    "plan": "Docs/kepler_moment_coupling_plan_2026-10-17.md",
+    "frozen_boundary_root": "/gpfs/kjhan/LagForce/Codex_LO_frozen_boundary_validation_20261017_091524",
+    "reference_root": "/gpfs/kjhan/LagForce/Codex_LP_kepler_reference_validation_20261017_091747",
+    "first_fluid_preflight": "/gpfs/kjhan/LagForce/Codex_LQ_kepler_fluid_preflight_20261017_092051",
+    "first_preflight_status": "failed before time evolution: repeated identical polygon vertices caused zero edge",
+    "polygon_fix_root": "/gpfs/kjhan/LagForce/Codex_LR_kepler_polygon_fix_20261017_092235",
+    "polygon_fix_status": "432 tests passed; IC generated. First fluid RHS fails on reconstructed Euler vacuum at active-active face, also present before gravity",
+    "vacuum_diagnosis_root": "/gpfs/kjhan/LagForce/Codex_LS_kepler_vacuum_diagnosis_20261017_092808",
+    "refinement_preflights": [
+      "/gpfs/kjhan/LagForce/Codex_LT_kepler_preflight_n32_20261017_093046",
+      "/gpfs/kjhan/LagForce/Codex_LU_kepler_preflight_n64_20261017_093046"
+    ],
+    "refinement_initial_failures": {
+      "n32": "37.4 percent pressure error from polar area loss at roundoff vertex loops, not energy cancellation",
+      "n64": "vacuum at frozen wall, no evolving cell on that face"
+    },
+    "refinement_diagnosis_root": "/gpfs/kjhan/LagForce/Codex_LV_kepler_refinement_diagnosis_20261017_093401",
+    "first_step_passes": {
+      "n32": "/gpfs/kjhan/LagForce/Codex_LZ_polar_local_area_20261017/kepler32",
+      "n64": "/gpfs/kjhan/LagForce/Codex_LW_frozen_resume_validation_20261017_093918/kepler64"
+    },
+    "field_audit_root": "/gpfs/kjhan/LagForce/Codex_MF_layer_field_validation_20261017",
+    "field_audit_status": "MT all four independent n64 state/order audits completed. MQ/MS checkpointed audit validated. First-step n32 and n64 pass relative diagnostic L1 .05; long evolution remains unverified.",
+    "evolved_polar_diagnosis": "/gpfs/kjhan/LagForce/Codex_MC_polar_evolved_diagnosis_20261017",
+    "angular_layer_fix": "/gpfs/kjhan/LagForce/Codex_MD_polar_layers_20261017/layer_report.json",
+    "n32_first_step_field_audit": "/gpfs/kjhan/LagForce/Codex_MF_layer_field_validation_20261017/n32/kepler_field_audit.json",
+    "n32_first_step_fields": {
+      "density_relative_L1": 0.031941329006162276,
+      "velocity_mass_weighted_relative_L1": 0.0004219745487291248,
+      "pressure_relative_L1": 1.0624971244330748e-07,
+      "scope": "t1e-5 only, order24"
+    },
+    "n32_continuation": "/gpfs/kjhan/LagForce/Codex_MM_kepler32_continuation_20261017",
+    "visibility_optimization_validation": "/gpfs/kjhan/LagForce/Codex_ML_polar_visibility_equivalence_20261017/report.json",
+    "checkpointed_field_audit_validation": "/gpfs/kjhan/LagForce/Codex_MS_field_audit_resume_equivalence_20261017",
+    "n64_checkpointed_field_audit": "/gpfs/kjhan/LagForce/Codex_MT_kepler64_checkpointed_audit_20261017",
+    "checkpointed_field_audit_validation_status": "MS passed: forced interruption after atomic save, resumed result exactly equal to original scorer on246cell IC.",
+    "n64_first_step_fields": {
+      "density_relative_L1": 0.022574795507984108,
+      "velocity_mass_weighted_relative_L1": 4.9706286808593356e-05,
+      "pressure_relative_L1": 1.8997241707238046e-08,
+      "scope": "t1e-5 only, order24"
+    },
+    "timestep_controls": "/gpfs/kjhan/LagForce/Codex_MW_kepler_timestep_controls_20261017"
+  },
+  "full_validation_complete": false,
+  "regression_suite": {
+    "root": "/gpfs/kjhan/LagForce/Codex_MU_global_gate_accounting_20261017",
+    "tests": 448,
+    "normal_passed": true,
+    "reverse_status": "passed",
+    "reverse_passed": true
+  },
+  "review_snapshot": "/gpfs/kjhan/LagForce/Codex_KX_extended_review_20261017_083534",
+  "active_status_receipt": "/gpfs/kjhan/LagForce/Codex_KX_extended_review_20261017_083534/active_status.json",
+  "historical_extension_accounting_review": "Existing immutable duration-extension runs must have historical normalized rate peaks retargeted before any whole-interval numerical pass claim. Final numerical_gates now includes all stored rate/generator/state peaks explicitly; prior integrated-only flags are insufficient for this claim.",
+  "latest_regression": {
+    "bundle": "/gpfs/kjhan/LagForce/Codex_MX_3d_vortex_validation_20261017",
+    "normal": 451,
+    "reverse": 451,
+    "passed": true
+  },
+  "nonlinear_3d_vortex_status": "Driver and lossless dense-record serialization tested; n6/n8 evolution not yet launched at commit preparation"
+}

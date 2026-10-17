@@ -1,0 +1,2862 @@
+{
+  "updated_at": "2026-10-17T09:32:25.574412",
+  "project": "LagEunha / LagForce numerical method research",
+  "repository": "/tmp/lageunha-push",
+  "origin": "git@github.com:kjhan0606/LagEunha.git",
+  "active_runs": [
+    "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+    "/gpfs/kjhan/LagForce/Codex_KL_sod16_extension_20261017_081923",
+    "/gpfs/kjhan/LagForce/Codex_KU_sod16_p2_extension_20261017_083340",
+    "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341",
+    "/gpfs/kjhan/LagForce/Codex_LM_3d_quadratic_n8_20261017_090928",
+    "/gpfs/kjhan/LagForce/Codex_LN_3d_quadratic_n8_20261017_090928",
+    "/gpfs/kjhan/LagForce/Codex_LT_kepler_preflight_n32_20261017_093046",
+    "/gpfs/kjhan/LagForce/Codex_LU_kepler_preflight_n64_20261017_093046"
+  ],
+  "active_processes": "foreground SSH on lageunha; finished execution logs checked",
+  "approved_scope": "Continue autonomously until physical-solution accuracy is established; all basic2D tests preapproved. Unsteered generators, fixed mass, time-dependent weights; retain successful checkpoints.",
+  "regression_tests_passed": 432,
+  "source_snapshot": "/gpfs/kjhan/LagForce/Codex_LR_kepler_polygon_fix_20261017_092235",
+  "report": "Docs/extended_physics_validation_2026-10-17.md",
+  "handover": "Docs/HANDOVER_CODEX_2026-10-10_2D_BATCH.md",
+  "canonical_unfinished": {
+    "root": "/gpfs/kjhan/LagForce/Codex_CI_original_recovery_20261016_150256",
+    "execution": "LagEunha\n2026-10-16T15:03:36+09:00\n2026-10-16T17:04:24+09:00\nexit=124\n",
+    "last_accepted_time": 5.85151232755631e-05,
+    "target_time": 0.00011,
+    "steps": 56,
+    "rejected": 12,
+    "next_dt": 3.0723264853239616e-07,
+    "fixed_mass_array_exact": true,
+    "source_sha256": "312e07fc0088b48f67c8bc3b2df67b96a4ec661668a304ffe4efa3fe1656df9f",
+    "checkpoint_sha256": "f7fc3bb75b4f587a029e5f1635497a8a913eabba6660c953b5a06ceb8a119d87",
+    "pending_status": "uncommitted_trial_at_last_accepted_state",
+    "pending_files": {
+      "pending.json": {
+        "sha256": "53676094d51e06604e96f41fc82048ebb4f7dfe6f6ca222a014ab53dd83ac662",
+        "saved_samples": null
+      },
+      "pending_nodes.json": {
+        "sha256": "49b8d357efd2dbc97d56436e4b4b487d5ba3717d0e93d2c649bf6696a2549794",
+        "saved_samples": 65
+      },
+      "pending_refined_nodes.json": {
+        "sha256": "f24666b4082793e9c671d7fb8e66f7fc4841f7affbbc7069fa7856783b31fae9",
+        "saved_samples": 160
+      }
+    },
+    "committed_interval_absolute_mass_defect": 1.3778104226440419e-11,
+    "committed_interval_quadrature_difference": 3.0507527766354313e-13,
+    "peak": {
+      "rate": 1.9661317502260368e-10,
+      "generator": 3.175237850427948e-14,
+      "ledger": 2.1315815995596143e-14,
+      "pressure_error": 1.141309269314661e-13,
+      "stage_mass": 3.9386896522053405e-15,
+      "min_pressure": 0.5999999999999147,
+      "min_factor_R": 0.0
+    },
+    "note": "Accepted state and saved pending samples preserved. Prefix integrals before this interval are distinct; no reintegration or hidden model change is performed by this audit."
+  },
+  "completed_global_control": "/gpfs/kjhan/LagForce/Codex_DA_global_resume_20261016_163850/resumed_branch_report.json",
+  "curved_static_refinement": "/gpfs/kjhan/LagForce/Codex_CZ_curved_n64_active_20261016_163250/curved_static_refinement_report.json",
+  "curved_accepted_checkpoint": "/gpfs/kjhan/LagForce/Codex_CV_curved_step_corrected_20261016_162020/accepted_checkpoint.json",
+  "audit_root": "/gpfs/kjhan/LagForce/Codex_DB_result_audit_20261016_164138",
+  "audit_counts": {
+    "runs": 35,
+    "immutable_files": 8670,
+    "result_files": 819,
+    "mismatches": 0
+  },
+  "next_priorities": [
+    "Finish current shock and vortex continuation gates; no t0 repeats",
+    "Validate 3D clipping fixes and explicitly retain unsupported non-simple cases",
+    "Gravity coupling and 3D moment evolution are missing; auxiliary geometry/orbit results do not certify fluid benchmarks"
+  ],
+  "git_push_performed": false,
+  "new_transport_related_tests_passed": 23,
+  "physical_accuracy_targets": {
+    "benchmark": "curved128-gon stationary affine contact",
+    "density_L1_relative": 0.001,
+    "cell_mass_L1_relative": 0.0001,
+    "retained_density_query_times": [
+      0.01,
+      0.05,
+      0.2
+    ],
+    "general_Euler_validated": false,
+    "retained_density_N64_all_times_passed": true,
+    "simple_wave_T05_all_fields_perturbation_L1": 0.01,
+    "simple_wave_N16_passed": false,
+    "simple_wave_affine_N32_intermediate_density_error_over_amplitude": 0.0182357466875012,
+    "simple_wave_affine_N32_intermediate_time": 0.04375987045602259,
+    "vortex_T": 0.05,
+    "vortex_velocity_pressure_goal": 0.01,
+    "vortex_density_goal": 0.001,
+    "simple_wave_affine_N32_T05_density_field_error_over_amplitude": 0.02083153182,
+    "simple_wave_affine_N32_T05_velocity_field_error_over_amplitude": 0.0037620561,
+    "simple_wave_affine_N32_T05_pressure_field_error_over_amplitude": 0.0036322125,
+    "simple_wave_quadratic_v2_N16_density_field_error_over_amplitude": 0.02590404,
+    "vortex_projected_kappa1_N16_density_field": 0.002393067908365206,
+    "simple_wave_projected_kappa1_N32_T05_density_field_error_over_amplitude": 0.014634075213606703,
+    "simple_wave_projected_kappa1_N16_T05_density_field_error_over_amplitude": 0.025197390135763612,
+    "vortex_projected_kappa1_N16fine_density_field": 0.002392965115183356,
+    "simple_wave_quadratic_pressure_N32_passed": true,
+    "simple_wave_quadratic_pressure_N32_final_errors": {
+      "pressure_cell": 0.0026441500544896667,
+      "velocity_cell": 0.002419669220360865,
+      "density_cell": 0.0010221848135521215,
+      "pressure_field": 0.003669780707845018,
+      "velocity_field": 0.002768048931942568,
+      "density_field": 0.0093048259026362,
+      "transverse_velocity": 0.0006640217361292698,
+      "energy_cell": 0.003971098359332324
+    }
+  },
+  "latest_validated_source_snapshot": "/gpfs/kjhan/LagForce/Codex_JT_complete_verification_20261017_052141",
+  "source_snapshot_note": "JT full388 standard and reverse passed; OpenMP4 passed. Test isolation fixes and full-suite runner only; physical evolution code identical to JM233. Prior smooth2D physical acceptance remains scoped to its original endpoints.",
+  "run_index": [
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DD_curved_evolution_20261016_172155",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DE_curved_evolution_20261016_172155",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DF_retained_density_20261016_172712",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DG_curved_n16_corrected_20261016_172745",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DH_transport_n16_20261016_173015",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DI_transport_n32_20261016_173015",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DJ_transport_n64_20261016_173015",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DK_analytic_faces_20261016_173240",
+      "status": "terminated",
+      "exit_code": 2
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DL_capacity_roundoff_20261016_173459",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DM_capacity_roundoff_20261016_173459",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DN_capacity_n64_resume_20261016_174342",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DO_nonlinear_wave_n4_20261016_174236",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.034568020031840695,
+          "velocity_cell": 0.04181628001685045,
+          "density_cell": 0.02837978827791958,
+          "velocity_field": 0.10997168457704588,
+          "density_field": 0.09245279468306972
+        },
+        "reference_quadrature_difference": 3.851086116668512e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.980758201422023,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DP_nonlinear_wave_n8_20261016_174441",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DQ_nonlinear_wave_n16_20261016_174441",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DR_parallel_equivalence_20261016_175028",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DS_wave_parallel_n8_20261016_175313",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.030858965663682104,
+          "velocity_cell": 0.04237580259463199,
+          "density_cell": 0.02534972643898955,
+          "pressure_field": 0.053938320922889096,
+          "velocity_field": 0.05162770831562027,
+          "density_field": 0.06025314718618408,
+          "transverse_velocity": 0.007665429177240055,
+          "energy_cell": 0.04656722129681902
+        },
+        "reference_quadrature_difference": 2.7137580377312176e-14,
+        "reference_global_mass_relative": 2.213772388715833e-16,
+        "density_min": 0.9878068116687034,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DT_wave_parallel_n16_20261016_175313",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DU_wave_quadrature_probe_20261016_175505",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DV_adaptive_quad_validation_20261016_175932",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DW_wave_adaptive_n16_20261016_180314",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.011406110010586395,
+          "velocity_cell": 0.012266222972726896,
+          "density_cell": 0.009773903641307409,
+          "pressure_field": 0.016618520032401357,
+          "velocity_field": 0.014505495694626405,
+          "density_field": 0.03616631364411553,
+          "transverse_velocity": 0.003497011713808397,
+          "energy_cell": 0.017092985530517156
+        },
+        "reference_quadrature_difference": 3.134699531198715e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9917624984371922,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DX_nonlinear_rhs_consistency_20261016_180754",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DY_nonlinear_wave_n32_20261016_181035",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_DZ_wave_time_source_20261016_181542",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EA_wave_time_10_20261016_182146",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05199999999999999,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.03159007319591062,
+          "velocity_cell": 0.04206581265973837,
+          "density_cell": 0.02601624719618138,
+          "pressure_field": 0.05538066536246182,
+          "velocity_field": 0.050881990607519495,
+          "density_field": 0.0629160241645035,
+          "transverse_velocity": 0.007870130707462798,
+          "energy_cell": 0.047663967710838084
+        },
+        "reference_quadrature_difference": 2.8319360745321376e-14,
+        "reference_global_mass_relative": 4.427544777431666e-16,
+        "density_min": 0.9875505801063549,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EB_wave_time_20_20261016_182146",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.052,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.03159006523785565,
+          "velocity_cell": 0.04206581172232959,
+          "density_cell": 0.026016242704906233,
+          "pressure_field": 0.05538066135733111,
+          "velocity_field": 0.05088199222619993,
+          "density_field": 0.0629160192984926,
+          "transverse_velocity": 0.007870130226858176,
+          "energy_cell": 0.047663955746681495
+        },
+        "reference_quadrature_difference": 2.8059152223924855e-14,
+        "reference_global_mass_relative": 4.427544777431666e-16,
+        "density_min": 0.9875505801380839,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EC_wave_time_40_20261016_182146",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.052,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.031590063276012825,
+          "velocity_cell": 0.042065811486525835,
+          "density_cell": 0.026016241533010666,
+          "pressure_field": 0.05538066037406558,
+          "velocity_field": 0.050881992630037835,
+          "density_field": 0.06291601810352565,
+          "transverse_velocity": 0.007870130107603747,
+          "energy_cell": 0.047663952797150695
+        },
+        "reference_quadrature_difference": 3.4358366846065636e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9875505800940075,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EI_quad_time_10_20261016_185528",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EJ_quad_time_20_20261016_185528",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EK_quad_time_40_20261016_185528",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EP_continuous_time_10_20261016_193054",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EQ_continuous_time_20_20261016_193054",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_ER_continuous_time_40_20261016_193054",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.0019999999999999987,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0005003646476216045,
+          "velocity_cell": 0.0004596797285413174,
+          "density_cell": 0.00023856137826873663,
+          "pressure_field": 0.012082321667718127,
+          "velocity_field": 0.0027222088975146523,
+          "density_field": 0.0009348827649866982,
+          "transverse_velocity": 0.0002749576928767988,
+          "energy_cell": 0.0007511842976452941
+        },
+        "reference_quadrature_difference": 2.781791724054683e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.9999444341023178,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_ED_vector_mass_root_20261016_182645",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EE_wave_time_analysis_20261016_183142",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EF_wave_vector_n32_20261016_183257",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.003040691627207742,
+          "velocity_cell": 0.0030054476539255535,
+          "density_cell": 0.0030299780332155865,
+          "pressure_field": 0.003632212463600762,
+          "velocity_field": 0.0037620560985921845,
+          "density_field": 0.020831531820835532,
+          "transverse_velocity": 0.0010913793046237901,
+          "energy_cell": 0.004568790487309928
+        },
+        "reference_quadrature_difference": 3.1205625513090404e-14,
+        "reference_global_mass_relative": 4.427544777431666e-16,
+        "density_min": 0.9969629791940351,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EG_quadratic_velocity_units_20261016_184541",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EH_quadratic_euler_rhs_20261016_185007",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EL_quadratic_budget_diagnosis_20261016_185842",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EM_stable_quadratic_20261016_190645",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EN_continuous_quadratic_20261016_192828",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EO_continuous_euler_rhs_20261016_192916",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_ES_steady_vortex_rhs_20261016_193405",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EU_continuous_time_10_20261016_193613",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.002999999999999997,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0007558245553874175,
+          "velocity_cell": 0.0006803314683231117,
+          "density_cell": 0.000359520540633854,
+          "pressure_field": 0.012153550742365574,
+          "velocity_field": 0.002905089162656706,
+          "density_field": 0.0011907767965486777,
+          "transverse_velocity": 0.00040236200593412333,
+          "energy_cell": 0.001134621959985086
+        },
+        "reference_quadrature_difference": 2.7679681463554928e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9999287688957125,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EV_continuous_time_20_20261016_193613",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.003,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0007558229003323423,
+          "velocity_cell": 0.0006803326096185718,
+          "density_cell": 0.00035951873571886915,
+          "pressure_field": 0.012153550529566856,
+          "velocity_field": 0.002905089972831556,
+          "density_field": 0.0011907760194358446,
+          "transverse_velocity": 0.0004023623980425198,
+          "energy_cell": 0.0011346194719478358
+        },
+        "reference_quadrature_difference": 3.152453341773165e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9999287689570565,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EW_continuous_time_40_20261016_193613",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.0029999999999999927,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0007558224880971549,
+          "velocity_cell": 0.0006803328943101026,
+          "density_cell": 0.00035951830576208283,
+          "pressure_field": 0.012153550473563295,
+          "velocity_field": 0.0029050901745396335,
+          "density_field": 0.0011907758332902459,
+          "transverse_velocity": 0.0004023624956891393,
+          "energy_cell": 0.0011346188522218855
+        },
+        "reference_quadrature_difference": 3.081031523660682e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9999287689618284,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EX_continuous_wave_n16_20261016_193613",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.009129782368358673,
+          "velocity_cell": 0.01121370912364811,
+          "density_cell": 0.00544153218972397,
+          "pressure_field": 0.016852807786796667,
+          "velocity_field": 0.013195764905481787,
+          "density_field": 0.02590403946156209,
+          "transverse_velocity": 0.0034727066882846583,
+          "energy_cell": 0.013733357520127127
+        },
+        "reference_quadrature_difference": 3.072357906280798e-14,
+        "reference_global_mass_relative": 8.85508955486333e-16,
+        "density_min": 0.9926677608215968,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EY_vortex_n8_20261016_193748",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.013576677032848669,
+          "velocity_cell": 0.009199533024772033,
+          "density_cell": 0.0031581105089211955,
+          "pressure_field": 0.02416552591430129,
+          "velocity_field": 0.028795190753787732,
+          "density_field": 0.011425926480674708,
+          "energy_cell": 0.02052625648003214
+        },
+        "density_min": 0.8111725960765525,
+        "pressure_min": 0.7561785697777648,
+        "reference_quadrature_difference": 4.665209639757545e-09,
+        "reference_global_mass_relative": 3.33066907387547e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_EZ_vortex_n16_20261016_193748",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FA_vortex_n32_20261016_193748",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FD_lift_time_10_20261016_194953",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.06,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.033601081434870866,
+          "velocity_cell": 0.040070460691900664,
+          "density_cell": 0.027959627263966086,
+          "pressure_field": 0.06134355109079434,
+          "velocity_field": 0.04728202626408737,
+          "density_field": 0.07293419281117318,
+          "transverse_velocity": 0.00866494142172489,
+          "energy_cell": 0.05066657389565929
+        },
+        "reference_quadrature_difference": 3.047692306856753e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9864790842409349,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FE_lift_time_20_20261016_194953",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.06,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0336007511198463,
+          "velocity_cell": 0.040070312849033375,
+          "density_cell": 0.02795973906478148,
+          "pressure_field": 0.06134340573298015,
+          "velocity_field": 0.04728210625421609,
+          "density_field": 0.07293431127868627,
+          "transverse_velocity": 0.008664873762508143,
+          "energy_cell": 0.050666075514149776
+        },
+        "reference_quadrature_difference": 3.344763702117781e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9864790604829824,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FF_lift_time_40_20261016_194953",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.06,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.03360066922317605,
+          "velocity_cell": 0.04007027516158133,
+          "density_cell": 0.02795976790546037,
+          "pressure_field": 0.06134336964174847,
+          "velocity_field": 0.047282125534702096,
+          "density_field": 0.0729343398626138,
+          "transverse_velocity": 0.008664857108852583,
+          "energy_cell": 0.05066595194238473
+        },
+        "reference_quadrature_difference": 2.817841446289826e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9864790538167412,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FK_quadratic_lift_time_10_20261016_195749",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.006,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0015377623128379095,
+          "velocity_cell": 0.0013152349700907176,
+          "density_cell": 0.0007311776155331708,
+          "pressure_field": 0.012389081794336572,
+          "velocity_field": 0.0035339390795349757,
+          "density_field": 0.002127409603924405,
+          "transverse_velocity": 0.0007507004799428106,
+          "energy_cell": 0.0023079691914200265
+        },
+        "reference_quadrature_difference": 3.057992227495365e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9998720151874486,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FL_quadratic_lift_time_20_20261016_195749",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FM_quadratic_lift_time_40_20261016_195749",
+      "status": "terminated",
+      "exit_code": 0,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.006,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0015377020157279612,
+          "velocity_cell": 0.0013153238214987848,
+          "density_cell": 0.0007311807143252271,
+          "pressure_field": 0.012389071220003602,
+          "velocity_field": 0.0035340060023189178,
+          "density_field": 0.0021276343132416472,
+          "transverse_velocity": 0.0007507231982942773,
+          "energy_cell": 0.0023078782383495174
+        },
+        "reference_quadrature_difference": 3.036443709317216e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.9998719966646188,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_ES_steady_vortex_rhs_20261016_193545",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_ET_continuous_time_source_20261016_193513",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FC_continuous_time_analysis_20261016_194233",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FB_geometry_lift_audit_20261016_194552",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FI_lift_time_analysis_20261016_195340",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FH_lift_refinement_20261016_195310",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FJ_vortex_n32_lift_20261016_195514",
+      "status": "terminated",
+      "exit_code": 143
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FG_continuous_wave_n32_20261016_195119",
+      "status": "terminated",
+      "exit_code": 124,
+      "checkpoint": {
+        "t": 0.029976636873668593,
+        "steps": 279,
+        "rejected": 53,
+        "next_dt": 4.813893059181842e-05,
+        "peak": {
+          "rate": 4.556995750623291e-07,
+          "generator": 9.839813687288756e-08,
+          "ledger": 3.881443777498106e-17,
+          "stage_mass": 1.9826367122376875e-13,
+          "min_pressure": 0.5999496382225871,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "4929d310ee3a6683e7d175ed8247c196d9f075ee1b627bc2087b01e97a1d014a",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FB_geometry_lift_audit_20261016_194212",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FB_geometry_lift_audit_20261016_194333",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FS_vortex_n32_strict_lift_20261016_201748",
+      "status": "terminated",
+      "exit_code": 124,
+      "checkpoint": {
+        "t": 0.0038776018379599523,
+        "steps": 80,
+        "rejected": 33,
+        "next_dt": 0.000718470039671602,
+        "peak": {
+          "rate": 8.03109597712302e-07,
+          "generator": 1.5637685854552608e-08,
+          "ledger": 6.748450146458199e-17,
+          "stage_mass": 4.394000354540628e-16,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "9e790a456ba49bf05fc4e97a47d2415f432a43c07e13ec44e2d4dfc3e21737bb",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FT_vortex_n16_strict_lift_20261016_201748",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 352,
+        "rejected": 84,
+        "next_dt": 0.001,
+        "peak": {
+          "rate": 2.5659117763640533e-06,
+          "generator": 5.8965381563580443e-08,
+          "ledger": 5.421010862427522e-17,
+          "stage_mass": 8.592302216947623e-18,
+          "min_pressure": 0.7210179389335023,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "36da3079e59cc219fa0e406ad5f74f5e28b2df7283caf27546b16a0cac938c31",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.00418082380099374,
+          "velocity_cell": 0.002212732873090587,
+          "density_cell": 0.0010341991792849814,
+          "pressure_field": 0.005797948776716484,
+          "velocity_field": 0.007465399989780027,
+          "density_field": 0.006120015841371021,
+          "energy_cell": 0.006396390768692839
+        },
+        "density_min": 0.890915964115034,
+        "pressure_min": 0.6788824862258829,
+        "reference_quadrature_difference": 2.0933479874332226e-10,
+        "reference_global_mass_relative": 0.0,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FU_projected_vortex_n16_20261016_201810",
+      "status": "terminated",
+      "exit_code": 124,
+      "checkpoint": {
+        "t": 0.014500000000000006,
+        "steps": 16,
+        "rejected": 2,
+        "next_dt": 0.001,
+        "peak": {
+          "rate": 1.4579325084863212e-06,
+          "generator": 3.500845087957154e-08,
+          "ledger": 2.551334023110872e-17,
+          "stage_mass": 6.667843360785852e-18,
+          "min_pressure": 0.7210179389335023,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "158ed268d12c587b67d338452da5abcffa6d349757c23eed4d75ccdf4869edbe",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_FV_quadratic_lift_time_analysis_20261016_202854",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GB_smoothed_vortex_rhs_20261016_205211",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GE_smoothed_vortex_n16_20261016_205856",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.010119125476665554,
+        "steps": 8,
+        "rejected": 3,
+        "next_dt": 0.0015,
+        "peak": {
+          "rate": 1.4912711397313274e-06,
+          "generator": 1.1878600089333311e-07,
+          "ledger": 1.8676728560574516e-17,
+          "stage_mass": 6.613633252161577e-18,
+          "min_pressure": 0.7210179389335025,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "a757764f3b6944b60c7173c3e66ff2522c9cdb9611a64aa75f018b3d021e797c",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GF_smoothed_vortex_n32_20261016_205856",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.001,
+        "steps": 1,
+        "rejected": 1,
+        "next_dt": 0.0013878036590711934,
+        "peak": {
+          "rate": 2.0226258582342865e-07,
+          "generator": 1.7926641065307955e-07,
+          "ledger": 3.130014605233966e-17,
+          "stage_mass": 4.061953274821575e-15,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "56155373130d18508cf4db4eb832bf3636518a54aa27e1ee2fae2e77844ff126",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GG_smoothed_wave_rhs_20261016_205911",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GH_moment_obstruction_20261016_211908",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GI_smoothed_wave_n32_20261016_211215",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.0007627922070937111,
+        "steps": 2,
+        "rejected": 3,
+        "next_dt": 0.0003941883106405665,
+        "peak": {
+          "rate": 1.2352022045363105e-07,
+          "generator": 7.330609264923071e-08,
+          "ledger": 1.8010766489329198e-18,
+          "stage_mass": 1.615715346887578e-19,
+          "min_pressure": 0.5999988508108756,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "8ca6e405ec1bfb452bf9e5df8ccd00c1d56d58b17c1cae38c31907340f0ffbb6",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GJ_regularized_mean_20261016_211600",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GK_budget_geometry_20261016_212439",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GL_native_budget_steady_vortex_n16_20261016_214100",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 109,
+        "rejected": 34,
+        "next_dt": 0.0005291158052652123,
+        "peak": {
+          "rate": 7.433813718666848e-05,
+          "generator": 9.859947646406741e-06,
+          "ledger": 5.767955557622884e-17,
+          "stage_mass": 1.9463857608981172e-13,
+          "min_pressure": 0.7210179389335025,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "f33bc0521f9fd5610bd8cd0506393b359ac3517e0bde5fb9b251604fe7d051c7",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.002015600268877319,
+          "velocity_cell": 0.0012645374474584742,
+          "density_cell": 0.0004070422052191466,
+          "pressure_field": 0.003996514860205768,
+          "velocity_field": 0.0030206830075996424,
+          "density_field": 0.002393067908365206,
+          "energy_cell": 0.002958220563240829
+        },
+        "density_min": 0.9523537183364552,
+        "pressure_min": 0.6807386839712127,
+        "reference_quadrature_difference": 2.0242300287407943e-10,
+        "reference_global_mass_relative": 3.3306690738754696e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GM_native_budget_steady_vortex_n16fine_20261016_214100",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 271,
+        "rejected": 51,
+        "next_dt": 4.8735416392206576e-05,
+        "peak": {
+          "rate": 7.360003074548403e-06,
+          "generator": 2.4851559921601485e-06,
+          "ledger": 8.023096076392733e-17,
+          "stage_mass": 1.9842531480754322e-13,
+          "min_pressure": 0.7210179389335025,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "9282ce93a06e95d6c78082006a9a86e360a75fa45a502543b7b7dea8b891de71",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0020155321378475194,
+          "velocity_cell": 0.0012645640672442223,
+          "density_cell": 0.00040704156975528583,
+          "pressure_field": 0.003996426797281209,
+          "velocity_field": 0.003020695408713122,
+          "density_field": 0.002392965115183356,
+          "energy_cell": 0.0029580334066615544
+        },
+        "density_min": 0.9523530886442271,
+        "pressure_min": 0.6807364263910647,
+        "reference_quadrature_difference": 2.0242277306924885e-10,
+        "reference_global_mass_relative": 4.440892098500626e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GN_native_budget_steady_vortex_n32_20261016_214100",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.028839558404425397,
+        "steps": 134,
+        "rejected": 40,
+        "next_dt": 0.00019873498061239865,
+        "peak": {
+          "rate": 7.958800261145493e-05,
+          "generator": 6.462828444242508e-06,
+          "ledger": 6.227321401204671e-17,
+          "stage_mass": 1.9754451912701136e-13,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "c1fdcd37da5bee3b7fd027d01e987f3aaefff52678d9b32cb520376caedad30b",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GO_native_budget_nonlinear_simple_wave_n32_20261016_214100",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 67,
+        "rejected": 3,
+        "next_dt": 0.0003657610945937105,
+        "peak": {
+          "rate": 2.856253018767183e-06,
+          "generator": 1.9418637250724624e-06,
+          "ledger": 7.921485106549142e-18,
+          "stage_mass": 1.9578197188926667e-13,
+          "min_pressure": 0.5999165438471012,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "6087c40dd05c5245e52648deda91050e041cbbdd741aa22e6236ca3c43003d43",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0018026938637987898,
+          "velocity_cell": 0.0020338239343927274,
+          "density_cell": 0.0012920468571505955,
+          "pressure_field": 0.002981387016780593,
+          "velocity_field": 0.002807481167574379,
+          "density_field": 0.014634075213606703,
+          "transverse_velocity": 0.0010567929011752093,
+          "energy_cell": 0.0027131374172365465
+        },
+        "reference_quadrature_difference": 2.9969889146341105e-14,
+        "reference_global_mass_relative": 2.213772388715833e-16,
+        "density_min": 0.998108520533414,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GP_wave_refinement_n16_20261016_215939",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 62,
+        "rejected": 4,
+        "next_dt": 0.00085799632143172,
+        "peak": {
+          "rate": 3.116566961091777e-06,
+          "generator": 1.992110252769727e-06,
+          "ledger": 2.905661822261152e-17,
+          "stage_mass": 7.24247051220317e-17,
+          "min_pressure": 0.5995714714447076,
+          "min_factor_R": -1.121839430861144e-37
+        }
+      },
+      "checkpoint_sha256": "275f73a0ab2f556e42b3875c046852345be56dd199e2c747bc5e5cfb958c8a94",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.009127224732936695,
+          "velocity_cell": 0.011273069105477979,
+          "density_cell": 0.005436378978926088,
+          "pressure_field": 0.016825708958227662,
+          "velocity_field": 0.013190844323977631,
+          "density_field": 0.025197390135763612,
+          "transverse_velocity": 0.0034532765459531233,
+          "energy_cell": 0.013737400275804437
+        },
+        "reference_quadrature_difference": 2.969087649351554e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9932697391848567,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GQ_wave_refinement_n64_20261016_215939",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.019828928659909116,
+        "steps": 27,
+        "rejected": 3,
+        "next_dt": 0.0007948620956446901,
+        "peak": {
+          "rate": 4.555690562195392e-06,
+          "generator": 1.6252439737074464e-06,
+          "ledger": 1.563482374904381e-17,
+          "stage_mass": 3.7291249422045564e-14,
+          "min_pressure": 0.5999947020225705,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "343df40ae29598711e901b5faebfba9e804ba998c51483f7894b0ab1e41385e4",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GU_quadratic_pressure_nonlinear_simple_wave_rhs_20261016_221233",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GV_quadratic_pressure_steady_vortex_rhs_20261016_221233",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GW_quadratic_pressure_nonlinear_simple_wave_n16_20261016_221456",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 60,
+        "rejected": 4,
+        "next_dt": 0.0004526738117225544,
+        "peak": {
+          "rate": 4.971419984058068e-06,
+          "generator": 1.9811617302765983e-06,
+          "ledger": 1.8648277366750676e-17,
+          "stage_mass": 9.534229959348717e-15,
+          "min_pressure": 0.5995999108631977,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "a55cd03a192549e84d5ec699de406041fda9d9843d8837710959bc02acd9a096",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.011437461288064346,
+          "velocity_cell": 0.01335807948695021,
+          "density_cell": 0.006218741889118303,
+          "pressure_field": 0.020269918884609616,
+          "velocity_field": 0.015119658756913781,
+          "density_field": 0.03055428913192365,
+          "transverse_velocity": 0.0029890456346086634,
+          "energy_cell": 0.017236728352923232
+        },
+        "reference_quadrature_difference": 2.8305130591807504e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9932060898631159,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GX_quadratic_pressure_steady_vortex_n16_20261016_221456",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 112,
+        "rejected": 29,
+        "next_dt": 0.0006642720082662778,
+        "peak": {
+          "rate": 5.3932353717884794e-05,
+          "generator": 7.1207193552413894e-06,
+          "ledger": 8.630249292984615e-17,
+          "stage_mass": 1.9055107968943275e-13,
+          "min_pressure": 0.7210179389335025,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "b9d27bf601e1654a04894b4dfa8a138e3ca64cc14bfa246cd84a11039fb40901",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0028785039932927876,
+          "velocity_cell": 0.0016647829302535858,
+          "density_cell": 0.0003335253317867438,
+          "pressure_field": 0.005112662135259896,
+          "velocity_field": 0.003122949035891459,
+          "density_field": 0.002612237127149222,
+          "energy_cell": 0.004256895166494516
+        },
+        "density_min": 0.9133711792192393,
+        "pressure_min": 0.7104144742671256,
+        "reference_quadrature_difference": 2.030975786438648e-10,
+        "reference_global_mass_relative": 4.440892098500626e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GY_quadratic_pressure_nonlinear_simple_wave_n32_20261016_221456",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 64,
+        "rejected": 2,
+        "next_dt": 0.0005613323929499758,
+        "peak": {
+          "rate": 2.853083150605696e-06,
+          "generator": 1.9425932529307244e-06,
+          "ledger": 9.540979117872439e-18,
+          "stage_mass": 4.705776241765991e-17,
+          "min_pressure": 0.5998997991219313,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "7c0620ea111a690e1a764a051eda7c57a6e1329d48b91d31245c9d9b26a44f3d",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0026441500544896667,
+          "velocity_cell": 0.002419669220360865,
+          "density_cell": 0.0010221848135521215,
+          "pressure_field": 0.003669780707845018,
+          "velocity_field": 0.002768048931942568,
+          "density_field": 0.0093048259026362,
+          "transverse_velocity": 0.0006640217361292698,
+          "energy_cell": 0.003971098359332324
+        },
+        "reference_quadrature_difference": 3.186402422299117e-14,
+        "reference_global_mass_relative": 2.213772388715833e-16,
+        "density_min": 0.9975201114011247,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GZ_quadratic_pressure_steady_vortex_n32_20261016_221456",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.015402393086719004,
+        "steps": 70,
+        "rejected": 24,
+        "next_dt": 6.293294543602316e-05,
+        "peak": {
+          "rate": 6.0085815859616165e-05,
+          "generator": 1.3475061753087658e-06,
+          "ledger": 4.972621493435101e-17,
+          "stage_mass": 4.132289196695678e-15,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "693d71a801b9cf990bc0a461d433cac25457bee636863b5760ffa2f30396fceb",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HD_quadratic_pressure_time_10_20261016_222016",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.004907056608608262,
+        "steps": 10,
+        "rejected": 0,
+        "next_dt": 0.0001,
+        "peak": {
+          "rate": 9.76919071003232e-10,
+          "generator": 2.1615536006935887e-08,
+          "ledger": 4.7704895589362195e-18,
+          "stage_mass": 2.8053731213062427e-18,
+          "min_pressure": 0.5999779859324804,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "433a390f78b3ad1ca5e9136d04aabc64d118e458869633a2d288a7b125d7ef5f",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.004907056608608262,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0013826922083170763,
+          "velocity_cell": 0.001572781921537708,
+          "density_cell": 0.000585648320919189,
+          "pressure_field": 0.013251957117058089,
+          "velocity_field": 0.003714895300712766,
+          "density_field": 0.0017698202483344442,
+          "transverse_velocity": 0.0006561594450257815,
+          "energy_cell": 0.002068102894893487
+        },
+        "reference_quadrature_difference": 2.9357484325476246e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.9999471628083886,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HE_quadratic_pressure_time_20_20261016_222016",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.004907056608608256,
+        "steps": 20,
+        "rejected": 0,
+        "next_dt": 5e-05,
+        "peak": {
+          "rate": 2.4421355914967427e-10,
+          "generator": 5.407760992476307e-09,
+          "ledger": 6.5052130349130266e-18,
+          "stage_mass": 2.995108501491206e-18,
+          "min_pressure": 0.5999779859702348,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "63f7bad64508c28c4f55c6a02aa4ea0ca2d81c1344b26b77cd305e7c4101097f",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.004907056608608256,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0013826900468635515,
+          "velocity_cell": 0.001572783816286673,
+          "density_cell": 0.0005856462148475568,
+          "pressure_field": 0.013251956611329663,
+          "velocity_field": 0.0037148972487812044,
+          "density_field": 0.0017698196655287041,
+          "transverse_velocity": 0.0006561599542049394,
+          "energy_cell": 0.0020680996423525855
+        },
+        "reference_quadrature_difference": 2.8362728832220796e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9999471626304568,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HF_quadratic_pressure_time_40_20261016_222016",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.004907056608608256,
+        "steps": 40,
+        "rejected": 0,
+        "next_dt": 2.5e-05,
+        "peak": {
+          "rate": 6.105142074180332e-11,
+          "generator": 1.352423114470147e-09,
+          "ledger": 1.951563910473908e-17,
+          "stage_mass": 2.9680034471790684e-18,
+          "min_pressure": 0.5999779859792247,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "be5e83f9a974490c48e435bc0a923897372ecbae1a4c8ee9adafe604403d9cd7",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.004907056608608256,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0013826895070467057,
+          "velocity_cell": 0.0015727842895341868,
+          "density_cell": 0.0005856456888879424,
+          "pressure_field": 0.013251956484925097,
+          "velocity_field": 0.0037148977351895486,
+          "density_field": 0.0017698195219618797,
+          "transverse_velocity": 0.0006561600810705783,
+          "energy_cell": 0.0020680988300343607
+        },
+        "reference_quadrature_difference": 3.1716979303347825e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9999471625863618,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GR_vortex_moment_bound_20261016_220446",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GS_pressure_curvature_kick_20261016_220734",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_GT_quadratic_pressure_validation_20261016_221048",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HA_rotating_pressure_patch_20261016_221702",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HC_quadratic_pressure_time_source_20261016_221847",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HB_vortex_budget_comparison_20261016_221927",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HH_saved_rhs_profile_20261016_222132",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HM_quadratic_pressure_late_time_10_20261016_223937",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.051000000000000004,
+        "steps": 10,
+        "rejected": 0,
+        "next_dt": 0.00010000000000000009,
+        "peak": {
+          "rate": 6.696809741474657e-10,
+          "generator": 2.066939593092787e-08,
+          "ledger": 8.239936510889834e-18,
+          "stage_mass": 2.2238409573029083e-15,
+          "min_pressure": 0.5995914330844053,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "5cc2c82581fce7cdf233354700aebd21c1ce0e86c857f99a4adc085803fa253c",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.051000000000000004,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.011690766762753161,
+          "velocity_cell": 0.013629742975331116,
+          "density_cell": 0.00617376245293426,
+          "pressure_field": 0.020254425990889956,
+          "velocity_field": 0.015355177256292466,
+          "density_field": 0.03125650362075268,
+          "transverse_velocity": 0.0030151416193366655,
+          "energy_cell": 0.01761822166085311
+        },
+        "reference_quadrature_difference": 3.023297757975829e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9930009663090117,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HN_quadratic_pressure_late_time_20_20261016_223937",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.051000000000000004,
+        "steps": 20,
+        "rejected": 0,
+        "next_dt": 5.000000000000004e-05,
+        "peak": {
+          "rate": 1.6743213009438895e-10,
+          "generator": 5.169026259105314e-09,
+          "ledger": 4.336808689942018e-18,
+          "stage_mass": 2.2238409573029083e-15,
+          "min_pressure": 0.599591433142972,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "5a78ea07c95eb2f5d5982f40585b1526380096f3013d747d751316e69586f204",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.051000000000000004,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.011690765641938501,
+          "velocity_cell": 0.013629743193926642,
+          "density_cell": 0.006173761126839535,
+          "pressure_field": 0.020254425240067223,
+          "velocity_field": 0.015355177172568155,
+          "density_field": 0.031256502858952664,
+          "transverse_velocity": 0.0030151415877336996,
+          "energy_cell": 0.01761821997260949
+        },
+        "reference_quadrature_difference": 2.999648598088489e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.9930009663154782,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HO_quadratic_pressure_late_time_40_20261016_223937",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05099999999999989,
+        "steps": 40,
+        "rejected": 0,
+        "next_dt": 2.500000000000002e-05,
+        "peak": {
+          "rate": 4.185983727179931e-11,
+          "generator": 1.292465193897252e-09,
+          "ledger": 2.168404344971009e-17,
+          "stage_mass": 2.2238409573029083e-15,
+          "min_pressure": 0.5995914331576299,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "fb87bc502fb904bdaf6434f56d77d66b2749beda4c79c12e6d34c9093053465c",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05099999999999989,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.011690765361445796,
+          "velocity_cell": 0.013629743248177464,
+          "density_cell": 0.0061737607956556485,
+          "pressure_field": 0.020254425052233203,
+          "velocity_field": 0.015355177151368098,
+          "density_field": 0.031256502666888265,
+          "transverse_velocity": 0.003015141579864045,
+          "energy_cell": 0.017618219550111745
+        },
+        "reference_quadrature_difference": 2.9558061727386065e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9930009663145265,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HY_quadratic_pressure_initial_time_10_20261016_231153",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.001,
+        "steps": 10,
+        "rejected": 0,
+        "next_dt": 0.0001,
+        "peak": {
+          "rate": 3.281231202188362e-09,
+          "generator": 2.332131654302766e-07,
+          "ledger": 5.637851296924623e-18,
+          "stage_mass": 3.8624702394796095e-19,
+          "min_pressure": 0.5999959461432741,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "252be5fe04427a572435eeaaffbb0a79ef9444722af1df41310fc8ff0ab57de5",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.001,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0002671512178107965,
+          "velocity_cell": 0.00034292606945450466,
+          "density_cell": 0.00011299849519172227,
+          "pressure_field": 0.01313138189261374,
+          "velocity_field": 0.0025753231973225563,
+          "density_field": 0.0007223094260612422,
+          "transverse_velocity": 0.00015027739869063605,
+          "energy_cell": 0.00039953496743291156
+        },
+        "reference_quadrature_difference": 2.982640176507623e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.999953887264123,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HZ_quadratic_pressure_initial_time_20_20261016_231153",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.001,
+        "steps": 20,
+        "rejected": 0,
+        "next_dt": 5e-05,
+        "peak": {
+          "rate": 1.3024612838472553e-09,
+          "generator": 9.512926134325195e-08,
+          "ledger": 8.239936510889834e-18,
+          "stage_mass": 5.21772295508649e-19,
+          "min_pressure": 0.5999959462001705,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "1384960e7ecc12655310d28367165359d1ac9fc2b7e74db3687f25a1595b2feb",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.001,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.00026714895550676966,
+          "velocity_cell": 0.0003429283993746532,
+          "density_cell": 0.00011299651825359951,
+          "pressure_field": 0.013131381435275924,
+          "velocity_field": 0.002575323979139996,
+          "density_field": 0.0007223086089399347,
+          "transverse_velocity": 0.00015027819810965417,
+          "energy_cell": 0.00039953156389747196
+        },
+        "reference_quadrature_difference": 3.002426866155483e-14,
+        "reference_global_mass_relative": 6.641317166147498e-16,
+        "density_min": 0.9999538871467175,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IA_quadratic_pressure_initial_time_40_20261016_231153",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.0009999999999999994,
+        "steps": 40,
+        "rejected": 0,
+        "next_dt": 2.5e-05,
+        "peak": {
+          "rate": 9.35088843562674e-10,
+          "generator": 7.016815613790361e-08,
+          "ledger": 1.5178830414797062e-17,
+          "stage_mass": 4.845028458294598e-19,
+          "min_pressure": 0.5999959462148998,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "1e998366f4ea74f06c2b7ac32a302e063b9f565e12637cd0065e1d33a8cb75ba",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.0009999999999999994,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.00026714838191001147,
+          "velocity_cell": 0.00034292898064171485,
+          "density_cell": 0.00011299602524412512,
+          "pressure_field": 0.013131381319912363,
+          "velocity_field": 0.0025753241719889655,
+          "density_field": 0.0007223084018947685,
+          "transverse_velocity": 0.00015027839666557482,
+          "energy_cell": 0.0003995307010328528
+        },
+        "reference_quadrature_difference": 3.038476588390626e-14,
+        "reference_global_mass_relative": 6.641317166147498e-16,
+        "density_min": 0.9999538871175254,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HU_numerical_acceleration_n32_20261016_225846",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 222,
+        "rejected": 60,
+        "next_dt": 8.572362435701336e-06,
+        "peak": {
+          "rate": 7.958800261145493e-05,
+          "generator": 9.72575062931861e-06,
+          "ledger": 6.971604482057181e-17,
+          "stage_mass": 1.9818635664872741e-13,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "6b044433ff257aa8f1950568e90bcc5ba8978865582bb1a1ec58af0e4d2ed4ed",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0002961190145257415,
+          "velocity_cell": 0.00024349104058988972,
+          "density_cell": 0.00011232253030548126,
+          "pressure_field": 0.0007124981736455798,
+          "velocity_field": 0.0005285250313613402,
+          "density_field": 0.0012429963567158358,
+          "energy_cell": 0.00046139269007635926
+        },
+        "density_min": 0.9643414864867171,
+        "pressure_min": 0.6806732294383852,
+        "reference_quadrature_difference": 1.733831271738373e-11,
+        "reference_global_mass_relative": 1.1102230246251568e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HV_numerical_acceleration_n64_20261016_225846",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 65,
+        "rejected": 3,
+        "next_dt": 0.0008048990315464341,
+        "peak": {
+          "rate": 1.2698972764914465e-05,
+          "generator": 1.8988126995471595e-06,
+          "ledger": 1.563482374904381e-17,
+          "stage_mass": 1.8937733109958765e-13,
+          "min_pressure": 0.5999862778223571,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "d27dd52e40e82f1d1d2ab9060bf235b26ec8f813f5b03a2afccccc275e675334",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.00038638134939950535,
+          "velocity_cell": 0.0004487277981395378,
+          "density_cell": 0.0005484620191762541,
+          "pressure_field": 0.0006051097628592611,
+          "velocity_field": 0.0006965350242203435,
+          "density_field": 0.009235342944181308,
+          "transverse_velocity": 0.0002321107205676168,
+          "energy_cell": 0.0005815314563239286
+        },
+        "reference_quadrature_difference": 3.0663736185084466e-14,
+        "reference_global_mass_relative": 1.5496406721010827e-15,
+        "density_min": 0.9987738316325401,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HW_numerical_acceleration_n32_20261016_225846",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 228,
+        "rejected": 64,
+        "next_dt": 0.0002001417953665409,
+        "peak": {
+          "rate": 6.59887870867881e-05,
+          "generator": 1.871969166677978e-06,
+          "ledger": 6.228486091500037e-17,
+          "stage_mass": 1.875853801718702e-13,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "615e15f023f364268bc98b4be2965b3fcc4c1b4cf6f50ab12b7651a955308da6",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0004205499591143878,
+          "velocity_cell": 0.00023039938354638785,
+          "density_cell": 5.303219573640349e-05,
+          "pressure_field": 0.0007207570679242944,
+          "velocity_field": 0.00038635533834162935,
+          "density_field": 0.0005306375141553017,
+          "energy_cell": 0.0006228976448989299
+        },
+        "density_min": 0.9570729376805635,
+        "pressure_min": 0.6882436560518725,
+        "reference_quadrature_difference": 1.7337896426651374e-11,
+        "reference_global_mass_relative": 1.1102230246251567e-15,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IE_degree4_nonlinear_simple_wave_rhs_20261016_233931",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IF_degree4_steady_vortex_rhs_20261016_233931",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HI_batched_velocity_validation_20261016_222707",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HJ_batched_velocity_physical_validation_20261016_222859",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HG_quadratic_pressure_time_analysis_20261016_222751",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HK_quadratic_pressure_wave_n64_20261016_223131",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 63,
+        "rejected": 2,
+        "next_dt": 0.0006420208265530206,
+        "peak": {
+          "rate": 3.324763275561881e-06,
+          "generator": 1.6534156951804324e-06,
+          "ledger": 1.4958443861111968e-17,
+          "stage_mass": 1.8552374877682358e-13,
+          "min_pressure": 0.5999818021850689,
+          "min_factor_R": 0.0
+        }
+      },
+      "checkpoint_sha256": "1a68fcafc2982433678e725e425f1a0c1fa3117b7563627d815ce77978f0e987",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0005017650275902214,
+          "velocity_cell": 0.0004560811608553426,
+          "density_cell": 0.00027487315524543236,
+          "pressure_field": 0.0005849908458407301,
+          "velocity_field": 0.0005162448244848366,
+          "density_field": 0.0028959895110993936,
+          "transverse_velocity": 0.00011342275383464581,
+          "energy_cell": 0.0007540731187845091
+        },
+        "reference_quadrature_difference": 3.023916092027325e-14,
+        "reference_global_mass_relative": 6.641317166147498e-16,
+        "density_min": 0.999810762193248,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HL_quadratic_pressure_late_time_source_20261016_223447",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HP_quadratic_pressure_late_time_analysis_20261016_225436",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HQ_pressure_curvature_spatial_consistency_20261016_223736",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HR_rejection_quadrature_diagnosis_20261016_224209",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HS_resolved_rejection_replay_20261016_224607",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HT_numerical_acceleration_validation_20261016_225404",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HX_physical_field_audit_20261016_231015",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IB_quadratic_pressure_initial_time_analysis_20261016_232414",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IC_density_local_moment_obstruction_20261016_231909",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_ID_degree4_pressure_validation_20261016_233505",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IG_degree4_nonlinear_simple_wave_n16_20261016_234538",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 65,
+        "rejected": 7,
+        "next_dt": 0.0008920527132386555,
+        "peak": {
+          "rate": 5.2585265699057474e-06,
+          "generator": 1.8762035015260081e-06,
+          "ledger": 1.3010426069826053e-17,
+          "stage_mass": 6.892578142351363e-15,
+          "min_pressure": 0.599473444472053,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 65,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "aab3bcfcba8e5c1a8240af7a9cf39f2fee12666b49490dabcfa359799b0ce7fe",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.01191765195992045,
+          "velocity_cell": 0.015567475029911305,
+          "density_cell": 0.006365016314297824,
+          "pressure_field": 0.02088957470206531,
+          "velocity_field": 0.017301096064341593,
+          "density_field": 0.034372606103368696,
+          "transverse_velocity": 0.004080121639598526,
+          "energy_cell": 0.017938992626423466
+        },
+        "reference_quadrature_difference": 2.906881549705198e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9928660191839243,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IH_degree4_steady_vortex_n16_20261016_234538",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 118,
+        "rejected": 33,
+        "next_dt": 0.00018196899265851552,
+        "peak": {
+          "rate": 5.110644264492183e-05,
+          "generator": 9.345604093491389e-06,
+          "ledger": 4.7271214720367993e-17,
+          "stage_mass": 1.958008950288248e-13,
+          "min_pressure": 0.7210179389335025,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 118,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "fa9bb4420554d53cde936a81e0f047851bce13d3a8c8ba5a16e201c057069337",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.002549897643422352,
+          "velocity_cell": 0.001796262389073409,
+          "density_cell": 0.0003416954294678696,
+          "pressure_field": 0.004686160809041927,
+          "velocity_field": 0.003231476998337876,
+          "density_field": 0.0026048611021220283,
+          "energy_cell": 0.003777941479605066
+        },
+        "density_min": 0.9236982532723308,
+        "pressure_min": 0.7058665994872155,
+        "reference_quadrature_difference": 2.0328956662217398e-10,
+        "reference_global_mass_relative": 1.1102230246251565e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_II_degree4_nonlinear_simple_wave_n32_20261016_234538",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 64,
+        "rejected": 2,
+        "next_dt": 0.0007933384732496003,
+        "peak": {
+          "rate": 3.5289145449022858e-06,
+          "generator": 1.9481473641762975e-06,
+          "ledger": 1.0313487476639193e-17,
+          "stage_mass": 4.0526291361382e-18,
+          "min_pressure": 0.5999149683786719,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 64,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "2bd403d63a9434b870e23ae4d382409835fc67de7e0827954556f3718b5faa24",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0018830891912112967,
+          "velocity_cell": 0.0018621074510009026,
+          "density_cell": 0.0011230633278634379,
+          "pressure_field": 0.0023561733665839243,
+          "velocity_field": 0.002153773991884066,
+          "density_field": 0.007396122453935815,
+          "transverse_velocity": 0.000448431523926153,
+          "energy_cell": 0.0028308809247963957
+        },
+        "reference_quadrature_difference": 3.146964568274957e-14,
+        "reference_global_mass_relative": 8.855089554863332e-16,
+        "density_min": 0.9982375901207807,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IJ_degree4_steady_vortex_n32_20261016_234538",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.02565318431017644,
+        "steps": 133,
+        "rejected": 47,
+        "next_dt": 0.0003248039845590676,
+        "peak": {
+          "rate": 8.258179657839559e-05,
+          "generator": 1.931831090123959e-06,
+          "ledger": 5.92814255740235e-17,
+          "stage_mass": 4.061986309106518e-15,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 133,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "91d9d7838cc4f72d8479fd98ee80bb4ac846e9238d54a4f3b5e5a4c90f38c6e9",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IK_degree4_wave_n64_20261016_235151",
+      "status": "terminated",
+      "exit_code": 143,
+      "checkpoint": {
+        "t": 0.024575439234841127,
+        "steps": 31,
+        "rejected": 2,
+        "next_dt": 0.00080020104141126,
+        "peak": {
+          "rate": 3.5667240109303384e-06,
+          "generator": 1.6802927719113125e-06,
+          "ledger": 1.4782187973391304e-17,
+          "stage_mass": 1.5038631548952648e-13,
+          "min_pressure": 0.5999955268480858,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 31,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "8217d77b8fd95460d437e4407e8accdbc836384a2f51f1c7d7db3d1c62ded96a",
+      "fixed_mass_array_exact": true
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IN_degree4_pressure_late_time_10_20261017_002334",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.051000000000000004,
+        "steps": 10,
+        "rejected": 0,
+        "next_dt": 0.00010000000000000009,
+        "peak": {
+          "rate": 6.484499871412988e-10,
+          "generator": 2.0655979281192227e-08,
+          "ledger": 5.637851296924623e-18,
+          "stage_mass": 1.9492904740434774e-15,
+          "min_pressure": 0.5994591902936324,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 10,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "cec2a35f6d34978c177650258d76b8db85fd96ee3f100c02400f1792bbcc169d",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.051000000000000004,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.012092100123972261,
+          "velocity_cell": 0.015838952757220543,
+          "density_cell": 0.006325024962987248,
+          "pressure_field": 0.02087066236001583,
+          "velocity_field": 0.01754309534374126,
+          "density_field": 0.035173007582234836,
+          "transverse_velocity": 0.004104362175931995,
+          "energy_cell": 0.018218718547564072
+        },
+        "reference_quadrature_difference": 2.794395574309827e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9926197475172286,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IO_degree4_pressure_late_time_20_20261017_002334",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.051000000000000004,
+        "steps": 20,
+        "rejected": 0,
+        "next_dt": 5.000000000000004e-05,
+        "peak": {
+          "rate": 1.6212478185695396e-10,
+          "generator": 5.165999530931664e-09,
+          "ledger": 1.1709383462843448e-17,
+          "stage_mass": 1.9492904740434774e-15,
+          "min_pressure": 0.5994591903555828,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 20,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "608d9b9785a1f2316c90b7f18ec063f61d35c4e4fdcc2ff704a4c5c70bd3ae25",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.051000000000000004,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.012092098854806953,
+          "velocity_cell": 0.015838952933407004,
+          "density_cell": 0.006325023644106762,
+          "pressure_field": 0.020870661519627767,
+          "velocity_field": 0.01754309524153413,
+          "density_field": 0.03517300673384153,
+          "transverse_velocity": 0.004104362125346298,
+          "energy_cell": 0.018218716637092597
+        },
+        "reference_quadrature_difference": 3.106645799985652e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9926197475764624,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IP_degree4_pressure_late_time_40_20261017_002334",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05099999999999989,
+        "steps": 40,
+        "rejected": 0,
+        "next_dt": 2.500000000000002e-05,
+        "peak": {
+          "rate": 4.053300315552151e-11,
+          "generator": 2.6996153434116917e-09,
+          "ledger": 2.47198095326695e-17,
+          "stage_mass": 1.9492904740434774e-15,
+          "min_pressure": 0.599459190371089,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 40,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "991ef96d4a5305e017929d7d6964aba722cdc00f94b1f1959c05267f70eb026d",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05099999999999989,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.012092098537422501,
+          "velocity_cell": 0.015838952977072697,
+          "density_cell": 0.006325023314731303,
+          "pressure_field": 0.020870661309448677,
+          "velocity_field": 0.01754309521576037,
+          "density_field": 0.03517300651935235,
+          "transverse_velocity": 0.004104362112753451,
+          "energy_cell": 0.01821871615933129
+        },
+        "reference_quadrature_difference": 3.0254661623208e-14,
+        "reference_global_mass_relative": 0.0,
+        "density_min": 0.9926197475909739,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IL_horner_pressure_validation_20261017_000456",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IM_degree4_time_source_20261017_001115",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IQ_refinement_field_audit_20261017_002351",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IS_centered_moment_rate_consistency_20261017_002905",
+      "status": "terminated",
+      "exit_code": 1
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IU_centered_moment_rate_consistency_corrected_20261017_003107",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IR_degree4_late_time_analysis_20261017_002942",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IT_quadratic_wave64_field_audit_20261017_002942",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IV_completed_accuracy_figures_20261017_003517",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JB_combined_kernel_resume_n32_20261017_005828",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 240,
+        "rejected": 76,
+        "next_dt": 0.00014041343009602372,
+        "peak": {
+          "rate": 8.258179657839559e-05,
+          "generator": 1.931831090123959e-06,
+          "ledger": 6.410938226524592e-17,
+          "stage_mass": 8.096717469662645e-14,
+          "min_pressure": 0.6941875710827357,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 240,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "c866ea5a447c338731e8d5498a25003edb319bb9ef0ccc9c402323a7a8461393",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0002020279117567451,
+          "velocity_cell": 0.0001333369251174949,
+          "density_cell": 3.786895413298078e-05,
+          "pressure_field": 0.0003067581562660423,
+          "velocity_field": 0.00029561021586595437,
+          "density_field": 0.0003769377111344966,
+          "energy_cell": 0.0003006989794890693
+        },
+        "density_min": 0.9861645297792333,
+        "pressure_min": 0.6860389592506746,
+        "reference_quadrature_difference": 1.7334013834491577e-11,
+        "reference_global_mass_relative": 8.881784197001254e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JC_combined_kernel_resume_n64_20261017_005828",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05,
+        "steps": 63,
+        "rejected": 2,
+        "next_dt": 0.0005967465481917233,
+        "peak": {
+          "rate": 3.5667240109303384e-06,
+          "generator": 1.6802927719113125e-06,
+          "ledger": 1.4782187973391304e-17,
+          "stage_mass": 1.962756245967506e-13,
+          "min_pressure": 0.5999887875187628,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 63,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "a1d0de29118cc11160e4c904b2c8bea3b95ddec3293909a78096b372fc4b15b7",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.05,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0003421175099782072,
+          "velocity_cell": 0.0003360138045901897,
+          "density_cell": 0.0003138013319031353,
+          "pressure_field": 0.00035261646103073284,
+          "velocity_field": 0.00038247057375480787,
+          "density_field": 0.0023499130933451735,
+          "transverse_velocity": 3.321400798255917e-05,
+          "energy_cell": 0.0005148412805118822
+        },
+        "reference_quadrature_difference": 3.1201199765941e-14,
+        "reference_global_mass_relative": 1.771017910972666e-15,
+        "density_min": 0.9998521627174045,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IW_vector_path_validation_20261017_004420",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IX_vector_moment_flux_validation_20261017_004809",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IZ_combined_kernel_validation_20261017_005308",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JA_combined_kernel_resume_validation_20261017_005550",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JH_refined_density_moment_bounds_20261017_010253",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JG_equivalent_kernel_time_analysis_20261017_010612",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JG_equivalent_kernel_time_analysis_20261017_010612/kernel_comparison",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JK_global_timecap_wave32_20261017_011418",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.04999999999999992,
+        "steps": 125,
+        "rejected": 0,
+        "next_dt": 0.0004,
+        "peak": {
+          "rate": 1.2004152205508293e-06,
+          "generator": 8.783775619098516e-07,
+          "ledger": 1.9081958235744878e-17,
+          "stage_mass": 4.702091648445435e-17,
+          "min_pressure": 0.5998999246944926,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 125,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0
+        }
+      },
+      "checkpoint_sha256": "32efae635e74dce07caea13d495e1d08d2962536bb540c36d5d0498567c4cb65",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": true,
+      "physical_score": {
+        "t": 0.04999999999999992,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.0026402821481256063,
+          "velocity_cell": 0.002421026696229436,
+          "density_cell": 0.00101841323193806,
+          "pressure_field": 0.0036677064782300968,
+          "velocity_field": 0.0027687798133348525,
+          "density_field": 0.009303499897463924,
+          "transverse_velocity": 0.0006640015617958154,
+          "energy_cell": 0.003965258721225162
+        },
+        "reference_quadrature_difference": 3.134580946586099e-14,
+        "reference_global_mass_relative": 1.1068861943579165e-15,
+        "density_min": 0.9975198352457676,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JD_equivalent_kernel_time_10_20261017_010212",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.051000000000000004,
+        "steps": 10,
+        "rejected": 0,
+        "next_dt": 0.00010000000000000009,
+        "peak": {
+          "rate": 6.484500030110796e-10,
+          "generator": 2.0655979284661674e-08,
+          "ledger": 5.637851296924623e-18,
+          "stage_mass": 1.9492904740434774e-15,
+          "min_pressure": 0.5994591902936315,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 10,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "cb2531517c7194e3f94097b66119c2a427249b8dfa0940926fa3d0fb09839bbc",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.051000000000000004,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.012092100123974686,
+          "velocity_cell": 0.01583895275722057,
+          "density_cell": 0.006325024962990826,
+          "pressure_field": 0.020870662360018444,
+          "velocity_field": 0.017543095343741277,
+          "density_field": 0.03517300758280111,
+          "transverse_velocity": 0.00410436217593189,
+          "energy_cell": 0.018218718547566834
+        },
+        "reference_quadrature_difference": 3.068563198677099e-14,
+        "reference_global_mass_relative": 2.2137723887158325e-16,
+        "density_min": 0.9926197475170312,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JE_equivalent_kernel_time_20_20261017_010212",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.051000000000000004,
+        "steps": 20,
+        "rejected": 0,
+        "next_dt": 5.000000000000004e-05,
+        "peak": {
+          "rate": 1.6212476274237837e-10,
+          "generator": 5.165999551748346e-09,
+          "ledger": 9.540979117872439e-18,
+          "stage_mass": 1.9492904740434774e-15,
+          "min_pressure": 0.5994591903555831,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 20,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "8a477209c6bf14769c493993290bfe0a45d9b6634397f4d8db33d50aeb40ed61",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.051000000000000004,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.012092098854806364,
+          "velocity_cell": 0.015838952933407008,
+          "density_cell": 0.0063250236441071955,
+          "pressure_field": 0.02087066151962841,
+          "velocity_field": 0.01754309524153402,
+          "density_field": 0.035173006734169426,
+          "transverse_velocity": 0.004104362125346386,
+          "energy_cell": 0.01821871663709044
+        },
+        "reference_quadrature_difference": 3.0344108302438055e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.992619747576538,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JF_equivalent_kernel_time_40_20261017_010212",
+      "status": "terminated",
+      "exit_code": 0,
+      "checkpoint": {
+        "t": 0.05099999999999989,
+        "steps": 40,
+        "rejected": 0,
+        "next_dt": 2.500000000000002e-05,
+        "peak": {
+          "rate": 4.053305383578824e-11,
+          "generator": 2.699615343648861e-09,
+          "ledger": 2.688821387764051e-17,
+          "stage_mass": 1.9492904740434774e-15,
+          "min_pressure": 0.5994591903710895,
+          "min_factor_R": 0.0,
+          "pressure_diagnostics_steps_observed": 40,
+          "pressure_limited_cells_max": 0,
+          "pressure_positivity_scale_min": 1.0,
+          "pressure_deficient_stencil_cells_max": 0
+        }
+      },
+      "checkpoint_sha256": "0d7cfc4d96fe205ea6166fb2267d71f44e944c357c75a08775f0e5d03371b4a6",
+      "fixed_mass_array_exact": true,
+      "numerical_passed": true,
+      "physical_accuracy_passed": false,
+      "physical_score": {
+        "t": 0.05099999999999989,
+        "amplitude": 0.02,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.01209209853742035,
+          "velocity_cell": 0.0158389529770727,
+          "density_cell": 0.0063250233147294594,
+          "pressure_field": 0.020870661309445798,
+          "velocity_field": 0.01754309521576021,
+          "density_field": 0.03517300651923387,
+          "transverse_velocity": 0.004104362112753418,
+          "energy_cell": 0.018218716159327412
+        },
+        "reference_quadrature_difference": 3.156383574648425e-14,
+        "reference_global_mass_relative": 4.427544777431665e-16,
+        "density_min": 0.9926197475909017,
+        "reference_valid": true
+      }
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JL_final_comparison_audit_validation_20261017_012219",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JI_high_quadrature_moment_identity_audit_20261017_012353",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JM_overlap_comparison_validation_20261017_013139",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JO_final_degree4_field_audit_20261017_013853",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JN_global_timecap_field_comparison_20261017_014934",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JP_final_accuracy_figures_20261017_014051",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JQ_fine_timecap_field_audit_20261017_014934",
+      "status": "terminated",
+      "exit_code": 0
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JP_final_accuracy_figures_20261017_014051/distribution_analysis",
+      "status": "terminated",
+      "exit_code": 0
+    }
+  ],
+  "curved_completed_moment_continuation": "/gpfs/kjhan/LagForce/Codex_DD_curved_evolution_20261016_172155/curved_evolution_report.json",
+  "curved_unfinished_n16": "/gpfs/kjhan/LagForce/Codex_DG_curved_n16_corrected_20261016_172745/evolution/curved_n16/short/checkpoint.json",
+  "density_moment_obstruction": "/gpfs/kjhan/LagForce/Codex_GH_moment_obstruction_20261016_211908/moment_obstruction_report.json",
+  "numerical_error_allocation": {
+    "note": "Explicit native RK2 comparison; physical goals unchanged. Original strict runs remain distinct.",
+    "vortex_mass": 1e-05,
+    "wave_mass": 1e-05,
+    "quadrature": 1e-07,
+    "fine_vortex_mass": 1e-06,
+    "fine_vortex_quadrature": 1e-08
+  },
+  "quadratic_pressure_report": "Docs/quadratic_pressure_2026-10-16.md",
+  "quadratic_pressure_kick": {
+    "old_gradient_error": 0.11773488747985861,
+    "new_gradient_error": 2.2193878679299672e-12,
+    "new_all18_rotating_moment_rate_error_per_mass": 5.432427450814879e-14
+  },
+  "budget_sensitivity_report": "/gpfs/kjhan/LagForce/Codex_HB_vortex_budget_comparison_20261016_221927/physical_budget_comparison_report.json",
+  "new_quadratic_pressure_N64": "/gpfs/kjhan/LagForce/Codex_HK_quadratic_pressure_wave_n64_20261016_223131",
+  "pressure_spatial_consistency": "/gpfs/kjhan/LagForce/Codex_HQ_pressure_curvature_spatial_consistency_20261016_223736/pressure_spatial_kick_report.json",
+  "early_time_analysis": "/gpfs/kjhan/LagForce/Codex_HG_quadratic_pressure_time_analysis_20261016_222751/simple_wave_time_analysis.json",
+  "late_time_roots": [
+    "/gpfs/kjhan/LagForce/Codex_HM_quadratic_pressure_late_time_10_20261016_223937",
+    "/gpfs/kjhan/LagForce/Codex_HN_quadratic_pressure_late_time_20_20261016_223937",
+    "/gpfs/kjhan/LagForce/Codex_HO_quadratic_pressure_late_time_40_20261016_223937"
+  ],
+  "controller_replay": "/gpfs/kjhan/LagForce/Codex_HS_resolved_rejection_replay_20261016_224607/resolved_rejection_replay_report.json",
+  "controller_replay_correction": "GN21 still fails after65 samples: mass ratio1.026. Therefore no actual unnecessary rejection established by this case. Universal native refinement-before-rejection is NOT adopted; current repo makes it opt-in. Existing live snapshots unchanged.",
+  "time_integrator": "positive midpoint RK2 with Sylvester covariance factors; pressure polynomial degree is spatial order, not RK4",
+  "current_accuracy_report": "Docs/physical_accuracy_status_2026-10-16.md",
+  "source_python_files": 336,
+  "validation_scope": "File count is a snapshot count, not test coverage.233 related regression tests passed.",
+  "numerical_acceleration_continuations": [
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HU_numerical_acceleration_n32_20261016_225846",
+      "source": "/gpfs/kjhan/LagForce/Codex_GN_native_budget_steady_vortex_n32_20261016_214100",
+      "n": 32,
+      "problem": "steady_vortex",
+      "pressure_reconstruction": "linear",
+      "source_time": 0.028839558404425397,
+      "steps": 134,
+      "rejected": 40
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HV_numerical_acceleration_n64_20261016_225846",
+      "source": "/gpfs/kjhan/LagForce/Codex_GQ_wave_refinement_n64_20261016_215939",
+      "n": 64,
+      "problem": "nonlinear_simple_wave",
+      "pressure_reconstruction": "linear",
+      "source_time": 0.019828928659909116,
+      "steps": 27,
+      "rejected": 3
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_HW_numerical_acceleration_n32_20261016_225846",
+      "source": "/gpfs/kjhan/LagForce/Codex_GZ_quadratic_pressure_steady_vortex_n32_20261016_221456",
+      "n": 32,
+      "problem": "steady_vortex",
+      "pressure_reconstruction": "quadratic_cell_mean",
+      "source_time": 0.015402393086719004,
+      "steps": 70,
+      "rejected": 24
+    }
+  ],
+  "degree4_pressure_static_roots": [
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IE_degree4_nonlinear_simple_wave_rhs_20261016_233931",
+      "problem": "nonlinear_simple_wave"
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_IF_degree4_steady_vortex_rhs_20261016_233931",
+      "problem": "steady_vortex"
+    }
+  ],
+  "time_order_reports": {
+    "initial": "/gpfs/kjhan/LagForce/Codex_IB_quadratic_pressure_initial_time_analysis_20261016_232414/simple_wave_time_analysis.json",
+    "early": "/gpfs/kjhan/LagForce/Codex_HG_quadratic_pressure_time_analysis_20261016_222751/simple_wave_time_analysis.json",
+    "late": "/gpfs/kjhan/LagForce/Codex_HP_quadratic_pressure_late_time_analysis_20261016_225436/simple_wave_time_analysis.json"
+  },
+  "independent_field_audit": "/gpfs/kjhan/LagForce/Codex_HX_physical_field_audit_20261016_231015/physical_field_accuracy_audit_report.json",
+  "local_moment_obstruction": "/gpfs/kjhan/LagForce/Codex_IC_density_local_moment_obstruction_20261016_231909/moment_obstruction_report.json",
+  "degree4_time_order_report": "/gpfs/kjhan/LagForce/Codex_IR_degree4_late_time_analysis_20261017_002942/simple_wave_time_analysis.json",
+  "centered_moment_rate_report": "/gpfs/kjhan/LagForce/Codex_IU_centered_moment_rate_consistency_corrected_20261017_003107/physical_moment_rate_audit_report.json",
+  "additional_field_audits": [
+    "/gpfs/kjhan/LagForce/Codex_IQ_refinement_field_audit_20261017_002351/physical_field_accuracy_audit_report.json",
+    "/gpfs/kjhan/LagForce/Codex_IT_quadratic_wave64_field_audit_20261017_002942/physical_field_accuracy_audit_report.json"
+  ],
+  "combined_kernel_continuations": [
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JB_combined_kernel_resume_n32_20261017_005828",
+      "source": "/gpfs/kjhan/LagForce/Codex_IJ_degree4_steady_vortex_n32_20261016_234538",
+      "n": 32,
+      "problem": "steady_vortex",
+      "source_time": 0.02565318431017644,
+      "steps": 133,
+      "rejected": 47
+    },
+    {
+      "root": "/gpfs/kjhan/LagForce/Codex_JC_combined_kernel_resume_n64_20261017_005828",
+      "source": "/gpfs/kjhan/LagForce/Codex_IK_degree4_wave_n64_20261016_235151",
+      "n": 64,
+      "problem": "nonlinear_simple_wave",
+      "source_time": 0.024575439234841127,
+      "steps": 31,
+      "rejected": 2
+    }
+  ],
+  "combined_kernel_equivalence_report": "/gpfs/kjhan/LagForce/Codex_IZ_combined_kernel_validation_20261017_005308/combined_numerical_kernel_validation_report.json",
+  "standalone_figures": "/gpfs/kjhan/LagForce/Codex_IV_completed_accuracy_figures_20261017_003517",
+  "equivalent_kernel_time_order_report": "/gpfs/kjhan/LagForce/Codex_JG_equivalent_kernel_time_analysis_20261017_010612/simple_wave_time_analysis.json",
+  "equivalent_kernel_time_endpoint_comparison": "/gpfs/kjhan/LagForce/Codex_JG_equivalent_kernel_time_analysis_20261017_010612/kernel_comparison/kernel_time_equivalence_report.json",
+  "refined_density_moment_bounds": "/gpfs/kjhan/LagForce/Codex_JH_refined_density_moment_bounds_20261017_010253/moment_obstruction_report.json",
+  "whole_interval_timestep_sensitivity_run": "/gpfs/kjhan/LagForce/Codex_JK_global_timecap_wave32_20261017_011418",
+  "independent_high_quadrature_moment_identity_audit": "/gpfs/kjhan/LagForce/Codex_JI_high_quadrature_moment_identity_audit_20261017_012353/physical_field_accuracy_audit_report.json",
+  "physical_accuracy_acceptance_report": "Docs/physical_accuracy_acceptance_2026-10-17.json",
+  "final_stage_status": "established_smooth2D_L1_verification_complete",
+  "all_current_verification_runs_terminated": false,
+  "full_automated_verification": {
+    "root": "/gpfs/kjhan/LagForce/Codex_JT_complete_verification_20261017_052141",
+    "unique_tests": 388,
+    "standard_passed": true,
+    "reverse_passed": true,
+    "skipped": 0,
+    "openmp_threads": 4,
+    "prior_receipts": 66,
+    "prior_endpoints": 7,
+    "physics_code_changed": false
+  },
+  "extended_validation": "/tmp/lageunha-push/Docs/extended_physics_validation_2026-10-17.json",
+  "extended_validation_complete": false,
+  "extended_review_snapshot": "/gpfs/kjhan/LagForce/Codex_KX_extended_review_20261017_083534",
+  "regression_reverse_passed": true,
+  "regression_suite_source": "/gpfs/kjhan/LagForce/Codex_MU_global_gate_accounting_20261017",
+  "latest_extended_bundle": "2026-10-17T09:46:19.127799"
+}

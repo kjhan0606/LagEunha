@@ -1,0 +1,2 @@
+float WTIME();
+float WALLCLOCK();
