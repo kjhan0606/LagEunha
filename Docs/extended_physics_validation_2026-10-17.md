@@ -5,14 +5,14 @@
 무조향, 원래 셀 질량 고정, 가변 Laguerre 가중치 유지. 기존 승인 경로 보존.
 현재 네 가지 전체 유체 검증이 모두 통과한 상태는 아니다.
 
-## 현재 판정 — 2026-10-17 13:23 갱신
+## 현재 판정 — 2026-10-17 14:34 갱신
 
 | 범위 | 완료에 필요한 범위 | 현재 판정 |
 |---|---|---|
 | 충격파 | T=.15, 공간 비교, 물리 L1<.05 및 수치 경로 검사 | 미완료. 새 피팅16² T=.02 통과; 전체 구간 계산 중 |
 | 장시간 와류 | 10중심주기(T=10.4685979156) | 미완료. 기존 중간 궤적의 밀도 기준 초과 확인; 전체기간 예산 대조 진행 |
 | 3차원 | 비선형 물리장, 독립 전체 경로, 시간·공간 수렴 | 미완료. 6³ coarse 압력 기준 미달; 8³/10³ 및 시간 정밀화 진행 |
-| 케플러 | 공식192² 유체 원반100궤도 | 미완료. 초기 적분·셀별 재구성 감사 중; 공식 유체 진화 미시작 |
+| 케플러 | 공식192² 유체 원반100궤도 | 미완료. 초기 적분 완료; 셀별·전체 이웃 재구성 감사 중; 공식 유체 진화 미시작 |
 
 아래 내용은 순차 연구 기록이다. 초기 시점의 구현/실행 상태를 현재 완료 상태로
 해석하지 않는다. 최신 체크포인트 캡처와 제한은 JSON의
@@ -1740,3 +1740,454 @@ boundary face in the inspected cells. This is evidence of a genuine local
 mesh-topology event, not a demonstrated geometry closure bug. Quantifying
 its contribution to the dense-path error is the next diagnostic; covariance
 caps, solver tolerances, and accepted trajectories remain unchanged.
+
+
+### 13:45 Topology-event trial and independent 3D audit continuation
+
+QR finds the isolated weighted power-circle event for sites686/687/718/719
+on PZ rejection17 at phase .04060305493, time .00109788894035.
+The actual saved geometry confirms that face686–719 disappears across it.
+The determinant utility has three targeted passing tests; roots are candidates
+requiring adjacency/geometry verification, not a general production event solver.
+
+QS independently recomputes a midpoint step from that rejected source with
+dt=1.34180051102e-7, the predicted time to the event. Source RHS matches
+exactly. Seventeen saved path nodes, with the unchanged full10period budget,
+give mass ratio3.00229987e-5, quadrature ratio1.33956172e-5, scaled rate
+6.02160761e-10, generator defect8.17679258e-14, positive minimum pressure
+.69420346 and stage mass residual3.68802126e-15. This is promising single-step
+evidence for event-aware proposals; it does not establish the next step across
+the event, automatic event selection, or long-time physical accuracy.
+PZ's accepted trajectory and all running sources remain unchanged.
+
+At13:44–13:45, saved checkpoints: JU t=.17535210 (1219 steps),
+MV t=.09394635 (2532), free-affine QB t=.03713651 (464), PQ32
+t=.01120562 (150), full-horizon PZ t=.0017220511 (96), NX t=.015 (15),
+OR t=.008 (4), QK t=.001 (1), auxiliary OT t=.01375. QD10 has no first
+checkpoint yet but its actual Python process1936379 was verified live.
+QK's process1947710 is also live and has completed its first step.
+Canonical PK has integrated28096/36864 cells; independent QE has audited
+15328/36864. These are partial counts, not official Kepler evolution.
+
+OR's independent audit exited0 at13:35:37 and covers t=.008: absolute
+relative mass1.20325057e-6, nested quadrature difference8.87151916e-10,
+duration-scaled rate1.05332036e-5, generator defect1.48474610e-5.
+NX's prior audit exited0 at13:14:43 through t=.012. After verifying no
+audit process remained and verifying SHA256SUMS, resumed its existing
+node caches at13:44 (session66768, timeout1h, execution_resume_1344.txt)
+to audit newly accepted history. No fluid evolution was replayed.
+All four full validation targets remain incomplete.
+
+QT starts a diagnostic follow-up from QS's saved endpoint at twice its dt,
+with the same17-node/full-horizon checks. It does not alter PZ. The first
+launch exited1 before any RHS evaluation because the audit wrapper passed
+the trial wrapper rather than its record to restore(). Corrected only that
+loader; the failed log is retained. Retry session35606 uses execution_retry.txt
+and run_retry.log with a20minute bound. Actual geometry crossing must still
+be checked on the recomputed proposals: the old rejected polynomial's event
+time need not equal that on a new midpoint polynomial.
+
+QT retry exited0: dt2.683601022e-7, mass ratio1.03882009e-4,
+quadrature ratio2.20509419e-5, rate2.09127090e-9, generator3.27460281e-13,
+minimum pressure.69420346, stage mass3.68797213e-15. It satisfies the same
+sampled per-step criteria. QU (session43861, timeout10m) now checks the
+actual686–719 face at phases0,.5,1 on both recomputed dense paths.
+Neither proposal is installed as a production checkpoint.
+
+QU exited0 and confirms actual face length2.627594e-8→1.313797e-8→0
+across QS, then0 at every inspected QT phase. The recomputed path really
+passes the local topology event. This does not yet show a lower cost over
+the original rejected interval: the first two small steps cover only part
+of it. QV (session52454, timeout20m) therefore proposes the remaining
+interval from QT to the exact original rejection17 endpoint. All budgets
+remain unchanged; accepted production histories are untouched.
+
+QV exited0 and passes the remaining dt2.902138555e-6: mass ratio.01235587,
+quadrature ratio.0005909053, scaled rate2.47547582e-7, generator defect
+3.83741927e-11, minimum pressure.69420347, stage mass3.68789421e-15.
+QW verifies exact state/factor continuity across all three saved proposals,
+checks the final time against rejection17, and sums absolute path and
+quadrature estimates over the same original interval (session1875).
+This is local evidence for an event-aware trial controller, not proof of
+physical field convergence or of full10period vortex accuracy.
+
+QW exited0: exact array continuity confirmed, final time.0011010594390064726
+matches rejection17. Aggregate absolute relative mass3.42838245e-14,
+allocated whole-interval mass budget ratio.010860468 and summed quadrature
+budget ratio.0005191195. All three sampled step gates pass unchanged.
+This verifies one local event split across an identical time interval.
+Next: adjacency-qualified automatic proposals and additional real events
+before production integration; retain all original full validation targets.
+NX independent audit is processing step15 nodes at13:51, retaining earlier
+validated node caches.
+
+
+### 13:54 Automatic interior-event candidates and canonical native quadrature
+
+QX adds an endpoint adjacency comparison to power_flip_time.py. For disappearing
+interior edges with exactly two common neighbors it proposes isolated weighted
+circle roots; ambiguous adjacency and persistent degeneracy are reported.
+Five targeted tests pass. Boundary events and transient flips that restore the
+original adjacency are outside this detector's coverage; it is not a complete
+event-aware integrator and is not installed into running physics snapshots.
+
+Actual PZ archived rejections7/8 yield edge491–522 at phases
+.579374599/.105832536, both verified against actual geometry just before/after.
+Rejection17 automatically recovers686–719 at phase.04060305488.
+Rejection1 has no detected disappearing interior edge: topology handling alone
+cannot explain or eliminate all early rejections. QY (session11336,20minute
+bound) tests an unchanged-budget proposal from rejection8 to its automatically
+predicted event; source RHS and original trial hashes are checked.
+
+NX independent audit exited0 at13:53:30, covering the checkpoint captured
+at launch rather than later fluid progress; its report is retained in JSON.
+OR fluid reached t=.01; its earlier audit exited0 at13:35:37 through .008.
+After checking no Python process occupied its audit directory and verifying
+the source manifest, resumed existing caches (session52645,1h bound,
+execution_resume_1353.txt). Fluid evolution was not repeated.
+
+PK canonical IC integration reached32096/36864 cells and QE order16 audited
+19488/36864 at the latest checkpoint observation. QZ now audits the same
+original cached cells with density order6 (session51718,2h bound). It shares
+only immutable physics source and original IC chunks, with a separate audit
+cache/identity. This addresses the gap between higher-order diagnostic density
+quadrature and native reconstruction; it neither replaces the physical IC
+nor certifies topology-wide closure, potential enrichment, or100fluid orbits.
+
+QY exited0: automatically identified event8 proposal dt1.932496893e-6,
+source RHS exactly matches archived RHS; mass ratio.0050994115, quadrature
+ratio.0002272658, rate1.02673264e-7, generator1.70251591e-11, positive
+pressure.69420230, stage mass3.71502383e-15. RA continues this diagnostic
+endpoint through the remaining1.632745378e-5 to the original rejected end:
+mass ratio.390885215, quadrature ratio.018031286, rate7.82975555e-6,
+generator1.21504262e-9, positive pressure.69420233. Both pass the same
+sampled criteria. RB (session47303) checks actual recomputed face491–522
+geometry and exact state continuity plus aggregate quadrature/mass over
+this complete interval. No production states or controller settings changed.
+
+RB exited0. QY/RA span exactly the original rejection8 interval with exact
+state/factor continuity; aggregate absolute relative mass6.10565618e-12,
+allocated mass budget ratio.350042893, summed quadrature budget ratio
+.0161470414. Actual face491–522 length decreases3.772237e-7→1.886127e-7
+→9.866766e-13 over QY, then disappears during RA. Thus the predicted time
+is close but is not an exact root for the recomputed midpoint path. No
+face clipping or forced geometry correction was introduced. A production
+controller must treat the event time as a proposal and retain every gate.
+
+JU's bounded execution ended13:58:21 with exit124; original PID1842321
+was verified absent. Captured source hashes in resume_1358_receipt.json
+at t=.17799820723,1254 steps, including pending trial/node caches.
+Verified immutable source manifest and resumed existing run with a2h
+bound (session52241, execution_resume_1358.txt/run_resume_1358.log).
+This preserves the existing diagnostic continuation toward .2; its known
+physical density and full10period accounting limitations still apply.
+
+
+### 14:04 Canonical initialization complete, spatial 3D evidence, event retry control
+
+PK exited0 at14:02:07 after integrating all36864 original canonical cells.
+This completes only physical IC moments. QE order16 and QZ order6 per-cell
+audits continue. RG (session9706,4h bound) now evaluates the retained
+canonical initial state with whole-neighborhood quadratic projected velocity
+and degree4 pressure, density quadrature16 and independent field integration
+orders16/24. It reuses original moments and does not activate enriched
+potential moments or evolve the disk. Official100fluid orbits remain unmet.
+
+RC compares stored6³/8³ coarse endpoints at identical t=.01: order12
+rho L1 .002317925→.001672361, velocity/amplitude L1 .040096018→.022879519,
+pressure/amplitude² L1 .049811149→.023674951. All three improve spatially
+at this time. Maximum sampled vertical velocity .001418047→.001820934
+does not improve, and this is not a finalT=.02 convergence certificate.
+The independently normalized mass-weighted velocity relative L1 is still
+.2441105/.1392939; these differ from the fixed-amplitude acceptance norm.
+
+RD adds actual-geometry verification to an optional rejected-step proposal.
+Only isolated interior candidates contracting dt by at least10% and above
+the existing minimum step are used. Otherwise ordinary halving remains.
+Material-mass-lift geometry is explicitly unsupported. Retry proposal details
+are archived with the rejected trial; every regular sampled mass, quadrature,
+generator, pressure, factor, stage and accepted-state gate remains in force.
+RD reproduces actual event proposals7/8/17 and falls back to halving for1.
+Six targeted tests pass. RE immutable source snapshot passes505 tests with
+one pre-existing Sod logarithm warning (exit0,14:02:37).
+
+RF starts the first64² evolution from the saved QO original initial arrays,
+with unchanged radial velocity fit and full10period budgets, and opts into
+this retry proposal (session60970,4h bound). Execution endpoint .01 is the
+first spatial/temporal physical gate; validation_end remains10.468597915605091.
+Existing32² and accepted diagnostic histories are preserved. RF source is
+the verified RE manifest, and configuration hashes bind the reused QO IC.
+
+At14:04:52 actual Python processes RF1996150 and RG1995738 were verified
+live with accumulating CPU time; neither had a terminal receipt. Empty
+early progress logs are not treated as failures or grounds for restart.
+
+
+### 14:08 Three-dimensional paths and shock generator mismatch
+
+QD10 first actual step reached t=.002, and QK8 fine reached .002 with2steps.
+Started independent order6/17-node history audits in NT/qd_n10_order6
+(session75548) and NT/qk_n8fine_order6(session99357), each2h, using identical
+library hashes and preserved actual path records. OR audit exited0 at14:01:07
+through .01: absolute relative mass1.48493010e-6, quadrature8.87167992e-10,
+scaled rate1.05332036e-5, generator1.48474610e-5. This is a partial interval.
+RH (session79023) scores existing6³/8³/10³ coarse states at the same .002.
+
+RI reads QB free-affine shock's actual rejections102–107 aroundt=.03731.
+Their dt~5e-7, mass ratios.0008–.00164, and quadrature ratios.0021–.00495
+are small; generator path defects1.25–1.77e-5 exceed the1e-5 gate and
+dominate rejection. Stage mass residuals~1.9e-15 remain small. Worst mass
+flux cell249 is not necessarily the worst generator-defect cell. RJ separately
+locates the actual generator defect and affine/quadratic contributions on
+rejection106 at five saved-path phases, with no modified path or thresholds.
+
+RF first rejection archives a verified event proposal for face2196–2259
+at phase.01454311178, retrydt3.635777944e-6. This confirms the optional
+controller executed in the new64² run, not that its retry is accepted yet.
+
+RH exited0 at14:07:36. At equal t=.002,6³/8³/10³ order12 field errors:
+rho .000473037/.000343816/.000281365, velocity/amplitude
+.038149375/.022065751/.013889374, pressure/amplitude²
+.046082011/.020825988/.013078872. Spatial refinement improves all three
+global norms at this early time; sampled vertical velocity maxima
+.000307511/.000405582/.000368127 remain nonmonotonic. FullT=.02 and
+independent history audits are still required.
+
+RJ confirms actual worst generator mismatch at cell248, x-component,
+from phase.25 onward, reaching1.77364978e-5. Its affine velocity changes
+smoothly while the quadratic correction changes .00519827→.00519158.
+Cell area~.00174174 and spatial covariance eigenvalues~2.58e-8/1.59e-7
+remain positive. This is not evidence of a collapsed cell or failed mass root.
+Source-phase mismatch is only5.93e-10. RK (session39379) observes the
+unchanged batch projection inputs/outputs to distinguish unconstrained-fit
+variation from covariance-budget effects; no model substitution or steering.
+
+RK exited0. At fixed cell248 the quadratic Gram factor condition is only
+5.47793→5.47799, and the dominant budget singular value remains saturated
+at1−1e-12 across all five phases. The transverse curvature variation is
+already present before budget projection: unconstrained x-velocity yy
+coefficient3.53755e-5→1.90824e-5→1.99756e-5→3.59796e-5→6.76430e-5.
+It is therefore not explained by a newly switching covariance cap. The
+residual factor is highly anisotropic (~1.1567e-4 and3.629e-14 singular
+values). Next diagnostic: conditioning and data sensitivity of the augmented
+free-affine curvature fit, while preserving the accepted shock trajectory.
+
+RF has now actually accepted three steps through t=1.409704574e-5,
+with ratios.61149245/.08360135/.18815641. Its first automatically event-sized
+retry passed the unchanged gates; this is initial progress, not a long-time
+physical certificate.
+
+
+### 14:16 Shock fit conditioning and independent stencil trials
+
+RL actual cell248 augmented fit uses12neighbors and has condition
+94112→94365, with smallest singular value~2.05e-5. Across the saved
+rejected step, matrix/rhs maximum changes4.22e-6/6.53e-5. Holding either
+matrix or rhs fixed still changes the weak transverse curvature; the
+variation exists before covariance projection. All encoded fit inputs are
+saved for further reproducibility and sensitivity analysis.
+
+RM static alternatives retain the original moments and only change the
+velocity fit's support: scalar support4 gives15neighbors, condition10.47,
+and transverse x-velocity curvature~9.2e-10; bounding-cell width scaling
+gives9neighbors, condition14.91, transverse curvature~1.52e-9. The
+longitudinal curvature also changes (-.23033 baseline→-.13435/-.24199).
+Thus these are alternative reconstructions, not an equivalent numerical
+implementation. Their old-path generator defects are not acceptance tests.
+
+RN independently recomputes source RHS, midpoint, factors and17dense nodes
+from rejection106's retained source with dt1e-5, separately for support4
+and cell_width (sessions25656/33150,20minute bounds). Pressure stencils
+are explicitly left unchanged by restricting the interception to velocity
+prepare. The full .15 shock budgets remain unchanged. These diagnostic
+trials do not modify QB, overwrite its history, or certify full physical
+accuracy of either new reconstruction.
+
+NX fluid reached t=.019,19steps. Its prior independent audit exited0
+through .015; after source verification and checking no Python process
+occupied its audit directory, resumed existing node caches at14:16
+(session34336,1h bound,execution_resume_1416.txt).
+
+RN both trials completed. At dt1e-5 (19.26times rejection106's dt),
+support4/cell_width path ratios are .06134479/.05001065 and generator
+defects3.169575e-8/3.305882e-8, with positive pressure and factors. Stage
+mass residuals1.914e-17/3.652e-15. These are genuine recomputed new-RHS
+trials; source RHS differences.006343/.002583 explicitly confirm changed
+reconstruction. All sampled numerical gates pass, but no long-interval
+physical accuracy or convergence is inferred. Next: explicit optional
+geometry-aware velocity stencil, manufactured compressed-cell tests,
+and controlled full shock comparison before selecting any default.
+
+MV previous bounded execution ended14:17:44,exit124; original PID1865974
+was verified absent. Saved resume_1418_receipt.json at t=.10628814957,
+2903steps with checkpoint/pending/configuration hashes, verified immutable
+source manifest, and resumed the same run for2h(session22802). No accepted
+step was replayed or erased. Original T=.15 remains the shock target.
+
+
+### 14:21 Optional cell-width velocity stencil
+
+Implemented explicit velocity_stencil=cell_width, default area unchanged.
+Only tensor velocity fits use per-axis polygon bounding widths for neighbor
+support. Polynomial basis, fixed means/moments and covariance budget remain
+the original ones; pressure stencils are untouched. This is an axis-dependent
+reconstruction option, not a rotation-invariance claim or geometry steering.
+Environment/configuration identity checks and cached-source RHS fit/stencil
+checks prevent importing a RHS from the other reconstruction.
+
+Added tests for bitwise default support preservation, compressed-wall
+manufactured planar curvature with a well-conditioned stencil, and invalid
+configuration/widths. RO immutable snapshot is running regression and a
+real saved-state comparison against RN's isolated cell-width implementation
+(session56109). RP16/32 fullT=.15 controls are prepared from retained
+original physical IC arrays; launch awaits those checks. These are distinct
+reconstruction comparisons, not restarts of existing accepted trajectories.
+
+RO exited0 at14:21:32:508 regression tests pass, with one existing Sod
+initialization logarithm warning. Actual source RHS equals the RN cell-width
+prototype exactly (maximum difference0), stage mass3.61955774e-15.
+After manifest verification, launched RP16/32 fullT=.15 comparisons
+at14:22 (sessions98950/99228,4h bounds). Each reuses original initial arrays
+with explicit source hashes and velocity_stencil=cell_width; original
+area-stencil runs continue separately. No event-controller change was added
+to these controls, isolating the velocity stencil as the new option.
+
+RQ compares n8 at exactlyt=.002 using the existing independently integrated
+17-node/order6 caches and identical IC arrays. Halvingdt .002→.001
+reduces absolute mass defect3.15484504e-7→7.82789952e-8, ratio4.03025745.
+Generator defect1.48474610e-5→3.71289912e-6 also decreases approximately
+fourfold. This supports temporal consistency at the shared early time,
+not fullT=.02 path certification or final physical accuracy.
+
+RP Python processes2019178/2019179 verified live at14:23:50. n16
+has11accepted steps through .00037438851; n32 is reducing its initial
+step under the unchanged gates. These rejections are not terminal failures.
+
+
+### 14:27 Full6³ temporal run completed, pressure criterion still fails
+
+NX dt=.001 reachedT=.02 with20stored actual paths. Final order12
+rho/v/P=.004549458/.042642928/.055554603, versus coarse pressure
+.055557249. Pressure remains above .05 for both time resolutions.
+Mass arrays are exact, stage mass peak1.95008248e-13, energy ledger
+error2.22044605e-16. This supports a spatial/reconstruction error limitation
+at6³, not full physical validation. NX independent audit is still running
+on the earlier captured prefix and must then include the final path.
+
+NT10 first-step audit exited0 at14:22:52 through .002: absolute mass
+6.51135394e-7, quadrature1.00709624e-9, scaled rate2.53220234e-5,
+generator1.18101985e-5. Its mass defect exceeds8³ at the same dt.
+RR10 time refinement (.001, target.02, session75520,4h bound) starts
+from exact original QD10 arrays and score, with unchanged immutable source;
+this separates temporal error from spatial physical-field improvement.
+RS(session68750) independently scores the already saved8³ fine endpoint
+at.002, reusing the coarse score only after matching its record hash.
+
+PA32's2h control ended14:24:36 with exit124; original PID1875066
+was verified absent. Captured checkpoint/pending hashes at t=.01859280656,
+327steps, and resumed with unchanged source for1h(session71445).
+This preserves the existing short comparison toward.02.
+
+QE exited0 at14:26:39 and covers all36864 canonical original cells at
+density order16. Maximum independently integrated relative mass error
+6.43172734e-12,16/24 integration difference4.78931309e-14, minimum
+decoded cell pressure2.77777771e-5. This completes that per-cell IC audit,
+not native order6, global velocity/pressure closure, potential enrichment,
+or100fluid orbital periods. RG and QZ still address separate requirements.
+
+NX terminal receipt confirms exit0 at14:24:35. RS n8 same-time .002
+field comparison exited0 at14:26:40: coarse/fine pressure
+.02082598765/.02082560188, velocity .02206575087/.02206581906,
+rho .00034381572/.00034383361. Time refinement changes these physical
+errors very little while independent mass-path error improves fourfold.
+Raw endpoint factor differences are not directly a covariance error:
+RS supplementary audit(session79361) compares LLᵀ and signed column
+permutations explicitly without modifying factors.
+
+RS supplementary covariance audit completed: maxLLᵀ difference3.290922e-12;
+after cellwise signed column permutations, maxfactor difference2.027717e-8.
+The rawfactor-coordinate difference.00177958 therefore should not be
+interpreted as a comparably large covariance error. No factor was changed.
+RR10 fine Python PID2023529 verified live at14:29:49.
+
+NX independent prefix audit exited0 at14:29:13 through.019,19steps,
+absolute relative mass4.96954939e-7. After terminal/process/source checks,
+resumed the retained cache to include finalstep20 (execution_resume_1430.txt,
+1h bound). Final physical pressure failure remains separate from this
+numerical path audit.
+
+
+### 14:34 Native6 log incident, verified cache evidence, canonical initial fields
+
+A status-refresh helper reused its documentation-path variable for the last
+progress log and wrote documentation JSON into QZ/n192/run.log. This was
+an assistant bookkeeping error. That log is contaminated and excluded from
+progress evidence. RT preserves a hashed snapshot and incident record.
+Python PID1984343 was verified live; no physics/cache files were rewritten
+or numerical process restarted. RT independently verified source/geometry/
+script identities, original chunk hashes and exact cell-index sequences for
+18752 completed native6 cells. Their max mass error1.71612516e-5, quadrature
+difference1.32244545e-14, minP2.77777771e-5. This is a partial prefix and
+is markedly less accurate in independent mass integration than order16.
+The documentation audit was refreshed using separate explicit output paths.
+
+RG initial global order16 integral completed: relative densityL1 .0059349155,
+mass-weighted velocityL1 1.52765263e-6, pressureL1 5.97968660e-10.
+Minimum density/pressure are positive, but sampled max relative density
+error36.96074 is large. Reference density jumps1↔.01 at radii.5 and2.
+RU(session83845,1h bound) independently measures the density error in
+polygons crossing those interfaces at orders16/24; it does not assume
+that all global error is confined to them. RG order24 remains separate.
+Canonical fluid100-orbit evolution has not started.
+
+NX independent history audit exited0 at14:33:33 and covers all20steps
+throughT=.02. Absolute relative mass5.17933943e-7, quadrature difference
+1.15839977e-9, scaled rate3.87202949e-6, generator4.31441416e-6.
+Coarse/fine full-interval absolute mass ratio=4.00842479103773.
+Both physical pressure errors still exceed .05. This completes the6³
+temporal path comparison, not the full three-dimensional accuracy goal.
+
+RU exited0 at14:34:57:503polygons cross the actual r=.5 or2 density
+interfaces. Their order16 densityL1 accounts for .999999697 of the global
+order16 density error. Cut-cell normalized L1 is .00593491368(order16)
+and .00592904903(order24). Worst sampled outer-interface density is
+~.38 against reference .01, immediately outside r=2. This local smearing
+is not a mass-integral failure, and its later transport remains unverified.
+
+RV(session78661,4h bound) begins a separate canonical initial per-cell
+potential-enriched density audit. It preserves the original m,q,Q and
+reference potential moments, uses order16 base density, and independently
+checks mass/potential integrals at16/24. Frozen cells retain the original
+unenriched closure. Per-chunk identity caches and failure-cell receipts
+are retained; no target moment is adjusted on failure. This is preparation
+for a coupled canonical step, not a claim of fluid evolution or100orbits.
+
+RV has produced352identity-bound initial-cell audits by14:38:09 and
+its Python process is live. This remains an incomplete prefix.
+
+
+### 14:42 Equal-budget shock field comparison and auxiliary angular ledger
+
+RW exited0. At t=.02 with identical original IC and full .15 budgets,
+area/cell_width16² rhoL1=.01330303/.01330646, vL1=.02960721/.02956488,
+PL1=.02229074/.02229181. Both meet the .05 early physical criterion;
+cell_width is not uniformly more accurate. Max meanvy1.0874e-11/8.5900e-12
+retains planar symmetry. Dense accepted paths were sampled, not replayed.
+The fullT=.15 and32² comparisons remain in progress.
+
+OR fluid reached .014; prior independent audit exited0 through .01.
+Verified terminal/process/source state and resumed its cached nodes
+(session78662,1h bound,execution_resume_1440.txt) for the new paths.
+
+RX(session31093) checks accepted auxiliary Kepler angular momentum using
+Dxy−Dyx about the physical center, separating centroid orbital and intrinsic
+parts and subtracting the frozen-reservoir angular/momentum ledger.
+This avoids equating generator orbital angular momentum with total fluid
+angular momentum. It does not establish the canonical100-orbit result.
+
+RX completed on23accepted auxiliary steps from .01 to .01575. Fluid
+angular change−1.47717216e-9 agrees with boundary exchange−1.47717139e-9;
+residual−7.76569653e-16, relative5.59052179e-17. Centroid orbital and
+intrinsic components change separately, reinforcing the need to retain
+both. This is conservation evidence for the captured auxiliary interval,
+not a physical-orbit accuracy or canonical-duration certificate.

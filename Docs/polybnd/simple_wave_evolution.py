@@ -167,6 +167,12 @@ def run_with_executor(executor=None):
     velocity_fit=fit_mode()
     if cfg.get('velocity_fit','radial_fixed_mean')!=velocity_fit:raise ValueError('velocity fit configuration mismatch')
     if velocity_fit!='radial_fixed_mean' and velocity_closure=='affine':raise ValueError('velocity fit requires quadratic reconstruction')
+    from quadratic_velocity_reconstruction import stencil_mode
+    velocity_stencil=stencil_mode()
+    if cfg.get('velocity_stencil','area')!=velocity_stencil:raise ValueError('velocity stencil configuration mismatch')
+    if velocity_stencil!='area' and not velocity_fit.startswith('tensor_free_'):raise ValueError('cell-width velocity stencil requires tensor fit')
+    if cfg.get('event_aligned_retries',False) and cfg.get('geometry_path','quadratic_midpoint')!='quadratic_midpoint':
+        raise ValueError('event-aligned retries require quadratic midpoint geometry')
     from quadratic_velocity_reconstruction import budget_backend_name
     if cfg.get('quadratic_budget_backend','scalar')!=budget_backend_name():raise ValueError('quadratic budget backend configuration mismatch')
     from quadratic_pressure_reconstruction import closure_name as pressure_closure_name
@@ -250,6 +256,8 @@ def run_with_executor(executor=None):
                 base=json.loads(base_path.read_text())
                 if base['state_sha256']!=digest or base['t']!=t:raise ValueError('saved source RHS mismatch')
                 if base['diag'].get('velocity_reconstruction','affine')!=velocity_closure:raise ValueError('saved source RHS velocity closure mismatch')
+                if base['diag'].get('velocity_fit','radial_fixed_mean')!=velocity_fit:raise ValueError('saved source RHS velocity fit mismatch')
+                if base['diag'].get('velocity_stencil','area')!=velocity_stencil:raise ValueError('saved source RHS velocity stencil mismatch')
                 if base['diag'].get('pressure_reconstruction','linear')!=pressure_closure:raise ValueError('saved source RHS pressure closure mismatch')
                 if base['diag'].get('pressure_reflection_y','')!=pressure_reflection:raise ValueError('saved source RHS pressure reflection mismatch')
                 if base['diag'].get('pressure_fit','radial_fixed_mean')!=pressure_fit:raise ValueError('saved source RHS pressure fit mismatch')
@@ -261,6 +269,8 @@ def run_with_executor(executor=None):
                     base=checked_json(cfg['preserved_source_rhs'],cfg['preserved_source_rhs_sha256'])
                     if base['state_sha256']!=digest or base['t']!=t:raise ValueError('preserved source RHS mismatch')
                     if base['diag'].get('velocity_reconstruction','affine')!=velocity_closure:raise ValueError('preserved source RHS velocity closure mismatch')
+                    if base['diag'].get('velocity_fit','radial_fixed_mean')!=velocity_fit:raise ValueError('preserved source RHS velocity fit mismatch')
+                    if base['diag'].get('velocity_stencil','area')!=velocity_stencil:raise ValueError('preserved source RHS velocity stencil mismatch')
                     if base['diag'].get('pressure_reconstruction','linear')!=pressure_closure:raise ValueError('preserved source RHS pressure closure mismatch')
                     if base['diag'].get('pressure_reflection_y','')!=pressure_reflection:raise ValueError('preserved source RHS pressure reflection mismatch')
                     if base['diag'].get('pressure_fit','radial_fixed_mean')!=pressure_fit:raise ValueError('preserved source RHS pressure fit mismatch')
@@ -320,7 +330,14 @@ def run_with_executor(executor=None):
         if not np.isfinite(ratio) or pressure<=0 or gram<-1e-20:raise RuntimeError('simple-wave physical path state failed')
         if ratio>1:
             if cfg.get('fixed_dt',False):raise RuntimeError('fixed time mesh failed path gate: '+str(ratio))
-            rejected+=1;dt/=2
+            next_dt=dt/2
+            if cfg.get('event_aligned_retries',False):
+                from power_flip_time import rejected_step_proposal
+                import moment_ale_evolve as event_geometry
+                proposal=rejected_step_proposal(record,lambda x,w,time:event_geometry.geometry(x,w,time)[1],
+                                               minimum_dt=execution_duration*1e-8)
+                next_dt=proposal['dt'];trial['event_retry_proposal']=proposal;atomic(pending_path,trial)
+            rejected+=1;dt=next_dt
             commit_trial(False,'rejection_'+str(rejected)+'.json','rejection_'+str(rejected)+'_samples.json')
             print('simple wave',cfg['n'],'rejected',ratio,'dt',dt,flush=True);continue
         new=np.asarray(trial['new']);newL=[np.asarray(v) for v in trial['newL']]

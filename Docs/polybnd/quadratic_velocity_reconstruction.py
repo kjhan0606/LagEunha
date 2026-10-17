@@ -16,6 +16,21 @@ def fit_mode():
     return name
 
 
+def stencil_mode():
+    name=os.environ.get('LAGFORCE_VELOCITY_STENCIL','area')
+    if name not in ('area','cell_width'):raise ValueError('unknown velocity stencil')
+    return name
+
+
+def velocity_tensor_stencil(centers,center,scale,poly,support=3.):
+    from pressure_fit_stencil import tensor_stencil
+    if stencil_mode()=='cell_width':
+        scale=np.ptp(np.asarray(poly,dtype=float),axis=0)
+        if scale.shape!=(2,) or not np.all(np.isfinite(scale)) or np.any(scale<=0):
+            raise ValueError('positive finite cell widths required')
+    return tensor_stencil(centers,center,scale,support)
+
+
 def curvature_fit(design,target,weight,mode,zmean=None):
     if mode=='radial_fixed_mean':
         return np.linalg.solve(design.T@(weight[:,None]*design)+1e-10*np.eye(3),
@@ -149,6 +164,9 @@ def covariance_budget(L,mass,candidate,gram_factor):
 def prepare(states,cells,edges,mass,factors):
     N=len(states)
     fit_name=fit_mode()
+    stencil=stencil_mode()
+    if stencil!='area' and not fit_name.startswith('tensor_free_'):
+        raise ValueError('cell-width velocity stencil requires tensor fit')
     centers=np.asarray([s['c'] for s in states]);means=np.asarray([s['v'] for s in states])
     second=np.asarray([s['raw'][3:7].reshape(2,2)/m for s,m in zip(states,mass)])
     active=rank_deficient=0;split_error=orthogonal_error=0.;fractions=[];prepared=[]
@@ -159,8 +177,7 @@ def prepare(states,cells,edges,mass,factors):
         radius=np.linalg.norm(centers-center,axis=1)/(3*scale)
         ids=np.flatnonzero((radius<1)&(np.arange(N)!=i))
         if fit_name.startswith('tensor_free_'):
-            from pressure_fit_stencil import tensor_stencil
-            ids,tensor_weight=tensor_stencil(centers,center,scale,3.)
+            ids,tensor_weight=velocity_tensor_stencil(centers,center,scale,cells[i],3.)
         if len(ids)<3:rank_deficient+=1
         points=s['density'].points;prob=s['density'].weighted_mass/m
         z=(points-center)/scale;X=np.column_stack([np.ones(len(z)),z])
@@ -197,6 +214,6 @@ def prepare(states,cells,edges,mass,factors):
         fractions.append(float(np.trace(resolved)/np.trace(R)))
     if split_error>1e-9 or orthogonal_error>1e-10:
         raise RuntimeError('quadratic velocity moment budget failed: '+str(dict(split_error=split_error,orthogonal_error=orthogonal_error)))
-    return dict(velocity_fit=fit_name,velocity_quadratic_cells=active,velocity_quadratic_rank_deficient=rank_deficient,
+    return dict(velocity_fit=fit_name,velocity_stencil=stencil,velocity_quadratic_cells=active,velocity_quadratic_rank_deficient=rank_deficient,
         velocity_quadratic_covariance_split_error=split_error,velocity_quadratic_orthogonality_error=orthogonal_error,
         velocity_quadratic_max_resolved_fraction=max(fractions,default=0.),velocity_quadratic_budget_backend='batched' if batched else 'scalar')
