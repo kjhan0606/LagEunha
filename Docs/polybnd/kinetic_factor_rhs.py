@@ -67,7 +67,7 @@ def solve(records,N):
 
 
 def rhs(t,flat,mass,linear_pressure=True,covariance_factors=None,return_covariance_terms=True,
-        audit_geometry_rates=None,face_density_provider=None,face_segments=1,face_order=4,exact_bin_transport=False,frozen_mask=None):
+        audit_geometry_rates=None,face_density_provider=None,face_segments=1,face_order=4,exact_bin_transport=False,frozen_mask=None,density_provider=None):
     # Optional rates ONLY evaluate the residual of an existing dense path.
     # Evolution callers leave this unset, retaining unsteered material sites
     # and the instantaneous mass solve. Do not use the audit mode to advance.
@@ -85,7 +85,9 @@ def rhs(t,flat,mass,linear_pressure=True,covariance_factors=None,return_covarian
     if has_frozen and (audit_geometry_rates is not None or exact_bin_transport):
         raise ValueError('frozen boundary requires its explicit point-quadrature evolution solve')
     polys,edges=base.geometry(x,w,t);raw=np.column_stack([mass,y[:,3:]])
-    states=[base.decode(p,r) for p,r in zip(polys,raw)]
+    if density_provider is not None and (face_density_provider is not None or exact_bin_transport):
+        raise ValueError('provided volume density requires matching continuous face density')
+    states=[base.decode(p,r,density=None if density_provider is None else density_provider(i,p,r)) for i,(p,r) in enumerate(zip(polys,raw))]
     trace=None;density_diag={}
     if face_density_provider is not None:trace,density_diag=face_density_provider(polys,edges,raw)
     for s,L in zip(states,covariance_factors):s['R']=L@L.T

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-17T11:18:13.028082",
+  "updated_at": "2026-10-17T12:01:52.065149+09:00",
   "request": "Validate shocks, long time, 3D, Kepler",
   "constraints": [
     "unsteered generators",
@@ -50,20 +50,21 @@
     "tensor_n16_endpoint": "T=.02 completed, numerical and L1 passed: density .01318826, velocity .02942935, pressure .02225530. max mean vy .0001739633, transverse kinetic1.31568e-10; remaining symmetry error nonzero.",
     "whole_interval_gate_audit": "/gpfs/kjhan/LagForce/Codex_MU_global_gate_accounting_20261017/prefix_audit.json",
     "whole_interval_time_control": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
-    "whole_interval_status": "Independent tensor/reflected n16 control launched using T=.15 budget allocation from t0 and original identical IC. Short T=.02 accepted prefixes retained separately; their normalized rate peaks exceed1e-4 after duration retargeting."
+    "whole_interval_status": "Independent tensor/reflected n16 control launched using T=.15 budget allocation from t0 and original identical IC. Short T=.02 accepted prefixes retained separately; their normalized rate peaks exceed1e-4 after duration retargeting.",
+    "status": "Short Sod32 P2 T=.02 passed. Long T=.15 not completed; tensor/reflected and original comparisons retained."
   },
   "long_time": {
     "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
     "source_time": 0.05,
     "first_target": 0.2,
     "ultimate_target": "10 central vortex periods, conditional on shorter accuracy gates",
-    "status": "Original2h timeout exit124 at t=.09939543512386753,582steps. PID absent verified. Same immutable code/config/pending caches resumed; subsequent accepted steps confirmed.",
+    "status": "Resumed at11:58 after verified timeout; ten-central-period requirement remains incomplete.",
     "progress_audit": "/gpfs/kjhan/LagForce/Codex_KS_vortex_progress_audit_20261017_083145",
     "resume_receipt": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456/resume_0957_receipt.json"
   },
   "three_dimensions": {
     "root": "/gpfs/kjhan/LagForce/Codex_KF_3d_release_validation_20261017_081119",
-    "status": "N8 quadratic pressure acoustic T=.02 dt=.002 passed established three L1 goals. dt=.001 sensitivity still running; dense-path mass and nonlinear3D gates incomplete.",
+    "status": "Acoustic n8 short-time gates passed. Nonlinear split-face n6 time refinement and n8 spatial comparison running; complete nonlinear path/field validation pending.",
     "limits": "Vertex3D stores three incident faces; non-simple cut-through-existing-vertex cases explicitly rejected",
     "capacity_root": "/gpfs/kjhan/LagForce/Codex_KD_3d_fixed_mass_geometry_20261017_080749",
     "contracts_root": "/gpfs/kjhan/LagForce/Codex_KK_3d_weight_capacity_contracts_20261017_081900",
@@ -128,8 +129,8 @@
   },
   "kepler": {
     "root": "/gpfs/kjhan/LagForce/Codex_JZ_kepler_force_orbit_gate_20261017_080122",
-    "status": "Auxiliary n32 and n64 first coupled fluid steps passed after distinct initialization/inactive-face fixes. First-step field audits ongoing; canonical192 squared100-orbit test incomplete.",
-    "canonical": "unchanged 192² nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
+    "status": "Auxiliary saved-state enriched-density/midpoint-gravity trials improve energy consistency; whole-path and continuation checks in progress. Canonical192 squared100-orbit fluid validation not done.",
+    "canonical": "unchanged 192\u00b2 nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
     "control_is_disk_validation": false,
     "gravity_component_root": "/gpfs/kjhan/LagForce/Codex_KH_gravity_source_validation_20261017_081402",
     "potential_component_root": "/gpfs/kjhan/LagForce/Codex_KZ_kepler_potential_validation_20261017_084619",
@@ -193,9 +194,9 @@
   "active_status_receipt": "/gpfs/kjhan/LagForce/Codex_KX_extended_review_20261017_083534/active_status.json",
   "historical_extension_accounting_review": "Existing immutable duration-extension runs must have historical normalized rate peaks retargeted before any whole-interval numerical pass claim. Final numerical_gates now includes all stored rate/generator/state peaks explicitly; prior integrated-only flags are insufficient for this claim.",
   "latest_regression": {
-    "bundle": "/gpfs/kjhan/LagForce/Codex_NT_3d_history_audit_20261017",
-    "normal": 469,
-    "reverse": 469,
+    "root": "/gpfs/kjhan/LagForce/Codex_OQ_midpoint_path_continuation_20261017",
+    "normal": 488,
+    "reverse": 488,
     "passed": true
   },
   "nonlinear_3d_vortex_status": "MX point n8 T=.02 completed, amplitude-normalized field goals passed; mass path not certified. NS split n6 running.",
@@ -309,6 +310,40 @@
       "duration_scaled_rate": 9.156319815621938e-06,
       "generator_path_defect": 1.724891930296457e-05,
       "covers_target": false
+    },
+    "latest_NS_prefix": {
+      "t": 0.006,
+      "target": 0.02,
+      "steps": 3,
+      "covers_target": false,
+      "captured_checkpoint_sha256": "a1ef042dd78a555472c12e3a99f0599b51062a0744fcaebc1362fc06736a9687",
+      "max_absolute_relative_mass": 6.91521281720332e-07,
+      "max_signed_relative_mass": 6.870421390809171e-07,
+      "max_prefix_signed_relative_mass": 6.870421390809171e-07,
+      "summed_nested_quadrature_difference": 3.729629647506979e-09,
+      "duration_scaled_peak_rate": 9.156319815621938e-06,
+      "maximum_generator_path_defect": 1.724891930296457e-05,
+      "full_validation": false,
+      "note": "Nested numerical quadrature estimates, not continuum enclosures; physical errors and other gates remain separate."
+    },
+    "NX_audit": {
+      "root": "/gpfs/kjhan/LagForce/Codex_NT_3d_history_audit_20261017/nx_n6_order6",
+      "status": "first accepted step t=.001 audit running"
+    },
+    "NX_first_step": {
+      "t": 0.001,
+      "target": 0.02,
+      "steps": 1,
+      "covers_target": false,
+      "captured_checkpoint_sha256": "9dcc5bfe8592c97454d5cf4e9189291d13cc1576340b26313b599feca1d3f06c",
+      "max_absolute_relative_mass": 5.271848037024457e-08,
+      "max_signed_relative_mass": 4.3856287280678966e-08,
+      "max_prefix_signed_relative_mass": 4.3856287280678966e-08,
+      "summed_nested_quadrature_difference": 1.1560017922157524e-09,
+      "duration_scaled_peak_rate": 3.872029487927913e-06,
+      "maximum_generator_path_defect": 4.314414158879121e-06,
+      "full_validation": false,
+      "note": "Nested numerical quadrature estimates, not continuum enclosures; physical errors and other gates remain separate."
     }
   },
   "n8_baseline_mass_audit": {
@@ -333,7 +368,1139 @@
   },
   "energy_audit": {
     "root": "/gpfs/kjhan/LagForce/Codex_NW_kepler_energy_audit_20261017",
-    "status": "three trials running; shared initial potential reused",
+    "status": "three saved single-step audits completed; energy consistency not passed",
+    "results": {
+      "dt001": {
+        "t": 0.01,
+        "dt": 0.001,
+        "gas_energy_change": 1.0267901462412965e-07,
+        "gas_boundary_exchange": 1.2102567222009495e-10,
+        "potential_boundary_exchange": -1.3359301121881687e-10,
+        "potential_exchange_nested_difference": 1.4310009788702056e-17,
+        "gas_ledger_gravity_identity_error": 5.114174500773632e-17,
+        "initial_active_thermal": 0.0008384638017720788,
+        "rows": [
+          {
+            "order": 16,
+            "initial_potential": -9.482810989316427,
+            "final_potential": -9.482811713316856,
+            "residual": -6.213088474231228e-07,
+            "relative_to_initial_thermal": 0.0007410085517228022,
+            "maximum_mass_quadrature_error": 1.380544517348703e-05
+          },
+          {
+            "order": 24,
+            "initial_potential": -9.482810989316427,
+            "final_potential": -9.482811713316856,
+            "residual": -6.213088474231228e-07,
+            "relative_to_initial_thermal": 0.0007410085517228022,
+            "maximum_mass_quadrature_error": 1.3805445168602049e-05
+          }
+        ],
+        "potential_change_quadrature_difference": 0.0,
+        "full_validation": false
+      },
+      "dt0005": {
+        "t": 0.01,
+        "dt": 0.0005,
+        "gas_energy_change": 4.987311363890967e-08,
+        "gas_boundary_exchange": 6.04912517603835e-11,
+        "potential_boundary_exchange": -9.166885777918502e-11,
+        "potential_exchange_nested_difference": 1.1675680841814981e-18,
+        "gas_ledger_gravity_identity_error": 4.611124148028365e-16,
+        "initial_active_thermal": 0.0008384638017720788,
+        "rows": [
+          {
+            "order": 16,
+            "initial_potential": -9.482810989316427,
+            "final_potential": -9.482811350076267,
+            "residual": -3.1085554853430596e-07,
+            "relative_to_initial_thermal": 0.0003707441488557027,
+            "maximum_mass_quadrature_error": 1.3783353996599246e-05
+          },
+          {
+            "order": 24,
+            "initial_potential": -9.482810989316427,
+            "final_potential": -9.482811350076268,
+            "residual": -3.108555503106628e-07,
+            "relative_to_initial_thermal": 0.0003707441509742877,
+            "maximum_mass_quadrature_error": 1.3783353989160751e-05
+          }
+        ],
+        "potential_change_quadrature_difference": 1.7763568394002505e-15,
+        "full_validation": false
+      },
+      "dt00025": {
+        "t": 0.01,
+        "dt": 0.00025,
+        "gas_energy_change": 2.457010683798444e-08,
+        "gas_boundary_exchange": 3.0235332495804883e-11,
+        "potential_boundary_exchange": -4.870043257150019e-11,
+        "potential_exchange_nested_difference": 2.921508219483528e-20,
+        "gas_ledger_gravity_identity_error": 8.112205497543437e-16,
+        "initial_active_thermal": 0.0008384638017720788,
+        "rows": [
+          {
+            "order": 16,
+            "initial_potential": -9.482810989316427,
+            "final_potential": -9.482811169859858,
+            "residual": -1.5595485893408862e-07,
+            "relative_to_initial_thermal": 0.00018600070581995396,
+            "maximum_mass_quadrature_error": 1.3772212541174333e-05
+          },
+          {
+            "order": 24,
+            "initial_potential": -9.482810989316427,
+            "final_potential": -9.482811169859858,
+            "residual": -1.5595485893408862e-07,
+            "relative_to_initial_thermal": 0.00018600070581995396,
+            "maximum_mass_quadrature_error": 1.3772212539397977e-05
+          }
+        ],
+        "potential_change_quadrature_difference": 0.0,
+        "full_validation": false
+      }
+    },
+    "interpretation": "Residual approximately proportional to dt; spatial closure/quadrature consistency must be investigated."
+  },
+  "density_normalization_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_NY_kepler_density_normalization_20261017",
+    "report": {
+      "identity": {
+        "source_sha256": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "configuration_sha256": "79ae1c145f7e123c0829afe8c00943637322a1b31ccc414603e16ff9769d5105"
+      },
+      "t": 0.01,
+      "worst_mass": {
+        "cell": 410,
+        "mass_relative": -1.3761008315404943e-05,
+        "centered_moment_difference": 1.7904359737003217e-05,
+        "native_mass_relative": 2.220446049250313e-16,
+        "native_fit_residual": 4.163336342344337e-17
+      },
+      "worst_centered_moment": {
+        "cell": 387,
+        "mass_relative": -1.3730295083003163e-05,
+        "centered_moment_difference": 1.975472768245279e-05,
+        "native_mass_relative": 0.0,
+        "native_fit_residual": 6.938893903907228e-17
+      },
+      "refinement": [
+        {
+          "order": 16,
+          "mass_relative": -1.3761008314516765e-05
+        },
+        {
+          "order": 24,
+          "mass_relative": -1.3761008308854628e-05
+        },
+        {
+          "order": 32,
+          "mass_relative": -1.3761008310075873e-05
+        }
+      ],
+      "full_validation": false
+    },
+    "single_cell_refinement": {
+      "cell": 410,
+      "rows": [
+        {
+          "order": 6,
+          "native_fit_residual": 4.163336342344337e-17,
+          "independent_mass_relative": -1.3761008309853828e-05,
+          "independent_centered_moment_difference": 1.790435973522686e-05
+        },
+        {
+          "order": 8,
+          "native_fit_residual": 2.7755575615628914e-16,
+          "independent_mass_relative": -9.532467448725157e-08,
+          "independent_centered_moment_difference": 1.4910061707507083e-07
+        },
+        {
+          "order": 12,
+          "native_fit_residual": 2.220446049250313e-16,
+          "independent_mass_relative": -8.122391648157645e-13,
+          "independent_centered_moment_difference": 1.6220635945529693e-12
+        },
+        {
+          "order": 16,
+          "native_fit_residual": 5.551115123125783e-17,
+          "independent_mass_relative": -1.3655743202889425e-14,
+          "independent_centered_moment_difference": 5.10702591327572e-15
+        },
+        {
+          "order": 24,
+          "native_fit_residual": 3.3306690738754696e-16,
+          "independent_mass_relative": -1.3988810110276972e-14,
+          "independent_centered_moment_difference": 4.052314039881821e-15
+        }
+      ],
+      "scope": "one saved cell refit, no trajectory validation"
+    },
+    "next": "Implement explicit quadrature-controlled density reconstruction and compare same saved trial without modifying accepted history; do not infer energy consistency from one-cell success."
+  },
+  "density_quadrature_controls": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OA_density_quadrature_controls_20261017",
+    "cases": [
+      "q16_dt001",
+      "q16_dt00025",
+      "q24_dt001"
+    ],
+    "status": "all three controls complete",
+    "targeted_tests_passed": 7,
+    "regression": "476 normal and reverse passed",
+    "default_density_quadrature_order": 6,
+    "configuration_key": "density_quadrature_order",
+    "original_mass_and_accepted_history_preserved": true,
+    "full_validation": false,
+    "energy_results": {
+      "q16_dt001": {
+        "t": 0.01,
+        "dt": 0.001,
+        "gas_energy_change": 1.0268352568232331e-07,
+        "gas_boundary_exchange": 1.2102402479411134e-10,
+        "potential_boundary_exchange": -1.3359134538612956e-10,
+        "potential_exchange_nested_difference": 1.4400006057070848e-17,
+        "gas_ledger_gravity_identity_error": 4.245214120446184e-16,
+        "initial_active_thermal": 0.0008384638017720788,
+        "rows": [
+          {
+            "order": 16,
+            "initial_potential": -9.482811212360007,
+            "final_potential": -9.482811937389599,
+            "residual": -6.223334989163086e-07,
+            "relative_to_initial_thermal": 0.0007422306098379173,
+            "maximum_mass_quadrature_error": 1.9206858326015208e-14
+          },
+          {
+            "order": 24,
+            "initial_potential": -9.48281121236001,
+            "final_potential": -9.482811937389595,
+            "residual": -6.223334918108813e-07,
+            "relative_to_initial_thermal": 0.0007422306013635773,
+            "maximum_mass_quadrature_error": 1.687538997430238e-14
+          }
+        ],
+        "potential_change_quadrature_difference": 7.105427357601002e-15,
+        "full_validation": false
+      },
+      "q16_dt00025": {
+        "t": 0.01,
+        "dt": 0.00025,
+        "gas_energy_change": 2.4571241041826397e-08,
+        "gas_boundary_exchange": 3.023492946951899e-11,
+        "potential_boundary_exchange": -4.870000810640352e-11,
+        "potential_exchange_nested_difference": 6.836417056908054e-20,
+        "gas_ledger_gravity_identity_error": 1.8803198369314508e-17,
+        "initial_active_thermal": 0.0008384638017720788,
+        "rows": [
+          {
+            "order": 16,
+            "initial_potential": -9.482811212360007,
+            "final_potential": -9.482811392969305,
+            "residual": -1.5601959206329043e-07,
+            "relative_to_initial_thermal": 0.00018607791026105803,
+            "maximum_mass_quadrature_error": 1.9206858326015208e-14
+          },
+          {
+            "order": 24,
+            "initial_potential": -9.48281121236001,
+            "final_potential": -9.482811392969312,
+            "residual": -1.560195956160041e-07,
+            "relative_to_initial_thermal": 0.00018607791449822805,
+            "maximum_mass_quadrature_error": 1.84297022087776e-14
+          }
+        ],
+        "potential_change_quadrature_difference": 3.552713678800501e-15,
+        "full_validation": false
+      },
+      "q24_dt001": {
+        "t": 0.01,
+        "dt": 0.001,
+        "gas_energy_change": 1.0268352568232331e-07,
+        "gas_boundary_exchange": 1.2102402478385202e-10,
+        "potential_boundary_exchange": -1.335913429956487e-10,
+        "potential_exchange_nested_difference": 1.475007320915211e-17,
+        "gas_ledger_gravity_identity_error": 4.3041095124088575e-16,
+        "initial_active_thermal": 0.0008384638017720788,
+        "rows": [
+          {
+            "order": 16,
+            "initial_potential": -9.482811212360007,
+            "final_potential": -9.482811937389593,
+            "residual": -6.223334935896184e-07,
+            "relative_to_initial_thermal": 0.0007422306034850011,
+            "maximum_mass_quadrature_error": 1.9317880628477724e-14
+          },
+          {
+            "order": 24,
+            "initial_potential": -9.48281121236001,
+            "final_potential": -9.482811937389595,
+            "residual": -6.223334918132615e-07,
+            "relative_to_initial_thermal": 0.0007422306013664162,
+            "maximum_mass_quadrature_error": 2.0650148258027912e-14
+          }
+        ],
+        "potential_change_quadrature_difference": 1.7763568394002505e-15,
+        "full_validation": false
+      }
+    },
+    "interpretation": "q16/q24 agree; density normalization corrected but nonzero semi-discrete energy residual persists."
+  },
+  "sod32_P2_short_completion": {
+    "root": "/gpfs/kjhan/LagForce/Codex_KV_sod32_p2_resolution_20261017_083341",
+    "report": {
+      "completed": true,
+      "problem": "sod_gamma5_3",
+      "n": 32,
+      "amplitude": 1.0,
+      "t": 0.02,
+      "source_time": 0.0,
+      "steps": 475,
+      "rejected": 30,
+      "numerical_passed": true,
+      "adaptive_path_quadrature": true,
+      "physical_accuracy_passed": true,
+      "final_score": {
+        "t": 0.02,
+        "amplitude": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.006066294938373483,
+          "velocity_cell": 0.005017647100112915,
+          "density_cell": 0.0037584898668264815,
+          "pressure_field": 0.012569736871038673,
+          "velocity_field": 0.01795574480278739,
+          "density_field": 0.01071721073066654,
+          "energy_cell": 0.010500856720210682
+        },
+        "reference_quadrature_difference": 4.579551391966155e-16,
+        "reference_global_mass_relative": 1.9737298215558342e-16,
+        "density_min": 0.10024147541510538,
+        "pressure_min": 0.0039955959259612706,
+        "integrated_entropy": 0.07235706906797237,
+        "reference_valid": true
+      },
+      "peak": {
+        "rate": 3.578610380090993e-05,
+        "generator": 9.998713528081016e-06,
+        "ledger": 8.847089727481716e-17,
+        "stage_mass": 1.972498641269109e-13,
+        "min_pressure": 0.08431124018129607,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 475,
+        "pressure_limited_cells_max": 32,
+        "pressure_positivity_scale_min": 0.18691792076888258
+      },
+      "integrated_absolute_mass_defect": 5.2302004841945855e-06,
+      "quadrature_mass_difference": 4.763399377939194e-10,
+      "config": {
+        "n": 32,
+        "amplitude": 1.0,
+        "end": 0.02,
+        "max_dt": 0.0005,
+        "physical_goal": 0.05,
+        "path_mass_budget": 1e-05,
+        "path_quadrature_budget": 1e-07,
+        "path_rate_budget": 0.0001,
+        "generator_path_budget": 1e-05,
+        "mass_root_backend": "vector_sparse",
+        "velocity_reconstruction": "quadratic_budget_projected",
+        "kinetic_smoothing_coefficient": 1.0,
+        "kinetic_smoothing_length": 1.0,
+        "geometry_path": "quadratic_midpoint",
+        "geometry_step_controller": "combined",
+        "dense_moment_arithmetic": "longdouble",
+        "path_sample_lattice": 1024,
+        "path_save_batch": 8,
+        "adaptive_path_quadrature": true,
+        "note": "Same P2 model and original error thresholds. Third spatial resolution for Sod T=.02 convergence. New N32 aligned initial mesh; no generator steering.",
+        "problem": "sod_gamma5_3",
+        "pressure_reconstruction": "quadratic_cell_mean",
+        "pressure_polynomial_degree": 2,
+        "quadratic_budget_backend": "batched",
+        "physical_goals": {},
+        "resolve_mass_quadrature_before_reject": false,
+        "pressure_evaluation_backend": "monomial",
+        "mass_path_evaluation_backend": "cell_batched",
+        "moment_flux_evaluation_backend": "batched",
+        "power_cell_evaluation_backend": "seeded_active"
+      },
+      "seconds": 2403.1149083413184,
+      "path_workers": 4,
+      "note": "sod_gamma5_3 exact Euler reference used only at initialization/scoring. Continuous positive density from numerical six moments; current Sylvester positive midpoint factors. Fixed original mass, material generators. New physical-error allocation for this benchmark; old5e-11 contact budget unchanged. Sampled dense-path quadrature evidence, not a continuous-time bound.",
+      "signed_quadrature_absolute_sum": 1.4713623609490108e-09,
+      "absolute_quadrature_absolute_sum": 5.524781013078079e-09
+    },
+    "scope": "T=.02 only, not full shock T=.15 requirement"
+  },
+  "potential_tangent_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OB_kepler_potential_tangent_20261017",
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+        "trial.json": "5c3244de0281b4035a97ca6e588e2621623e0244f5adcc9b46e7e9cdce3ab850",
+        "script_sha256": "c4c5e19dde96b9ed5dc926194c82b6039e35ff213648b8a9f4060bb3372728e2"
+      },
+      "t": 0.01,
+      "gravity_work_rate_native": 0.0016280941606427956,
+      "gravity_work_rate_polar": 0.0016280941606470528,
+      "potential_boundary_rate": -1.977003657122956e-07,
+      "rows": [
+        {
+          "h": 1e-05,
+          "potential_directional_derivative": -0.002252922737255858,
+          "residual_native": -0.0006246308762473501,
+          "residual_polar": -0.0006246308762430929
+        },
+        {
+          "h": 5e-06,
+          "potential_directional_derivative": -0.0022529247800662233,
+          "residual_native": -0.0006246329190577154,
+          "residual_polar": -0.0006246329190534582
+        }
+      ],
+      "full_validation": false,
+      "scope": "single-stage directional consistency, fixed original masses"
+    },
+    "status": "completed diagnostic; no full validation claim"
+  },
+  "polynomial_potential_identity": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OC_polynomial_potential_identity_20261017",
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "trial.json": "5c3244de0281b4035a97ca6e588e2621623e0244f5adcc9b46e7e9cdce3ab850",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f"
+      },
+      "rows": [
+        {
+          "potential": "1",
+          "potential_rate": 0.0,
+          "gravity_work_rate": 0.0,
+          "boundary_rate": -1.9109063290057016e-17,
+          "residual": 1.9109063290057016e-17,
+          "maximum_active_mass_rate": 6.982261990806649e-17
+        },
+        {
+          "potential": "x",
+          "potential_rate": -7.1010041306182195e-06,
+          "gravity_work_rate": 2.754169977790057e-08,
+          "boundary_rate": -7.073462430909359e-06,
+          "residual": 6.903996146480351e-17,
+          "maximum_active_mass_rate": 6.982261990806649e-17
+        },
+        {
+          "potential": "y",
+          "potential_rate": 2.6786233920507934e-05,
+          "gravity_work_rate": 1.1370028542729291e-08,
+          "boundary_rate": 2.6797603948862446e-05,
+          "residual": 1.8821749714348357e-16,
+          "maximum_active_mass_rate": 6.982261990806649e-17
+        },
+        {
+          "potential": "x2/2",
+          "potential_rate": -0.0006170959760370715,
+          "gravity_work_rate": 0.0005933892115131063,
+          "boundary_rate": -2.3706764524153024e-05,
+          "residual": 1.8787190770100382e-16,
+          "maximum_active_mass_rate": 6.982261990806649e-17
+        },
+        {
+          "potential": "xy",
+          "potential_rate": 5.817452603649545e-05,
+          "gravity_work_rate": 1.199918281893789e-07,
+          "boundary_rate": 5.829451786406624e-05,
+          "residual": 6.185915495116046e-16,
+          "maximum_active_mass_rate": 6.982261990806649e-17
+        },
+        {
+          "potential": "y2/2",
+          "potential_rate": -0.0005136464763410283,
+          "gravity_work_rate": 0.0005933235727477623,
+          "boundary_rate": 7.96770964076991e-05,
+          "residual": -9.65156773946596e-16,
+          "maximum_active_mass_rate": 6.982261990806649e-17
+        }
+      ],
+      "maximum_residual": 9.65156773946596e-16,
+      "full_validation": false
+    },
+    "status": "completed diagnostic; no full validation claim"
+  },
+  "potential_dual_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OD_density_potential_dual_20261017",
+    "status": "completed diagnostic",
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "trial.json": "5c3244de0281b4035a97ca6e588e2621623e0244f5adcc9b46e7e9cdce3ab850",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f"
+      },
+      "rows": [
+        {
+          "face_order": 8,
+          "moment_part": -0.0016775514911733264,
+          "moving_boundary_part": -0.0005753726239403973,
+          "potential_rate": -0.0022529241151137223
+        },
+        {
+          "face_order": 16,
+          "moment_part": -0.0016775514911733264,
+          "moving_boundary_part": -0.0005753726214003489,
+          "potential_rate": -0.0022529241125736734
+        },
+        {
+          "face_order": 24,
+          "moment_part": -0.0016775514911733264,
+          "moving_boundary_part": -0.0005753726214067626,
+          "potential_rate": -0.002252924112580087
+        }
+      ],
+      "full_validation": false,
+      "scope": "analytic derivative of reconstructed U on one saved hydro stage"
+    }
+  },
+  "potential_enrichment_tangent": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OE_potential_enrichment_tangent_20261017",
+    "status": "completed diagnostic",
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "trial.json": "5c3244de0281b4035a97ca6e588e2621623e0244f5adcc9b46e7e9cdce3ab850",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f"
+      },
+      "rows": [
+        {
+          "face_order": 8,
+          "moment_part": -0.0016775514911733264,
+          "moving_boundary_part": -0.0005753726239403973,
+          "potential_rate": -0.0022529241151137223
+        },
+        {
+          "face_order": 16,
+          "moment_part": -0.0016775514911733264,
+          "moving_boundary_part": -0.0005753726214003489,
+          "potential_rate": -0.0022529241125736734
+        },
+        {
+          "face_order": 24,
+          "moment_part": -0.0016775514911733264,
+          "moving_boundary_part": -0.0005753726214067626,
+          "potential_rate": -0.002252924112580087
+        }
+      ],
+      "full_validation": false,
+      "scope": "analytic derivative of reconstructed U on one saved hydro stage",
+      "enrichment": {
+        "sum_missing_rate": 0.0006246322515715824,
+        "maximum_rms_fractional_density_rate": 2.9264481074037847,
+        "worst_cell": 13,
+        "predicted_rms_change_at_dt00025": 0.0007316120268509461
+      }
+    }
+  },
+  "potential_enriched_density_fit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OF_potential_enriched_density_20261017",
+    "status": "worst-cell three finite perturbations passed; full regression pending",
+    "scope": "single fixed cell representability, not coupled evolution",
+    "full_validation": false,
+    "report": {
+      "cell": 13,
+      "rows": [
+        {
+          "dt": 0.00025,
+          "converged": true,
+          "fit": {
+            "iterations": 2,
+            "residual": 2.2713601832702324e-14
+          },
+          "checks": [
+            {
+              "order": 24,
+              "mass_relative": 0.0,
+              "retained_moment_error": 6.982478831241146e-15,
+              "potential_mean_error": -1.021405182655144e-14,
+              "minimum_sampled_density": 0.009594522904002019
+            },
+            {
+              "order": 32,
+              "mass_relative": 0.0,
+              "retained_moment_error": 6.989417725145053e-15,
+              "potential_mean_error": -9.769962616701378e-15,
+              "minimum_sampled_density": 0.009594699710547034
+            }
+          ],
+          "theta": [
+            4.224433174332052e-07,
+            1.309078709142748e-07,
+            -2.4485341633945343e-06,
+            5.87335510435771e-07,
+            -2.3335912193087935e-06,
+            -0.0007316753566882229
+          ]
+        },
+        {
+          "dt": 0.000125,
+          "converged": true,
+          "fit": {
+            "iterations": 2,
+            "residual": 1.3802435756826714e-15
+          },
+          "checks": [
+            {
+              "order": 24,
+              "mass_relative": 0.0,
+              "retained_moment_error": 8.881784197001252e-16,
+              "potential_mean_error": 8.881784197001252e-16,
+              "minimum_sampled_density": 0.009593258580321807
+            },
+            {
+              "order": 32,
+              "mass_relative": 0.0,
+              "retained_moment_error": 1.9984014443252818e-15,
+              "potential_mean_error": 8.881784197001252e-16,
+              "minimum_sampled_density": 0.009593503642837196
+            }
+          ],
+          "theta": [
+            1.0559216865419815e-07,
+            3.271867784471623e-08,
+            -6.121128075528361e-07,
+            1.4680764813497938e-07,
+            -5.833615450981555e-07,
+            -0.00036582182260614553
+          ]
+        },
+        {
+          "dt": 6.25e-05,
+          "converged": true,
+          "fit": {
+            "iterations": 2,
+            "residual": 4.3021142204224816e-16
+          },
+          "checks": [
+            {
+              "order": 24,
+              "mass_relative": 2.220446049250313e-16,
+              "retained_moment_error": 4.440892098500626e-16,
+              "potential_mean_error": 4.440892098500626e-16,
+              "minimum_sampled_density": 0.009592626697480773
+            },
+            {
+              "order": 32,
+              "mass_relative": 2.220446049250313e-16,
+              "retained_moment_error": 2.3314683517128287e-15,
+              "potential_mean_error": 4.440892098500626e-16,
+              "minimum_sampled_density": 0.009592905889623084
+            }
+          ],
+          "theta": [
+            2.6395712206098526e-08,
+            8.178634318986383e-09,
+            -1.5302563196508326e-07,
+            3.669865999452544e-08,
+            -1.4583587876044756e-07,
+            -0.0001829069560033505
+          ]
+        }
+      ],
+      "full_validation": false,
+      "scope": "fixed-cell extra potential moment representability; no coupled evolution"
+    }
+  },
+  "all_potential_enriched_cells": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OG_all_enriched_cells_20261017",
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "trial.json": "5c3244de0281b4035a97ca6e588e2621623e0244f5adcc9b46e7e9cdce3ab850",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+        "enrichment_cells.json": "d7e4f98a060d7738ab891cb131c14b06402cfc55a6a3ae143242c2bc665acd8f",
+        "source_manifest_sha256": "259489fb1fd1b169a2d21b0166e2819846e216a312d3d7b1abb767dce3f49ccd"
+      },
+      "cells": 572,
+      "failures": [],
+      "max_mass_relative": 9.103828801926284e-15,
+      "max_retained_moment_error": 1.996056098185761e-12,
+      "max_potential_mean_error": 7.989164885202626e-13,
+      "full_validation": false,
+      "scope": "all active cells, fixed geometry and m,q,Q; not coupled evolution"
+    },
+    "status": "all 572 active cells converged, fixed geometry only"
+  },
+  "enriched_density_interface": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OH_enriched_density_interface_20261017",
+    "status": "targeted6 and full480 normal/reverse passed",
+    "coupled_evolution_implemented": false
+  },
+  "density_provider": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OI_density_provider_20261017",
+    "targeted_passed": 8,
+    "normal_passed": 483,
+    "reverse_status": "483 passed"
+  },
+  "potential_moment_coupled_trial": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OJ_enriched_kepler_trial_20261017/dt00025",
+    "status": "completed single saved-state trial; not accepted whole history",
+    "dt": 0.00025,
+    "source_time": 0.01,
+    "scope": "single saved-state coupled trial, extra U transported; no accepted endpoint yet",
+    "full_validation": false,
+    "report": {
+      "t": 0.01,
+      "dt": 0.00025,
+      "diagnostics": {
+        "stage_mass_flux": 5.204170427930421e-17,
+        "generator_velocity_defect": 0.0,
+        "potential_boundary_exchange": -4.980358668543856e-11,
+        "gravity_kick_work": 2.453240622333792e-08,
+        "hydro_potential_work": 2.4471433579729132e-08
+      },
+      "energy_residual": 6.097265731187512e-11,
+      "gas_energy_change": 2.4562605093099432e-08,
+      "potential_change": -2.452123714781593e-08,
+      "gas_boundary_exchange": 3.019887465706644e-11,
+      "independent_mass_error": 9.325873406851315e-15,
+      "independent_potential_moment_error": 2.4695523404005826e-14,
+      "full_validation": false,
+      "endpoint_accepted": false,
+      "scope": "single coupled saved-state trial with extra potential-density moment"
+    }
+  },
+  "enriched_path_validation": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OK_enriched_path_validation_20261017",
+    "status": "both saved trials and17-node path audits completed; not complete history",
+    "cases": [
+      "dt000125",
+      "dt0000625"
+    ],
+    "targeted_tests_passed": 7,
+    "initial_U_reused_with_function_and_dependency_identity_checks": true,
+    "full_validation": false,
+    "path_results": {
+      "dt000125": {
+        "identity": {
+          "trial_sha256": "365314a0d6bfb8a241dd661542ad6d7ecf66f9922edc019450f69cfd6eef0f8d",
+          "configuration_sha256": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+          "source_manifest_sha256": "b8fa80689c31a4d689947ae4956b9b3602740337b6e4d3161a41839aabcb0e64"
+        },
+        "dt": 0.000125,
+        "absolute_relative_mass": 1.160371490436965e-09,
+        "signed_relative_mass": 1.1603714902876878e-09,
+        "nested_difference": 2.5086273904634782e-15,
+        "maximum_generator_defect": 1.0858164967153527e-07,
+        "integrated_potential_boundary": -2.46215003294804e-11,
+        "full_validation": false,
+        "scope": "single saved hydro subflow; no root solve at audit nodes"
+      },
+      "dt0000625": {
+        "identity": {
+          "trial_sha256": "329a718f95e25363ba9111135a14f40baef37115f25d544f9580d8ea5e7e2dbe",
+          "configuration_sha256": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+          "source_manifest_sha256": "b8fa80689c31a4d689947ae4956b9b3602740337b6e4d3161a41839aabcb0e64"
+        },
+        "dt": 6.25e-05,
+        "absolute_relative_mass": 1.4503525668314422e-10,
+        "signed_relative_mass": 1.4503525661052836e-10,
+        "nested_difference": 1.0748361795364654e-15,
+        "maximum_generator_defect": 2.7137817104616602e-08,
+        "integrated_potential_boundary": -1.2342310725072515e-11,
+        "full_validation": false,
+        "scope": "single saved hydro subflow; no root solve at audit nodes"
+      }
+    }
+  },
+  "enriched_timestep_comparison": {
+    "results": {
+      "dt00025": {
+        "t": 0.01,
+        "dt": 0.00025,
+        "diagnostics": {
+          "stage_mass_flux": 5.204170427930421e-17,
+          "generator_velocity_defect": 0.0,
+          "potential_boundary_exchange": -4.980358668543856e-11,
+          "gravity_kick_work": 2.453240622333792e-08,
+          "hydro_potential_work": 2.4471433579729132e-08
+        },
+        "energy_residual": 6.097265731187512e-11,
+        "gas_energy_change": 2.4562605093099432e-08,
+        "potential_change": -2.452123714781593e-08,
+        "gas_boundary_exchange": 3.019887465706644e-11,
+        "independent_mass_error": 9.325873406851315e-15,
+        "independent_potential_moment_error": 2.4695523404005826e-14,
+        "full_validation": false,
+        "endpoint_accepted": false,
+        "scope": "single coupled saved-state trial with extra potential-density moment"
+      },
+      "dt000125": {
+        "t": 0.01,
+        "dt": 0.000125,
+        "diagnostics": {
+          "stage_mass_flux": 5.2909066017292616e-17,
+          "generator_velocity_defect": 0.0,
+          "potential_boundary_exchange": -2.4783849810237333e-11,
+          "gravity_kick_work": 1.2176744904182755e-08,
+          "hydro_potential_work": 1.216150550611413e-08
+        },
+        "energy_residual": 1.5239458344618805e-11,
+        "gas_energy_change": 1.2191850531947219e-08,
+        "potential_change": -1.2186289313781016e-08,
+        "gas_boundary_exchange": 1.5105609631820926e-11,
+        "independent_mass_error": 8.215650382226158e-15,
+        "independent_potential_moment_error": 2.7922109069322687e-14,
+        "full_validation": false,
+        "endpoint_accepted": false,
+        "scope": "single coupled saved-state trial with extra potential-density moment"
+      },
+      "dt0000625": {
+        "t": 0.01,
+        "dt": 6.25e-05,
+        "diagnostics": {
+          "stage_mass_flux": 4.5102810375396984e-17,
+          "generator_velocity_defect": 0.0,
+          "potential_boundary_exchange": -1.2362598374811802e-11,
+          "gravity_kick_work": 6.066005296972006e-09,
+          "hydro_potential_work": 6.0621953736389196e-09
+        },
+        "energy_residual": 3.809944389291256e-12,
+        "gas_energy_change": 6.073559449831399e-09,
+        "potential_change": -6.074557964145166e-09,
+        "gas_boundary_exchange": 7.554139671753305e-12,
+        "independent_mass_error": 8.881784197001252e-15,
+        "independent_potential_moment_error": 2.7394753132625738e-14,
+        "full_validation": false,
+        "endpoint_accepted": false,
+        "scope": "single coupled saved-state trial with extra potential-density moment"
+      }
+    },
+    "interpretation": "Single-step energy residual decreases by about4 per dt halving, not8. Second-order full time integration is not established."
+  },
+  "enriched_gravity_subdivision": {
+    "root": "/gpfs/kjhan/LagForce/Codex_ON_enriched_gravity_subdivision_20261017",
+    "status": "completed 1/2/4/8/16 source subdivisions, first-order convergence",
+    "scope": "fixed geometry gravity-only 1/2/4/8/16 substeps over .001",
+    "partial_comparison": {
+      "completed_subdivisions": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "rows": [
+        {
+          "coarse_n": 1,
+          "energy_sum_difference": 9.754517417192915e-10,
+          "max_state_difference": 1.3051504607695507e-10
+        },
+        {
+          "coarse_n": 2,
+          "energy_sum_difference": 4.877258323772449e-10,
+          "max_state_difference": 6.525752286907095e-11
+        },
+        {
+          "coarse_n": 4,
+          "energy_sum_difference": 2.438629834904723e-10,
+          "max_state_difference": 3.262876156328448e-11
+        }
+      ],
+      "full_validation": false
+    },
+    "interpretation": "Differences halve with doubled subdivisions: current finite kick shows first-order convergence for this retained nonlinear closure.",
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+        "initial_potential.json": "bcababddb14e515054c2c1c841077e34fdd97949e07b438e0054bd76f5622e95",
+        "duration": 0.001,
+        "source_manifest_sha256": "dce6e15242a9b2335dd72cb202ca4563c9a15a2589e5e76b4f90fd361e0a7146"
+      },
+      "pairs": [
+        {
+          "coarse_n": 1,
+          "max_state_difference": 1.3051504607695507e-10,
+          "sum_active_energy_difference": 9.754517417192915e-10,
+          "max_energy_difference": 9.239458883310986e-11
+        },
+        {
+          "coarse_n": 2,
+          "max_state_difference": 6.525752286907095e-11,
+          "sum_active_energy_difference": 4.877258323772449e-10,
+          "max_energy_difference": 4.619729479602569e-11
+        },
+        {
+          "coarse_n": 4,
+          "max_state_difference": 3.262876156328448e-11,
+          "sum_active_energy_difference": 2.438629834904723e-10,
+          "max_energy_difference": 2.3098647452222953e-11
+        },
+        {
+          "coarse_n": 8,
+          "max_state_difference": 1.6314376458386078e-11,
+          "sum_active_energy_difference": 1.2193152687338654e-10,
+          "max_energy_difference": 1.1549323726111477e-11
+        }
+      ],
+      "full_validation": false,
+      "scope": "gravity source flow only; fixed density/geometry and original moments"
+    }
+  },
+  "enriched_continuation_driver": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OM_enriched_continuation_validation_20261017",
+    "status": "prepared; targeted resume6 tests passed; physics continuation not launched pending path/source-flow checks",
     "full_validation": false
+  },
+  "enriched_field_audit": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OL_enriched_kepler_fields_20261017",
+    "status": "completed",
+    "density": "uses stored enriched potential moments explicitly",
+    "evolved_order24": {
+      "state": "evolved",
+      "t": 0.01025,
+      "order": 24,
+      "relative_L1": {
+        "density": 0.03233402507785653,
+        "velocity_mass_weighted": 0.00042286846369959567,
+        "pressure": 0.00010723864429212747
+      },
+      "volume": 19.634954084936204,
+      "volume_reference": 19.634954084936208,
+      "minimum_density": 8.986947813034244e-05,
+      "minimum_pressure": 2.7758400443608473e-05,
+      "sampled_maximum_density_relative": 47.40921560766785,
+      "sampled_maximum_velocity_absolute": 0.11302667260441306,
+      "sampled_maximum_pressure_relative": 0.0039047515158394663,
+      "sha256": "f2e43b5a24c260f8d569de5765ccaa5bdf645952b2bf33968810cf80de4c80a3"
+    }
+  },
+  "split_3d_equal_time": {
+    "t": 0.002,
+    "dt002_absolute_mass": 2.443164776371481e-07,
+    "dt001_absolute_mass": 6.059613566487908e-08,
+    "ratio": 4.031882148200278,
+    "full_validation": false
+  },
+  "midpoint_gravity_source": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OO_midpoint_gravity_source_20261017",
+    "targeted_tests_passed": 4,
+    "status": "all source subdivisions completed; second-order maximum-state differences until roundoff",
+    "limitation": "requires positive-definite covariance at iterations; rejects failure without clipping; not enabled in production coupling",
+    "partial_comparison": {
+      "completed_subdivisions": [
+        1,
+        2,
+        4
+      ],
+      "rows": [
+        {
+          "coarse_n": 1,
+          "energy_sum_difference": 7.168771869528467e-15,
+          "max_state_difference": 2.6122767143865744e-13
+        },
+        {
+          "coarse_n": 2,
+          "energy_sum_difference": 2.5337669245714678e-15,
+          "max_state_difference": 6.57755100386126e-14
+        }
+      ],
+      "full_validation": false
+    },
+    "report": {
+      "identity": {
+        "source.json": "c3538c89e73b75106958b9cf11e0d29502c08b5fc81fadf573c6773be947c379",
+        "configuration.json": "a402d5b9262e68843942ca0fc456cadc25aa3dbfa2b4d7652235738787bb488f",
+        "initial_potential.json": "bcababddb14e515054c2c1c841077e34fdd97949e07b438e0054bd76f5622e95",
+        "duration": 0.001,
+        "scheme": "midpoint",
+        "source_manifest_sha256": "6479a02dd84801bd94acf054171587f1c6abf6d8522b676ea3b3b1cec11645e8"
+      },
+      "pairs": [
+        {
+          "coarse_n": 1,
+          "max_state_difference": 2.6122767143865744e-13,
+          "sum_active_energy_difference": 7.168771869528467e-15,
+          "max_energy_difference": 5.255344770471737e-14
+        },
+        {
+          "coarse_n": 2,
+          "max_state_difference": 6.57755100386126e-14,
+          "sum_active_energy_difference": 2.5337669245714678e-15,
+          "max_energy_difference": 1.2996548282018239e-14
+        },
+        {
+          "coarse_n": 4,
+          "max_state_difference": 1.6470332042661795e-14,
+          "sum_active_energy_difference": 3.419573652019281e-16,
+          "max_energy_difference": 3.245667623552606e-15
+        },
+        {
+          "coarse_n": 8,
+          "max_state_difference": 4.120835617182905e-15,
+          "sum_active_energy_difference": 1.3491540783866496e-16,
+          "max_energy_difference": 8.101158632811689e-16
+        }
+      ],
+      "full_validation": false,
+      "scope": "gravity source flow only; fixed density/geometry and original moments"
+    }
+  },
+  "MH_timeout_resume_1153": {
+    "root": "/gpfs/kjhan/LagForce/Codex_MH_reflected_sod_controls_20261017/n32",
+    "t": 0.018810299153820265,
+    "steps": 348,
+    "reason": "exit124; PID1685764 absent; source manifest verified; checkpoints/pending caches preserved",
+    "session": 57507
+  },
+  "midpoint_coupled_trials": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OP_midpoint_coupled_kepler_20261017",
+    "cases": [
+      "dt00025",
+      "dt000125"
+    ],
+    "targeted_passed": 7,
+    "status": "two coupled saved-state trials completed; independent path audits now running",
+    "full_validation": false,
+    "verified_live_pids": [
+      1837441,
+      1837442
+    ],
+    "results": {
+      "dt00025": {
+        "t": 0.01,
+        "dt": 0.00025,
+        "diagnostics": {
+          "stage_mass_flux": 4.9439619065339e-17,
+          "generator_velocity_defect": 0.0,
+          "potential_boundary_exchange": -4.980358668765271e-11,
+          "gravity_kick_work": 2.447143175189734e-08,
+          "hydro_potential_work": 2.4471433610634797e-08,
+          "gravity_scheme": "midpoint"
+        },
+        "energy_residual": -1.893180084192853e-15,
+        "gas_energy_change": 2.4501630609919333e-08,
+        "potential_change": -2.4521237215090674e-08,
+        "gas_boundary_exchange": 3.0198874696395777e-11,
+        "independent_mass_error": 8.659739592076221e-15,
+        "independent_potential_moment_error": 2.466082893448629e-14,
+        "full_validation": false,
+        "endpoint_accepted": false,
+        "scope": "single coupled saved-state trial with extra potential-density moment"
+      },
+      "dt000125": {
+        "t": 0.01,
+        "dt": 0.000125,
+        "diagnostics": {
+          "stage_mass_flux": 6.982261990806649e-17,
+          "generator_velocity_defect": 0.0,
+          "potential_boundary_exchange": -2.4783849805537147e-11,
+          "gravity_kick_work": 1.216150234998551e-08,
+          "hydro_potential_work": 1.2161505507258652e-08,
+          "gravity_scheme": "midpoint"
+        },
+        "energy_residual": -3.1467592458231953e-15,
+        "gas_energy_change": 1.2176607962045643e-08,
+        "potential_change": -1.2186289348990482e-08,
+        "gas_boundary_exchange": 1.5105609619943853e-11,
+        "independent_mass_error": 9.103828801926284e-15,
+        "independent_potential_moment_error": 2.7956803538842223e-14,
+        "full_validation": false,
+        "endpoint_accepted": false,
+        "scope": "single coupled saved-state trial with extra potential-density moment"
+      }
+    }
+  },
+  "midpoint_path_continuation": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OQ_midpoint_path_continuation_20261017",
+    "targeted_passed": 5,
+    "status": "two actual midpoint trial path audits running; continuation prepared",
+    "changes": [
+      "explicit gravity scheme in continuation identity",
+      "dense endpoint density/potential moment consistency checks"
+    ]
+  },
+  "JU_timeout_resume_1158": {
+    "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+    "t": 0.14591723950209515,
+    "steps": 934,
+    "session": 1999,
+    "evidence": "exit12411:57:39; PID1691812 absent; complete source manifest verified; pending state retained"
+  },
+  "split_3d_n8": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8",
+    "status": "running",
+    "source_snapshot": "same immutable NS split model",
+    "initial_state": "same original MX n8 physical arrays",
+    "dt": 0.002,
+    "target": 0.02,
+    "session": 72821,
+    "full_validation": false
+  },
+  "MK_timeout_resume_1200": {
+    "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod32",
+    "t": 0.018595780775015603,
+    "steps": 344,
+    "session": 49930,
+    "evidence": "exit12412:00:02, originalPID1694969 absent, full source manifest verified, pending data preserved"
+  },
+  "current_completion_audit": {
+    "as_of": "2026-10-17T12:01:52.065149+09:00",
+    "full_scope_complete": false,
+    "requirements": {
+      "shock": {
+        "target_t": 0.15,
+        "physical_L1_goal": 0.05,
+        "complete": false,
+        "current": {
+          "root": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
+          "t": 0.0606774344318195,
+          "steps": 1299
+        }
+      },
+      "long_time": {
+        "target": "10 central vortex periods",
+        "intermediate_target": 0.2,
+        "complete": false,
+        "current": {
+          "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+          "t": 0.1471584707298482,
+          "steps": 944
+        }
+      },
+      "three_dimensions": {
+        "target": "nonlinear physical accuracy plus independent mass path, temporal and spatial convergence",
+        "complete": false,
+        "current": [
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6",
+            "t": 0.012,
+            "steps": 6
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_NX_split_vortex_time_refinement_20261017/n6",
+            "t": 0.005,
+            "steps": 5
+          }
+        ],
+        "n8_root": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8"
+      },
+      "kepler": {
+        "target": "canonical192 squared100-orbit fluid disk",
+        "complete": false,
+        "current": "auxiliary n32 saved-state controls near t=.01; canonical run absent",
+        "limitations": [
+          "single-step conservation is not full disk accuracy",
+          "large local density errors remain",
+          "midpoint source currently requires positive-definite covariance"
+        ]
+      }
+    }
+  },
+  "split_3d_equal_time_fields": {
+    "root": "/gpfs/kjhan/LagForce/Codex_OS_split_3d_equal_time_fields_20261017",
+    "t": 0.004,
+    "coarse_saved_step": 2,
+    "fine_saved_step": 4,
+    "status": "running",
+    "scope": "read-only physical field comparison; no evolution replay"
   }
 }

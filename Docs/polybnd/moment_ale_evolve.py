@@ -52,7 +52,10 @@ def features(points,origin,scale):
 
 class Density:
     def __init__(self,poly,m,q,Q):
-        pts,w=quadrature(poly);self.area=w.sum();self.origin=w@pts/self.area;self.scale=np.sqrt(self.area)
+        from density_quadrature import rule,validate_order
+        self.quadrature_order=validate_order(os.environ.get('LAGFORCE_DENSITY_QUADRATURE_ORDER','6'))
+        pts,w=quadrature(poly) if self.quadrature_order==6 else rule(poly,self.quadrature_order)
+        self.area=w.sum();self.origin=w@pts/self.area;self.scale=np.sqrt(self.area)
         self.points=pts;self.weights=w;self.mass=m
         extended=np.asarray(q).dtype==np.dtype(np.longdouble)
         if extended:
@@ -83,11 +86,13 @@ class Density:
         return self.mass*np.exp(features(np.atleast_2d(points),self.origin,self.scale)@self.theta-self.logZ)
 
 
-def decode(poly,raw):
+def decode(poly,raw,density=None):
     m=raw[0];q=raw[1:3];Q=raw[3:7].reshape(2,2);p=raw[7:9];D=raw[9:13].reshape(2,2);Pi=raw[13:17].reshape(2,2)
     extended=np.asarray(raw).dtype==np.dtype(np.longdouble)
     if extended:m=float(m)
-    density=Density(poly,m,q,Q);c=q/m;v=p/m;S=Q-np.outer(q,q)/m;C=D-np.outer(q,p)/m
+    if density is None:density=Density(poly,m,q,Q)
+    elif density.mass!=float(m):raise ValueError('provided density has different cell mass')
+    c=q/m;v=p/m;S=Q-np.outer(q,q)/m;C=D-np.outer(q,p)/m
     S=(S+S.T)/2
     if extended:
         c=np.asarray(c,dtype=float);v=np.asarray(v,dtype=float);S=np.asarray(S,dtype=float);C=np.asarray(C,dtype=float)

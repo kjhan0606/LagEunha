@@ -733,3 +733,338 @@ frozen mask 전환 금지, frozen raw 배열 보존 검사를 포함한다.
 재사용한다. 노드/cell 적분은 checkpoint 가능하다. 대상은t=.01의
 단일trial 세개이며 전체과거구간 에너지 보존을 소급 인증하지 않는다.
 NW targeted4개 검사 통과 후 독립세trial 감사를 진행 중이다.
+
+### 11:26 Kepler energy residual and density normalization diagnosis
+
+NW completed all three saved trials. Energy residuals for dt=.001/.0005/.00025
+are -6.21308847e-7/-3.10855550e-7/-1.55954859e-7. They are approximately
+linear in dt; polar16/24 differences are <=1.78e-15. Gas ledger/gravity work
+identity errors are <=8.12e-16. No complete energy-consistency pass is claimed.
+NW regression: 473 tests normal and 473 reverse passed.
+
+NY independently integrates every active reconstructed density at saved t=.01.
+Worst cell410: native fit residual4.16e-17 but continuum relative mass error
+-1.37610083e-5. Polar16/24/32 agree. Native fitted mass is exact to roundoff;
+this distinction invalidates using native fit residual alone as physical proof.
+Largest centered-moment discrepancy is1.97547e-5 (cell387).
+
+NZ refits exactly the same cell410 polygon and original raw moments using
+triangle Gauss orders6/8/12/16/24, without changing any accepted history.
+Independent polar32 mass errors are -1.3761e-5/-9.5325e-8/-8.1224e-13/
+-1.3656e-14/-1.3989e-14. This identifies underresolved density-fit quadrature
+in this cell. It does not yet establish the cause of the entire energy residual.
+Next: explicit quadrature-controlled density closure, followed by same-state
+coupled trial comparison and independent energy/mass audits; no mass rescaling.
+
+NS accepted t=.004 (2 steps). NT independent order6 history audit resumed
+from its existing cached first step, now auditing step2. NS/NX processes were
+confirmed live; no trajectory restarted. Full shock/long-duration/3D/official
+192-squared100-orbit Kepler requirements remain incomplete.
+
+### 11:28 Explicit density quadrature controls and completed short Sod32
+
+Added density_quadrature_order configuration (6..64); default6 retains the
+original quadrature function exactly. Higher orders affect density fit points,
+normalization, and all existing consumers of density.weighted_mass, including
+gravity and quadratic-velocity budgets. This is an explicit numerical-model
+comparison, not a silent change to accepted trajectories. Same raw masses and
+moments are retained. Default identity, configuration validation, saved-cell
+independent polar mass convergence, and energy/exchange targeted tests:7 passed.
+
+OA immutable snapshot runs same saved t=.01 Kepler state for q16 dt=.001,
+q16 dt=.00025, and q24 dt=.001. Each trial must finish its17node hydro audit
+before its energy audit runs. Independent cases run concurrently on lageunha.
+Full476-test regression normal/reverse launched. No complete pass claimed yet.
+
+NT NS independent history now covers t=.004 (two accepted steps): accumulated
+absolute relative mass4.71138181e-7, signed4.51020696e-7, quadrature estimate
+3.72929869e-9. NX first accepted t=.001 now has its own independent order6
+history audit running; compare at equal physical times once both are available.
+
+KV original P2 Sod32 completed T=.02,475steps,exit0. Driver numerical and
+physical gates passed. Field L1 rho=.01071721,v=.01795574,P=.01256974;
+absolute mass-path defect5.23020e-6, energy ledger8.84709e-17. This is the
+short baseline, not the required long shock interval. MV long shock t=.048375,
+JU vortex t=.135310, MH Sod32 t=.016988, MK Sod32 t=.015555 remain active.
+
+### 11:31 Higher density quadrature fixes normalization, not energy consistency
+
+OA476 tests passed normal and reverse. q16 dt=.001/.00025 full saved-step
+energy audits completed. Independent relative mass errors <=1.93e-14.
+Energy residuals remain -6.22333492e-7/-1.56019596e-7, comparable to q6.
+Polar16/24 residual differences <=7.11e-15; relative to initial thermal energy
+these are7.42231e-4/1.86078e-4. Thus density normalization underintegration is
+real but is not the main cause of the energy residual. q24 comparison remains
+running. Original fixed masses, material sites, and accepted history preserved.
+
+OB now checks the actual saved hydro-stage directional derivative of U using
+symmetric perturbations h=1e-5,5e-6. It compares this with independent native
+and polar gravity work rates and the frozen-reservoir potential mass flux.
+This discriminates semi-discrete closure consistency from time integration.
+It does not apply any energy correction or advance an accepted trajectory.
+
+NX first-step t=.001 independent order6 path audit completed: absolute mass
+5.27184804e-8, signed4.38562873e-8, nested temporal difference1.15600e-9,
+whole-target-scaled peak rate3.87203e-6, generator interpolation4.31441e-6.
+NS first step was dt=.002: differing endpoints preclude calling this an
+equal-duration convergence result. Need NX second step for that comparison.
+
+### 11:33 Semi-discrete potential compatibility diagnosis
+
+OA q24 dt=.001 energy audit complete. Residual -6.22333491813e-7 agrees
+with q16 -6.22333491811e-7. Independent density mass errors <=2.07e-14.
+
+OB on the actual saved q16 dt=.00025 initial hydro stage:
+physical gravity work rate .00162809416064705 (polar), native differs4.3e-15.
+Frozen-reservoir potential rate -1.97700365712e-7. Symmetric U derivatives
+h=1e-5/5e-6 are -.00225292273726/-.00225292478007, giving residuals
+-.00062463087624/-.00062463291905. This matches the approximately linear
+single-step energy defect. This is semi-discrete, not solely timestep error.
+
+OC checks fixed potentials1,x,y,x²/2,xy,y²/2 directly from stored q,Q,p,D
+and the same face flux. All six conservation identities close <=9.66e-16.
+Thus the basic moment transport identities pass on this actual state; the
+nonpolynomial potential compatibility remains unfulfilled.
+
+OD independently differentiates the exponential quadratic density closure.
+For fixed local polynomial basis b and A=int rho b b^T, solve
+A lambda=int rho Phi b. Reynolds transport yields
+Udot=lambda.Mdot+integral_boundary rho(Phi-lambda.b)wn.
+Compare against OB finite differences before assigning the residual entirely
+to closure projection. No force modification or energy correction is applied.
+A future compatible closure must address potential outside the retained
+quadratic moment space; simply increasing quadrature or reducing dt is not
+supported as a remedy by these controls.
+
+NS reached t=.006 (3 accepted stages); NT audit resumed with previous cached
+steps preserved. NX remains active after first accepted t=.001 step.
+
+### 11:36 Analytic derivative and potential-enrichment feasibility
+
+OD analytic Udot=-.00225292411258, agreeing with OB symmetric differences
+within8.1e-10 at h=5e-6. Face quadrature16/24 agrees6.4e-15. Components:
+lambda.Mdot=-.00167755149117 and moving-boundary remainder=-.000575372621407.
+This confirms the actual closure derivative and the semi-discrete defect.
+
+OE adds diagnostic cellwise Phi-weighted mass flux. Constant-Phi cellwise
+identity and global internal-face cancellation pass targeted tests (7 total).
+For each cell, orthogonalize r=Phi-lambda.b against the retained six moments.
+An extra density tangent rho_dot=rho*r*missing/(m*E[r²]) can change Udot
+while retaining m,q,Q to first order. No dynamics is changed by this audit.
+Missing rate summed over active cells=.000624632251572. Maximum RMS relative
+density-rate requirement=2.9264481 (cell13), corresponding to7.31612e-4 for
+dt=.00025. This is local tangent evidence, not finite-step realizability.
+
+OF tests positive exponential tilts in the six independent normalized
+features (five spatial + potential remainder), holding the original cell
+geometry,m,q,Q fixed and varying only the extra U moment by the missing rate.
+Trials dt=.00025/.000125/.0000625 use independent polar24/32 checks.
+No energy repair is applied to a simulation; no accepted history is replaced.
+Full regression and actual worst-cell feasibility test are running.
+
+OF actual worst-cell13 control completed: all three finite perturbations
+converged in2Newton iterations. Independent polar24/32 checks retain mass
+within2.23e-16 and five scaled spatial moments within7e-15; target potential
+mean error<=1.03e-14. Minimum sampled density>.00959, and the exponential
+representation is positive wherever finite. This supports local representability
+of the missing potential direction, not global stability or coupled evolution.
+Next: check all active cells, then propagate an actual extra potential moment
+with the same mass-flux quadrature and gravity work. Recompute all density-
+dependent velocity/gravity closures consistently; a diagnostic scalar alone
+would not establish physical conservation.
+
+### 11:40 All-active-cell enrichment feasibility
+
+OG completed all572 active cells at fixed geometry with dt=.00025 missing-U
+perturbations. All fits converged. Independent polar24/32 maxima: relative
+mass9.10383e-15, retained scaled spatial moments1.99606e-12, potential mean
+7.98916e-13. Cellwise progress and original hashes are preserved.
+This is not a coupled timestep: geometry and m,q,Q were held fixed deliberately.
+
+Implemented opt-in PotentialDensity interface exposing positive density values,
+quadrature points/weights/weighted masses, and moment-fit diagnostics. It fits
+supplied original m,q,Q and extra U; it rejects numerically dependent potential
+bases and never changes targets on fit failure. Current evolution still uses
+its original density until explicit stage-provider plumbing is implemented.
+OH tests actual cell13 against independent polar32, weighted-density identity,
+and rejection of redundant constant potential, plus full regression.
+OF prior source passed478 tests normal and reverse.
+
+NS third-step independent history covers t=.006: integrated absolute mass
+6.91521e-7, signed6.87042e-7; fullT=.02 still pending.
+
+### 11:43 Explicit density providers and first coupled potential-moment trial
+
+Added opt-in volume density providers to kinetic RHS, gravity source and dense
+mass-path evaluator, plus explicit density argument to decode. Existing original
+providers reproduce RHS, gravity state/factors, and path flux arrays exactly.
+OI targeted8 and483 normal passed; reverse pending. OH480 normal/reverse passed.
+
+Potential-moment coupling now evolves per-cell U with Phi-weighted shared mass
+flux minus physical gravity work. Every fluid stage and gravity kick reconstructs
+its own density from original m,q,Q and its stage U. Frozen states and U remain
+fixed. Physical acceleration is unchanged; gas energy is not reset from U.
+A Strang kick/RK2 drift/kick trial uses independent same-state t=.01,dt=.00025.
+OJ checks original masses/frozen data exactly and independently integrates the
+final enriched density with polar24. No old trajectory or checkpoint is replaced.
+Full history, dense enriched-path, temporal convergence and canonical longrun
+remain required even if this first trial succeeds.
+
+NS accepted t=.008; NX accepted t=.002. NT resumed both independent audits
+from prior caches after confirming terminal receipts. NX will now permit the
+first equal-duration dt=.001 vs.002 mass-path comparison at t=.002.
+MV shock t=.054544; JU vortex t=.140387; MH/MK short Sod32 t=.018264/.017470.
+
+### 11:46 First enriched coupled trial substantially improves energy balance
+
+OJ dt=.00025 completed. Egas+U residual after gas/potential boundary exchange
+is6.09726573e-11, compared with baseline q16 -1.56019596e-7 (about2559-fold
+smaller absolute residual). Stage mass5.20417e-17, generator defect0. Independent
+polar24 relative mass9.32587e-15, maximum per-cell U error2.46955e-14.
+Gravity kick work2.45324062233e-8 and hydro potential-work integral
+2.44714335797e-8 differ by the residual to roundoff, consistent with a remaining
+split-time error; its scaling is not yet established. No gas-energy correction.
+This is one saved-state step at t=.01, not a retroactive correction of earlier
+accepted history or canonical longrun proof.
+
+OI483 normal/reverse tests passed. Added optional actual hydro record including
+U,du0,dum and its quadratic dense extension. Frozen U remains fixed and
+extrapolation is rejected; OK targeted7 tests passed. OK dt=.000125/.0000625
+trials run independently, each followed only on success by a17-node enriched
+dense mass/potential boundary audit. Their common initial U was reused from
+OJ after AST equality of initialization function and byte equality of relevant
+density/geometry/potential dependencies; provenance/hash recorded per case.
+No already completed fluid trial is replayed. Old snapshots stay immutable.
+
+### 11:50 Temporal controls reveal remaining source-integration issue
+
+OK485 normal/reverse tests passed. Enriched single-step residuals at
+h=.00025/.000125/.0000625:6.09726573e-11/1.52394583e-11/3.80994439e-12.
+They decrease by4, not8, per halving. This is a dt² local energy defect;
+do not call the complete coupled method second-order based on its Strang/RK2
+labels. Independent density mass errors remain <1e-14 and cell U error<2.8e-14.
+Dense audits of the smaller trials are still running; all trial outputs kept.
+
+ON isolates the gravity source with fixed density/geometry over duration.001
+using1/2/4/8/16 substeps. Same enriched densities are cached by exact geometry
+and original density moments; velocity reconstruction is recomputed at every
+kick. Purpose: determine whether the nonlinear velocity closure makes the
+current finite kick only first-order for its actual moment source flow.
+
+OL field audit now detects stored potential moments and reconstructs enriched
+density for reference L1 comparisons. Original checkpoint handling is retained.
+OM continuation driver saves each trial before its17-node path audit, caches
+nodes, updates accepted checkpoint only after cumulative mass/rate/quadrature,
+energy/thermal and generator gates. Interrupted-audit unit test verifies no
+fluid trial replay and no replay of a completed prefix. Targeted6 passed.
+Physics continuation is prepared but awaits these path/source-flow controls.
+
+At equal3D physical time t=.002, NS dt=.002 absolute path defect2.44316e-7
+versus NX two dt=.001 steps6.05961e-8: reduction4.032. This supports temporal
+convergence of this early path diagnostic, not complete nonlinear3D accuracy.
+
+### 11:53 Source-flow first-order convergence confirmed in partial subdivision data
+
+ON fixed-duration.001 source results1/2/4/8 subdivisions: successive summed
+energy differences9.75451742e-10,4.87725832e-10,2.43862983e-10. Maximum state
+differences1.30515046e-10,6.52575229e-11,3.26287616e-11. Exact factors of2
+identify first-order convergence of the finite kick for the current nonlinear
+velocity closure. n16 remains running; source files and cached endpoints kept.
+
+OO experimental implicit midpoint gravity source reconstructs midpoint velocity
+and updates p,D from fixed force moments, Pi from midpoint cross(v,g), E from
+physical kinetic work. Cholesky requires positive-definite residual covariance;
+rank-deficient/indefinite trials are rejected, never clipped. This prototype is
+not yet a general replacement. Affine-force comparison to exact moment kick and
+original provider tests4 passed. Same full-state source subdivision launched.
+OO is not enabled in coupled production; original ON remains the comparison.
+
+OL enriched physical-field audit completed at t=.01025. Relative L1 density
+.0323340251, velocity .000422868464, pressure .000107238644, close to source
+values. Sampled minimumdensity8.98695e-5 is below background.01, and maximum
+relative density error47.4092 near the disk contrast remains large. Bulk L1
+agreement alone does not certify pointwise accuracy or long-run disk stability.
+OM486 normal/reverse tests passed. Dense enriched paths remain in progress.
+
+11:53 MH n32 timeout124 confirmed at11:53:09, originalPID1685764 absent. Entire source manifest verified. Resume at t=.0188102991538,348steps with original checkpoint/pending caches; execution_resume_1153.txt and resume_1153_receipt.json preserve evidence. No initial restart.
+
+### 11:55 Midpoint source improvement and completed enriched paths
+
+ON16 subdivisions completed; energy differences halve at every refinement,
+confirming finite-kick first-order source convergence. OO midpoint1/2/4 source
+results show max state differences2.61228e-13 and6.57755e-14 (ratio3.97).
+Summed energy differences7.17e-15/2.53e-15 approach roundoff and are not a
+reliable energy order estimate. Larger subdivisions continue; this is a short
+fixed-geometry source test, not a full time-integrator proof.
+
+OP explicitly selects gravity_scheme=midpoint in the coupled extra-U method.
+The default finite scheme and immutable old trials remain available. Targeted7
+passed. Same-state dt=.00025/.000125 coupled trials started; common initialU
+reused with unchanged initializer AST and verified dependency bytes. Results
+will determine whether the complete split step recovers expected order.
+
+OK finite-kick path audits completed: absolute relative mass1.16037149e-9
+at h=.000125 and1.45035257e-10 at h=.0000625 (ratio8.00). Temporal nested
+quadrature estimates2.51e-15/1.07e-15; generator defects1.08582e-7/2.71378e-8.
+Integrated potential boundary exchange differs from midpoint-stage ledger by
+1.62349e-13/2.02876e-14, consistent with dt³ scaling of that quadrature term.
+It does not explain the dominant finite-kick dt² energy defect. No mass root
+is re-solved at path audit nodes. Both remain single-step controls only.
+
+### 11:57 Midpoint continuation preparation
+
+OQ continuation identity now includes explicit gravity integration scheme;
+default finite and selected midpoint cannot silently share a resume identity.
+Path audit checks dense endpoint geometry and density moments against the
+saved post-kick endpoint, and checks U as well. Targeted5 passed including
+interrupted-audit reuse; full regression running. No physical continuation
+launched before midpoint coupled/path evidence. OP trial PIDs1837441/1837442
+verified active at11:56:59, both ~99% CPU; OO source PID1834097 also active.
+
+### 11:58 Midpoint coupled energy residual reaches roundoff against stage ledger
+
+OP completed dt=.00025/.000125 saved-state coupled trials. Energy residuals
+against the midpoint-stage potential exchange are -1.89318e-15/-3.14676e-15.
+Stage mass<=6.99e-17, generator defect0. Independent relative mass<=9.11e-15,
+maximum per-cell U error<=2.80e-14. These residuals are at roundoff and do not
+provide an energy convergence slope. Independent continuous-path boundary
+exchange still needs evaluation: the prior finite-kick tests showed a dt³
+stage-versus-path boundary difference, so no whole-path roundoff claim is made.
+OQ now audits both actual saved midpoint paths with endpoint consistency checks.
+
+JU timeout124 confirmed at11:57:39 and original PID1691812 absent. Complete
+source manifest verified before resume. t=.145917239502,934steps retained,
+as were pending stage and quadrature caches. New execution_resume_1158.txt,
+run_resume_1158.log and resume_1158_receipt.json record the continuation.
+
+### 12:00 Higher-resolution split3D control and midpoint source completion
+
+OO completed all1/2/4/8/16 source subdivisions. Maximum state differences
+2.61228e-13,6.57755e-14,1.64703e-14,4.12084e-15 decrease approximately4x
+per halving until floating-point scale. Global summed energy differences are
+near roundoff; use maximum state differences for this order observation.
+OQ488 normal/reverse tests passed; midpoint dense path audits remain live.
+
+NS t=.012, NX t=.004; independent audits were resumed from their existing
+cached prefixes after terminal receipts. OR starts the independent n8 split
+face-integration control at dt=.002,target.02, using byte-verified NS physics
+snapshot and the original MX n8 physical initial arrays/score. Only experiment
+configuration changes; prior n8 point-mode accepted trajectory is preserved.
+OR timeout4h permits this heavier reference calculation to complete while
+saving every accepted step and exact dense record. It is not a restart of MX.
+
+12:00 MK sod32 timeout124 at12:00:02, PID1694969 absent. Verified complete immutable source manifest and resumed t=.018595780775,344steps. Checkpoint and pending quadrature retained; execution_resume_1200.txt/run_resume_1200.log/resume_1200_receipt.json record the action.
+
+### 12:03 Completion requirements and equal-time3D field comparison
+
+Refreshed the four top-level scope statuses and an explicit completion audit
+in the JSON. ShockT=.15, ten vortex periods, complete nonlinear3D validation,
+and canonical192²100-orbit fluid disk all remain unfulfilled. Unit counts or
+single-step energy conservation do not substitute for those requirements.
+Current shock t=.0606774; long vortex t=.1471585. Midpoint path audit handle
+44705 verified running and both controls reached node12/16 at12:02:22.
+
+OS reads preserved NSstep2/NXstep4 endpoints at identical t=.004, verifies
+original mass arrays match, and computes physical reference scores at volume
+orders8/12 for both. It also records raw/site differences and source hashes.
+This comparison reuses saved endpoints without evolving either trajectory.

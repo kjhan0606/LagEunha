@@ -15,6 +15,8 @@ import kinetic_factor_rhs as kinetic
 
 
 def environment(cfg):
+    from density_quadrature import validate_order
+    density_order=validate_order(cfg.get('density_quadrature_order',6))
     name=cfg.get('velocity_reconstruction','affine')
     modes=dict(quadratic_budget_continuous='dominant',quadratic_budget_projected='projected',quadratic_budget_projected_regularized='projected_regularized')
     if name!='affine' and name not in modes:raise ValueError('unsupported audit velocity closure')
@@ -23,7 +25,7 @@ def environment(cfg):
     geometry=cfg.get('power_cell_evaluation_backend','active')
     if geometry not in ('active','seeded_active','exhaustive'):raise ValueError('unsupported audit power cell backend')
     reflection=cfg.get('pressure_reflection_y','')
-    return dict(LAGFORCE_PRESSURE_FIT=cfg.get('pressure_fit','radial_fixed_mean'),LAGFORCE_PRESSURE_REFLECT_Y=reflection,LAGFORCE_QUADRATIC_VELOCITY='0' if name=='affine' else '1',LAGFORCE_QUADRATIC_BUDGET=modes.get(name,'dominant'),
+    return dict(LAGFORCE_DENSITY_QUADRATURE_ORDER=str(density_order),LAGFORCE_PRESSURE_FIT=cfg.get('pressure_fit','radial_fixed_mean'),LAGFORCE_PRESSURE_REFLECT_Y=reflection,LAGFORCE_QUADRATIC_VELOCITY='0' if name=='affine' else '1',LAGFORCE_QUADRATIC_BUDGET=modes.get(name,'dominant'),
         LAGFORCE_QUADRATIC_PRESSURE='0' if pressure=='linear' else '1',LAGFORCE_PRESSURE_DEGREE=str(degrees[pressure]),
         LAGFORCE_FAST_PRESSURE_POLYNOMIAL='1' if cfg.get('pressure_evaluation_backend','monomial')=='horner' else '0',
         LAGFORCE_ACTIVE_POWER_CELLS='0' if geometry=='exhaustive' else '1',LAGFORCE_SEEDED_POWER_CELLS='1' if geometry=='seeded_active' else '0',

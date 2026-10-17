@@ -15,8 +15,10 @@ class PotentialExchangeTests(unittest.TestCase):
         np.testing.assert_allclose(flux,old,atol=1e-14,rtol=0)
         self.assertAlmostEqual(d['active_potential_mass_exchange'],3*flux[~frozen].sum(),places=13)
         self.assertGreater(abs(d['active_potential_mass_exchange']),1e-6)
+        np.testing.assert_allclose(d['potential_mass_rates'],3*flux,atol=1e-14,rtol=0)
 
     def test_internal_faces_cancel_from_total_potential_exchange(self):
         m,y,L=state();gen=np.zeros((len(m),2));z=np.linspace(0.,.01,len(m))
         _,d=evaluate_smooth_path(0.,y,L,m,(gen,z),potential=lambda p:p[:,0]**2+p[:,1])
         self.assertLess(abs(d['active_potential_mass_exchange']),1e-14)
+        self.assertLess(abs(d['potential_mass_rates'].sum()),1e-14)

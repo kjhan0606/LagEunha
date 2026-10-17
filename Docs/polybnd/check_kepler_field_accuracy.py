@@ -17,7 +17,17 @@ from quadratic_pressure_reconstruction import prepare as prepare_pressure,value
 
 def inspect(path,order,progress=None,configuration_sha256=None):
     data=Path(path).read_bytes();cp=json.loads(data);mass=np.asarray(cp['mass']);a=np.asarray(cp['state'])[:-4].reshape(-1,20);L=[np.asarray(v) for v in cp['factors']]
-    polys,edges=base.geometry(a[:,:2],a[:,2],cp['t']);states=[base.decode(p,np.r_[m,row[3:]]) for p,m,row in zip(polys,mass,a)]
+    polys,edges=base.geometry(a[:,:2],a[:,2],cp['t'])
+    density_provider=None
+    if 'potential_moments' in cp:
+        from potential_moment_coupled_2d import provider
+        from audit_kepler_energy_step import phi
+        from kepler_disk_reference import frozen
+        U=np.asarray(cp['potential_moments'])
+        if U.shape!=mass.shape:raise ValueError('invalid stored potential moments')
+        density_provider=provider(U,phi,lambda p:polar_rule(p,16,radii=(.25,.5)),frozen(cp['t'],a[:,:2]))
+    raw=[np.r_[m,row[3:]] for m,row in zip(mass,a)]
+    states=[base.decode(p,r,density=None if density_provider is None else density_provider(i,p,r)) for i,(p,r) in enumerate(zip(polys,raw))]
     prepare(states,polys,edges,mass,L);pressure,_=prepare_pressure(states,polys)
     error=np.zeros(3);denom=np.zeros(3);minimum=np.full(2,np.inf);maximum=np.zeros(3);volume=0.
     identity=dict(input_sha256=hashlib.sha256(data).hexdigest(),order=order,configuration_sha256=configuration_sha256)

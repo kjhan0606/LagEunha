@@ -47,11 +47,12 @@ def sample_record_file(path,expected_digest,mass,s):
     return sample_record(_record_cache,mass,s)
 
 
-def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4,frozen_mask=None,potential=None):
+def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4,frozen_mask=None,potential=None,density_provider=None):
     a=np.asarray(state)[:-4].reshape(-1,20);mass=np.asarray(mass);N=len(mass)
     x=np.asarray(a[:,:2],dtype=float);weights=np.asarray(a[:,2],dtype=float)
     cells,edges=model.geometry(x,weights,t)
-    raw=np.column_stack([mass,a[:,3:]]);states=[model.decode(v,r) for v,r in zip(cells,raw)]
+    raw=np.column_stack([mass,a[:,3:]])
+    states=[model.decode(v,r,density=None if density_provider is None else density_provider(i,v,r)) for i,(v,r) in enumerate(zip(cells,raw))]
     quadratic=os.environ.get('LAGFORCE_QUADRATIC_VELOCITY','0')=='1'
     closure={}
     if quadratic:
@@ -74,6 +75,7 @@ def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4,frozen_mask
     smoothing,smoothing_length=parameters()
     active=np.ones(N,dtype=bool) if frozen_mask is None else ~np.asarray(frozen_mask,dtype=bool)
     potential_exchange=0.
+    potential_rates=np.zeros(N) if potential is not None else None
     g,w=np.polynomial.legendre.leggauss(order);g=(g+1)/2;w=w/2;residual=np.zeros(N)
     for i,j,start,end,n,length in edges:
         points=start+g[:,None]*(end-start)
@@ -100,12 +102,16 @@ def evaluate_smooth_path(t,state,factors,mass,geometry_rates,order=4,frozen_mask
         if j>=0:residual[j]-=value
         if potential is not None:
             sign=-int(active[i])+(int(active[j]) if j>=0 else 0)
-            if sign:
-                phi=np.asarray(potential(points))
-                if phi.shape!=(len(points),) or not np.isfinite(phi).all():raise ValueError('invalid potential samples')
-                potential_exchange+=sign*float(length*(w@(flux*phi)))
+            phi=np.asarray(potential(points))
+            if phi.shape!=(len(points),) or not np.isfinite(phi).all():raise ValueError('invalid potential samples')
+            value=float(length*(w@(flux*phi)))
+            potential_rates[i]-=value
+            if j>=0:potential_rates[j]+=value
+            potential_exchange+=sign*value
     diag=dict(generator_defect=float(np.max(abs(gen-material))),
         min_pressure=min(s['P'] for s in states),
         min_factor_R=min(float(np.linalg.eigvalsh(L@L.T).min()/m) for L,m in zip(factors,mass)),**closure)
-    if potential is not None:diag['active_potential_mass_exchange']=potential_exchange
+    if potential is not None:
+        diag['active_potential_mass_exchange']=potential_exchange
+        diag['potential_mass_rates']=potential_rates
     return -residual,diag
