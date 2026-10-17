@@ -163,6 +163,10 @@ def run_with_executor(executor=None):
         from quadratic_velocity_reconstruction import closure_name
         velocity_closure=closure_name()
     if cfg.get('velocity_reconstruction','affine')!=velocity_closure:raise ValueError('velocity reconstruction configuration mismatch')
+    from quadratic_velocity_reconstruction import fit_mode
+    velocity_fit=fit_mode()
+    if cfg.get('velocity_fit','radial_fixed_mean')!=velocity_fit:raise ValueError('velocity fit configuration mismatch')
+    if velocity_fit!='radial_fixed_mean' and velocity_closure=='affine':raise ValueError('velocity fit requires quadratic reconstruction')
     from quadratic_velocity_reconstruction import budget_backend_name
     if cfg.get('quadratic_budget_backend','scalar')!=budget_backend_name():raise ValueError('quadratic budget backend configuration mismatch')
     from quadratic_pressure_reconstruction import closure_name as pressure_closure_name
@@ -212,8 +216,9 @@ def run_with_executor(executor=None):
             mass,y0,L0,adjustment=initial_function(cfg['n'],amp)
             original=dict(t=0.,mass=mass,state=y0,factors=L0,config_sha256=identity,roundoff_Pi_completion=adjustment)
         atomic(input_path,original);atomic('initial_score.json',score_function(original['t'],y0,mass,amp,L0))
-    duration=end-original['t']
-    if duration<=0:raise ValueError('simple-wave target must follow source')
+    from physical_gate_accounting import budget_duration
+    execution_duration=end-original['t']
+    duration=budget_duration(cfg,original['t'])
     checkpoint=Path('checkpoint.json');pending_path=Path('pending.json');sample_path=Path('pending_samples.json')
     finish_pending_commit(pending_path,checkpoint,sample_path,identity)
     if checkpoint.exists():
@@ -235,7 +240,7 @@ def run_with_executor(executor=None):
         finish_pending_commit(pending_path,checkpoint,sample_path,identity)
     while t<end-1e-15:
         dt=min(dt,end-t)
-        if dt<duration*1e-8:raise RuntimeError('simple-wave time controller exhausted')
+        if dt<execution_duration*1e-8:raise RuntimeError('simple-wave time controller exhausted')
         if pending_path.exists():
             trial=json.loads(pending_path.read_text())
             if trial['record']['t']!=t or trial['record']['dt']!=dt:raise ValueError('simple-wave pending mismatch')
@@ -342,6 +347,8 @@ def run_with_executor(executor=None):
     from physical_gate_accounting import numerical_gates
     final_numerical_gates=numerical_gates(accum,mass,peak,cfg);numerical=all(final_numerical_gates.values())
     report=dict(completed=True,problem=problem,n=cfg['n'],amplitude=amp,t=t,source_time=original['t'],steps=steps,rejected=rejected,
+        validation_end=float(cfg.get('validation_end',end)),path_budget_duration=duration,
+        covers_validation_target=bool(t>=float(cfg.get('validation_end',end))-1e-15),
         numerical_passed=bool(numerical),numerical_gate_details=final_numerical_gates,adaptive_path_quadrature=bool(cfg.get('adaptive_path_quadrature',False)),
         physical_accuracy_passed=bool(passed),final_score=final,peak=peak,
         integrated_absolute_mass_defect=float(np.max(accum['absolute']/mass)),quadrature_mass_difference=float(np.max(abs(accum['quad_delta'])/mass)),

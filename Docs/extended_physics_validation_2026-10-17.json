@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-17T12:49:03.575510+09:00",
+  "updated_at": "2026-10-17T13:23:15.193190+09:00",
   "request": "Validate shocks, long time, 3D, Kepler",
   "constraints": [
     "unsteered generators",
@@ -214,7 +214,7 @@
   "kepler": {
     "root": "/gpfs/kjhan/LagForce/Codex_JZ_kepler_force_orbit_gate_20261017_080122",
     "status": "Auxiliary saved-state enriched-density/midpoint-gravity trials improve energy consistency; whole-path and continuation checks in progress. Canonical192 squared100-orbit fluid validation not done.",
-    "canonical": "unchanged 192² nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
+    "canonical": "unchanged 192\u00b2 nonvacuum disk rho1 in r.5..2, corotating background rho.01, P2.7777778e-5, spline rc.5, frozen r>=2.5;100 orbits",
     "control_is_disk_validation": false,
     "gravity_component_root": "/gpfs/kjhan/LagForce/Codex_KH_gravity_source_validation_20261017_081402",
     "potential_component_root": "/gpfs/kjhan/LagForce/Codex_KZ_kepler_potential_validation_20261017_084619",
@@ -1605,28 +1605,59 @@
     "evidence": "exit12412:00:02, originalPID1694969 absent, full source manifest verified, pending data preserved"
   },
   "current_completion_audit": {
-    "as_of": "2026-10-17T12:01:52.065149+09:00",
+    "as_of": "2026-10-17T13:23:15.193190+09:00",
     "full_scope_complete": false,
     "requirements": {
       "shock": {
         "target_t": 0.15,
         "physical_L1_goal": 0.05,
         "complete": false,
-        "current": {
-          "root": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
-          "t": 0.0606774344318195,
-          "steps": 1299
-        }
+        "current": [
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
+            "t": 0.08561422801392758,
+            "steps": 2283,
+            "checkpoint_sha256": "6bfe677f39eab926024df4b9791c0b89822d707321ffd29684a6c1baa746f988"
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_PH_sod32_tensor_whole_interval_20261017",
+            "t": 0.004495399801016799,
+            "steps": 133,
+            "checkpoint_sha256": "5f964f4cdf7e5286a0b1cc994243cb58bb362331d6163e7e255839f71e507b63"
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_QB_affine_sod16_whole_interval_20261017/sod16",
+            "t": 0.022078166487355996,
+            "steps": 214,
+            "checkpoint_sha256": "b88f970dbc3d16e67af781a230cee035e5feaf4fe98e489c343bf2ec70ef924e"
+          }
+        ],
+        "short_free_affine_n16_passed": true
       },
       "long_time": {
         "target": "10 central vortex periods",
         "intermediate_target": 0.2,
         "complete": false,
-        "current": {
-          "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
-          "t": 0.1471584707298482,
-          "steps": 944
-        }
+        "current": [
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+            "t": 0.17063758210801247,
+            "steps": 1168,
+            "checkpoint_sha256": "737ca3935c2dd415163230970aeb81c329cb2604c7d6ed1e8df4d8be1d32178d"
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_PZ_vortex_full_horizon_control_20261017/n32",
+            "t": 0.0009823124511590539,
+            "steps": 44,
+            "checkpoint_sha256": "f6bc815b22c0e7e7336a1860d6e8dab8367e8aac1d37c1cbb457ccefa239138c"
+          }
+        ],
+        "target_t": 10.468597915605091,
+        "known_limitations": [
+          "JU density-field error exceeds .001 at saved t=.1558767",
+          "JU historical path rates fail full10period normalization",
+          "PZ is an independent full-horizon temporal control, not yet physical accuracy proof"
+        ]
       },
       "three_dimensions": {
         "target": "nonlinear physical accuracy plus independent mass path, temporal and spatial convergence",
@@ -1634,21 +1665,53 @@
         "current": [
           {
             "root": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6",
-            "t": 0.012,
-            "steps": 6
+            "t": 0.02,
+            "steps": 10,
+            "checkpoint_sha256": "18e6f81a6aaade72f32a3d682122e3af0ae86045380cbb9a41a0d434bbef65c2"
           },
           {
             "root": "/gpfs/kjhan/LagForce/Codex_NX_split_vortex_time_refinement_20261017/n6",
-            "t": 0.005,
-            "steps": 5
+            "t": 0.013000000000000005,
+            "steps": 13,
+            "checkpoint_sha256": "ad3d1d355ca7cb649be43a24db7dc00fc70f896eb1f9dee15f97b39b38f34a4c"
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8",
+            "t": 0.006,
+            "steps": 3,
+            "checkpoint_sha256": "c3128c4f0e95d632dd6455669b0d903d47c57a8b7e6c7e7d074246971a258e95"
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_QD_split_vortex_n10_20261017/n10",
+            "checkpoint_available": false
+          },
+          {
+            "root": "/gpfs/kjhan/LagForce/Codex_QK_split_vortex_n8_time_refinement_20261017/n8",
+            "checkpoint_available": false
           }
         ],
-        "n8_root": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8"
+        "n8_root": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8",
+        "known_limitations": [
+          "n6 coarse T=.02 pressure field exceeds .05",
+          "independent path and field comparisons do not yet cover every full target",
+          "vertical pressure-gradient maxima are not monotonically convergent across n6/n8/n10"
+        ]
       },
       "kepler": {
         "target": "canonical192 squared100-orbit fluid disk",
         "complete": false,
-        "current": "auxiliary n32 saved-state controls near t=.01; canonical run absent",
+        "current": {
+          "auxiliary": {
+            "root": "/gpfs/kjhan/LagForce/Codex_OT_midpoint_kepler_continuation_20261017/n32",
+            "t": 0.013000000000000003,
+            "steps": null,
+            "checkpoint_sha256": "686f2c8942a18ea6d64e3751ea9d280bb18b36e1290b2aa9ba62b934d53e8ff1"
+          },
+          "canonical_initial_root": "/gpfs/kjhan/LagForce/Codex_PK_canonical192_initial_20261017/n192",
+          "canonical_initial_audit_root": "/gpfs/kjhan/LagForce/Codex_QE_kepler_chunk_reconstruction_20261017/n192",
+          "verified_audited_prefix": 2624,
+          "canonical_fluid_evolution_started": false
+        },
         "limitations": [
           "single-step conservation is not full disk accuracy",
           "large local density errors remain",
@@ -1751,7 +1814,7 @@
         "energy_over_initial_thermal": 1.5517586442845983e-09
       }
     },
-    "scope": "Auxiliary n32 enriched midpoint continuation. Original masses, accepted first trial and cellwise path budgets preserved. Not canonical 192²/100-orbit proof.",
+    "scope": "Auxiliary n32 enriched midpoint continuation. Original masses, accepted first trial and cellwise path budgets preserved. Not canonical 192\u00b2/100-orbit proof.",
     "accepted_t": 0.011000000000000001,
     "accepted_steps": 4,
     "latest_acceptance": {
@@ -3908,5 +3971,5183 @@
       "scope": "Read-only saved-state RHS sensitivity; no time evolution or state repair."
     },
     "conclusion": "Tightening2e-13 to2e-15 changes neither RHS nor weight rates at this saved state; both achieve3.97e-19 residual. This local test does not exclude accumulated sensitivity elsewhere."
+  },
+  "free_affine_early_symmetry_20261017": {
+    "report": "/gpfs/kjhan/LagForce/Codex_PR_affine_early_symmetry_20261017/report.json",
+    "time": 0.0004,
+    "n": 16,
+    "original_max_mean_vy": 6.376875555090621e-10,
+    "free_constant_max_mean_vy": 6.670424297902945e-10,
+    "free_affine_max_mean_vy": 2.908397858326554e-17,
+    "full_validation": false
+  },
+  "temporal_mass_path_T010_20261017": {
+    "rows": [
+      {
+        "t": 0.008,
+        "coarse": {
+          "t": 0.008,
+          "steps": 4,
+          "absolute_mass": 8.974704775564849e-07,
+          "signed_mass": 8.929913349090943e-07,
+          "nested_difference": 3.7297944054459065e-09
+        },
+        "fine": {
+          "t": 0.008,
+          "steps": 8,
+          "absolute_mass": 2.234111935013782e-07,
+          "signed_mass": 2.225638493663734e-07,
+          "nested_difference": 1.1583981179126616e-09
+        },
+        "absolute_mass_ratio": 4.017124045984511
+      },
+      {
+        "t": 0.01,
+        "coarse": {
+          "t": 0.01,
+          "steps": 5,
+          "absolute_mass": 1.0998131409924533e-06,
+          "signed_mass": 1.0953339983220167e-06,
+          "nested_difference": 3.729845676808578e-09
+        },
+        "fine": {
+          "t": 0.010000000000000002,
+          "steps": 10,
+          "absolute_mass": 2.738200878081802e-07,
+          "signed_mass": 2.7297274364708493e-07,
+          "nested_difference": 1.1583992125918797e-09
+        },
+        "absolute_mass_ratio": 4.016553897838598
+      }
+    ],
+    "full_validation": false,
+    "scope": "Equal-time cached mass-path estimates; physical-field accuracy separate."
+  },
+  "spatial_fields_T004_20261017": {
+    "t": 0.004,
+    "rows": [
+      {
+        "n": 6,
+        "dt": 0.002,
+        "input_sha256": "9c54d5cbba4b35eb9634ab8d9c1de4c7426a900de90748ab65c22ce62d588f35",
+        "configuration": {
+          "n": 6,
+          "dt": 0.002,
+          "end": 0.02,
+          "amplitude": 0.3,
+          "pressure_model": "quadratic",
+          "velocity_model": "affine",
+          "face_integration": "split",
+          "face_order": 4
+        },
+        "initial_fields": [
+          {
+            "order": 8,
+            "density_L1": 2.3489580363276732e-12,
+            "velocity_L1": 0.03769623184200729,
+            "pressure_L1": 0.045330454237999786,
+            "velocity_reference_relative_L1": 0.22950014140572655,
+            "min_density": 0.9999999999455766,
+            "min_pressure": 0.937942752350776,
+            "max_vertical_velocity_sampled": 0.0
+          },
+          {
+            "order": 12,
+            "density_L1": 2.3475331616999104e-12,
+            "velocity_L1": 0.037705605433909536,
+            "pressure_L1": 0.0453565844624011,
+            "velocity_reference_relative_L1": 0.22955734074920298,
+            "min_density": 0.9999999999442417,
+            "min_pressure": 0.9378262576784238,
+            "max_vertical_velocity_sampled": 0.0
+          }
+        ],
+        "evolved_fields": [
+          {
+            "order": 8,
+            "density_L1": 0.0009407835474868146,
+            "velocity_L1": 0.03861216312096783,
+            "pressure_L1": 0.046887465684575975,
+            "velocity_reference_relative_L1": 0.2350764646855622,
+            "min_density": 0.9843328109143331,
+            "min_pressure": 0.9370892335586467,
+            "max_vertical_velocity_sampled": 0.0005931026286167419
+          },
+          {
+            "order": 12,
+            "density_L1": 0.0009407463530499453,
+            "velocity_L1": 0.038621283323351775,
+            "pressure_L1": 0.046903950070859096,
+            "velocity_reference_relative_L1": 0.2351321215463764,
+            "min_density": 0.9840100087879444,
+            "min_pressure": 0.9369694743436793,
+            "max_vertical_velocity_sampled": 0.0006025170171111785
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "dt": 0.002,
+        "input_sha256": "1a375cfc46fe56762c93fabed8db09f0a72801f7faba0d967bcf4f640838c060",
+        "configuration": {
+          "n": 8,
+          "dt": 0.002,
+          "end": 0.02,
+          "amplitude": 0.3,
+          "pressure_model": "quadratic",
+          "velocity_model": "affine",
+          "face_integration": "split",
+          "face_order": 4
+        },
+        "initial_fields": [
+          {
+            "order": 8,
+            "density_L1": 5.784390368554297e-12,
+            "velocity_L1": 0.021916827936130076,
+            "pressure_L1": 0.020437530718755054,
+            "velocity_reference_relative_L1": 0.13343288453207156,
+            "min_density": 0.9999999998776867,
+            "min_pressure": 0.9152666917003729,
+            "max_vertical_velocity_sampled": 0.0
+          },
+          {
+            "order": 12,
+            "density_L1": 5.7836722289239075e-12,
+            "velocity_L1": 0.021919117242597198,
+            "pressure_L1": 0.020442143484262213,
+            "velocity_reference_relative_L1": 0.13344684317391795,
+            "min_density": 0.9999999998712651,
+            "min_pressure": 0.9151718882150426,
+            "max_vertical_velocity_sampled": 0.0
+          }
+        ],
+        "evolved_fields": [
+          {
+            "order": 8,
+            "density_L1": 0.0006823383917438023,
+            "velocity_L1": 0.02223873375680943,
+            "pressure_L1": 0.021383513804677852,
+            "velocity_reference_relative_L1": 0.1353926896756971,
+            "min_density": 0.9852897279082696,
+            "min_pressure": 0.9150632174157083,
+            "max_vertical_velocity_sampled": 0.0007813103029451363
+          },
+          {
+            "order": 12,
+            "density_L1": 0.0006823225206401522,
+            "velocity_L1": 0.022243279151439546,
+            "pressure_L1": 0.021384348837942976,
+            "velocity_reference_relative_L1": 0.1354203889696699,
+            "min_density": 0.9849778066708669,
+            "min_pressure": 0.9149728391337789,
+            "max_vertical_velocity_sampled": 0.0007894714391306363
+          }
+        ]
+      }
+    ],
+    "full_validation": false,
+    "scope": "Equal-time saved-endpoint spatial comparison; no evolution or cross-mesh array subtraction."
+  },
+  "vertical_pressure_reconstruction_audit_20261017": {
+    "rows": [
+      {
+        "path": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6/initial_state.json",
+        "sha256": "fc313739f9fe35d3e8c6143add2a549b2f4ad176ded102d96aa8d9227217ee23",
+        "t": 0.0,
+        "cells": 216,
+        "max_vertical_pressure_gradient": 0.09274171924022033,
+        "worst_cell": 120,
+        "worst_site": [
+          0.5788824927550367,
+          0.4245870375414267,
+          0.07971942779754101
+        ],
+        "max_mean_vertical_velocity": 0.0,
+        "pressure_diagnostic": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        }
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6/step_00002.npz",
+        "sha256": "9c54d5cbba4b35eb9634ab8d9c1de4c7426a900de90748ab65c22ce62d588f35",
+        "t": 0.004,
+        "cells": 216,
+        "max_vertical_pressure_gradient": 0.09369875303109858,
+        "worst_cell": 120,
+        "worst_site": [
+          0.5795192985024884,
+          0.42525709941998274,
+          0.07971895997941104
+        ],
+        "max_mean_vertical_velocity": 0.0002459709602285477,
+        "pressure_diagnostic": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        }
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8/initial_state.json",
+        "sha256": "e8d7970b38b4937e9323d61fee6896a0474f9d1d998f46d0f9671f645834d7fa",
+        "t": 0.0,
+        "cells": 512,
+        "max_vertical_pressure_gradient": 0.14774215953969522,
+        "worst_cell": 280,
+        "worst_site": [
+          0.557396573204245,
+          0.4403834266647636,
+          0.06167464477697772
+        ],
+        "max_mean_vertical_velocity": 0.0,
+        "pressure_diagnostic": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        }
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8/step_00002.npz",
+        "sha256": "1a375cfc46fe56762c93fabed8db09f0a72801f7faba0d967bcf4f640838c060",
+        "t": 0.004,
+        "cells": 512,
+        "max_vertical_pressure_gradient": 0.1449570771147673,
+        "worst_cell": 280,
+        "worst_site": [
+          0.558026907334003,
+          0.4409962263491676,
+          0.0616738749864896
+        ],
+        "max_mean_vertical_velocity": 0.00037388195370221654,
+        "pressure_diagnostic": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        }
+      }
+    ],
+    "full_validation": false,
+    "scope": "Reconstructed vertical pressure gradient on preserved states."
+  },
+  "free_affine_followup_symmetry_20261017": {
+    "n16_T004": {
+      "t": 0.004,
+      "rows": [
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+          "t": 0.004,
+          "step": 28,
+          "s": 0.5406793343400932,
+          "trial_sha256": "791669504b9f8d84bc4e0d91c614a6e4698cd5c6d860d52697a7ff18c0f57773",
+          "max_mean_vy": 6.476903176508315e-07,
+          "worst_site": [
+            0.5937275607674831,
+            0.9687499994706159
+          ],
+          "transverse_kinetic": 4.13371889509586e-15,
+          "min_transverse_second_moment": 2.184702991181349e-31
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod16",
+          "t": 0.004,
+          "step": 27,
+          "s": 0.8971925567242148,
+          "trial_sha256": "98a6e171c4d358264a43981e8e27706ee28f8aaf0bc0a68223554363231dfc97",
+          "max_mean_vy": 6.481340847965213e-07,
+          "worst_site": [
+            0.5937277574169264,
+            0.03125000051790809
+          ],
+          "transverse_kinetic": 7.884541404924855e-15,
+          "min_transverse_second_moment": 1.1945889301495808e-31
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PQ_velocity_affine_sod_controls_20261017/sod16",
+          "t": 0.004,
+          "step": 28,
+          "s": 0.43167026759845917,
+          "trial_sha256": "04dde698414e1f14a3e1f525eb36ec669bb174498769d1958227ddcbfe5836b2",
+          "max_mean_vy": 2.1226669618570535e-15,
+          "worst_site": [
+            0.5314751715855813,
+            0.09375
+          ],
+          "transverse_kinetic": 9.91685848049436e-32,
+          "min_transverse_second_moment": 3.2107157690852995e-38
+        }
+      ],
+      "full_validation": false,
+      "scope": "Equal-time dense saved-state diagnostic, no evolution or modified states."
+    },
+    "n32_T0001": {
+      "t": 0.0001,
+      "rows": [
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod32",
+          "t": 0.0001,
+          "step": 6,
+          "s": 0.5895877393287263,
+          "trial_sha256": "b4631d1aac931a93e397c278e53b1b8769a7bd08f3576e37f281d59a6d5b8c29",
+          "max_mean_vy": 2.0953390604195643e-11,
+          "worst_site": [
+            0.5156252852551821,
+            0.04687500000000046
+          ],
+          "transverse_kinetic": 3.609126617669627e-25,
+          "min_transverse_second_moment": 2.6464892592600537e-39
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod32",
+          "t": 0.0001,
+          "step": 6,
+          "s": 0.5971070772119766,
+          "trial_sha256": "ca77fd996d4661795640007ec4731f6293a2d7cb8e4b7b906df24d22f77f0600",
+          "max_mean_vy": 2.1700788651829654e-11,
+          "worst_site": [
+            0.5156252851251029,
+            0.046875000000000486
+          ],
+          "transverse_kinetic": 3.8406650821631e-25,
+          "min_transverse_second_moment": 3.6001984104573266e-39
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PQ_velocity_affine_sod_controls_20261017/sod32",
+          "t": 0.0001,
+          "step": 6,
+          "s": 0.5895460688737465,
+          "trial_sha256": "923785a46441a02c968f47919c37f6a23a46b0b61608d68944f49abdd9d7e5f3",
+          "max_mean_vy": 4.561391903473552e-17,
+          "worst_site": [
+            0.5156252852373547,
+            0.765625
+          ],
+          "transverse_kinetic": 9.767877607814845e-35,
+          "min_transverse_second_moment": 1.3912834673664389e-40
+        }
+      ],
+      "full_validation": false,
+      "scope": "Equal-time dense saved-state diagnostic, no evolution or modified states."
+    }
+  },
+  "pressure_fit_candidates_3d_20261017": {
+    "rows": [
+      {
+        "n": 6,
+        "mode": "radial_fixed_mean",
+        "max_vertical_gradient": 0.09274171924022033,
+        "pressure_L1_order6": 0.045346040048270767,
+        "max_cell_mean_error": 7.771561172376096e-16,
+        "diagnostics": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        },
+        "initial_sha256": "fc313739f9fe35d3e8c6143add2a549b2f4ad176ded102d96aa8d9227217ee23"
+      },
+      {
+        "n": 6,
+        "mode": "radial_free_mean",
+        "max_vertical_gradient": 0.04289112739119071,
+        "pressure_L1_order6": 0.04597742969895606,
+        "max_cell_mean_error": 7.771561172376096e-16,
+        "diagnostics": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        },
+        "initial_sha256": "fc313739f9fe35d3e8c6143add2a549b2f4ad176ded102d96aa8d9227217ee23"
+      },
+      {
+        "n": 6,
+        "mode": "tensor_free_mean",
+        "max_vertical_gradient": 0.049697200514416846,
+        "pressure_L1_order6": 0.04692685745880827,
+        "max_cell_mean_error": 6.661338147750939e-16,
+        "diagnostics": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        },
+        "initial_sha256": "fc313739f9fe35d3e8c6143add2a549b2f4ad176ded102d96aa8d9227217ee23"
+      },
+      {
+        "n": 8,
+        "mode": "radial_fixed_mean",
+        "max_vertical_gradient": 0.14774215953969522,
+        "pressure_L1_order6": 0.020431146953952924,
+        "max_cell_mean_error": 7.771561172376096e-16,
+        "diagnostics": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        },
+        "initial_sha256": "e8d7970b38b4937e9323d61fee6896a0474f9d1d998f46d0f9671f645834d7fa"
+      },
+      {
+        "n": 8,
+        "mode": "radial_free_mean",
+        "max_vertical_gradient": 0.06082165740381436,
+        "pressure_L1_order6": 0.020495327427475903,
+        "max_cell_mean_error": 9.992007221626409e-16,
+        "diagnostics": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        },
+        "initial_sha256": "e8d7970b38b4937e9323d61fee6896a0474f9d1d998f46d0f9671f645834d7fa"
+      },
+      {
+        "n": 8,
+        "mode": "tensor_free_mean",
+        "max_vertical_gradient": 0.07522647293564405,
+        "pressure_L1_order6": 0.02125627822056106,
+        "max_cell_mean_error": 7.771561172376096e-16,
+        "diagnostics": {
+          "pressure_limited_cells": 0,
+          "pressure_min_positivity_scale": 1.0
+        },
+        "initial_sha256": "e8d7970b38b4937e9323d61fee6896a0474f9d1d998f46d0f9671f645834d7fa"
+      }
+    ],
+    "full_validation": false,
+    "scope": "Initial state reconstruction only; no fluid evolution or changed state."
+  },
+  "long_vortex_gate_review_20261017": {
+    "source": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+    "checkpoint_sha256": "4c8b4c782710bf4ea5252c9df428e1668f58ca03c51cfb5ef18df022b52ce6cd",
+    "checkpoint_time": 0.16521874154958166,
+    "physical_score_time": 0.15587670642387452,
+    "physical_gates": {
+      "density_cell": {
+        "error": 0.0001930402862133229,
+        "limit": 0.001,
+        "passed": true
+      },
+      "velocity_cell": {
+        "error": 0.0004058998549717371,
+        "limit": 0.01,
+        "passed": true
+      },
+      "pressure_cell": {
+        "error": 0.00026852101161150497,
+        "limit": 0.01,
+        "passed": true
+      },
+      "density_field": {
+        "error": 0.0013012749334776177,
+        "limit": 0.001,
+        "passed": false
+      },
+      "velocity_field": {
+        "error": 0.0006514755137795119,
+        "limit": 0.01,
+        "passed": true
+      },
+      "pressure_field": {
+        "error": 0.0003592077406567415,
+        "limit": 0.01,
+        "passed": true
+      }
+    },
+    "full_target": 10.468597915605091,
+    "current_target": 0.2,
+    "stored_peak_rate": 9.476229092836153e-05,
+    "full_duration_rate_lower_bound": 0.0049601416064530435,
+    "rate_budget": 0.0001,
+    "full_validation": false,
+    "note": "Existing prefix durations do not exceed .2. Scaling stored peak by full_target/.2 is only a lower bound when earlier prefix rates used shorter durations. No trajectories or thresholds changed. Intermediate physical score failure is not an assertion about the future endpoint."
+  },
+  "free_affine_sod16_T002_20261017": {
+    "physical_report": {
+      "completed": true,
+      "problem": "sod_gamma5_3",
+      "n": 16,
+      "amplitude": 1.0,
+      "t": 0.02,
+      "source_time": 0.0,
+      "steps": 117,
+      "rejected": 6,
+      "numerical_passed": true,
+      "numerical_gate_details": {
+        "integrated_mass_and_quadrature": true,
+        "path_rate": true,
+        "generator_path": true,
+        "ledger": true,
+        "stage_mass": true,
+        "positive_pressure": true,
+        "positive_factor": true
+      },
+      "adaptive_path_quadrature": true,
+      "physical_accuracy_passed": true,
+      "final_score": {
+        "t": 0.02,
+        "amplitude": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 0.006256539810106595,
+          "velocity_cell": 0.012878863542920161,
+          "density_cell": 0.003647793187706164,
+          "pressure_field": 0.022291338879012298,
+          "velocity_field": 0.029607562129038943,
+          "density_field": 0.013303149115065173,
+          "energy_cell": 0.010279886234624683
+        },
+        "reference_quadrature_difference": 6.302467228658237e-16,
+        "reference_global_mass_relative": 1.9737298215558342e-16,
+        "density_min": 0.11287022048515037,
+        "pressure_min": 0.05313297761998069,
+        "integrated_entropy": 0.07239457644535238,
+        "reference_valid": true
+      },
+      "peak": {
+        "rate": 2.7878591225235608e-05,
+        "generator": 9.050295334725456e-06,
+        "ledger": 9.194034422677078e-17,
+        "stage_mass": 1.854900042371459e-13,
+        "min_pressure": 0.08691570663355823,
+        "min_factor_R": 0.0,
+        "pressure_diagnostics_steps_observed": 117,
+        "pressure_limited_cells_max": 16,
+        "pressure_positivity_scale_min": 0.6095322667924705
+      },
+      "integrated_absolute_mass_defect": 3.4177851094950685e-06,
+      "quadrature_mass_difference": 1.4122533169189024e-09,
+      "config": {
+        "n": 16,
+        "amplitude": 1.0,
+        "end": 0.02,
+        "max_dt": 0.0005,
+        "physical_goal": 0.05,
+        "path_mass_budget": 1e-05,
+        "path_quadrature_budget": 1e-07,
+        "path_rate_budget": 0.0001,
+        "generator_path_budget": 1e-05,
+        "mass_root_backend": "vector_sparse",
+        "velocity_reconstruction": "quadratic_budget_projected",
+        "kinetic_smoothing_coefficient": 1.0,
+        "kinetic_smoothing_length": 1.0,
+        "geometry_path": "quadratic_midpoint",
+        "geometry_step_controller": "combined",
+        "dense_moment_arithmetic": "longdouble",
+        "path_sample_lattice": 1024,
+        "path_save_batch": 8,
+        "adaptive_path_quadrature": true,
+        "note": "Independent free-affine nuisance curvature fit control; original physical initial arrays, fixed mass, material generators and unchanged thresholds. Earlier trajectories preserved.",
+        "problem": "sod_gamma5_3",
+        "pressure_reconstruction": "quadratic_cell_mean",
+        "pressure_polynomial_degree": 2,
+        "quadratic_budget_backend": "batched",
+        "physical_goals": {},
+        "resolve_mass_quadrature_before_reject": false,
+        "pressure_evaluation_backend": "monomial",
+        "mass_path_evaluation_backend": "cell_batched",
+        "moment_flux_evaluation_backend": "batched",
+        "power_cell_evaluation_backend": "seeded_active",
+        "pressure_reflection_y": "0,1",
+        "preserved_initial_state": "/gpfs/kjhan/LagForce/Codex_KI_sod16_quadratic_pressure_20261017_081427/initial_state.json",
+        "preserved_initial_state_sha256": "32e13388006c6468db0437c4d34e5b60877500ddceb9cad2be7be9e442ce6e47",
+        "preserved_source_config": "/gpfs/kjhan/LagForce/Codex_KI_sod16_quadratic_pressure_20261017_081427/simple_wave_config.json",
+        "preserved_source_config_sha256": "6b161dced3bf975ac0a6889fd89adad2d7fb999055ea874799f42ac040878d53",
+        "pressure_fit": "tensor_free_mean",
+        "velocity_fit": "tensor_free_affine"
+      },
+      "seconds": 514.1423729397357,
+      "path_workers": 4,
+      "note": "sod_gamma5_3 exact Euler reference used only at initialization/scoring. Continuous positive density from numerical six moments; current Sylvester positive midpoint factors. Fixed original mass, material generators. New physical-error allocation for this benchmark; old5e-11 contact budget unchanged. Sampled dense-path quadrature evidence, not a continuous-time bound.",
+      "signed_quadrature_absolute_sum": 1.4330738730661817e-09,
+      "absolute_quadrature_absolute_sum": 1.4850681811906333e-08
+    },
+    "symmetry": {
+      "t": 0.02,
+      "rows": [
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+          "t": 0.02,
+          "step": 134,
+          "s": 1.0,
+          "trial_sha256": "47382ab096e0cdfe4640d31676e65da28059df11d0bb4623de8e5b3e1e2063ea",
+          "max_mean_vy": 0.0001739633304707325,
+          "worst_site": [
+            0.5930934356445676,
+            0.031250790367500454
+          ],
+          "transverse_kinetic": 1.3156844443737888e-10,
+          "min_transverse_second_moment": 3.2931493869522938e-24
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod16",
+          "t": 0.02,
+          "step": 127,
+          "s": 1.0,
+          "trial_sha256": "3448ca3aed40f8fc41e96848ca0761ad6892a543e9fea7bd207f01f753f05144",
+          "max_mean_vy": 0.00010188276496917271,
+          "worst_site": [
+            0.5931236388182788,
+            0.03125053523121336
+          ],
+          "transverse_kinetic": 7.377543911771479e-11,
+          "min_transverse_second_moment": 2.669857485014047e-24
+        },
+        {
+          "root": "/gpfs/kjhan/LagForce/Codex_PQ_velocity_affine_sod_controls_20261017/sod16",
+          "t": 0.02,
+          "step": 117,
+          "s": 1.0,
+          "trial_sha256": "b827f42d09d90cd820fdd5c8d988887347cee3e6fa3bff6b1a9113fe0883f1d1",
+          "max_mean_vy": 8.49861547725744e-12,
+          "worst_site": [
+            0.5366565030495001,
+            0.46875000000001216
+          ],
+          "transverse_kinetic": 2.455946318409732e-25,
+          "min_transverse_second_moment": 7.306797560387719e-36
+        }
+      ],
+      "full_validation": false,
+      "scope": "Equal-time dense saved-state diagnostic, no evolution or modified states."
+    },
+    "full_shock_validation": false
+  },
+  "full_duration_budget_20261017": {
+    "targeted_passed": 6,
+    "regression_passed": 497,
+    "warning": "Existing Sod reference log warning",
+    "vortex_control": "/gpfs/kjhan/LagForce/Codex_PZ_vortex_full_horizon_control_20261017/n32",
+    "vortex_session": 86530,
+    "shock_control": "/gpfs/kjhan/LagForce/Codex_QB_affine_sod16_whole_interval_20261017/sod16",
+    "shock_session": 45359,
+    "full_validation": false
+  },
+  "full_horizon_initial_rejections_20261017": {
+    "rows": [
+      {
+        "rejection": 1,
+        "dt": 0.00025,
+        "nodes": 9,
+        "trial_sha256": "7d7d7830e518f8a7cf656f3ec7953d5d72a1b2d7e915cf33730857438bac032d",
+        "samples_sha256": "20369b51afc04c28f9f06a3826bee6c4a5ac60d19769dc28052540aee1935806",
+        "rate": 0.0017039752807549676,
+        "mass_ratio": 84.72621075181428,
+        "physical_ratio": 84.72621075181428,
+        "quadrature_ratio": 26.255443988596735,
+        "generator": 6.971564812703836e-07,
+        "ratio": 84.72621075181428,
+        "worst_node_s": 1.0,
+        "worst_cell": 336,
+        "initial_node_relative_rate": 2.593558114012422e-11,
+        "stage_mass": 4.061993085370096e-15
+      },
+      {
+        "rejection": 2,
+        "dt": 0.000125,
+        "nodes": 9,
+        "trial_sha256": "78ee59b56b45326b82c001a9bc6af35a8cff268b255cb9ea782ef6f61451fee7",
+        "samples_sha256": "6f89f7ecdaf25aa68b67be40391293e447540ba17776fdb4986e15ffb778ab76",
+        "rate": 0.00042597927403061227,
+        "mass_ratio": 21.17728651090511,
+        "physical_ratio": 21.17728651090511,
+        "quadrature_ratio": 18.931175367619467,
+        "generator": 4.922726164765673e-07,
+        "ratio": 21.17728651090511,
+        "worst_node_s": 1.0,
+        "worst_cell": 336,
+        "initial_node_relative_rate": 2.593558114012422e-11,
+        "stage_mass": 4.061993085370096e-15
+      },
+      {
+        "rejection": 3,
+        "dt": 6.25e-05,
+        "nodes": 9,
+        "trial_sha256": "fca9cbf440401c1cbdb99d877997418799828afb1f2d2cca4e90bdd4e5cbfb09",
+        "samples_sha256": "88d03a13a931d7c0291db6bfac50fed2c3296d6e6bb06654fd64c3f4c9b00505",
+        "rate": 0.00010649361188952189,
+        "mass_ratio": 5.293808287180271,
+        "physical_ratio": 5.293808287180271,
+        "quadrature_ratio": 13.51814108016192,
+        "generator": 3.478201967746332e-07,
+        "ratio": 13.51814108016192,
+        "worst_node_s": 1.0,
+        "worst_cell": 336,
+        "initial_node_relative_rate": 2.593558114012422e-11,
+        "stage_mass": 4.061993085370096e-15
+      },
+      {
+        "rejection": 4,
+        "dt": 3.125e-05,
+        "nodes": 9,
+        "trial_sha256": "62df3ffb0f0b3513753036d1f078fe1145f285999fd17182f625f5e2993a417d",
+        "samples_sha256": "bb91cb31f7076b78bda7e1aa9da28563e8694343f260a9627f01198819835f41",
+        "rate": 5.8928249738626394e-05,
+        "mass_ratio": 2.217528278006187,
+        "physical_ratio": 2.217528278006187,
+        "quadrature_ratio": 9.594571816367525,
+        "generator": 2.4584278007850175e-07,
+        "ratio": 9.594571816367525,
+        "worst_node_s": 1.0,
+        "worst_cell": 877,
+        "initial_node_relative_rate": 2.593558114012422e-11,
+        "stage_mass": 4.061993085370096e-15
+      },
+      {
+        "rejection": 5,
+        "dt": 1.5625e-05,
+        "nodes": 9,
+        "trial_sha256": "6ea3e0c250c507a1e3527d83d9e121c481e5ecd4fdb29480e1adfb829a2ba299",
+        "samples_sha256": "73c159e658e1456ffdb0780022ddfc23974d10eb53111f4a80073c1853d4664e",
+        "rate": 4.232966133856105e-05,
+        "mass_ratio": 1.58744194690235,
+        "physical_ratio": 1.58744194690235,
+        "quadrature_ratio": 6.792125196505139,
+        "generator": 1.7379761033976598e-07,
+        "ratio": 6.792125196505139,
+        "worst_node_s": 1.0,
+        "worst_cell": 877,
+        "initial_node_relative_rate": 2.593558114012422e-11,
+        "stage_mass": 4.061993085370096e-15
+      },
+      {
+        "rejection": 6,
+        "dt": 7.8125e-06,
+        "nodes": 9,
+        "trial_sha256": "9dbe5981a4f5f53c342b0eecd4e22ca13c882c101391abb2ddf939918a2bbbba",
+        "samples_sha256": "3c5e29590bbfc7937f139535f9e66ab5bc4ae29f8e89ba048bbd52074b3c7226",
+        "rate": 3.0183757707925275e-05,
+        "mass_ratio": 1.1295043900502642,
+        "physical_ratio": 1.1295043900502642,
+        "quadrature_ratio": 4.80419123721796,
+        "generator": 1.2287828201886217e-07,
+        "ratio": 4.80419123721796,
+        "worst_node_s": 1.0,
+        "worst_cell": 877,
+        "initial_node_relative_rate": 2.593558114012422e-11,
+        "stage_mass": 4.061993085370096e-15
+      }
+    ],
+    "captured_time": 3.90625e-06,
+    "full_validation": false
+  },
+  "full_horizon_covariance_scaling_20261017": {
+    "rows": [
+      {
+        "rejection": 1,
+        "dt": 0.00025,
+        "cells": [
+          {
+            "cell": 336,
+            "site": [
+              0.5175703355718109,
+              0.32896814023713483
+            ],
+            "initial_covariance_trace": 6.393386925353426e-09,
+            "endpoint_covariance_trace": 6.39673880230103e-09,
+            "trace_increment_per_dt": 1.340750779041419e-08,
+            "mass": 0.0008307768055356342
+          },
+          {
+            "cell": 877,
+            "site": [
+              0.41931174207986355,
+              0.8634871881821273
+            ],
+            "initial_covariance_trace": 0.0,
+            "endpoint_covariance_trace": 3.06597993675548e-15,
+            "trace_increment_per_dt": 1.226391974702192e-11,
+            "mass": 0.0009881719055574436
+          }
+        ]
+      },
+      {
+        "rejection": 2,
+        "dt": 0.000125,
+        "cells": [
+          {
+            "cell": 336,
+            "site": [
+              0.5175703355718109,
+              0.32896814023713483
+            ],
+            "initial_covariance_trace": 6.393386925353426e-09,
+            "endpoint_covariance_trace": 6.395055397433723e-09,
+            "trace_increment_per_dt": 1.3347776642374835e-08,
+            "mass": 0.0008307768055356342
+          },
+          {
+            "cell": 877,
+            "site": [
+              0.41931174207986355,
+              0.8634871881821273
+            ],
+            "initial_covariance_trace": 0.0,
+            "endpoint_covariance_trace": 1.5354834500420996e-15,
+            "trace_increment_per_dt": 1.2283867600336797e-11,
+            "mass": 0.0009881719055574436
+          }
+        ]
+      },
+      {
+        "rejection": 3,
+        "dt": 6.25e-05,
+        "cells": [
+          {
+            "cell": 336,
+            "site": [
+              0.5175703355718109,
+              0.32896814023713483
+            ],
+            "initial_covariance_trace": 6.393386925353426e-09,
+            "endpoint_covariance_trace": 6.3942192855807344e-09,
+            "trace_increment_per_dt": 1.3317763636928755e-08,
+            "mass": 0.0008307768055356342
+          },
+          {
+            "cell": 877,
+            "site": [
+              0.41931174207986355,
+              0.8634871881821273
+            ],
+            "initial_covariance_trace": 0.0,
+            "endpoint_covariance_trace": 7.683784831095898e-16,
+            "trace_increment_per_dt": 1.2294055729753435e-11,
+            "mass": 0.0009881719055574436
+          }
+        ]
+      },
+      {
+        "rejection": 4,
+        "dt": 3.125e-05,
+        "cells": [
+          {
+            "cell": 336,
+            "site": [
+              0.5175703355718109,
+              0.32896814023713483
+            ],
+            "initial_covariance_trace": 6.393386925353426e-09,
+            "endpoint_covariance_trace": 6.393802635393102e-09,
+            "trace_increment_per_dt": 1.3302721269623045e-08,
+            "mass": 0.0008307768055356342
+          },
+          {
+            "cell": 877,
+            "site": [
+              0.41931174207986355,
+              0.8634871881821273
+            ],
+            "initial_covariance_trace": 0.0,
+            "endpoint_covariance_trace": 3.843521909697629e-16,
+            "trace_increment_per_dt": 1.2299270111032412e-11,
+            "mass": 0.0009881719055574436
+          }
+        ]
+      },
+      {
+        "rejection": 5,
+        "dt": 1.5625e-05,
+        "cells": [
+          {
+            "cell": 336,
+            "site": [
+              0.5175703355718109,
+              0.32896814023713483
+            ],
+            "initial_covariance_trace": 6.393386925353426e-09,
+            "endpoint_covariance_trace": 6.393594662716603e-09,
+            "trace_increment_per_dt": 1.329519124331018e-08,
+            "mass": 0.0008307768055356342
+          },
+          {
+            "cell": 877,
+            "site": [
+              0.41931174207986355,
+              0.8634871881821273
+            ],
+            "initial_covariance_trace": 0.0,
+            "endpoint_covariance_trace": 1.9221802202201247e-16,
+            "trace_increment_per_dt": 1.2301953409408797e-11,
+            "mass": 0.0009881719055574436
+          }
+        ]
+      },
+      {
+        "rejection": 6,
+        "dt": 7.8125e-06,
+        "cells": [
+          {
+            "cell": 336,
+            "site": [
+              0.5175703355718109,
+              0.32896814023713483
+            ],
+            "initial_covariance_trace": 6.393386925353426e-09,
+            "endpoint_covariance_trace": 6.393490764603687e-09,
+            "trace_increment_per_dt": 1.3291424033307624e-08,
+            "mass": 0.0008307768055356342
+          },
+          {
+            "cell": 877,
+            "site": [
+              0.41931174207986355,
+              0.8634871881821273
+            ],
+            "initial_covariance_trace": 0.0,
+            "endpoint_covariance_trace": 9.611989095277821e-17,
+            "trace_increment_per_dt": 1.230334604195561e-11,
+            "mass": 0.0009881719055574436
+          }
+        ]
+      }
+    ],
+    "full_validation": false,
+    "note": "Saved endpoint factor traces; descriptive scaling only, not a causal proof."
+  },
+  "nonlinear3d_n10_control_20261017": {
+    "root": "/gpfs/kjhan/LagForce/Codex_QD_split_vortex_n10_20261017/n10",
+    "initial_score": [
+      {
+        "order": 8,
+        "density_L1": 9.640713833752893e-12,
+        "velocity_L1": 0.013800515456965224,
+        "pressure_L1": 0.012762980232239401,
+        "velocity_reference_relative_L1": 0.0840195980234239,
+        "min_density": 0.9999999997953393,
+        "min_pressure": 0.9033999692263917,
+        "max_vertical_velocity_sampled": 0.0
+      },
+      {
+        "order": 12,
+        "density_L1": 9.639214195816774e-12,
+        "velocity_L1": 0.013800177559665706,
+        "pressure_L1": 0.012762243505891727,
+        "velocity_reference_relative_L1": 0.08401752901411064,
+        "min_density": 0.9999999997900306,
+        "min_pressure": 0.9033287691178513,
+        "max_vertical_velocity_sampled": 0.0
+      }
+    ],
+    "initial_receipt": {
+      "initial_only": true,
+      "steps": 0,
+      "source": "original check_3d_vortex_evolution initializer",
+      "n": 10
+    },
+    "evolution_session": 73509,
+    "full_validation": false
+  },
+  "canonical_initial_chunk_audit_20261017": {
+    "root": "/gpfs/kjhan/LagForce/Codex_QE_kepler_chunk_reconstruction_20261017",
+    "preflight": {
+      "audited_cells": 32,
+      "total_cells": 246,
+      "density_order": 16,
+      "covers_all_initial_cells": false,
+      "full_validation": false,
+      "max_independent_mass_relative": 8.379256768527283e-14,
+      "max_quadrature_difference": 3.349747502917052e-15,
+      "min_pressure": 2.777777773158544e-05,
+      "scope": "Initial per-cell reconstruction only; no topology-wide closure, potential enrichment, or evolution validation."
+    },
+    "cache_validation": {
+      "passed": true,
+      "completed_cells_recomputed": false,
+      "scope": "32-cell real-data prefix cache reuse"
+    },
+    "canonical_session": 49974,
+    "full_validation": false
+  },
+  "n10_initial_vertical_pressure_20261017": {
+    "row": {
+      "path": "/gpfs/kjhan/LagForce/Codex_QD_split_vortex_n10_20261017/n10/initial_state.json",
+      "sha256": "77a38e1fbd12dd8d10c71b33a1b71ad1c4d09faa3d8dae4d1b6546f5693e90b4",
+      "t": 0.0,
+      "cells": 1000,
+      "max_vertical_pressure_gradient": 0.13807905248150068,
+      "worst_cell": 549,
+      "worst_site": [
+        0.5472518323042237,
+        0.44963957593520854,
+        0.9522257447818778
+      ],
+      "max_mean_vertical_velocity": 0.0,
+      "pressure_diagnostic": {
+        "pressure_limited_cells": 0,
+        "pressure_min_positivity_scale": 1.0
+      }
+    },
+    "full_validation": false,
+    "scope": "Initial n10 vertical pressure polynomial gradient, no evolution."
+  },
+  "temporal_mass_path_T012_20261017": {
+    "rows": [
+      {
+        "t": 0.012,
+        "coarse": {
+          "t": 0.012,
+          "steps": 6,
+          "absolute_mass": 1.2974242120415667e-06,
+          "signed_mass": 1.2929450693360157e-06,
+          "nested_difference": 3.729851285367204e-09
+        },
+        "fine": {
+          "t": 0.012000000000000004,
+          "steps": 12,
+          "absolute_mass": 3.230168211548692e-07,
+          "signed_mass": 3.2216947695586666e-07,
+          "nested_difference": 1.1583995426379932e-09
+        },
+        "absolute_mass_ratio": 4.0165840509572766
+      }
+    ],
+    "full_validation": false,
+    "scope": "Equal-time cached mass-path estimates; physical-field accuracy separate."
+  },
+  "nx_resume_1317_20261017": {
+    "time": "2026-10-17T13:17:34.330474",
+    "prior_terminal_exit": 124,
+    "old_pid_absent": true,
+    "checkpoint_sha256": "ad3d1d355ca7cb649be43a24db7dc00fc70f896eb1f9dee15f97b39b38f34a4c",
+    "source_manifest_verified": true,
+    "resume_time": 0.013000000000000005,
+    "steps": 13,
+    "pending_dense_record_exists": false,
+    "initial_state_preserved": true
+  },
+  "equal_time_affine_spatial_symmetry_T004_20261017": {
+    "t": 0.004,
+    "rows": [
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod16",
+        "t": 0.004,
+        "step": 28,
+        "s": 0.5406793343400932,
+        "trial_sha256": "791669504b9f8d84bc4e0d91c614a6e4698cd5c6d860d52697a7ff18c0f57773",
+        "max_mean_vy": 6.476903176508315e-07,
+        "worst_site": [
+          0.5937275607674831,
+          0.9687499994706159
+        ],
+        "transverse_kinetic": 4.13371889509586e-15,
+        "min_transverse_second_moment": 2.184702991181349e-31
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod16",
+        "t": 0.004,
+        "step": 27,
+        "s": 0.8971925567242148,
+        "trial_sha256": "98a6e171c4d358264a43981e8e27706ee28f8aaf0bc0a68223554363231dfc97",
+        "max_mean_vy": 6.481340847965213e-07,
+        "worst_site": [
+          0.5937277574169264,
+          0.03125000051790809
+        ],
+        "transverse_kinetic": 7.884541404924855e-15,
+        "min_transverse_second_moment": 1.1945889301495808e-31
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_PQ_velocity_affine_sod_controls_20261017/sod16",
+        "t": 0.004,
+        "step": 28,
+        "s": 0.43167026759845917,
+        "trial_sha256": "04dde698414e1f14a3e1f525eb36ec669bb174498769d1958227ddcbfe5836b2",
+        "max_mean_vy": 2.1226669618570535e-15,
+        "worst_site": [
+          0.5314751715855813,
+          0.09375
+        ],
+        "transverse_kinetic": 9.91685848049436e-32,
+        "min_transverse_second_moment": 3.2107157690852995e-38
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_MK_tensor_pressure_validation_20261017/sod32",
+        "t": 0.004,
+        "step": 52,
+        "s": 0.6376037215788729,
+        "trial_sha256": "69daf7a492d0617bff74c6c18ebdb40cf8a3a5e054bd3d49b72f40a311224b02",
+        "max_mean_vy": 8.061891283970655e-06,
+        "worst_site": [
+          0.5468244866946447,
+          0.015625007268447417
+        ],
+        "transverse_kinetic": 1.0184140175676047e-13,
+        "min_transverse_second_moment": 1.6054581250853556e-37
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_PA_velocity_tensor_sod_controls_20261017/sod32",
+        "t": 0.004,
+        "step": 57,
+        "s": 0.6443078189856646,
+        "trial_sha256": "8e1ac789ac00bf19c6941c23b4a95668a82c2c6cb478d4a8ed910df7087ed5b6",
+        "max_mean_vy": 7.434164006420354e-06,
+        "worst_site": [
+          0.5468252574858169,
+          0.9843749930539044
+        ],
+        "transverse_kinetic": 1.1407706659799604e-13,
+        "min_transverse_second_moment": 2.837490536124594e-37
+      },
+      {
+        "root": "/gpfs/kjhan/LagForce/Codex_PQ_velocity_affine_sod_controls_20261017/sod32",
+        "t": 0.004,
+        "step": 50,
+        "s": 0.697621768256812,
+        "trial_sha256": "062a12db0930efa49a3e701a35e0f0680806467297e2d43a3b34f48a3ed5f6ce",
+        "max_mean_vy": 5.2801321453485074e-14,
+        "worst_site": [
+          0.5160676418740893,
+          0.765625
+        ],
+        "transverse_kinetic": 1.1853912109267551e-29,
+        "min_transverse_second_moment": 2.737749251473201e-38
+      }
+    ],
+    "full_validation": false,
+    "scope": "Equal-time dense saved-state diagnostic, no evolution or modified states."
+  },
+  "canonical_initial_2624_cell_prefix_20261017": {
+    "cells": 2624,
+    "total": 36864,
+    "full_validation": false,
+    "identity": {
+      "initial_identity_sha256": "5c7e8624e639236fd4f4fa827d54a8d7fe3aa580e4070dfc1cf327bc1699985b",
+      "geometry_sha256": "baef3d28d0aa34099e08f1ae2af4ca0b0d9b6583883a53603da45ec224d73120",
+      "density_order": 16,
+      "source_manifest_sha256": "ac5c83726b04b22348d30313f7aca94b4b5f8ffe5bb5961772a6320286fea658",
+      "script_sha256": "1c4123af9a7b35733037ab02ffc569dc3a9ea28a85301145e6011b20b52a85fe"
+    },
+    "chunk_hashes": [
+      {
+        "first": 0,
+        "sha256": "8566b8b5b60f43a72f6e8ccf6db68d6c6eb95ac557d08f514a6a2d1aa7a85b78"
+      },
+      {
+        "first": 32,
+        "sha256": "672856d947f001f80207e2bf5358544a2cf75c32e376016a0f0a98cf5e813eaf"
+      },
+      {
+        "first": 64,
+        "sha256": "17b6b084b085ccbf0b810e12d6c5e60fb18cbc7f2269a6a54cd204073b89ed24"
+      },
+      {
+        "first": 96,
+        "sha256": "17fd56e90282b7055d8a914c20601207c1be9614f36d73076824631489c12144"
+      },
+      {
+        "first": 128,
+        "sha256": "858d21a8835b54811247fc183589d652cf250396f67861a651f62ce969dc56d3"
+      },
+      {
+        "first": 160,
+        "sha256": "858488e8f7df40a0c77e662ad490ba7e663b8ca26b995119798c9724de24c459"
+      },
+      {
+        "first": 192,
+        "sha256": "d30d5ff32196f73d278e425631031f56503a355a0025a6dd569604ac2749c2da"
+      },
+      {
+        "first": 224,
+        "sha256": "33d18297cc8ffd9b4df8c7ff756549f743d94b9af563f1da18e37e1cd5d4c3bf"
+      },
+      {
+        "first": 256,
+        "sha256": "fe8990039b6db2fb4138c8ddeadfb383285bbf50182909aee6aedab86c01be7b"
+      },
+      {
+        "first": 288,
+        "sha256": "1e50881570af4d0c6cbeb5a2facb054ca6f9ac25cfb9a036b87045c4f0390245"
+      },
+      {
+        "first": 320,
+        "sha256": "5b60a711c215cc7e4b9fc122435fadc91d95c324b27f6dfc0d4c7733ef15b9c1"
+      },
+      {
+        "first": 352,
+        "sha256": "10335f3c3aeb456bfe4c31ef4560e0a869e9543f0a8719e5b3e8101acc7b2ad6"
+      },
+      {
+        "first": 384,
+        "sha256": "cd75e57f42a72c9d43b0956abbef747fbe65bdbd2aa9b8da85ba0c4916ee557b"
+      },
+      {
+        "first": 416,
+        "sha256": "a6a727017a9d29e85d37f9470c21f1566485f4a2dd192ca35802c4623ab55a5a"
+      },
+      {
+        "first": 448,
+        "sha256": "c33fdabc915cdbf0e4f1ade388a5dac8e51fc2f77045d0bbcb4551a923744995"
+      },
+      {
+        "first": 480,
+        "sha256": "6cf661debbb1fb21a7938f24d4af075bd4bc95dd2f946d68d023b163cb9870c7"
+      },
+      {
+        "first": 512,
+        "sha256": "d02466fbfef4def01704587e97196670b2b2b8d541492213a6317ea515b78adc"
+      },
+      {
+        "first": 544,
+        "sha256": "60c63291d9ceb6faf2516ea5939b1da55b80cccb60771078322434a3940b4ea8"
+      },
+      {
+        "first": 576,
+        "sha256": "7c0cbb985971b497f5b12c9e033654b2535effd05aaa6f4bd92a16dc75b803df"
+      },
+      {
+        "first": 608,
+        "sha256": "243cdd32106207a6f24a90b4cb5b719b25d495bdb4890faf9c97756aee03ff62"
+      },
+      {
+        "first": 640,
+        "sha256": "8328f0577c129e9e72e5c8341fa4b8a9607f1192404b5bdd321e1c01241f8904"
+      },
+      {
+        "first": 672,
+        "sha256": "5c74967f7c0f1fd5439aea1b0e681b8b753b6e96f233f6118aeaa3410098cefa"
+      },
+      {
+        "first": 704,
+        "sha256": "1b3c85f33ea6ff7aa02baaaf8f52d18e0f442336610563b622a6661466c25d0c"
+      },
+      {
+        "first": 736,
+        "sha256": "766e9f25f0e5eea75e95847dc148a42ef6ef97d45322d4bdbae659a8c76f7299"
+      },
+      {
+        "first": 768,
+        "sha256": "5f7c0eb4414ffeb99bac944a1d070e0a66b4529396e5e5244223e47c09a3c2d1"
+      },
+      {
+        "first": 800,
+        "sha256": "883762ff7ff8ae41c8074aa163cf9fb80dfecb42ee2808e81776804efe55aca6"
+      },
+      {
+        "first": 832,
+        "sha256": "91932ff4ea054f2ac22868459d2efeb14671278ff2cd8a5f75b401673a4edbe2"
+      },
+      {
+        "first": 864,
+        "sha256": "cfc15e68a962757c5ade906ab1df190cb81fb2961d39509f57a5d8b016bf853d"
+      },
+      {
+        "first": 896,
+        "sha256": "d3ad06f81e66eb78a4afcf53240c195c51d8b2dbcde4b0a3d1890330fd326dad"
+      },
+      {
+        "first": 928,
+        "sha256": "dd8a8626a19f3ecc27b9b0036a4428843a768ae23c40886f74ec0a74b0be3f05"
+      },
+      {
+        "first": 960,
+        "sha256": "9a6f7b38b0fa5447240dcea006f914e1402085e599db84db80282d38eec726c6"
+      },
+      {
+        "first": 992,
+        "sha256": "c87d1d5a88676177b90601d3ebff174d488ec02d55bf2b4cd6a8611ce92a03c6"
+      },
+      {
+        "first": 1024,
+        "sha256": "1136c7d12a4dc6a0d544e080f1ff32c323e4a2b20c74992461b6d1e5601dd00b"
+      },
+      {
+        "first": 1056,
+        "sha256": "9165f08c7faa0091d0a35ddb98af26e61a001885b4a980b45614a2bee5d04b7a"
+      },
+      {
+        "first": 1088,
+        "sha256": "73e28c79d01c90e248b0004a66a9e13572d6078946ccc7f4dc9d8232f11ba560"
+      },
+      {
+        "first": 1120,
+        "sha256": "9dca0033c6bdf4f4955ebf8381a2754a3061cbedf775a78d935245e81bb52a4a"
+      },
+      {
+        "first": 1152,
+        "sha256": "8f64f51bdd9a8b8be1c6bf6ff9667d6ec0f86ac8ff718903143c17953e112f5f"
+      },
+      {
+        "first": 1184,
+        "sha256": "723b212a4207060083b05c27d4617550236d4dfac7b5cb12b68d7708e2d716f1"
+      },
+      {
+        "first": 1216,
+        "sha256": "1763d7f7b7363740ef78dedb26185931bc580f4a3d75e7ff2b593bc0b706731a"
+      },
+      {
+        "first": 1248,
+        "sha256": "1bb91ff679e6b6d8a3fd7ed3aed7fb5568ba8143a18c613c17e87d0395b165b2"
+      },
+      {
+        "first": 1280,
+        "sha256": "0f87b26aae186bff112c99d2842960cba24a43f845761a86211a6026dd5bb049"
+      },
+      {
+        "first": 1312,
+        "sha256": "e07a93e676ebeb7412735da66e5a083a810830b722a4402fd26449357c21ba98"
+      },
+      {
+        "first": 1344,
+        "sha256": "ad3449f46fa772623697b5386e30fd969bde04622f02eb7b49df4657aec96311"
+      },
+      {
+        "first": 1376,
+        "sha256": "cdeeef05ab903085fbdf6dd37dc430f299d4bfba58476e6c6a5de3dc3027df44"
+      },
+      {
+        "first": 1408,
+        "sha256": "b130b640c55f880fb3ef5af8468713cf39fd0f20b77fac1b298d9aa5650b924a"
+      },
+      {
+        "first": 1440,
+        "sha256": "deb16706ed370b0e559bd6ef8ff646e060ae05164db1ed923af8bed489ff85b9"
+      },
+      {
+        "first": 1472,
+        "sha256": "b1e146a7fa61dc209695217cd53a955884b5c07a581510c380ea124843b6aae2"
+      },
+      {
+        "first": 1504,
+        "sha256": "d1136d34ad7ee2a3964bf31341619991814a8b3268be9437a77b97a87018de55"
+      },
+      {
+        "first": 1536,
+        "sha256": "be9e4b9eba48d0b3ea7dbcb1388667dd31aff5f4d6e1e5c668a0a7eb684d6310"
+      },
+      {
+        "first": 1568,
+        "sha256": "ad6e7d7dce9e587b5367b4fba5846d17c963cc8c579468d2cc161ebad94c6956"
+      },
+      {
+        "first": 1600,
+        "sha256": "b93517650c0d9d154070463631d88ac31c2c08b9a2ff1e4ab0d34c9da3422d12"
+      },
+      {
+        "first": 1632,
+        "sha256": "78efb53c3daa2f0c3a646e193587476e12b81341ae495b9846611c17614c7790"
+      },
+      {
+        "first": 1664,
+        "sha256": "63e36d408669163cfeda431a1732791275d0401b869e7567ebe5346510d631dd"
+      },
+      {
+        "first": 1696,
+        "sha256": "d59351c6c67906e213c38606e5fbe7315ffc7fa264b60b4b4a6413265e708db0"
+      },
+      {
+        "first": 1728,
+        "sha256": "841af2725e8f223e155299886e81bdb9d34aa3c95a0131c64ff8e5c1e29b5c59"
+      },
+      {
+        "first": 1760,
+        "sha256": "f5c391cf9537a19743dd49090052f9910272cdb13eddda9dca2264014ca2d161"
+      },
+      {
+        "first": 1792,
+        "sha256": "57a123eee8e71f478080376eef64ba1825cdec63e00e65be552ee81f2ab09ac0"
+      },
+      {
+        "first": 1824,
+        "sha256": "0711f9a073e286551107f8c26b3c1d0456c1807d119666ae271d68c4981801a9"
+      },
+      {
+        "first": 1856,
+        "sha256": "c3a423f489005004cbb1bf6bcce037332a76627ee68bcd0ef31a40e8e4c84554"
+      },
+      {
+        "first": 1888,
+        "sha256": "cdf493c4dc4db388483a2c8d7a120dc6a671fceaa1755620d6bfca6c05712e1d"
+      },
+      {
+        "first": 1920,
+        "sha256": "4e26b7afc1aff715f8c30451cc5cf4f5c65f41b6e3c6f2c34542a2d8df8ef03c"
+      },
+      {
+        "first": 1952,
+        "sha256": "5b68df739efd8f8d042022e72430ebe38605579caab999b604311f5e49c5c557"
+      },
+      {
+        "first": 1984,
+        "sha256": "7d2e19cbe69fddfc68609c264ff4997718e78604ad012538ed0af512ab47ce09"
+      },
+      {
+        "first": 2016,
+        "sha256": "3cc5947970766bcd39bbebb7b29ee92b78623b4732a46ff7612804a640ecd93f"
+      },
+      {
+        "first": 2048,
+        "sha256": "b4cd6b74818598e2cf8d4813d3b3b929211ff7b4e6333df7a378c8d721bb508d"
+      },
+      {
+        "first": 2080,
+        "sha256": "3099fbcf081a7f8391b94748f33ff1e36872fa78a31bab2914d20700b7400791"
+      },
+      {
+        "first": 2112,
+        "sha256": "00a20cbf1e8271ce7fca54b3f7dd5f5d8851b08e4c4c2dbbae479ad7fdc9be36"
+      },
+      {
+        "first": 2144,
+        "sha256": "b70fefc09d13c41f43ab13bce522e516ba48eb51086a52a42b0b92963fc5c283"
+      },
+      {
+        "first": 2176,
+        "sha256": "5d128a011150960b9bbd76b9b3bf372ce7142fc76d809ee9c88b3110399cccb8"
+      },
+      {
+        "first": 2208,
+        "sha256": "fcb20ce23f06078d65b6e89e7cdd51a1b1d6ae423a923d0a8caaeacd35b5e2cf"
+      },
+      {
+        "first": 2240,
+        "sha256": "57d27a6cb17e67b8eb73afb42be001c0b6aee8419d63e19694de94358f6cdf55"
+      },
+      {
+        "first": 2272,
+        "sha256": "c8cb4e2ec66ffe34d572a3541b410fb3ba78bf88f7320a817b8b39ca0c4c620f"
+      },
+      {
+        "first": 2304,
+        "sha256": "72239238a256e2fe2d85f19403b5845b3d87e467634b65c30d0a882ebb7f24d7"
+      },
+      {
+        "first": 2336,
+        "sha256": "29be14135ebcc3c7e901f99d7711ace0d10d4649ed0d3afda6ff3f08151c8df8"
+      },
+      {
+        "first": 2368,
+        "sha256": "ea84fa0efd3a304b2ed5de1499a4c4e1b39e40074680f7c29d74fcb6e3b9fa01"
+      },
+      {
+        "first": 2400,
+        "sha256": "602084fd8383249924be1692ddb59b488cf43ab55a74d95cb4e0579ca2e5447c"
+      },
+      {
+        "first": 2432,
+        "sha256": "287c9566ee5d5b2dfc145d887892bfc597b975d28273eb356f77ecb943b7e103"
+      },
+      {
+        "first": 2464,
+        "sha256": "d6e9f7a3c2ab2933d86732f586434507946af5428607dda02efe63c25da8b583"
+      },
+      {
+        "first": 2496,
+        "sha256": "060baffb504cd523ca8ef790a11e586bb3c55991288215f1d394a87daddb4d34"
+      },
+      {
+        "first": 2528,
+        "sha256": "3c6f0735e9c771f8cfe89615a7b9231f6ad49c32979992bddbf2ba45bceb9b3e"
+      },
+      {
+        "first": 2560,
+        "sha256": "48567ef56c2c7484c892609a966900df0398428504aa6876583ead53c4ba260f"
+      },
+      {
+        "first": 2592,
+        "sha256": "19166a5a29ed567fd14ba8fae6ab745d3afbaa6a78e99ce7da801eeaf8eef7fb"
+      }
+    ],
+    "worst_mass": {
+      "cell": 2423,
+      "pressure": 2.777777783101725e-05,
+      "density_fit_residual": 2.0816681711721685e-16,
+      "independent_mass_relative": 1.2579421987651171e-12,
+      "independent_mass_quadrature_difference": 4.443455311780703e-16
+    },
+    "max_quadrature_difference": 3.3202172736556692e-15,
+    "minimum_pressure": 2.777777710207712e-05,
+    "scope": "Captured audited prefix, not full initial state or evolution."
+  },
+  "long_shock_progress_T008457_20261017": {
+    "t": 0.08457386732205362,
+    "amplitude": 1.0,
+    "errors_over_amplitude": {
+      "pressure_cell": 0.018967328011815204,
+      "velocity_cell": 0.02743458239308062,
+      "density_cell": 0.008498859261341588,
+      "pressure_field": 0.027117911942571175,
+      "velocity_field": 0.041997481496448406,
+      "density_field": 0.02949335040676223,
+      "energy_cell": 0.024885390683930832
+    },
+    "reference_quadrature_difference": 5.392618318035558e-16,
+    "reference_global_mass_relative": 5.921189464667503e-16,
+    "density_min": 0.10625704972013976,
+    "pressure_min": 0.05827465314490582,
+    "integrated_entropy": 0.07436784199924588,
+    "reference_valid": true,
+    "checkpoint_sha256": "95a8c08f48741b5a9756cbc5a3df007f9309da7ab2d44bc0dbb2e190fdef9044",
+    "mass_array_exact": true,
+    "steps": 2244,
+    "target": 0.15,
+    "intermediate_only": true,
+    "max_mean_transverse_velocity": 0.006428062149680277,
+    "transverse_kinetic": 1.350977969285321e-07
+  },
+  "completion_audit_history": [
+    {
+      "as_of": "2026-10-17T12:01:52.065149+09:00",
+      "full_scope_complete": false,
+      "requirements": {
+        "shock": {
+          "target_t": 0.15,
+          "physical_L1_goal": 0.05,
+          "complete": false,
+          "current": {
+            "root": "/gpfs/kjhan/LagForce/Codex_MV_sod16_tensor_whole_interval_20261017",
+            "t": 0.0606774344318195,
+            "steps": 1299
+          }
+        },
+        "long_time": {
+          "target": "10 central vortex periods",
+          "intermediate_target": 0.2,
+          "complete": false,
+          "current": {
+            "root": "/gpfs/kjhan/LagForce/Codex_JU_vortex_long_continuation_20261017_075456",
+            "t": 0.1471584707298482,
+            "steps": 944
+          }
+        },
+        "three_dimensions": {
+          "target": "nonlinear physical accuracy plus independent mass path, temporal and spatial convergence",
+          "complete": false,
+          "current": [
+            {
+              "root": "/gpfs/kjhan/LagForce/Codex_NS_split_vortex_evolution_20261017/n6",
+              "t": 0.012,
+              "steps": 6
+            },
+            {
+              "root": "/gpfs/kjhan/LagForce/Codex_NX_split_vortex_time_refinement_20261017/n6",
+              "t": 0.005,
+              "steps": 5
+            }
+          ],
+          "n8_root": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017/n8"
+        },
+        "kepler": {
+          "target": "canonical192 squared100-orbit fluid disk",
+          "complete": false,
+          "current": "auxiliary n32 saved-state controls near t=.01; canonical run absent",
+          "limitations": [
+            "single-step conservation is not full disk accuracy",
+            "large local density errors remain",
+            "midpoint source currently requires positive-definite covariance"
+          ]
+        }
+      }
+    }
+  ],
+  "n8_time_refinement_control_20261017": {
+    "root": "/gpfs/kjhan/LagForce/Codex_QK_split_vortex_n8_time_refinement_20261017/n8",
+    "session": 58672,
+    "dt": 0.001,
+    "end": 0.02,
+    "source_receipt": {
+      "source": "/gpfs/kjhan/LagForce/Codex_OR_split_vortex_n8_20261017",
+      "source_manifest_verified": true,
+      "original_initial_sha256": "e8d7970b38b4937e9323d61fee6896a0474f9d1d998f46d0f9671f645834d7fa",
+      "original_arrays_exact": true,
+      "changed_setting": "dt .002 -> .001",
+      "target": 0.02,
+      "full_validation": false
+    },
+    "full_validation": false
+  },
+  "velocity_fit_run_identity_guard_20261017": {
+    "root": "/gpfs/kjhan/LagForce/Codex_QL_velocity_fit_identity_validation_20261017",
+    "targeted_passed": 6,
+    "regression_passed": 499,
+    "regression_warning": "Existing Sod initializer logarithm warning",
+    "behavior": "Reject configuration/environment velocity-fit mismatch and nondefault curvature fit with affine-only reconstruction before creating state files",
+    "existing_run_sources_changed": false,
+    "full_validation": false
+  },
+  "three_d_time_fields_T012_20261017": {
+    "t": 0.012000000000000004,
+    "rows": [
+      {
+        "n": 6,
+        "dt": 0.002,
+        "input_sha256": "3b75d51830bdfde84674b23407b23d69bb0e34a7599c3f9a4066602fbc7066c0",
+        "configuration": {
+          "n": 6,
+          "dt": 0.002,
+          "end": 0.02,
+          "amplitude": 0.3,
+          "pressure_model": "quadratic",
+          "velocity_model": "affine",
+          "face_integration": "split",
+          "face_order": 4
+        },
+        "initial_fields": [
+          {
+            "order": 8,
+            "density_L1": 2.3489580363276732e-12,
+            "velocity_L1": 0.03769623184200729,
+            "pressure_L1": 0.045330454237999786,
+            "velocity_reference_relative_L1": 0.22950014140572655,
+            "min_density": 0.9999999999455766,
+            "min_pressure": 0.937942752350776,
+            "max_vertical_velocity_sampled": 0.0
+          },
+          {
+            "order": 12,
+            "density_L1": 2.3475331616999104e-12,
+            "velocity_L1": 0.037705605433909536,
+            "pressure_L1": 0.0453565844624011,
+            "velocity_reference_relative_L1": 0.22955734074920298,
+            "min_density": 0.9999999999442417,
+            "min_pressure": 0.9378262576784238,
+            "max_vertical_velocity_sampled": 0.0
+          }
+        ],
+        "evolved_fields": [
+          {
+            "order": 8,
+            "density_L1": 0.0027696873836541534,
+            "velocity_L1": 0.0405935532064341,
+            "pressure_L1": 0.05088380505313245,
+            "velocity_reference_relative_L1": 0.24713944930091664,
+            "min_density": 0.9558072477487312,
+            "min_pressure": 0.9356088605050896,
+            "max_vertical_velocity_sampled": 0.0016426573882522926
+          },
+          {
+            "order": 12,
+            "density_L1": 0.00276976961807812,
+            "velocity_L1": 0.04059988164290401,
+            "pressure_L1": 0.050888944144379084,
+            "velocity_reference_relative_L1": 0.24717812143042966,
+            "min_density": 0.9548924232330335,
+            "min_pressure": 0.9354831476102878,
+            "max_vertical_velocity_sampled": 0.0016684244936455749
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "dt": 0.001,
+        "input_sha256": "c1054cb6d96b425897948ccaeff76690c61f6ff2a026f2596d579e81b474b0c6",
+        "configuration": {
+          "n": 6,
+          "dt": 0.001,
+          "end": 0.02,
+          "amplitude": 0.3,
+          "pressure_model": "quadratic",
+          "velocity_model": "affine",
+          "face_integration": "split",
+          "face_order": 4
+        },
+        "initial_fields": [
+          {
+            "order": 8,
+            "density_L1": 2.3489580363276732e-12,
+            "velocity_L1": 0.03769623184200729,
+            "pressure_L1": 0.045330454237999786,
+            "velocity_reference_relative_L1": 0.22950014140572655,
+            "min_density": 0.9999999999455766,
+            "min_pressure": 0.937942752350776,
+            "max_vertical_velocity_sampled": 0.0
+          },
+          {
+            "order": 12,
+            "density_L1": 2.3475331616999104e-12,
+            "velocity_L1": 0.037705605433909536,
+            "pressure_L1": 0.0453565844624011,
+            "velocity_reference_relative_L1": 0.22955734074920298,
+            "min_density": 0.9999999999442417,
+            "min_pressure": 0.9378262576784238,
+            "max_vertical_velocity_sampled": 0.0
+          }
+        ],
+        "evolved_fields": [
+          {
+            "order": 8,
+            "density_L1": 0.002769666112664779,
+            "velocity_L1": 0.04059333605543337,
+            "pressure_L1": 0.05088152541580383,
+            "velocity_reference_relative_L1": 0.24713813137022012,
+            "min_density": 0.9557570923539693,
+            "min_pressure": 0.9356086783953044,
+            "max_vertical_velocity_sampled": 0.001643019929239249
+          },
+          {
+            "order": 12,
+            "density_L1": 0.0027697545019611707,
+            "velocity_L1": 0.040600278826463165,
+            "pressure_L1": 0.05088740478634986,
+            "velocity_reference_relative_L1": 0.24718054019319907,
+            "min_density": 0.9548611729589898,
+            "min_pressure": 0.9354829727834335,
+            "max_vertical_velocity_sampled": 0.0016687968636660937
+          }
+        ]
+      }
+    ],
+    "full_validation": false,
+    "scope": "Equal-time temporal refinement with identical original initial arrays; no evolution replay.",
+    "maximum_endpoint_differences": {
+      "sites": 3.960231514943402e-08,
+      "weights": 1.3021769153606253e-08,
+      "raw": 5.084309490023704e-09,
+      "factors": 3.141580687162759e-08
+    }
+  },
+  "vortex_initial_fit_divergence_20261017": {
+    "initial_sha256": "f28f2cbe85a7709cbc6b847ff2bbb22c099fb224dbd6870f32e906b40a015f43",
+    "initial_density_error": 9.547918011776346e-15,
+    "rows": [
+      {
+        "mode": "radial_fixed_mean",
+        "max_density_mean_rate": 0.03162034069612136,
+        "volume_integrated_absolute_density_rate": 0.0017185942556041923,
+        "global_area_rate": 1.7394668604814312e-17,
+        "worst_cell": 758,
+        "worst_site": [
+          0.7006862066046771,
+          0.7297408163182938
+        ],
+        "mass_flux": 4.061993085370096e-15
+      },
+      {
+        "mode": "tensor_free_mean",
+        "max_density_mean_rate": 0.034859590315283503,
+        "volume_integrated_absolute_density_rate": 0.0018499562509338026,
+        "global_area_rate": 3.5270451923669066e-17,
+        "worst_cell": 758,
+        "worst_site": [
+          0.7006862066046771,
+          0.7297408163182938
+        ],
+        "mass_flux": 6.240918426578951e-15
+      },
+      {
+        "mode": "tensor_free_affine",
+        "max_density_mean_rate": 0.03604840715343398,
+        "volume_integrated_absolute_density_rate": 0.0017713510294992039,
+        "global_area_rate": -3.134021904840911e-17,
+        "worst_cell": 758,
+        "worst_site": [
+          0.7006862066046771,
+          0.7297408163182938
+        ],
+        "mass_flux": 5.206216859530988e-15
+      }
+    ],
+    "full_validation": false,
+    "scope": "Same initial-state instantaneous volume/density consistency comparison; stationary reference density is1, no steering or evolution."
+  },
+  "vortex_initial_spatial_consistency_20261017": {
+    "root": "/gpfs/kjhan/LagForce/Codex_QO_vortex_spatial_initial_consistency_20261017",
+    "n16_session": 29930,
+    "n64_session": 94011,
+    "initial_only": true,
+    "full_validation": false
+  },
+  "vortex_spatial_initial_results_20261017": {
+    "16": {
+      "n": 16,
+      "t": 0.0,
+      "initial_only": true,
+      "full_validation": false,
+      "initial_score": {
+        "t": 0.0,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 1.6854489482543522e-15,
+          "velocity_cell": 0.0,
+          "density_cell": 0.0,
+          "pressure_field": 0.002846451316550308,
+          "velocity_field": 0.0017636537304753707,
+          "density_field": 8.68850345323973e-13,
+          "energy_cell": 0.0
+        },
+        "density_min": 0.9999999999587043,
+        "pressure_min": 0.6958315201980818,
+        "reference_quadrature_difference": 2.1666726839176997e-10,
+        "reference_global_mass_relative": 4.440892098500627e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      },
+      "initial_density_mean_error": 4.440892098500626e-16,
+      "max_density_mean_rate": 0.10458177795822597,
+      "volume_integrated_absolute_density_rate": 0.010875967759444879,
+      "mass_flux": 5.421010862427522e-18,
+      "source_manifest_sha256": "c95c9509f6912ecf5532cb7b2d0f1386add1f288666016bc7cd262df21d3e297",
+      "script_sha256": "f11ead4ef20b7d1e43653f7411a794f0c46b2c68c115f6eeaa3c9339532d8d4a"
+    },
+    "64": {
+      "n": 64,
+      "t": 0.0,
+      "initial_only": true,
+      "full_validation": false,
+      "initial_score": {
+        "t": 0.0,
+        "amplitude": 0.5,
+        "pressure_scale": 0.3152032964677642,
+        "density_scale": 1.0,
+        "errors_over_amplitude": {
+          "pressure_cell": 1.8050642282044534e-15,
+          "velocity_cell": 0.0,
+          "density_cell": 0.0,
+          "pressure_field": 6.441056135633174e-06,
+          "velocity_field": 1.556644049662661e-05,
+          "density_field": 3.345010342888963e-11,
+          "energy_cell": 0.0
+        },
+        "density_min": 0.9999999988702682,
+        "pressure_min": 0.6848048825530211,
+        "reference_quadrature_difference": 1.0424251118193455e-12,
+        "reference_global_mass_relative": 1.1102230246251568e-16,
+        "reference_valid": true,
+        "note": "Velocity errors normalized by peak speed, pressure/energy by pressure drop, density by background1. Stationary exact fields only initialize/score; cells and reference cell integrals move."
+      },
+      "initial_density_mean_error": 5.551115123125783e-16,
+      "max_density_mean_rate": 0.006430708126617045,
+      "volume_integrated_absolute_density_rate": 0.0002890137168139395,
+      "mass_flux": 1.657474071187215e-17,
+      "source_manifest_sha256": "c95c9509f6912ecf5532cb7b2d0f1386add1f288666016bc7cd262df21d3e297",
+      "script_sha256": "f11ead4ef20b7d1e43653f7411a794f0c46b2c68c115f6eeaa3c9339532d8d4a"
+    }
+  },
+  "vortex_later_rejection_diagnosis_20261017": {
+    "rows": [
+      {
+        "rejection": 7,
+        "t": 0.0010066615247029016,
+        "dt": 2.434660089854604e-05,
+        "nodes": 9,
+        "trial_sha256": "ad67167ffff1bb23314d7799496ae2a04a3c03da8ab9c92ee1aed7463a1f7a62",
+        "samples_sha256": "cac55a7994f15da651ba65345dd07aa9c3efd531a1de8e330dbdb45b6c131866",
+        "rate": 0.0029747365389581745,
+        "mass_ratio": 62.674482594890435,
+        "physical_ratio": 62.674482594890435,
+        "quadrature_ratio": 241.67726708988064,
+        "generator": 2.7017462156386784e-09,
+        "ratio": 241.67726708988064,
+        "worst_node_s": 1.0,
+        "worst_cell": 491,
+        "initial_node_relative_rate": 9.817713574745688e-12,
+        "stage_mass": 3.719109066123872e-15
+      },
+      {
+        "rejection": 8,
+        "t": 0.0010188348251521746,
+        "dt": 1.825995067390953e-05,
+        "nodes": 9,
+        "trial_sha256": "b09efb803ef7fcd77db436092decdcf489a233f90aa0a9a910b75aa3e7820581",
+        "samples_sha256": "95bb4308bb6cbaa7742c79fed52d0dcbb80e559869b52edd86f64db49a4396e8",
+        "rate": 0.0005547671970459508,
+        "mass_ratio": 25.663525414873398,
+        "physical_ratio": 25.663525414873398,
+        "quadrature_ratio": 235.08755538837997,
+        "generator": 1.5196870983835709e-09,
+        "ratio": 235.08755538837997,
+        "worst_node_s": 1.0,
+        "worst_cell": 491,
+        "initial_node_relative_rate": 9.636668529420778e-12,
+        "stage_mass": 3.7150238262192645e-15
+      },
+      {
+        "rejection": 9,
+        "t": 0.0010188348251521746,
+        "dt": 9.129975336954766e-06,
+        "nodes": 9,
+        "trial_sha256": "66e096af009a665e2575a5be59bcc2b0e93097bc64ef64fddada2058a219a7fe",
+        "samples_sha256": "8bca6762e3faa9cba40c96b2db17d513d67c5ac43c02b35b9d68c520728cd103",
+        "rate": 0.0005619376982795781,
+        "mass_ratio": 21.96233187189764,
+        "physical_ratio": 21.96233187189764,
+        "quadrature_ratio": 150.92250025981954,
+        "generator": 3.7994229984406047e-10,
+        "ratio": 150.92250025981954,
+        "worst_node_s": 1.0,
+        "worst_cell": 491,
+        "initial_node_relative_rate": 9.636668529420778e-12,
+        "stage_mass": 3.7150238262192645e-15
+      },
+      {
+        "rejection": 10,
+        "t": 0.0010188348251521746,
+        "dt": 4.564987668477383e-06,
+        "nodes": 9,
+        "trial_sha256": "968af91d0782de32ca91f054fee732c543d95da1aedd6c1ecab61ac534215253",
+        "samples_sha256": "a1da75bc74439f2cc69b4ca5286f7272c685cd828091ac2a9f12c884614e7a53",
+        "rate": 0.0005636860934536662,
+        "mass_ratio": 16.223207896247605,
+        "physical_ratio": 16.223207896247605,
+        "quadrature_ratio": 42.57796386858078,
+        "generator": 9.49850198495028e-11,
+        "ratio": 42.57796386858078,
+        "worst_node_s": 1.0,
+        "worst_cell": 491,
+        "initial_node_relative_rate": 9.636668529420778e-12,
+        "stage_mass": 3.7150238262192645e-15
+      },
+      {
+        "rejection": 11,
+        "t": 0.0010188348251521746,
+        "dt": 2.2824938342386914e-06,
+        "nodes": 9,
+        "trial_sha256": "9e7c090811729f0555b3ea53826dd19a3daa9a8be69a81b5e395d05e7ab4d8c5",
+        "samples_sha256": "f9f826b8ec1abba013e62c8a474ea382c4de6831ab0fdc34c2e5b59e2020c5e1",
+        "rate": 0.00010204855408754913,
+        "mass_ratio": 0.7422707238063496,
+        "physical_ratio": 1.0204855408754911,
+        "quadrature_ratio": 11.391926445209101,
+        "generator": 2.375177832192321e-11,
+        "ratio": 11.391926445209101,
+        "worst_node_s": 1.0,
+        "worst_cell": 491,
+        "initial_node_relative_rate": 9.636668529420778e-12,
+        "stage_mass": 3.7150238262192645e-15
+      },
+      {
+        "rejection": 12,
+        "t": 0.001019976072069294,
+        "dt": 1.7118703756790185e-06,
+        "nodes": 9,
+        "trial_sha256": "ed0ba9dbbba032a0176646e03aa01bf28d414ef823e188022de54bc3df606f66",
+        "samples_sha256": "e65539f0a61737c087ff960d572d5970820a3652de9a1d5d418f605b537f59df",
+        "rate": 0.00023094500968245623,
+        "mass_ratio": 6.1673541787628965,
+        "physical_ratio": 6.1673541787628965,
+        "quadrature_ratio": 7.8685436941941544,
+        "generator": 1.3363699036261778e-11,
+        "ratio": 7.8685436941941544,
+        "worst_node_s": 1.0,
+        "worst_cell": 491,
+        "initial_node_relative_rate": 1.1870283118398455e-11,
+        "stage_mass": 3.714592686449112e-15
+      },
+      {
+        "rejection": 13,
+        "t": 0.001092614148974728,
+        "dt": 2.3499937479637427e-05,
+        "nodes": 9,
+        "trial_sha256": "3e04f8e3d1b45df9b563bc95cfe1ef6c77f9e5f6427300a286ef15a66c06d94e",
+        "samples_sha256": "74038f66fbbd180e914361c11efc26d9e49edbc4c78d27213121bbd288edefaf",
+        "rate": 0.0014996910916448625,
+        "mass_ratio": 57.603020754307686,
+        "physical_ratio": 57.603020754307686,
+        "quadrature_ratio": 483.1187197105401,
+        "generator": 2.515938013480934e-09,
+        "ratio": 483.1187197105401,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.028022657005546e-11,
+        "stage_mass": 3.689813584610135e-15
+      },
+      {
+        "rejection": 14,
+        "t": 0.001092614148974728,
+        "dt": 1.1749968739818714e-05,
+        "nodes": 9,
+        "trial_sha256": "4a22435cd80a902e9d5c837e4637f049b69bc2e13eaafa07b987863d9351dd85",
+        "samples_sha256": "cb10de1dc49f5e9f913877b01ea233278c63ae2bd70c4bb4c1fceac0b723c269",
+        "rate": 0.0014955278173938188,
+        "mass_ratio": 40.934734743154024,
+        "physical_ratio": 40.934734743154024,
+        "quadrature_ratio": 70.82532353959739,
+        "generator": 6.290289400467941e-10,
+        "ratio": 70.82532353959739,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.028022657005546e-11,
+        "stage_mass": 3.689813584610135e-15
+      },
+      {
+        "rejection": 15,
+        "t": 0.001092614148974728,
+        "dt": 5.874984369909357e-06,
+        "nodes": 9,
+        "trial_sha256": "e81030c5a918caf164aea61c2a32a1b73e39b2b487ca72d0c5171f068eda6ef8",
+        "samples_sha256": "2d2262e1549bb4e71282eab868a45dbf691d0558b0ba9115fd3f738928eb84ca",
+        "rate": 0.00017038461482836643,
+        "mass_ratio": 0.7285444689138726,
+        "physical_ratio": 1.7038461482836642,
+        "quadrature_ratio": 70.82447135744769,
+        "generator": 1.5725643010000567e-10,
+        "ratio": 70.82447135744769,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.028022657005546e-11,
+        "stage_mass": 3.689813584610135e-15
+      },
+      {
+        "rejection": 16,
+        "t": 0.0010955516411596826,
+        "dt": 4.406238277432017e-06,
+        "nodes": 9,
+        "trial_sha256": "e0ad04ed7176f34015a46a284e8c5c9dbcf0d18b55d5519631bbb1b91177f1f5",
+        "samples_sha256": "ce9797c41e2681f56b870f005fd705f7704488a2131a8b2e6df5c0a21bc1b34d",
+        "rate": 0.0005861781587853303,
+        "mass_ratio": 13.868329369790342,
+        "physical_ratio": 13.868329369790342,
+        "quadrature_ratio": 15.833467311798094,
+        "generator": 8.845635335319457e-11,
+        "ratio": 15.833467311798094,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 8.563328490277871e-12,
+        "stage_mass": 3.688785286612168e-15
+      },
+      {
+        "rejection": 17,
+        "t": 0.0010977547602983985,
+        "dt": 3.304678708074013e-06,
+        "nodes": 9,
+        "trial_sha256": "6554d4f19772a5392d7a4c0a30df64e69776f1e7d39510c9edd0783e12afe9f1",
+        "samples_sha256": "5ed83151139e98a1d3efeaca29c755e6361e7b6084d8b7bb74f2904543f34504",
+        "rate": 3.8098535029615196e-05,
+        "mass_ratio": 1.744552354954449,
+        "physical_ratio": 1.744552354954449,
+        "quadrature_ratio": 15.833464321147247,
+        "generator": 4.976113965327045e-11,
+        "ratio": 15.833464321147247,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.2065482334697706e-11,
+        "stage_mass": 3.688021262893745e-15
+      },
+      {
+        "rejection": 18,
+        "t": 0.0010977547602983985,
+        "dt": 1.6523393540370065e-06,
+        "nodes": 9,
+        "trial_sha256": "be0d900e518bfb25a4fe3bb76e37ac76eab8fe117748408b796c49d73669a979",
+        "samples_sha256": "1d85ff11fb7fa520f6db5e45d547a8d4b5090b6c901333ce1f3ffe2235af670a",
+        "rate": 3.8025921662929207e-05,
+        "mass_ratio": 1.7424273630450577,
+        "physical_ratio": 1.7424273630450577,
+        "quadrature_ratio": 15.83346442540568,
+        "generator": 1.2441991881217973e-11,
+        "ratio": 15.83346442540568,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.2065482334697706e-11,
+        "stage_mass": 3.688021262893745e-15
+      },
+      {
+        "rejection": 19,
+        "t": 0.0010977547602983985,
+        "dt": 8.261696770185033e-07,
+        "nodes": 9,
+        "trial_sha256": "614c6079c8a0e01e1f423ebde121287f93737f9ec1b9d6def32853db9daf9cf0",
+        "samples_sha256": "6d17f080bb497cef89dfad100cab50816c813ad60d1141fbeab5c18f987a9111",
+        "rate": 3.8007393672719725e-05,
+        "mass_ratio": 1.5959942488358696,
+        "physical_ratio": 1.5959942488358696,
+        "quadrature_ratio": 1.2442598023852622,
+        "generator": 3.1183389204159084e-12,
+        "ratio": 1.5959942488358696,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.2065482334697706e-11,
+        "stage_mass": 3.688021262893745e-15
+      },
+      {
+        "rejection": 20,
+        "t": 0.0010977547602983985,
+        "dt": 4.1308483850925163e-07,
+        "nodes": 9,
+        "trial_sha256": "598c1a3b9720d9fbe3883d4e30427c06db248ed24d1479fd255b6e8e90a0bc4e",
+        "samples_sha256": "2754546337da77fc8e0340236187724aea0707ea9d46d4cd0bda9e893e0bfeb6",
+        "rate": 3.800235144480642e-05,
+        "mass_ratio": 1.2791780346193145,
+        "physical_ratio": 1.2791780346193145,
+        "quadrature_ratio": 1.2450496079537294,
+        "generator": 7.805422974627163e-13,
+        "ratio": 1.2791780346193145,
+        "worst_node_s": 1.0,
+        "worst_cell": 719,
+        "initial_node_relative_rate": 1.2065482334697706e-11,
+        "stage_mass": 3.688021262893745e-15
+      }
+    ],
+    "captured_time": 0.001098196974748717,
+    "full_validation": false
+  },
+  "vortex_rejected_path_budget_metadata_20261017": {
+    "rows": [
+      {
+        "rejection": 17,
+        "t": 0.0010977547602983985,
+        "dt": 3.304678708074013e-06,
+        "s": 0.0,
+        "trial_sha256": "6554d4f19772a5392d7a4c0a30df64e69776f1e7d39510c9edd0783e12afe9f1",
+        "neighbors": [
+          {
+            "cell": 686,
+            "residual_fraction": 0.08808414530457073,
+            "residual_map_singular_values": [
+              0.3089089185713433,
+              0.28287068134145554
+            ],
+            "factor_singular_values": [
+              7.193128052836409e-05,
+              5.088782424900509e-05
+            ],
+            "coefficient": [
+              [
+                0.011052877163349253,
+                0.001581255581336304,
+                0.022161085557988625
+              ],
+              [
+                0.010433104080295056,
+                -0.022828101451496743,
+                -0.0008889214985251715
+              ]
+            ]
+          },
+          {
+            "cell": 687,
+            "residual_fraction": 0.1271150737253527,
+            "residual_map_singular_values": [
+              0.39603646271463827,
+              0.2965392495725071
+            ],
+            "factor_singular_values": [
+              7.577785651736702e-05,
+              6.576792392437808e-05
+            ],
+            "coefficient": [
+              [
+                0.013719119144551305,
+                0.001441920699803762,
+                0.02354945154289488
+              ],
+              [
+                0.0037656347584259574,
+                -0.026654079547289076,
+                -0.00021256238136875641
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.12042578446388631,
+            "residual_map_singular_values": [
+              0.3743913175926651,
+              0.31121797362491316
+            ],
+            "factor_singular_values": [
+              6.096108801133843e-05,
+              4.821809362949798e-05
+            ],
+            "coefficient": [
+              [
+                0.01177876463527725,
+                -0.00046862831193581584,
+                0.01909033617503629
+              ],
+              [
+                -0.002415388103335381,
+                -0.022382870609996403,
+                0.00015858962682759403
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11678409422296929,
+            "residual_map_singular_values": [
+              0.35635452592072336,
+              0.3117706097529428
+            ],
+            "factor_singular_values": [
+              5.0728257217452395e-05,
+              3.212927825237811e-05
+            ],
+            "coefficient": [
+              [
+                0.009350526928967881,
+                0.004864594993631156,
+                0.009647848063732554
+              ],
+              [
+                0.006783776716012758,
+                -0.01829600510493366,
+                -0.0025340552939800906
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735663410243172,
+            "residual_map_singular_values": [
+              0.3927126998327127,
+              0.21130023635104148
+            ],
+            "factor_singular_values": [
+              5.872187180069922e-05,
+              3.639406407786603e-05
+            ],
+            "coefficient": [
+              [
+                0.010944505141246957,
+                0.0014880525710231221,
+                0.011390753387581031
+              ],
+              [
+                0.003199764810697494,
+                -0.021658205923192016,
+                -0.0010677014779568099
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710034856717575,
+            "residual_map_singular_values": [
+              0.4291954263144901,
+              0.2637373228021714
+            ],
+            "factor_singular_values": [
+              6.894460101179454e-05,
+              4.465776208080386e-05
+            ],
+            "coefficient": [
+              [
+                0.012613671891701926,
+                -0.0013685342499826908,
+                0.012281365416925802
+              ],
+              [
+                -0.0029598016030959,
+                -0.025056672865929393,
+                0.0010381840033533475
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073695290954235,
+            "residual_map_singular_values": [
+              0.4680254043212767,
+              1.4141979198676763e-06
+            ],
+            "factor_singular_values": [
+              4.7854599400896816e-05,
+              2.8078091735822597e-05
+            ],
+            "coefficient": [
+              [
+                0.007765844229395948,
+                0.00872749818184047,
+                -0.0020623415324610055
+              ],
+              [
+                0.005016774463006587,
+                -0.015551466201621419,
+                -0.003912363320720121
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13526849481765452,
+            "residual_map_singular_values": [
+              0.547882095136457,
+              0.31772090829990296
+            ],
+            "factor_singular_values": [
+              4.6180778634140686e-05,
+              1.9439247833401843e-05
+            ],
+            "coefficient": [
+              [
+                0.008311463194772745,
+                0.001984197504674007,
+                -0.00023182640084094588
+              ],
+              [
+                0.0016891164842253348,
+                -0.01751898664643818,
+                -0.0011107514035040844
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 17,
+        "t": 0.0010977547602983985,
+        "dt": 3.304678708074013e-06,
+        "s": 0.25,
+        "trial_sha256": "6554d4f19772a5392d7a4c0a30df64e69776f1e7d39510c9edd0783e12afe9f1",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.1271158304748757,
+            "residual_map_singular_values": [
+              0.3960397852370332,
+              0.29653555549887906
+            ],
+            "factor_singular_values": [
+              7.577804771111619e-05,
+              6.57677173120413e-05
+            ],
+            "coefficient": [
+              [
+                0.013719111310204719,
+                0.001441924361113151,
+                0.02354945651114304
+              ],
+              [
+                0.003765725421901486,
+                -0.02665405367974028,
+                -0.0002125716522873998
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.12042708418904535,
+            "residual_map_singular_values": [
+              0.3743919347878213,
+              0.311219867741855
+            ],
+            "factor_singular_values": [
+              6.096141884656664e-05,
+              4.821785105353814e-05
+            ],
+            "coefficient": [
+              [
+                0.011778770927879777,
+                -0.00046861455170399245,
+                0.019090332097796436
+              ],
+              [
+                -0.0024153141858115233,
+                -0.022382887381410328,
+                0.00015858064510894222
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11678747674003204,
+            "residual_map_singular_values": [
+              0.35635665459630994,
+              0.3117742733671709
+            ],
+            "factor_singular_values": [
+              5.0728381463413516e-05,
+              3.2129266147213585e-05
+            ],
+            "coefficient": [
+              [
+                0.009350511711931362,
+                0.004864622886230378,
+                0.009647859823887776
+              ],
+              [
+                0.0067838139893440065,
+                -0.01829597142526602,
+                -0.002534068872507846
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735812877180686,
+            "residual_map_singular_values": [
+              0.3927114266830863,
+              0.2113135180454453
+            ],
+            "factor_singular_values": [
+              5.8721757722721775e-05,
+              3.639413698455803e-05
+            ],
+            "coefficient": [
+              [
+                0.010944496509037836,
+                0.0014880844158288258,
+                0.011390751628476
+              ],
+              [
+                0.003199811920844362,
+                -0.02165819248862682,
+                -0.0010677149225365617
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710125842109601,
+            "residual_map_singular_values": [
+              0.4291998031348506,
+              0.2637303490073529
+            ],
+            "factor_singular_values": [
+              6.894465536322549e-05,
+              4.465772007608682e-05
+            ],
+            "coefficient": [
+              [
+                0.012613683768462608,
+                -0.0013684990498784753,
+                0.012281360919015948
+              ],
+              [
+                -0.002959751096064891,
+                -0.025056683831279757,
+                0.0010381691129160077
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073833607316787,
+            "residual_map_singular_values": [
+              0.4680263689716204,
+              1.4141979198550733e-06
+            ],
+            "factor_singular_values": [
+              4.7854644276460076e-05,
+              2.8078044095098044e-05
+            ],
+            "coefficient": [
+              [
+                0.007765837248579715,
+                0.008727521897186957,
+                -0.002062327951182732
+              ],
+              [
+                0.0050167910802275595,
+                -0.015551453000357186,
+                -0.003912376035947274
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13527232940694386,
+            "residual_map_singular_values": [
+              0.5478829931363582,
+              0.3177283397762867
+            ],
+            "factor_singular_values": [
+              4.618086143356499e-05,
+              1.943923858755702e-05
+            ],
+            "coefficient": [
+              [
+                0.008311459552099465,
+                0.0019842290783414545,
+                -0.00023182603488420268
+              ],
+              [
+                0.0016891368500903526,
+                -0.0175189791093002,
+                -0.0011107677993747018
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 17,
+        "t": 0.0010977547602983985,
+        "dt": 3.304678708074013e-06,
+        "s": 0.5,
+        "trial_sha256": "6554d4f19772a5392d7a4c0a30df64e69776f1e7d39510c9edd0783e12afe9f1",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.1271165872500246,
+            "residual_map_singular_values": [
+              0.3960431078189791,
+              0.29653186123009884
+            ],
+            "factor_singular_values": [
+              7.57782389034726e-05,
+              6.576751070047739e-05
+            ],
+            "coefficient": [
+              [
+                0.01371910347551308,
+                0.001441928022392011,
+                0.023549461478989116
+              ],
+              [
+                0.0037658160851796736,
+                -0.026654027812769054,
+                -0.00021258092314083656
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.1204283839994927,
+            "residual_map_singular_values": [
+              0.37439255231991136,
+              0.3112217614967655
+            ],
+            "factor_singular_values": [
+              6.0961749681253445e-05,
+              4.821760847588073e-05
+            ],
+            "coefficient": [
+              [
+                0.01177877722032973,
+                -0.00046860079108440545,
+                0.01909032802081054
+              ],
+              [
+                -0.002415240268423352,
+                -0.022382904152293194,
+                0.00015857166351050103
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11679085931379465,
+            "residual_map_singular_values": [
+              0.35635878629310025,
+              0.311777933386829
+            ],
+            "factor_singular_values": [
+              5.072850571068079e-05,
+              3.212925403880204e-05
+            ],
+            "coefficient": [
+              [
+                0.00935049649479151,
+                0.00486465077839218,
+                0.009647871583803338
+              ],
+              [
+                0.0067838512626436625,
+                -0.018295937745322097,
+                -0.002534082450996501
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735962353244021,
+            "residual_map_singular_values": [
+              0.39271015356536854,
+              0.21132679906807783
+            ],
+            "factor_singular_values": [
+              5.872164364899867e-05,
+              3.639420988621684e-05
+            ],
+            "coefficient": [
+              [
+                0.01094448787667648,
+                0.0014881162606513903,
+                0.011390749869450692
+              ],
+              [
+                0.003199859030823493,
+                -0.021658179053531595,
+                -0.0010677283672108921
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710216831665752,
+            "residual_map_singular_values": [
+              0.42920418002358807,
+              0.2637233748290665
+            ],
+            "factor_singular_values": [
+              6.894470971555245e-05,
+              4.465767806978544e-05
+            ],
+            "coefficient": [
+              [
+                0.012613695645202571,
+                -0.0013684638497756239,
+                0.012281356421317915
+              ],
+              [
+                -0.0029597005888795554,
+                -0.025056694796706924,
+                0.001038154222173166
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073971931470034,
+            "residual_map_singular_values": [
+              0.4680273336331518,
+              1.4141979198887194e-06
+            ],
+            "factor_singular_values": [
+              4.785468915175915e-05,
+              2.8077996454640327e-05
+            ],
+            "coefficient": [
+              [
+                0.007765830268432218,
+                0.008727545612926246,
+                -0.002062314369948656
+              ],
+              [
+                0.005016807697358447,
+                -0.015551439798824286,
+                -0.00391238875103628
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13527616401696047,
+            "residual_map_singular_values": [
+              0.547883891097199,
+              0.3177357711620323
+            ],
+            "factor_singular_values": [
+              4.6180944232308514e-05,
+              1.9439229341809522e-05
+            ],
+            "coefficient": [
+              [
+                0.008311455909503402,
+                0.0019842606524568917,
+                -0.00023182566904436674
+              ],
+              [
+                0.0016891572159644034,
+                -0.017518971571995685,
+                -0.0011107841952265835
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 17,
+        "t": 0.0010977547602983985,
+        "dt": 3.304678708074013e-06,
+        "s": 0.75,
+        "trial_sha256": "6554d4f19772a5392d7a4c0a30df64e69776f1e7d39510c9edd0783e12afe9f1",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.12711734405152467,
+            "residual_map_singular_values": [
+              0.3960464304622443,
+              0.2965281667658863
+            ],
+            "factor_singular_values": [
+              7.577843009443619e-05,
+              6.576730408968632e-05
+            ],
+            "coefficient": [
+              [
+                0.013719095640473541,
+                0.0014419316836426538,
+                0.023549466446430346
+              ],
+              [
+                0.0037659067482601937,
+                -0.02665400194637218,
+                -0.0002125901939294687
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.12042968389522889,
+            "residual_map_singular_values": [
+              0.3743931701891886,
+              0.3112236548893601
+            ],
+            "factor_singular_values": [
+              6.0962080515398456e-05,
+              4.821736589652623e-05
+            ],
+            "coefficient": [
+              [
+                0.011778783512627457,
+                -0.0004685870300794699,
+                0.019090323944079952
+              ],
+              [
+                -0.0024151663511714984,
+                -0.022382920922643684,
+                0.0001585626820315173
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11679424194499313,
+            "residual_map_singular_values": [
+              0.3563609210114595,
+              0.31178158981413356
+            ],
+            "factor_singular_values": [
+              5.072862995925404e-05,
+              3.212924192714364e-05
+            ],
+            "coefficient": [
+              [
+                0.009350481277546991,
+                0.004864678670112215,
+                0.009647883343479052
+              ],
+              [
+                0.006783888535909944,
+                -0.01829590406509849,
+                -0.0025340960294460745
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11736111838288217,
+            "residual_map_singular_values": [
+              0.3927088804766348,
+              0.21134007941789168
+            ],
+            "factor_singular_values": [
+              5.8721529579529916e-05,
+              3.639428278284248e-05
+            ],
+            "coefficient": [
+              [
+                0.01094447924416584,
+                0.0014881481054882276,
+                0.011390748110507123
+              ],
+              [
+                0.00319990614063427,
+                -0.021658165617912194,
+                -0.0010677418119799298
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.1271030782538517,
+            "residual_map_singular_values": [
+              0.4292085569806101,
+              0.2637164002673878
+            ],
+            "factor_singular_values": [
+              6.894476406877538e-05,
+              4.465763606189978e-05
+            ],
+            "coefficient": [
+              [
+                0.012613707521922405,
+                -0.0013684286496752959,
+                0.012281351923831573
+              ],
+              [
+                -0.002959650081539935,
+                -0.025056705762211213,
+                0.0010381393311247771
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10074110263411372,
+            "residual_map_singular_values": [
+              0.4680282983057413,
+              1.4141979198600649e-06
+            ],
+            "factor_singular_values": [
+              4.785473402679404e-05,
+              2.80779488144495e-05
+            ],
+            "coefficient": [
+              [
+                0.007765823288954122,
+                0.008727569329057775,
+                -0.002062300788759182
+              ],
+              [
+                0.005016824314399575,
+                -0.015551426597022822,
+                -0.003912401465987436
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13527999864784537,
+            "residual_map_singular_values": [
+              0.5478847890189895,
+              0.31774320245734267
+            ],
+            "factor_singular_values": [
+              4.6181027030371245e-05,
+              1.9439220096159364e-05
+            ],
+            "coefficient": [
+              [
+                0.008311452266984827,
+                0.0019842922270191794,
+                -0.00023182530332208225
+              ],
+              [
+                0.0016891775818468407,
+                -0.01751896403452344,
+                -0.001110800591059819
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 17,
+        "t": 0.0010977547602983985,
+        "dt": 3.304678708074013e-06,
+        "s": 1.0,
+        "trial_sha256": "6554d4f19772a5392d7a4c0a30df64e69776f1e7d39510c9edd0783e12afe9f1",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.12711810087936792,
+            "residual_map_singular_values": [
+              0.3960497531667994,
+              0.29652447210624344
+            ],
+            "factor_singular_values": [
+              7.577862128400703e-05,
+              6.576709747966809e-05
+            ],
+            "coefficient": [
+              [
+                0.013719087805085487,
+                0.001441935344865053,
+                0.02354947141346739
+              ],
+              [
+                0.003765997411143391,
+                -0.026653976080549424,
+                -0.0002125994646533202
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.1204309838762543,
+            "residual_map_singular_values": [
+              0.37439378839560894,
+              0.31122554791972534
+            ],
+            "factor_singular_values": [
+              6.096241134900128e-05,
+              4.821712331547512e-05
+            ],
+            "coefficient": [
+              [
+                0.011778789804772613,
+                -0.0004685732686880857,
+                0.01909031986760349
+              ],
+              [
+                -0.002415092434055783,
+                -0.022382937692462253,
+                0.0001585537006731481
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11679762463361995,
+            "residual_map_singular_values": [
+              0.3563630587515487,
+              0.31178524264901664
+            ],
+            "factor_singular_values": [
+              5.072875420913321e-05,
+              3.212922981223852e-05
+            ],
+            "coefficient": [
+              [
+                0.009350466060197776,
+                0.004864706561390754,
+                0.009647895102914281
+              ],
+              [
+                0.006783925809142771,
+                -0.018295870384595368,
+                -0.002534109607856035
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11736261332316886,
+            "residual_map_singular_values": [
+              0.392707607416989,
+              0.21135335909495556
+            ],
+            "factor_singular_values": [
+              5.872141551431552e-05,
+              3.6394355674434956e-05
+            ],
+            "coefficient": [
+              [
+                0.010944470611504787,
+                0.0014881799503386564,
+                0.0113907463516458
+              ],
+              [
+                0.003199953250277414,
+                -0.021658152181768333,
+                -0.0010677552568441216
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710398823273655,
+            "residual_map_singular_values": [
+              0.42921293400592253,
+              0.263709425322485
+            ],
+            "factor_singular_values": [
+              6.894481842289423e-05,
+              4.465759405242988e-05
+            ],
+            "coefficient": [
+              [
+                0.012613719398621355,
+                -0.0013683934495778806,
+                0.012281347426557277
+              ],
+              [
+                -0.0029595995740457647,
+                -0.025056716727791504,
+                0.001038124439770462
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10074248603144603,
+            "residual_map_singular_values": [
+              0.4680292629895049,
+              1.4141979198418314e-06
+            ],
+            "factor_singular_values": [
+              4.7854778901564726e-05,
+              2.807790117452553e-05
+            ],
+            "coefficient": [
+              [
+                0.0077658163101453175,
+                0.008727593045581726,
+                -0.002062287207613992
+              ],
+              [
+                0.005016840931350383,
+                -0.015551413394952758,
+                -0.003912414180799956
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13528383329943655,
+            "residual_map_singular_values": [
+              0.5478856869017352,
+              0.31775063366196626
+            ],
+            "factor_singular_values": [
+              4.61811098277532e-05,
+              1.9439210850606524e-05
+            ],
+            "coefficient": [
+              [
+                0.008311448624543433,
+                0.0019843238020292356,
+                -0.00023182493771679266
+              ],
+              [
+                0.0016891979477384334,
+                -0.017518956496884928,
+                -0.001110816986874326
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 18,
+        "t": 0.0010977547602983985,
+        "dt": 1.6523393540370065e-06,
+        "s": 0.0,
+        "trial_sha256": "be0d900e518bfb25a4fe3bb76e37ac76eab8fe117748408b796c49d73669a979",
+        "neighbors": [
+          {
+            "cell": 686,
+            "residual_fraction": 0.08808414530457073,
+            "residual_map_singular_values": [
+              0.3089089185713433,
+              0.28287068134145554
+            ],
+            "factor_singular_values": [
+              7.193128052836409e-05,
+              5.088782424900509e-05
+            ],
+            "coefficient": [
+              [
+                0.011052877163349253,
+                0.001581255581336304,
+                0.022161085557988625
+              ],
+              [
+                0.010433104080295056,
+                -0.022828101451496743,
+                -0.0008889214985251715
+              ]
+            ]
+          },
+          {
+            "cell": 687,
+            "residual_fraction": 0.1271150737253527,
+            "residual_map_singular_values": [
+              0.39603646271463827,
+              0.2965392495725071
+            ],
+            "factor_singular_values": [
+              7.577785651736702e-05,
+              6.576792392437808e-05
+            ],
+            "coefficient": [
+              [
+                0.013719119144551305,
+                0.001441920699803762,
+                0.02354945154289488
+              ],
+              [
+                0.0037656347584259574,
+                -0.026654079547289076,
+                -0.00021256238136875641
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.12042578446388631,
+            "residual_map_singular_values": [
+              0.3743913175926651,
+              0.31121797362491316
+            ],
+            "factor_singular_values": [
+              6.096108801133843e-05,
+              4.821809362949798e-05
+            ],
+            "coefficient": [
+              [
+                0.01177876463527725,
+                -0.00046862831193581584,
+                0.01909033617503629
+              ],
+              [
+                -0.002415388103335381,
+                -0.022382870609996403,
+                0.00015858962682759403
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11678409422296929,
+            "residual_map_singular_values": [
+              0.35635452592072336,
+              0.3117706097529428
+            ],
+            "factor_singular_values": [
+              5.0728257217452395e-05,
+              3.212927825237811e-05
+            ],
+            "coefficient": [
+              [
+                0.009350526928967881,
+                0.004864594993631156,
+                0.009647848063732554
+              ],
+              [
+                0.006783776716012758,
+                -0.01829600510493366,
+                -0.0025340552939800906
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735663410243172,
+            "residual_map_singular_values": [
+              0.3927126998327127,
+              0.21130023635104148
+            ],
+            "factor_singular_values": [
+              5.872187180069922e-05,
+              3.639406407786603e-05
+            ],
+            "coefficient": [
+              [
+                0.010944505141246957,
+                0.0014880525710231221,
+                0.011390753387581031
+              ],
+              [
+                0.003199764810697494,
+                -0.021658205923192016,
+                -0.0010677014779568099
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710034856717575,
+            "residual_map_singular_values": [
+              0.4291954263144901,
+              0.2637373228021714
+            ],
+            "factor_singular_values": [
+              6.894460101179454e-05,
+              4.465776208080386e-05
+            ],
+            "coefficient": [
+              [
+                0.012613671891701926,
+                -0.0013685342499826908,
+                0.012281365416925802
+              ],
+              [
+                -0.0029598016030959,
+                -0.025056672865929393,
+                0.0010381840033533475
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073695290954235,
+            "residual_map_singular_values": [
+              0.4680254043212767,
+              1.4141979198676763e-06
+            ],
+            "factor_singular_values": [
+              4.7854599400896816e-05,
+              2.8078091735822597e-05
+            ],
+            "coefficient": [
+              [
+                0.007765844229395948,
+                0.00872749818184047,
+                -0.0020623415324610055
+              ],
+              [
+                0.005016774463006587,
+                -0.015551466201621419,
+                -0.003912363320720121
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13526849481765452,
+            "residual_map_singular_values": [
+              0.547882095136457,
+              0.31772090829990296
+            ],
+            "factor_singular_values": [
+              4.6180778634140686e-05,
+              1.9439247833401843e-05
+            ],
+            "coefficient": [
+              [
+                0.008311463194772745,
+                0.001984197504674007,
+                -0.00023182640084094588
+              ],
+              [
+                0.0016891164842253348,
+                -0.01751898664643818,
+                -0.0011107514035040844
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 18,
+        "t": 0.0010977547602983985,
+        "dt": 1.6523393540370065e-06,
+        "s": 0.25,
+        "trial_sha256": "be0d900e518bfb25a4fe3bb76e37ac76eab8fe117748408b796c49d73669a979",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.12711545213159617,
+            "residual_map_singular_values": [
+              0.3960381240469948,
+              0.2965374025483509
+            ],
+            "factor_singular_values": [
+              7.577795211744647e-05,
+              6.576782061763904e-05
+            ],
+            "coefficient": [
+              [
+                0.013719115227418545,
+                0.0014419225304628126,
+                0.023549454027064397
+              ],
+              [
+                0.0037656800901882752,
+                -0.026654066613437166,
+                -0.00021256701683692504
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.120426434364382,
+            "residual_map_singular_values": [
+              0.3743916261875662,
+              0.31121892080660946
+            ],
+            "factor_singular_values": [
+              6.096125343184276e-05,
+              4.821797234161955e-05
+            ],
+            "coefficient": [
+              [
+                0.011778767781597773,
+                -0.0004686214318690352,
+                0.019090334136384526
+              ],
+              [
+                -0.0024153511445563205,
+                -0.022382878995769136,
+                0.00015858513595339672
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11678578552746818,
+            "residual_map_singular_values": [
+              0.3563555899082751,
+              0.3117724421378887
+            ],
+            "factor_singular_values": [
+              5.072831934194859e-05,
+              3.212927220091996e-05
+            ],
+            "coefficient": [
+              [
+                0.009350519320460628,
+                0.0048646089399828,
+                0.00964785394384
+              ],
+              [
+                0.006783795352680026,
+                -0.01829598826513022,
+                -0.00253406208324845
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.117357381455259,
+            "residual_map_singular_values": [
+              0.3927120632210713,
+              0.2113068775934668
+            ],
+            "factor_singular_values": [
+              5.8721814761424095e-05,
+              3.639410053365279e-05
+            ],
+            "coefficient": [
+              [
+                0.010944500825165055,
+                0.0014880684934232458,
+                0.011390752508019708
+              ],
+              [
+                0.0031997883657922657,
+                -0.021658199205982012,
+                -0.0010677082002347646
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710080351962255,
+            "residual_map_singular_values": [
+              0.42919761479352925,
+              0.2637338359491431
+            ],
+            "factor_singular_values": [
+              6.894462818838308e-05,
+              4.465774107977898e-05
+            ],
+            "coefficient": [
+              [
+                0.012613677830084966,
+                -0.0013685166499306412,
+                0.012281363167944485
+              ],
+              [
+                -0.002959776349599907,
+                -0.025056678348594975,
+                0.0010381765581729692
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073764449985477,
+            "residual_map_singular_values": [
+              0.4680258866650614,
+              1.4141979198528408e-06
+            ],
+            "factor_singular_values": [
+              4.785462184019925e-05,
+              2.807806791584943e-05
+            ],
+            "coefficient": [
+              [
+                0.007765840739117768,
+                0.008727510039868401,
+                -0.0020623347418528906
+              ],
+              [
+                0.005016782771576421,
+                -0.015551459601116946,
+                -0.003912369678341695
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.1352704121361707,
+            "residual_map_singular_values": [
+              0.5478825441459966,
+              0.3177246241326596
+            ],
+            "factor_singular_values": [
+              4.6180820034620505e-05,
+              1.9439243210824657e-05
+            ],
+            "coefficient": [
+              [
+                0.008311461373426516,
+                0.0019842132914519753,
+                -0.00023182621784828767
+              ],
+              [
+                0.0016891266671569425,
+                -0.01751898287789016,
+                -0.001110759601441972
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 18,
+        "t": 0.0010977547602983985,
+        "dt": 1.6523393540370065e-06,
+        "s": 0.5,
+        "trial_sha256": "be0d900e518bfb25a4fe3bb76e37ac76eab8fe117748408b796c49d73669a979",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.12711583054361017,
+            "residual_map_singular_values": [
+              0.3960397853922392,
+              0.2965355554764841
+            ],
+            "factor_singular_values": [
+              7.577804771717771e-05,
+              6.576771731109324e-05
+            ],
+            "coefficient": [
+              [
+                0.013719111310198583,
+                0.0014419243611161242,
+                0.023549456511128455
+              ],
+              [
+                0.0037657254219012363,
+                -0.02665405367972559,
+                -0.00021257165229034361
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.12042708428620597,
+            "residual_map_singular_values": [
+              0.37439193486658695,
+              0.31121986789790024
+            ],
+            "factor_singular_values": [
+              6.096141885221181e-05,
+              4.821785105331664e-05
+            ],
+            "coefficient": [
+              [
+                0.011778770927879894,
+                -0.0004686145517034715,
+                0.019090332097796817
+              ],
+              [
+                -0.0024153141858108316,
+                -0.022382887381410213,
+                0.00015858064510854668
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11678747684508103,
+            "residual_map_singular_values": [
+              0.35635665465098837,
+              0.3117742736210507
+            ],
+            "factor_singular_values": [
+              5.0728381466771324e-05,
+              3.2129266148650004e-05
+            ],
+            "coefficient": [
+              [
+                0.009350511711925791,
+                0.004864622886226202,
+                0.009647859823888313
+              ],
+              [
+                0.006783813989336654,
+                -0.018295971425254562,
+                -0.0025340688725070215
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735812883274394,
+            "residual_map_singular_values": [
+              0.3927114266218157,
+              0.21131351866627568
+            ],
+            "factor_singular_values": [
+              5.8721757723212546e-05,
+              3.639413698818121e-05
+            ],
+            "coefficient": [
+              [
+                0.010944496509049653,
+                0.001488084415830514,
+                0.011390751628476576
+              ],
+              [
+                0.0031998119208453643,
+                -0.0216581924886427,
+                -0.0010677149225352294
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.127101258482505,
+            "residual_map_singular_values": [
+              0.42919980328964824,
+              0.26373034900040804
+            ],
+            "factor_singular_values": [
+              6.89446553651956e-05,
+              4.4657720078358014e-05
+            ],
+            "coefficient": [
+              [
+                0.012613683768462475,
+                -0.0013684990498795849,
+                0.012281360919016195
+              ],
+              [
+                -0.0029597510960653046,
+                -0.025056683831279142,
+                0.0010381691129163317
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073833610963101,
+            "residual_map_singular_values": [
+              0.4680263690116507,
+              1.4141979198815617e-06
+            ],
+            "factor_singular_values": [
+              4.7854644279435676e-05,
+              2.8078044095942986e-05
+            ],
+            "coefficient": [
+              [
+                0.007765837249007226,
+                0.008727521897994656,
+                -0.0020623279512552604
+              ],
+              [
+                0.005016791080123942,
+                -0.01555145300054581,
+                -0.003912376035928432
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13527232945992254,
+            "residual_map_singular_values": [
+              0.5478829931457118,
+              0.31772833994284244
+            ],
+            "factor_singular_values": [
+              4.618086143493013e-05,
+              1.943923858827179e-05
+            ],
+            "coefficient": [
+              [
+                0.008311459552099441,
+                0.001984229078341622,
+                -0.0002318260348856049
+              ],
+              [
+                0.0016891368500907306,
+                -0.01751897910929934,
+                -0.0011107677993751753
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 18,
+        "t": 0.0010977547602983985,
+        "dt": 1.6523393540370065e-06,
+        "s": 0.75,
+        "trial_sha256": "be0d900e518bfb25a4fe3bb76e37ac76eab8fe117748408b796c49d73669a979",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.12711620896219217,
+            "residual_map_singular_values": [
+              0.3960414467520934,
+              0.29653370835699394
+            ],
+            "factor_singular_values": [
+              7.577814331656075e-05,
+              6.576761400474061e-05
+            ],
+            "coefficient": [
+              [
+                0.013719107392886974,
+                0.0014419261917622437,
+                0.0235494589950842
+              ],
+              [
+                0.0037657707535653246,
+                -0.026654040746149115,
+                -0.00021257628772908206
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.12042773422942585,
+            "residual_map_singular_values": [
+              0.3743922436299626,
+              0.311220814898781
+            ],
+            "factor_singular_values": [
+              6.096158427244552e-05,
+              4.821772976458933e-05
+            ],
+            "coefficient": [
+              [
+                0.011778774074123742,
+                -0.0004686076714414686,
+                0.019090330059272523
+              ],
+              [
+                -0.0024152772270991146,
+                -0.022382895766917658,
+                0.0001585761542937891
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11678916817654875,
+            "residual_map_singular_values": [
+              0.35635772014905637,
+              0.3117761042048677
+            ],
+            "factor_singular_values": [
+              5.072844359192059e-05,
+              3.212926009556826e-05
+            ],
+            "coefficient": [
+              [
+                0.009350504103361683,
+                0.004864636832357289,
+                0.009647865703876709
+              ],
+              [
+                0.006783832625981339,
+                -0.018295954585303136,
+                -0.002534075661755223
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735887623341779,
+            "residual_map_singular_values": [
+              0.39271079003194853,
+              0.21132015956849104
+            ],
+            "factor_singular_values": [
+              5.8721700686064626e-05,
+              3.63941734414513e-05
+            ],
+            "coefficient": [
+              [
+                0.010944492192902033,
+                0.0014881003382428816,
+                0.011390750748954412
+              ],
+              [
+                0.003199835475857657,
+                -0.02165818577118065,
+                -0.0010677216448588772
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.1271017134557608,
+            "residual_map_singular_values": [
+              0.42920199180285357,
+              0.263726861955712
+            ],
+            "factor_singular_values": [
+              6.894468254223212e-05,
+              4.4657699076540955e-05
+            ],
+            "coefficient": [
+              [
+                0.01261368970683513,
+                -0.0013684814498286502,
+                0.012281358670141093
+              ],
+              [
+                -0.0029597258424930196,
+                -0.025056689313983187,
+                0.0010381616675837837
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073902773890343,
+            "residual_map_singular_values": [
+              0.46802685136109756,
+              1.4141979198589392e-06
+            ],
+            "factor_singular_values": [
+              4.7854666718606017e-05,
+              2.807802027610325e-05
+            ],
+            "coefficient": [
+              [
+                0.007765833759064314,
+                0.008727533756219204,
+                -0.0020623211606682684
+              ],
+              [
+                0.005016799388648915,
+                -0.015551446399907475,
+                -0.0039123823934803185
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.13527424678882027,
+            "residual_map_singular_values": [
+              0.5478834421355769,
+              0.3177320557302814
+            ],
+            "factor_singular_values": [
+              4.618090283506955e-05,
+              1.9439233965743265e-05
+            ],
+            "coefficient": [
+              [
+                0.008311457730791717,
+                0.001984244865342878,
+                -0.00023182585195306098
+              ],
+              [
+                0.0016891470330270204,
+                -0.017518975340666716,
+                -0.001110775997303453
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "rejection": 18,
+        "t": 0.0010977547602983985,
+        "dt": 1.6523393540370065e-06,
+        "s": 1.0,
+        "trial_sha256": "be0d900e518bfb25a4fe3bb76e37ac76eab8fe117748408b796c49d73669a979",
+        "neighbors": [
+          {
+            "cell": 687,
+            "residual_fraction": 0.12711658738734727,
+            "residual_map_singular_values": [
+              0.39604310812655835,
+              0.29653186118989794
+            ],
+            "factor_singular_values": [
+              7.577823891559556e-05,
+              6.576751069858121e-05
+            ],
+            "coefficient": [
+              [
+                0.013719103475486147,
+                0.0014419280224018335,
+                0.023549461478930684
+              ],
+              [
+                0.003765816085179608,
+                -0.026654027812708335,
+                -0.0002125809231527896
+              ]
+            ]
+          },
+          {
+            "cell": 688,
+            "residual_fraction": 0.1204283841939861,
+            "residual_map_singular_values": [
+              0.3743925524775972,
+              0.3112217618091683
+            ],
+            "factor_singular_values": [
+              6.096174969254381e-05,
+              4.8217608475437654e-05
+            ],
+            "coefficient": [
+              [
+                0.011778777220329873,
+                -0.00046860079108233625,
+                0.019090328020811988
+              ],
+              [
+                -0.002415240268421164,
+                -0.022382904152292302,
+                0.00015857166350901995
+              ]
+            ]
+          },
+          {
+            "cell": 718,
+            "residual_fraction": 0.11679085952188244,
+            "residual_map_singular_values": [
+              0.35635878640256774,
+              0.31177793388922
+            ],
+            "factor_singular_values": [
+              5.072850571739639e-05,
+              3.2129254041674765e-05
+            ],
+            "coefficient": [
+              [
+                0.009350496494768865,
+                0.004864650778375673,
+                0.009647871583805572
+              ],
+              [
+                0.0067838512626141835,
+                -0.01829593774527598,
+                -0.002534082450993115
+              ]
+            ]
+          },
+          {
+            "cell": 719,
+            "residual_fraction": 0.11735962365732185,
+            "residual_map_singular_values": [
+              0.39271015345154503,
+              0.21132680030005624
+            ],
+            "factor_singular_values": [
+              5.87216436499803e-05,
+              3.639420989346304e-05
+            ],
+            "coefficient": [
+              [
+                0.01094448787672328,
+                0.0014881162606590304,
+                0.011390749869453041
+              ],
+              [
+                0.0031998590308279506,
+                -0.021658179053595183,
+                -0.001067728367205675
+              ]
+            ]
+          },
+          {
+            "cell": 720,
+            "residual_fraction": 0.12710216843947553,
+            "residual_map_singular_values": [
+              0.42920418033309726,
+              0.2637233748154376
+            ],
+            "factor_singular_values": [
+              6.89447097194927e-05,
+              4.4657678074327776e-05
+            ],
+            "coefficient": [
+              [
+                0.012613695645202283,
+                -0.0013684638497795003,
+                0.012281356421319195
+              ],
+              [
+                -0.0029597005888818174,
+                -0.025056694796705664,
+                0.0010381542221743671
+              ]
+            ]
+          },
+          {
+            "cell": 750,
+            "residual_fraction": 0.10073971938766084,
+            "residual_map_singular_values": [
+              0.4680273337134027,
+              1.4141979198510802e-06
+            ],
+            "factor_singular_values": [
+              4.785468915771033e-05,
+              2.807799645633023e-05
+            ],
+            "coefficient": [
+              [
+                0.007765830269288879,
+                0.0087275456145421,
+                -0.0020623143700917307
+              ],
+              [
+                0.0050168076971512324,
+                -0.0155514397992022,
+                -0.003912388750997604
+              ]
+            ]
+          },
+          {
+            "cell": 751,
+            "residual_fraction": 0.1352761641229056,
+            "residual_map_singular_values": [
+              0.5478838911155381,
+              0.31773577149510407
+            ],
+            "factor_singular_values": [
+              4.618094423503875e-05,
+              1.9439229343239073e-05
+            ],
+            "coefficient": [
+              [
+                0.008311455909503555,
+                0.0019842606524563197,
+                -0.00023182566905031793
+              ],
+              [
+                0.0016891572159652335,
+                -0.01751897157199197,
+                -0.001110784195227296
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "full_validation": false,
+    "scope": "Saved dense path reconstruction metadata; no altered state or evolution."
+  },
+  "vortex_rejected_path_geometry_20261017": {
+    "rows": [
+      {
+        "s": 0.0,
+        "cells": [
+          {
+            "cell": 686,
+            "area": 0.000966581839159485,
+            "vertices": 6,
+            "face_count": 6,
+            "normal_closure": [
+              1.1102230246251565e-16,
+              5.551115123125783e-17
+            ],
+            "faces": [
+              {
+                "neighbor": 653,
+                "length": 0.006655977481742849,
+                "start": [
+                  0.43633703207519253,
+                  0.6507915732545765
+                ],
+                "end": [
+                  0.4315398089013935,
+                  0.6554055396673534
+                ],
+                "normal": [
+                  -0.6932064336805327,
+                  -0.720739093087032
+                ]
+              },
+              {
+                "neighbor": 654,
+                "length": 0.03363039491343977,
+                "start": [
+                  0.46869823278860007,
+                  0.6599434118906358
+                ],
+                "end": [
+                  0.43633703207519253,
+                  0.6507915732545765
+                ],
+                "normal": [
+                  0.27212997824185287,
+                  -0.9622605026405734
+                ]
+              },
+              {
+                "neighbor": 685,
+                "length": 0.034042017389290434,
+                "start": [
+                  0.43153980890139343,
+                  0.6554055396673534
+                ],
+                "end": [
+                  0.44208312093318747,
+                  0.6877736956131743
+                ],
+                "normal": [
+                  -0.9508295461949869,
+                  0.3097146655917915
+                ]
+              },
+              {
+                "neighbor": 719,
+                "length": 2.6275938974943227e-08,
+                "start": [
+                  0.46647139099595636,
+                  0.6842534574454145
+                ],
+                "end": [
+                  0.466471371926331,
+                  0.6842534755223157
+                ],
+                "normal": [
+                  0.6879640425176737,
+                  0.7257447734587831
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.02464099705759995,
+                "start": [
+                  0.466471371926331,
+                  0.6842534755223157
+                ],
+                "end": [
+                  0.44208312093318747,
+                  0.6877736956131743
+                ],
+                "normal": [
+                  0.14286029427420327,
+                  0.9897428637377933
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.02441182375909038,
+                "start": [
+                  0.46869823278860007,
+                  0.6599434118906357
+                ],
+                "end": [
+                  0.46647139099595636,
+                  0.6842534574454145
+                ],
+                "normal": [
+                  0.9958307824390389,
+                  0.09121980457582507
+                ]
+              }
+            ]
+          },
+          {
+            "cell": 719,
+            "area": 0.000895524049814739,
+            "vertices": 7,
+            "face_count": 7,
+            "normal_closure": [
+              1.1102230246251565e-16,
+              -5.551115123125783e-17
+            ],
+            "faces": [
+              {
+                "neighbor": 686,
+                "length": 2.6275938974943227e-08,
+                "start": [
+                  0.46647139099595636,
+                  0.6842534574454145
+                ],
+                "end": [
+                  0.466471371926331,
+                  0.6842534755223157
+                ],
+                "normal": [
+                  -0.6879640425176737,
+                  -0.7257447734587831
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.030439621869595073,
+                "start": [
+                  0.4964801635167628,
+                  0.6893568045194848
+                ],
+                "end": [
+                  0.4664713909959563,
+                  0.6842534574454145
+                ],
+                "normal": [
+                  0.16765474603900257,
+                  -0.985845771979876
+                ]
+              },
+              {
+                "neighbor": 688,
+                "length": 0.0008586216374879366,
+                "start": [
+                  0.4970642641732405,
+                  0.6899861355448321
+                ],
+                "end": [
+                  0.4964801635167628,
+                  0.6893568045194848
+                ],
+                "normal": [
+                  0.732955003543325,
+                  -0.6802771220471878
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.03239718322420134,
+                "start": [
+                  0.466471371926331,
+                  0.6842534755223157
+                ],
+                "end": [
+                  0.468577519932046,
+                  0.7165821256865353
+                ],
+                "normal": [
+                  -0.997884598191532,
+                  0.0650102199052194
+                ]
+              },
+              {
+                "neighbor": 720,
+                "length": 0.02455502874056806,
+                "start": [
+                  0.49706426417324057,
+                  0.6899861355448321
+                ],
+                "end": [
+                  0.49931570710762224,
+                  0.7144377293817039
+                ],
+                "normal": [
+                  0.9957876284817624,
+                  -0.09168968842060456
+                ]
+              },
+              {
+                "neighbor": 751,
+                "length": 0.029470693419771418,
+                "start": [
+                  0.49931570710762224,
+                  0.7144377293817039
+                ],
+                "end": [
+                  0.4700419069827423,
+                  0.7178386699708258
+                ],
+                "normal": [
+                  0.11540076579400214,
+                  0.9933190138390375
+                ]
+              },
+              {
+                "neighbor": 750,
+                "length": 0.001929593991654603,
+                "start": [
+                  0.4700419069827423,
+                  0.7178386699708258
+                ],
+                "end": [
+                  0.46857751993204605,
+                  0.7165821256865355
+                ],
+                "normal": [
+                  -0.6511962048621786,
+                  0.7589094167113065
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "s": 0.125,
+        "cells": [
+          {
+            "cell": 686,
+            "area": 0.000966581837694069,
+            "vertices": 5,
+            "face_count": 5,
+            "normal_closure": [
+              0.0,
+              -5.551115123125783e-17
+            ],
+            "faces": [
+              {
+                "neighbor": 653,
+                "length": 0.006655929462406811,
+                "start": [
+                  0.43633683258323647,
+                  0.6507915252968806
+                ],
+                "end": [
+                  0.4315396401753595,
+                  0.6554054544261957
+                ],
+                "normal": [
+                  -0.6932058332911952,
+                  -0.7207396705406605
+                ]
+              },
+              {
+                "neighbor": 654,
+                "length": 0.033630424732886716,
+                "start": [
+                  0.4686980690220975,
+                  0.659943347184488
+                ],
+                "end": [
+                  0.43633683258323647,
+                  0.6507915252968804
+                ],
+                "normal": [
+                  0.2721292389345922,
+                  -0.9622607117184406
+                ]
+              },
+              {
+                "neighbor": 685,
+                "length": 0.034042076063520964,
+                "start": [
+                  0.4315396401753595,
+                  0.6554054544261957
+                ],
+                "end": [
+                  0.4420829662051158,
+                  0.6877736675209096
+                ],
+                "normal": [
+                  -0.9508295861367657,
+                  0.30971454296979145
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.02464098211301075,
+                "start": [
+                  0.46647119887291316,
+                  0.6842534250810915
+                ],
+                "end": [
+                  0.4420829662051158,
+                  0.6877736675209096
+                ],
+                "normal": [
+                  0.14286128790131888,
+                  0.9897427203163338
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.024411858552766015,
+                "start": [
+                  0.46869806902209743,
+                  0.6599433471844881
+                ],
+                "end": [
+                  0.46647119887291316,
+                  0.6842534250810915
+                ],
+                "normal": [
+                  0.9958306879444442,
+                  0.09122083615104143
+                ]
+              }
+            ]
+          },
+          {
+            "cell": 719,
+            "area": 0.0008955240498289164,
+            "vertices": 6,
+            "face_count": 6,
+            "normal_closure": [
+              1.1102230246251565e-16,
+              -1.1102230246251565e-16
+            ],
+            "faces": [
+              {
+                "neighbor": 687,
+                "length": 0.030439573279098135,
+                "start": [
+                  0.49647996946324763,
+                  0.689356766057483
+                ],
+                "end": [
+                  0.46647123847325866,
+                  0.6842534645982253
+                ],
+                "normal": [
+                  0.16765351512867324,
+                  -0.9858459813099608
+                ]
+              },
+              {
+                "neighbor": 688,
+                "length": 0.0008587070916636351,
+                "start": [
+                  0.4970641283554881,
+                  0.6899861596210741
+                ],
+                "end": [
+                  0.49647996946324763,
+                  0.6893567660574831
+                ],
+                "normal": [
+                  0.7329548919546842,
+                  -0.6802772422767772
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.032397151264316276,
+                "start": [
+                  0.46647123847325883,
+                  0.6842534645982256
+                ],
+                "end": [
+                  0.4685773656312041,
+                  0.7165820840929945
+                ],
+                "normal": [
+                  -0.9978846359364069,
+                  0.06500964053172993
+                ]
+              },
+              {
+                "neighbor": 720,
+                "length": 0.024554977774755113,
+                "start": [
+                  0.497064128355488,
+                  0.6899861596210741
+                ],
+                "end": [
+                  0.4993155491039852,
+                  0.7144377043193535
+                ],
+                "normal": [
+                  0.9957876941520964,
+                  -0.0916889752110399
+                ]
+              },
+              {
+                "neighbor": 751,
+                "length": 0.029470629826975944,
+                "start": [
+                  0.4993155491039852,
+                  0.7144377043193535
+                ],
+                "end": [
+                  0.4700418172303209,
+                  0.7178386813241944
+                ],
+                "normal": [
+                  0.1154022504713419,
+                  0.9933188413526393
+                ]
+              },
+              {
+                "neighbor": 750,
+                "length": 0.001929677456886308,
+                "start": [
+                  0.4700418172303209,
+                  0.7178386813241944
+                ],
+                "end": [
+                  0.468577365631204,
+                  0.7165820840929945
+                ],
+                "normal": [
+                  -0.6511954765888622,
+                  0.7589100416190344
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "s": 0.25,
+        "cells": [
+          {
+            "cell": 686,
+            "area": 0.0009665818362286852,
+            "vertices": 5,
+            "face_count": 5,
+            "normal_closure": [
+              0.0,
+              5.551115123125783e-17
+            ],
+            "faces": [
+              {
+                "neighbor": 653,
+                "length": 0.006655881443092966,
+                "start": [
+                  0.43633663309131576,
+                  0.6507914773389861
+                ],
+                "end": [
+                  0.43153947144940186,
+                  0.6554053691849074
+                ],
+                "normal": [
+                  -0.6932052329010918,
+                  -0.7207402479940629
+                ]
+              },
+              {
+                "neighbor": 654,
+                "length": 0.03363045455239816,
+                "start": [
+                  0.46869790525568444,
+                  0.6599432824781145
+                ],
+                "end": [
+                  0.43633663309131576,
+                  0.6507914773389862
+                ],
+                "normal": [
+                  0.27212849962730196,
+                  -0.9622609207957026
+                ]
+              },
+              {
+                "neighbor": 685,
+                "length": 0.034042134737707834,
+                "start": [
+                  0.43153947144940186,
+                  0.6554053691849074
+                ],
+                "end": [
+                  0.44208281147714695,
+                  0.6877736394284593
+                ],
+                "normal": [
+                  -0.9508296260780055,
+                  0.3097144203493924
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.02464094933839391,
+                "start": [
+                  0.4664710081724506,
+                  0.6842533771870237
+                ],
+                "end": [
+                  0.44208281147714695,
+                  0.6877736394284593
+                ],
+                "normal": [
+                  0.14286228152543184,
+                  0.9897425768942893
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.024411877751935776,
+                "start": [
+                  0.4686979052556845,
+                  0.6599432824781144
+                ],
+                "end": [
+                  0.4664710081724506,
+                  0.6842533771870237
+                ],
+                "normal": [
+                  0.9958305934487821,
+                  0.09122186772614574
+                ]
+              }
+            ]
+          },
+          {
+            "cell": 719,
+            "area": 0.0008955240498432124,
+            "vertices": 6,
+            "face_count": 6,
+            "normal_closure": [
+              0.0,
+              -2.220446049250313e-16
+            ],
+            "faces": [
+              {
+                "neighbor": 687,
+                "length": 0.03043950392067959,
+                "start": [
+                  0.4964797754097966,
+                  0.6893567275954184
+                ],
+                "end": [
+                  0.4664711064246647,
+                  0.6842534752326744
+                ],
+                "normal": [
+                  0.1676522842173201,
+                  -0.9858461906386387
+                ]
+              },
+              {
+                "neighbor": 688,
+                "length": 0.0008587925456144659,
+                "start": [
+                  0.4970639925376686,
+                  0.689986183697068
+                ],
+                "end": [
+                  0.4964797754097965,
+                  0.6893567275954184
+                ],
+                "normal": [
+                  0.7329547803645345,
+                  -0.680277362507953
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.03239709770024677,
+                "start": [
+                  0.46647110642466477,
+                  0.6842534752326744
+                ],
+                "end": [
+                  0.4685772113304127,
+                  0.7165820424994946
+                ],
+                "normal": [
+                  -0.9978846736809378,
+                  0.06500906115833568
+                ]
+              },
+              {
+                "neighbor": 720,
+                "length": 0.02455492680925308,
+                "start": [
+                  0.4970639925376686,
+                  0.689986183697068
+                ],
+                "end": [
+                  0.4993153911003818,
+                  0.7144376792570453
+                ],
+                "normal": [
+                  0.9957877598219178,
+                  -0.09168826200145
+                ]
+              },
+              {
+                "neighbor": 751,
+                "length": 0.029470566234225812,
+                "start": [
+                  0.4993153911003818,
+                  0.7144376792570453
+                ],
+                "end": [
+                  0.4700417274779259,
+                  0.7178386926773644
+                ],
+                "normal": [
+                  0.11540373514674415,
+                  0.993318668864217
+                ]
+              },
+              {
+                "neighbor": 750,
+                "length": 0.0019297609219452363,
+                "start": [
+                  0.4700417274779259,
+                  0.7178386926773644
+                ],
+                "end": [
+                  0.46857721133041275,
+                  0.7165820424994946
+                ],
+                "normal": [
+                  -0.6511947483126939,
+                  0.7589106665279961
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "s": 0.5,
+        "cells": [
+          {
+            "cell": 686,
+            "area": 0.0009665818332984167,
+            "vertices": 5,
+            "face_count": 5,
+            "normal_closure": [
+              0.0,
+              0.0
+            ],
+            "faces": [
+              {
+                "neighbor": 653,
+                "length": 0.00665578540453214,
+                "start": [
+                  0.43633623410758093,
+                  0.6507913814226021
+                ],
+                "end": [
+                  0.4315391339977153,
+                  0.6554051987019393
+                ],
+                "normal": [
+                  -0.6932040321185065,
+                  -0.7207414029002669
+                ]
+              },
+              {
+                "neighbor": 654,
+                "length": 0.033630514191614384,
+                "start": [
+                  0.46869757772312737,
+                  0.6599431530646891
+                ],
+                "end": [
+                  0.43633623410758093,
+                  0.6507913814226021
+                ],
+                "normal": [
+                  0.2721270210126308,
+                  -0.9622613389484121
+                ]
+              },
+              {
+                "neighbor": 685,
+                "length": 0.03404225208595125,
+                "start": [
+                  0.43153913399771526,
+                  0.6554051987019393
+                ],
+                "end": [
+                  0.44208250202151755,
+                  0.6877735832430021
+                ],
+                "normal": [
+                  -0.9508297059588723,
+                  0.3097141751133847
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.024640883788963265,
+                "start": [
+                  0.46647062677162365,
+                  0.684253281398777
+                ],
+                "end": [
+                  0.44208250202151755,
+                  0.6877735832430021
+                ],
+                "normal": [
+                  0.1428642687646574,
+                  0.9897422900484447
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.024411916150933837,
+                "start": [
+                  0.4686975777231273,
+                  0.6599431530646891
+                ],
+                "end": [
+                  0.46647062677162365,
+                  0.684253281398777
+                ],
+                "normal": [
+                  0.9958304044542571,
+                  0.09122393087600666
+                ]
+              }
+            ]
+          },
+          {
+            "cell": 719,
+            "area": 0.0008955240498728368,
+            "vertices": 6,
+            "face_count": 6,
+            "normal_closure": [
+              0.0,
+              1.1102230246251565e-16
+            ],
+            "faces": [
+              {
+                "neighbor": 687,
+                "length": 0.030439365204357166,
+                "start": [
+                  0.49647938730308605,
+                  0.6893566506711004
+                ],
+                "end": [
+                  0.46647084232737657,
+                  0.6842534965008787
+                ],
+                "normal": [
+                  0.16764982239153892,
+                  -0.9858466092917728
+                ]
+              },
+              {
+                "neighbor": 688,
+                "length": 0.0008589634528423467,
+                "start": [
+                  0.49706372090182893,
+                  0.689986231848312
+                ],
+                "end": [
+                  0.4964793873030861,
+                  0.6893566506711004
+                ],
+                "normal": [
+                  0.7329545571796542,
+                  -0.6802776029751216
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.03239699057297154,
+                "start": [
+                  0.46647084232737657,
+                  0.6842534965008787
+                ],
+                "end": [
+                  0.4685769027289821,
+                  0.7165819593126178
+                ],
+                "normal": [
+                  -0.9978847491689662,
+                  0.06500790241185583
+                ]
+              },
+              {
+                "neighbor": 720,
+                "length": 0.024554824879180707,
+                "start": [
+                  0.49706372090182893,
+                  0.689986231848312
+                ],
+                "end": [
+                  0.49931507509327644,
+                  0.7144376291325549
+                ],
+                "normal": [
+                  0.99578789116002,
+                  -0.09168683558221434
+                ]
+              },
+              {
+                "neighbor": 751,
+                "length": 0.02947043904886201,
+                "start": [
+                  0.49931507509327644,
+                  0.7144376291325549
+                ],
+                "end": [
+                  0.47004154797321485,
+                  0.7178387153831092
+                ],
+                "normal": [
+                  0.11540670449175318,
+                  0.9933183238812989
+                ]
+              },
+              {
+                "neighbor": 750,
+                "length": 0.0019299278515453905,
+                "start": [
+                  0.47004154797321485,
+                  0.7178387153831092
+                ],
+                "end": [
+                  0.46857690272898206,
+                  0.7165819593126178
+                ],
+                "normal": [
+                  -0.65119329175182,
+                  0.7589119163496045
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "s": 0.75,
+        "cells": [
+          {
+            "cell": 686,
+            "area": 0.0009665818303688065,
+            "vertices": 5,
+            "face_count": 5,
+            "normal_closure": [
+              -1.1102230246251565e-16,
+              5.551115123125783e-17
+            ],
+            "faces": [
+              {
+                "neighbor": 653,
+                "length": 0.006655689366060293,
+                "start": [
+                  0.43633583512398794,
+                  0.6507912855054242
+                ],
+                "end": [
+                  0.43153879654633387,
+                  0.6554050282184487
+                ],
+                "normal": [
+                  -0.693202831332785,
+                  -0.7207425578056359
+                ]
+              },
+              {
+                "neighbor": 654,
+                "length": 0.03363057383108819,
+                "start": [
+                  0.4686972501909285,
+                  0.6599430236503597
+                ],
+                "end": [
+                  0.43633583512398794,
+                  0.6507912855054243
+                ],
+                "normal": [
+                  0.2721255423978382,
+                  -0.9622617570987027
+                ]
+              },
+              {
+                "neighbor": 685,
+                "length": 0.03404236943402063,
+                "start": [
+                  0.43153879654633387,
+                  0.6554050282184487
+                ],
+                "end": [
+                  0.4420821925662993,
+                  0.6877735270568026
+                ],
+                "normal": [
+                  -0.9508297858375887,
+                  0.309713929883764
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.024640818239269856,
+                "start": [
+                  0.46647024537092774,
+                  0.6842531856103815
+                ],
+                "end": [
+                  0.4420821925662993,
+                  0.6877735270568026
+                ],
+                "normal": [
+                  0.1428662559918878,
+                  0.9897420032002585
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.024411954550809672,
+                "start": [
+                  0.46869725019092856,
+                  0.6599430236503597
+                ],
+                "end": [
+                  0.46647024537092774,
+                  0.6842531856103815
+                ],
+                "normal": [
+                  0.9958302154554636,
+                  0.0912259940254132
+                ]
+              }
+            ]
+          },
+          {
+            "cell": 719,
+            "area": 0.0008955240499038237,
+            "vertices": 6,
+            "face_count": 6,
+            "normal_closure": [
+              1.1102230246251565e-16,
+              -1.6653345369377348e-16
+            ],
+            "faces": [
+              {
+                "neighbor": 687,
+                "length": 0.030439226488721664,
+                "start": [
+                  0.4964789991966317,
+                  0.6893565737465304
+                ],
+                "end": [
+                  0.46647057822995486,
+                  0.6842535177681577
+                ],
+                "normal": [
+                  0.16764736056165774,
+                  -0.985847027939279
+                ]
+              },
+              {
+                "neighbor": 688,
+                "length": 0.0008591343591718931,
+                "start": [
+                  0.49706344926572177,
+                  0.6899862799985641
+                ],
+                "end": [
+                  0.49647899919663163,
+                  0.6893565737465305
+                ],
+                "normal": [
+                  0.7329543339886772,
+                  -0.6802778434487005
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.032396883446848546,
+                "start": [
+                  0.46647057822995497,
+                  0.6842535177681579
+                ],
+                "end": [
+                  0.468576594127754,
+                  0.7165818761259048
+                ],
+                "normal": [
+                  -0.9978848246556177,
+                  0.06500674366576716
+                ]
+              },
+              {
+                "neighbor": 720,
+                "length": 0.02455472295035125,
+                "start": [
+                  0.4970634492657217,
+                  0.689986279998564
+                ],
+                "end": [
+                  0.49931475908630607,
+                  0.7144375790082331
+                ],
+                "normal": [
+                  0.99578802249607,
+                  -0.09168540916288989
+                ]
+              },
+              {
+                "neighbor": 751,
+                "length": 0.029470311863680054,
+                "start": [
+                  0.49931475908630607,
+                  0.7144375790082331
+                ],
+                "end": [
+                  0.470041368468609,
+                  0.7178387380880596
+                ],
+                "normal": [
+                  0.11540967382901009,
+                  0.9933179788902854
+                ]
+              },
+              {
+                "neighbor": 750,
+                "length": 0.0019300947804549104,
+                "start": [
+                  0.470041368468609,
+                  0.7178387380880596
+                ],
+                "end": [
+                  0.46857659412775393,
+                  0.7165818761259047
+                ],
+                "normal": [
+                  -0.6511918351795529,
+                  0.7589131661761351
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "s": 1.0,
+        "cells": [
+          {
+            "cell": 686,
+            "area": 0.0009665818274398634,
+            "vertices": 5,
+            "face_count": 5,
+            "normal_closure": [
+              0.0,
+              0.0
+            ],
+            "faces": [
+              {
+                "neighbor": 653,
+                "length": 0.00665559332767762,
+                "start": [
+                  0.4363354361405369,
+                  0.6507911895874526
+                ],
+                "end": [
+                  0.43153845909525745,
+                  0.655404857734436
+                ],
+                "normal": [
+                  -0.6932016305439237,
+                  -0.7207437127101737
+                ]
+              },
+              {
+                "neighbor": 654,
+                "length": 0.03363063347081998,
+                "start": [
+                  0.4686969226590883,
+                  0.6599428942351262
+                ],
+                "end": [
+                  0.4363354361405369,
+                  0.6507911895874525
+                ],
+                "normal": [
+                  0.2721240637829276,
+                  -0.9622621752465724
+                ]
+              },
+              {
+                "neighbor": 685,
+                "length": 0.034042486781915966,
+                "start": [
+                  0.43153845909525745,
+                  0.655404857734436
+                ],
+                "end": [
+                  0.4420818831114924,
+                  0.687773470869861
+                ],
+                "normal": [
+                  -0.9508298657141516,
+                  0.3097136846605401
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.02464075268931365,
+                "start": [
+                  0.4664698639703629,
+                  0.6842530898218376
+                ],
+                "end": [
+                  0.4420818831114923,
+                  0.6877734708698608
+                ],
+                "normal": [
+                  0.1428682432071141,
+                  0.9897417163497318
+                ]
+              },
+              {
+                "neighbor": 687,
+                "length": 0.02441199295156361,
+                "start": [
+                  0.46869692265908824,
+                  0.6599428942351262
+                ],
+                "end": [
+                  0.4664698639703629,
+                  0.6842530898218376
+                ],
+                "normal": [
+                  0.9958300264524018,
+                  0.09122805717436165
+                ]
+              }
+            ]
+          },
+          {
+            "cell": 719,
+            "area": 0.0008955240499361771,
+            "vertices": 6,
+            "face_count": 6,
+            "normal_closure": [
+              0.0,
+              5.551115123125783e-17
+            ],
+            "faces": [
+              {
+                "neighbor": 687,
+                "length": 0.030439087773772237,
+                "start": [
+                  0.4964786110904329,
+                  0.6893564968217086
+                ],
+                "end": [
+                  0.4664703141323998,
+                  0.6842535390345118
+                ],
+                "normal": [
+                  0.16764489872767402,
+                  -0.9858474465811574
+                ]
+              },
+              {
+                "neighbor": 688,
+                "length": 0.0008593052646028288,
+                "start": [
+                  0.49706317762934676,
+                  0.6899863281478241
+                ],
+                "end": [
+                  0.4964786110904329,
+                  0.6893564968217086
+                ],
+                "normal": [
+                  0.7329541107915839,
+                  -0.6802780839287113
+                ]
+              },
+              {
+                "neighbor": 718,
+                "length": 0.03239677632187791,
+                "start": [
+                  0.4664703141323998,
+                  0.6842535390345118
+                ],
+                "end": [
+                  0.46857628552672853,
+                  0.7165817929393558
+                ],
+                "normal": [
+                  -0.997884900140892,
+                  0.06500558492008152
+                ]
+              },
+              {
+                "neighbor": 720,
+                "length": 0.024554621022764404,
+                "start": [
+                  0.49706317762934676,
+                  0.6899863281478241
+                ],
+                "end": [
+                  0.4993144430794707,
+                  0.7144375288840796
+                ],
+                "normal": [
+                  0.9957881538300666,
+                  -0.09168398274348478
+                ]
+              },
+              {
+                "neighbor": 751,
+                "length": 0.029470184678679893,
+                "start": [
+                  0.4993144430794707,
+                  0.7144375288840796
+                ],
+                "end": [
+                  0.47004118896410846,
+                  0.7178387607922162
+                ],
+                "normal": [
+                  0.11541264315853372,
+                  0.9933176338911742
+                ]
+              },
+              {
+                "neighbor": 750,
+                "length": 0.0019302617086737982,
+                "start": [
+                  0.47004118896410846,
+                  0.7178387607922162
+                ],
+                "end": [
+                  0.4685762855267285,
+                  0.7165817929393558
+                ],
+                "normal": [
+                  -0.6511903785958933,
+                  0.7589144160075872
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "full_validation": false
   }
 }

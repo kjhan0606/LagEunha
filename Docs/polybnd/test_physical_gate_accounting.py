@@ -1,5 +1,5 @@
 import unittest
-from physical_gate_accounting import retarget_peak,numerical_gates
+from physical_gate_accounting import retarget_peak,numerical_gates,budget_duration
 
 class GateAccountingTests(unittest.TestCase):
     def fixture(self):
@@ -18,5 +18,26 @@ class GateAccountingTests(unittest.TestCase):
 
     def test_invalid_retarget_duration_rejected(self):
         with self.assertRaises(ValueError):retarget_peak({'rate':1.},0.,1.)
+
+    def test_full_target_is_independent_of_intermediate_stop(self):
+        self.assertEqual(budget_duration({'end':.2},0.),.2)
+        self.assertEqual(budget_duration({'end':.2,'validation_end':10.},0.),10.)
+        self.assertEqual(budget_duration({'end':.5,'validation_end':10.},0.),10.)
+        self.assertEqual(budget_duration({'end':.5,'validation_end':10.},.1),9.9)
+
+    def test_shorter_or_nonfinite_target_is_rejected(self):
+        for cfg in ({'end':.2,'validation_end':.1},{'end':.2,'validation_end':float('nan')},
+                    {'end':float('inf')},{'end':0.}):
+            with self.assertRaises(ValueError):budget_duration(cfg,0.)
+
+    def test_full_target_tightens_path_mass_and_rate_together(self):
+        from smooth_path_quadrature import assess_values
+        cfg=dict(end=.2,validation_end=10.,path_mass_budget=1e-5,path_rate_budget=1e-4,
+                 path_quadrature_budget=1e-7,generator_path_budget=1e-5)
+        nodes=[dict(flux=[1e-6],diag=dict(generator_defect=0.,min_pressure=1.,min_factor_R=0.)) for _ in range(9)]
+        short=assess_values(nodes,[1.],.001,.2,cfg)
+        full=assess_values(nodes,[1.],.001,budget_duration(cfg,0.),cfg)
+        self.assertAlmostEqual(full['rate']/short['rate'],50.)
+        self.assertAlmostEqual(full['mass_ratio']/short['mass_ratio'],50.)
 
 if __name__=='__main__':unittest.main()

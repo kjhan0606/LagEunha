@@ -44,3 +44,20 @@ def test_planar_odd_residual_needs_affine_nuisance_terms():
     assert np.max(abs(fit[:,1]))==0
     assert environment({'velocity_fit':'tensor_free_affine'})['LAGFORCE_VELOCITY_FIT']=='tensor_free_affine'
     with pytest.raises(ValueError):curvature_fit(A,target,w,'tensor_free_affine')
+
+
+@pytest.mark.parametrize('actual,expected',[
+    ('radial_fixed_mean','velocity fit configuration mismatch'),
+    ('tensor_free_affine','velocity fit requires quadratic reconstruction'),
+])
+def test_evolution_rejects_misreported_velocity_fit(monkeypatch,tmp_path,actual,expected):
+    import json
+    from simple_wave_evolution import run_with_executor
+    monkeypatch.chdir(tmp_path)
+    for key in ('LAGFORCE_PRESSURE_RIEMANN','LAGFORCE_VECTOR_KINETIC_ROOT','LAGFORCE_QUADRATIC_VELOCITY'):
+        monkeypatch.delenv(key,raising=False)
+    monkeypatch.setenv('LAGFORCE_VELOCITY_FIT',actual)
+    (tmp_path/'simple_wave_config.json').write_text(json.dumps({'velocity_fit':'tensor_free_affine'}))
+    with pytest.raises(ValueError,match=expected):run_with_executor()
+    assert not (tmp_path/'initial_state.json').exists()
+    assert not (tmp_path/'checkpoint.json').exists()

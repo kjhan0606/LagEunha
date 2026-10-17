@@ -3,6 +3,20 @@ import copy
 import numpy as np
 
 
+def budget_duration(cfg,source_time):
+    """Allocate each accepted path against the declared full target.
+
+    A shorter execution endpoint may be used for inspection, but cannot
+    enlarge the per-step mass/quadrature allocation or relax the rate gate.
+    Configuration hashes still protect continuation identity.
+    """
+    end=float(cfg['end']);target=float(cfg.get('validation_end',end))
+    source=float(source_time)
+    if not all(np.isfinite(x) for x in (end,target,source)) or end<=source or target<end:
+        raise ValueError('finite validation endpoint must cover the execution interval')
+    return target-source
+
+
 def retarget_peak(peak,old_duration,new_duration):
     if not np.isfinite(old_duration+new_duration) or old_duration<=0 or new_duration<=0:raise ValueError('positive finite durations required')
     result=copy.deepcopy(peak);result['rate']*=new_duration/old_duration

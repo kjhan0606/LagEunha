@@ -5,6 +5,19 @@
 무조향, 원래 셀 질량 고정, 가변 Laguerre 가중치 유지. 기존 승인 경로 보존.
 현재 네 가지 전체 유체 검증이 모두 통과한 상태는 아니다.
 
+## 현재 판정 — 2026-10-17 13:23 갱신
+
+| 범위 | 완료에 필요한 범위 | 현재 판정 |
+|---|---|---|
+| 충격파 | T=.15, 공간 비교, 물리 L1<.05 및 수치 경로 검사 | 미완료. 새 피팅16² T=.02 통과; 전체 구간 계산 중 |
+| 장시간 와류 | 10중심주기(T=10.4685979156) | 미완료. 기존 중간 궤적의 밀도 기준 초과 확인; 전체기간 예산 대조 진행 |
+| 3차원 | 비선형 물리장, 독립 전체 경로, 시간·공간 수렴 | 미완료. 6³ coarse 압력 기준 미달; 8³/10³ 및 시간 정밀화 진행 |
+| 케플러 | 공식192² 유체 원반100궤도 | 미완료. 초기 적분·셀별 재구성 감사 중; 공식 유체 진화 미시작 |
+
+아래 내용은 순차 연구 기록이다. 초기 시점의 구현/실행 상태를 현재 완료 상태로
+해석하지 않는다. 최신 체크포인트 캡처와 제한은 JSON의
+`current_completion_audit`에 있으며 이전 판정도 보존한다.
+
 ## 충격파
 
 현재 2D 모멘트 해법에 Sod adapter를 추가했다. 이전 `stagSod.py`는 다른
@@ -1364,3 +1377,366 @@ this is not an exclusion of cumulative error at every earlier state.
 PK canonical192 geometry completed and began persisting32-cell integration
 chunks; at least768/36864 cells observed. Existing initial and control work
 is retained, and completed chunks will be reused on any required resume.
+
+
+### 12:57 Free-affine velocity fit: counterexample and independent controls
+
+PN/PO force decompositions show pressure traction dominates the early
+transverse acceleration. At the same first accepted state, the original fit
+has column pressure-rate spread 6.178851e-6; the tensor/free-constant fit
+still has 6.79093e-6. A truncated tensor stencil with a planar odd residual
+produces false xy curvature (0.2928317) under the free-constant fit.
+The optional tensor_free_affine mode fits nuisance constant and linear terms,
+then discards them: the stored momentum and mixed moments still determine
+the physical affine velocity. No mass rescaling or generator steering occurs.
+
+PP targeted tests (4), existing velocity invariants under the new option (17),
+and normal regression (494 passed, one Sod-reference log warning) completed.
+On identical archived MK states, PP reduces first-step pressure-rate spread
+to 5.339773e-11; at step10 it is 4.837546e-5 versus the original 0.00245476.
+The pressure traction already encoded in later archived states remains;
+this read-only experiment does not prove evolution or spatial convergence.
+
+PQ independent n16/n32 T=.02 controls were launched on lageunha using the
+verified PP source manifest and the original initial-array/configuration hashes.
+Only the velocity fit setting changes relative to PA; all error thresholds
+are retained. Two-hour bounded CPU runs use sessions33324/55313 and preserve
+existing trajectories in their original directories. Root:
+`/gpfs/kjhan/LagForce/Codex_PQ_velocity_affine_sod_controls_20261017`.
+The default remains radial_fixed_mean. Full shock, long-time, nonlinear3D,
+and canonical192 100-orbit validation remain incomplete.
+
+
+### 12:59 Early evolved planar-symmetry comparison
+
+PR compares preserved accepted dense states at exactly t=.0004 for n16.
+Original radial, tensor/free-constant, and tensor/free-affine velocity fits
+respectively give max mean |vy| 6.376876e-10, 6.670424e-10, 2.908398e-17;
+transverse kinetic energies are 1.156560e-21, 1.103417e-21, 1.013085e-34.
+Trial hashes and unmodified initial mass arrays were verified. This is
+actual evolution evidence for early symmetry improvement, not a long-time
+or mesh-convergence certificate. PQ n32 is still performing its initial
+adaptive step selection; no failure or restart is inferred from rejections.
+
+The independent n8 3D audit completed through t=.004 (2 steps): accumulated
+absolute relative mass 6.175911e-7, nested quadrature difference8.870148e-10,
+duration-scaled rate1.053320e-5, generator path defect1.484746e-5.
+Full target .02 is not covered. PS separately evaluates n6/n8 physical fields
+at t=.004 from their actual saved endpoints; no evolution is replayed.
+
+
+### 13:00 Extended 3D temporal mass-path evidence
+
+NX independent order6 audit completed through t=.01,10steps, exit0.
+PT compares identical initial arrays and independently cached mass-path nodes
+at matching times: coarse/fine absolute mass ratios4.017124 at t=.008 and
+4.016554 at t=.01. At t=.01 absolute relative mass is1.099813e-6 versus
+2.738201e-7; nested quadrature differences3.729846e-9 versus1.158399e-9.
+NX generator defect4.314414e-6 and duration-scaled rate3.872029e-6 are
+reported separately. This extends evidence of second-order path convergence;
+it does not resolve the known n6 pressure-field failure at T=.02.
+
+PS first invocation exited2 before computation because the comparison
+script was absent from the source snapshot. The repository script was copied
+into the standalone audit directory and a local launcher imports immutable
+PP dependencies. The corrected bounded read-only audit is session3754;
+no simulation trajectory was restarted.
+
+PS corrected audit completed exit0. At t=.004, n6→n8 order12 density L1
+.000940746→.000682323, velocity/amplitude L1 .0386213→.0222433,
+pressure/amplitude² L1 .0469040→.0213843. Sampled maximum vertical velocity
+increases .000602517→.000789471. Integral field errors improve with refinement,
+but vertical symmetry does not improve uniformly. No full spatial convergence
+certificate is inferred from two resolutions and this early time.
+
+
+### 13:02 Vertical pressure reconstruction and evolved planar symmetry
+
+PU read-only audit and two derivative unit tests completed. The analytic
+vertical derivative of each quadratic pressure polynomial is affine; its
+absolute maximum is evaluated at all convex-cell vertices. Original files
+and masses are checked. At t=0, n6/n8 maximum reconstructed |dP/dz| is
+0.09274172/0.14774216, despite exactly zero initial vertical mean velocity
+and a vertically invariant physical reference. At t=.004 the gradients are
+0.09369875/0.14495708 and maximum mean vertical velocities are
+0.000245971/0.000373882. No pressure positivity limiter was active.
+This identifies a pre-evolution spatial reconstruction defect; it is not a
+complete momentum-force decomposition or proof that every later error has
+one cause. Sites are irregular, so tensor-product planar invariance cannot
+be assumed from the 2D Cartesian control. No state, mass or generator changed.
+
+PV same-time actual dense-path comparisons extend the free-affine evidence.
+At n16,t=.004 original/free-constant/free-affine max |vy| is
+6.476903e-7/6.481341e-7/2.122667e-15; transverse kinetic energy is
+4.133719e-15/7.884541e-15/9.916858e-32.
+At n32,t=.0001 max |vy| is2.095339e-11/2.170079e-11/4.561392e-17,
+and transverse kinetic energy3.609127e-25/3.840665e-25/9.767878e-35.
+These two resolutions are compared at different times, so they support
+within-resolution improvement, not a cross-resolution convergence order.
+Full-duration shock and physical-field criteria remain required.
+
+OT midpoint Kepler has accepted9steps to t=.01225: absolute mass8.393648e-8,
+quadrature mass1.273482e-9, rate1.130149e-5, generator4.464017e-7,
+energy/initial thermal1.422086e-8. Official192 initialization and all longer
+validation targets remain incomplete; no canonical completion is inferred.
+
+
+### 13:05 3D candidate fit tradeoff and long-vortex gate review
+
+PW evaluated only preserved initial states, with prototype modules saved beside
+the audit and the original production implementation unchanged. Free-constant
+radial fitting reduces max vertical pressure gradient n6 .0927417→.0428911,
+n8 .147742→.0608217; tensor/free-constant gives .0496972/.0752265.
+However order6 pressure L1 slightly worsens: n6 .0453460→.0459774 (radial)
+or .0469269 (tensor); n8 .0204311→.0204953 or .0212563. All cell pressure
+means are preserved to1e-15 and no limiter activates. This is a tradeoff,
+not a validated model improvement; no new evolution with these models launched.
+
+PX checks PF's saved vortex score against actual per-field configuration.
+At t=.1558767064 density_field=.00130127493 exceeds its .001 limit;
+the other five checked field/cell measures pass their respective limits.
+The reference quadrature is valid. This is an intermediate physical-gate
+failure, not a prediction of the future endpoint. JU remains preserved/running
+for diagnostic evolution; it cannot certify all-time physical accuracy.
+The full10-period target is10.4685979156. Even scaling the current stored
+rate peak by full_target/.2 gives a lower bound exceeding the1e-4 rate
+budget; earlier shorter prefix durations can make the exact bound stricter.
+Therefore merely extending the target cannot certify the existing trajectory
+under the full-duration rate gate. PX captures the actual checkpoint and
+calculation without rewriting any accepted history or relaxing requirements.
+
+
+### 13:08 Full-horizon allocation and completed short free-affine shock
+
+PY adds optional validation_end, an absolute target no earlier than execution
+end. Every step mass/quadrature allocation and rate gate uses the duration
+from original source time to validation_end. Default behavior is unchanged;
+shorter inspection intervals cannot enlarge their per-step budgets. Invalid
+or nonfinite horizons reject. Report includes covers_validation_target;
+configuration hashes still guard resumes, no existing history is migrated.
+Six targeted and497 normal regressions passed (existing Sod log warning).
+
+PZ starts an independent n32 vortex temporal control with original JU initial
+arrays and model, execution end=.01, validation_end=10.468597915605091,
+max_dt=.00025, unchanged thresholds. This isolates stricter full-horizon
+time allocation; it does not promise to repair spatial density error.
+Session86530, lageunha CPU threads1/path workers4, timeout3h. Prior JU runs
+and caches remain intact. Full10period completion is explicitly false.
+
+PQ n16 free-affine shock reached T=.02 in117accepted steps, exit0 at13:05:50.
+Numerical and physical gates pass for that short interval: rho/v/P field L1
+.013303149/.029607562/.022291339; absolute relative mass3.417785e-6.
+QA compares actual accepted endpoint paths: original/free-constant/free-affine
+max mean |vy|1.739633e-4/1.018828e-4/8.498615e-12; transverse kinetic
+1.315684e-10/7.377544e-11/2.455946e-25. Global field errors are not uniformly
+smaller, although symmetry is strongly improved. PQ n32 remains running.
+
+QB starts the independent n16 free-affine whole T=.15 test, using original
+initial arrays and full-duration allocation fromt0. Source PY manifest and
+original initial/configuration hashes verified. Session45359, timeout4h.
+This is a new candidate control; completed and active older trajectories are
+preserved. All full-scope validation targets remain incomplete.
+
+
+### 13:10 Full-horizon initial-step regularity and continued 3D audits
+
+PZ rejected its initial .00025 step and adaptively reached an accepted
+first endpoint t=3.90625e-6. QC evaluates actual archived rejected samples,
+not newly solved geometry. Full-duration rate decreases .00170398→.000425979
+→.000106494 as dt halves initially (worst cell336), then5.892825e-5→
+4.232966e-5→3.018376e-5 (worst cell877). Initial-node relative rate remains
+2.593558e-11 and stage mass residual4.061993e-15. Later rejection ratios
+are dominated by quadrature (9.59457,6.79213,4.80419), with additional
+mass-allocation violations. No solver tolerance or budget was relaxed.
+
+Cell877 starts with zero residual covariance-factor trace. Across these
+six saved trials its endpoint trace increment/dt tends to1.23033e-11;
+cell336 starts at6.39339e-9 and has increment/dt about1.33e-8.
+This is evidence of O(dt) covariance generation at an initially rank-zero
+cell, consistent with square-root velocity-scale regularity; a causal
+attribution of the full path error is not yet established. Values are
+preserved factor norms, with no clipping, seed covariance or mass correction.
+
+At13:08 NX was live at t=.012 and OR live at t=.006. Earlier independent
+order6 audits had terminal exit0; resumed from cached nodes with new receipts
+execution_resume_1308.txt (NX session65329, OR session53040), timeout1h.
+No old path nodes or simulation steps are replayed. Official192 initial
+integration was live with10592/36864 cells persisted. QB accepted7steps to
+.000177492 under full .15 allocation; all full targets remain incomplete.
+
+
+### 13:14 Third 3D spatial resolution and pipelined canonical IC audits
+
+QD uses the verified OR source manifest and unchanged split4/affine-velocity/
+quadratic-pressure nonlinear vortex model at n10, dt=.002,T=.02. Initial-only
+run exited0 at13:12:37, preserving the exact normal initializer output.
+Order12 initial rho/v/P amplitude-normalized L1 is9.639214e-12/
+.013800178/.012762244; velocity relative to reference speed is.084017529.
+Initial sampled vz=0 and positive pressure/density. The same saved initial
+state now proceeds into evolution, session73509,timeout4h; no initialization
+replay or altered original masses. lageunha observed32 CPUs, load19.63,
+937GiB available before adding the single-thread control.
+
+QE audits already completed official initial-integration chunks while PK
+continues. Source/site/geometry/chunk/script identities protect cache reuse.
+It reconstructs the actual factor-completed cell state with density order16,
+and independently integrates mass with polar orders16/24. It neither edits
+physical arrays nor solves alternative geometry. A32-cell n16 real-data
+preflight gives max independent relative mass8.379257e-14, quadrature
+difference3.349748e-15, minimum pressure2.777777773e-5. A second run replacing
+decode with a function that fails proves completed cache reuse without
+reconstruction; cache and report bytes remain identical.
+
+Canonical QE session49974,timeout2h, processes available chunks and stops at
+the first missing chunk. Report explicitly distinguishes audited prefix from
+all36864 cells. Density-order16 validity does not validate the native order6
+model, enriched potential closure, intercell pressure fit, or100orbital periods.
+All full-scope completion claims remain false.
+
+
+### 13:16 Third-resolution vertical-gradient evidence
+
+QF n10 initial-state audit completed: max reconstructed |dP/dz|=.13807905,
+worst cell549 near the upperz wall, initial meanvz=0, no pressure limiting.
+The corresponding n6/n8 values were .09274172/.14774216. Thus the third
+resolution lowers the n8 maximum slightly but does not establish monotonic
+maximum-gradient convergence, despite improved integrated field errors.
+
+At13:15:43 NX remained live at t=.013, so no premature restart was made.
+Its independent order6 audit completed through captured t=.012 with exit0
+at13:14:43. QE canonical initial reconstruction reached928cells with no
+reported fit failure; this is only the audited prefix, not completion.
+
+
+### 13:18 Verified NX timeout and checkpoint continuation
+
+NX timeout exited124 at13:16:44; oldPID1790182 absent at13:17:16. Verified
+every immutable source-manifest entry before resuming the actual checkpoint
+t=.013000000000000005,13steps. No pending next-step dense record existed;
+all accepted records and original mass/state arrays retained. Receipt
+resume_1317_receipt.json includes checkpoint hash and terminal evidence.
+Session31155 resumes for2h with unchanged parameters; no accepted-step replay.
+
+QG independent cached-node comparison at t=.012 gives coarse/fine absolute
+relative mass1.297424e-6/3.230168e-7, ratio4.016584. Nested quadrature estimates
+are3.729851e-9/1.158400e-9. Temporal path evidence remains consistent with
+second order; it does not erase the n6 physical pressure failure atT=.02.
+
+
+### 13:20 Equal-time two-resolution symmetry and canonical reconstruction prefix
+
+QH evaluates all three velocity fits at the same physical time t=.004 for
+both n16/n32. Max mean |vy| original/free-constant/free-affine:
+n16 6.476903e-7/6.481341e-7/2.122667e-15;
+n32 8.061891e-6/7.434164e-6/5.280132e-14.
+Transverse kinetic energy under free-affine is9.916858e-32/1.185391e-29.
+Both meshes show strong improvement. These near-roundoff values do not
+establish a conventional spatial convergence order. Actual archived paths,
+original mass arrays and record hashes were checked without replay.
+
+QI captures the first2624 canonical density-order16 audited cells and checks
+each cache against its original IC chunk hash and common audit identity.
+Worst independent mass relative error1.257942e-12 (cell2423), maximum polar
+order16/24 difference3.320217e-15, minimum pressure2.777777710e-5.
+This prefix includes only2624/36864 cells; no complete initial/evolution
+validation is claimed. PK had15488 integrated cells at13:18:23 and remains
+live. PQ32 t=.00616421, QB16 t=.01599194, PZ vortex t=.000616781 were
+observed advancing. QJ separately captures the original long-shock current
+state for an exact-reference physical score, preserving source files.
+
+
+QJ completed the exact-reference original MV shock score at t=.0845738673,
+2244steps. Density/velocity/pressure field L1 .02949335/.04199748/.02711791
+and all three cell errors are below .05 at this captured time. Reference
+quadrature difference5.392618e-16 and original masses unchanged. Max mean
+transverse velocity.00642806, transverse kinetic1.350978e-7 remain nonzero.
+This is an intermediate field assessment, not fullT=.15 or every-time proof.
+
+
+### 13:23 Missing n8 temporal control added
+
+QK starts the n8 dt=.001,T=.02 split4 nonlinear control from exact original
+OR sites/weights/raw/factors/mass arrays. Only configuration dt changes;
+initial integration and score are reused, with original IC hash recorded.
+All source manifest entries verified. Session58672, lageunha one thread,
+timeout4h. This fills the missing temporal comparison at the finer physical
+resolution; no result is claimed before actual paths/fields are audited.
+Refreshed the explicit completion matrix from current checkpoint artifacts;
+all four full-scope requirements remain unfulfilled.
+
+
+### 13:26 Runtime velocity-fit identity guard
+
+QL verifies the actual environment velocity-fit mode matches the recorded
+configuration, and rejects nondefault curvature fits with affine-only velocity.
+These checks run before initial/checkpoint creation. Two driver-level negative
+cases plus four stencil tests pass; normal regression499passed, with the
+existing Sod-initializer logarithm warning. Existing running snapshots were
+not edited; this guard changes configuration validation, not the equations.
+At13:24:46 PQ32 had86steps,t=.00733461; QB16 had234steps,t=.02392065;
+PK had18592 integrated initial cells and QE5472 reconstructed/audited cells.
+All counts are intermediate observations, not full validation claims.
+
+
+### 13:31 Time accuracy versus spatial error in3D and vortex
+
+QM compares exact same-time n6 saved endpoints at t=.012, dt=.002/.001,
+with identical original IC arrays. Order12 rho/v/P errors are coarse
+.002769770/.040599882/.050888944 and fine
+.002769755/.040600279/.050887405. Both pressure errors exceed .05;
+maximum raw endpoint difference5.084309e-9 and site difference3.960232e-8.
+Thus halving time step improves the separately measured mass path but does
+not remove this physical pressure error. No evolution was replayed.
+OR reached t=.008; its prior order6 audit exited0 at13:16:25 through .006.
+Resumed existing caches at13:27,session71849,timeout1h, for the new path.
+
+QN evaluates identical original n32 vortex states under three velocity fits.
+Initial density equals1 to geometric precision. Max spurious mean-density
+rate radial/free-constant/free-affine=.03162034/.03485959/.03604841;
+volume-integrated absolute rates=.001718594/.001849956/.001771351.
+Global area rates are around1e-17 and mass-root residuals4–6e-15; original
+state/factor/mass bytes remain unchanged. The new planar fit is not a measured
+improvement for this irregular vortex and was not substituted in active runs.
+This instantaneous consistency diagnostic does not prove a later-time error.
+
+QO prepares n16/n64 initial-only spatial consistency controls using the same
+vortex definition and baseline radial velocity fit. Exact initializer arrays
+and initial physical scores are saved for later reuse. Sessions29930/94011,
+one thread each,timeout1h. No evolution has been launched; purpose is to
+measure how the initial spurious density rate scales with spatial resolution.
+All original long-time and canonical targets remain required.
+
+
+### 13:34 Spatial improvement of initial vortex consistency; tight path events
+
+QO initial-only n16/n64 completed with original generated arrays saved.
+Combined with QN's unchanged n32 baseline, volume-integrated absolute initial
+density rates are .01087597/.001718594/.000289014; max rates
+.10458178/.03162034/.006430708. This is clear initial consistency improvement
+with spatial refinement, not a long-time density-error certificate.
+n64 initial pressure/velocity field errors6.441056e-6/1.556644e-5 and density
+field3.345010e-11. Reference moment/score data and initial states are retained.
+
+PZ reaches t=.00109775476 but rejects some very small steps. QP reads only
+actual rejection archives: rejections17/18 at the same source time have dt
+3.304679e-6/1.652339e-6 and nearly identical quadrature ratio15.833464.
+Worst flux is at endpoint s=1,cell719; initial-node relative rate1.20655e-11
+and stage residual3.68802e-15 are small. Halving again lowers the ratio;
+there is no evidence of a terminal failure or permission to restart.
+QQ examines the stored quadratic covariance-partition metadata at five
+phases of these two paths (session1956,timeout20m). No closure, moment,
+threshold, or running source is changed. Higher-resolution long evolution
+is deferred until this localized time-control issue is understood better.
+
+
+QQ completed both saved-path audits. Cell719 residual covariance fraction
+changes smoothly .11735663→.11736261 across rejection17; neighbor750 stays
+at the same saturated residual-map singular value1.4142e-6 throughout.
+No sudden covariance-partition switch was found at these sampled phases.
+However edge686–719 exists at s=0 with length2.627594e-8 and disappears
+before s=.125; the adjacent polygons change6→5 and7→6 vertices.
+Per-cell oriented face-normal closure remains within2.22e-16, with no false
+boundary face in the inspected cells. This is evidence of a genuine local
+mesh-topology event, not a demonstrated geometry closure bug. Quantifying
+its contribution to the dense-path error is the next diagnostic; covariance
+caps, solver tolerances, and accepted trajectories remain unchanged.
