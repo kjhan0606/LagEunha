@@ -1,5 +1,42 @@
 # CURRENT DRIVER UPDATE 2026-10-22: ACTUAL STEP5 TRIAL-WEIGHT CHART/DEGREE PASSED; MASS LAW AND REMAP NOT YET SOLVED
 
+## Current checkpoint 2026-10-23: ordered-cut prefix [0,1100000), remaining source ranges queued
+
+The direct joint original-edge presence/exterior-incidence and independent
+canonical-versus-wire audits prove a contiguous [0,1000000) source-event
+ledger: 3,017,218 incidence wires and 1,513,721 canonical events. The
+additional [1000000,1050000), [1050000,1100000), and [1100000,1150000)
+root60 source chunks each completed with native exit 0, frozen inputs,
+binary128 endpoint checks, native reconciliation, independent event audit,
+and zero overlapping root-interval pairs in parameter-order preflight.
+The first two also passed frozen native cut order and independent cut audit.
+The direct whole-prefix cut audit now proves [0,1100000): 1,647,573
+canonical events, 1,645,533 individual ordered cuts and 2,040 grouped
+target-node events. Native cut order for [1100000,1150000) is active.
+
+Native original-triangle boundary routing and independent audits now prove
+the contiguous [0,150000) block and a separate [500000,750000) block.
+The [150000,200000) route is active. A separate H200 source-edge job
+435163 for [1100000,1150000) completed 0 in 00:03:40. The remaining
+disjoint original-edge source runs [1150000,1708672) were submitted as
+12 H200 Slurm jobs 435165–435176, four MPI ranks, four OpenMP threads per
+rank, `--gres=gpu:H200:1` each; 435165 and 435166 were running at this
+checkpoint, and the rest were pending. Each run still needs the full
+frozen-input and independent source/canonical/cut audit chain. A terminal
+Slurm state or a printed native event count alone does not accept a chunk.
+
+The binary128 source-edge certificate remains a reference-quality geometry
+path, not yet a feasible production path for every RK stage: a single
+heavy 50,000-edge H200 chunk took 01:33:24 with four OpenMP threads per
+rank, before overlap, remap, or mass-law work. The eight-thread H200 trial
+completed a different [800000,850000) chunk in 00:40:09, so the wall-time
+ratio is not a controlled speedup measurement. Workload-normalized
+root-box throughput improved, but the CUDA+MPI/OpenMP production path still
+needs algorithmic acceleration before a long Kepler evolution is credible.
+Accepted physical time remains t=0.00011263377801805954. No screened
+fixed-M mass law, positive overlap integration, conservative remap, RK4
+advance, or t>6 stability result has been accepted.
+
 ## Current checkpoint 2026-10-23: contiguous [0,800000) source events and ordered cuts
 
 The separate H200 root-width 2^-60 reruns of [550000,600000) (job 435136,
