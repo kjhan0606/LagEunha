@@ -61,6 +61,12 @@ H200 job 435127 was submitted for independent [600000,650000) root60
 production; it is running. Separate LagEunha root60
 production is running for [650000,700000), [700000,750000), and
 [750000,800000), each with four MPI ranks and four OpenMP threads per rank.
+To probe CPU utilization in the otherwise unchanged CUDA+MPI producer,
+`run_power_v52_edge_chunk_h200_sm90_root60_omp8.sbatch` requests
+`--gres=gpu:H200:1`, eight CPUs/threads per rank and a distinct output
+directory. Job 435139 for independent [800000,850000) was submitted and
+pending at this checkpoint. This is a throughput trial; no speedup claim
+is made until its native result and workload-normalized timing pass.
 Native triangle routing for the already ordered [0,50000) range completed
 on LagEunha with native exit 0 and frozen inputs. The independent
 `audit_power_triangle_route_chunks.py` verified 86,313 canonical events,

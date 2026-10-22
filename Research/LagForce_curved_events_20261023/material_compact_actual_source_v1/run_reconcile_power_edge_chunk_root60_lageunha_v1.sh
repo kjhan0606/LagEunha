@@ -11,6 +11,10 @@ last=$2
 chunk=$dest/power_edge_chunk_${first}_${last}_h200sm90_root60
 if ! test -f "$chunk/native_exit_code.txt" ||
    test "$(cat "$chunk/native_exit_code.txt")" != 0; then
+  chunk=$dest/power_edge_chunk_${first}_${last}_h200sm90_root60_omp8
+fi
+if ! test -f "$chunk/native_exit_code.txt" ||
+   test "$(cat "$chunk/native_exit_code.txt")" != 0; then
   chunk=$dest/power_edge_chunk_${first}_${last}_lageunha_root60
 fi
 presence=$dest/source_edge_presence_v3

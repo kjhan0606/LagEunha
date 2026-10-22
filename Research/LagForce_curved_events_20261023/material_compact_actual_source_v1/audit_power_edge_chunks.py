@@ -93,7 +93,8 @@ def audit_chunk(directory):
                                f"power_edge_chunk_{first}_{last}_h200sm90_v2",
                                f"power_edge_chunk_{first}_{last}_h200sm90_v2b",
                                f"power_edge_chunk_{first}_{last}_h200sm90_root60",
-                               f"power_edge_chunk_{first}_{last}_lageunha_root60"),
+                               f"power_edge_chunk_{first}_{last}_lageunha_root60",
+                               f"power_edge_chunk_{first}_{last}_h200sm90_root60_omp8"),
             f"directory/range mismatch: {directory}")
     output = []
     for rank, manifest in enumerate(manifests):

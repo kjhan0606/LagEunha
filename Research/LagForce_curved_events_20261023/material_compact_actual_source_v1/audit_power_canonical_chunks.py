@@ -41,7 +41,7 @@ def event_key(row):
 
 def audit_one(chunk):
     first, last, total, seal, ranks = audit_chunk(chunk)
-    variant = "_root60_v1" if chunk.name.endswith("_root60") else "_v2"
+    variant = "_root60_v1" if "_root60" in chunk.name else "_v2"
     canonical = chunk.parent / f"power_edge_reconcile_{first}_{last}{variant}"
     require((canonical / "native_exit_code.txt").read_text().strip() == "0",
             f"native reconciliation did not exit zero: {canonical}")
