@@ -1,5 +1,32 @@
 # CURRENT DRIVER UPDATE 2026-10-22: ACTUAL STEP5 TRIAL-WEIGHT CHART/DEGREE PASSED; MASS LAW AND REMAP NOT YET SOLVED
 
+## Current checkpoint 2026-10-23: independently audited [650000,750000) cut order
+
+The two LagEunha root-width 2^-60 source-edge runs for [650000,700000)
+and [700000,750000) both exited 0. Their exact source inputs were frozen.
+Original-edge presence/exterior-incidence and binary128 printed-endpoint
+roundtrip audits passed: respectively 127,084 and 126,954 incidence wires,
+with 254,168 and 253,908 roundtripped endpoints. Native reconciliation
+exited 0, its input snapshots were frozen, and the independent
+canonical-versus-wire audit proved 63,542 and 63,477 events. The parameter
+order preflight found zero overlapping root-interval pairs in both ranges.
+Both native MPI4 cut-order runs then exited 0, froze their inputs, and passed
+the independent cut audit: all 127,019 events became 127,019 individual
+ordered cuts, with zero grouped target-node events. This is a separately
+proved [650000,750000) cut-order block; the [550000,650000) 2^-60 H200
+reruns remain incomplete, so the contiguous accepted cut prefix is still
+[0,550000). The 2^-40 event ledger remains contiguous through [0,650000).
+
+The [750000,800000) 2^-60 source-edge run remains active on LagEunha.
+H200 jobs 435127 ([600000,650000)) and 435136 ([550000,600000)) remain
+active, and the independent eight-thread H200 throughput trial 435139
+([800000,850000)) is pending. An additional independent 2^-60 source-edge
+run for [850000,900000) was started on LagEunha after the two cut jobs
+completed. None of these running ranges is accepted until native exit 0 and
+the same frozen-input and independent audit chain passes. The accepted
+physical state remains t=0.00011263377801805954; no fixed-M mass-law,
+overlap/remap, RK4 step, or long-time physical Kepler result is claimed.
+
 ## Current checkpoint 2026-10-23: cut-order prefix and root-interval refinement
 
 The accepted physical state is still t=0.00011263377801805954. These
