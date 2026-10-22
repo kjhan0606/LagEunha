@@ -1,5 +1,30 @@
 # CURRENT DRIVER UPDATE 2026-10-22: ACTUAL STEP5 TRIAL-WEIGHT CHART/DEGREE PASSED; MASS LAW AND REMAP NOT YET SOLVED
 
+## Current checkpoint 2026-10-23: [0,1450000) cut order and [0,750000) triangle routing
+
+The direct independent whole-prefix cut audit passed [0,1450000):
+2,115,734 canonical events became 2,113,694 individual ordered cuts
+and 2,040 grouped target-node events. Its input range chunks have native
+exit 0, frozen source snapshots, independent original-edge presence and
+exterior-incidence proofs, binary128 endpoint roundtrips, native canonical
+reconciliation, independent canonical-versus-wire audits, and parameter-order
+preflights with zero nonnode overlapping root intervals. The last separate
+source chunks through [1600000,1650000) also passed this source/canonical
+preflight chain, but native cut order beyond [0,1450000) is still pending.
+The last two H200 source jobs 435175 ([1650000,1700000)) and 435176
+([1700000,1708672)) were running at this checkpoint; all earlier submitted
+source jobs 435165–435174 completed with Slurm/native exit 0.
+
+`audit_power_triangle_route_chunks.py` now verifies contiguity as well as
+each native route receipt. Its joint audit proved [0,750000) without a gap:
+1,186,024 canonical events, 1,183,984 individual cuts, 2,040 grouped
+target-node events and 2,359,784 sent/received triangle-incidence wires.
+The [750000,800000) route is running on LagEunha. These route receipts
+prove boundary cut ownership, not closed positive overlap regions or
+remapped masses. The accepted physical state remains
+t=0.00011263377801805954; no screened fixed-M law, overlap integral,
+conservative remap, RK4 advance, or long-time Kepler stability is claimed.
+
 ## Current checkpoint 2026-10-23: ordered-cut prefix [0,1100000), remaining source ranges queued
 
 The direct joint original-edge presence/exterior-incidence and independent

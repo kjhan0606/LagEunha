@@ -56,13 +56,24 @@ def audit_one(directory):
     print(f"PASS triangle route [{first},{last}) canonical_events={events} "
           f"ordered_cuts={cuts} grouped_target_nodes={grouped} "
           f"sent={sent} received={received}")
+    return first, last, events, cuts, grouped, sent, received
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("directories", nargs="+", type=Path)
-    for directory in parser.parse_args().directories:
-        audit_one(directory)
+    rows = sorted((audit_one(directory) for directory in parser.parse_args().directories),
+                  key=lambda row: row[0])
+    expected = rows[0][0]
+    for first, last, *_ in rows:
+        require(first == expected, f"triangle-route range gap or overlap before {first}")
+        expected = last
+    print(f"PASS triangle route contiguous=[{rows[0][0]},{expected}) "
+          f"canonical_events={sum(row[2] for row in rows)} "
+          f"ordered_cuts={sum(row[3] for row in rows)} "
+          f"grouped_target_nodes={sum(row[4] for row in rows)} "
+          f"sent={sum(row[5] for row in rows)} "
+          f"received={sum(row[6] for row in rows)}")
 
 
 if __name__ == "__main__":

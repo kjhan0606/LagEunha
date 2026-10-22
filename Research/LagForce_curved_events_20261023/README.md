@@ -34,7 +34,7 @@ parameter-order preflight. The retained `2^-40` chunks remain distinct.
 The separate `probe_power_triangle_route_root60_v1.cpp` and matching runner
 read the revised canonical ledger for native triangle-boundary routing;
 `audit_power_triangle_route_chunks.py` audits both ledger variants. The
-full ordered-cut prefix is currently `[0,1100000)`, while native
-triangle routing has been independently audited for `[0,150000)` and the
-separate `[500000,750000)` block. These gates do not construct positive
+full ordered-cut prefix is currently `[0,1450000)`, while native
+triangle routing has been independently audited for `[0,750000)` as one
+contiguous block. These gates do not construct positive
 source/target overlap masses or advance the physical Kepler state.
