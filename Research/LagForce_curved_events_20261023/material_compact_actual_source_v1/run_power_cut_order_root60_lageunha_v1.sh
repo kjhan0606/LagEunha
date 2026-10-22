@@ -22,7 +22,7 @@ test "$(cat "$canonical/native_exit_code.txt")" = 0
 run=$dest/power_edge_cut_chunk_${first}_${last}_root60_v1
 source "$transition/run_env.sh"
 export I_MPI_CXX=g++ I_MPI_HYDRA_BOOTSTRAP=fork I_MPI_PIN=0
-export OMP_NUM_THREADS=4 OMP_PROC_BIND=false CUDA_VISIBLE_DEVICES=0
+export OMP_NUM_THREADS=2 OMP_PROC_BIND=false CUDA_VISIBLE_DEVICES=0
 unset OMP_PLACES GOMP_CPU_AFFINITY KMP_AFFINITY
 cd "$dest"
 sha256sum -c "$chunk/source_edge_wires.sha256" >/dev/null

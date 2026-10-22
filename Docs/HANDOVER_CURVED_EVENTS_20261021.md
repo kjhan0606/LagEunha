@@ -7,19 +7,31 @@ calculations use geometric trial weights; no screened fixed-M mass-law solve,
 conservative remap, RK4 advance, or t=6–10 Kepler accuracy claim has occurred.
 The original OpenMP+MPI+CUDA source remains unchanged.
 
-The frozen, independently checked source-edge event ledger covers the contiguous
-[0,550000) original-edge range (1,837,220 incidence wires, 923,722 canonical
-events). The independent [600000,650000) ledger also passed its original-edge
-presence, exterior incidence, binary128 serialization, native reconciliation,
-and canonical-vs-wire checks (127,582 wires, 63,791 canonical events), but is
-disjoint until [550000,600000) H200 job 435106 completes. Job 435106 was still
-running at this checkpoint. Separate root-width 2^-60 H200 trial job 435126
-was submitted for [500000,550000); it writes a new directory and leaves the
-older sealed ledger intact.
+The frozen, independently checked source-edge event ledger now covers the
+contiguous [0,650000) original-edge range (2,107,786 incidence wires,
+1,059,005 canonical events), proven by the joint original-edge presence,
+exterior incidence and canonical-versus-wire audits. H200 job 435106 completed
+[550000,600000) in 01:08:49, Slurm/native exit 0; its 142,984 wires passed
+all 285,968 binary128 endpoint roundtrips and native reconciliation yielded
+71,492 canonical events. Its 2^-40 parameter-order preflight found 348
+**nonnodal overlapping root-interval pairs**, so it is only a valid event
+ledger, not an accepted cut ledger. Separate 2^-60 H200 job 435136 was
+submitted for this range and started running.
+
+Separate root-width 2^-60 H200 trial job 435126
+completed [500000,550000) in 00:37:22 with Slurm/native exit 0. The new
+directory leaves the older sealed ledger intact. Its 171,156 wires passed
+frozen-source, original-edge presence/exterior incidence and all 342,312
+binary128 printed endpoint roundtrips. Native reconciliation exited 0 with
+86,984 canonical events; an independent canonical-vs-wire audit passed.
+The parameter-order preflight found 840 overlapping endpoint-marked pairs
+and **zero nonnode overlapping pairs**, resolving the one nonnode conflict
+in the earlier 2^-40 ledger. Native C++ cut order then exited 0, froze its
+inputs, and passed the independent ordered-cut audit.
 
 The native chart cut-order gate now has a frozen, independently audited
-contiguous [0,500000) prefix: 836,738 canonical events became 835,258
-individual ordered cuts plus 1,480 grouped target-node endpoint events.
+contiguous [0,550000) prefix: 923,722 canonical events became 921,682
+individual ordered cuts plus 2,040 grouped target-node endpoint events.
 The finite LagEunha cut-order batch completed. This is
 cut order only, not a triangle route, positive overlap volume, or mass solve.
 
@@ -41,14 +53,14 @@ the actual call uses local edge 0 of original triangle 119232, as confirmed
 by the source incidence CSV and edge ID 600048. At tighter 2^-80 some
 unrelated segment intersections fail the strict root-width gate, so 2^-60
 is the current trial, not a blanket mandate to tighten indefinitely.
-Do not order cuts
-from the affected ranges until a complete revised ledger passes the same
-checks. The 2^-60 producer and its reconciliation/cut-order runners have
+Do not order cuts from the remaining affected [550000,650000) ranges until
+their complete revised ledgers pass the same checks. The 2^-60 producer and
+its reconciliation/cut-order runners have
 separate filenames; original production inputs and sealed results are intact.
 H200 job 435127 was submitted for independent [600000,650000) root60
-production; it was pending at this checkpoint. Separate LagEunha root60
-production was started for [650000,700000) and [700000,750000) with four
-MPI ranks and four OpenMP threads per rank in each independent job.
+production; it is running. Separate LagEunha root60
+production is running for [650000,700000), [700000,750000), and
+[750000,800000), each with four MPI ranks and four OpenMP threads per rank.
 Native triangle routing for the already ordered [0,50000) range completed
 on LagEunha with native exit 0 and frozen inputs. The independent
 `audit_power_triangle_route_chunks.py` verified 86,313 canonical events,
