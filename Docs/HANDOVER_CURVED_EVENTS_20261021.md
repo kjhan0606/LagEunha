@@ -1,5 +1,55 @@
 # CURRENT DRIVER UPDATE 2026-10-22: ACTUAL STEP5 TRIAL-WEIGHT CHART/DEGREE PASSED; MASS LAW AND REMAP NOT YET SOLVED
 
+## Current checkpoint 2026-10-23: contiguous [0,800000) source events and ordered cuts
+
+The separate H200 root-width 2^-60 reruns of [550000,600000) (job 435136,
+01:08:32) and [600000,650000) (job 435127, 01:33:24) both completed with
+Slurm/native exit 0. The earlier 2^-40 nonnode root-interval overlaps in
+these ranges no longer occur: independent parameter-order preflight found
+zero overlapping root-interval pairs in each complete revised ledger. The
+two additional LagEunha 2^-60 runs [750000,800000) and [850000,900000)
+also completed native exit 0 and passed the same frozen-source,
+original-edge presence/exterior-incidence, binary128 endpoint, native
+reconciliation, independent canonical-versus-wire, preflight, native cut
+order, and independent cut-audit chain. All four revised cut-order runs
+exited 0; their exact inputs were frozen. This resolves the prior
+[550000,650000) cut-order gap without reusing the failed 2^-40 order.
+
+The joint independent original-edge and canonical-versus-wire audits now
+prove a contiguous [0,800000) ledger: 2,489,402 incidence wires and
+1,249,813 canonical events. The joint native cut-order audit proves all
+1,249,813 events as 1,247,773 individual ordered cuts plus 2,040 grouped
+target-node events. The additional [850000,900000) block has 135,924 wires,
+67,962 canonical events and 67,962 individual cuts, but remains separate
+until [800000,850000) passes. H200 eight-thread job 435139 for that gap
+completed in 00:40:09 with Slurm/native exit 0. Its 124,044 incidence
+wires passed source/presence/exterior and 248,088 binary128 endpoint audits;
+native reconciliation and the independent canonical-versus-wire audit
+proved 62,022 events. Parameter-order preflight found zero overlapping
+root-interval pairs. Native cut order is running on LagEunha, so the
+contiguous accepted cut prefix remains [0,800000). Workload-normalized
+timing suggests higher per-rank root-box throughput at eight threads, but
+the range and hardware differences preclude a clean causal speedup claim.
+
+`probe_power_triangle_route_root60_v1.cpp` and its separate LagEunha runner
+read the revised canonical ledger for the next original-triangle boundary
+route. The route auditor accepts both the old and 2^-60 ledger names;
+the old [0,50000) route still passes its independent audit. New 2^-60
+triangle-route jobs for [500000,550000) and [550000,600000) both exited 0,
+froze their inputs, and passed the independent route audit. The first routed
+86,984 canonical events (86,424 cuts and 560 grouped target-node events)
+with 170,596 sent and received triangle-incidence wires; the second routed
+71,492 cuts with 142,984 sent and received wires. A further independent
+route for [600000,650000) also exited 0, froze its inputs, and passed the
+independent audit: 63,791 cuts, 127,582 sent and received wires. A route
+for [650000,700000) is running. The independent [900000,950000)
+source-edge run on LagEunha and H200 job 435158 for [950000,1000000)
+are running; neither is yet accepted.
+These are geometric trial weights at accepted
+physical time t=0.00011263377801805954. No fixed-M mass-law, overlap mass,
+conservative remap, RK4 step, or long-time Kepler stability follows from
+these event and cut-order gates.
+
 ## Current checkpoint 2026-10-23: independently audited [650000,750000) cut order
 
 The two LagEunha root-width 2^-60 source-edge runs for [650000,700000)

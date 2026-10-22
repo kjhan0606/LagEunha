@@ -10,9 +10,10 @@ from audit_power_edge_chunks import check_sha_file, check_source_snapshot, requi
 
 def audit_one(directory):
     directory = directory.resolve()
-    match = re.fullmatch(r"power_edge_triangle_route_chunk_(\d+)_(\d+)_v1", directory.name)
+    match = re.fullmatch(r"power_edge_triangle_route_chunk_(\d+)_(\d+)_(root60_)?v1", directory.name)
     require(match is not None, f"invalid triangle-route directory: {directory}")
-    first, last = map(int, match.groups())
+    first, last = map(int, match.group(1, 2))
+    canonical_variant = "_root60_v1" if match.group(3) else "_v2"
     require(first < last and last - first <= 50000, f"invalid edge range: {directory}")
     require((directory / "native_exit_code.txt").read_text().strip() == "0",
             f"native route failed: {directory}")
@@ -42,7 +43,7 @@ def audit_one(directory):
         s, r, t, er = map(int, route_match[0])
         require(e == c + g and er == 3 * t and s >= 0 and r >= 0,
                 f"rank {rank} cut/route accounting failed: {directory}")
-        canonical = directory.parent / f"power_edge_reconcile_{first}_{last}_v2" / f"canonical_owner{rank}.csv"
+        canonical = directory.parent / f"power_edge_reconcile_{first}_{last}{canonical_variant}" / f"canonical_owner{rank}.csv"
         with canonical.open() as stream:
             require(sum(1 for _ in stream) - 1 == e,
                     f"rank {rank} canonical input count mismatch: {directory}")
