@@ -4560,3 +4560,24 @@ heat/rotation storage, cap/order/tolerances to manufacture acceptance.
 Only225/137 plus same tiny-lens regression next. Fail at the fixed budget
 with a dominant-term witness. No weight Newton/compression/evolution until
 the restricted physical-error contract passes. Goal final scope unchanged.
+
+## 2026-10-23 original source-edge checkpoint
+
+The accepted physical state remains t=0.00011263377801805954. This is a
+geometric trial-weight checkpoint, not a new Kepler evolution or a physical
+solution at t=6-10. The original OpenMP+MPI+CUDA application was not changed.
+
+All 35 frozen source-edge chunks were checked together across the exact
+contiguous interval [0,1708672). The joint original-edge presence and
+exterior-incidence audit passed (1,708,672 edges, 4,916,796 wire rows).
+The independent canonical-versus-wire audit passed (2,463,510 canonical
+events). The binary128 wire roundtrip passed in all 35 chunks (9,833,592
+endpoints). These are geometric event-ledger checks; they do not prove
+positive source/target overlap mass or conservation through a time step.
+Receipts are in Research/LagForce_curved_events_20261023/full_source_*
+audit_0_1708672_20261023.log.
+
+The separate ordered-cut joint audit covers [0,1550000). The separate
+triangle-route joint audit covers [0,800000). Both are partial prefixes of
+the full source-edge range. Continue them from their proven prefixes;
+do not restart the accepted Kepler physical state for these audits.
