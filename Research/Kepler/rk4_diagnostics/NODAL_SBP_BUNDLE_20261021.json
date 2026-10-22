@@ -1,0 +1,84 @@
+{
+  "scope": "completed native spatial rejection bundle; no evolved nodal state",
+  "previous_goal_turn": "no progress: read-only opinion response; current turn revalidated source and completed new native checks",
+  "current_goal_turn": "progress: native operators, exact Jacobians, independent controls and angular failures change next choice",
+  "final_goal": "native accelerated Kepler stability through historical t6-10 and longest GIZMO duration; not achieved",
+  "evolution_authorized_for_these_candidates": false,
+  "original_runtime_sources": "enriched_v5_build/source.sha256 independently rechecked; all25 entries OK",
+  "audits": {
+    "v1": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_v1",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "bfe912dc06986ac74ec87897cfcaaf493db4743d3fe90434e1c315ff7b92985f",
+      "executable_sha256": "4f7e00a2792f96b9db37cebef399dc87d41b4707e40d71c9b4caaa60dac6e094"
+    },
+    "v2": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_v2",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "c6b00c9dc91c2371489e83205dee1985c21065d3b8304ce8cc6694ce7417618c",
+      "executable_sha256": "0bd938fdd4a5ca41d7b6e6eb5aea6a56f3ab1016cfb677389ffa103c081b7e1e"
+    },
+    "v3": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_v3",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "8e4aeedf3d6ce84825f26a7c62e327dbc2f669bbc5639e074866f656c6b226b4",
+      "executable_sha256": "6f1caa30441d95f14d3917941b898556de3505f3213f5424c2b939a433d8cc36"
+    },
+    "v4": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_v4",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "32eea69db925990e91c49da1ea77af3519b03af2a04bd6991ab5212710c7eb35",
+      "executable_sha256": "63faf9e79b885acbca6a398b965d45e1e05e4f19a4a12d098cfbd8298bb22389"
+    },
+    "angular_v1": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_angular_v1",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "8e8f97f892794e4b4be4efb372f417de157aa854c296fa295af6994206dec3f2",
+      "executable_sha256": "3333c8f2522f004ca704a42e316a82b729942eb1e091c9bcf03c43cebcaed3b1"
+    },
+    "angular_v2": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_angular_v2",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "85b93bf0665a50e60e6d2c4ef8375f9beb7dd6195865eca695c4afe27aa10826",
+      "executable_sha256": "3333c8f2522f004ca704a42e316a82b729942eb1e091c9bcf03c43cebcaed3b1"
+    },
+    "upwind_A_v1": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/nodal_sbp_upwind_A_v1",
+      "native_calculation": "terminal",
+      "physics_approval": false,
+      "analysis_sha256": "fefa2f911e8e056a058a67894234cb328e47c5a8f914504d0aac63d7682c8b99",
+      "executable_sha256": "1228ff773a3644394923b68b106778ee061de712e0e508e114469a5c359fa8ac"
+    }
+  },
+  "rejected_candidates": [
+    {
+      "name": "positive P2 nodal KEP split",
+      "reason": "advected density-wave local stability, cold divergence accuracy and angular weak balance",
+      "exact_advected_Jacobian_max_real": 1.8103932166598997,
+      "max_pressure_rate_over_P0": 3.731244867312279
+    },
+    {
+      "name": "full Euler arithmetic central diagnostic control",
+      "reason": "cold thermal kinetic cancellation fails",
+      "exact_advected_Jacobian_max_real": 1.2334588306627664e-14,
+      "max_pressure_rate_over_P0": 20973.831051382353
+    },
+    {
+      "name": "midpoint-reconstructed Euler HLL volume correction",
+      "reason": "first angular gate fails; same RHS has huge cold thermal damage",
+      "max_angular_residual_over_kinetic_scale": 0.0978869417386996,
+      "max_pressure_rate_over_P0": 33533.49858513666,
+      "downstream_P4_or_Jacobian_or_runtime": "not run"
+    }
+  ],
+  "next_planning_input": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/VOLUME_UPWIND_A_RESULTS.md",
+  "planning_delegate": "/root/astra_planning_review",
+  "current_review": "one complete review delivered ASTRA_VOLUME_UPWIND_PLAN.md; its subsequent first gate is now measured and rejected",
+  "live_native_handles": []
+}

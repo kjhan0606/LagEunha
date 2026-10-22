@@ -12,20 +12,40 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <float.h>
+#include <errno.h>
 #include <cuda_runtime.h>
 
 /* CUB for device-wide reduction */
 #include <cub/cub.cuh>
 #include "gfs_pair.h"
+#include "gfs_velocity_limiter.h"
 
 extern "C" {
 #include "exam_gpu.h"
 }
 
 static __device__ unsigned long long d_gfs_pair_hits;
+static __device__ unsigned long long d_gfs_candidate_fallback_cells;
+static __device__ unsigned long long d_gfs_invalid_raw_volume_cells;
+static __device__ unsigned long long d_gfs_invalid_velocity_fit_cells;
+static __device__ unsigned long long d_gfs_tess_geometry_errors;
+static __device__ unsigned long long d_gfs_stencil_expanded_cells;
+static __device__ unsigned long long d_gfs_stencil_halo_clipped_cells;
 static long long h_gfs_pair_hits = 0;
+static int h_geometry_trial=0,h_geometry_failed=0;
+extern "C" void gpu_geometry_trial_begin(void) { h_geometry_trial=1; h_geometry_failed=0; }
+extern "C" void gpu_geometry_trial_end(void) { h_geometry_trial=0; h_geometry_failed=0; }
+extern "C" int gpu_geometry_trial_active(void) { return h_geometry_trial; }
+extern "C" int gpu_geometry_trial_failed(void) { return h_geometry_failed; }
+extern "C" void gpu_geometry_trial_mark_failed(void) { h_geometry_failed=1; }
+/* Geometry from the latest host tessellation launch, for optional dumps. */
+static int h_diag_tess_mx = 0, h_diag_tess_my = 0;
+static double h_diag_tess_cellsize = 0.0;
+static double h_diag_tess_xmin = 0.0, h_diag_tess_ymin = 0.0;
+static double h_diag_global_w2_max = 0.0;
 
 /* ================================================================
  *  Error checking macro
@@ -1341,6 +1361,7 @@ void gpu_init(GPUContext *ctx, int max_particles, int max_faces, int mpi_rank)
 
     alloc_particle_soa(&ctx->h_parts, &ctx->d_parts, max_particles);
     alloc_face_csr(&ctx->h_faces, &ctx->d_faces, max_particles, max_faces);
+    CUDA_CHECK(cudaMalloc(&ctx->d_tess_den_input, max_particles * sizeof(float)));
 
     /* --- Create CUDA stream --- */
     {
@@ -1378,6 +1399,10 @@ void gpu_free(GPUContext *ctx)
     free_face_csr(&ctx->h_faces, &ctx->d_faces);
     gpu_free_tess_buffers(ctx);
     gpu_free_tree_buffers(ctx);
+    if (ctx->d_tess_den_input) {
+        cudaFree(ctx->d_tess_den_input);
+        ctx->d_tess_den_input = NULL;
+    }
     if (ctx->d_cub_temp) { cudaFree(ctx->d_cub_temp); ctx->d_cub_temp = NULL; }
     if (ctx->d_cub_min_out) { cudaFree(ctx->d_cub_min_out); ctx->d_cub_min_out = NULL; }
     if (ctx->h_cub_min_out) { cudaFreeHost(ctx->h_cub_min_out); ctx->h_cub_min_out = NULL; }
@@ -1477,6 +1502,317 @@ void gpu_download_results(GPUContext *ctx, int n)
     CUDA_CHECK(cudaStreamSynchronize(s));
 }
 
+/* Host-only structural snapshot used with GFS_GPU_FACE_DUMP_CALL.
+ * It reads the polygons and linked-cell data produced by the tessellation
+ * kernel. It does not feed any values back into the solver. */
+static void dump_kepler_tess_snapshot(GPUContext *ctx, int n_particles,
+                                      int n_total, int mpi_rank, int force_call,
+                                      int mx, int my, double cellsize,
+                                      double xmin, double ymin)
+{
+    const double cx0 = getenv("EUNHA_KEPLER_CX") ? atof(getenv("EUNHA_KEPLER_CX")) : 12.0;
+    const double cy0 = getenv("EUNHA_KEPLER_CY") ? atof(getenv("EUNHA_KEPLER_CY")) : 12.0;
+    const double r_cut = 2.5;
+    PolygonOut *poly = (PolygonOut *)malloc((size_t)n_particles * sizeof(PolygonOut));
+    float *w2 = (float *)malloc((size_t)n_total * sizeof(float));
+    if (!poly || !w2) {
+        fprintf(stderr, "[KEPLER_TESS_DUMP] rank=%d allocation failed\n", mpi_rank);
+        free(poly); free(w2);
+        exit(1);
+    }
+    CUDA_CHECK(cudaMemcpy(poly, ctx->d_polygons,
+                          (size_t)n_particles * sizeof(PolygonOut), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(w2, ctx->d_parts.w2,
+                          (size_t)n_total * sizeof(float), cudaMemcpyDeviceToHost));
+
+    char path[160];
+    snprintf(path, sizeof(path), "kepler_tess_diag_r%d_call%d.tsv", mpi_rank, force_call);
+    FILE *out = fopen(path, "w");
+    if (!out) {
+        fprintf(stderr, "[KEPLER_TESS_DUMP] rank=%d could not open %s\n", mpi_rank, path);
+        free(poly); free(w2);
+        exit(1);
+    }
+    const int max_candidates = ctx->h_cells.n_entries;
+    fprintf(out, "# rank=%d call=%d nbp=%d n_total=%d mx=%d my=%d cellsize=%.17g xmin=%.17g ymin=%.17g n_cells=%d n_entries=%d center=%.17g,%.17g r_cut=%.17g max_neigh=%d\n",
+            mpi_rank, force_call, n_particles, n_total, mx, my,
+            cellsize, xmin, ymin,
+            ctx->h_cells.n_cells, ctx->h_cells.n_entries, cx0, cy0, r_cut, max_candidates);
+    fprintf(out, "# CELL rank owner_soa owner_id x y binx biny nc raw_area maxR2 floor_active n_raw n_stored n_truncated min_stencil_drad2 n_outside_le_R2 min_out_id min_out_soa min_out_drad2 min_out_x min_out_y min_out_binx min_out_biny\n");
+    fprintf(out, "# VERT rank owner_soa owner_id corner xrel yrel edge_neigh_soa edge_neigh_id xworld yworld\n");
+    fprintf(out, "# CAND rank owner_soa owner_id sorted_order soa id dx dy w2 drad2 binx biny\n");
+
+    if (mx <= 0 || my <= 0 || !(cellsize > 0.0) ||
+        ctx->h_cells.n_cells != mx * my) {
+        fprintf(out, "[KEPLER_TESS_DUMP] rank=%d inconsistent cell grid: mx=%d my=%d n_cells=%d\n",
+                mpi_rank, mx, my, ctx->h_cells.n_cells);
+        fclose(out); free(poly); free(w2);
+        return;
+    }
+
+    typedef struct {
+        int soa, bx, by;
+        double dx, dy, w2, drad2;
+    } CandidateDump;
+    CandidateDump *cand = (CandidateDump *)malloc((size_t)max_candidates * sizeof(*cand));
+    if (!cand) {
+        fprintf(stderr, "[KEPLER_TESS_DUMP] rank=%d candidate allocation failed (%d entries)\n",
+                mpi_rank, max_candidates);
+        fclose(out); free(poly); free(w2);
+        exit(1);
+    }
+    const double volume_floor = 1.0e-3 * cellsize * cellsize;
+
+    for (int i = 0; i < n_particles; i++) {
+        const double xi = ctx->h_parts.x[i], yi = ctx->h_parts.y[i];
+        const double rx = xi - cx0, ry = yi - cy0;
+        if (rx * rx + ry * ry >= r_cut * r_cut) continue;
+
+        int ix = (int)((xi - xmin) / cellsize);
+        int iy = (int)((yi - ymin) / cellsize);
+        if (ix < 0) ix = 0; if (ix >= mx) ix = mx - 1;
+        if (iy < 0) iy = 0; if (iy >= my) iy = my - 1;
+
+        const long long idi = ctx->h_parts.indx[i];
+        const PolygonOut *p = &poly[i];
+        const int nc = (p->n_corners < 0) ? 0 :
+                       (p->n_corners > GPU_MAX_CORNERS ? GPU_MAX_CORNERS : p->n_corners);
+        double raw_area2 = 0.0, maxR2 = 0.0;
+        for (int e = 0; e < nc; e++) {
+            int en = (e + 1) % nc;
+            raw_area2 += p->cx[e] * p->cy[en] - p->cy[e] * p->cx[en];
+            double r2 = p->cx[e] * p->cx[e] + p->cy[e] * p->cy[e];
+            if (r2 > maxR2) maxR2 = r2;
+        }
+        double raw_area = 0.5 * fabs(raw_area2);
+
+        int n_stored = 0;
+        long long n_raw = 0;
+        double min_stencil_drad2 = DBL_MAX;
+        for (int dyc = -2; dyc <= 2; dyc++) {
+            int cy = iy + dyc;
+            if (cy < 0 || cy >= my) continue;
+            for (int dxc = -2; dxc <= 2; dxc++) {
+                int cx = ix + dxc;
+                if (cx < 0 || cx >= mx) continue;
+                int cell_id = cx + mx * cy;
+                int begin = ctx->h_cells.cell_offset[cell_id];
+                int end = ctx->h_cells.cell_offset[cell_id + 1];
+                for (int k = begin; k < end; k++) {
+                    int j = ctx->h_cells.particle_index[k];
+                    if (j < 0 || j >= n_total || ctx->h_parts.indx[j] == idi) continue;
+                    double dx = ctx->h_parts.x[j] - xi;
+                    double dy = ctx->h_parts.y[j] - yi;
+                    double dist2 = dx * dx + dy * dy;
+                    double w2j = (double)w2[j];
+                    double wdiff = ((double)w2[i] - w2j) / dist2;
+                    double wfrac = 0.5 + 0.5 * wdiff;
+                    if (wfrac < 0.05) wfrac = 0.05; else if (wfrac > 0.95) wfrac = 0.95;
+                    /* Sort/filter by the actual clipped bisector offset. */
+                    double drad2 = wfrac * wfrac * dist2;
+                    n_raw++;
+                    if (n_stored < max_candidates) {
+                        cand[n_stored].soa = j; cand[n_stored].bx = cx; cand[n_stored].by = cy;
+                        cand[n_stored].dx = dx; cand[n_stored].dy = dy;
+                        cand[n_stored].w2 = w2j; cand[n_stored].drad2 = drad2;
+                        if (drad2 < min_stencil_drad2) min_stencil_drad2 = drad2;
+                        n_stored++;
+                    }
+                }
+            }
+        }
+        /* Match the GPU's stable insertion sort on the stored candidate prefix. */
+        for (int a = 1; a < n_stored; a++) {
+            CandidateDump key = cand[a];
+            int b = a - 1;
+            while (b >= 0 && cand[b].drad2 > key.drad2) {
+                cand[b + 1] = cand[b]; b--;
+            }
+            cand[b + 1] = key;
+        }
+
+        long long n_outside_le_R2 = 0;
+        double min_out_drad2 = DBL_MAX, min_out_dx = 0, min_out_dy = 0;
+        long long min_out_id = -1;
+        int min_out_soa = -1, min_out_bx = -1, min_out_by = -1;
+        for (int j = 0; j < n_total; j++) {
+            if (ctx->h_parts.indx[j] == idi) continue;
+            int jx = (int)((ctx->h_parts.x[j] - xmin) / cellsize);
+            int jy = (int)((ctx->h_parts.y[j] - ymin) / cellsize);
+            if (jx < 0) jx = 0; if (jx >= mx) jx = mx - 1;
+            if (jy < 0) jy = 0; if (jy >= my) jy = my - 1;
+            if (abs(jx - ix) <= 2 && abs(jy - iy) <= 2) continue;
+            double dx = ctx->h_parts.x[j] - xi, dy = ctx->h_parts.y[j] - yi;
+            double dist2 = dx * dx + dy * dy;
+            double w2j = (double)w2[j];
+            double wdiff = ((double)w2[i] - w2j) / dist2;
+            double wfrac = 0.5 + 0.5 * wdiff;
+            if (wfrac < 0.05) wfrac = 0.05; else if (wfrac > 0.95) wfrac = 0.95;
+            double drad2 = wfrac * wfrac * dist2;
+            if (drad2 <= maxR2) n_outside_le_R2++;
+            if (drad2 < min_out_drad2) {
+                min_out_drad2 = drad2; min_out_dx = dx; min_out_dy = dy;
+                min_out_id = ctx->h_parts.indx[j]; min_out_soa = j; min_out_bx = jx; min_out_by = jy;
+            }
+        }
+
+        fprintf(out, "CELL\t%d\t%d\t%lld\t%.17g\t%.17g\t%d\t%d\t%d\t%.17g\t%.17g\t%d\t%lld\t%d\t%lld\t%.17g\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%d\t%d\n",
+                mpi_rank, i, idi, xi, yi, ix, iy, nc, raw_area, maxR2,
+                raw_area < volume_floor, n_raw, n_stored, n_raw - n_stored,
+                min_stencil_drad2, n_outside_le_R2, min_out_id, min_out_soa,
+                min_out_drad2, xi + min_out_dx, yi + min_out_dy,
+                min_out_bx, min_out_by);
+
+        for (int e = 0; e < nc; e++) {
+            int j = p->edge_neigh[e];
+            long long idj = (j >= 0 && j < n_total) ? ctx->h_parts.indx[j] : -1;
+            fprintf(out, "VERT\t%d\t%d\t%lld\t%d\t%.17g\t%.17g\t%d\t%lld\t%.17g\t%.17g\n",
+                    mpi_rank, i, idi, e, p->cx[e], p->cy[e], j, idj,
+                    xi + p->cx[e], yi + p->cy[e]);
+        }
+        for (int a = 0; a < n_stored; a++) {
+            int j = cand[a].soa;
+            fprintf(out, "CAND\t%d\t%d\t%lld\t%d\t%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%d\t%d\n",
+                    mpi_rank, i, idi, a, j, ctx->h_parts.indx[j],
+                    cand[a].dx, cand[a].dy, cand[a].w2, cand[a].drad2,
+                    cand[a].bx, cand[a].by);
+        }
+    }
+
+    /* Full-domain audit of generators omitted by the fixed 5x5 stencil.
+     * The detailed dump above is intentionally limited to the Kepler core;
+     * this compact audit covers every owned cell and asks whether an omitted
+     * bisector would actually cut its GPU polygon.  For a weighted face, a
+     * conservative search radius follows from the clamped wfrac in [0.05,.95]
+     * and the global maximum w2. */
+    {
+        char audit_path[160];
+        snprintf(audit_path, sizeof(audit_path),
+                 "kepler_stencil_audit_r%d_call%d.tsv", mpi_rank, force_call);
+        FILE *audit = fopen(audit_path, "w");
+        if (!audit) {
+            fprintf(stderr, "[KEPLER_STENCIL_AUDIT] rank=%d could not open %s\n",
+                    mpi_rank, audit_path);
+            free(cand); free(poly); free(w2);
+            exit(1);
+        }
+        fprintf(audit, "# rank owner_soa owner_id x y area maxR2 search_radius n_outside_possible n_outside_cut n_outside_any_cut max_violation worst_neighbor_id worst_neighbor_x worst_neighbor_y halo_search_clipped\n");
+        const double global_w2_max = h_diag_global_w2_max;
+
+        long long audit_possible_total = 0;
+        long long audit_cut_total = 0;
+        long long audit_any_cut_total = 0;
+        int audit_cells_with_cut = 0;
+        int audit_halo_clipped_cells = 0;
+        double audit_max_violation = 0.0;
+
+        for (int i = 0; i < n_particles; i++) {
+            const double xi = ctx->h_parts.x[i], yi = ctx->h_parts.y[i];
+            int ix = (int)((xi - xmin) / cellsize);
+            int iy = (int)((yi - ymin) / cellsize);
+            if (ix < 0) ix = 0; if (ix >= mx) ix = mx - 1;
+            if (iy < 0) iy = 0; if (iy >= my) iy = my - 1;
+
+            const PolygonOut *p = &poly[i];
+            const int nc = (p->n_corners < 0) ? 0 :
+                           (p->n_corners > GPU_MAX_CORNERS ? GPU_MAX_CORNERS : p->n_corners);
+            double maxR2 = 0.0, area2 = 0.0;
+            for (int e = 0; e < nc; e++) {
+                const int en = (e + 1) % nc;
+                area2 += p->cx[e] * p->cy[en] - p->cy[e] * p->cx[en];
+                const double r2 = p->cx[e] * p->cx[e] + p->cy[e] * p->cy[e];
+                if (r2 > maxR2) maxR2 = r2;
+            }
+            const double radius = sqrt(maxR2);
+            const double deltaW = fmax(0.0, global_w2_max - (double)w2[i]);
+            const double d_clamped = (deltaW > 0.0)
+                ? fmin(sqrt(deltaW / 0.9), 20.0 * radius) : 0.0;
+            const double d_unclamped = radius + sqrt(maxR2 + deltaW);
+            double search_radius = fmax(2.0 * radius, fmax(d_clamped, d_unclamped));
+            if (!(search_radius >= 0.0) || !isfinite(search_radius))
+                search_radius = hypot((double)mx * cellsize, (double)my * cellsize);
+            int pad = (int)ceil(search_radius / cellsize) + 1;
+            if (pad < 3) pad = 3;
+            if (pad > (mx > my ? mx : my)) pad = mx > my ? mx : my;
+            const double grid_xmax = xmin + (double)mx * cellsize;
+            const double grid_ymax = ymin + (double)my * cellsize;
+            const int halo_search_clipped =
+                (xi - search_radius < xmin || xi + search_radius > grid_xmax ||
+                 yi - search_radius < ymin || yi + search_radius > grid_ymax);
+            if (halo_search_clipped) audit_halo_clipped_cells++;
+            int xlo = ix - pad, xhi = ix + pad;
+            int ylo = iy - pad, yhi = iy + pad;
+            if (xlo < 0) xlo = 0; if (xhi >= mx) xhi = mx - 1;
+            if (ylo < 0) ylo = 0; if (yhi >= my) yhi = my - 1;
+
+            long long n_possible = 0, n_cut = 0, n_any_cut = 0;
+            double max_violation = 0.0;
+            long long worst_id = -1;
+            double worst_x = 0.0, worst_y = 0.0;
+            const long long owner_id = ctx->h_parts.indx[i];
+            for (int cy = ylo; cy <= yhi; cy++) {
+                for (int cx = xlo; cx <= xhi; cx++) {
+                    if (abs(cx - ix) <= 2 && abs(cy - iy) <= 2) continue;
+                    const int cell_id = cx + mx * cy;
+                    const int begin = ctx->h_cells.cell_offset[cell_id];
+                    const int end = ctx->h_cells.cell_offset[cell_id + 1];
+                    for (int k = begin; k < end; k++) {
+                        const int j = ctx->h_cells.particle_index[k];
+                        if (j < 0 || j >= n_total || ctx->h_parts.indx[j] == owner_id) continue;
+                        const double dx = ctx->h_parts.x[j] - xi;
+                        const double dy = ctx->h_parts.y[j] - yi;
+                        const double dist2 = dx * dx + dy * dy;
+                        if (!(dist2 > 0.0)) continue;
+                        double wfrac = 0.5 + 0.5 * ((double)w2[i] - (double)w2[j]) / dist2;
+                        if (wfrac < 0.05) wfrac = 0.05;
+                        else if (wfrac > 0.95) wfrac = 0.95;
+                        const double drad2 = wfrac * wfrac * dist2;
+                        if (drad2 > maxR2) continue;
+                        n_possible++;
+
+                        const double threshold = wfrac * dist2;
+                        double violation = -DBL_MAX;
+                        for (int e = 0; e < nc; e++) {
+                            const double v = p->cx[e] * dx + p->cy[e] * dy - threshold;
+                            if (v > violation) violation = v;
+                        }
+                        if (violation > 0.0) n_any_cut++;
+                        const double tol = 64.0 * DBL_EPSILON * fmax(1.0, dist2);
+                        if (violation > tol) {
+                            n_cut++;
+                            if (violation > max_violation) {
+                                max_violation = violation;
+                                worst_id = ctx->h_parts.indx[j];
+                                worst_x = ctx->h_parts.x[j];
+                                worst_y = ctx->h_parts.y[j];
+                            }
+                        }
+                    }
+                }
+            }
+            audit_possible_total += n_possible;
+            audit_cut_total += n_cut;
+            audit_any_cut_total += n_any_cut;
+            if (n_cut > 0) audit_cells_with_cut++;
+            if (max_violation > audit_max_violation) audit_max_violation = max_violation;
+            fprintf(audit, "%d\t%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%lld\t%lld\t%lld\t%.17g\t%lld\t%.17g\t%.17g\t%d\n",
+                    mpi_rank, i, owner_id, xi, yi, 0.5 * fabs(area2), maxR2,
+                    search_radius, n_possible, n_cut, n_any_cut, max_violation,
+                    worst_id, worst_x, worst_y, halo_search_clipped);
+        }
+        fclose(audit);
+        fprintf(stderr, "[GPU_STENCIL_AUDIT] rank=%d file=%s cells=%d possible_5x5=%lld cut_5x5=%lld any_cut_5x5=%lld cells_with_cut_5x5=%d max_violation=%.6e halo_search_clipped=%d\n",
+                mpi_rank, audit_path, n_particles, audit_possible_total,
+                audit_cut_total, audit_any_cut_total, audit_cells_with_cut,
+                audit_max_violation, audit_halo_clipped_cells);
+    }
+
+    fclose(out);
+    fprintf(stderr, "[KEPLER_TESS_DUMP] rank=%d call=%d nbp=%d file=%s\n",
+            mpi_rank, force_call, n_particles, path);
+    free(cand); free(poly); free(w2);
+}
+
 /* ================================================================
  *  Kernel launch + CFL reduction
  * ================================================================ */
@@ -1487,6 +1823,72 @@ long long gpu_take_pair_hits(void)
     return h_gfs_pair_hits;
 }
 
+/* Bounded, read-only force-input capture. Actual face fluxes are still written
+ * by the production force kernel. No branch or force arithmetic is changed. */
+static int gfs_face_dump_selected(long long id, const long long *ids, int n)
+{
+    if (!n) return 1;
+    for (int k=0; k<n; k++) if (id==ids[k]) return 1;
+    return 0;
+}
+
+static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
+    int rank, int call, const GPUPhysicsParams *params,
+    const long long *ids, int nids)
+{
+    if (!nids) return;
+    if (params->av_mode!=5 || !params->use_muscl || !params->phase1) {
+        fprintf(stderr,"[FACE_INPUT] selected input capture requires phase1 MUSCL av_mode5\n"); exit(1);
+    }
+    unsigned char *needed=(unsigned char *)calloc((size_t)n_total,1);
+    if (!needed) { fprintf(stderr,"[FACE_INPUT] allocation failed\n"); exit(1); }
+    for (int i=0; i<n_particles; i++) {
+        if (!gfs_face_dump_selected(ctx->h_parts.indx[i],ids,nids)) continue;
+        needed[i]=1;
+        for (int f=ctx->h_faces.face_offset[i]; f<ctx->h_faces.face_offset[i+1]; f++) {
+            int j=ctx->h_faces.neighbor_idx[f];
+            if (j>=0 && j<n_total) needed[j]=1;
+        }
+    }
+    /* CUDA arrays contain the exact EOS/reconstruction inputs consumed by the
+     * force kernel. Host particle fields from the prior RK stage are not used. */
+#define GFS_CAPTURE_FIELD(field,type) CUDA_CHECK(cudaMemcpy(ctx->h_parts.field,ctx->d_parts.field,(size_t)n_total*sizeof(type),cudaMemcpyDeviceToHost))
+    GFS_CAPTURE_FIELD(vx,double); GFS_CAPTURE_FIELD(vy,double);
+    GFS_CAPTURE_FIELD(mass,double);
+    GFS_CAPTURE_FIELD(den,float); GFS_CAPTURE_FIELD(pressure,float);
+    GFS_CAPTURE_FIELD(csound,float); GFS_CAPTURE_FIELD(volume,float);
+    GFS_CAPTURE_FIELD(ie,float); GFS_CAPTURE_FIELD(w2,float); GFS_CAPTURE_FIELD(w2old,float);
+    GFS_CAPTURE_FIELD(gUxx,double); GFS_CAPTURE_FIELD(gUxy,double);
+    GFS_CAPTURE_FIELD(gUyx,double); GFS_CAPTURE_FIELD(gUyy,double);
+    GFS_CAPTURE_FIELD(dPdx,double); GFS_CAPTURE_FIELD(dPdy,double);
+    GFS_CAPTURE_FIELD(dRhodx,double); GFS_CAPTURE_FIELD(dRhody,double);
+#undef GFS_CAPTURE_FIELD
+    char path[160]; snprintf(path,sizeof(path),"face_input_r%d_call%d.tsv",rank,call);
+    FILE *out=fopen(path,"wx");
+    if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
+    fprintf(out,"index\tid\tx\ty\tvx\tvy\tmass\tV\trho\tP\tcs\tU\tW\tWold\tBxx\tBxy\tByx\tByy\tdPdx\tdPdy\tdRhodx\tdRhody\n");
+    for (int i=0; i<n_total; i++) if (needed[i]) {
+        const ParticleSoA *h=&ctx->h_parts;
+        fprintf(out,"%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
+            i,h->indx[i],h->x[i],h->y[i],h->vx[i],h->vy[i],h->mass[i],
+            (double)h->volume[i],(double)h->den[i],(double)h->pressure[i],
+            (double)h->csound[i],(double)h->ie[i],(double)h->w2[i],(double)h->w2old[i],
+            h->gUxx[i],h->gUxy[i],h->gUyx[i],h->gUyy[i],h->dPdx[i],h->dPdy[i],h->dRhodx[i],h->dRhody[i]);
+    }
+    if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] write failed\n"); exit(1); }
+    free(needed);
+    snprintf(path,sizeof(path),"face_input_meta_r%d_call%d.json",rank,call);
+    out=fopen(path,"wx");
+    if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
+    fprintf(out,"{\"rank\":%d,\"call\":%d,\"Gamma\":%.17g,\"dtold\":%.17g,\"av_mode\":%d,\"use_muscl\":%d,\"phase1\":%d,\"geom_fv\":%d,\"face_charge\":%d,\"w2lin\":%d,\"alphavis\":%.17g,\"betavis\":%.17g,\"nu_phys\":%.17g,\"cd_amax\":%.17g,\"hyperv_alpha\":%.17g}\n",
+        rank,call,params->Gamma,params->dtold,params->av_mode,params->use_muscl,
+        params->phase1,params->geom_fv,params->face_charge,params->w2lin,
+        params->alphavis,params->betavis,params->nu_phys,params->cd_amax,params->hyperv_alpha);
+    if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] meta write failed\n"); exit(1); }
+}
+
+#include "gfs_ale_shadow.inc"
+
 extern "C"
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                int n_total, int mpi_rank,
@@ -1494,15 +1896,45 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
 {
     static int force_call = 0;
     static int dump_call = -1;
+    static int dump_first=0,dump_last=0,dump_nids=0;
+    static long long dump_ids[64];
     force_call++;
     if (dump_call < 0) {
         const char *s = getenv("GFS_GPU_FACE_DUMP_CALL");
         dump_call = (s && s[0]) ? atoi(s) : 0;
+        const char *cursor=getenv("GFS_GPU_FACE_DUMP_IDS");
+        while (cursor && *cursor) {
+            while (*cursor==',' || *cursor==' ' || *cursor=='\t') cursor++;
+            if (!*cursor) break;
+            if (*cursor<'0' || *cursor>'9' || dump_nids>=64) {
+                fprintf(stderr,"[FACE_INPUT] invalid/over-capacity ID list\n"); exit(1);
+            }
+            errno=0; char *end=NULL; unsigned long long id=strtoull(cursor,&end,10);
+            if (errno || id>(unsigned long long)MAX_INDEX_GPU ||
+                (*end && *end!=',' && *end!=' ' && *end!='\t')) {
+                fprintf(stderr,"[FACE_INPUT] malformed ID\n"); exit(1);
+            }
+            dump_ids[dump_nids++]=(long long)id; cursor=end;
+        }
+        const char *first=getenv("GFS_GPU_FACE_DUMP_FIRST");
+        const char *last=getenv("GFS_GPU_FACE_DUMP_LAST");
+        if (first || last) {
+            char *e1=NULL,*e2=NULL;
+            long a=first?strtol(first,&e1,10):0, b=last?strtol(last,&e2,10):0;
+            if (!first || !last || !first[0] || !last[0] || *e1 || *e2 ||
+                a<1 || b<a || b-a>=16 || b>1000000000L || !dump_nids) {
+                fprintf(stderr,"[FACE_INPUT] range needs positive FIRST/LAST, <=16 calls, and explicit IDs\n"); exit(1);
+            }
+            dump_first=(int)a; dump_last=(int)b;
+        }
     }
     int n_faces = ctx->d_faces.n_faces_total;
-    int do_dump = (dump_call > 0 && force_call == dump_call && n_faces > 0);
+    int do_dump = n_faces>0 && ((dump_call>0 && force_call==dump_call) ||
+        (dump_first>0 && force_call>=dump_first && force_call<=dump_last));
+    const char *shadow_env=getenv("GFS_ALE_SHADOW_CALL");
+    int do_shadow=shadow_env && atoi(shadow_env)==force_call;
     double *d_audit_work = NULL, *d_audit_pressure = NULL, *d_audit_udotds = NULL;
-    if (do_dump) {
+    if (do_dump || do_shadow) {
         CUDA_CHECK(cudaMalloc(&d_audit_work, n_faces * sizeof(double)));
         CUDA_CHECK(cudaMalloc(&d_audit_pressure, n_faces * sizeof(double)));
         CUDA_CHECK(cudaMalloc(&d_audit_udotds, n_faces * sizeof(double)));
@@ -1576,6 +2008,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         h_gfs_pair_hits = (long long)h;
     }
 
+    if(do_shadow) gfs_ale_shadow_capture(ctx,n_particles,n_total,mpi_rank,force_call,params,d_audit_pressure,d_audit_work);
+
     if (do_dump) {
         size_t bytes = (size_t)n_faces * sizeof(double);
         double *h_work = (double *)malloc(bytes);
@@ -1597,6 +2031,15 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaMemcpy(ctx->h_parts.y, ctx->d_parts.y,
             (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
+        gfs_dump_force_inputs(ctx,n_particles,n_total,mpi_rank,force_call,params,dump_ids,dump_nids);
+        /* Face flux/geometry diagnostics do not require the much larger
+         * all-candidate structural dump on a locally refined mesh. */
+        const char *tess_dump = getenv("GFS_GPU_TESS_DUMP");
+        if (!(tess_dump && atoi(tess_dump)==0))
+            dump_kepler_tess_snapshot(ctx, n_particles, n_total, mpi_rank, force_call,
+                                      h_diag_tess_mx, h_diag_tess_my,
+                                      h_diag_tess_cellsize,
+                                      h_diag_tess_xmin, h_diag_tess_ymin);
 
         char path[128];
         snprintf(path, sizeof(path), "face_dump_r%d_call%d.tsv", mpi_rank, force_call);
@@ -1608,6 +2051,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\n");
         long long nrows = 0;
         for (int i = 0; i < n_particles; i++) {
+            if (!gfs_face_dump_selected(ctx->h_parts.indx[i],dump_ids,dump_nids)) continue;
             for (int f = ctx->h_faces.face_offset[i];
                  f < ctx->h_faces.face_offset[i + 1]; f++) {
                 int j = ctx->h_faces.neighbor_idx[f];
@@ -1629,6 +2073,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         fprintf(stderr, "[FACE_DUMP] rank=%d call=%d rows=%lld file=%s\n",
             mpi_rank, force_call, nrows, path);
         free(h_work); free(h_pressure); free(h_udotds);
+    }
+    if(do_dump || do_shadow){
         CUDA_CHECK(cudaFree(d_audit_work));
         CUDA_CHECK(cudaFree(d_audit_pressure));
         CUDA_CHECK(cudaFree(d_audit_udotds));
@@ -1819,8 +2265,132 @@ void gpu_upload_cells(GPUContext *ctx, int n_cells, int n_entries)
  *  gradients, avgNeighP, w2ceil. Writes PolygonOut for face scatter.
  * ================================================================ */
 
-/* Max neighbors gathered from 3×3 stencil */
-#define GPU_MAX_NEIGH 256
+/* Legacy inline capacity, retained only to count dense seed stencils.
+ * Candidate clipping now streams directly from CellCSR; no candidate is
+ * truncated and no per-thread arrays of this size are allocated. */
+#define GPU_MAX_NEIGH 512
+
+/* Remove only exactly coincident consecutive vertices. The outgoing
+ * support belongs to the last emitted copy of that point. Keeping both
+ * copies can exhaust the polygon capacity during dense grid clipping,
+ * even when the actual convex cell has only a few nonzero edges. */
+__device__ __forceinline__
+int gpu_raw_append_vertex(double x, double y, int support,
+    double *out_x, double *out_y, int *out_support, int *count)
+{
+    int n=*count;
+    if(n>0 && out_x[n-1]==x && out_y[n-1]==y){
+        out_support[n-1]=support;
+        return 1;
+    }
+    if(n>=GPU_MAX_CORNERS) return 0;
+    out_x[n]=x;out_y[n]=y;out_support[n]=support;*count=n+1;
+    return 1;
+}
+
+__device__ __forceinline__
+int gpu_clip_voronoi_halfplane(
+    double nx_n, double ny_n, double wfrac, int neighbor_soa,
+    double *poly_x, double *poly_y, int *poly_neigh, int nc,
+    double *tmp_x, double *tmp_y, int *tmp_neigh, int exact_intersections)
+{
+    const double dist2 = nx_n * nx_n + ny_n * ny_n;
+    const double threshold = wfrac * dist2;
+    int out_count = 0;
+
+    if(exact_intersections){
+        int valid=1;
+        for(int e=0;e<nc && valid;e++){
+            int en=(e+1)%nc;
+            double ax=poly_x[e],ay=poly_y[e],bx=poly_x[en],by=poly_y[en];
+            double da=ax*nx_n+ay*ny_n,db=bx*nx_n+by*ny_n;
+            int ain=da<=threshold,bin=db<=threshold;
+            if(ain)
+                valid=gpu_raw_append_vertex(ax,ay,poly_neigh[e],tmp_x,tmp_y,tmp_neigh,&out_count);
+            if(ain!=bin && valid){
+                double denom=db-da;
+                if(denom==0 || !isfinite(denom)){
+                    atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+                    return -1;
+                }
+                double t=fmax(0.0,fmin(1.0,(threshold-da)/denom));
+                double x=ax+t*(bx-ax),y=ay+t*(by-ay);
+                valid=gpu_raw_append_vertex(x,y,ain?neighbor_soa:poly_neigh[e],
+                    tmp_x,tmp_y,tmp_neigh,&out_count);
+            }
+        }
+        if(!valid){
+            unsigned long long errors=atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+            if(errors<8)
+                printf("[GPU_CLIP_CAPACITY] nc=%d capacity=%d neighbor_soa=%d normal=(%.17g,%.17g) threshold=%.17g\n",nc,GPU_MAX_CORNERS,neighbor_soa,nx_n,ny_n,threshold);
+            return -1;
+        }
+        if(out_count>1 && tmp_x[0]==tmp_x[out_count-1] && tmp_y[0]==tmp_y[out_count-1])
+            out_count--;
+        for(int e=0;e<out_count;e++){
+            poly_x[e]=tmp_x[e];poly_y[e]=tmp_y[e];poly_neigh[e]=tmp_neigh[e];
+        }
+        return out_count;
+    }
+
+    for (int e = 0; e < nc; e++) {
+        const int e_next = (e + 1) % nc;
+        const double ax = poly_x[e], ay = poly_y[e];
+        const double bx = poly_x[e_next], by = poly_y[e_next];
+        const double da = ax * nx_n + ay * ny_n;
+        const double db = bx * nx_n + by * ny_n;
+        const int a_in = (da <= threshold);
+        const int b_in = (db <= threshold);
+
+        if (a_in && b_in) {
+            if (out_count < GPU_MAX_CORNERS) {
+                tmp_x[out_count] = ax;
+                tmp_y[out_count] = ay;
+                tmp_neigh[out_count] = poly_neigh[e];
+                out_count++;
+            } else atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+        } else if (a_in && !b_in) {
+            if (out_count < GPU_MAX_CORNERS) {
+                tmp_x[out_count] = ax;
+                tmp_y[out_count] = ay;
+                tmp_neigh[out_count] = poly_neigh[e];
+                out_count++;
+            } else atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+            const double denom = db - da;
+            if (exact_intersections && (denom == 0.0 || !isfinite(denom)))
+                atomicAdd(&d_gfs_tess_geometry_errors, 1ull);
+            double t = exact_intersections ? ((denom != 0.0) ? (threshold-da)/denom : 0.0)
+                       : ((fabs(denom) > 1e-30) ? (threshold-da)/denom : wfrac);
+            t = exact_intersections ? fmax(0.0,fmin(1.0,t)) : fmax(1e-9,fmin(1.0-1e-9,t));
+            if (out_count < GPU_MAX_CORNERS) {
+                tmp_x[out_count] = ax + t * (bx - ax);
+                tmp_y[out_count] = ay + t * (by - ay);
+                tmp_neigh[out_count] = neighbor_soa;
+                out_count++;
+            } else atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+        } else if (!a_in && b_in) {
+            const double denom = db - da;
+            if (exact_intersections && (denom == 0.0 || !isfinite(denom)))
+                atomicAdd(&d_gfs_tess_geometry_errors, 1ull);
+            double t = exact_intersections ? ((denom != 0.0) ? (threshold-da)/denom : 0.0)
+                       : ((fabs(denom) > 1e-30) ? (threshold-da)/denom : wfrac);
+            t = exact_intersections ? fmax(0.0,fmin(1.0,t)) : fmax(1e-9,fmin(1.0-1e-9,t));
+            if (out_count < GPU_MAX_CORNERS) {
+                tmp_x[out_count] = ax + t * (bx - ax);
+                tmp_y[out_count] = ay + t * (by - ay);
+                tmp_neigh[out_count] = poly_neigh[e];
+                out_count++;
+            } else atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+        }
+    }
+
+    for (int e = 0; e < out_count; e++) {
+        poly_x[e] = tmp_x[e];
+        poly_y[e] = tmp_y[e];
+        poly_neigh[e] = tmp_neigh[e];
+    }
+    return out_count;
+}
 
 __global__ __launch_bounds__(256, 2)
 void voronoi_tessellate_kernel(
@@ -1852,8 +2422,8 @@ void voronoi_tessellate_kernel(
     /* Grid parameters */
     int nbp, int n_total, int mx, int my,
     double cellsize, double xmin, double ymin,
-    double boxsize, double OoA, int av_mode,
-    int gradient_method)
+    double boxsize, double global_w2_max, double OoA, int av_mode,
+    int gradient_method, int raw_volume, int limit_velocity, int merge_small_faces)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
@@ -1869,152 +2439,217 @@ void voronoi_tessellate_kernel(
     if (ix < 0) ix = 0;  if (ix >= mx) ix = mx - 1;
     if (iy < 0) iy = 0;  if (iy >= my) iy = my - 1;
 
-    /* ---- Gather neighbors from 3×3 stencil ---- */
-    double n_dx[GPU_MAX_NEIGH], n_dy[GPU_MAX_NEIGH];
-    double n_w2[GPU_MAX_NEIGH], n_drad2[GPU_MAX_NEIGH];
-    int    n_soa_idx[GPU_MAX_NEIGH];
-    int    n_count = 0;
-
-    for (int dy_c = -1; dy_c <= 1; dy_c++) {
-        int cy = iy + dy_c;
-        if (cy < 0 || cy >= my) continue;
-        for (int dx_c = -1; dx_c <= 1; dx_c++) {
-            int cx = ix + dx_c;
-            if (cx < 0 || cx >= mx) continue;
-            int cell_id = cx + mx * cy;
-            int c_begin = cell_offset[cell_id];
-            int c_end   = cell_offset[cell_id + 1];
-            for (int k = c_begin; k < c_end && n_count < GPU_MAX_NEIGH; k++) {
-                int j = cell_particle_index[k];
-                if (pindx[j] == indx_i) continue;  /* skip self */
-                double dx = px[j] - xi;
-                double dy_val = py[j] - yi;
-                double dist2 = dx * dx + dy_val * dy_val;
-                double w2j = (double)pw2[j];
-                double wdiff = (w2i - w2j) / dist2;
-                double drad2 = 0.25 * dist2 * (1.0 + wdiff) * (1.0 + wdiff);
-                n_dx[n_count] = dx;
-                n_dy[n_count] = dy_val;
-                n_w2[n_count] = w2j;
-                n_drad2[n_count] = drad2;
-                n_soa_idx[n_count] = j;
-                n_count++;
-            }
-        }
-    }
-
-    /* ---- Insertion sort by drad2 ---- */
-    for (int a = 1; a < n_count; a++) {
-        double key_d = n_drad2[a];
-        double key_dx = n_dx[a], key_dy = n_dy[a], key_w2 = n_w2[a];
-        int key_idx = n_soa_idx[a];
-        int b = a - 1;
-        while (b >= 0 && n_drad2[b] > key_d) {
-            n_drad2[b+1] = n_drad2[b];
-            n_dx[b+1] = n_dx[b]; n_dy[b+1] = n_dy[b];
-            n_w2[b+1] = n_w2[b]; n_soa_idx[b+1] = n_soa_idx[b];
-            b--;
-        }
-        n_drad2[b+1] = key_d;
-        n_dx[b+1] = key_dx; n_dy[b+1] = key_dy;
-        n_w2[b+1] = key_w2; n_soa_idx[b+1] = key_idx;
-    }
-
     /* ---- Initialize box polygon ---- */
-    double halfbox = 0.5 * boxsize;
+    double max_halfbox = 0.5 * boxsize;
+    double halfbox = raw_volume >= 2 ? fmin(max_halfbox,cellsize) : max_halfbox;
     /* 4 box corners: (-hb,-hb), (+hb,-hb), (+hb,+hb), (-hb,+hb) */
     double poly_x[GPU_MAX_CORNERS], poly_y[GPU_MAX_CORNERS];
     int    poly_neigh[GPU_MAX_CORNERS];
-    int    nc = 4;
+    int    nc = 4, stencil_pad = 2, seed_candidates = 0, box_retry = 0;
+    double maxdist2;
+    double tmp_x[GPU_MAX_CORNERS], tmp_y[GPU_MAX_CORNERS];
+    int    tmp_neigh[GPU_MAX_CORNERS];
+
+    /* Start locally to avoid cancellation when a cell of width~h is clipped
+     * out of a nominal box thousands of times wider. A local box is accepted
+     * only when no artificial box support remains. If it remains, double
+     * the box and repeat the complete search. Convexity then certifies that
+     * the accepted polygon is not truncated by the initial box. */
+    for (;;) {
+    nc=4;
     /* Same init as Voro2D_InitializeCorner: corner i = (((i+1)%4)/2, i/2)*box - halfbox */
     poly_x[0] = -halfbox; poly_y[0] = -halfbox; poly_neigh[0] = -1;
     poly_x[1] =  halfbox; poly_y[1] = -halfbox; poly_neigh[1] = -2;
     poly_x[2] =  halfbox; poly_y[2] =  halfbox; poly_neigh[2] = -3;
     poly_x[3] = -halfbox; poly_y[3] =  halfbox; poly_neigh[3] = -4;
 
-    double maxdist2 = halfbox * sqrt(3.0);
+    maxdist2 = 2.0 * halfbox * halfbox;
 
     /* ---- Sutherland-Hodgman clipping ---- */
-    double tmp_x[GPU_MAX_CORNERS], tmp_y[GPU_MAX_CORNERS];
-    int    tmp_neigh[GPU_MAX_CORNERS];
 
-    for (int ni = 0; ni < n_count; ni++) {
-        if (n_drad2[ni] > maxdist2) break;
-
-        double nx_n = n_dx[ni], ny_n = n_dy[ni];
-        double dist2 = nx_n * nx_n + ny_n * ny_n;
-        double wfrac = 0.5 + 0.5 * (w2i - n_w2[ni]) / dist2;
-        if(wfrac < 0.05) wfrac = 0.05; else if(wfrac > 0.95) wfrac = 0.95;
-        double threshold = wfrac * dist2;  /* wfrac * dot(neigh, neigh) */
-        int j_soa = n_soa_idx[ni];
-
-        int out_count = 0;
-        for (int e = 0; e < nc; e++) {
-            int e_next = (e + 1) % nc;
-            double ax = poly_x[e],    ay = poly_y[e];
-            double bx = poly_x[e_next], by = poly_y[e_next];
-            double da = ax * nx_n + ay * ny_n;  /* dot(A, neigh) */
-            double db = bx * nx_n + by * ny_n;  /* dot(B, neigh) */
-            int a_in = (da <= threshold);
-            int b_in = (db <= threshold);
-
-            if (a_in && b_in) {
-                /* Both inside: output A with original edge_neigh */
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax;
-                    tmp_y[out_count] = ay;
-                    tmp_neigh[out_count] = poly_neigh[e];
-                    out_count++;
-                }
-            } else if (a_in && !b_in) {
-                /* A in, B out: output A, then intersection with neighbor ni */
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax;
-                    tmp_y[out_count] = ay;
-                    tmp_neigh[out_count] = poly_neigh[e];
-                    out_count++;
-                }
-                /* Intersection: t = (threshold - da) / (db - da) */
-                double denom = db - da;
-                double t = (fabs(denom) > 1e-30) ? (threshold - da) / denom : wfrac;
-                t = fmax(1e-9, fmin(1.0 - 1e-9, t));
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax + t * (bx - ax);
-                    tmp_y[out_count] = ay + t * (by - ay);
-                    tmp_neigh[out_count] = j_soa;  /* new face starts */
-                    out_count++;
-                }
-            } else if (!a_in && b_in) {
-                /* A out, B in: output intersection with original edge_neigh */
-                double denom = db - da;
-                double t = (fabs(denom) > 1e-30) ? (threshold - da) / denom : wfrac;
-                t = fmax(1e-9, fmin(1.0 - 1e-9, t));
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax + t * (bx - ax);
-                    tmp_y[out_count] = ay + t * (by - ay);
-                    tmp_neigh[out_count] = poly_neigh[e];
-                    out_count++;
+    if(raw_volume>=2){
+        /* Dense local refinement can give a distant row dozens of active
+         * intermediate supports before the nearest generators are visited.
+         * Tighten the starting superset with up to eight real halfplanes
+         * first. This changes only processing order: every seed/adaptive
+         * candidate is still examined below, and the corner cap still
+         * aborts rather than truncating a genuinely complex polygon. */
+        int nearest[8]; double offset2[8];
+        for(int s=0;s<8;s++){nearest[s]=-1;offset2[s]=DBL_MAX;}
+        for(int yc=-2;yc<=2;yc++){
+            int cy=iy+yc;if(cy<0 || cy>=my)continue;
+            for(int xc=-2;xc<=2;xc++){
+                int cx=ix+xc;if(cx<0 || cx>=mx)continue;
+                int cell=cx+mx*cy;
+                for(int k=cell_offset[cell];k<cell_offset[cell+1];k++){
+                    int j=cell_particle_index[k];if(pindx[j]==indx_i)continue;
+                    double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+                    if(!(d2>0))continue;
+                    double wf=fmax(.05,fmin(.95,.5+.5*(w2i-(double)pw2[j])/d2));
+                    double dr2=wf*wf*d2;
+                    int s=fabs(dx)>=fabs(dy)
+                        ? (dx>=0?(dy>=0?0:7):(dy>=0?3:4))
+                        : (dy>=0?(dx>=0?1:2):(dx>=0?6:5));
+                    if(dr2<offset2[s]){offset2[s]=dr2;nearest[s]=j;}
                 }
             }
-            /* both out: skip */
         }
-
-        nc = out_count;
-        for (int e = 0; e < nc; e++) {
-            poly_x[e] = tmp_x[e];
-            poly_y[e] = tmp_y[e];
-            poly_neigh[e] = tmp_neigh[e];
+        for(int s=0;s<8 && nc>=3;s++){
+            int j=nearest[s];if(j<0 || offset2[s]>maxdist2)continue;
+            double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+            double wf=fmax(.05,fmin(.95,.5+.5*(w2i-(double)pw2[j])/d2));
+            nc=gpu_clip_voronoi_halfplane(dx,dy,wf,j,poly_x,poly_y,poly_neigh,nc,
+                                         tmp_x,tmp_y,tmp_neigh,1);
+            maxdist2=0;
+            for(int e=0;e<nc;e++)maxdist2=fmax(maxdist2,poly_x[e]*poly_x[e]+poly_y[e]*poly_y[e]);
         }
+    }
 
-        if (nc < 3) break;  /* degenerate polygon */
+    /* Stream the 5x5 seed in exactly the former linked-cell order. The old
+     * stored prefix and overflow pass together used this same sequence.
+     * Keeping only the current half-plane removes 18 KiB of per-thread
+     * candidate arrays, while retaining the polygon-radius rejection and
+     * the complete adaptive search below. */
+    seed_candidates = 0;
+    for (int dy_c = -2; dy_c <= 2 && nc >= 3; dy_c++) {
+        int cy = iy + dy_c;
+        if (cy < 0 || cy >= my) continue;
+        for (int dx_c = -2; dx_c <= 2 && nc >= 3; dx_c++) {
+            int cx = ix + dx_c;
+            if (cx < 0 || cx >= mx) continue;
+            int cell_id = cx + mx * cy;
+            int c_begin = cell_offset[cell_id];
+            int c_end = cell_offset[cell_id + 1];
+            for (int k = c_begin; k < c_end && nc >= 3; k++) {
+                int j = cell_particle_index[k];
+                if (pindx[j] == indx_i) continue;
+                seed_candidates++;
 
-        /* Update maxdist2 from farthest surviving corner */
-        double new_max = 0;
-        for (int e = 0; e < nc; e++) {
-            double cd = poly_x[e] * poly_x[e] + poly_y[e] * poly_y[e];
-            if (cd > new_max) new_max = cd;
+                double dx = px[j] - xi;
+                double dy_val = py[j] - yi;
+                double dist2 = dx * dx + dy_val * dy_val;
+                double w2j = (double)pw2[j];
+                double wfrac = 0.5 + 0.5 * (w2i - w2j) / dist2;
+                if (wfrac < 0.05) wfrac = 0.05; else if (wfrac > 0.95) wfrac = 0.95;
+                double drad2 = wfrac * wfrac * dist2;
+                if (drad2 > maxdist2) continue;
+
+                nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
+                                                poly_x, poly_y, poly_neigh, nc,
+                                                tmp_x, tmp_y, tmp_neigh, raw_volume >= 2);
+                if (nc < 3) break;
+
+                double new_max = 0.0;
+                for (int e = 0; e < nc; e++) {
+                    double cd = poly_x[e] * poly_x[e] + poly_y[e] * poly_y[e];
+                    if (cd > new_max) new_max = cd;
+                }
+                maxdist2 = new_max;
+            }
         }
-        maxdist2 = new_max;
+    }
+
+    /* Expand beyond the 5x5 seed stencil when the current polygon can still
+     * be cut by a more distant generator.  The seed polygon is a superset of
+     * the complete cell, so its circumradius gives a safe search bound.  For
+     * a clamped Laguerre bisector, the global weight bound gives the exact
+     * conservative Euclidean radius needed to include every possible cut. */
+    stencil_pad = 2;
+    if (nc >= 3) {
+        const double radius = sqrt(fmax(0.0, maxdist2));
+        const double deltaW = fmax(0.0, global_w2_max - w2i);
+        const double d_clamped = (deltaW > 0.0)
+            ? fmin(sqrt(deltaW / 0.9), 20.0 * radius) : 0.0;
+        const double d_unclamped = radius + sqrt(maxdist2 + deltaW);
+        double search_radius = fmax(2.0 * radius,
+                                    fmax(d_clamped, d_unclamped));
+        if (!(search_radius >= 0.0) || !isfinite(search_radius))
+            search_radius = hypot((double)mx * cellsize,
+                                  (double)my * cellsize);
+        stencil_pad = (int)ceil(search_radius / cellsize) + 1;
+        if (stencil_pad < 2) stencil_pad = 2;
+        if (stencil_pad > (mx > my ? mx : my))
+            stencil_pad = mx > my ? mx : my;
+
+
+        if (stencil_pad > 2) {
+            int ylo = iy - stencil_pad, yhi = iy + stencil_pad;
+            int xlo = ix - stencil_pad, xhi = ix + stencil_pad;
+            if (ylo < 0) ylo = 0; if (yhi >= my) yhi = my - 1;
+            if (xlo < 0) xlo = 0; if (xhi >= mx) xhi = mx - 1;
+            for (int cy = ylo; cy <= yhi && nc >= 3; cy++) {
+                for (int cx = xlo; cx <= xhi && nc >= 3; cx++) {
+                    if (abs(cx - ix) <= 2 && abs(cy - iy) <= 2) continue;
+                    const int cell_id = cx + mx * cy;
+                    const int c_begin = cell_offset[cell_id];
+                    const int c_end = cell_offset[cell_id + 1];
+                    for (int k = c_begin; k < c_end && nc >= 3; k++) {
+                        const int j = cell_particle_index[k];
+                        if (pindx[j] == indx_i) continue;
+                        const double dx = px[j] - xi;
+                        const double dy_val = py[j] - yi;
+                        const double dist2 = dx * dx + dy_val * dy_val;
+                        if (!(dist2 > 0.0)) continue;
+                        double wfrac = 0.5 + 0.5 * (w2i - (double)pw2[j]) / dist2;
+                        if (wfrac < 0.05) wfrac = 0.05;
+                        else if (wfrac > 0.95) wfrac = 0.95;
+                        if (wfrac * wfrac * dist2 > maxdist2) continue;
+
+                        nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
+                                                        poly_x, poly_y, poly_neigh, nc,
+                                                        tmp_x, tmp_y, tmp_neigh, raw_volume >= 2);
+                        if (nc < 3) break;
+                        double new_max = 0.0;
+                        for (int e = 0; e < nc; e++) {
+                            const double cd = poly_x[e] * poly_x[e]
+                                            + poly_y[e] * poly_y[e];
+                            if (cd > new_max) new_max = cd;
+                        }
+                        maxdist2 = new_max;
+                    }
+                }
+            }
+        }
+    }
+
+    if (raw_volume < 2 || nc < 3) break;
+    int touches_box=0;
+    for (int e=0;e<nc;e++)
+        if (poly_neigh[e]<0 || fabs(poly_x[e])>=halfbox*(1-32*DBL_EPSILON) ||
+            fabs(poly_y[e])>=halfbox*(1-32*DBL_EPSILON)) touches_box=1;
+    if (!touches_box) break;
+    if (halfbox>=max_halfbox || ++box_retry>32) {
+        atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+        face_count_out[i]=0;
+        return;
+    }
+    halfbox=fmin(max_halfbox,2.0*halfbox);
+    } /* adaptive initial box */
+    if (seed_candidates > GPU_MAX_NEIGH)
+        atomicAdd(&d_gfs_candidate_fallback_cells, 1ull);
+    if (stencil_pad > 2)
+        atomicAdd(&d_gfs_stencil_expanded_cells, 1ull);
+
+    if(raw_volume>=2){
+        /* A convex power-cell has one connected edge per support plane.
+         * Repeated clipping can leave consecutive collinear segments with
+         * the same outgoing support. They must be one Riemann face: using
+         * different segment midpoints at the two cell ends gives different
+         * nonlinear pressures even when summed area vectors agree. Remove
+         * the redundant vertex by support identity, with no length cutoff. */
+        int changed=1;
+        while(changed && nc>=3){
+            changed=0;
+            for(int e=0;e<nc;e++){
+                int prev=(e+nc-1)%nc;
+                if(poly_neigh[e]>=0 && poly_neigh[e]==poly_neigh[prev]){
+                    for(int k=e;k+1<nc;k++){
+                        poly_x[k]=poly_x[k+1];poly_y[k]=poly_y[k+1];poly_neigh[k]=poly_neigh[k+1];
+                    }
+                    nc--;changed=1;break;
+                }
+            }
+        }
     }
 
     /* ---- Merge near-coincident vertices (degenerate faces at grid corners) ----
@@ -2022,7 +2657,7 @@ void voronoi_tessellate_kernel(
      * single point. Sutherland-Hodgman clipping produces two nearly-
      * identical vertices, creating a tiny face.  These cause CFL dt
      * collapse.  Use RELATIVE threshold: edge < 1e-4 * max_edge. */
-    {
+    if (!raw_volume && merge_small_faces) {
         double max_edge2 = 0;
         for (int e = 0; e < nc; e++) {
             int en = (e + 1) % nc;
@@ -2063,12 +2698,54 @@ void voronoi_tessellate_kernel(
         area += poly_x[e] * poly_y[en] - poly_y[e] * poly_x[en];
     }
     double volume = 0.5 * fabs(area);
+    if (raw_volume >= 2) {
+        /* Each positive edge must remain on its recorded support plane.
+         * This catches mislabeled/backward/ill-resolved micro-faces rather
+         * than treating positive shoelace area as a topology certificate. */
+        for (int e=0;e<nc;e++) {
+            int jn=poly_neigh[e], en=(e+1)%nc;
+            if (jn < 0) continue;
+            double ex=poly_x[en]-poly_x[e], ey=poly_y[en]-poly_y[e];
+            if (!(ex*ex+ey*ey > 0.0)) continue;
+            double dx=px[jn]-xi, dy=py[jn]-yi, d2=dx*dx+dy*dy;
+            double wf=fmax(0.05,fmin(0.95,0.5+0.5*(w2i-(double)pw2[jn])/d2));
+            double rhs=wf*d2;
+            double scale=fabs(rhs)+fabs(dx)*(fabs(poly_x[e])+fabs(poly_x[en]))+
+                         fabs(dy)*(fabs(poly_y[e])+fabs(poly_y[en]));
+            double tol=1024.0*DBL_EPSILON*fmax(scale,DBL_MIN);
+            double err=fmax(fabs(dx*poly_x[e]+dy*poly_y[e]-rhs),
+                            fabs(dx*poly_x[en]+dy*poly_y[en]-rhs));
+            /* A zero-measure Voronoi edge at a cocircular grid corner can
+             * reverse by one coordinate ulp. Bound subtraction/product
+             * roundoff explicitly; retain every vertex and its closure.
+             * A resolved reverse edge remains an error. */
+            double orientation=ey*dx-ex*dy;
+            double orientation_error=8.0*DBL_EPSILON*(
+                fabs(dx)*(fabs(poly_y[e])+fabs(poly_y[en]))+
+                fabs(dy)*(fabs(poly_x[e])+fabs(poly_x[en]))+
+                fabs(ey*dx)+fabs(ex*dy));
+            if (!isfinite(err) || err>tol || orientation < -orientation_error) {
+                unsigned long long count=atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+                if (count<8)
+                    printf("[GPU_SUPPORT_ERROR] i=%d id=%lld edge=%d neighbor=%lld err=%.17g tol=%.17g orientation=%.17g edge=(%.17g,%.17g) n=(%.17g,%.17g) a=(%.17g,%.17g) b=(%.17g,%.17g) area=%.17g\n",
+                        i,(long long)pindx[i],e,(long long)pindx[jn],err,tol,ey*dx-ex*dy,ex,ey,dx,dy,
+                        poly_x[e],poly_y[e],poly_x[en],poly_y[en],area);
+                face_count_out[i]=0;
+                return;
+            }
+        }
+    }
+    if (raw_volume && (!(area > 0.0) || !isfinite(volume) || nc < 3)) {
+        atomicAdd(&d_gfs_invalid_raw_volume_cells, 1ull);
+        face_count_out[i] = 0;
+        return;
+    }
     /* Volume floor at 0.1% of nominal cell area (= cellsize²).  Sutherland-
      * Hodgman clipping at corners of rings IC (Nx≥256) sometimes produces
      * polygon area ~1e-30 → density = mass/V → 1.5e+25 garbage → step-1
      * K explosion via conduction.  See bug_gpu_sedov_zerovol.md. */
     double volume_floor = 1.0e-3 * cellsize * cellsize;
-    if (volume < volume_floor) {
+    if (!raw_volume && volume < volume_floor) {
         printf("[GPU_VOL_DIAG] i=%d nc=%d V_raw=%g V_floor=%g cellsize=%g\n",
                i, nc, volume, volume_floor, cellsize);
         volume = volume_floor;
@@ -2289,8 +2966,36 @@ void voronoi_tessellate_kernel(
 
         /* Apply limiter */
         dRhodx_val *= alpha_rho;  dRhody_val *= alpha_rho;
-        gUxx *= alpha_vx;         gUxy *= alpha_vx;
-        gUyx *= alpha_vy;         gUyy *= alpha_vy;
+        if (limit_velocity == 2) {
+            /* Use every real face neighbor. tmp_x/y are no longer needed
+             * for clipping; keep geometry intact and reuse this scratch. */
+            double sample_x[GPU_MAX_CORNERS], sample_y[GPU_MAX_CORNERS];
+            int nsample = 0;
+            double input_scale = hypot(pvx[i],pvy[i]);
+            for (int e = 0; e < nc; e++) {
+                int jn = poly_neigh[e];
+                if (jn < 0 || pindx[jn] == MAX_INDEX_GPU) continue;
+                sample_x[nsample] = px[jn] - xi;
+                sample_y[nsample] = py[jn] - yi;
+                tmp_x[nsample] = pvx[jn] - pvx[i];
+                tmp_y[nsample] = pvy[jn] - pvy[i];
+                input_scale = fmax(input_scale,hypot(pvx[jn],pvy[jn]));
+                nsample++;
+            }
+            double alpha_v = gfs_velocity_midpoint_alpha(nsample,
+                sample_x, sample_y, tmp_x, tmp_y, gUxx, gUxy, gUyx, gUyy,
+                gfs_velocity_matrix_condition(Mxx,Mxy,Myy),input_scale);
+            if (!(alpha_v >= 0.0)) {
+                atomicAdd(&d_gfs_invalid_velocity_fit_cells,1ull);
+                face_count_out[i] = 0;
+                return;
+            }
+            gUxx *= alpha_v; gUxy *= alpha_v;
+            gUyx *= alpha_v; gUyy *= alpha_v;
+        } else if (limit_velocity) {
+            gUxx *= alpha_vx;     gUxy *= alpha_vx;
+            gUyx *= alpha_vy;     gUyy *= alpha_vy;
+        }
         dPdx_val *= alpha_P;      dPdy_val *= alpha_P;
         divv_val = gUxx + gUyy;  /* recompute after limiting */
     }
@@ -2316,14 +3021,40 @@ void voronoi_tessellate_kernel(
     /* Write PolygonOut for face scatter */
     PolygonOut *po = &polygons[i];
     po->n_corners = nc;
+    po->stencil_pad = stencil_pad;
     int n_real_faces = 0;
     for (int e = 0; e < nc; e++) {
         po->cx[e] = poly_x[e];
         po->cy[e] = poly_y[e];
         po->edge_neigh[e] = poly_neigh[e];
-        if (poly_neigh[e] >= 0) n_real_faces++;
+        int en = (e+1)%nc;
+        double ex = poly_x[en]-poly_x[e], ey = poly_y[en]-poly_y[e];
+        if (poly_neigh[e] >= 0 && (raw_volume < 2 || ex*ex+ey*ey > 0.0)) n_real_faces++;
     }
     po->n_real_faces = n_real_faces;
+    if (nc >= 3) {
+        double final_maxdist2 = 0.0;
+        for (int e = 0; e < nc; e++) {
+            const double cd = poly_x[e] * poly_x[e] + poly_y[e] * poly_y[e];
+            if (cd > final_maxdist2) final_maxdist2 = cd;
+        }
+        const double final_radius = sqrt(final_maxdist2);
+        const double deltaW = fmax(0.0, global_w2_max - w2i);
+        const double d_clamped = (deltaW > 0.0)
+            ? fmin(sqrt(deltaW / 0.9), 20.0 * final_radius) : 0.0;
+        const double d_unclamped = final_radius + sqrt(final_maxdist2 + deltaW);
+        const double final_search_radius = fmax(2.0 * final_radius,
+                                                 fmax(d_clamped, d_unclamped));
+        const double grid_xmax = xmin + (double)mx * cellsize;
+        const double grid_ymax = ymin + (double)my * cellsize;
+        po->halo_clipped =
+            (xi - final_search_radius < xmin || xi + final_search_radius > grid_xmax ||
+             yi - final_search_radius < ymin || yi + final_search_radius > grid_ymax);
+        if (po->halo_clipped)
+            atomicAdd(&d_gfs_stencil_halo_clipped_cells, 1ull);
+    } else {
+        po->halo_clipped = 0;
+    }
     face_count_out[i] = n_real_faces;
 }
 
@@ -2414,7 +3145,7 @@ void scatter_faces_kernel(
     int *__restrict__ f_neighbor_idx,
     int *__restrict__ f_kp_idx, int *__restrict__ f_km_idx,
     int *__restrict__ f_is_ghost,
-    int nbp)
+    int nbp, int omit_zero_edges)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
@@ -2429,6 +3160,8 @@ void scatter_faces_kernel(
         if (j_neigh < 0) continue;  /* skip box boundary edges */
 
         int en = (e + 1) % nc;
+        double ex=po->cx[en]-po->cx[e], ey=po->cy[en]-po->cy[e];
+        if (omit_zero_edges && !(ex*ex+ey*ey > 0.0)) continue;
         int dst = base + local_f;
 
         f_c1x[dst] = po->cx[e];
@@ -2456,15 +3189,67 @@ void scatter_faces_kernel(
 extern "C"
 void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     int mx, int my, double cellsize, double xmin, double ymin,
-    double boxsize, double OoA, int av_mode, double Gamma,
+    double boxsize, double global_w2_max, double OoA, int av_mode, double Gamma,
     double nu_phys, double prandtl, double cd_amax,
     int gradient_method,
     int entropy_mode, double K_floor)
 {
+    h_diag_tess_mx = mx; h_diag_tess_my = my;
+    h_diag_tess_cellsize = cellsize;
+    h_diag_tess_xmin = xmin; h_diag_tess_ymin = ymin;
+    h_diag_global_w2_max = global_w2_max;
     cudaStream_t s = (cudaStream_t)ctx->stream;
     int blockSize = 256;
     int gridSize = (nbp + blockSize - 1) / blockSize;
     int n_total = ctx->d_parts.n_total;
+
+    /* Causal controls for the explicit affine patch test only. Production
+     * retains both limiters. Rho/P positivity limiting is never bypassed. */
+    const char *probe_v = getenv("GFS_AFFINE_UNLIMITED_VELOCITY");
+    const char *probe_m = getenv("GFS_AFFINE_UNMERGED_FACES");
+    const char *velocity_env = getenv("GFS_VELOCITY_LIMITER");
+    int limit_velocity = (velocity_env && atoi(velocity_env) > 0) ? 2 : 1;
+    if (probe_v && atoi(probe_v) > 0) limit_velocity = 0;
+    if (limit_velocity == 2 && gradient_method != 1) {
+        fprintf(stderr,"[VELOCITY_LIMITER] requires LSF gradient_method=1\n"); exit(1);
+    }
+    const char *raw_env = getenv("GFS_GPU_RAW_FACES");
+    int raw_geometry = (raw_env && atoi(raw_env) > 0) ? 2 : 0;
+    int merge_small_faces = !(probe_m && atoi(probe_m) > 0);
+    if (raw_geometry) merge_small_faces = 0;
+    if ((probe_v && atoi(probe_v)>0) || (probe_m && atoi(probe_m)>0)) {
+        const char *ic = getenv("EUNHA_IC");
+        if (!ic || strcmp(ic, "affine_probe") != 0) {
+            fprintf(stderr, "[AFFINE_PROBE] diagnostic controls require EUNHA_IC=affine_probe\n");
+            exit(1);
+        }
+        static int banner = 0;
+        if (!banner) {
+            fprintf(stderr, "[AFFINE_PROBE] velocity_limiter=%d merge_small_faces=%d; rho/P limiting retained\n",
+                    limit_velocity, merge_small_faces);
+            banner = 1;
+        }
+    }
+
+    unsigned long long zero_fallbacks = 0;
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_invalid_raw_volume_cells,&zero_fallbacks,sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_invalid_velocity_fit_cells,&zero_fallbacks,sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_tess_geometry_errors,&zero_fallbacks,sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_candidate_fallback_cells, &zero_fallbacks, sizeof(zero_fallbacks), 0,
+                                       cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_stencil_expanded_cells, &zero_fallbacks, sizeof(zero_fallbacks), 0,
+                                       cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_stencil_halo_clipped_cells, &zero_fallbacks, sizeof(zero_fallbacks), 0,
+                                       cudaMemcpyHostToDevice, s));
+
+    /* Kernel A reads neighbor densities while publishing each cell's new
+     * density. Passing d_parts.den as both input and output made those reads
+     * depend on block execution order, and violated the restrict contract.
+     * Freeze exactly the uploaded stage input (including MPI padding); the
+     * copy and kernel share a stream, so every read sees one time level. */
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tess_den_input, ctx->d_parts.den,
+                               n_total * sizeof(float),
+                               cudaMemcpyDeviceToDevice, s));
 
     /* Kernel A: Voronoi tessellation + gradients */
     voronoi_tessellate_kernel<<<gridSize, blockSize, 0, s>>>(
@@ -2472,7 +3257,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         ctx->d_parts.vx, ctx->d_parts.vy,
         ctx->d_parts.mass, ctx->d_parts.indx,
         ctx->d_parts.ie, ctx->d_parts.w2,
-        ctx->d_parts.pressure, ctx->d_parts.den,
+        ctx->d_parts.pressure, ctx->d_tess_den_input,
         ctx->d_cells.cell_offset, ctx->d_cells.particle_index,
         /* outputs */
         ctx->d_parts.den, ctx->d_parts.pressure,
@@ -2483,8 +3268,8 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         ctx->d_parts.dRhodx, ctx->d_parts.dRhody,
         ctx->d_parts.lap_vx, ctx->d_parts.lap_vy,
         ctx->d_polygons, ctx->d_face_count,
-        nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, OoA, av_mode,
-        gradient_method);
+        nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max, OoA, av_mode,
+        gradient_method, raw_geometry, limit_velocity, merge_small_faces);
     CUDA_CHECK(cudaGetLastError());
 
     /* Kernel B: Pressure, sound speed, NS stress */
@@ -2522,6 +3307,32 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         CUDA_CHECK(cudaMemcpyAsync(&h_last_count, ctx->d_face_count + nbp - 1,
                    sizeof(int), cudaMemcpyDeviceToHost, s));
         CUDA_CHECK(cudaStreamSynchronize(s));
+        unsigned long long h_candidate_fallbacks = 0;
+        CUDA_CHECK(cudaMemcpyFromSymbol(&h_candidate_fallbacks, d_gfs_candidate_fallback_cells,
+                                       sizeof(h_candidate_fallbacks)));
+        if (h_candidate_fallbacks > 0)
+            fprintf(stderr, "[GPU_CANDIDATE_STREAM] cells_over_legacy_cap=%llu legacy_cap=%d all_candidates_accounted_for=1\n",
+                    h_candidate_fallbacks, GPU_MAX_NEIGH);
+        unsigned long long h_stencil_expanded = 0, h_halo_clipped = 0;
+        CUDA_CHECK(cudaMemcpyFromSymbol(&h_stencil_expanded, d_gfs_stencil_expanded_cells,
+                                       sizeof(h_stencil_expanded)));
+        CUDA_CHECK(cudaMemcpyFromSymbol(&h_halo_clipped, d_gfs_stencil_halo_clipped_cells,
+                                       sizeof(h_halo_clipped)));
+        if (h_stencil_expanded > 0 || h_halo_clipped > 0)
+            fprintf(stderr, "[GPU_STENCIL_EXPANSION] expanded_cells=%llu halo_clipped_cells=%llu\n",
+                    h_stencil_expanded, h_halo_clipped);
+        unsigned long long invalid_volume=0,invalid_fit=0,geometry_errors=0;
+        CUDA_CHECK(cudaMemcpyFromSymbol(&invalid_volume,d_gfs_invalid_raw_volume_cells,sizeof(invalid_volume)));
+        CUDA_CHECK(cudaMemcpyFromSymbol(&invalid_fit,d_gfs_invalid_velocity_fit_cells,sizeof(invalid_fit)));
+        CUDA_CHECK(cudaMemcpyFromSymbol(&geometry_errors,d_gfs_tess_geometry_errors,sizeof(geometry_errors)));
+        if (invalid_volume || invalid_fit || geometry_errors || (raw_geometry && h_halo_clipped)) {
+            fprintf(stderr,"[GPU_TESS_INVALID] volume=%llu velocity_fit=%llu geometry=%llu halo=%llu\n",
+                    invalid_volume,invalid_fit,geometry_errors,h_halo_clipped);
+            if (h_geometry_trial) {
+                h_geometry_failed=1; ctx->tess_faces_on_device=0; return;
+            }
+            exit(1);
+        }
         int total_faces = h_last_offset + h_last_count;
 
         /* Set face_offset[nbp] on device */
@@ -2534,8 +3345,11 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
 
         /* Check capacity (should not happen with proper allocation) */
         if (total_faces > ctx->max_faces) {
-            fprintf(stderr, "[GPU TESS] WARNING: total_faces=%d > max_faces=%d, "
-                    "faces may be truncated!\n", total_faces, ctx->max_faces);
+            fprintf(stderr, "[GPU TESS] total_faces=%d > max_faces=%d; refusing truncated faces\n",total_faces,ctx->max_faces);
+            if (h_geometry_trial) {
+                h_geometry_failed=1; ctx->tess_faces_on_device=0; return;
+            }
+            exit(1);
         }
     }
 
@@ -2547,7 +3361,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         ctx->d_faces.neighbor_idx,
         ctx->d_faces.kp_idx, ctx->d_faces.km_idx,
         ctx->d_faces.is_ghost,
-        nbp);
+        nbp, raw_geometry >= 2);
     CUDA_CHECK(cudaGetLastError());
 
     /* Copy face_offset to FaceCSR (device already has it, just set pointer) */
@@ -2565,6 +3379,71 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
  *  Downloads the tessellation outputs (den, P, cs, volume, w2ceil,
  *  avgNeighP, gradients, stress) so CPU can write them back to AoS.
  * ================================================================ */
+/* End-of-step geometry uses the same complete candidate search, but keeps
+ * raw positive area: CPU exam2dUpdateVol neither merges small faces nor applies
+ * the force-stage volume floor. No pressure/EOS or face-CSR update is performed.
+ * Return failure to the MPI wrapper before any host particle is changed. */
+extern "C"
+int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
+    int mx, int my, double cellsize, double xmin, double ymin,
+    double boxsize, double global_w2_max, double OoA, int av_mode,
+    int gradient_method)
+{
+    ctx->tess_faces_on_device = 0;
+    if (nbp <= 0) return 0;
+    cudaStream_t s = (cudaStream_t)ctx->stream;
+    int blockSize = 256, gridSize = (nbp + blockSize - 1) / blockSize;
+    int n_total = ctx->d_parts.n_total;
+    unsigned long long zero = 0;
+    const char *raw_env=getenv("GFS_GPU_RAW_FACES");
+    int raw_geometry=(raw_env && atoi(raw_env)>0) ? 2 : 1;
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_tess_geometry_errors,&zero,sizeof(zero),0,cudaMemcpyHostToDevice,s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_invalid_raw_volume_cells, &zero,
+        sizeof(zero), 0, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_stencil_halo_clipped_cells, &zero,
+        sizeof(zero), 0, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_stencil_expanded_cells, &zero,
+        sizeof(zero), 0, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_candidate_fallback_cells, &zero,
+        sizeof(zero), 0, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_tess_den_input, ctx->d_parts.den,
+        n_total * sizeof(float), cudaMemcpyDeviceToDevice, s));
+    voronoi_tessellate_kernel<<<gridSize, blockSize, 0, s>>>(
+        ctx->d_parts.x, ctx->d_parts.y,
+        ctx->d_parts.vx, ctx->d_parts.vy,
+        ctx->d_parts.mass, ctx->d_parts.indx,
+        ctx->d_parts.ie, ctx->d_parts.w2,
+        ctx->d_parts.pressure, ctx->d_tess_den_input,
+        ctx->d_cells.cell_offset, ctx->d_cells.particle_index,
+        /* outputs */
+        ctx->d_parts.den, ctx->d_parts.pressure,
+        ctx->d_parts.volume, ctx->d_parts.w2ceil, ctx->d_parts.avgNeighP,
+        ctx->d_parts.gUxx, ctx->d_parts.gUxy,
+        ctx->d_parts.gUyx, ctx->d_parts.gUyy,
+        ctx->d_parts.dPdx, ctx->d_parts.dPdy,
+        ctx->d_parts.dRhodx, ctx->d_parts.dRhody,
+        ctx->d_parts.lap_vx, ctx->d_parts.lap_vy,
+        ctx->d_polygons, ctx->d_face_count,
+        nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max, OoA, av_mode,
+        gradient_method, raw_geometry, 1, 0);
+    CUDA_CHECK(cudaGetLastError());
+    unsigned long long invalid = 0, clipped = 0, geometry_errors=0;
+    CUDA_CHECK(cudaMemcpyFromSymbolAsync(&geometry_errors,d_gfs_tess_geometry_errors,sizeof(geometry_errors),0,cudaMemcpyDeviceToHost,s));
+    CUDA_CHECK(cudaMemcpyFromSymbolAsync(&invalid, d_gfs_invalid_raw_volume_cells,
+        sizeof(invalid), 0, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyFromSymbolAsync(&clipped, d_gfs_stencil_halo_clipped_cells,
+        sizeof(clipped), 0, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.volume, ctx->d_parts.volume,
+        nbp * sizeof(float), cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.avgNeighP, ctx->d_parts.avgNeighP,
+        nbp * sizeof(float), cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaStreamSynchronize(s));
+    if (invalid || clipped || geometry_errors)
+        fprintf(stderr, "[GPU_FINAL_VOLUME] invalid=%llu halo_clipped=%llu geometry=%llu\n",
+                invalid, clipped,geometry_errors);
+    return (invalid || clipped || geometry_errors) ? 1 : 0;
+}
+
 extern "C"
 void gpu_download_tess_results(GPUContext *ctx, int nbp, int has_stress)
 {
@@ -3701,5 +4580,10 @@ double gpu_launch_lagmfm_force_kernel(GPUContext *ctx, int n_particles,
 
     return (double)(*(float *)ctx->h_cub_min_out);
 }
+
+#include "gfs_moment_gpu.inc"
+#include "gfs_dg_gpu.inc"
+#include "gfs_enriched_gpu.inc"
+#include "gfs_enriched_coupling_gpu.inc"
 
 #endif /* USE_CUDA */

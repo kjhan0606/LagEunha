@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020
+src=/gpfs/kjhan/LagForce/Kepler_stencil5x5_Nx256_A100_call33720_20261020/src
+version=${1:-v1}
+dest=$root/rk4_diagnostics/material_shared_$version
+case "$(hostname)" in LagEunha|lageunha) ;; *) printf 'Use authorized lageunha\n' >&2;exit 2;; esac
+mkdir "$dest"
+source "$root/run_env.sh"
+export OMP_NUM_THREADS=1 I_MPI_HYDRA_BOOTSTRAP=fork I_MPI_PIN=0 I_MPI_CXX=g++
+unset I_MPI_PMI_LIBRARY PMI_RANK PMI_SIZE PMI_FD PMI_PORT
+cd "$src"
+sha256sum Exam/gfs_material_map.h Exam/gfs_material_triangle.h Exam/gfs_moment.h Exam/gfs_moment_density.h Exam/gfs_moment_initial.h Exam/gfs_dg_euler.h Exam/gfs_enriched_euler.h Exam/gfs_ale_flux.h Exam/gfs_ale_fan.h > "$dest/source.sha256"
+cp Exam/gfs_material_map.h Exam/gfs_material_triangle.h Exam/gfs_moment.h Exam/gfs_moment_density.h Exam/gfs_moment_initial.h Exam/gfs_dg_euler.h Exam/gfs_enriched_euler.h Exam/gfs_ale_flux.h Exam/gfs_ale_fan.h "$dest/"
+cp "$root/rk4_diagnostics/test_enriched_euler_v1.cpp" "$root/rk4_diagnostics/test_material_shared_v1.cpp" "$dest/"
+mpicxx -O2 -std=c++17 -I"$dest" "$dest/test_material_shared_v1.cpp" -o "$dest/contract.exe" > "$dest/build.log" 2>&1
+for ranks in 1 4; do
+    mkdir "$dest/mpi$ranks"
+    mpirun -np "$ranks" "$dest/contract.exe" "$root/rk4_diagnostics/dg_projection_v2_p2/fine_fresh" "$dest/mpi$ranks" ${2:+"$2"} > "$dest/mpi$ranks/contract.json" 2> "$dest/mpi$ranks/stderr.log"
+done
+sha256sum -c "$dest/source.sha256" > "$dest/source_unchanged.txt"
+sha256sum "$dest/contract.exe" > "$dest/binary.sha256"
+printf 'AUDIT_COMPLETE\n' > "$dest/status.txt"

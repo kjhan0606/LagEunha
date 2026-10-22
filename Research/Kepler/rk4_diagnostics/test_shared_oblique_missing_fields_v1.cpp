@@ -1,0 +1,34 @@
+#define GFS_OBLIQUE_PANELS_LIBRARY
+#include "test_shared_oblique_panels_v1.cpp"
+namespace {
+struct SavedPoint {uint64_t slot,index,axis;sd::Point field;S radius,reference_measure;};
+struct Recovery {Frame29 frame;op::Linear linear;std::vector<Panel>panels;std::vector<os::Slab>slabs;std::vector<Axis>selected,axis;std::vector<SavedPoint>points;std::vector<op::VDomainProof>domains;std::string reason;};
+struct Observer {std::vector<op::VDomainProof>*prior;explicit Observer(std::vector<op::VDomainProof>&v):prior(op::v_domain_observer){op::v_domain_observer=&v;}~Observer(){op::v_domain_observer=prior;}};
+static void recover(const curved::Packet&p,const sd::Compiled&m,const std::vector<target::Face>&faces,Recovery&w){
+ Observer observer(w.domains);uint64_t cached_slab=UINT64_MAX,cached_child=UINT64_MAX;bool ready[2]={false,false};op::Branches branches[2];
+ for(const auto&old:w.selected){Axis z=old;z.passed=0;bool pass=false;
+  try{need(old.passed&&old.index<w.panels.size()&&old.axis<2,"only missing800 saved passing inputs");const auto&b=w.panels[old.index];need(b.index==old.index&&b.slot==old.slot,"unchanged original panel index");auto it=std::find_if(w.slabs.begin(),w.slabs.end(),[&](const os::Slab&s){return s.index==b.slab;});need(it!=w.slabs.end()&&!it->empty,"original nonempty slab");
+   if(cached_slab!=b.slab||cached_child!=b.free_child){cached_slab=b.slab;cached_child=b.free_child;ready[0]=ready[1]=false;}
+   if(!ready[old.axis]){op::v_domain_panel=b.index;op::v_domain_axis=old.axis;branches[old.axis]=op::prepare(m,faces,w.frame,w.linear,*it,old.u);ready[old.axis]=true;}
+   auto q=op::point(m,w.frame,w.linear,old.u,old.eta,branches[old.axis]);z.v=q.v;z.s=q.s;z.t=q.t;z.width=q.width;z.J=q.value.field.J;z.contraction=q.contraction;z.invariance=q.invariance;z.forcing=q.forcing;z.radius=q.radius;z.prior=q.prior;z.reference_measure=w.frame.determinant*q.width*(b.u1-b.u0)*(b.eta1-b.eta0);z.reference_radius=target::reference_radius(m,w.frame.original,q.s,q.t,q.value);
+   (void)target::complex_density_bound(p,z.reference_radius);w.points.push_back({z.slot,z.index,z.axis,q.value,z.reference_radius,z.reference_measure});pass=true;snprintf(z.reason,sizeof(z.reason),"required_missing_full_field_recovered_same_saved800_input");
+  }catch(const target::GraphFailure&e){snprintf(z.reason,sizeof(z.reason),"%s",e.what());z.contraction=e.contraction;z.invariance=e.invariance;z.forcing=e.forcing;z.radius=e.radius;z.prior=e.prior;}
+  catch(const sd::DomainFailure&e){snprintf(z.reason,sizeof(z.reason),"%s",e.what());z.argument=e.argument;z.argument_limit=e.limit;z.argument_phase=e.phase;z.argument_edge=e.edge;}
+  catch(const std::exception&e){snprintf(z.reason,sizeof(z.reason),"%s",e.what());}
+  z.passed=pass;w.axis.push_back(z);if(!pass){w.reason=z.reason;return;}
+ }
+ w.reason="all_selected_missing_fields_recovered_no_other_field_query";
+}
+}
+int main(int argc,char**argv){int provided;MPI_Init_thread(&argc,&argv,MPI_THREAD_FUNNELED,&provided);int rank,ranks;MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&ranks);try{
+ need(argc==9&&ranks==1,"packet saved sites weights adopted14 original800 NEWdest cap");auto start=std::chrono::steady_clock::now();auto p=curved::read(argv[1]);const auto f=load_saved(std::string(argv[2])+"/shared_state.bin",p);auto before=f.coefficient;auto site=sites(argv[3],argv[4]);std::sort(site.begin(),site.end(),[](const Site&a,const Site&b){return a.id<b.id;});std::string old=argv[5],prefix=argv[6],dest=argv[7];need(std::stoull(argv[8])==13074432,"same authorized budget");
+ auto frames=read29<Frame29>(old+"/unchanged_frames_rank0.bin");auto linear=read29<op::Linear>(old+"/same_chart_linear_coordinates_rank0.bin");auto panels=read29<Panel>(old+"/unchanged_candidate_panels_rank0.bin");auto slabs=read29<os::Slab>(old+"/unchanged_actual_slabs_rank0.bin");auto selected=read29<Axis>(prefix+"/retained800_axis_proofs_rank0.bin");need(frames.size()==14&&linear.size()==14&&panels.size()==4384&&selected.size()==800,"frozen adopted input ABI and selection");
+ std::vector<Recovery>work(14);std::map<int,sd::Compiled>maps;
+ for(size_t j=0;j<14;j++){auto&w=work[j];w.frame=frames[j];w.linear=linear[j];if(!maps.count(w.frame.source))maps.emplace(w.frame.source,sd::compile(f,w.frame.source));for(const auto&b:panels)if(b.slot==w.frame.slot)w.panels.push_back(b);for(const auto&s:slabs)if(s.slot==w.frame.slot)w.slabs.push_back(s);for(const auto&a:selected)if(a.slot==w.frame.slot)w.selected.push_back(a);}
+ #pragma omp parallel for schedule(static)
+ for(size_t j=0;j<work.size();j++){auto&w=work[j];if(w.selected.empty()){w.reason="no_missing_field_in_this_chart";continue;}try{std::vector<target::Face>faces;for(const auto&plane:target::planes(site,w.frame.target))faces.push_back(target::pullback(maps.at(w.frame.source),plane));recover(p,maps.at(w.frame.source),faces,w);}catch(const std::exception&e){w.reason=e.what();}}
+ std::vector<Axis>axes;std::vector<SavedPoint>points;std::vector<op::VDomainProof>domains;std::ofstream csv(dest+"/missing_field_recovery.csv");csv<<"slot_id,selected_missing_fields,attempted_fields,recovered_fields,reason\n";
+ for(const auto&w:work){append(axes,w.axis);append(points,w.points);append(domains,w.domains);csv<<w.frame.slot<<','<<w.selected.size()<<','<<w.axis.size()<<','<<w.points.size()<<','<<w.reason<<'\n';}csv.close();
+ packet(dest+"/selected_original800_inputs_rank0.bin",selected,0);packet(dest+"/recovered_axis_records_rank0.bin",axes,0);packet(dest+"/recovered_full_field_points_rank0.bin",points,0);packet(dest+"/recovery_geometric_domains_rank0.bin",domains,0);need(!memcmp(before.data(),f.coefficient.data(),before.size()*sizeof(STCoefficient)),"unchanged physical and heat state");
+ printf("{\"scope\":\"only800 previously absent full-field snapshots at original saved geometry-proof inputs; required new data recovery for all12, not a physical quadrature or trajectory replay\",\"selected_missing_fields\":800,\"new_required_complex_field_queries\":%zu,\"recovered_full_fields\":%zu,\"complete800_recovery\":%s,\"unselected_field_queries\":0,\"retained_geometry_clearance_axes\":8768,\"new_boundary_neighborhood_records\":%zu,\"existing7968_full_fields_recomputed\":0,\"new_canonical_root_jobs\":0,\"new_inverse_solves\":0,\"new_physical_quadrature_queries\":0,\"remaining_incomplete_atlas_slots\":29,\"all12_analytic_remainders_complete\":false,\"full_quadrature_allowed\":false,\"state_unchanged\":true,\"OMP_threads\":%d,\"seconds\":%.17g}\n",axes.size(),points.size(),points.size()==800?"true":"false",domains.size(),omp_get_max_threads(),std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count());
+ }catch(const std::exception&e){fprintf(stderr,"missing oblique field recovery FAIL %s\n",e.what());MPI_Abort(MPI_COMM_WORLD,2);}MPI_Finalize();return 0;}

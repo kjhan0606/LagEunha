@@ -817,10 +817,11 @@ void kh_findVol(SimParameters *simpar){
     postype xmin,ymin,zmin,xmax,ymax,zmax, cellsize;
     cellsize = BASICCELL_CELLWIDTH(simpar) = KH_GridSize(simpar);
     // xmin,ymin,xmax,ymax are the boundaries of the local domain.
-    xmin = KH_XMIN(simpar)-cellsize;
-    ymin = KH_YMIN(simpar)-cellsize;
-    xmax = KH_XMAX(simpar)+cellsize;
-    ymax = KH_YMAX(simpar)+cellsize;
+    postype halo_width = gfs_kepler_halo_width(cellsize);
+    xmin = KH_XMIN(simpar)-halo_width;
+    ymin = KH_YMIN(simpar)-halo_width;
+    xmax = KH_XMAX(simpar)+halo_width;
+    ymax = KH_YMAX(simpar)+halo_width;
 
 //  DEBUGPRINT("P%d has cell info. %g : %g %g %g %g\n", MYID(simpar), cellsize, xmin,ymin,xmax,ymax);
 

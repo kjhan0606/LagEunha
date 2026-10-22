@@ -1,0 +1,8 @@
+#define main unused_complement_driver_main
+#include "test_curved_complement_v1.cpp"
+#undef main
+int main(int argc,char **argv){
+    int provided;MPI_Init_thread(&argc,&argv,MPI_THREAD_FUNNELED,&provided);active_mpi=true;need(argc==6,"same packet/sites/guard, output, one triangle");auto p=curved::read(argv[1]);auto site=curved_partition::read_sites(argv[2]);auto weights=read_weights(argv[3],site);int it=atoi(argv[5]);need(it>=0 && it<(int)p.record.size(),"actual cache-control triangle");std::vector<QuadPoint> points;auto start=std::chrono::steady_clock::now();auto q=complement(it,p,site,weights,argv[3],points);double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+    std::string path=std::string(argv[4])+"/moments.csv";FILE *f=fopen(path.c_str(),"w");need(f,"same ordered current moments");fprintf(f,"row,mass,px,py,angular,K,U,volume,qx,qy,polar,thermal_rate,potential\n");for(int j=-2;j<24;j++){fprintf(f,"%d",j);const auto &m=j==-2?q.source:(j==-1?q.angular_uncertainty:q.outgoing[j]);for(R a:m.a)fprintf(f,",%.21Lg",a);fprintf(f,"\n");}fclose(f);
+    path=std::string(argv[4])+"/points.bin";f=fopen(path.c_str(),"wb");need(f,"same ordered positive quadrature points");if(!points.empty())need(fwrite(points.data(),sizeof(QuadPoint),points.size(),f)==points.size(),"complete same positive packet");fclose(f);printf("{\"triangle\":%d,\"quadrature_complete\":%s,\"quadrature_ratio\":%.17Lg,\"points\":%zu,\"evaluated\":%llu,\"seconds\":%.17g}\n",it,q.quadrature_complete?"true":"false",q.quadrature_ratio,points.size(),(unsigned long long)q.evaluated,seconds);active_mpi=false;MPI_Finalize();return 0;
+}

@@ -1,0 +1,129 @@
+{
+  "scope": "compatible pressure/heat saved-state bundle plus actual nu curvature, native CPU/OpenMP/MPI/CUDA",
+  "pressure_audit_ledger": "GEOMETRIC_PRESSURE_LEDGER_20261021.json",
+  "pressure_same_state_checks_pass": true,
+  "actual_nu_curvature": {
+    "1": {
+      "initial": {
+        "scope": "SAVED initial and SAVED compatible acceleration; exact chosen quadratic boundary functional Hessian contraction; no state/RHS update",
+        "MPI_ranks": 1,
+        "initial_Kepler_reference_gate_applied": true,
+        "actual_nu_pressure_curvature_chi_max": 5.5000099693806706e-05,
+        "actual_nu_every_cell_mean_chi_max": 1.5035960293914423e-06,
+        "material_J_pressure_curvature_chi_max": 5.5000099693792916e-05,
+        "nu_vs_material_curvature_correction_chi_max": 2.862492867754257e-15,
+        "every_cell_mean_correction_chi_max": 2.81354509756633e-15,
+        "sum_nuddot_boundary_identity_over_area": 8.058577345405496e-22,
+        "worst_source": 377,
+        "worst_cell": 68600,
+        "X": 1.016194491756511e-06,
+        "Y": 0.03514481143511944,
+        "worst_nudot_over_nu": 8.877418686139427e-13,
+        "worst_nuddot_over_nu": -0.16326387038193432,
+        "actual_nu_temporal_gate_pass": true
+      },
+      "finite": {
+        "scope": "SAVED finite and SAVED compatible acceleration; exact chosen quadratic boundary functional Hessian contraction; no state/RHS update",
+        "MPI_ranks": 1,
+        "initial_Kepler_reference_gate_applied": false,
+        "actual_nu_pressure_curvature_chi_max": 0.0012837003580107179,
+        "actual_nu_every_cell_mean_chi_max": 0.0010706687522839607,
+        "material_J_pressure_curvature_chi_max": 0.0012837003580106353,
+        "nu_vs_material_curvature_correction_chi_max": 1.1738755707923468e-14,
+        "every_cell_mean_correction_chi_max": 1.1540226178098043e-14,
+        "sum_nuddot_boundary_identity_over_area": 3.430897541376352e-17,
+        "worst_source": 257,
+        "worst_cell": 68527,
+        "X": -3.875061307751222e-08,
+        "Y": 0.00022299975441465348,
+        "worst_nudot_over_nu": 0.0007417219530906259,
+        "worst_nuddot_over_nu": 7.418339021359709,
+        "actual_nu_temporal_gate_pass": true
+      }
+    },
+    "4": {
+      "initial": {
+        "scope": "SAVED initial and SAVED compatible acceleration; exact chosen quadratic boundary functional Hessian contraction; no state/RHS update",
+        "MPI_ranks": 4,
+        "initial_Kepler_reference_gate_applied": true,
+        "actual_nu_pressure_curvature_chi_max": 5.5000099693806706e-05,
+        "actual_nu_every_cell_mean_chi_max": 1.5035960293914423e-06,
+        "material_J_pressure_curvature_chi_max": 5.5000099693792916e-05,
+        "nu_vs_material_curvature_correction_chi_max": 2.862492867755463e-15,
+        "every_cell_mean_correction_chi_max": 2.8135450975662144e-15,
+        "sum_nuddot_boundary_identity_over_area": 5.852762378597422e-22,
+        "worst_source": 377,
+        "worst_cell": 68600,
+        "X": 1.016194491756511e-06,
+        "Y": 0.03514481143511944,
+        "worst_nudot_over_nu": 8.877418686139427e-13,
+        "worst_nuddot_over_nu": -0.1632638703819343,
+        "actual_nu_temporal_gate_pass": true
+      },
+      "finite": {
+        "scope": "SAVED finite and SAVED compatible acceleration; exact chosen quadratic boundary functional Hessian contraction; no state/RHS update",
+        "MPI_ranks": 4,
+        "initial_Kepler_reference_gate_applied": false,
+        "actual_nu_pressure_curvature_chi_max": 0.0012837003580107179,
+        "actual_nu_every_cell_mean_chi_max": 0.0010706687522839607,
+        "material_J_pressure_curvature_chi_max": 0.0012837003580106353,
+        "nu_vs_material_curvature_correction_chi_max": 1.1738755708259376e-14,
+        "every_cell_mean_correction_chi_max": 1.1540226178116606e-14,
+        "sum_nuddot_boundary_identity_over_area": 8.866364432770347e-18,
+        "worst_source": 257,
+        "worst_cell": 68527,
+        "X": -3.875061307751222e-08,
+        "Y": 0.00022299975441465348,
+        "worst_nudot_over_nu": 0.0007417219530906259,
+        "worst_nuddot_over_nu": 7.418339021359709,
+        "actual_nu_temporal_gate_pass": true
+      }
+    }
+  },
+  "MPI_curvature_reduction_comparison": {
+    "initial": {
+      "actual_nu_pressure_curvature_chi_max": {
+        "absolute_difference_in_chi_units": 0.0,
+        "relative_difference": 0.0
+      },
+      "actual_nu_every_cell_mean_chi_max": {
+        "absolute_difference_in_chi_units": 0.0,
+        "relative_difference": 0.0
+      },
+      "nu_vs_material_curvature_correction_chi_max": {
+        "absolute_difference_in_chi_units": 1.206168324082927e-27,
+        "relative_difference": 4.213698967322519e-13
+      }
+    },
+    "finite": {
+      "actual_nu_pressure_curvature_chi_max": {
+        "absolute_difference_in_chi_units": 0.0,
+        "relative_difference": 0.0
+      },
+      "actual_nu_every_cell_mean_chi_max": {
+        "absolute_difference_in_chi_units": 0.0,
+        "relative_difference": 0.0
+      },
+      "nu_vs_material_curvature_correction_chi_max": {
+        "absolute_difference_in_chi_units": 3.359080174957799e-25,
+        "relative_difference": 2.8615300108804157e-11
+      }
+    }
+  },
+  "preliminary_inline_audit_assertion_failed": true,
+  "inline_audit_failure_reason": "force relative1e-11 was incorrectly applied to the near-zero nu-minus-J curvature correction; native physics gates unchanged",
+  "initial_physical_curvature_gates_pass": true,
+  "finite_control_is_an_accepted_time_step": false,
+  "finite_ideal_Kepler_curvature_pass_claimed": false,
+  "thermal_restart_for_general_evolved_state_implemented": false,
+  "whole_target_68526_transfer_certified": false,
+  "production_long_Kepler_validated": false,
+  "all_native_exec_sessions_closed": [
+    90245,
+    42750,
+    16281,
+    33998,
+    60880,
+    20383
+  ]
+}

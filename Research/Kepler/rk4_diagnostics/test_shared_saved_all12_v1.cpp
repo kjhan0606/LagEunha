@@ -1,0 +1,54 @@
+#define GFS_PENDING_CLEARANCE_LIBRARY
+#include "test_shared_pending_clearance_v1.cpp"
+#include "material_shared_logistic_density.h"
+namespace {
+struct ObliqueSaved {uint64_t slot,index,axis;sd::Point field;S radius,reference_measure;};
+static_assert(sizeof(ObliqueSaved)==1488,"stored oblique field ABI");
+struct Blob {uint64_t width=0,count=0;std::vector<unsigned char>data;const unsigned char*at(uint64_t i)const{need(i<count,"saved field record in range");return data.data()+64+i*width;}};
+static Blob blob(const std::string&path){FILE*f=fopen(path.c_str(),"rb");need(f,"existing v7 field/plan packet");uint64_t h[8];need(fread(h,sizeof(h),1,f)==1&&(h[0]==0x4753415749544e31ULL||h[0]==0x475341544c415331ULL)&&h[1]==1&&h[2]==1&&h[6]==24&&h[7]==384,"existing v7 typed packet header");Blob b;b.width=h[3];b.count=h[4];b.data.resize(64+b.width*b.count);memcpy(b.data.data(),h,64);need(!b.count||fread(b.data.data()+64,b.width,b.count,f)==b.count,"existing complete packet");need(fgetc(f)==EOF,"saved packet exact length");fclose(f);return b;}
+struct Job {uint64_t slot,source,target,panel,typed,record,fp[2],fr[2];bool whole=false,oblique=false;};
+struct FieldInput {sd::Point field;S radius,measure;};
+static FieldInput extract(const Job&j,int axis,const Blob&b){FieldInput out;if(j.oblique){need(b.width==1488,"oblique full field width");ObliqueSaved x;memcpy(&x,b.at(j.fr[axis]),sizeof(x));need(x.slot==j.slot&&x.index==j.panel&&x.axis==uint64_t(axis),"same saved oblique field identity");out={x.field,x.radius,x.reference_measure};}else{need(b.width==1680,"regular full field width");FullField x;memcpy(&x,b.at(j.fr[axis]),sizeof(x));need(x.slot==j.slot&&x.source==j.source&&x.target==j.target&&x.panel==j.panel&&x.axis==uint64_t(axis),"same saved regular field identity");out={x.field,x.reference_radius,x.reference_measure};}return out;}
+static std::array<S,12> moments(const curved::Packet&p,const FieldInput&q,const target::Thermal&context){
+ target::same_control(context);const auto&f=q.field.field;need(sf::lower(f.J)>0,"saved all12 current/generating J positive branch");
+ S nu=f.J+sf::exact(context.delta);need(sf::lower(nu)>0,"saved all12 compatible EOS nu denominator");
+ S rho=target::stable_reference_density(p,q.radius).value;
+ S U=sf::exact(p.parameters[2])/(sf::exact(p.parameters[1])-S(1))*target::holomorphic_power(f.J,Q(1)-Q(p.parameters[1]));
+ S P=(sf::exact(p.parameters[1])-S(1))*U/nu,x=f.position[0],y=f.position[1],vx=f.velocity[0],vy=f.velocity[1];
+ S potential=x*x+y*y+sf::exact(p.parameters[3])*sf::exact(p.parameters[3]);need(sf::lower(potential)>0,"saved all12 potential positive-half-plane branch unproved");
+ std::array<S,12>z;z[target::MASS]=rho;z[target::PX]=rho*vx;z[target::PY]=rho*vy;z[target::ANGULAR]=rho*(x*vy-y*vx);z[target::KINETIC]=S(Q(.5L))*rho*(vx*vx+vy*vy);z[target::THERMAL]=U;z[target::VOLUME]=f.J;z[target::QX]=rho*x;z[target::QY]=rho*y;z[target::POLAR]=rho*(x*x+y*y);z[target::THERMAL_RATE]=-P*(f.J*(f.grad_v[0]+f.grad_v[3])+sf::exact(context.delta_dot));z[target::POTENTIAL]=-rho*target::holomorphic_power(potential,Q(-.5L));return z;
+}
+struct PanelProof {uint64_t slot,source,target,panel,whole,passed,failed_axis;S z[2][12],measure[2];Q coefficient[12],majorant[12],remainder[12];char reason[192];};
+static_assert(sizeof(PanelProof)==1664,"saved all12 panel proof ABI");
+struct TargetSum {Q tau[12]={},remainder[12]={};uint64_t panels=0,complete=0;};
+}
+int main(int argc,char**argv){int provided;MPI_Init_thread(&argc,&argv,MPI_THREAD_FUNNELED,&provided);int ranks;MPI_Comm_size(MPI_COMM_WORLD,&ranks);try{
+ need(argc==8&&ranks==1,"packet saved retainedEOS v7registry original24tau contextbinding NEWdest");auto start=std::chrono::steady_clock::now();auto p=curved::read(argv[1]);const auto f=load_saved(std::string(argv[2])+"/shared_state.bin",p);const auto before=f.coefficient;const sf::FrozenThermal heat(f,p.parameters[2],p.parameters[1],1);const auto context=target::retained_context(argv[3],f,heat);std::string registry=argv[4],dest=argv[7],line;std::ifstream binding(argv[6]);need(bool(binding),"explicit384 source context binding");std::getline(binding,line);uint64_t bindings=0;while(std::getline(binding,line))bindings++;need(bindings==384,"all source thermal bindings present; same_control also checked natively");
+ std::map<uint64_t,std::string>paths;std::ifstream packets(registry+"/typed_packet_registry.csv");need(bool(packets),"v7 packet registry");std::getline(packets,line);while(std::getline(packets,line)){if(!line.empty()&&line.back()=='\r')line.pop_back();auto c=target::columns(line);need(c.size()==6,"packet registry schema");paths.emplace(std::stoull(c[0]),c[1]);}
+ std::vector<Job>jobs;std::set<uint64_t>required;std::ifstream in(registry+"/panel_evidence_registry.csv");need(bool(in),"audited v7 panel field registry");std::getline(in,line);uint64_t retained=0;
+ while(std::getline(in,line)){if(!line.empty()&&line.back()=='\r')line.pop_back();auto c=target::columns(line);need(c.size()==24,"panel registry schema");if(c[3]=="retained_group"){retained++;continue;}need(c[9]=="stored_pair"&&c[8]=="passed_both_axes","all active fields and geometry/density already bound");Job j={};j.slot=std::stoull(c[0]);j.source=std::stoull(c[1]);j.target=std::stoull(c[2]);j.panel=std::stoull(c[4]);j.typed=std::stoull(c[5]);j.record=std::stoull(c[6]);j.oblique=c[3]=="oblique";need(j.oblique||c[3]=="regular","fixed actual regular/oblique panel kind");j.fp[0]=std::stoull(c[10]);j.fr[0]=std::stoull(c[11]);j.fp[1]=std::stoull(c[14]);j.fr[1]=std::stoull(c[15]);for(auto id:{j.typed,j.fp[0],j.fp[1]})required.insert(id);jobs.push_back(j);}
+ need(jobs.size()==90121&&retained==1047,"exact v7 active and retained panels");std::map<uint64_t,Blob>data;for(auto id:required)data.emplace(id,blob(paths.at(id)));
+ for(auto&j:jobs)if(!j.oblique){const auto&b=data.at(j.typed);need(b.width==704,"regular typed plan ABI");TypedPanel t;memcpy(&t,b.at(j.record),sizeof(t));need(t.slot==j.slot&&t.source==j.source&&t.target==j.target&&t.index==j.panel,"same original typed plan");j.whole=t.geometry.whole;}
+ std::map<uint64_t,TargetSum>sums;std::ifstream tau(argv[5]);need(bool(tau),"original24 physical tolerances");std::getline(tau,line);uint64_t tau_rows=0;while(std::getline(tau,line)){auto c=target::columns(line);uint64_t target=std::stoull(c[0]);need(c[2]=="1","immutable original physical tau complete");int k=0;while(k<12&&c[1]!=target::moment_name[k])k++;need(k<12&&sums[target].tau[k]==0,"one immutable tau per target/moment");sums[target].tau[k]=target::number(c[3]);tau_rows++;}need(tau_rows==288&&sums.size()==24,"all288 original24target criteria");
+ Q C=sf::mag(target::cauchy_coefficient());std::vector<PanelProof>proof(jobs.size());
+ #pragma omp parallel for schedule(dynamic,32)
+ for(size_t i=0;i<jobs.size();i++){const auto&j=jobs[i];auto&z=proof[i];z.slot=j.slot;z.source=j.source;z.target=j.target;z.panel=j.panel;z.whole=j.whole;z.failed_axis=UINT64_MAX;try{
+  for(int axis=0;axis<2;axis++){z.failed_axis=axis;auto field=extract(j,axis,data.at(j.fp[axis]));auto value=moments(p,field,context.at(f.triangle.at(j.source).cell));z.measure[axis]=field.measure;for(int k=0;k<12;k++)z.z[axis][k]=value[k];}
+  for(int k=0;k<12;k++){
+   // Any fixed real coefficient is admissible. No field-center replay.
+   // Whole measures are affine in the normalized radial coordinate, so
+   // coefficient*measure is also Gauss-exact. For curved strips subtract
+   // a constant of the entire normalized integrand, never its measure.
+   S g[2]={z.z[0][k]*z.measure[0],z.z[1][k]*z.measure[1]};
+   z.coefficient[k]=j.whole?(z.z[0][k].n+z.z[1][k].n)/Q(2):(g[0].n+g[1].n)/Q(2);
+   for(int axis=0;axis<2;axis++){S residual=j.whole?(z.z[axis][k]-S(z.coefficient[k]))*z.measure[axis]:g[axis]-S(z.coefficient[k]);z.majorant[k]=std::max(z.majorant[k],sf::mag(residual));}
+   z.remainder[k]=sf::mul(C,z.majorant[k]);
+  }z.passed=1;z.failed_axis=UINT64_MAX;snprintf(z.reason,sizeof(z.reason),"saved_both_axes_all12_same_integrand_Gauss_exact_constant_removal");
+ }catch(const std::exception&e){snprintf(z.reason,sizeof(z.reason),"%s",e.what());}}
+ uint64_t complete=0;for(const auto&z:proof){auto&t=sums.at(z.target);t.panels++;t.complete+=z.passed;complete+=z.passed;if(z.passed)for(int k=0;k<12;k++)t.remainder[k]=sf::add(t.remainder[k],z.remainder[k]);}
+ packet(dest+"/saved_field_all12_panel_proofs_rank0.bin",proof,0);
+ std::ofstream errors(dest+"/target_analytic_subtotals.csv"),failures(dest+"/first_missing_analytic_inputs.csv");errors<<"target,moment,active_panels,completed_panels,known_analytic_subtotal,ORIGINAL_tau,analytic_subtotal_complete,analytic_subtotal_within_tau,endpoint_domain_error,native_forward_sum_final_error,total_error_status\n";failures<<"slot_id,source,target,panel,failed_axis,reason\n";uint64_t over=0,missing=0;
+ for(const auto&e:sums){const auto&t=e.second;if(e.first==68526){need(t.panels==0,"retained published target not replayed");continue;}for(int k=0;k<12;k++){bool all=t.complete==t.panels,within=all&&t.remainder[k]<=t.tau[k];over+=all&&!within;missing+=!all;errors<<e.first<<','<<target::moment_name[k]<<','<<t.panels<<','<<t.complete<<','<<qs(t.remainder[k])<<','<<qs(t.tau[k])<<','<<all<<','<<within<<",budget_unproved,budget_unproved,budget_unproved\n";}}
+ for(const auto&z:proof)if(!z.passed)failures<<z.slot<<','<<z.source<<','<<z.target<<','<<z.panel<<','<<z.failed_axis<<','<<z.reason<<'\n';errors.close();failures.close();need(!memcmp(before.data(),f.coefficient.data(),before.size()*sizeof(STCoefficient)),"all12 proof preserves physical state and immutable heat");
+ printf("{\"scope\":\"all90121active panels reuse180242 saved complex fields; same frozen CONTROL all12 integrands, constant-removal analytic subtotals only; no new field or physical query\",\"active_panels\":90121,\"retained_original_panels_not_replayed\":1047,\"completed_all12_panel_majorants\":%llu,\"panels_with_missing_analytic_bounds\":%llu,\"complete_target_moment_subtotals_over_original_tau\":%llu,\"target_moments_with_missing_panel_bounds\":%llu,\"cauchy_coefficient\":\"%s\",\"new_complex_field_queries\":0,\"new_real_center_queries\":0,\"new_physical_quadrature_queries\":0,\"P2_derivative_inputs_recovered\":0,\"endpoint_domain_error_complete\":false,\"native_forward_sum_final_complete\":false,\"full_quadrature_allowed\":false,\"accepted_RK4_evolution\":false,\"long_Kepler_validated\":false,\"state_unchanged\":true,\"OMP_threads\":%d,\"seconds\":%.17g}\n",(unsigned long long)complete,(unsigned long long)(jobs.size()-complete),(unsigned long long)over,(unsigned long long)missing,qs(C).c_str(),omp_get_max_threads(),std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count());
+ }catch(const std::exception&e){fprintf(stderr,"saved all12 FAIL %s\n",e.what());MPI_Abort(MPI_COMM_WORLD,2);}MPI_Finalize();return 0;}

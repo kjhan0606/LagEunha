@@ -1,0 +1,618 @@
+{
+  "scope": "Short captured intervals and optional fresh run; no t6-10 or paper-duration claim",
+  "fine_effective_half": {
+    "time": 0.10258818651626195,
+    "a": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_intervals_v2/fine_base/khout.000004.dat",
+    "b": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_fine_active_half_v2/fine_active_half/khout.000006.dat",
+    "fields": {
+      "x": {
+        "max_absolute": 5.511154199666635e-09,
+        "L1_relative_sum": 1.1492827157242707e-13,
+        "max_pointwise_symmetric_relative": 4.601799676114849e-10,
+        "p99_pointwise_symmetric_relative": 4.778462272701425e-13
+      },
+      "y": {
+        "max_absolute": 5.507430955731252e-09,
+        "L1_relative_sum": 1.1492583911981272e-13,
+        "max_pointwise_symmetric_relative": 4.5985839726589465e-10,
+        "p99_pointwise_symmetric_relative": 4.778462272701425e-13
+      },
+      "vx": {
+        "max_absolute": 2.328601544254738e-06,
+        "L1_relative_sum": 2.260361773389164e-09,
+        "max_pointwise_symmetric_relative": 2.1225492089809362e-05,
+        "p99_pointwise_symmetric_relative": 6.119317402999376e-11
+      },
+      "vy": {
+        "max_absolute": 2.3286015473633626e-06,
+        "L1_relative_sum": 2.260506764016184e-09,
+        "max_pointwise_symmetric_relative": 2.1158242595389574e-05,
+        "p99_pointwise_symmetric_relative": 6.116263830191667e-11
+      },
+      "volume": {
+        "max_absolute": 4.3655745685100555e-11,
+        "L1_relative_sum": 1.6674069535320474e-12,
+        "max_pointwise_symmetric_relative": 2.4039102966449345e-07,
+        "p99_pointwise_symmetric_relative": 0.0
+      },
+      "ie": {
+        "max_absolute": 1.0010395290471763e-13,
+        "L1_relative_sum": 1.0092548919119709e-08,
+        "max_pointwise_symmetric_relative": 0.013889443465278348,
+        "p99_pointwise_symmetric_relative": 1.3475288717429802e-07
+      }
+    }
+  },
+  "sedov_ceiling_comparison": {
+    "time": 0.02463711101881927,
+    "a": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_intervals_v2/sedov_base/khout.000003.dat",
+    "b": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_intervals_v2/sedov_half/khout.000003.dat",
+    "fields": {
+      "x": {
+        "max_absolute": 6.16456781177277e-07,
+        "L1_relative_sum": 1.0270149161445072e-09,
+        "max_pointwise_symmetric_relative": 1.4207868964543217e-06,
+        "p99_pointwise_symmetric_relative": 2.2466809954907955e-09
+      },
+      "y": {
+        "max_absolute": 6.689034972584551e-07,
+        "L1_relative_sum": 1.0682176873741053e-09,
+        "max_pointwise_symmetric_relative": 1.5410696739432177e-06,
+        "p99_pointwise_symmetric_relative": 2.3289802581076613e-09
+      },
+      "vx": {
+        "max_absolute": 0.016007653979666192,
+        "L1_relative_sum": 0.00010081317093220848,
+        "max_pointwise_symmetric_relative": 0.3112368458856565,
+        "p99_pointwise_symmetric_relative": 0.004553822456804264
+      },
+      "vy": {
+        "max_absolute": 0.024396492175382534,
+        "L1_relative_sum": 0.00013060474574966462,
+        "max_pointwise_symmetric_relative": 1.1185317975000022,
+        "p99_pointwise_symmetric_relative": 0.006159622227367134
+      },
+      "volume": {
+        "max_absolute": 6.634218152612448e-08,
+        "L1_relative_sum": 3.583118086700323e-07,
+        "max_pointwise_symmetric_relative": 0.0005418136579350565,
+        "p99_pointwise_symmetric_relative": 7.197361517304903e-07
+      },
+      "ie": {
+        "max_absolute": 1.4543842553393915e-05,
+        "L1_relative_sum": 0.00010813570602942518,
+        "max_pointwise_symmetric_relative": 0.5594904908306689,
+        "p99_pointwise_symmetric_relative": 7.174568996641771e-06
+      }
+    }
+  },
+  "fine_base": {
+    "snapshot": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_intervals_v2/fine_base/khout.000004.dat",
+    "time": 0.10258818651626195,
+    "n": 71080,
+    "mass_exact": true,
+    "W0_exact": true,
+    "min_U": 7.100934857479091e-12,
+    "entropy_reference": "initial U times (initial V/current V)^(gamma-1); diagnostic adiabat, not a prescribed solution for Riemann exchanges",
+    "orbital_reference": "analytic circular particle trajectories in fixed Plummer potential; not a substitute for a continuum cell-average comparison",
+    "focus": {
+      "67935": {
+        "U": 7.1192899665784015e-12,
+        "Uad": 1.6176649802989602e-10,
+        "entropy_ratio": 0.044009668585782744,
+        "volume_ratio": 1.43696928024292
+      },
+      "68001": {
+        "U": 7.100934857479091e-12,
+        "Uad": 1.6176745234557233e-10,
+        "entropy_ratio": 0.043895942938570034,
+        "volume_ratio": 1.4369566440582275
+      },
+      "68526": {
+        "U": 7.119264813088e-12,
+        "Uad": 1.6176650598246851e-10,
+        "entropy_ratio": 0.04400951092965779,
+        "volume_ratio": 1.43696928024292
+      },
+      "68592": {
+        "U": 7.123428583111213e-12,
+        "Uad": 1.61766442361916e-10,
+        "entropy_ratio": 0.04403526763093513,
+        "volume_ratio": 1.4369701147079468
+      }
+    },
+    "radial": [
+      {
+        "initial_Rlo": 0,
+        "initial_Rhi": 0.1,
+        "n": 232,
+        "entropy_error_mass_weighted": 0.42231464021634574,
+        "entropy_ratio_min": 0.043895942938570034,
+        "entropy_ratio_p01": 0.04401760428977999,
+        "entropy_ratio_max": 4.380652307560761,
+        "cells_entropy_ratio_below_point1": 4,
+        "orbital_position_error_mass_weighted": 0.002154673784991859,
+        "orbital_velocity_error_mass_weighted": 0.0020742187461205,
+        "internal_energy": 6.665781882020383e-08
+      },
+      {
+        "initial_Rlo": 0.1,
+        "initial_Rhi": 0.2,
+        "n": 680,
+        "entropy_error_mass_weighted": 0.025406175795135797,
+        "entropy_ratio_min": 0.8956355778165723,
+        "entropy_ratio_p01": 0.9163044744485299,
+        "entropy_ratio_max": 1.2728133296341335,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 0.00012369592414453103,
+        "orbital_velocity_error_mass_weighted": 0.00030276496846574284,
+        "internal_energy": 1.4430489159167337e-07
+      },
+      {
+        "initial_Rlo": 0.2,
+        "initial_Rhi": 0.5,
+        "n": 4536,
+        "entropy_error_mass_weighted": 0.004047184706157151,
+        "entropy_ratio_min": 0.8938857337211432,
+        "entropy_ratio_p01": 0.9662228028396272,
+        "entropy_ratio_max": 1.0417787352918433,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.2852326915693296e-05,
+        "orbital_velocity_error_mass_weighted": 0.00010994074048618503,
+        "internal_energy": 1.0196096127401688e-06
+      },
+      {
+        "initial_Rlo": 0.5,
+        "initial_Rhi": 0.65,
+        "n": 244,
+        "entropy_error_mass_weighted": 0.005042855666763951,
+        "entropy_ratio_min": 0.9609111467373345,
+        "entropy_ratio_p01": 0.9609276461070382,
+        "entropy_ratio_max": 1.0252823070820063,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.4779264439149669e-05,
+        "orbital_velocity_error_mass_weighted": 0.00014157011921452566,
+        "internal_energy": 7.462870712515723e-07
+      },
+      {
+        "initial_Rlo": 0.65,
+        "initial_Rhi": 1,
+        "n": 212,
+        "entropy_error_mass_weighted": 0.0008392561839854288,
+        "entropy_ratio_min": 0.9996878561516294,
+        "entropy_ratio_p01": 0.9996878561516294,
+        "entropy_ratio_max": 1.0048383539314527,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 8.765130159347507e-07,
+        "orbital_velocity_error_mass_weighted": 1.0464241213062677e-05,
+        "internal_energy": 2.79727873930824e-06
+      },
+      {
+        "initial_Rlo": 1,
+        "initial_Rhi": 2,
+        "n": 1076,
+        "entropy_error_mass_weighted": 0.00011752985362630204,
+        "entropy_ratio_min": 0.9999791968515105,
+        "entropy_ratio_p01": 0.9999961293505284,
+        "entropy_ratio_max": 1.0005355077457485,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.1737542027699794e-09,
+        "orbital_velocity_error_mass_weighted": 4.264196900642946e-08,
+        "internal_energy": 1.4187289707479067e-05
+      },
+      {
+        "initial_Rlo": 2,
+        "initial_Rhi": 4,
+        "n": 4284,
+        "entropy_error_mass_weighted": 2.771537781772028e-05,
+        "entropy_ratio_min": 0.9999932889440546,
+        "entropy_ratio_p01": 0.9999939953720567,
+        "entropy_ratio_max": 1.0002156241372615,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 4.5533085223610075e-11,
+        "orbital_velocity_error_mass_weighted": 3.6129150446997753e-09,
+        "internal_energy": 5.647986108670011e-05
+      },
+      {
+        "initial_Rlo": 4,
+        "initial_Rhi": 8,
+        "n": 17152,
+        "entropy_error_mass_weighted": 1.1736254692824646e-06,
+        "entropy_ratio_min": 0.9999947017998091,
+        "entropy_ratio_p01": 0.9999960440118516,
+        "entropy_ratio_max": 1.0000052981861554,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.6714771904951316e-12,
+        "orbital_velocity_error_mass_weighted": 3.6675578455938495e-10,
+        "internal_energy": 0.00022612488828599453
+      }
+    ]
+  },
+  "fine_active_half": {
+    "snapshot": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_fine_active_half_v2/fine_active_half/khout.000006.dat",
+    "time": 0.10258818651626195,
+    "n": 71080,
+    "mass_exact": true,
+    "W0_exact": true,
+    "min_U": 7.20095207421001e-12,
+    "entropy_reference": "initial U times (initial V/current V)^(gamma-1); diagnostic adiabat, not a prescribed solution for Riemann exchanges",
+    "orbital_reference": "analytic circular particle trajectories in fixed Plummer potential; not a substitute for a continuum cell-average comparison",
+    "focus": {
+      "67935": {
+        "U": 7.219379174333573e-12,
+        "Uad": 1.617665218876164e-10,
+        "entropy_ratio": 0.0446283884334799,
+        "volume_ratio": 1.4369690418243408
+      },
+      "68001": {
+        "U": 7.20095207421001e-12,
+        "Uad": 1.6176747620364457e-10,
+        "entropy_ratio": 0.044514214125124456,
+        "volume_ratio": 1.4369562864303589
+      },
+      "68526": {
+        "U": 7.2193648628648965e-12,
+        "Uad": 1.617665218876164e-10,
+        "entropy_ratio": 0.04462829996357581,
+        "volume_ratio": 1.4369690418243408
+      },
+      "68592": {
+        "U": 7.223532536015931e-12,
+        "Uad": 1.6176645826704827e-10,
+        "entropy_ratio": 0.0446540810338515,
+        "volume_ratio": 1.4369698762893677
+      }
+    },
+    "radial": [
+      {
+        "initial_Rlo": 0,
+        "initial_Rhi": 0.1,
+        "n": 232,
+        "entropy_error_mass_weighted": 0.4223171302353948,
+        "entropy_ratio_min": 0.044514214125124456,
+        "entropy_ratio_p01": 0.044636353139595096,
+        "entropy_ratio_max": 4.380652667133317,
+        "cells_entropy_ratio_below_point1": 4,
+        "orbital_position_error_mass_weighted": 0.00215467300157448,
+        "orbital_velocity_error_mass_weighted": 0.0020742179377832006,
+        "internal_energy": 6.665817409157171e-08
+      },
+      {
+        "initial_Rlo": 0.1,
+        "initial_Rhi": 0.2,
+        "n": 680,
+        "entropy_error_mass_weighted": 0.025405021800006974,
+        "entropy_ratio_min": 0.8956344917451903,
+        "entropy_ratio_p01": 0.9163044744485299,
+        "entropy_ratio_max": 1.272813028653265,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 0.0001236958452554388,
+        "orbital_velocity_error_mass_weighted": 0.0003027566549583498,
+        "internal_energy": 1.443046500071432e-07
+      },
+      {
+        "initial_Rlo": 0.2,
+        "initial_Rhi": 0.5,
+        "n": 4536,
+        "entropy_error_mass_weighted": 0.004047186108241149,
+        "entropy_ratio_min": 0.893885675800216,
+        "entropy_ratio_p01": 0.9662228028396272,
+        "entropy_ratio_max": 1.0417787352918433,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.2852326449012533e-05,
+        "orbital_velocity_error_mass_weighted": 0.00010994074047553144,
+        "internal_energy": 1.0196096127401688e-06
+      },
+      {
+        "initial_Rlo": 0.5,
+        "initial_Rhi": 0.65,
+        "n": 244,
+        "entropy_error_mass_weighted": 0.0050428373128552076,
+        "entropy_ratio_min": 0.9609111467373345,
+        "entropy_ratio_p01": 0.9609276461070382,
+        "entropy_ratio_max": 1.0252823070820063,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.4779264442628546e-05,
+        "orbital_velocity_error_mass_weighted": 0.00014157011921485233,
+        "internal_energy": 7.462870712515723e-07
+      },
+      {
+        "initial_Rlo": 0.65,
+        "initial_Rhi": 1,
+        "n": 212,
+        "entropy_error_mass_weighted": 0.0008392679529671459,
+        "entropy_ratio_min": 0.999687721331268,
+        "entropy_ratio_p01": 0.999687721331268,
+        "entropy_ratio_max": 1.0048383539314527,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 8.76513012534353e-07,
+        "orbital_velocity_error_mass_weighted": 1.046424118326795e-05,
+        "internal_energy": 2.79727873930824e-06
+      },
+      {
+        "initial_Rlo": 1,
+        "initial_Rhi": 2,
+        "n": 1076,
+        "entropy_error_mass_weighted": 0.00011753262696949921,
+        "entropy_ratio_min": 0.9999793316366715,
+        "entropy_ratio_p01": 0.9999961293505284,
+        "entropy_ratio_max": 1.000535440408372,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.173754532122465e-09,
+        "orbital_velocity_error_mass_weighted": 4.264196912592388e-08,
+        "internal_energy": 1.4187289707479067e-05
+      },
+      {
+        "initial_Rlo": 2,
+        "initial_Rhi": 4,
+        "n": 4284,
+        "entropy_error_mass_weighted": 2.770409659075896e-05,
+        "entropy_ratio_min": 0.9999932889440546,
+        "entropy_ratio_p01": 0.9999939953720567,
+        "entropy_ratio_max": 1.0002154894000501,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 4.553285429407559e-11,
+        "orbital_velocity_error_mass_weighted": 3.612915057605341e-09,
+        "internal_energy": 5.647986108670011e-05
+      },
+      {
+        "initial_Rlo": 4,
+        "initial_Rhi": 8,
+        "n": 17152,
+        "entropy_error_mass_weighted": 1.1736254692824646e-06,
+        "entropy_ratio_min": 0.9999947017998091,
+        "entropy_ratio_p01": 0.9999960440118516,
+        "entropy_ratio_max": 1.0000052981861554,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.6714574170041795e-12,
+        "orbital_velocity_error_mass_weighted": 3.667557900699333e-10,
+        "internal_energy": 0.00022612488828599453
+      }
+    ]
+  },
+  "fine_fresh": {
+    "snapshot": "rk4_diagnostics/ssprk3_fresh_v2/fine_fresh/khdiag.step000516.ssp_rejected_start.dat",
+    "time": 0.1350910368100389,
+    "n": 71080,
+    "mass_exact": true,
+    "W0_exact": true,
+    "min_U": 3.4335561737569575e-12,
+    "entropy_reference": "initial U times (initial V/current V)^(gamma-1); diagnostic adiabat, not a prescribed solution for Riemann exchanges",
+    "orbital_reference": "analytic circular particle trajectories in fixed Plummer potential; not a substitute for a continuum cell-average comparison",
+    "focus": {
+      "67935": {
+        "U": 3.7143821005058975e-12,
+        "Uad": 1.7632552969747225e-10,
+        "entropy_ratio": 0.02106548102749948,
+        "volume_ratio": 1.2627215385437012
+      },
+      "68001": {
+        "U": 3.4335561737569575e-12,
+        "Uad": 1.7632420786978455e-10,
+        "entropy_ratio": 0.01947297092803411,
+        "volume_ratio": 1.2627358436584473
+      },
+      "68526": {
+        "U": 3.716298102585114e-12,
+        "Uad": 1.7632574671632578e-10,
+        "entropy_ratio": 0.021076321364252738,
+        "volume_ratio": 1.2627192735671997
+      },
+      "68592": {
+        "U": 3.712597937410855e-12,
+        "Uad": 1.7632481945862038e-10,
+        "entropy_ratio": 0.02105544726380464,
+        "volume_ratio": 1.2627291679382324
+      }
+    },
+    "radial": [
+      {
+        "initial_Rlo": 0,
+        "initial_Rhi": 0.1,
+        "n": 232,
+        "entropy_error_mass_weighted": 0.5919615635582092,
+        "entropy_ratio_min": 0.01947297092803411,
+        "entropy_ratio_p01": 0.02106884153189299,
+        "entropy_ratio_max": 4.740453077676898,
+        "cells_entropy_ratio_below_point1": 4,
+        "orbital_position_error_mass_weighted": 0.004067008061880316,
+        "orbital_velocity_error_mass_weighted": 0.0033649904901000382,
+        "internal_energy": 7.562670134575455e-08
+      },
+      {
+        "initial_Rlo": 0.1,
+        "initial_Rhi": 0.2,
+        "n": 680,
+        "entropy_error_mass_weighted": 0.040711472026668596,
+        "entropy_ratio_min": 0.8540323667722297,
+        "entropy_ratio_p01": 0.8694412331113006,
+        "entropy_ratio_max": 1.2850017378481529,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 0.0004358988638084776,
+        "orbital_velocity_error_mass_weighted": 0.0007306969971124854,
+        "internal_energy": 1.4656450275651878e-07
+      },
+      {
+        "initial_Rlo": 0.2,
+        "initial_Rhi": 0.5,
+        "n": 4536,
+        "entropy_error_mass_weighted": 0.006491944735249585,
+        "entropy_ratio_min": 0.8602987249433371,
+        "entropy_ratio_p01": 0.9466262977812302,
+        "entropy_ratio_max": 1.0753059896393344,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 2.7078542761422497e-05,
+        "orbital_velocity_error_mass_weighted": 0.0001806825909597933,
+        "internal_energy": 1.0203473266301444e-06
+      },
+      {
+        "initial_Rlo": 0.5,
+        "initial_Rhi": 0.65,
+        "n": 244,
+        "entropy_error_mass_weighted": 0.007876926327042311,
+        "entropy_ratio_min": 0.9361440446109445,
+        "entropy_ratio_p01": 0.9362055485728581,
+        "entropy_ratio_max": 1.0455558543230576,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 2.8749930832859903e-05,
+        "orbital_velocity_error_mass_weighted": 0.0002239868581736542,
+        "internal_energy": 7.47525007227523e-07
+      },
+      {
+        "initial_Rlo": 0.65,
+        "initial_Rhi": 1,
+        "n": 212,
+        "entropy_error_mass_weighted": 0.001179604395507066,
+        "entropy_ratio_min": 0.999451273638582,
+        "entropy_ratio_p01": 0.999451273638582,
+        "entropy_ratio_max": 1.0064426458584899,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.4625947540930936e-06,
+        "orbital_velocity_error_mass_weighted": 1.3297992134909103e-05,
+        "internal_energy": 2.798075456666993e-06
+      },
+      {
+        "initial_Rlo": 1,
+        "initial_Rhi": 2,
+        "n": 1076,
+        "entropy_error_mass_weighted": 0.00016041374799288997,
+        "entropy_ratio_min": 0.9999490785489371,
+        "entropy_ratio_p01": 0.999980504072632,
+        "entropy_ratio_max": 1.0007762796389783,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 1.999593791819256e-09,
+        "orbital_velocity_error_mass_weighted": 5.5054136948272305e-08,
+        "internal_energy": 1.4187929991749115e-05
+      },
+      {
+        "initial_Rlo": 2,
+        "initial_Rhi": 4,
+        "n": 4284,
+        "entropy_error_mass_weighted": 3.6711290519991556e-05,
+        "entropy_ratio_min": 0.9999926681534115,
+        "entropy_ratio_p01": 0.999993175747813,
+        "entropy_ratio_max": 1.0002941183115635,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 7.806028037237712e-11,
+        "orbital_velocity_error_mass_weighted": 4.682324234700368e-09,
+        "internal_energy": 5.648031219607219e-05
+      },
+      {
+        "initial_Rlo": 4,
+        "initial_Rhi": 8,
+        "n": 17152,
+        "entropy_error_mass_weighted": 1.5211744790520362e-06,
+        "entropy_ratio_min": 0.9999938213539035,
+        "entropy_ratio_p01": 0.9999949811632091,
+        "entropy_ratio_max": 1.000006922960431,
+        "cells_entropy_ratio_below_point1": 0,
+        "orbital_position_error_mass_weighted": 2.885240386138237e-12,
+        "orbital_velocity_error_mass_weighted": 4.800744667164314e-10,
+        "internal_energy": 0.00022612488828599453
+      }
+    ]
+  },
+  "fresh_geometry_audit": {
+    "snapshot": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/ssprk3_fresh_v2/fine_fresh/khdiag.step000516.ssp_rejected_start.dat",
+    "meta": {
+      "t": 0.1350910368100389,
+      "dt": 4.577100480673835e-05,
+      "dtold": 4.577100480673835e-05,
+      "nx": 256,
+      "ny": 256,
+      "Lx": 24.0,
+      "Ly": 24.0,
+      "alpha_vis": 0.0,
+      "beta_vis": 0.0,
+      "n": 71080,
+      "psize": 576
+    },
+    "area_audit": "global unweighted Voronoi; only cells proved independent of missing periodic images",
+    "safe_cells": 69664,
+    "mass": 75.97420601059443,
+    "Lz": 167.50267509951254,
+    "Eint": 0.0008824995020404458,
+    "Etotal": -8.791969557115776,
+    "max_stored_density_mass_volume_relative": 5.9464881516765175e-08,
+    "radial": [
+      {
+        "Rlo": 0,
+        "Rhi": 0.5,
+        "n": 5448,
+        "area_rel_max": 5.7528355579000166e-08,
+        "area_rel_p99": 5.266267968024754e-08,
+        "area_rel_median": 2.5844940277286917e-08,
+        "cells_area_error_gt_1pct": 0,
+        "L1_vphi": 0.00012991361210006066,
+        "rms_vr_over_vc": 0.0005274144211022729,
+        "pressure_median": 9.997959296015324e-07,
+        "pressure_max": 6.143922746559838e-06
+      },
+      {
+        "Rlo": 0.5,
+        "Rhi": 1,
+        "n": 456,
+        "area_rel_max": 5.295908443047334e-08,
+        "area_rel_p99": 5.235311076895403e-08,
+        "area_rel_median": 2.3645577378135472e-08,
+        "cells_area_error_gt_1pct": 0,
+        "L1_vphi": 0.0001874222503231252,
+        "rms_vr_over_vc": 0.0003592056051448886,
+        "pressure_median": 9.995796972361859e-07,
+        "pressure_max": 1.7833548326962045e-06
+      },
+      {
+        "Rlo": 1,
+        "Rhi": 2,
+        "n": 1076,
+        "area_rel_max": 5.2899382605370714e-08,
+        "area_rel_p99": 5.267368879256349e-08,
+        "area_rel_median": 2.5707950452224222e-08,
+        "cells_area_error_gt_1pct": 0,
+        "L1_vphi": 4.775944091274016e-07,
+        "rms_vr_over_vc": 1.8859504177956592e-07,
+        "pressure_median": 1.0001384680435876e-06,
+        "pressure_max": 1.0024568837252446e-06
+      },
+      {
+        "Rlo": 2,
+        "Rhi": 4,
+        "n": 4284,
+        "area_rel_max": 5.2956654739106045e-08,
+        "area_rel_p99": 5.2579241305716675e-08,
+        "area_rel_median": 2.5335472943887892e-08,
+        "cells_area_error_gt_1pct": 0,
+        "L1_vphi": 3.3676185486983585e-09,
+        "rms_vr_over_vc": 2.6595776656961766e-09,
+        "pressure_median": 1.0000079555538832e-06,
+        "pressure_max": 1.0004322348322603e-06
+      },
+      {
+        "Rlo": 4,
+        "Rhi": 8,
+        "n": 17152,
+        "area_rel_max": 5.297945654691565e-08,
+        "area_rel_p99": 5.248723320653284e-08,
+        "area_rel_median": 2.6458950034500052e-08,
+        "cells_area_error_gt_1pct": 0,
+        "L1_vphi": 2.9536014991115284e-10,
+        "rms_vr_over_vc": 3.19714944089402e-10,
+        "pressure_median": 9.999999974752427e-07,
+        "pressure_max": 1.0000111387853394e-06
+      },
+      {
+        "Rlo": 8,
+        "Rhi": 10,
+        "n": 12868,
+        "area_rel_max": 5.2962784131406256e-08,
+        "area_rel_p99": 5.2153672207525626e-08,
+        "area_rel_median": 2.6375676125151692e-08,
+        "cells_area_error_gt_1pct": 0,
+        "L1_vphi": 7.051866842124228e-10,
+        "rms_vr_over_vc": 1.909463048527305e-09,
+        "pressure_median": 9.999999974752427e-07,
+        "pressure_max": 1.0000009069699445e-06
+      }
+    ]
+  }
+}

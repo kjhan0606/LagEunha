@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=material-full-cached
+#SBATCH --partition=h200
+#SBATCH --nodes=1
+#SBATCH --ntasks=4
+#SBATCH --cpus-per-task=3
+#SBATCH --gres=gpu:H200:1
+#SBATCH --mem=64G
+#SBATCH --time=02:00:00
+set -euo pipefail
+dest=$1
+trap 'printf "CACHED_CONTINUATION_SETUP_OR_EXECUTION_FAILED\n" > "$dest/status.txt"' ERR
+base=/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020
+src=/gpfs/kjhan/LagForce/Kepler_stencil5x5_Nx256_A100_call33720_20261020/src
+source "$dest/run_env.sh"
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-4} OMP_PROC_BIND=false I_MPI_HYDRA_BOOTSTRAP=fork I_MPI_PIN=0 I_MPI_CXX=g++
+unset OMP_PLACES GOMP_CPU_AFFINITY KMP_AFFINITY I_MPI_PMI_LIBRARY PMI_RANK PMI_SIZE PMI_FD PMI_PORT
+sha256sum -c "$dest/source.sha256" > "$dest/prelaunch_source_integrity.txt"
+sha256sum -c "$dest/retained_build_objects.sha256" > "$dest/retained_build_integrity.txt"
+sha256sum -c "$dest/immutable_payload.sha256" > "$dest/immutable_payload_integrity.txt"
+sha256sum -c "$dest/accepted_input.sha256" > "$dest/accepted_input_integrity.txt"
+if test "${GFS_USE_PREBUILT:-0}" = 1; then
+sha256sum -c "$dest/binary.sha256" > "$dest/prebuilt_binary_integrity.txt"
+else
+printf 'BUILDING_CACHED_NATIVE_CONTINUATION\n' > "$dest/status.txt"
+includes=(-I"$dest/Exam" -I"$src" -I"$src/Exam" -I"$src/Voro" -I/home/kjhan/local/include -I"$src/RkS" -I"$src/Cosmos" -I"$src/Timer" -I"$src/MpiAux" -I"$src/Colorize" -I"$src/OST")
+nvcc -O2 -std=c++17 --fmad=false -DXYZDBL -DGOTPM -DUSE_CUDA -gencode arch=compute_90,code=sm_90 "${includes[@]}" -c "$dest/Exam/material_full_initial_cuda.cu" -o "$dest/Exam/material_full_initial_cuda.o" > "$dest/build_cuda.log" 2>&1
+mpicxx -O2 -std=c++17 -fopenmp -fno-fast-math -ffp-contract=off -DXYZDBL -DGOTPM -DUSE_CUDA "${includes[@]}" -I/opt/ohpc/pub/cuda/13.0.2/include -c "$dest/Exam/material_full_initial_driver.cpp" -o "$dest/Exam/material_full_initial_driver.o" > "$dest/build_host.log" 2>&1
+# Reuse the already accepted original native C entry and all other objects.
+ar rcs "$dest/Exam/libexam.a" "$dest/Exam/material_full_initial_driver.o" "$dest/Exam/material_full_initial_cuda.o"
+python3 - "$dest" "$src" <<'PY'
+import pathlib, shlex, subprocess, sys
+d, src = map(pathlib.Path, sys.argv[1:])
+args = shlex.split((d/'donor_link_command.txt').read_text())
+args[args.index('-o')+1] = str(d/'eunha2_material_cached.exe')
+args = ['-L'+str(d/'Exam') if a.startswith('-L') and a.endswith('/material_full_GPU_mass_v1_h200_mpi4/Exam') else a for a in args]
+assert '-L'+str(d/'Exam') in args
+(d/'link_command.txt').write_text(shlex.join(args)+'\n')
+with (d/'build_link.log').open('w') as out:
+    subprocess.run(args,cwd=src,stdout=out,stderr=subprocess.STDOUT,check=True)
+PY
+sha256sum "$dest/eunha2_material_cached.exe" > "$dest/binary.sha256"
+fi
+ldd "$dest/eunha2_material_cached.exe" > "$dest/ldd.txt"
+if grep -q 'not found' "$dest/ldd.txt"; then exit 2; fi
+sha256sum -c "$dest/source.sha256" > "$dest/postbuild_source_integrity.txt"
+if test "${GFS_BUILD_ONLY:-0}" = 1; then printf 'BUILD_PASS_NO_NEW_PHYSICAL_EXECUTION\n' > "$dest/status.txt"; exit 0; fi
+export GFS_MATERIAL_INITIAL_INPUT=$base/rk4_diagnostics/material_full_initial_v2_h200_mpi4/run
+export GFS_MATERIAL_PREPARE_REFERENCE=1 GFS_MATERIAL_BOUNDARY=material_constant_Pext GFS_MATERIAL_EVOLVE=1
+export GFS_MATERIAL_REFERENCE_INPUT=$base/rk4_diagnostics/material_full_reference_v2_h200_mpi4/run
+export GFS_MATERIAL_IMMUTABLE_MANIFEST=$dest/immutable_payload.sha256
+export GFS_MATERIAL_RESUME_PREFIX=$base/rk4_diagnostics/material_full_GPU_mass_v1_h200_mpi4/run/first_GPU_mass_step/accepted_r
+export GFS_MATERIAL_CONTINUOUS=1 GFS_MATERIAL_POINT_CACHE=1 GFS_MATERIAL_TARGET_TIME=1 GFS_MATERIAL_WALL_SECONDS=86400
+export GFS_GPU_RAW_FACES=1 GFS_GPU_FINAL_VOLUME=1 GFS_GPU_FACE_DUMP_CALL=0 GFS_GPU_TESS_DUMP=0
+export HYDRO_TSTOP=10 EUNHA_DUMP_DT=100 GFS_EXACT_STOP=1 GFS_FAIL_NONPOSITIVE_U=1
+unset GFS_DG_PROJECT_ONLY GFS_MOMENT_INIT_ONLY GFS_DG_ENRICHED GFS_SSPRK3
+mkdir "$dest/run"
+cp "$base/core_refinement/fine_integrated/khout.000001.dat" "$dest/run/khout.000001.dat"
+cp "$base/core_refinement/fine_integrated/params.dat" "$dest/run/params.dat"
+nvidia-smi --query-gpu=index,uuid,name,memory.total,memory.used --format=csv > "$dest/device.txt"
+printf 'RUNNING_CACHED_NATIVE_CONTINUATION\n' > "$dest/status.txt"
+cd "$dest/run"
+env | sort > "$dest/effective_environment.txt"
+set +e
+mpirun -np 4 "$dest/eunha2_material_cached.exe" params.dat 1 > "$dest/native.log" 2>&1
+result=$?
+set -e
+printf '%s\n' "$result" > "$dest/native_exit_code.txt"
+sha256sum -c "$dest/source.sha256" > "$dest/final_source_integrity.txt"
+sha256sum -c "$dest/accepted_input.sha256" > "$dest/final_accepted_input_integrity.txt"
+if test "$result" = 0; then printf 'CACHED_CONTINUATION_ACCEPTED_LONG_GOAL_ACTIVE\n' > "$dest/status.txt"; else printf 'CACHED_CONTINUATION_REJECTED_EXIT_%s\n' "$result" > "$dest/status.txt"; fi
+exit "$result"

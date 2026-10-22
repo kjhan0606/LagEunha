@@ -1,0 +1,380 @@
+{
+  "scope": "partial first material-ALE bundle: cell-local smooth material RHS, affine conservative remap controls, native CUDA helper; no evolved Kepler state",
+  "previous_goal_turn": "progress: rejected nodal operators by measured thermal, angular and Jacobian evidence",
+  "current_goal_turn": "progress: kinematic obstruction, compatible native map/stress/moments, finite mass-weight remap controls and CUDA matching",
+  "final_goal": "t6-10 and longest GIZMO Kepler stability; not achieved",
+  "cases": {
+    "Kepler": {
+      "cells": 24,
+      "maximum_absolute": {
+        "initial_velocity_error": 8.73012599711398e-14,
+        "coordinate_error": 1.3877787807814457e-17,
+        "K_minus_reference_over_U": 1.1821824880776508e-11,
+        "energy_work_residual": 5.61681114702138e-20,
+        "energy_work_relative": 3.6368609918846695e-15,
+        "angular_residual_over_2K": 2.728971700728139e-15,
+        "max_Kepler_divergence_error": 1.0658141036401503e-14,
+        "max_abs_Pdot_over_P0": 1.7763571782134294e-14,
+        "volume_vs_boundary_rate_over_area": 2.2288058008014479e-13,
+        "finite_map_volume_rate_error_over_area": 1.64085802425073e-11,
+        "native_initial_mass_relative_error": 3.3908076526939457e-13,
+        "native_initial_energy_error_over_U": 1.1050836301595432e-11,
+        "mass_matrix_solve_relative": 2.1236496841594054e-16,
+        "mass_solve_kinetic_power_residual": 1.0156950741538627e-20
+      }
+    },
+    "Kepler_perturb": {
+      "cells": 24,
+      "maximum_absolute": {
+        "initial_velocity_error": 8.731383671634063e-14,
+        "coordinate_error": 1.3877787807814457e-17,
+        "K_minus_reference_over_U": 1.387779442525938e-11,
+        "energy_work_residual": 5.749236129488564e-20,
+        "energy_work_relative": 3.6472720692945124e-15,
+        "angular_residual_over_2K": 2.748455890299231e-15,
+        "max_Kepler_divergence_error": 1.0658141036401503e-14,
+        "max_abs_Pdot_over_P0": 1.7763571782134294e-14,
+        "volume_vs_boundary_rate_over_area": 1.4009321222356345e-13,
+        "finite_map_volume_rate_error_over_area": 1.64085802425073e-11,
+        "native_initial_mass_relative_error": 3.3908076526939457e-13,
+        "native_initial_energy_error_over_U": 1.1564828687716149e-11,
+        "mass_matrix_solve_relative": 2.1236496841594054e-16,
+        "mass_solve_kinetic_power_residual": 1.011145580784821e-20
+      }
+    }
+  },
+  "quadrature": {
+    "coarse": "32x20",
+    "fine": "64x28",
+    "max_mass_relative_change": 3.08395283329689e-15,
+    "max_energy_change_over_thermal": 5.171797412494937e-12
+  },
+  "intrinsic_rotation": {
+    "scope": "actual represented initial field and material RHS; no separately advanced spin reservoir or relaxation",
+    "minimum_resolved_strain_remainder": 2.6731953033673663e-12
+  },
+  "remap": {
+    "scope": "24 actual polygons, manufactured uniform-density constant-P affine shear; compatible exact material control plus finite mass-weight common-refinement remap and inverse deformation; no curved-Kepler remap or runtime compression",
+    "rho": 1.3,
+    "P": 1e-06,
+    "velocity": "(1.2*y,0)",
+    "finite_shear_strain": 0.125,
+    "reports": [
+      {
+        "name": "identity_W0",
+        "Newton_steps": 0,
+        "backtracks": 0,
+        "fragments": 24,
+        "max_mass_weight_relative_residual": 0,
+        "max_abs_W": 0,
+        "sum_mu_W": 0,
+        "finite_Jacobian_FD_error_over_mu": 8.892750790960312e-06,
+        "mass_change": 0,
+        "px_change": 0,
+        "energy_change_over_thermal": 0,
+        "angular_change": 0,
+        "thermal_change_relative": 0,
+        "kinetic_change_over_thermal": 0,
+        "hypothetical_mean_velocity_projection_K_loss_over_thermal": 424.4307178394045,
+        "hypothetical_mean_only_angular_error": 4.0217796340585e-05,
+        "actual_velocity_compression": "none: affine field retained exactly on common-refinement fragments",
+        "Jacobian_FD": [
+          {
+            "step": 1.373291015625e-09,
+            "error_over_mu": 8.892750790960312e-06
+          },
+          {
+            "step": 6.866455078125e-10,
+            "error_over_mu": 4.446375394645821e-06
+          },
+          {
+            "step": 3.4332275390625e-10,
+            "error_over_mu": 2.223187755795268e-06
+          }
+        ],
+        "weights": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "remapped_cell_mass": [
+          0.01142578125,
+          0.01142578125,
+          0.01142578125,
+          0.01142578125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125,
+          0.00017852783203125
+        ]
+      },
+      {
+        "name": "finite_shear_to_Laguerre",
+        "Newton_steps": 2,
+        "backtracks": 0,
+        "fragments": 92,
+        "max_mass_weight_relative_residual": 4.96471186811193e-14,
+        "max_abs_W": 2.1019158722800398e-07,
+        "sum_mu_W": 9.281224966786393e-23,
+        "finite_Jacobian_FD_error_over_mu": 2.0712181302327506e-13,
+        "mass_change": 2.0328790734103208e-20,
+        "px_change": 0,
+        "energy_change_over_thermal": 9.534931220790112e-12,
+        "angular_change": -1.0842021724855044e-18,
+        "thermal_change_relative": -2.273304753491905e-19,
+        "kinetic_change_over_thermal": -9.534931220790112e-12,
+        "hypothetical_mean_velocity_projection_K_loss_over_thermal": 424.43509256921544,
+        "hypothetical_mean_only_angular_error": 4.021821087701102e-05,
+        "actual_velocity_compression": "none: affine field retained exactly on common-refinement fragments",
+        "Jacobian_FD": [
+          {
+            "step": 1.373291015625e-09,
+            "error_over_mu": 2.0712181302327506e-13
+          },
+          {
+            "step": 6.866455078125e-10,
+            "error_over_mu": 4.632753974446585e-13
+          },
+          {
+            "step": 3.4332275390625e-10,
+            "error_over_mu": 8.726407600663191e-13
+          }
+        ],
+        "weights": [
+          0,
+          0,
+          0,
+          0,
+          1.0032612199144072e-07,
+          -1.4937013856772065e-07,
+          -1.728642433933551e-07,
+          4.0798099811043835e-08,
+          -2.8359435664484277e-08,
+          2.832653816267768e-09,
+          2.1019158722800398e-07,
+          -2.05078443917063e-08,
+          -1.0648732255837155e-07,
+          1.2344052172888163e-07,
+          1.2344052172888163e-07,
+          -1.0648732255837155e-07,
+          -2.0507844391706298e-08,
+          2.1019158722800398e-07,
+          2.8326538162677733e-09,
+          -2.8359435664484277e-08,
+          4.079809981104383e-08,
+          -1.728642433933551e-07,
+          -1.4937013856772067e-07,
+          1.0032612199144072e-07
+        ],
+        "remapped_cell_mass": [
+          0.01142578125,
+          0.01142578125,
+          0.01142578125,
+          0.01142578125,
+          0.00017839740807266998,
+          0.00017872201321138901,
+          0.00017875255554765677,
+          0.00017847479450148714,
+          0.00017856469929761323,
+          0.00017852414958128437,
+          0.0001782545829678533,
+          0.00017855449222896284,
+          0.00017866626555058249,
+          0.00017836735935300083,
+          0.00017836735935300083,
+          0.00017866626555058249,
+          0.00017855449222896284,
+          0.0001782545829678533,
+          0.00017852414958128437,
+          0.00017856469929761323,
+          0.00017847479450148714,
+          0.00017875255554765677,
+          0.00017872201321138901,
+          0.00017839740807266998
+        ]
+      },
+      {
+        "name": "inverse_deformation_return",
+        "Newton_steps": 2,
+        "backtracks": 0,
+        "fragments": 180,
+        "max_mass_weight_relative_residual": 1.2794008196175666e-13,
+        "max_abs_W": 5.280815250368487e-18,
+        "sum_mu_W": 7.96010364226813e-23,
+        "finite_Jacobian_FD_error_over_mu": 8.892750741334544e-06,
+        "mass_change": 1.0164395367051604e-20,
+        "px_change": 0,
+        "energy_change_over_thermal": 9.534931220790112e-12,
+        "angular_change": -1.0842021724855044e-18,
+        "thermal_change_relative": 2.273304753491905e-19,
+        "kinetic_change_over_thermal": -9.534931220790112e-12,
+        "hypothetical_mean_velocity_projection_K_loss_over_thermal": 424.4307178394045,
+        "hypothetical_mean_only_angular_error": 4.021779634058608e-05,
+        "actual_velocity_compression": "none: affine field retained exactly on common-refinement fragments",
+        "Jacobian_FD": [
+          {
+            "step": 1.373291015625e-09,
+            "error_over_mu": 8.892750741334544e-06
+          },
+          {
+            "step": 6.866455078125e-10,
+            "error_over_mu": 4.44637534872669e-06
+          },
+          {
+            "step": 3.4332275390625e-10,
+            "error_over_mu": 2.223187620916181e-06
+          }
+        ],
+        "weights": [
+          0,
+          0,
+          0,
+          0,
+          5.48417591265949e-19,
+          1.2207913692206508e-18,
+          1.6452218474716235e-18,
+          -2.6644059483065793e-18,
+          -3.484308462121012e-18,
+          -1.755954454218883e-18,
+          -1.811418156083846e-18,
+          -7.3939013397796635e-19,
+          5.2808107159013404e-18,
+          1.7602720548881957e-18,
+          1.7602806448009035e-18,
+          5.280815250368487e-18,
+          -7.394015257258166e-19,
+          -1.8114252350881067e-18,
+          -1.7559467781415804e-18,
+          -3.48431198092501e-18,
+          -2.6644049025854636e-18,
+          1.6452178235300113e-18,
+          1.2207853771767874e-18,
+          5.484161341167947e-19
+        ],
+        "remapped_cell_mass": [
+          0.01142578125,
+          0.01142578125,
+          0.01142578125,
+          0.01142578125,
+          0.00017852783203124928,
+          0.00017852783203125224,
+          0.00017852783203125652,
+          0.00017852783203124283,
+          0.00017852783203124256,
+          0.00017852783203124717,
+          0.00017852783203124535,
+          0.00017852783203125031,
+          0.00017852783203126598,
+          0.0001785278320312477,
+          0.0001785278320312477,
+          0.00017852783203126598,
+          0.00017852783203125031,
+          0.00017852783203124535,
+          0.00017852783203124717,
+          0.00017852783203124256,
+          0.00017852783203124283,
+          0.00017852783203125652,
+          0.00017852783203125224,
+          0.00017852783203124928
+        ]
+      }
+    ]
+  },
+  "cuda": {
+    "scope": "native CUDA shared material-map/stress helper with65536 manufactured points; kernel timing excludes allocation, transfers, basis/mass assembly and MPI; no Kepler evolution",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "samples": 65536,
+    "invalid": 0,
+    "max_CPU_GPU_difference": 2.220446049250313e-16,
+    "max_stress_work_identity_error": 2.1250362580715887e-16,
+    "max_internal_stress_torque_error": 1.1525069093520912e-16,
+    "minimum_J": 0.9857569367369076,
+    "CPU_single_thread_seconds": 0.006207192,
+    "GPU_kernel_ms": 0.28384000062942505
+  },
+  "accepted_evolution": false,
+  "incomplete": [
+    "Global continuous/shared kinematic space and mass assembly; current RHS is cell-local at matching initial traces.",
+    "Curved material faces and remap of the actual nonuniform-density Kepler field.",
+    "Cold-conservative finite representation/fragment compression for repeated remaps.",
+    "Fixed-target density-wave composed-update response and historical cs/h sliding mode.",
+    "Multidimensional symmetric Riemann compression stress, physical shock heating and positivity.",
+    "Actual native CUDA+MPI runtime/halo/migration/checkpoint/time stepping.",
+    "Historical t6-10 range and longest matched-GIZMO duration."
+  ],
+  "native_handles": [],
+  "artifacts": {
+    "affine_face_kinematics_v1": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/affine_face_kinematics_v1",
+      "executable_sha256": "ec9ce340a83cdd95aa8d1edfa0bc60c57a60901f31cdafdde0833ca28dc20b1b",
+      "raw_contract_sha256": "0b4ccbba7663eb45350c23f687db9927ab22252b81682682b269c19dd9c475d9"
+    },
+    "material_rhs_v1": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_rhs_v1",
+      "executable_sha256": "1d0f9c32d732aaed51ebb00608e0c29e889a93f7a6255eb0e196adcd214040ea",
+      "raw_contract_sha256": "7c93b035d6533ced103f141a31f2b84e9022f961fa9b9877301b1b417227d84c"
+    },
+    "material_rhs_v2": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_rhs_v2",
+      "executable_sha256": "61195739bf425db943cf52092b750ddd88153e86728afd3061dfc7a4e023e246",
+      "raw_contract_sha256": "043a96d7f25c1bb156397932b201f0d80dcaeeea19058a71aa3e028645a25f61"
+    },
+    "material_rhs_v3": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_rhs_v3",
+      "executable_sha256": "fffced64740564a30a5c15ba4cdbc5d0a39058fc1c27cf59686b351556494873",
+      "raw_contract_sha256": "69342c61537251c98de4aac0dcc2e3fbe39594c74c8b2f49a07d5a6fc1e6ef77"
+    },
+    "material_remap_v3": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_remap_v3",
+      "executable_sha256": "4af8723ad69253d740e06ab97ad5b67cc32d1a2aafdf722c6747f0b17a4e8f55",
+      "raw_contract_sha256": "7a3dc9266f6914b3b3d8f7d04434a870a1ae31965ba2c092dc6964e18277784d"
+    },
+    "material_remap_v4": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_remap_v4",
+      "executable_sha256": "1f932068bfd3c8b2624015579852ee924f62f4369691f1ecd54777b54801afa3",
+      "raw_contract_sha256": "a3f8e4d2b26a9a8eff47e09c4152d52b7185d1ea80038934b242abacc00cad59"
+    },
+    "material_cuda_v1": {
+      "path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_cuda_v1",
+      "executable_sha256": "e3e31711516908cc349dc73c0b837a4cd541007e3b851a50611b8a142dc6d410",
+      "raw_contract_sha256": "9407aa8c043b6054bafe7fedb43578b4f92073eaa0fb50b2f0170b0152805b8f"
+    }
+  }
+}

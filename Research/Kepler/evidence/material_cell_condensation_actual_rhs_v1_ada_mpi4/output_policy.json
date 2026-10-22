@@ -1,0 +1,21 @@
+{
+  "purpose": "first genuine selected-rule step6 RHS at retained step5, same-force original resident full solve shadow, full original Ma-f and all source cell gates; no RK4 commit yet",
+  "MPI_ranks": 4,
+  "OMP_threads_per_rank": 8,
+  "visible_Ada_cards": 1,
+  "expected_physical_dumps": 0,
+  "artifacts": [
+    "actual_force_r[0-3].bin",
+    "same_force_old_acceleration_r[0-3].bin",
+    "prepared_selected_k1_r[0-3].bin",
+    "original every-cell ledgers and source summaries"
+  ],
+  "output_budget_bytes": 4294967296,
+  "wrapper_wall_seconds": 1800,
+  "same_original_force_only_once": true,
+  "old_full_GPU_buffers_freed_before_condensed_solver": true,
+  "memory_check": "exact new explicit aggregate allocation against fresh free memory, then >=20% total device memory free after all ranks allocate",
+  "immutable_field_cache_not_yet_allocated": true,
+  "actual_RHS_cost_not_a_full_step_cost_gate": true,
+  "free_bytes_at_preparation": 230394276347904
+}

@@ -114,6 +114,8 @@ draw:
 
 
 
+kh.o: ../gfs_moment.h
+
 $(KHLIB): $(KHOBJ)
 	ar -rcv $@ $?
 	ranlib $@

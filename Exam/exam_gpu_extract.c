@@ -30,6 +30,7 @@ extern long long gfs_pair_face_ends;
 #include "../OST/nnost.h"   /* TStruct / TPtlStruct for tree serialization */
 /* exam.h/exam2d.h omitted: TStruct dependency.
    CellType = HydroTreeLinkedCell (from eunha.h). */
+extern postype gfs_kepler_halo_width(postype cellsize);
 
 /* ================================================================
  *  ptr_to_soa_index: convert particle pointer → SoA index
@@ -804,14 +805,16 @@ double getAccVoro2DBlend_GPU(
         gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
         gpu_upload_faces(&g_gpu_ctx, nbp, n_faces);
     } else {
-        /* Refresh MPI padding after GPU tessellation has computed current-stage
+        /* Refresh MPI and periodic padding after GPU tessellation computed
          * gradients for real cells. The original padding was copied before
          * that kernel and otherwise carries lagged gradients into the MUSCL
-         * Riemann states at rank boundaries. Keep the device face CSR only
+         * Riemann states at rank and periodic boundaries. Periodic images also
+         * exist with one MPI rank, so their refresh must not depend on NID.
+         * Keep the device face CSR only
          * when refreshed padding preserves its SoA indices. Setting
          * GFS_GPU_SYNC_HALO_STATE=0 retains the old path for comparisons. */
         const char *sync_env = getenv("GFS_GPU_SYNC_HALO_STATE");
-        if (NID(simpar) > 1 && (!sync_env || atoi(sync_env) > 0)) {
+        if (!sync_env || atoi(sync_env) > 0) {
             void *fresh = NULL;
             ptrdiff_t n_fresh = 0;
             size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
@@ -819,7 +822,7 @@ double getAccVoro2DBlend_GPU(
             MPI_Barrier(MPI_COMM(simpar));
             ppadding(VORORK4_TBP(simpar), VORO_NP(simpar), &fresh, &n_fresh,
                 TVORORK4_DDINFO(simpar), NDDINFO(simpar), COS_SIMBOX(simpar),
-                HydroGridSize(simpar), &GRIDINFO(simpar), 2);
+                gfs_kepler_halo_width(HydroGridSize(simpar)), &GRIDINFO(simpar), 2);
             if (n_fresh != npad) {
                 fprintf(stderr, "[HALO_SYNC] rank=%d padding count changed %d -> %ld\n",
                     MYID(simpar), npad, (long)n_fresh);
@@ -1835,6 +1838,65 @@ void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
  *  After GPU tessellation + download, write results back to CPU
  *  particle arrays (real particles only, [0, nbp)).
  * ================================================================ */
+/* End-of-step GPU geometry. The caller owns the linked list and padding.
+ * Write only the fields written by CPU exam2dUpdateVol. In particular, do not
+ * refresh pressure or stress before the caller books its thermal-energy floor. */
+void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
+    double cellsize, double xmin, double ymin, double boxsize, double OoA)
+{
+    SimParameters *simpar = (SimParameters *)simpar_opaque;
+    int nbp = VORO_NP(simpar), npad = VORO_NPAD(simpar);
+    int n_total = nbp + npad;
+    size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
+    int has_stress = p_size > sizeof(treevorork4particletype);
+    if (!g_gpu_ctx.initialized || n_total > g_gpu_ctx.max_particles) {
+        if (g_gpu_ctx.initialized) gpu_free(&g_gpu_ctx);
+        int max_p = (int)(n_total * 1.2) + 1024;
+        gpu_init(&g_gpu_ctx, max_p, max_p * 20, MYID(simpar));
+    }
+    gpu_build_cell_csr(&g_gpu_ctx, simpar, mx, my, p_size);
+    fillParticleSoA(simpar, &g_gpu_ctx.h_parts, has_stress);
+    g_gpu_ctx.d_parts.n_total = n_total;
+    gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
+    gpu_upload_cells(&g_gpu_ctx, mx * my, g_gpu_ctx.h_cells.n_entries);
+    double local_wmax = 0, global_wmax = 0;
+    for (int k = 0; k < nbp; k++)
+        if (g_gpu_ctx.h_parts.w2[k] > local_wmax)
+            local_wmax = g_gpu_ctx.h_parts.w2[k];
+    MPI_Allreduce(&local_wmax, &global_wmax, 1, MPI_DOUBLE, MPI_MAX,
+                  MPI_COMM(simpar));
+    int failed = gpu_tessellate_raw_volume(&g_gpu_ctx, nbp, mx, my,
+        cellsize, xmin, ymin, boxsize, global_wmax, OoA, GAS_AVMODE(simpar),
+        GAS_GRADIENT_METHOD(simpar));
+    for (int k = 0; k < nbp; k++)
+        if (!(g_gpu_ctx.h_parts.volume[k] > 0) ||
+            !isfinite(g_gpu_ctx.h_parts.volume[k])) failed = 1;
+    int any_failed = 0;
+    MPI_Allreduce(&failed, &any_failed, 1, MPI_INT, MPI_MAX, MPI_COMM(simpar));
+    if (any_failed) {
+        fprintf(stderr, "[GPU_FINAL_VOLUME] rank=%d invalid or incomplete geometry\n",
+                MYID(simpar));
+        if (gpu_geometry_trial_active()) {
+            gpu_geometry_trial_mark_failed();
+            return;
+        }
+        MPI_Abort(MPI_COMM(simpar), 1);
+    }
+    char *base = (char *)VORORK4_TBP(simpar);
+    for (int k = 0; k < nbp; k++) {
+        treevorork4particletype *b =
+            (treevorork4particletype *)(base + (size_t)k * p_size);
+        b->volume = g_gpu_ctx.h_parts.volume[k];
+        b->den = b->mass / b->volume;
+        b->avgNeighboringPressure = g_gpu_ctx.h_parts.avgNeighP[k];
+    }
+    static int banner = 0;
+    if (!banner && MYID(simpar) == 0) {
+        fprintf(stderr, "[GPU_FINAL_VOLUME] raw positive area; EOS and energy bookkeeping remain in caller\n");
+        banner = 1;
+    }
+}
+
 void gpu_writeback_tess_results(void *simpar_opaque, GPUContext *ctx,
                                 int nbp, int has_stress)
 {

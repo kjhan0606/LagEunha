@@ -1,0 +1,70 @@
+{
+  "utc": "2026-10-22T02:26:16.803977+00:00",
+  "scope": "saved generating header, inspected frozen sources, and analytical arithmetic only; no evolution",
+  "root": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics",
+  "sources_sha256": {
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_full_positive_transition_v2_ada_mpi4/Exam/material_full_initial_driver.cpp": "8767588f8f2740f2117c789eb2d1a9afc8e5f0165789c5dd7b25dce2606ea2d4",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_full_positive_transition_v2_ada_mpi4/Exam/gfs_enriched_euler.h": "76e5d2e8fac28199f22a5fd074d7770ff2f15f9f4ba91489f89a9a3e3954ad1a"
+  },
+  "thermal_header_path": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/material_full_initial_v2_h200_mpi4/run/full_generating_thermal_r0.bin",
+  "thermal_header_first_80_bytes_sha256": "150d8a32ad1a9a17ff6bdfb15766bb82a47664e8b1f39626fc211de73896b992",
+  "native_law": {
+    "GM": 1.0,
+    "gamma": 1.6666669845581055,
+    "pressure": 1e-06,
+    "eps": 0.047,
+    "reference_rin": 2,
+    "reference_rout": 8,
+    "rank0_cells": 17770,
+    "density": "0.001 + 2/(r+1e-6) * logistic(8*(r-2)) * logistic(8*(8-r))"
+  },
+  "period_formula": "2*pi*(r*r+eps*eps)**(3/4)/sqrt(GM)",
+  "native_periods": {
+    "0.0": 0.06402161940264556,
+    "0.5": 2.2361467613738286,
+    "1.0": 6.293592102710219,
+    "2.0": 17.778891990936625,
+    "4.0": 50.270687201246645,
+    "8.0": 142.17593437834304
+  },
+  "native_historical_times": {
+    "6": {
+      "orbits_r2": 0.3374788486852104,
+      "orbits_r4": 0.11935384881412976
+    },
+    "8": {
+      "orbits_r2": 0.44997179824694716,
+      "orbits_r4": 0.15913846508550636
+    },
+    "10": {
+      "orbits_r2": 0.5624647478086839,
+      "orbits_r4": 0.19892308135688294
+    }
+  },
+  "native_1000_orbit_durations": {
+    "r2": 17778.891990936623,
+    "r4": 50270.68720124665
+  },
+  "native_rho_samples_in_scaled_paper_annulus": {
+    "3.2": 0.6259574771072761,
+    "4.0": 0.5009998187324579,
+    "4.8": 0.4176665797800436
+  },
+  "paper_source": "https://arxiv.org/pdf/1409.7395",
+  "paper_locations": "section 4.2.4, equation 34, figures 6-8, printed pages 18-22",
+  "paper_reference_eps_used_here": null,
+  "paper_eps_zero_caption_arithmetic_only": {
+    "120": {
+      "orbits_r1": 19.098593171027442,
+      "orbits_rhalf": 54.018978969426364
+    },
+    "600": {
+      "orbits_r1": 95.4929658551372,
+      "orbits_rhalf": 270.09489484713185
+    }
+  },
+  "paper_reported_1000_orbit_reference_radius": "not uniquely established by inspected statement",
+  "direct_matched_paper_run": false,
+  "endpoint_selected_by_this_audit": false,
+  "long_Kepler_validated": false
+}

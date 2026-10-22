@@ -1,0 +1,199 @@
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -2142,8 +2142,9 @@
+  *  gradients, avgNeighP, w2ceil. Writes PolygonOut for face scatter.
+  * ================================================================ */
+ 
+-/* Inline candidate storage for the common case. Cells exceeding this capacity
+- * are completed by a second streaming pass after the stored candidates. */
++/* Legacy inline capacity, retained only to count dense seed stencils.
++ * Candidate clipping now streams directly from CellCSR; no candidate is
++ * truncated and no per-thread arrays of this size are allocated. */
+ #define GPU_MAX_NEIGH 512
+ 
+ __device__ __forceinline__
+@@ -2256,50 +2257,6 @@
+     if (ix < 0) ix = 0;  if (ix >= mx) ix = mx - 1;
+     if (iy < 0) iy = 0;  if (iy >= my) iy = my - 1;
+ 
+-    /* ---- Gather neighbors from 5×5 stencil ---- */
+-    double n_dx[GPU_MAX_NEIGH], n_dy[GPU_MAX_NEIGH];
+-    double n_w2[GPU_MAX_NEIGH], n_drad2[GPU_MAX_NEIGH];
+-    int    n_soa_idx[GPU_MAX_NEIGH];
+-    int    n_count = 0;
+-    int candidate_overflow = 0;
+-
+-    for (int dy_c = -2; dy_c <= 2; dy_c++) {
+-        int cy = iy + dy_c;
+-        if (cy < 0 || cy >= my) continue;
+-        for (int dx_c = -2; dx_c <= 2; dx_c++) {
+-            int cx = ix + dx_c;
+-            if (cx < 0 || cx >= mx) continue;
+-            int cell_id = cx + mx * cy;
+-            int c_begin = cell_offset[cell_id];
+-            int c_end   = cell_offset[cell_id + 1];
+-            for (int k = c_begin; k < c_end; k++) {
+-                int j = cell_particle_index[k];
+-                if (pindx[j] == indx_i) continue;  /* skip self */
+-                if (n_count >= GPU_MAX_NEIGH) { candidate_overflow = 1; continue; }
+-                double dx = px[j] - xi;
+-                double dy_val = py[j] - yi;
+-                double dist2 = dx * dx + dy_val * dy_val;
+-                double w2j = (double)pw2[j];
+-                double wdiff = (w2i - w2j) / dist2;
+-                double wfrac = 0.5 + 0.5 * wdiff;
+-                if (wfrac < 0.05) wfrac = 0.05; else if (wfrac > 0.95) wfrac = 0.95;
+-                /* Keep the radius bound consistent with the clipped bisector. */
+-                double drad2 = wfrac * wfrac * dist2;
+-                n_dx[n_count] = dx;
+-                n_dy[n_count] = dy_val;
+-                n_w2[n_count] = w2j;
+-                n_drad2[n_count] = drad2;
+-                n_soa_idx[n_count] = j;
+-                n_count++;
+-            }
+-        }
+-    }
+-
+-    if (candidate_overflow) atomicAdd(&d_gfs_candidate_fallback_cells, 1ull);
+-
+-    /* Candidates stay in linked-cell order. The polygon-radius bound below
+-     * filters each candidate independently, avoiding O(n_count^2) sorting. */
+-
+     /* ---- Initialize box polygon ---- */
+     double halfbox = 0.5 * boxsize;
+     /* 4 box corners: (-hb,-hb), (+hb,-hb), (+hb,+hb), (-hb,+hb) */
+@@ -2318,80 +2275,51 @@
+     double tmp_x[GPU_MAX_CORNERS], tmp_y[GPU_MAX_CORNERS];
+     int    tmp_neigh[GPU_MAX_CORNERS];
+ 
+-    for (int ni = 0; ni < n_count; ni++) {
+-        if (n_drad2[ni] > maxdist2) continue;
+-
+-        double nx_n = n_dx[ni], ny_n = n_dy[ni];
+-        double dist2 = nx_n * nx_n + ny_n * ny_n;
+-        double wfrac = 0.5 + 0.5 * (w2i - n_w2[ni]) / dist2;
+-        if(wfrac < 0.05) wfrac = 0.05; else if(wfrac > 0.95) wfrac = 0.95;
+-        int j_soa = n_soa_idx[ni];
+-        nc = gpu_clip_voronoi_halfplane(nx_n, ny_n, wfrac, j_soa,
+-                                        poly_x, poly_y, poly_neigh, nc,
+-                                        tmp_x, tmp_y, tmp_neigh);
+-
+-        if (nc < 3) break;  /* degenerate polygon */
+-
+-        /* Update maxdist2 from farthest surviving corner */
+-        double new_max = 0;
+-        for (int e = 0; e < nc; e++) {
+-            double cd = poly_x[e] * poly_x[e] + poly_y[e] * poly_y[e];
+-            if (cd > new_max) new_max = cd;
+-        }
+-        maxdist2 = new_max;
+-    }
+-
+-    /* The fixed inline arrays can hold only the first GPU_MAX_NEIGH entries.
+-     * If this cell exceeded that limit, revisit the stencil and clip every
+-     * candidate that was not stored above. Plane intersections commute, so
+-     * processing these candidates after the stored prefix preserves the exact
+-     * intersection of all 5x5-stencil half-planes without growing per-thread
+-     * storage. */
+-    if (candidate_overflow && nc >= 3) {
+-        int fallback_done = 0;
+-        for (int dy_c = -2; dy_c <= 2 && !fallback_done; dy_c++) {
+-            int cy = iy + dy_c;
+-            if (cy < 0 || cy >= my) continue;
+-            for (int dx_c = -2; dx_c <= 2 && !fallback_done; dx_c++) {
+-                int cx = ix + dx_c;
+-                if (cx < 0 || cx >= mx) continue;
+-                int cell_id = cx + mx * cy;
+-                int c_begin = cell_offset[cell_id];
+-                int c_end = cell_offset[cell_id + 1];
+-                for (int k = c_begin; k < c_end; k++) {
+-                    int j = cell_particle_index[k];
+-                    if (pindx[j] == indx_i) continue;
+-
+-                    int stored = 0;
+-                    for (int q = 0; q < n_count; q++) {
+-                        if (n_soa_idx[q] == j) { stored = 1; break; }
+-                    }
+-                    if (stored) continue;
+-
+-                    double dx = px[j] - xi;
+-                    double dy_val = py[j] - yi;
+-                    double dist2 = dx * dx + dy_val * dy_val;
+-                    double w2j = (double)pw2[j];
+-                    double wfrac = 0.5 + 0.5 * (w2i - w2j) / dist2;
+-                    if (wfrac < 0.05) wfrac = 0.05; else if (wfrac > 0.95) wfrac = 0.95;
+-                    double drad2 = wfrac * wfrac * dist2;
+-                    if (drad2 > maxdist2) continue;
+-
+-                    nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
+-                                                    poly_x, poly_y, poly_neigh, nc,
+-                                                    tmp_x, tmp_y, tmp_neigh);
+-                    if (nc < 3) { fallback_done = 1; break; }
+-
+-                    double new_max = 0.0;
+-                    for (int e = 0; e < nc; e++) {
+-                        double cd = poly_x[e] * poly_x[e] + poly_y[e] * poly_y[e];
+-                        if (cd > new_max) new_max = cd;
+-                    }
+-                    maxdist2 = new_max;
++    /* Stream the 5x5 seed in exactly the former linked-cell order. The old
++     * stored prefix and overflow pass together used this same sequence.
++     * Keeping only the current half-plane removes 18 KiB of per-thread
++     * candidate arrays, while retaining the polygon-radius rejection and
++     * the complete adaptive search below. */
++    int seed_candidates = 0;
++    for (int dy_c = -2; dy_c <= 2 && nc >= 3; dy_c++) {
++        int cy = iy + dy_c;
++        if (cy < 0 || cy >= my) continue;
++        for (int dx_c = -2; dx_c <= 2 && nc >= 3; dx_c++) {
++            int cx = ix + dx_c;
++            if (cx < 0 || cx >= mx) continue;
++            int cell_id = cx + mx * cy;
++            int c_begin = cell_offset[cell_id];
++            int c_end = cell_offset[cell_id + 1];
++            for (int k = c_begin; k < c_end && nc >= 3; k++) {
++                int j = cell_particle_index[k];
++                if (pindx[j] == indx_i) continue;
++                seed_candidates++;
++
++                double dx = px[j] - xi;
++                double dy_val = py[j] - yi;
++                double dist2 = dx * dx + dy_val * dy_val;
++                double w2j = (double)pw2[j];
++                double wfrac = 0.5 + 0.5 * (w2i - w2j) / dist2;
++                if (wfrac < 0.05) wfrac = 0.05; else if (wfrac > 0.95) wfrac = 0.95;
++                double drad2 = wfrac * wfrac * dist2;
++                if (drad2 > maxdist2) continue;
++
++                nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
++                                                poly_x, poly_y, poly_neigh, nc,
++                                                tmp_x, tmp_y, tmp_neigh);
++                if (nc < 3) break;
++
++                double new_max = 0.0;
++                for (int e = 0; e < nc; e++) {
++                    double cd = poly_x[e] * poly_x[e] + poly_y[e] * poly_y[e];
++                    if (cd > new_max) new_max = cd;
+                 }
+-            }
+-        }
+-    }
++                maxdist2 = new_max;
++            }
++        }
++    }
++    if (seed_candidates > GPU_MAX_NEIGH)
++        atomicAdd(&d_gfs_candidate_fallback_cells, 1ull);
+ 
+     /* Expand beyond the 5x5 seed stencil when the current polygon can still
+      * be cut by a more distant generator.  The seed polygon is a superset of
+@@ -3003,7 +2931,7 @@
+         CUDA_CHECK(cudaMemcpyFromSymbol(&h_candidate_fallbacks, d_gfs_candidate_fallback_cells,
+                                        sizeof(h_candidate_fallbacks)));
+         if (h_candidate_fallbacks > 0)
+-            fprintf(stderr, "[GPU_CANDIDATE_FALLBACK] cells=%llu inline_cap=%d all_candidates_accounted_for=1\n",
++            fprintf(stderr, "[GPU_CANDIDATE_STREAM] cells_over_legacy_cap=%llu legacy_cap=%d all_candidates_accounted_for=1\n",
+                     h_candidate_fallbacks, GPU_MAX_NEIGH);
+         unsigned long long h_stencil_expanded = 0, h_halo_clipped = 0;
+         CUDA_CHECK(cudaMemcpyFromSymbol(&h_stencil_expanded, d_gfs_stencil_expanded_cells,

@@ -1,0 +1,270 @@
+{
+  "scope": "two immutable SAVED-state native controls, no physical evolution",
+  "runs": {
+    "1": {
+      "summary": {
+        "scope": "two SAVED controls; fixed original positive rules and sparse mass; compatible geometric pressure/heat; no evolution",
+        "MPI_ranks": 1,
+        "OMP_threads": 4,
+        "actual_mass_equation_residual_max": 9.299141635767399e-17,
+        "same_state_bundle_pass": true,
+        "new_target_transfer_validated": false,
+        "long_Kepler_validated": false,
+        "seconds": 13.453667075
+      },
+      "states": {
+        "initial": {
+          "native_result": {
+            "scope": "SAVED initial control; m/U/x/v unchanged; compatible nu/pressure/heat; no evolution",
+            "max_chi": 5.500009969635534e-05,
+            "every_cell_mean_chi_max": 1.5035960293945615e-06,
+            "min_J": 0.9999999999999963,
+            "min_nu": 3.6177925864262234e-21,
+            "min_physical_U": 5.42668629199365e-27,
+            "volume_relative_change_max": 2.093594395069509e-16,
+            "physical_EOS_pressure_relative_change_max": 4.235435786814623e-16,
+            "global_energy_rate_error_over_U": 1.6919212709410596e-15,
+            "every_cell_energy_rate_error_over_U": 4.497528415846648e-14,
+            "global_angular_rate_error_over_2K": 8.24004114836651e-20,
+            "every_cell_angular_rate_error_over_2K": 6.148139945093675e-19,
+            "CPU_CUDA_force_relative_difference": 5.079996065488409e-13,
+            "boundary_geometry_derivative_vs_cofactor_relative": 5.2259712344063277e-17,
+            "external_traction_physical_relative_difference": 1.1582917647461089e-16,
+            "hybrid_global_reaction_residual_relative": 8.842677679446774e-17,
+            "zero_trace_bubble_reaction_relative": 8.842677679446774e-17,
+            "arbitrary_constant_face_force": 0,
+            "physical_boundary_edges": 136,
+            "paired_physical_edges": 56,
+            "external_edges": 80,
+            "same_cell_internal_edges_cancelled": 480,
+            "boundary_volume_translation_identity": 8.470329472543003e-22,
+            "boundary_volume_rotation_identity": 3.3881317890172014e-20,
+            "CUDA_seconds_rank0": 0.017455232620239257,
+            "same_state_bundle_pass": true,
+            "initial_curvature_evaluated": true
+          },
+          "constant_pressure_tests": [
+            {
+              "constant": "3.7e-07",
+              "native_global_force_relative": "1.52247826535911599088e-16",
+              "native_pressure_error_relative": "4.29235640087011205424e-16",
+              "thermal_volume_identity_over_cA": "4.12768840269034848102e-30",
+              "CPU_CUDA_force_difference_over_cG": "5.53382458664906865311e-29"
+            },
+            {
+              "constant": "7.25e-06",
+              "native_global_force_relative": "5.65150697418254554031e-17",
+              "native_pressure_error_relative": "3.50522562364563583515e-16",
+              "thermal_volume_identity_over_cA": "4.10603329409066309636e-30",
+              "CPU_CUDA_force_difference_over_cG": "2.02274562377448782215e-29"
+            },
+            {
+              "constant": "1",
+              "native_global_force_relative": "4.11493797984750205385e-17",
+              "native_pressure_error_relative": "2.22044604925031308085e-16",
+              "thermal_volume_identity_over_cA": "4.06568091104466348781e-30",
+              "CPU_CUDA_force_difference_over_cG": "1.57955101553741452792e-29"
+            }
+          ],
+          "frozen_physical_digest": "a1a536347660cf1a9a66a37bd37aa1d53d036a9e4a51d7f2a09a6d352bcdc663"
+        },
+        "finite": {
+          "native_result": {
+            "scope": "SAVED finite control; m/U/x/v unchanged; compatible nu/pressure/heat; no evolution",
+            "max_chi": null,
+            "every_cell_mean_chi_max": null,
+            "min_J": 0.9999999959746803,
+            "min_nu": 3.617792720426491e-21,
+            "min_physical_U": 5.426686157984837e-27,
+            "volume_relative_change_max": 4.4376394919831696e-16,
+            "physical_EOS_pressure_relative_change_max": 8.470329472543003e-16,
+            "global_energy_rate_error_over_U": 5.438739544655556e-16,
+            "every_cell_energy_rate_error_over_U": 6.544937353870792e-14,
+            "global_angular_rate_error_over_2K": 1.4857620666984302e-17,
+            "every_cell_angular_rate_error_over_2K": 1.2499460399014742e-16,
+            "CPU_CUDA_force_relative_difference": 5.132272061953303e-13,
+            "boundary_geometry_derivative_vs_cofactor_relative": 8.132588907108749e-17,
+            "external_traction_physical_relative_difference": 2.0878334944993e-16,
+            "hybrid_global_reaction_residual_relative": 8.817775287464059e-17,
+            "zero_trace_bubble_reaction_relative": 8.817775287464059e-17,
+            "arbitrary_constant_face_force": 0,
+            "physical_boundary_edges": 136,
+            "paired_physical_edges": 56,
+            "external_edges": 80,
+            "same_cell_internal_edges_cancelled": 480,
+            "boundary_volume_translation_identity": 1.0643897379866708e-17,
+            "boundary_volume_rotation_identity": 1.0184758793147473e-16,
+            "CUDA_seconds_rank0": 0.014564831733703614,
+            "same_state_bundle_pass": true,
+            "initial_curvature_evaluated": false
+          },
+          "constant_pressure_tests": [
+            {
+              "constant": "3.7e-07",
+              "native_global_force_relative": "1.62757153201481630365e-16",
+              "native_pressure_error_relative": "4.29235640087011205424e-16",
+              "thermal_volume_identity_over_cA": "3.38400007774808084806e-20",
+              "CPU_CUDA_force_difference_over_cG": "2.52364091911709616035e-19"
+            },
+            {
+              "constant": "7.25e-06",
+              "native_global_force_relative": "6.4297112605778055854e-17",
+              "native_pressure_error_relative": "3.50522562364563583515e-16",
+              "thermal_volume_identity_over_cA": "4.66477572452677238806e-20",
+              "CPU_CUDA_force_difference_over_cG": "2.06068334361009801751e-19"
+            },
+            {
+              "constant": "1",
+              "native_global_force_relative": "4.54063129863355069489e-17",
+              "native_pressure_error_relative": "2.22044604925031308085e-16",
+              "thermal_volume_identity_over_cA": "3.68929905915206367322e-20",
+              "CPU_CUDA_force_difference_over_cG": "1.95820968229905490878e-19"
+            }
+          ],
+          "frozen_physical_digest": "6148eeebb542aa4525590f09c150c11cd41790601e487e9196c5df6f4fa2afc5"
+        }
+      }
+    },
+    "4": {
+      "summary": {
+        "scope": "two SAVED controls; fixed original positive rules and sparse mass; compatible geometric pressure/heat; no evolution",
+        "MPI_ranks": 4,
+        "OMP_threads": 4,
+        "actual_mass_equation_residual_max": 9.29708974676531e-17,
+        "same_state_bundle_pass": true,
+        "new_target_transfer_validated": false,
+        "long_Kepler_validated": false,
+        "seconds": 5.300461621
+      },
+      "states": {
+        "initial": {
+          "native_result": {
+            "scope": "SAVED initial control; m/U/x/v unchanged; compatible nu/pressure/heat; no evolution",
+            "max_chi": 5.500009969635534e-05,
+            "every_cell_mean_chi_max": 1.5035960293945615e-06,
+            "min_J": 0.9999999999999963,
+            "min_nu": 3.6177925864262234e-21,
+            "min_physical_U": 5.42668629199365e-27,
+            "volume_relative_change_max": 2.093594395069509e-16,
+            "physical_EOS_pressure_relative_change_max": 4.235435786814623e-16,
+            "global_energy_rate_error_over_U": 1.6919212709410596e-15,
+            "every_cell_energy_rate_error_over_U": 4.4975284241442995e-14,
+            "global_angular_rate_error_over_2K": 8.24004114836651e-20,
+            "every_cell_angular_rate_error_over_2K": 6.148139945093662e-19,
+            "CPU_CUDA_force_relative_difference": 5.079996065488409e-13,
+            "boundary_geometry_derivative_vs_cofactor_relative": 5.2259712344063277e-17,
+            "external_traction_physical_relative_difference": 1.1582917647461089e-16,
+            "hybrid_global_reaction_residual_relative": 8.842677679446774e-17,
+            "zero_trace_bubble_reaction_relative": 8.842677679446774e-17,
+            "arbitrary_constant_face_force": 0,
+            "physical_boundary_edges": 136,
+            "paired_physical_edges": 56,
+            "external_edges": 80,
+            "same_cell_internal_edges_cancelled": 480,
+            "boundary_volume_translation_identity": 8.470329472543003e-22,
+            "boundary_volume_rotation_identity": 3.3881317890172014e-20,
+            "CUDA_seconds_rank0": 0.012180352210998535,
+            "same_state_bundle_pass": true,
+            "initial_curvature_evaluated": true
+          },
+          "constant_pressure_tests": [
+            {
+              "constant": "3.7e-07",
+              "native_global_force_relative": "1.52247826535911599088e-16",
+              "native_pressure_error_relative": "4.29235640087011205424e-16",
+              "thermal_volume_identity_over_cA": "4.12923278340651890596e-30",
+              "CPU_CUDA_force_difference_over_cG": "5.53382458664906865311e-29"
+            },
+            {
+              "constant": "7.25e-06",
+              "native_global_force_relative": "5.65150697418254554031e-17",
+              "native_pressure_error_relative": "3.50522562364563583515e-16",
+              "thermal_volume_identity_over_cA": "4.14080270554027252214e-30",
+              "CPU_CUDA_force_difference_over_cG": "2.02274562377448782215e-29"
+            },
+            {
+              "constant": "1",
+              "native_global_force_relative": "4.11493797984750205385e-17",
+              "native_pressure_error_relative": "2.22044604925031308085e-16",
+              "thermal_volume_identity_over_cA": "4.07817805646157622071e-30",
+              "CPU_CUDA_force_difference_over_cG": "1.57955101553741452792e-29"
+            }
+          ],
+          "frozen_physical_digest": "a1a536347660cf1a9a66a37bd37aa1d53d036a9e4a51d7f2a09a6d352bcdc663"
+        },
+        "finite": {
+          "native_result": {
+            "scope": "SAVED finite control; m/U/x/v unchanged; compatible nu/pressure/heat; no evolution",
+            "max_chi": null,
+            "every_cell_mean_chi_max": null,
+            "min_J": 0.9999999959746803,
+            "min_nu": 3.617792720426491e-21,
+            "min_physical_U": 5.426686157984837e-27,
+            "volume_relative_change_max": 4.4376394919831696e-16,
+            "physical_EOS_pressure_relative_change_max": 8.470329472543003e-16,
+            "global_energy_rate_error_over_U": 5.4392368300707e-16,
+            "every_cell_energy_rate_error_over_U": 6.545298862608699e-14,
+            "global_angular_rate_error_over_2K": 1.4857620666984302e-17,
+            "every_cell_angular_rate_error_over_2K": 1.249946039901464e-16,
+            "CPU_CUDA_force_relative_difference": 5.132272061953303e-13,
+            "boundary_geometry_derivative_vs_cofactor_relative": 8.132588907108749e-17,
+            "external_traction_physical_relative_difference": 2.0878334944993e-16,
+            "hybrid_global_reaction_residual_relative": 8.817775287464059e-17,
+            "zero_trace_bubble_reaction_relative": 8.817775287464059e-17,
+            "arbitrary_constant_face_force": 0,
+            "physical_boundary_edges": 136,
+            "paired_physical_edges": 56,
+            "external_edges": 80,
+            "same_cell_internal_edges_cancelled": 480,
+            "boundary_volume_translation_identity": 1.0643897379866708e-17,
+            "boundary_volume_rotation_identity": 1.0184758793147473e-16,
+            "CUDA_seconds_rank0": 0.006090720176696777,
+            "same_state_bundle_pass": true,
+            "initial_curvature_evaluated": false
+          },
+          "constant_pressure_tests": [
+            {
+              "constant": "3.7e-07",
+              "native_global_force_relative": "1.62757153201481630365e-16",
+              "native_pressure_error_relative": "4.29235640087011205424e-16",
+              "thermal_volume_identity_over_cA": "3.24451620357566890727e-20",
+              "CPU_CUDA_force_difference_over_cG": "2.52364091911709616035e-19"
+            },
+            {
+              "constant": "7.25e-06",
+              "native_global_force_relative": "6.4297112605778055854e-17",
+              "native_pressure_error_relative": "3.50522562364563583515e-16",
+              "thermal_volume_identity_over_cA": "4.97179917985655994544e-20",
+              "CPU_CUDA_force_difference_over_cG": "2.06068334361009801751e-19"
+            },
+            {
+              "constant": "1",
+              "native_global_force_relative": "4.54063129863355069489e-17",
+              "native_pressure_error_relative": "2.22044604925031308085e-16",
+              "thermal_volume_identity_over_cA": "4.16928439592950052037e-20",
+              "CPU_CUDA_force_difference_over_cG": "1.95820968229905490878e-19"
+            }
+          ],
+          "frozen_physical_digest": "6148eeebb542aa4525590f09c150c11cd41790601e487e9196c5df6f4fa2afc5"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "initial": {
+      "physical_m_U_reference_rows_bitwise_equal": true,
+      "saved_x_v_coefficients_bitwise_equal": true,
+      "acceleration_load_combined_max_difference": "0",
+      "acceleration_load_combined_relative_difference": "0E+18"
+    },
+    "finite": {
+      "physical_m_U_reference_rows_bitwise_equal": true,
+      "saved_x_v_coefficients_bitwise_equal": true,
+      "acceleration_load_combined_max_difference": "0",
+      "acceleration_load_combined_relative_difference": "0E+18"
+    }
+  },
+  "all_same_state_native_checks_pass": true,
+  "whole_target_transfer_certified": false,
+  "production_time_step_or_long_Kepler_certified": false
+}

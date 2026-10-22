@@ -1,0 +1,219 @@
+{
+  "scope": "bounded initial P3 spatial engineering gate; not full material-ALE evolution or long Kepler completion",
+  "status": "initial_spatial_gate_passed",
+  "versions": {
+    "material_p3_hybrid_v2": {
+      "frozen_header_and_binary_hash_checks": 13,
+      "all_match": true
+    },
+    "material_p3_hybrid_v3": {
+      "frozen_header_and_binary_hash_checks": 13,
+      "all_match": true
+    },
+    "material_p3_hybrid_v4": {
+      "frozen_header_and_binary_hash_checks": 13,
+      "all_match": true
+    }
+  },
+  "runtime_sources_unchanged": 25,
+  "MPI_state_bitmatch": true,
+  "read_only_probes_preserve_v3_states": true,
+  "engineering_cases": {
+    "Kepler": {
+      "max_chi": 0.0006291199064110165,
+      "max_cell_mean_chi": 3.960263847925323e-05,
+      "global_reductions": {
+        "curvature_error_max": 8.502137208781999,
+        "max_cell_curvature_error_L1": 7.767834369298335
+      },
+      "minimum_cell_maximum_reduction": 4.8358289998759565,
+      "minimum_cell_L1_reduction": 4.794039460641849
+    },
+    "Kepler_perturb": {
+      "max_chi": 0.0006291199064110256,
+      "max_cell_mean_chi": 3.96026384792525e-05,
+      "global_reductions": {
+        "curvature_error_max": 8.502137208781498,
+        "max_cell_curvature_error_L1": 7.767834369298486
+      },
+      "minimum_cell_maximum_reduction": 4.835828840742825,
+      "minimum_cell_L1_reduction": 4.794039463424034
+    }
+  },
+  "same_original_24_cell_initial_integrals": {
+    "maximum_relative_mass_difference": 1.199040866595169e-14,
+    "maximum_kinetic_difference_over_U": 4.368935282026199e-12,
+    "maximum_relative_U_difference": 3.68594044175552e-14
+  },
+  "linear_solver_read_only_correction_max_chi": 1.3973641090536186e-11,
+  "actual_gravity_linear_solver_correction_max_chi": 1.0721202024050699e-14,
+  "final_kepler_finite_map_chi_difference": 2.0066884351891856e-07,
+  "quadrature_sensitivity": {
+    "face_max_absolute_difference": {
+      "tx": 3.374470841643884e-15,
+      "ty": 2.2479034692685085e-15,
+      "ax": 2.0463630789890885e-12,
+      "ay": 3.0411229090532288e-12
+    },
+    "metric_absolute_differences": {
+      "chi_max": 8.463227948313223e-14,
+      "max_cell_chi_L1": 1.7210666148835508e-08,
+      "curvature_error_max": 2.4288215882961595e-09,
+      "max_cell_curvature_error_L1": 0.00010038213276566954,
+      "total_mass": 1.3552527156068805e-20,
+      "total_U": 1.3102540902839958e-21,
+      "total_K": 0.0
+    }
+  },
+  "independent_remainder_oracle": {
+    "scope": "native initial velocity interpolation residual and first derivatives, against direct 80-digit interpolation; no gravity or time evolution",
+    "precision_digits": 80,
+    "levels": {
+      "0": {
+        "queries": 7,
+        "max_normalized_error": 1.0871571149655814e-14,
+        "points": [
+          {
+            "triangle": 0,
+            "relative_value_and_length_scaled_derivative_error": 9.4782460593496e-15
+          },
+          {
+            "triangle": 17,
+            "relative_value_and_length_scaled_derivative_error": 2.6765657996276628e-15
+          },
+          {
+            "triangle": 34,
+            "relative_value_and_length_scaled_derivative_error": 1.0871571149655814e-14
+          },
+          {
+            "triangle": 51,
+            "relative_value_and_length_scaled_derivative_error": 2.3428919489056718e-15
+          },
+          {
+            "triangle": 68,
+            "relative_value_and_length_scaled_derivative_error": 1.59230695041629e-15
+          },
+          {
+            "triangle": 85,
+            "relative_value_and_length_scaled_derivative_error": 7.545025695219458e-15
+          },
+          {
+            "triangle": 95,
+            "relative_value_and_length_scaled_derivative_error": 2.6765657996276628e-15
+          }
+        ]
+      },
+      "1": {
+        "queries": 24,
+        "max_normalized_error": 6.240990318967216e-14,
+        "points": [
+          {
+            "triangle": 0,
+            "relative_value_and_length_scaled_derivative_error": 1.198215798898978e-14
+          },
+          {
+            "triangle": 17,
+            "relative_value_and_length_scaled_derivative_error": 1.6090967490648414e-14
+          },
+          {
+            "triangle": 34,
+            "relative_value_and_length_scaled_derivative_error": 8.756996365635032e-15
+          },
+          {
+            "triangle": 51,
+            "relative_value_and_length_scaled_derivative_error": 6.240990318967216e-14
+          },
+          {
+            "triangle": 68,
+            "relative_value_and_length_scaled_derivative_error": 2.5715641963435413e-15
+          },
+          {
+            "triangle": 85,
+            "relative_value_and_length_scaled_derivative_error": 1.5706354793037895e-15
+          },
+          {
+            "triangle": 102,
+            "relative_value_and_length_scaled_derivative_error": 1.701718724430037e-15
+          },
+          {
+            "triangle": 119,
+            "relative_value_and_length_scaled_derivative_error": 9.762837793327331e-15
+          },
+          {
+            "triangle": 136,
+            "relative_value_and_length_scaled_derivative_error": 2.33061703942205e-15
+          },
+          {
+            "triangle": 153,
+            "relative_value_and_length_scaled_derivative_error": 2.6511238768733866e-15
+          },
+          {
+            "triangle": 170,
+            "relative_value_and_length_scaled_derivative_error": 1.8897037272135997e-15
+          },
+          {
+            "triangle": 187,
+            "relative_value_and_length_scaled_derivative_error": 1.8512334207898603e-14
+          },
+          {
+            "triangle": 204,
+            "relative_value_and_length_scaled_derivative_error": 3.0814246611370044e-15
+          },
+          {
+            "triangle": 221,
+            "relative_value_and_length_scaled_derivative_error": 2.3478926866584947e-15
+          },
+          {
+            "triangle": 238,
+            "relative_value_and_length_scaled_derivative_error": 5.513615060211032e-15
+          },
+          {
+            "triangle": 255,
+            "relative_value_and_length_scaled_derivative_error": 1.3215892869960133e-14
+          },
+          {
+            "triangle": 272,
+            "relative_value_and_length_scaled_derivative_error": 4.1774711606367324e-15
+          },
+          {
+            "triangle": 289,
+            "relative_value_and_length_scaled_derivative_error": 2.6511238768733866e-15
+          },
+          {
+            "triangle": 306,
+            "relative_value_and_length_scaled_derivative_error": 8.294952280856832e-15
+          },
+          {
+            "triangle": 323,
+            "relative_value_and_length_scaled_derivative_error": 1.0241950053205886e-14
+          },
+          {
+            "triangle": 340,
+            "relative_value_and_length_scaled_derivative_error": 8.05051596725569e-15
+          },
+          {
+            "triangle": 357,
+            "relative_value_and_length_scaled_derivative_error": 9.708135304088396e-16
+          },
+          {
+            "triangle": 374,
+            "relative_value_and_length_scaled_derivative_error": 6.19825313092417e-15
+          },
+          {
+            "triangle": 383,
+            "relative_value_and_length_scaled_derivative_error": 3.049495545841459e-14
+          }
+        ]
+      }
+    }
+  },
+  "CUDA_helper": {
+    "scope": "actual native P3 input residual and polynomial helper on CUDA; no device mass/Schur solve, hydro evolution or performance claim",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "queries": 31,
+    "invalid": 0,
+    "CPU_GPU_polynomial_scaled_difference": 2.826166425630795e-15,
+    "CPU_GPU_residual_normalized_difference": 3.933267971647116e-14,
+    "CPU_native_packet_normalized_difference": 0
+  }
+}
