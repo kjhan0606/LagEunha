@@ -4577,7 +4577,30 @@ positive source/target overlap mass or conservation through a time step.
 Receipts are in Research/LagForce_curved_events_20261023/full_source_*
 audit_0_1708672_20261023.log.
 
-The separate ordered-cut joint audit covers [0,1550000). The separate
-triangle-route joint audit covers [0,800000). Both are partial prefixes of
-the full source-edge range. Continue them from their proven prefixes;
-do not restart the accepted Kepler physical state for these audits.
+At that checkpoint, the separate ordered-cut joint audit covered
+[0,1550000), and the separate triangle-route joint audit covered
+[0,800000). Both were partial prefixes of the full source-edge range.
+Do not restart the accepted Kepler physical state for these audits.
+
+## 2026-10-23 complete source-edge cut order and route continuation
+
+All 35 frozen native cut-order chunks now pass one independent joint audit
+over [0,1708672), with no gap or overlap: 2,463,510 canonical events are
+represented by 2,461,470 individual cuts and 2,040 grouped target-node
+events. The exact receipt is
+Research/LagForce_curved_events_20261023/full_cut_order_audit_0_1708672_20261023.log.
+
+The native triangle-route joint audit currently covers [0,950000), with
+1,446,739 canonical events, 1,444,699 ordered cuts, 2,040 grouped target
+nodes, and 2,881,214 sent and received triangle-incidence wires. Its exact
+receipt is Research/LagForce_curved_events_20261023/
+full_triangle_route_audit_0_950000_20261023.log. Subsequent disjoint route
+chunks are in progress on LagEunha; require native exit zero, frozen inputs,
+and independent joint audit before extending the accepted prefix.
+
+The 35 source-edge manifests sum to 14,859,285 root calls and 321,277,611
+root boxes at this one accepted physical state. This reference geometry path
+is too costly to repeat unchanged at every RK stage; candidate pruning and
+production-path acceleration remain necessary. These counts do not show a
+physical mass law, positive overlap integration, conservative remap, or
+long-time Kepler evolution.
