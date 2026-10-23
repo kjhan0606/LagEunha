@@ -4638,3 +4638,33 @@ density-field comparisons resume. Candidate pruning or GPU broadphase must
 conservatively retain every possible event; the 14,859,285 root calls and
 321,277,611 boxes cannot be repeated at every production RK stage.
 Accepted physical time is still t=0.00011263377801805954.
+
+## 2026-10-23 bounded source-edge plane-box prefilter experiment
+
+Before the planned 11:00 KST server shutdown, two independent H200 jobs
+compared the exact original-edge interval [500000,500100). Job 435236 used
+the unmodified source-edge root path; job 435235 used the optional
+`COMPACT_SOURCE_EDGE_PLANE_AABB_PREFILTER` compile definition. Both finished
+with Slurm and native exit zero, frozen source inputs, and matching accepted
+source/target/weight seals. The independent comparator passed exact equality
+of all 328 original-edge wire CSV rows, rank by rank. Its receipt is
+`Research/LagForce_curved_events_20261023/power_edge_prefilter_equivalence_500000_500100_20261023.log`.
+
+The prefilter checks an outward-rounded whole-source-edge box against each
+candidate target-plane signed-distance interval. It skips root solving only
+when the interval strictly excludes zero, while retaining exact endpoint
+checks. On these 100 edges it preserved 1,250 candidates and 328 wires;
+root calls fell from 1,250 to 1,100 (12.0%) but root boxes only from
+29,432 to 29,282 (0.51%). The final source-edge log timestamps were
+196.65 s in the baseline and 198.98 s in the prefilter run, with target
+boundary setup ending at about 168 s and 171 s respectively. This small
+concurrent comparison
+does not establish a runtime speedup. The skipped roots were cheap here;
+the prefilter is an experimental, opt-in conservative pruning rule, not a
+production performance result. The normal compile path remains unchanged.
+
+No new physical Kepler step or overlap-mass construction occurred. Next,
+profile root-box concentration and candidate pruning on representative
+bounded segments after the outage, then continue closed positive overlap
+and conservation gates from the preceding section. Do not extrapolate the
+100-edge result to the whole 1,708,672-edge state or to RK stages.

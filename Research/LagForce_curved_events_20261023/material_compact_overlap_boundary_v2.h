@@ -390,6 +390,12 @@ public:
         require(curve.source_epoch==source_epoch_&&curve.source_hash,
             "source edge and complete target boundary use the same accepted epoch");
         Result out;std::vector<size_t>possible;
+#ifdef COMPACT_SOURCE_EDGE_PLANE_AABB_PREFILTER
+        // The outward-rounded box contains the complete canonical curve.
+        // A plane signed-distance ball that excludes zero over this box
+        // cannot contain a source-edge/target-plane intersection.
+        const Box whole_source_box=source_edge_box(curve);
+#endif
         bool complete_candidates=query(source_edge_box(curve),possible);
         if(!complete_candidates){
             for(int parts=2;parts<=128&&!complete_candidates;parts*=2){
@@ -441,6 +447,18 @@ public:
                     trace.source_epoch!=curve.source_epoch)continue;
                 exact_endpoint[trace.source_endpoint]=true;
             }
+#ifdef COMPACT_SOURCE_EDGE_PLANE_AABB_PREFILTER
+            S signed_box=-plane.offset;
+            for(int k=0;k<2;k++)
+                signed_box=signed_box+plane.normal[k]*
+                    (sf::range(Q(whole_source_box.lo[k]),Q(whole_source_box.hi[k]))-
+                     plane.origin[k]);
+            if(cp::strict_sign(signed_box)){
+                require(!exact_endpoint[0]&&!exact_endpoint[1],
+                    "outward source box must retain every exact target-line endpoint");
+                continue;
+            }
+#endif
             auto roots=cp::intersections(plane,curve,root_budget,
                 exact_endpoint[0],exact_endpoint[1]);out.root_calls++;out.root_boxes+=roots.boxes;
             if(!roots.complete){
