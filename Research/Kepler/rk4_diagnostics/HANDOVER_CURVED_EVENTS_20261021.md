@@ -1,5 +1,144 @@
 # CURRENT DRIVER UPDATE 2026-10-22: ACTUAL STEP5 TRIAL-WEIGHT CHART/DEGREE PASSED; MASS LAW AND REMAP NOT YET SOLVED
 
+## Current checkpoint 2026-10-23: [0,1450000) cut order and [0,750000) triangle routing
+
+The direct independent whole-prefix cut audit passed [0,1450000):
+2,115,734 canonical events became 2,113,694 individual ordered cuts
+and 2,040 grouped target-node events. Its input range chunks have native
+exit 0, frozen source snapshots, independent original-edge presence and
+exterior-incidence proofs, binary128 endpoint roundtrips, native canonical
+reconciliation, independent canonical-versus-wire audits, and parameter-order
+preflights with zero nonnode overlapping root intervals. The last separate
+source chunks through [1600000,1650000) also passed this source/canonical
+preflight chain, but native cut order beyond [0,1450000) is still pending.
+The last two H200 source jobs 435175 ([1650000,1700000)) and 435176
+([1700000,1708672)) were running at this checkpoint; all earlier submitted
+source jobs 435165–435174 completed with Slurm/native exit 0.
+
+`audit_power_triangle_route_chunks.py` now verifies contiguity as well as
+each native route receipt. Its joint audit proved [0,750000) without a gap:
+1,186,024 canonical events, 1,183,984 individual cuts, 2,040 grouped
+target-node events and 2,359,784 sent/received triangle-incidence wires.
+The [750000,800000) route is running on LagEunha. These route receipts
+prove boundary cut ownership, not closed positive overlap regions or
+remapped masses. The accepted physical state remains
+t=0.00011263377801805954; no screened fixed-M law, overlap integral,
+conservative remap, RK4 advance, or long-time Kepler stability is claimed.
+
+## Current checkpoint 2026-10-23: ordered-cut prefix [0,1100000), remaining source ranges queued
+
+The direct joint original-edge presence/exterior-incidence and independent
+canonical-versus-wire audits prove a contiguous [0,1000000) source-event
+ledger: 3,017,218 incidence wires and 1,513,721 canonical events. The
+additional [1000000,1050000), [1050000,1100000), and [1100000,1150000)
+root60 source chunks each completed with native exit 0, frozen inputs,
+binary128 endpoint checks, native reconciliation, independent event audit,
+and zero overlapping root-interval pairs in parameter-order preflight.
+The first two also passed frozen native cut order and independent cut audit.
+The direct whole-prefix cut audit now proves [0,1100000): 1,647,573
+canonical events, 1,645,533 individual ordered cuts and 2,040 grouped
+target-node events. Native cut order for [1100000,1150000) is active.
+
+Native original-triangle boundary routing and independent audits now prove
+the contiguous [0,150000) block and a separate [500000,750000) block.
+The [150000,200000) route is active. A separate H200 source-edge job
+435163 for [1100000,1150000) completed 0 in 00:03:40. The remaining
+disjoint original-edge source runs [1150000,1708672) were submitted as
+12 H200 Slurm jobs 435165–435176, four MPI ranks, four OpenMP threads per
+rank, `--gres=gpu:H200:1` each; 435165 and 435166 were running at this
+checkpoint, and the rest were pending. Each run still needs the full
+frozen-input and independent source/canonical/cut audit chain. A terminal
+Slurm state or a printed native event count alone does not accept a chunk.
+
+The binary128 source-edge certificate remains a reference-quality geometry
+path, not yet a feasible production path for every RK stage: a single
+heavy 50,000-edge H200 chunk took 01:33:24 with four OpenMP threads per
+rank, before overlap, remap, or mass-law work. The eight-thread H200 trial
+completed a different [800000,850000) chunk in 00:40:09, so the wall-time
+ratio is not a controlled speedup measurement. Workload-normalized
+root-box throughput improved, but the CUDA+MPI/OpenMP production path still
+needs algorithmic acceleration before a long Kepler evolution is credible.
+Accepted physical time remains t=0.00011263377801805954. No screened
+fixed-M mass law, positive overlap integration, conservative remap, RK4
+advance, or t>6 stability result has been accepted.
+
+## Current checkpoint 2026-10-23: contiguous [0,800000) source events and ordered cuts
+
+The separate H200 root-width 2^-60 reruns of [550000,600000) (job 435136,
+01:08:32) and [600000,650000) (job 435127, 01:33:24) both completed with
+Slurm/native exit 0. The earlier 2^-40 nonnode root-interval overlaps in
+these ranges no longer occur: independent parameter-order preflight found
+zero overlapping root-interval pairs in each complete revised ledger. The
+two additional LagEunha 2^-60 runs [750000,800000) and [850000,900000)
+also completed native exit 0 and passed the same frozen-source,
+original-edge presence/exterior-incidence, binary128 endpoint, native
+reconciliation, independent canonical-versus-wire, preflight, native cut
+order, and independent cut-audit chain. All four revised cut-order runs
+exited 0; their exact inputs were frozen. This resolves the prior
+[550000,650000) cut-order gap without reusing the failed 2^-40 order.
+
+The joint independent original-edge and canonical-versus-wire audits now
+prove a contiguous [0,800000) ledger: 2,489,402 incidence wires and
+1,249,813 canonical events. The joint native cut-order audit proves all
+1,249,813 events as 1,247,773 individual ordered cuts plus 2,040 grouped
+target-node events. The additional [850000,900000) block has 135,924 wires,
+67,962 canonical events and 67,962 individual cuts, but remains separate
+until [800000,850000) passes. H200 eight-thread job 435139 for that gap
+completed in 00:40:09 with Slurm/native exit 0. Its 124,044 incidence
+wires passed source/presence/exterior and 248,088 binary128 endpoint audits;
+native reconciliation and the independent canonical-versus-wire audit
+proved 62,022 events. Parameter-order preflight found zero overlapping
+root-interval pairs. Native cut order is running on LagEunha, so the
+contiguous accepted cut prefix remains [0,800000). Workload-normalized
+timing suggests higher per-rank root-box throughput at eight threads, but
+the range and hardware differences preclude a clean causal speedup claim.
+
+`probe_power_triangle_route_root60_v1.cpp` and its separate LagEunha runner
+read the revised canonical ledger for the next original-triangle boundary
+route. The route auditor accepts both the old and 2^-60 ledger names;
+the old [0,50000) route still passes its independent audit. New 2^-60
+triangle-route jobs for [500000,550000) and [550000,600000) both exited 0,
+froze their inputs, and passed the independent route audit. The first routed
+86,984 canonical events (86,424 cuts and 560 grouped target-node events)
+with 170,596 sent and received triangle-incidence wires; the second routed
+71,492 cuts with 142,984 sent and received wires. A further independent
+route for [600000,650000) also exited 0, froze its inputs, and passed the
+independent audit: 63,791 cuts, 127,582 sent and received wires. A route
+for [650000,700000) is running. The independent [900000,950000)
+source-edge run on LagEunha and H200 job 435158 for [950000,1000000)
+are running; neither is yet accepted.
+These are geometric trial weights at accepted
+physical time t=0.00011263377801805954. No fixed-M mass-law, overlap mass,
+conservative remap, RK4 step, or long-time Kepler stability follows from
+these event and cut-order gates.
+
+## Current checkpoint 2026-10-23: independently audited [650000,750000) cut order
+
+The two LagEunha root-width 2^-60 source-edge runs for [650000,700000)
+and [700000,750000) both exited 0. Their exact source inputs were frozen.
+Original-edge presence/exterior-incidence and binary128 printed-endpoint
+roundtrip audits passed: respectively 127,084 and 126,954 incidence wires,
+with 254,168 and 253,908 roundtripped endpoints. Native reconciliation
+exited 0, its input snapshots were frozen, and the independent
+canonical-versus-wire audit proved 63,542 and 63,477 events. The parameter
+order preflight found zero overlapping root-interval pairs in both ranges.
+Both native MPI4 cut-order runs then exited 0, froze their inputs, and passed
+the independent cut audit: all 127,019 events became 127,019 individual
+ordered cuts, with zero grouped target-node events. This is a separately
+proved [650000,750000) cut-order block; the [550000,650000) 2^-60 H200
+reruns remain incomplete, so the contiguous accepted cut prefix is still
+[0,550000). The 2^-40 event ledger remains contiguous through [0,650000).
+
+The [750000,800000) 2^-60 source-edge run remains active on LagEunha.
+H200 jobs 435127 ([600000,650000)) and 435136 ([550000,600000)) remain
+active, and the independent eight-thread H200 throughput trial 435139
+([800000,850000)) is pending. An additional independent 2^-60 source-edge
+run for [850000,900000) was started on LagEunha after the two cut jobs
+completed. None of these running ranges is accepted until native exit 0 and
+the same frozen-input and independent audit chain passes. The accepted
+physical state remains t=0.00011263377801805954; no fixed-M mass-law,
+overlap/remap, RK4 step, or long-time physical Kepler result is claimed.
+
 ## Current checkpoint 2026-10-23: cut-order prefix and root-interval refinement
 
 The accepted physical state is still t=0.00011263377801805954. These
@@ -7,19 +146,31 @@ calculations use geometric trial weights; no screened fixed-M mass-law solve,
 conservative remap, RK4 advance, or t=6–10 Kepler accuracy claim has occurred.
 The original OpenMP+MPI+CUDA source remains unchanged.
 
-The frozen, independently checked source-edge event ledger covers the contiguous
-[0,550000) original-edge range (1,837,220 incidence wires, 923,722 canonical
-events). The independent [600000,650000) ledger also passed its original-edge
-presence, exterior incidence, binary128 serialization, native reconciliation,
-and canonical-vs-wire checks (127,582 wires, 63,791 canonical events), but is
-disjoint until [550000,600000) H200 job 435106 completes. Job 435106 was still
-running at this checkpoint. Separate root-width 2^-60 H200 trial job 435126
-was submitted for [500000,550000); it writes a new directory and leaves the
-older sealed ledger intact.
+The frozen, independently checked source-edge event ledger now covers the
+contiguous [0,650000) original-edge range (2,107,786 incidence wires,
+1,059,005 canonical events), proven by the joint original-edge presence,
+exterior incidence and canonical-versus-wire audits. H200 job 435106 completed
+[550000,600000) in 01:08:49, Slurm/native exit 0; its 142,984 wires passed
+all 285,968 binary128 endpoint roundtrips and native reconciliation yielded
+71,492 canonical events. Its 2^-40 parameter-order preflight found 348
+**nonnodal overlapping root-interval pairs**, so it is only a valid event
+ledger, not an accepted cut ledger. Separate 2^-60 H200 job 435136 was
+submitted for this range and started running.
+
+Separate root-width 2^-60 H200 trial job 435126
+completed [500000,550000) in 00:37:22 with Slurm/native exit 0. The new
+directory leaves the older sealed ledger intact. Its 171,156 wires passed
+frozen-source, original-edge presence/exterior incidence and all 342,312
+binary128 printed endpoint roundtrips. Native reconciliation exited 0 with
+86,984 canonical events; an independent canonical-vs-wire audit passed.
+The parameter-order preflight found 840 overlapping endpoint-marked pairs
+and **zero nonnode overlapping pairs**, resolving the one nonnode conflict
+in the earlier 2^-40 ledger. Native C++ cut order then exited 0, froze its
+inputs, and passed the independent ordered-cut audit.
 
 The native chart cut-order gate now has a frozen, independently audited
-contiguous [0,500000) prefix: 836,738 canonical events became 835,258
-individual ordered cuts plus 1,480 grouped target-node endpoint events.
+contiguous [0,550000) prefix: 923,722 canonical events became 921,682
+individual ordered cuts plus 2,040 grouped target-node endpoint events.
 The finite LagEunha cut-order batch completed. This is
 cut order only, not a triangle route, positive overlap volume, or mass solve.
 
@@ -41,14 +192,20 @@ the actual call uses local edge 0 of original triangle 119232, as confirmed
 by the source incidence CSV and edge ID 600048. At tighter 2^-80 some
 unrelated segment intersections fail the strict root-width gate, so 2^-60
 is the current trial, not a blanket mandate to tighten indefinitely.
-Do not order cuts
-from the affected ranges until a complete revised ledger passes the same
-checks. The 2^-60 producer and its reconciliation/cut-order runners have
+Do not order cuts from the remaining affected [550000,650000) ranges until
+their complete revised ledgers pass the same checks. The 2^-60 producer and
+its reconciliation/cut-order runners have
 separate filenames; original production inputs and sealed results are intact.
 H200 job 435127 was submitted for independent [600000,650000) root60
-production; it was pending at this checkpoint. Separate LagEunha root60
-production was started for [650000,700000) and [700000,750000) with four
-MPI ranks and four OpenMP threads per rank in each independent job.
+production; it is running. Separate LagEunha root60
+production is running for [650000,700000), [700000,750000), and
+[750000,800000), each with four MPI ranks and four OpenMP threads per rank.
+To probe CPU utilization in the otherwise unchanged CUDA+MPI producer,
+`run_power_v52_edge_chunk_h200_sm90_root60_omp8.sbatch` requests
+`--gres=gpu:H200:1`, eight CPUs/threads per rank and a distinct output
+directory. Job 435139 for independent [800000,850000) was submitted and
+pending at this checkpoint. This is a throughput trial; no speedup claim
+is made until its native result and workload-normalized timing pass.
 Native triangle routing for the already ordered [0,50000) range completed
 on LagEunha with native exit 0 and frozen inputs. The independent
 `audit_power_triangle_route_chunks.py` verified 86,313 canonical events,
@@ -4403,3 +4560,111 @@ heat/rotation storage, cap/order/tolerances to manufacture acceptance.
 Only225/137 plus same tiny-lens regression next. Fail at the fixed budget
 with a dominant-term witness. No weight Newton/compression/evolution until
 the restricted physical-error contract passes. Goal final scope unchanged.
+
+## 2026-10-23 original source-edge checkpoint
+
+The accepted physical state remains t=0.00011263377801805954. This is a
+geometric trial-weight checkpoint, not a new Kepler evolution or a physical
+solution at t=6-10. The original OpenMP+MPI+CUDA application was not changed.
+
+All 35 frozen source-edge chunks were checked together across the exact
+contiguous interval [0,1708672). The joint original-edge presence and
+exterior-incidence audit passed (1,708,672 edges, 4,916,796 wire rows).
+The independent canonical-versus-wire audit passed (2,463,510 canonical
+events). The binary128 wire roundtrip passed in all 35 chunks (9,833,592
+endpoints). These are geometric event-ledger checks; they do not prove
+positive source/target overlap mass or conservation through a time step.
+Receipts are in Research/LagForce_curved_events_20261023/full_source_*
+audit_0_1708672_20261023.log.
+
+At that checkpoint, the separate ordered-cut joint audit covered
+[0,1550000), and the separate triangle-route joint audit covered
+[0,800000). Both were partial prefixes of the full source-edge range.
+Do not restart the accepted Kepler physical state for these audits.
+
+## 2026-10-23 complete source-edge cut order and route continuation
+
+All 35 frozen native cut-order chunks now pass one independent joint audit
+over [0,1708672), with no gap or overlap: 2,463,510 canonical events are
+represented by 2,461,470 individual cuts and 2,040 grouped target-node
+events. The exact receipt is
+Research/LagForce_curved_events_20261023/full_cut_order_audit_0_1708672_20261023.log.
+
+At that checkpoint, the native triangle-route joint audit covered [0,950000), with
+1,446,739 canonical events, 1,444,699 ordered cuts, 2,040 grouped target
+nodes, and 2,881,214 sent and received triangle-incidence wires. Its exact
+receipt is Research/LagForce_curved_events_20261023/
+full_triangle_route_audit_0_950000_20261023.log. The subsequent disjoint
+route chunks were still in progress then; their completed full-range audit
+appears below.
+
+The 35 source-edge manifests sum to 14,859,285 root calls and 321,277,611
+root boxes at this one accepted physical state. This reference geometry path
+is too costly to repeat unchanged at every RK stage; candidate pruning and
+production-path acceleration remain necessary. These counts do not show a
+physical mass law, positive overlap integration, conservative remap, or
+long-time Kepler evolution.
+
+## 2026-10-23 complete native triangle route and sparse cut cache
+
+The final disjoint native route jobs 435203 and 435207-435217 completed with
+Slurm/native exit zero. Every one of the 35 route chunks has frozen input
+copies and passes its independent native receipt audit. Their direct joint
+audit proves the full contiguous [0,1708672) original-edge interval:
+2,463,510 canonical events, 2,461,470 individual ordered cuts, 2,040 grouped
+target-node events, and 4,914,756 triangle-incidence wires sent and received.
+The exact receipt is Research/LagForce_curved_events_20261023/
+full_triangle_route_audit_0_1708672_20261023.log.
+
+The new export_power_triangle_cuts_v1.py materializes sparse, oriented
+per-triangle boundary-cut CSVs from frozen canonical ledgers after checking
+the corresponding native route. It avoids rerunning the original source-edge
+root search to recover these cuts. The separate
+audit_power_triangle_cut_index_v1.py checks input/output hashes, native
+sender/receiver counts, bounded edge ownership, and strict ordered cuts.
+Its direct joint audit passes all 35 intervals and all 4,914,756 rows;
+receipt: Research/LagForce_curved_events_20261023/
+full_triangle_cut_index_audit_0_1708672_20261023.log. The large per-chunk
+CSV data stay in the GPFS workroot, not Git. The first two representative
+exports were made before the exporter began recording its own source hash;
+their canonical/native/output hashes and independent audits are retained.
+
+Next physics gate: construct closed positive source/target overlap regions
+on a bounded original triangle, integrate density and conserved fields with
+target-specific cold-error bounds, then prove whole-source and whole-target
+marginals. Only after that should the screened fixed-M weight solve,
+conservative remap, RK4 evolution and Kepler t=6/8/10 and GIZMO-longest
+density-field comparisons resume. Candidate pruning or GPU broadphase must
+conservatively retain every possible event; the 14,859,285 root calls and
+321,277,611 boxes cannot be repeated at every production RK stage.
+Accepted physical time is still t=0.00011263377801805954.
+
+## 2026-10-23 bounded source-edge plane-box prefilter experiment
+
+Before the planned 11:00 KST server shutdown, two independent H200 jobs
+compared the exact original-edge interval [500000,500100). Job 435236 used
+the unmodified source-edge root path; job 435235 used the optional
+`COMPACT_SOURCE_EDGE_PLANE_AABB_PREFILTER` compile definition. Both finished
+with Slurm and native exit zero, frozen source inputs, and matching accepted
+source/target/weight seals. The independent comparator passed exact equality
+of all 328 original-edge wire CSV rows, rank by rank. Its receipt is
+`Research/LagForce_curved_events_20261023/power_edge_prefilter_equivalence_500000_500100_20261023.log`.
+
+The prefilter checks an outward-rounded whole-source-edge box against each
+candidate target-plane signed-distance interval. It skips root solving only
+when the interval strictly excludes zero, while retaining exact endpoint
+checks. On these 100 edges it preserved 1,250 candidates and 328 wires;
+root calls fell from 1,250 to 1,100 (12.0%) but root boxes only from
+29,432 to 29,282 (0.51%). The final source-edge log timestamps were
+196.65 s in the baseline and 198.98 s in the prefilter run, with target
+boundary setup ending at about 168 s and 171 s respectively. This small
+concurrent comparison
+does not establish a runtime speedup. The skipped roots were cheap here;
+the prefilter is an experimental, opt-in conservative pruning rule, not a
+production performance result. The normal compile path remains unchanged.
+
+No new physical Kepler step or overlap-mass construction occurred. Next,
+profile root-box concentration and candidate pruning on representative
+bounded segments after the outage, then continue closed positive overlap
+and conservation gates from the preceding section. Do not extrapolate the
+100-edge result to the whole 1,708,672-edge state or to RK stages.

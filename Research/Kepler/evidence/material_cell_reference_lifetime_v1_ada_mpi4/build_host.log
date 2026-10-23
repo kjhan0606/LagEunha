@@ -1,0 +1,10 @@
+In file included from material_cell_continuation_common.h:36,
+                 from run_cell_reference_continuation_20261022.cpp:1:
+material_cell_device_plan.h: In constructor 'cell_native::DevicePlan::DevicePlan(const material_distributed::Mass&, const std::string&)':
+material_cell_device_plan.h:21:22: error: too few arguments to function 'int MPI_Allreduce(const void*, void*, int, MPI_Datatype, MPI_Op, MPI_Comm)'
+   21 |         MPI_Allreduce(&local,&aggregate,1,MPI_UINT64_T,M.layout.comm);
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from material_cell_continuation_common.h:2:
+/opt/ohpc/pub/intel/oneapi/mpi/2021.17/include/mpi.h:1188:5: note: declared here
+ 1188 | int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op,
+      |     ^~~~~~~~~~~~~
