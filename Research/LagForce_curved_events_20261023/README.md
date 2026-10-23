@@ -40,7 +40,13 @@ canonical events, and 9,833,592 binary128 endpoints checked by roundtrip.
 The audit receipts are stored beside this README. The full ordered-cut
 audit now covers `[0,1708672)`: 2,461,470 individual cuts and 2,040 grouped
 target-node events account for every canonical event. Native triangle
-routing has been independently audited for `[0,950000)` as one contiguous
-block. These gates
-do not construct positive source/target overlap masses or advance the
-physical Kepler state.
+routing has been independently audited for the complete `[0,1708672)`
+range: 4,914,756 triangle-incidence wires sent and received. The sparse
+per-triangle cut index reconstructed from frozen canonical ledgers passes a
+separate full-range audit with the same 4,914,756 rows. The H200 route runner
+reuses a previously verified SM90 CUDA library. Its Slurm jobs require
+`--gres=gpu:H200:1` and retain their own source snapshots and native logs.
+The sparse index stores ordered boundary cuts for later overlap work; its
+large CSV data remain on GPFS. These geometry gates do not construct closed
+positive source/target overlap regions or masses, solve the weight law,
+advance RK4, or establish long-time Kepler stability.

@@ -4590,13 +4590,13 @@ represented by 2,461,470 individual cuts and 2,040 grouped target-node
 events. The exact receipt is
 Research/LagForce_curved_events_20261023/full_cut_order_audit_0_1708672_20261023.log.
 
-The native triangle-route joint audit currently covers [0,950000), with
+At that checkpoint, the native triangle-route joint audit covered [0,950000), with
 1,446,739 canonical events, 1,444,699 ordered cuts, 2,040 grouped target
 nodes, and 2,881,214 sent and received triangle-incidence wires. Its exact
 receipt is Research/LagForce_curved_events_20261023/
-full_triangle_route_audit_0_950000_20261023.log. Subsequent disjoint route
-chunks are in progress on LagEunha; require native exit zero, frozen inputs,
-and independent joint audit before extending the accepted prefix.
+full_triangle_route_audit_0_950000_20261023.log. The subsequent disjoint
+route chunks were still in progress then; their completed full-range audit
+appears below.
 
 The 35 source-edge manifests sum to 14,859,285 root calls and 321,277,611
 root boxes at this one accepted physical state. This reference geometry path
@@ -4604,3 +4604,37 @@ is too costly to repeat unchanged at every RK stage; candidate pruning and
 production-path acceleration remain necessary. These counts do not show a
 physical mass law, positive overlap integration, conservative remap, or
 long-time Kepler evolution.
+
+## 2026-10-23 complete native triangle route and sparse cut cache
+
+The final disjoint native route jobs 435203 and 435207-435217 completed with
+Slurm/native exit zero. Every one of the 35 route chunks has frozen input
+copies and passes its independent native receipt audit. Their direct joint
+audit proves the full contiguous [0,1708672) original-edge interval:
+2,463,510 canonical events, 2,461,470 individual ordered cuts, 2,040 grouped
+target-node events, and 4,914,756 triangle-incidence wires sent and received.
+The exact receipt is Research/LagForce_curved_events_20261023/
+full_triangle_route_audit_0_1708672_20261023.log.
+
+The new export_power_triangle_cuts_v1.py materializes sparse, oriented
+per-triangle boundary-cut CSVs from frozen canonical ledgers after checking
+the corresponding native route. It avoids rerunning the original source-edge
+root search to recover these cuts. The separate
+audit_power_triangle_cut_index_v1.py checks input/output hashes, native
+sender/receiver counts, bounded edge ownership, and strict ordered cuts.
+Its direct joint audit passes all 35 intervals and all 4,914,756 rows;
+receipt: Research/LagForce_curved_events_20261023/
+full_triangle_cut_index_audit_0_1708672_20261023.log. The large per-chunk
+CSV data stay in the GPFS workroot, not Git. The first two representative
+exports were made before the exporter began recording its own source hash;
+their canonical/native/output hashes and independent audits are retained.
+
+Next physics gate: construct closed positive source/target overlap regions
+on a bounded original triangle, integrate density and conserved fields with
+target-specific cold-error bounds, then prove whole-source and whole-target
+marginals. Only after that should the screened fixed-M weight solve,
+conservative remap, RK4 evolution and Kepler t=6/8/10 and GIZMO-longest
+density-field comparisons resume. Candidate pruning or GPU broadphase must
+conservatively retain every possible event; the 14,859,285 root calls and
+321,277,611 boxes cannot be repeated at every production RK stage.
+Accepted physical time is still t=0.00011263377801805954.
