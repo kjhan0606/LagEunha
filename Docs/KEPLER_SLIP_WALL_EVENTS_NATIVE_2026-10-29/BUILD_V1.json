@@ -1,0 +1,33 @@
+{
+  "observed_at": "2026-10-29T08:15:39.987904+09:00",
+  "project": "LagEunha native CUDA+MPI+OpenMP bounded W0 RK4 events",
+  "source_base": "Exact RHS diagnostic source from Docs/KEPLER_SLIP_WALL_NATIVE_2026-10-29/RHS_PROBE_BUILD.json",
+  "base_source_hashes": {
+    "Exam/exam.c": "419daf0839c529808c50d868a4c1a0136625b27e452a2420b7f095a4ca8ba935",
+    "Exam/exam_gpu.cu": "51131a9e715147bc69041714d773938158d754f53e7a389646751ee1661ffc8b",
+    "Exam/Makefile": "ff69856d858667f28ca3f2cadedc68d8c24fc474f129dda1b8859997064a37ca"
+  },
+  "event_patch_sha256": "dc7e6cb873e0b7527e39ac2347f76feae8eea10e0b28ef6c5d1f8d70e0e0bdc4",
+  "patch_application": "GNU patch -p1 or git apply --unidiff-zero, only after base hash checks; copy Exam/gfs_wall_events.inc and gfs_wall_dense.h alongside the C-compatible kepler_slip_wall.h",
+  "patch_reconstruction_exact": true,
+  "candidate_manifest": {
+    "role": "Frozen first native RK4 event implementation; no production activation",
+    "files": {
+      "Exam/exam.c": "328982249341cc46b365eb89850683d575ebe54029e453159e73a35297b3ece7",
+      "Exam/exam_gpu.cu": "09a2d6a16d44f03534d38ea6fdfbaa556736d62fad7504981258a11ffbf6f5a3",
+      "Exam/gfs_wall_events.inc": "7f1cdd6408b950b6220160ed002d1a04da1163f86f2ce2f2980012616bcaa3a6",
+      "Exam/gfs_wall_dense.h": "01ca236d0eb731b43c26679b84509bef3e92cfc5872adadb4f304dfba5adb323",
+      "Exam/kepler_slip_wall.h": "4032460b4631bb430dea0c61d36de51118918fa120efb826242b38fbf942cc25",
+      "Exam/Makefile": "fd4d388ed6e533eb56e553f52d440cec4de4cd32f74761f9b9841745c5265dac",
+      "eunha2.exe": "32fa3fe90c4c3a41126df1802c81ea382d6d8af2d4dbb3470c5c14f6bd0b9f35"
+    },
+    "source_origin": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/source_origin.json"
+  },
+  "build_script": "#!/bin/bash\nset -euo pipefail\ncd /gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/project\nmodule purge\nmodule load intel/tbb/2022.3 intel/compiler-rt/2025.3.0 intel/umf/1.0.2 intel/compiler/2025.3.0 intel/mpi/2021.17 gnu13/13.2.0 cuda/13.0.2\nhostname > ../build_host.txt\nmodule list > ../build_modules.txt 2>&1\nmake -C Exam/KH -j2 USE_CUDA=1 GFS_VARPRESS_W0=1 libkh.a > ../build_kh.log 2>&1\nmake -C Exam -j2 USE_CUDA=1 GFS_VARPRESS_W0=1 libexam.a > ../build_exam.log 2>&1\nmake -j2 USE_CUDA=1 GFS_VARPRESS_W0=1 this > ../build_link.log 2>&1\nsha256sum eunha2.exe Exam/exam.c Exam/exam_gpu.cu Exam/exam_gpu_extract.c Exam/exam.o Exam/exam_gpu.o > ../build_outputs.sha256\n",
+  "build_host": "LagEunha",
+  "modules": "\nCurrently Loaded Modules:\n  1) intel/tbb/2022.3             4) intel/compiler/2025.3.0   7) cuda/13.0.2\n  2) intel/compiler-rt/2025.3.0   5) intel/mpi/2021.17\n  3) intel/umf/1.0.2              6) gnu13/13.2.0\n\n \n\n",
+  "frozen_source_and_binary": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v1",
+  "linked_archives_origin": "Previous frozen first-RHS build cached_libraries.json; unchanged non-Exam archives and KH archive",
+  "production_modified": false,
+  "scope": "Restricted one-MPI-rank W0 event implementation, physically tested on late Q2 fixture. Not a new Q1 long-time result."
+}

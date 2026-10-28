@@ -1,5 +1,7 @@
 # Native slip-wall impulse primitive, 2026-10-29
 
+Later update: the opt-in native RK4 event controller and its local GPU replay, rollback, timestep and independent wall-traction checks are now recorded in [the frozen v1 integration bundle](../KEPLER_SLIP_WALL_EVENTS_NATIVE_2026-10-29/README.md). The remaining-integration list below preserves the earlier planning state; Q1 and long-time validation remain pending.
+
 This is a new opt-in component for the user's existing CUDA+MPI+OpenMP bounded Kepler solver. It is not installed into a production executable. The published fixed-polygon source overlay and the failed periodic t=3 checkpoint remain unchanged.
 
 `Exam/kepler_slip_wall.h` is shared host/device C++ arithmetic. It accepts an already located, committed impact at a stationary boundary and returns reflected velocity, wall impulse, wall torque impulse about the supplied center, and kinetic roundoff. It neither moves a generator nor changes its mass, thermal energy or weights. It adds no steering, viscosity or energy floor. Pressure traction/work remains a separate continuous RHS ledger.

@@ -1,0 +1,165 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10242,0 +10243 @@
++static int gfs_wall_runtime_active=0,gfs_wall_stage_failed=0;
+@@ -10253,0 +10255,4 @@
++			if(penetration>=0 && gfs_wall_runtime_active){
++                if(!isfinite(penetration) || penetration>1.e-6){gfs_wall_stage_failed=1;return;}
++                continue; /* trial predictor only; final domain checked before commit */
++            }
+@@ -10662,0 +10668 @@
++#include "gfs_wall_events.inc"
+@@ -10868,0 +10875,2 @@
++    GfsWallEventStep wall;
++    gfs_wall_begin(simpar,&wall,postStage);
+@@ -10869,0 +10878 @@
++    gfs_wall_restart(&wall);
+@@ -10877,0 +10887,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -10885 +10897,4 @@
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+@@ -10933 +10948,4 @@
+-    if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
++    if(wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;if(!gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;}
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+@@ -10954,0 +10973,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
++#endif
+@@ -10988,0 +11010,3 @@
++#ifdef USE_CUDA
++    gfs_wall_pressure_stage(simpar,&wall,Dtime,1.0/6.0);
++#endif
+@@ -11004,0 +11029,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11007,0 +11035,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11022 +11052,4 @@
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+@@ -11044 +11077,4 @@
+-    if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
++    if(wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;if(!gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;}
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+@@ -11050,0 +11087,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11067,0 +11107,3 @@
++#ifdef USE_CUDA
++    gfs_wall_pressure_stage(simpar,&wall,Dtime,2.0/6.0);
++#endif
+@@ -11083,0 +11126,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11086,0 +11132,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11101 +11149,4 @@
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+@@ -11123 +11174,4 @@
+-    if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
++    if(wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;if(!gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;}
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+@@ -11129,0 +11184,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11146,0 +11204,3 @@
++#ifdef USE_CUDA
++    gfs_wall_pressure_stage(simpar,&wall,Dtime,2.0/6.0);
++#endif
+@@ -11162,0 +11223,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11165,0 +11229,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11180 +11246,4 @@
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+@@ -11202 +11271,4 @@
+-    if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
++    if(wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;if(!gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;}
++#endif
++#ifdef USE_CUDA
++    if(tx.on || wall.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+@@ -11208,0 +11281,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11225,0 +11301,3 @@
++#ifdef USE_CUDA
++    gfs_wall_pressure_stage(simpar,&wall,Dtime,1.0/6.0);
++#endif
+@@ -11241,0 +11320,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11272,0 +11354,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11274,0 +11359,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11311,0 +11399,3 @@
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11314,0 +11405,4 @@
++
++#ifdef USE_CUDA
++    if(wall.on && !gfs_wall_decide(simpar,&wall,Dtime)) goto gfs_wall_trial_rejected;
++#endif
+@@ -11567,0 +11662 @@
++    gfs_wall_commit(simpar,&wall,Dtime);
+@@ -11570,0 +11666,5 @@
++gfs_wall_trial_rejected:
++    gfs_wall_reject(simpar,&wall,Dtime);
++    sbp=(treevorostressrk4particletype*)VORORK4_TBP(simpar);
++    Dtime=0;
++    goto gfs_rk4_trial_restart;
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -106 +106,3 @@
+-    double probe_band=0.;
++    const char *events=getenv("GFS_KEPLER_WALL_EVENTS");
++    const int wall_events=events && strcmp(events,"1")==0;
++    double probe_band=wall_events?1.e-6:0.;
+--- a/Exam/Makefile
++++ b/Exam/Makefile
+@@ -132 +132 @@
+-exam.o: gfs_thermal64.h gfs_thermal64_native.inc gfs_rk4_direct_u.inc gfs_rk4_transaction.inc gfs_ssprk3.inc gfs_moment_native.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_native.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_native.inc gfs_enriched_coupling.h gfs_enriched_coupling_native.inc
++exam.o: gfs_wall_events.inc gfs_wall_dense.h kepler_slip_wall.h gfs_thermal64.h gfs_thermal64_native.inc gfs_rk4_direct_u.inc gfs_rk4_transaction.inc gfs_ssprk3.inc gfs_moment_native.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_native.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_native.inc gfs_enriched_coupling.h gfs_enriched_coupling_native.inc

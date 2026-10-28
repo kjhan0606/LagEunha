@@ -1,0 +1,270 @@
+{
+  "passed": true,
+  "checks": {
+    "actual_wall_traction_matches_force_sum_ledger": true,
+    "all_captures_noninvasive_full_restart_exact": true,
+    "wall_work_is_geometric_relative_sweep_correction": true
+  },
+  "h": 9.999965300266922e-10,
+  "stages": [
+    {
+      "call": 1,
+      "rows": 1090,
+      "wall_facets": 1024,
+      "wall_force_and_torque": [
+        -4.6348504630179694e-07,
+        -6.23900184317486e-08,
+        5.300521662794439e-11
+      ],
+      "wall_perimeter": 17.278732489024367,
+      "maximum_relative_sweep_work_formula_error": 0.0
+    },
+    {
+      "call": 2,
+      "rows": 1090,
+      "wall_facets": 1024,
+      "wall_force_and_torque": [
+        -4.6348504629044723e-07,
+        -6.23900185007013e-08,
+        5.3005217479552045e-11
+      ],
+      "wall_perimeter": 17.278732489024385,
+      "maximum_relative_sweep_work_formula_error": 0.0
+    },
+    {
+      "call": 3,
+      "rows": 1090,
+      "wall_facets": 1024,
+      "wall_force_and_torque": [
+        -4.6348504629044723e-07,
+        -6.23900185007013e-08,
+        5.3005217479552045e-11
+      ],
+      "wall_perimeter": 17.278732489024385,
+      "maximum_relative_sweep_work_formula_error": 0.0
+    },
+    {
+      "call": 4,
+      "rows": 1090,
+      "wall_facets": 1024,
+      "wall_force_and_torque": [
+        -4.634850462790986e-07,
+        -6.239001856966096e-08,
+        5.300521833862124e-11
+      ],
+      "wall_perimeter": 17.27873248902437,
+      "maximum_relative_sweep_work_formula_error": 0.0
+    }
+  ],
+  "wall_impulse_independent_faces": [
+    -4.634834380097081e-16,
+    -6.238980200900358e-17,
+    5.3005033554105796e-20
+  ],
+  "wall_impulse_native_ledger": [
+    -4.634834380097096e-16,
+    -6.238980200899055e-17,
+    5.3005033557223883e-20
+  ],
+  "absolute_difference": [
+    1.447914132190324e-30,
+    1.3031323486210135e-29,
+    3.1180850409639962e-30
+  ],
+  "declared_tolerance": [
+    2.2485017794756624e-23,
+    2.2485017794756624e-23,
+    6.183379893558072e-23
+  ],
+  "capture_full_restart_comparisons": [
+    {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/events_no_hit/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/wall_traction/call1/khout.011581.dat"
+      ],
+      "sha256": [
+        "43640185874f5cd49f3cf0c2f0bbde4d5a4fdb23690d192bba89725f8d10f5d0",
+        "82e6297a32b28db21b4d9f6993f06691fde78bddac28798d36c5e3f3d4863474"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    },
+    {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/events_no_hit/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/wall_traction/call2/khout.011581.dat"
+      ],
+      "sha256": [
+        "43640185874f5cd49f3cf0c2f0bbde4d5a4fdb23690d192bba89725f8d10f5d0",
+        "dfe6d28c48d4cfb81460de471c9a0c2ba1acfb7986700266c818b9d635840415"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    },
+    {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/events_no_hit/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/wall_traction/call3/khout.011581.dat"
+      ],
+      "sha256": [
+        "43640185874f5cd49f3cf0c2f0bbde4d5a4fdb23690d192bba89725f8d10f5d0",
+        "4f6e0f986890992b67af75b3a4a63a09c738d72b437966374b0253f6d8586281"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    },
+    {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/events_no_hit/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/wall_traction/call4/khout.011581.dat"
+      ],
+      "sha256": [
+        "43640185874f5cd49f3cf0c2f0bbde4d5a4fdb23690d192bba89725f8d10f5d0",
+        "a3ee790f3f47685e2b933c8c06cd7e593e434f5442b8f2d48a1c1f83a58bb250"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    }
+  ],
+  "scope": "All actual boundary faces at four actual native RK4 stages of the same no-impact step. Separately evaluates integral P n dA and torque; not derived from fluid acceleration. The wall is stationary: work column is the relative-sweep energy correction, not external wall power. No new physical evolution or long-time claim."
+}

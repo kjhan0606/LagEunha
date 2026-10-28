@@ -1,0 +1,193 @@
+{
+  "comparisons": {
+    "original_to_flag_off": {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/rhs_extension_probes/inside/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/flag_off/khout.011581.dat"
+      ],
+      "sha256": [
+        "67b22a5973d8623c372bc4cf67b8998a029a603c137e09eeac1588114fdd9098",
+        "dee146ba5ba9a59d8af3e02a1e43f643bb335110ba4a610cd516278f78e52517"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    },
+    "flag_off_to_on_no_hit": {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/flag_off/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/events_no_hit/khout.011581.dat"
+      ],
+      "sha256": [
+        "dee146ba5ba9a59d8af3e02a1e43f643bb335110ba4a610cd516278f78e52517",
+        "43640185874f5cd49f3cf0c2f0bbde4d5a4fdb23690d192bba89725f8d10f5d0"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    },
+    "no_hit_to_forced_retry": {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/events_no_hit/khout.011581.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/forced_retry/khout.011581.dat"
+      ],
+      "sha256": [
+        "43640185874f5cd49f3cf0c2f0bbde4d5a4fdb23690d192bba89725f8d10f5d0",
+        "c9936f602537f63b4cc28e8d64a7157d2f77240db4f5afa843515dc32eb6410e"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 51140,
+      "footer_fields": [
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965370793,
+          9.999965300266922e-10,
+          9.999965300266922e-10,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    },
+    "failure_restore": {
+      "passed": true,
+      "checks": {
+        "native_headers_exact": true,
+        "all_record_bytes_after_next_pointer_exact": true,
+        "full_precision_restart_footer_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/forced_failure/khdiag.step011580.wall_event_baseline.dat",
+        "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/forced_failure/khdiag.step011580.wall_event_start.dat"
+      ],
+      "sha256": [
+        "087393cabea933063f1b555d4052c97db47a67ec3c8942f55178091c12e508ed",
+        "087393cabea933063f1b555d4052c97db47a67ec3c8942f55178091c12e508ed"
+      ],
+      "records": 55351,
+      "stride": 576,
+      "changed_records_excluding_pointer": 0,
+      "first_changed_record_indices": [],
+      "differing_body_byte_columns": {},
+      "records_with_different_next_pointer": 0,
+      "footer_fields": [
+        [
+          48.37534965270793,
+          0.0019240538822486997,
+          0.0019240538822486997,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ],
+        [
+          48.37534965270793,
+          0.0019240538822486997,
+          0.0019240538822486997,
+          384,
+          384,
+          6.0,
+          6.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+    }
+  },
+  "passed": true
+}

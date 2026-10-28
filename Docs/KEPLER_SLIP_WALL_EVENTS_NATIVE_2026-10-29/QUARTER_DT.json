@@ -1,0 +1,49 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/quarter/khout.011580.dat",
+  "initial_sha256": "c4b11f1996349f5ce8ab664569fa4415cd91b5f836fe9579c98f7dcd51aff758",
+  "initial_time": 48.37534965270793,
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/quarter/khout.011634.dat",
+  "endpoint_sha256": "95870e03e72081210edbdf27ed42c89f07630272f63b156315cec6f23271e580",
+  "time": 48.4,
+  "checks": {
+    "native_exit_zero": true,
+    "native_binary_and_initial_hashes": true,
+    "complete_owned_IDs": true,
+    "same_fixed_masses": true,
+    "W0_exact": true,
+    "finite_positive_state": true,
+    "all_endpoints_inside_polygon_to_roundoff": true,
+    "no_energy_injection": true,
+    "expected_collision_reached": true,
+    "all_impact_gaps_within_tolerance": true,
+    "one_permanent_ledger_per_accepted_prefix": true,
+    "positive_physical_time_prefixes": true,
+    "prefix_times_close": true,
+    "wall_momentum_and_torque_balance": true,
+    "restart_total_energy": true,
+    "no_failed_rollback": true,
+    "no_stop_or_original_crossing_abort": true
+  },
+  "passed": true,
+  "impacts": [
+    {
+      "step": 11584,
+      "time": 48.37702401924917,
+      "id": 55283,
+      "side": 543,
+      "gap": 1.9567680809018384e-15,
+      "tolerance": 2.2969636658408244e-14,
+      "vn_before": 0.01502581182875189,
+      "kinetic_roundoff": 3.6753109133386764e-22
+    }
+  ],
+  "accepted_prefixes": 54,
+  "rollbacks": 6,
+  "minimum_accepted_h": 1.1866541233009902e-05,
+  "maximum_momentum_residual": 1.3253095706824161e-17,
+  "maximum_angular_residual": 1.542481546e-15,
+  "restart_relative_total_energy_change": -3.65047359136909e-14,
+  "minimum_internal_energy": 8.228632358830978e-11,
+  "maximum_endpoint_plane_penetration": -0.00030274697278587226,
+  "scope": "Late bounded Q2 event replay past original failure. Validates local collision/rollback/ledger behavior only; not Q1 boundary IC, full event-order convergence, long-time stability or GIZMO reproduction."
+}

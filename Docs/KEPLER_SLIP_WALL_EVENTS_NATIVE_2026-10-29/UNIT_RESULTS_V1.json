@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-29T08:15:39.987904+09:00",
+  "compiler": "gcc -std=c11 -O2 -Wall -Wextra -Wno-unused-parameter -Wno-unused-function",
+  "sources": {
+    "Exam/gfs_wall_events.inc": "7f1cdd6408b950b6220160ed002d1a04da1163f86f2ce2f2980012616bcaa3a6",
+    "Exam/gfs_wall_dense.h": "01ca236d0eb731b43c26679b84509bef3e92cfc5872adadb4f304dfba5adb323",
+    "test_wall_events.c": "07a9a9031bd79b5157059527d95f72f39e2eced84eb148fc231dd4903d8d5e7f",
+    "test_wall_dense.c": "45dbe8257c2d6a025a98b1ba0a979ab03b623ef1d554c7fd2e4571d2bc45e555"
+  },
+  "passed": true,
+  "stdout": "PASS actual native event include: constant flight, accelerated errors 6.668e-14 1.108e-14 1.108e-14, noncollision grazing, true out-and-back, repeated impacts, retry, corner and exact failure rollback\n",
+  "rollback_records": 459,
+  "every_rollback_exact": true,
+  "expected_failure_modes": [
+    "retry_or_time_progress_limit",
+    "unsupported_corner_contact"
+  ],
+  "analytic_cases": [
+    "constant flight",
+    "accelerated harmonic event h,h/2,h/4",
+    "non-colliding grazing with outside Euler predictor",
+    "true out-and-back event",
+    "three repeated collisions",
+    "forced once retry",
+    "bounded forced failure with exact accepted state",
+    "corner rejection with accepted state preserved"
+  ],
+  "scope": "Executes the actual event include. MPI, geometry and GPU cache adapters are test doubles; actual native GPU rollback/parity is verified separately. Timing errors are near roundoff and do not establish an overall fourth-order event scheme."
+}

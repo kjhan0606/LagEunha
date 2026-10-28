@@ -1,0 +1,128 @@
+{
+  "passed": true,
+  "checks": {
+    "all_individual_predeclared_gates_passed": true,
+    "one_collision_same_owner_and_facet": true,
+    "same_final_time": true,
+    "same_fixed_masses": true,
+    "event_time_spread_within_contact_resolution": true
+  },
+  "cases": [
+    "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/crossing_to484",
+    "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/half",
+    "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/quarter"
+  ],
+  "event_times": [
+    48.37702401924956,
+    48.37702401924917,
+    48.37702401924917
+  ],
+  "event_time_spread": 3.907985046680551e-13,
+  "combined_spatial_to_time_resolution": 4.6144574431781755e-12,
+  "restart_relative_energy_errors": [
+    -1.4758864729905232e-11,
+    -7.719092339567731e-13,
+    -3.65047359136909e-14
+  ],
+  "maximum_angular_balance_residuals": [
+    2.528151526e-13,
+    4.828981971e-15,
+    1.542481546e-15
+  ],
+  "collision_impulses_wall_Jx_Jy_torque": [
+    [
+      -2.49935880365933e-05,
+      -4.891868858111638e-06,
+      -1.8360493627933573e-07
+    ],
+    [
+      -2.4993588036765527e-05,
+      -4.8918688581453475e-06,
+      -1.8360493627464825e-07
+    ],
+    [
+      -2.4993588036548423e-05,
+      -4.891868858102854e-06,
+      -1.8360493627299823e-07
+    ]
+  ],
+  "endpoint_field_comparisons": [
+    {
+      "case": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/crossing_to484",
+      "reference": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/quarter",
+      "fields": {
+        "x": {
+          "max_absolute": 6.591645895781539e-09,
+          "normalized_mass_RMS": 1.60661456397487e-11
+        },
+        "y": {
+          "max_absolute": 5.544465775386698e-09,
+          "normalized_mass_RMS": 1.1965430387426496e-11
+        },
+        "vx": {
+          "max_absolute": 2.2222764914370252e-07,
+          "normalized_mass_RMS": 2.5329036235719973e-09
+        },
+        "vy": {
+          "max_absolute": 2.476324882927372e-07,
+          "normalized_mass_RMS": 2.8033778132907717e-09
+        },
+        "volume": {
+          "max_absolute": 9.313225746154785e-10,
+          "normalized_mass_RMS": 2.3491641415654584e-09
+        },
+        "den": {
+          "max_absolute": 7.152557373046875e-07,
+          "normalized_mass_RMS": 3.1166130405403726e-09
+        },
+        "ie": {
+          "max_absolute": 7.014833158791589e-12,
+          "normalized_mass_RMS": 5.549124720271713e-06
+        },
+        "pressure": {
+          "max_absolute": 5.309630068950355e-09,
+          "normalized_mass_RMS": 2.2298863721413716e-05
+        }
+      }
+    },
+    {
+      "case": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/half",
+      "reference": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v1/timestep_convergence/quarter",
+      "fields": {
+        "x": {
+          "max_absolute": 4.2292569446544803e-10,
+          "normalized_mass_RMS": 1.0562728883030112e-12
+        },
+        "y": {
+          "max_absolute": 3.526658964858598e-10,
+          "normalized_mass_RMS": 7.577376600742002e-13
+        },
+        "vx": {
+          "max_absolute": 1.543801295134095e-08,
+          "normalized_mass_RMS": 2.0346720634429808e-10
+        },
+        "vy": {
+          "max_absolute": 1.6870413288572195e-08,
+          "normalized_mass_RMS": 2.0468146387008415e-10
+        },
+        "volume": {
+          "max_absolute": 9.313225746154785e-10,
+          "normalized_mass_RMS": 1.2871304348347623e-09
+        },
+        "den": {
+          "max_absolute": 2.384185791015625e-07,
+          "normalized_mass_RMS": 1.1830038060503891e-09
+        },
+        "ie": {
+          "max_absolute": 9.467981954003335e-13,
+          "normalized_mass_RMS": 1.0349185397625192e-06
+        },
+        "pressure": {
+          "max_absolute": 7.166818249970675e-10,
+          "normalized_mass_RMS": 3.3816273081306975e-06
+        }
+      }
+    }
+  ],
+  "scope": "Three actual native late-state trajectories. The contact-resolution comparison is a reported numerical scale, not a rigorous continuum error bound. Endpoint field differences are reported without fitted pass tolerances. No full fourth-order event convergence, Q1 accuracy or long-time stability claim."
+}
