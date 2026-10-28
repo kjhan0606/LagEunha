@@ -28,11 +28,17 @@ are used separately for the pair diagnostic below.
 | Minimum stored dt in that disk | 0.04764037 |
 | Disk minimum / global minimum | 640.6073 |
 
-The matching step 21137 accepted dt=0.00015575629367958754. Its four printed
-CUDA force-stage minima are 7.926e-5, 1.504e-4, 1.558e-4 and 7.437e-5. The
-stored minimum agrees with the last one at its printed precision. These are
-different stage quantities; the last-K4 minimum must not be relabeled as
-the timestep already used by that accepted step.
+The matching step 21137 accepted dt=0.00015575629367958754. The last four
+printed CUDA minima before this record are 7.926e-5, 1.504e-4, 1.558e-4 and
+7.437e-5. The native logger emits this record every fourth force call
+(`Exam/exam_gpu_extract.c`), so these are K4 minima from four successive
+steps, not the four stages of one step. The stored minimum agrees with the
+last printed K4 value at its printed precision. That last-K4 minimum must
+not be relabeled as the timestep already used by the accepted step.
+
+Correction recorded on 2026-10-29: the earlier description called these
+four records force-stage minima of one step. The numerical receipt and
+the localization below are unchanged.
 
 All eight cells below twice the minimum initially lie outside r0=2.75.
 They form four mutually nearest pairs in the current periodic geometry:

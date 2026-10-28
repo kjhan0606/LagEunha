@@ -52,7 +52,7 @@ def matched_log(path, step):
             match = re.search(r"Time=\s*(\S+)\s+step=\s*(\d+)\s+dt=\s*(\S+)", line)
             if match and int(match[2]) == step:
                 if len(gpu) != 4:
-                    raise ValueError("Missing four preceding CUDA force records")
+                    raise ValueError("Missing four preceding printed CUDA K4 records")
                 return {"step": step, "printed_time": float(match[1]),
                         "accepted_dt": float(match[3]), "last_four_GPU_dt": list(gpu)}
     raise ValueError("Snapshot step absent from log")
@@ -73,7 +73,7 @@ def analyze(initial, snapshot, log, step, courant, gamma):
     if abs(row["accepted_dt"]/meta["dt"]-1) > 5.1e-6:
         raise ValueError("Snapshot accepted dt disagrees with log")
     if abs(base/row["last_four_GPU_dt"][-1]-1) > 5.1e-4:
-        raise ValueError("Stored minimum does not match final CUDA stage")
+        raise ValueError("Stored minimum does not match last printed CUDA K4 minimum")
     for field in ("x", "y", "vx", "vy", "mass", "volume", "ie", "den", "pressure", "w2"):
         if not all(np.isfinite(q[field]).all() for q in (p0, p)):
             raise ValueError("Nonfinite physical state")
