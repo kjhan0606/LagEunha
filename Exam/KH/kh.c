@@ -332,7 +332,15 @@ int RunKH(SimParameters *simpar, int icont){
 
 		icount ++;
 
-		/* snapshot cadence: Sedov needs fine time sampling (short-duration blast). */
+		/* snapshot cadence: Sedov needs fine time sampling (short-duration blast).
+		 * EUNHA_DUMP_DT overrides the default, in time units per snapshot. */
+		{
+		const char *dump_s = getenv("EUNHA_DUMP_DT");
+		double dump_dt = (dump_s && dump_s[0]) ? atof(dump_s) : 0.0;
+		if(dump_dt > 0){
+			iflag = t / dump_dt;
+			jflag = (t-dt) / dump_dt;
+		} else {
 #if defined(IC_SEDOV2D) || defined(IC_NOH2D)
 		iflag = t * 100.;
 		jflag = (t-dt) * 100.;
@@ -340,6 +348,8 @@ int RunKH(SimParameters *simpar, int icont){
 		iflag = t * 10.;
 		jflag = (t-dt) * 10.;
 #endif
+		}
+		}
 
 //		if(iflag != jflag || icount%100 ==0 || icount == 1 || icount == 2)
 		if(iflag != jflag )

@@ -166,7 +166,9 @@ double vph3D(Voro3D_GasParticle **Bp, int *mbp, ptype avgVolume){
 							ptype accel = sqrt(fx*fx + fy*fy + fz*fz)/bp[id].mass;
 							ptype dt1 = 2*Courant*dramp/vsig;
 							ptype dt2 = sqrt(0.05*2*dramp/accel);
-							ptype dt3 = (0.1*dramp/Vec3DDotP(&uij,&uij));
+							/* 0.1 d/|dv| with uij = dv/2. The old 0.1 d/|uij|^2 had units time^2/length. */
+							ptype uabs = sqrt(Vec3DDotP(&uij,&uij));
+							ptype dt3 = (uabs > 0) ? 0.1*dramp/(2*uabs) : 1.e20;
 							if(rvel >0) {
 								dt1 = dt2 = 1.e20;
 							}

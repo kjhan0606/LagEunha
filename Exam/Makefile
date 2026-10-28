@@ -146,10 +146,10 @@ clean:
 	$(CC) -o $*.exe $(DRAWOBJS) $(LIBS) $(LDFLAGS) $(INCLUDES)
 
 ifdef USE_CUDA
-exam_gpu.o: exam_gpu.cu exam_gpu.h
+exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_pair.h
 	$(NVCC) $(NVCCFLAGS) $(INCLUDES) -c $< -o $@
 
-exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h
+exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_pair.h
 	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 endif
 

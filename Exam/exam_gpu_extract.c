@@ -20,7 +20,10 @@
 #include <omp.h>
 #endif
 #include "exam_gpu.h"
+#include "gfs_pair.h"
 #include "../eunha.h"
+
+extern long long gfs_pair_face_ends;
 #include "../Voro/voro.h"
 #include "../Voro/voro_eunha.h"
 #include "../OST/nnost.h"   /* TStruct / TPtlStruct for tree serialization */
@@ -820,10 +823,13 @@ double getAccVoro2DBlend_GPU(
     {
         const char *ph = getenv("SEDOV_PHASE1");
         params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
+        const char *lr = getenv("GFS_LAGUERRE_ROTATION");
+        params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
     }
 
     /* --- Launch GPU kernel (all particles) --- */
     double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, &params);
+    gfs_pair_face_ends = gpu_take_pair_hits();
 
     double t5_download = MPI_Wtime();
     gpu_download_results(&g_gpu_ctx, nbp);
@@ -971,7 +977,7 @@ static inline void cpu_hllc_face_2d(
     if (phase1) {
         double pmin = pL < pR ? pL : pR;
         double pmax = pL > pR ? pL : pR;
-        if (pmin < 1.0e-3 || pmax > 100.0 * fmax(pmin, 1.0e-30)) {
+        if (pmax > 100.0 * fmax(pmin, 1.0e-30)) {
             cpu_hll_star_state(rhoL, pL, vnL, cL, rhoR, pR, vnR, cR,
                                Gamma, pstar, vnstar);
             return;
@@ -1109,6 +1115,26 @@ static void cpu_reference_force_csr(
                 cpu_get2dUpqradRk4(ibp_x, ibp_y, ibp_vx, ibp_vy, ibp_w2, ibp_w2old, (float)ibp_csound,
                     jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
                     P->dtold, &uradx_t, &urady_t);
+                if (ibp_w2 == 0.0f && jbp_w2 == 0.0f && dramp > 0.0) {
+                    double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
+                    double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
+                    double dxc = cx - 0.5 * (jbp_x - ibp_x);
+                    double dyc = cy - 0.5 * (jbp_y - ibp_y);
+                    double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+                    uradx_t += delta * erx;
+                    urady_t += delta * ery;
+                } else if (P->laguerre_rot && dramp > 0.0) {
+                    /* GFS_LAGUERRE_ROTATION: anchor fact1 (x_j - x_i), as in exam.c. */
+                    double rx = jbp_x - ibp_x, ry = jbp_y - ibp_y;
+                    double fact1 = 0.5 * (1.0 + ((double)ibp_w2 - (double)jbp_w2) / (rx * rx + ry * ry));
+                    double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
+                    double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
+                    double dxc = cx - fact1 * rx;
+                    double dyc = cy - fact1 * ry;
+                    double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+                    uradx_t += delta * erx;
+                    urady_t += delta * ery;
+                }
                 double wx = ibp_vx + uradx_t, wy = ibp_vy + urady_t;
                 double wn = wx * nx_hat + wy * ny_hat;
                 double vnL_lab = ibp_vx * nx_hat + ibp_vy * ny_hat;
@@ -1142,14 +1168,20 @@ static void cpu_reference_force_csr(
                 cpu_hllc_face_2d_rest_frame(rhoL, pL, vnL_lab, ibp_csound,
                     rhoR, pR, vnR_lab, jbp_csound, wn, P->Gamma, P->phase1, &pst, &vnst_lab);
                 pi_total = pst;
-                if (P->phase1 && P->use_muscl) {
-                    double pmin_f = pL < pR ? pL : pR;
-                    double pmax_f = pL > pR ? pL : pR;
-                    if (pmin_f < 1.0e-3 || pmax_f > 100.0 * fmax(pmin_f, 1.0e-30)) {
+                if (P->phase1 && dramp > 0) {
+                    double pmin_c = fmin(ibp_pressure, jbp_pressure);
+                    double pmax_c = fmax(ibp_pressure, jbp_pressure);
+                    if (pmax_c > 100.0 * fmax(pmin_c, 1.0e-30)) {
+                        double ps, vns;
+                        cpu_hll_star_state(
+                            ibp_den, ibp_pressure, ibp_vx * erx + ibp_vy * ery, ibp_csound,
+                            jbp_den, jbp_pressure, jbp_vx * erx + jbp_vy * ery, jbp_csound,
+                            P->Gamma, &ps, &vns);
+                        pi_total = ps;
                         riemann_vstar = 1;
-                        riemann_vn = vnst_lab;
-                        riemann_nx = nx_hat;
-                        riemann_ny = ny_hat;
+                        riemann_vn = vns;
+                        riemann_nx = erx;
+                        riemann_ny = ery;
                     }
                 }
 
@@ -1350,6 +1382,26 @@ static void cpu_reference_force_csr(
             cpu_get2dUpqradRk4(ibp_x, ibp_y, ibp_vx, ibp_vy, ibp_w2, ibp_w2old, (float)ibp_csound,
                 jbp_x, jbp_y, jbp_vx, jbp_vy, jbp_w2, jbp_w2old, (float)jbp_csound,
                 P->dtold, &uradx, &urady);
+            if (ibp_w2 == 0.0f && jbp_w2 == 0.0f && dramp > 0.0) {
+                double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
+                double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
+                double dxc = cx - 0.5 * (jbp_x - ibp_x);
+                double dyc = cy - 0.5 * (jbp_y - ibp_y);
+                double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+                uradx += delta * erx;
+                urady += delta * ery;
+            } else if (P->laguerre_rot && dramp > 0.0) {
+                /* GFS_LAGUERRE_ROTATION: anchor fact1 (x_j - x_i), as in exam.c. */
+                double rx = jbp_x - ibp_x, ry = jbp_y - ibp_y;
+                double fact1 = 0.5 * (1.0 + ((double)ibp_w2 - (double)jbp_w2) / (rx * rx + ry * ry));
+                double cx = 0.5 * (faces->c1x[f] + faces->c2x[f]);
+                double cy = 0.5 * (faces->c1y[f] + faces->c2y[f]);
+                double dxc = cx - fact1 * rx;
+                double dyc = cy - fact1 * ry;
+                double delta = -((jbp_vx - ibp_vx) * dxc + (jbp_vy - ibp_vy) * dyc) / dramp;
+                uradx += delta * erx;
+                urady += delta * ery;
+            }
 
             if (P->phase1 && !P->use_muscl && !jbp_is_ghost && facearea > 0) {
                 double invA = 1.0 / facearea;
@@ -1366,6 +1418,20 @@ static void cpu_reference_force_csr(
                 phase1_vn = vns;
                 phase1_nx = nx;
                 phase1_ny = ny;
+            }
+
+            if (!jbp_is_ghost) {
+                double vclose = -((jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery);
+                if (vclose < 0.0) vclose = 0.0;
+                double qpair = (jbp_vx - ibp_vx) * erx + (jbp_vy - ibp_vy) * ery;
+                double p_pair = gfs_pair_pressure(
+                    dramp, ibp_volume, (double)parts->volume[j],
+                    ibp_den, jbp_den, ibp_csound, jbp_csound, vclose);
+                p_pair = gfs_pair_work_limit(
+                    p_pair, facearea, P->dtold,
+                    ibp_mass, (double)parts->mass[j], qpair,
+                    (double)parts->ie[i], (double)parts->ie[j], 6.0);
+                if (p_pair > 0.0) pi_total += p_pair;
             }
 
             if (P->phase1) {
@@ -1402,7 +1468,7 @@ static void cpu_reference_force_csr(
             double VdotR = dvx * erx + dvy * ery;
             double vsig = jbp_csound + ibp_csound - fmin(0.0, VdotR);
             double heff = 0.25 * sqrt(ibp_volume);
-            double dramp_cfl = fmax(dramp, heff);
+            double dramp_cfl = jbp_is_ghost ? fmax(dramp, heff) : dramp;
             float dt_face = (float)(2.0 * P->Courant * dramp_cfl / vsig);
             if (dt_face < my_dt) my_dt = dt_face;
 
@@ -1482,6 +1548,8 @@ double getAccVoro2DBlend_GPU_validate(
     {
         const char *ph = getenv("SEDOV_PHASE1");
         params.phase1 = (ph && ph[0] == '1') ? 1 : 0;
+        const char *lr = getenv("GFS_LAGUERRE_ROTATION");
+        params.laguerre_rot = (lr && lr[0] && atoi(lr) > 0) ? 1 : 0;
     }
 
     double *ref_ax  = (double *)malloc(nbp * sizeof(double));

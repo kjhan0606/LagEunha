@@ -1,0 +1,23 @@
+### LagEunha 3D test parameters (Exam/Tests3D). Template; run.slurm fills the @-delimited placeholders.
+### Lines marked [2D key] exist in Params/params.h and are parsed today.
+### Lines marked [proposed 3D key] are what the 3D driver is expected to read;
+### no binary at this commit parses them (see README.md, 3D path audit).
+define Simulation Model     = @MODEL@            # [proposed 3D key] Hydro3D
+define Gamma_hydro         = @GAMMA@            # [2D key]
+define Hydro time-stepping way = 1              # [2D key] 1 = RK4 (GFS integrator; required with gravity)
+define Courant_hydro       = @COURANT@          # [2D key]
+define Nx                  = @NX@               # [2D key]
+define Ny                  = @NY@               # [2D key]
+define Nz                  = @NZ@               # [2D key]
+define GAS av_mode        = 5                   # [2D key] MUSCL + HLLC
+define GAS use_muscl      = 1                   # [2D key]
+define GAS kappa           = 0                  # [2D key] 0 = Voronoi (w2 = 0)
+define GAS entropy_mode   = 0                   # [2D key] evolve ie
+define GAS gpu_enabled    = 0                   # [2D key] no 3D GPU kernel exists
+define Voro centroid shift factor = 0           # [2D key] no mesh steering in the budget
+define Hydro3D IC file     = @ICFILE@           # [proposed 3D key] LAG3DV1 file (common/lag3d_ic.h)
+define Hydro3D t_end       = @TEND@             # [proposed 3D key]
+define Hydro3D dump dt     = @DUMPDT@           # [proposed 3D key] snapshots in LAG3DV1, named snap_%06d.l3d
+define Hydro3D gravity     = @GRAVITY@          # [proposed 3D key] 0 none, 1 self-gravity (isolated)
+define Hydro3D softening   = @EPS@              # [proposed 3D key] Plummer, only if gravity = 1
+#End of Ascii Header

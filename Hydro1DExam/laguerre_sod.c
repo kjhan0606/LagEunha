@@ -12,6 +12,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/stat.h>
+#include "../Exam/gfs_pair.h"
 
 /* ===== Fixed constants ===== */
 #define NMAX 5000
@@ -71,6 +72,31 @@ static double av_bt_mn = 0.0;    /* AV beta minimum (smooth region) */
 static int    use_muscl= 0;      /* MUSCL reconstruction (C: 0=off) */
 static int    use_riemann=0;     /* 1=acoustic, 2=exact, 3=HLLC */
 static int    extreme_hll=0;     /* HLL average when pressure ratio > 100 */
+static int    geom_face=0;       /* GFS: geometric face speed except on extreme faces */
+static long   n_pair_1d=0;       /* interior faces inside the pair cutoff */
+static double gfs_1d_dt=0;        /* step used to bound the pair impulse */
+static long   n_efloor_1d=0;     /* e<1e-14 floor hits (stage and final) */
+static long   n_wlim_1d=0;       /* pair faces reduced by gfs_pair_work_limit */
+static double de_eta_1d=0;       /* GFS_DUAL_ENERGY: e < eta*e_K takes e_K (0 = off) */
+static long   n_de_1d=0;         /* dual-energy resets */
+static double de_inj_1d=0;       /* energy added by those resets */
+/* GIZMO-style entropy switch and half-limit (both off by default).
+ * GFS_ENTROPY_SWITCH=1: 1D has no gravity, so the criterion is GIZMO's
+ * kinetic form (kicks.c, compiled out there):
+ *   coef * (E_th + 0.5 m max_nbr |dv|^2) > E_th,  E_th = m max(0.5 e_n, e_E)
+ * A switched cell takes the adiabatic e = e_n (rho/rho_n)^(gamma-1)
+ * instead of the energy-equation value e_E. GFS_ES_COEF = coef (0.01).
+ * GFS_HALF_LIMIT=1: e < 0.5 e_n becomes 0.5 e_n (default: same as the
+ * switch). Both act once per accepted step, after update_derived. */
+static int    es_on_1d=0, half_on_1d=0;
+static double es_coef_1d=0.01;
+static long   n_es_1d=0, n_half_1d=0;
+static double es_de_1d=0, hl_de_1d=0;   /* m (e - e_E) booked by each */
+static double s0rho[NMAX];
+static long   n_retry_1d=0;      /* rk4 steps refused and halved */
+static double dt_min_1d=0;       /* smallest accepted dt */
+static int    extreme_geom=0;    /* GFS_EXTREME_GEOM=1: extreme faces also move at the midpoint speed (test only) */
+static int    pair_1d=1;         /* GFS_PAIR=0 turns the 1D restoring pressure off */
 static int    direct_hll=0;      /* faces move at v*, weights follow the faces */
 static int    material_hll=0;    /* extreme face uses the zero-mass-flux HLL speed */
 static double vol_smooth=0;      /* oscillation-limited volume-equalizing weights (0=off) */
@@ -116,6 +142,7 @@ typedef struct {
     double x, v, e, m;
     double rho, p, c, w, vol;
     double av, ae;
+    double K;        /* entropy P/rho^gamma at t=0 (dual-energy switch) */
 } Pt;
 
 static int    N, mode;
@@ -474,6 +501,17 @@ static void face_st(void){
             else
                 hllc_face(rL, pL, vL, csL, rR, pR, vR, csR,
                           &pf[i], &vf[i]);
+            /* GFS keeps the HLL face speed only on an extreme face.
+             * An ordinary face moves at the Voronoi mid-point velocity.
+             * Dropping the HLL speed on the blast shock lets the cold
+             * particle cross its neighbor. */
+            if(geom_face){
+                double pmin = pL < pR ? pL : pR;
+                double pmax = pL > pR ? pL : pR;
+                int extreme = pmax > 100.0 * fmax(pmin, 1.0e-30);
+                if(!extreme || extreme_geom)
+                    vf[i] = 0.5 * (P[i-1].v + P[i].v);
+            }
         } else if(use_riemann == 1 && mode!=SPH_MODE){
             /* Full acoustic Riemann with separate Z_L, Z_R */
             double ZL = fmax(P[i-1].rho * P[i-1].c, 1e-30);
@@ -603,6 +641,27 @@ static void face_st(void){
             if(nu > 0){
                 double dvdx = (P[i].v - P[i-1].v) / dx;
                 pf[i] -= (4.0/3.0) * nu * denij * dvdx;
+            }
+        }
+
+        /* Bounded pair pressure. Finite as the gap closes, and still on
+         * when the relative velocity is already zero. */
+        if(pair_1d && geom_face && dx > 0 && P[i-1].vol > 0 && P[i].vol > 0){
+            double vclose = P[i-1].v - P[i].v;
+            if(vclose < 0) vclose = 0;
+            double qpair = P[i].v - P[i-1].v;
+            double pp = gfs_pair_pressure_len(
+                    dx, P[i-1].vol, P[i].vol,
+                    P[i-1].rho, P[i].rho, P[i-1].c, P[i].c, vclose);
+            /* The budget is internal energy, m e. P[].e is specific. */
+            double pp0 = pp;
+            pp = gfs_pair_work_limit(pp, 1.0, gfs_1d_dt,
+                    P[i-1].m, P[i].m, qpair,
+                    P[i-1].m*P[i-1].e, P[i].m*P[i].e, 2.0);
+            if(pp < pp0) n_wlim_1d++;
+            if(pp > 0){
+                pf[i] += pp;
+                n_pair_1d++;
             }
         }
 
@@ -818,6 +877,11 @@ static void update_alpha_cd(double dt){
 /* ============================================================
  *  CFL timestep
  * ============================================================ */
+static int positions_ordered(void){
+    for(int i=0;i<N-1;i++) if(!(P[i+1].x > P[i].x)) return 0;
+    return 1;
+}
+
 static double get_dt(void){
     double dt=1e30;
     for(int i=0;i<N;i++){
@@ -826,6 +890,31 @@ static double get_dt(void){
         double dx=(mode==SPH_MODE)?hh[i]:P[i].vol;
         double d=CFL*dx/s;
         if(d<dt) dt=d;
+    }
+    /* Do not close a gap, or leap away from one, in a single step. */
+    if(mode!=SPH_MODE){
+        for(int i=0;i<N-1;i++){
+            double dx = P[i+1].x - P[i].x;
+            if(!(dx > 0)) { dt = 1e-8; continue; }
+            double closing = P[i].v - P[i+1].v;
+            if(closing > 0){
+                double dclose = 0.2 * dx / closing;
+                if(dclose < dt) dt = dclose;
+            }
+            if(pair_1d && geom_face){
+                double vcl = closing > 0 ? closing : 0;
+                double pp = gfs_pair_pressure_len(
+                        dx, P[i].vol, P[i+1].vol,
+                        P[i].rho, P[i+1].rho, P[i].c, P[i+1].c, vcl);
+                if(pp > 0){
+                    double mi = fmax(P[i].m, 1e-30);
+                    double mj = fmax(P[i+1].m, 1e-30);
+                    double a = pp * (1.0/mi + 1.0/mj);
+                    double dforce = 0.2 * sqrt(dx / fmax(a, 1e-30));
+                    if(dforce < dt) dt = dforce;
+                }
+            }
+        }
     }
     return dt;
 }
@@ -844,6 +933,7 @@ static void fill_reservoir(Pt *p, double x, double rho, double vel, double pgas,
     p->vol = m / fmax(rho, 1e-14);
     p->w = 0;
     p->av = p->ae = 0;
+    p->K = pgas / pow(fmax(rho, 1e-300), GAM);
 }
 
 static void inflow_particles(void){
@@ -885,7 +975,9 @@ static void inflow_particles(void){
 /* ============================================================
  *  RK4 step
  * ============================================================ */
-static void rk4_step(double dt){
+static int rk4_step(double dt){
+    double eng_save = bc_eng_net;
+    gfs_1d_dt = dt;
     if(mode==LAGUERRE && w_coeff > 0){
         for(int i=0;i<N;i++) ow2[i] = P[i].w * P[i].w;
         prev_dt = dt;
@@ -899,6 +991,7 @@ static void rk4_step(double dt){
     double s0f[NMAX+1], kxf[4][NMAX+1];
     for(int i=0;i<N;i++){
         s0x[i]=P[i].x; s0v[i]=P[i].v; s0e[i]=P[i].e;
+        s0rho[i]=P[i].rho;
     }
     if(rk_face){
         for(int i=0;i<=N;i++) s0f[i] = xf_face[i];
@@ -913,10 +1006,18 @@ static void rk4_step(double dt){
                 P[i].x=s0x[i]+f*dt*kx[k][i];
                 P[i].v=s0v[i]+f*dt*kv[k][i];
                 P[i].e=s0e[i]+f*dt*ke[k][i];
-                if(P[i].e<1e-14) P[i].e=1e-14;
+                if(P[i].e<1e-14){ P[i].e=1e-14; n_efloor_1d++; }
             }
             if(rk_face){
                 for(int i=0;i<=N;i++) xf_face[i] = s0f[i] + f*dt*kxf[k][i];
+            }
+            if(!positions_ordered()){
+                for(int i=0;i<N;i++){
+                    P[i].x=s0x[i]; P[i].v=s0v[i]; P[i].e=s0e[i];
+                }
+                if(rk_face) for(int i=0;i<=N;i++) xf_face[i]=s0f[i];
+                bc_eng_net = eng_save;
+                return -1;
             }
         } else if(rk_face){
             for(int i=0;i<=N;i++) xf_face[i] = s0f[i];
@@ -943,7 +1044,15 @@ static void rk4_step(double dt){
         P[i].x=s0x[i]+dt/6.0*(kx[0][i]+2*kx[1][i]+2*kx[2][i]+kx[3][i]);
         P[i].v=s0v[i]+dt/6.0*(kv[0][i]+2*kv[1][i]+2*kv[2][i]+kv[3][i]);
         P[i].e=s0e[i]+dt/6.0*(ke[0][i]+2*ke[1][i]+2*ke[2][i]+ke[3][i]);
-        if(P[i].e<1e-14) P[i].e=1e-14;
+        if(P[i].e<1e-14){ P[i].e=1e-14; n_efloor_1d++; }
+    }
+    if(!positions_ordered()){
+        for(int i=0;i<N;i++){
+            P[i].x=s0x[i]; P[i].v=s0v[i]; P[i].e=s0e[i];
+        }
+        if(rk_face) for(int i=0;i<=N;i++) xf_face[i]=s0f[i];
+        bc_eng_net = eng_save;
+        return -1;
     }
     if(rk_face){
         for(int i=0;i<=N;i++)
@@ -965,9 +1074,53 @@ static void rk4_step(double dt){
         for(int i=0;i<=N;i++) xf_face[i] += vf[i]*dt;
     }
     update_derived();
+    if(es_on_1d || half_on_1d){
+        for(int i=0;i<N;i++){
+            double e0 = s0e[i], eE = P[i].e, e1 = eE;
+            if(!(e0 > 0) || !(s0rho[i] > 0) || !(P[i].rho > 0)) continue;
+            if(es_on_1d){
+                double dv2 = 0, d;
+                if(i > 0){ d = P[i].v - P[i-1].v; if(d*d > dv2) dv2 = d*d; }
+                if(i < N-1){ d = P[i+1].v - P[i].v; if(d*d > dv2) dv2 = d*d; }
+                double eth = P[i].m * ((0.5*e0 > eE) ? 0.5*e0 : eE);
+                if(es_coef_1d * (eth + 0.5*P[i].m*dv2) > eth){
+                    e1 = e0 * pow(P[i].rho/s0rho[i], GM1);
+                    es_de_1d += P[i].m * (e1 - eE);
+                    n_es_1d++;
+                }
+            }
+            if(half_on_1d && e1 < 0.5*e0){
+                hl_de_1d += P[i].m * (0.5*e0 - e1);
+                n_half_1d++;
+                e1 = 0.5*e0;
+            }
+            if(e1 != eE){
+                P[i].e = e1;
+                P[i].p = GM1 * P[i].rho * P[i].e;
+                P[i].c = eos_c(P[i].rho, P[i].p);
+            }
+        }
+    }
+    /* Dual energy (off by default). The entropy K is the t=0 value and is
+     * never raised, so a shocked cell sits far above e_K and is untouched.
+     * A cell drained below eta*e_K takes e_K. The energy added is counted. */
+    if(de_eta_1d > 0){
+        for(int i=0;i<N;i++){
+            if(!(P[i].K > 0) || !(P[i].rho > 0)) continue;
+            double eK = P[i].K * pow(P[i].rho, GM1) / GM1;
+            if(P[i].e < de_eta_1d * eK){
+                de_inj_1d += P[i].m * (eK - P[i].e);
+                n_de_1d++;
+                P[i].e = eK;
+                P[i].p = GM1 * P[i].rho * P[i].e;
+                P[i].c = eos_c(P[i].rho, P[i].p);
+            }
+        }
+    }
     inflow_particles();
     if(av_mode==2)
         update_alpha_cd(dt);
+    return 0;
 }
 
 /* ============================================================
@@ -1422,7 +1575,7 @@ static void hllc_face(double rhoL, double pL, double vL, double cL,
     {
         double pmin = pL < pR ? pL : pR;
         double pmax = pL > pR ? pL : pR;
-        if(extreme_hll && (pmin < 1e-3 || pmax > 100.0 * fmax(pmin, 1e-30))){
+        if(extreme_hll && pmax > 100.0 * fmax(pmin, 1e-30)){
             if(material_hll)
                 hll_material_state(rhoL, pL, vL, cL, rhoR, pR, vR, cR, pstar, vstar);
             else
@@ -1646,7 +1799,23 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
 {
     Metrics met = {0};
     mode = smode;
+    n_pair_1d = 0;
+    n_efloor_1d = 0; n_retry_1d = 0; dt_min_1d = 1e30;
+    n_wlim_1d = 0; n_de_1d = 0; de_inj_1d = 0;
+    {
+        const char *s = getenv("GFS_DUAL_ENERGY");
+        de_eta_1d = (s && s[0]) ? atof(s) : 0.0;
+        s = getenv("GFS_ENTROPY_SWITCH");
+        es_on_1d = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+        s = getenv("GFS_ES_COEF");
+        es_coef_1d = (s && s[0] && atof(s) > 0) ? atof(s) : 0.01;
+        s = getenv("GFS_HALF_LIMIT");
+        half_on_1d = (s && s[0]) ? (atoi(s) > 0 ? 1 : 0) : es_on_1d;
+        n_es_1d = n_half_1d = 0; es_de_1d = hl_de_1d = 0;
+    }
     init(np);
+    for(int i=0;i<N;i++)
+        P[i].K = (P[i].rho > 0 && P[i].p > 0) ? P[i].p / pow(P[i].rho, GAM) : 0.0;
 
     /* initial total energy (computed numerically) */
     double eng0=0;
@@ -1661,7 +1830,29 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
     while(t<tend-1e-14){
         double dt=get_dt();
         if(t+dt>tend) dt=tend-t;
-        rk4_step(dt);
+        int tries = 0;
+        while(rk4_step(dt) < 0){
+            dt *= 0.5;
+            tries++;
+            n_retry_1d++;
+            if(tries > 24 || dt < 1e-12){
+                double dmin=1e30, vc=0, pp=0; int im=-1;
+                for(int i=0;i<N-1;i++){
+                    double dx=P[i+1].x-P[i].x;
+                    if(dx<dmin){ dmin=dx; im=i;
+                        vc=P[i].v-P[i+1].v;
+                        pp=gfs_pair_pressure_len(dx,P[i].vol,P[i+1].vol,
+                            P[i].rho,P[i+1].rho,P[i].c,P[i+1].c, vc>0?vc:0);
+                    }
+                }
+                fprintf(stderr,"  STOP: crossed pair at t=%.4e dt=%.3e dmin=%.3e i=%d vc=%.3e pp=%.3e vL=%.3e vR=%.3e\n",
+                        t, dt, dmin, im, vc, pp, im>=0?P[im].v:0, im>=0?P[im+1].v:0);
+                met.failed = 1;
+                break;
+            }
+        }
+        if(met.failed) break;
+        if(dt < dt_min_1d && t+dt < tend-1e-14) dt_min_1d = dt;
         t+=dt; met.nstep++;
         if(diag_blast){
             double vmin=1e30, vmax=-1e30;
@@ -1688,7 +1879,19 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
             }
         }
         if(dt < 1e-12){
-            fprintf(stderr,"  STOP: dt=%.3e at t=%.4e step=%d\n", dt, t, met.nstep);
+            double dmin=1e30, vc=0, pp=0; int im=-1;
+            for(int i=0;i<N-1;i++){
+                double dx=P[i+1].x-P[i].x;
+                if(dx<dmin){ dmin=dx; im=i;
+                    vc=P[i].v-P[i+1].v;
+                    pp=gfs_pair_pressure_len(dx,P[i].vol,P[i+1].vol,
+                        P[i].rho,P[i+1].rho,P[i].c,P[i+1].c, vc>0?vc:0);
+                }
+            }
+            fprintf(stderr,"  STOP: dt=%.3e at t=%.4e step=%d dmin=%.3e i=%d vc=%.3e pp=%.3e volL=%.3e volR=%.3e cL=%.3e cR=%.3e\n",
+                    dt, t, met.nstep, dmin, im, vc, pp,
+                    im>=0?P[im].vol:0, im>=0?P[im+1].vol:0,
+                    im>=0?P[im].c:0, im>=0?P[im+1].c:0);
             met.failed = 1;
             break;
         }
@@ -1812,7 +2015,20 @@ static void write_plot_grid(const char *gpfile, const char *pngfile,
 /* ============================================================
  *  Method configuration helpers
  * ============================================================ */
+static void set_method_gfs(void){
+    const char *ps = getenv("GFS_PAIR");
+    pair_1d = !(ps && ps[0]=='0');
+    const char *eg = getenv("GFS_EXTREME_GEOM");
+    extreme_geom = (eg && eg[0]=='1');
+    w_coeff=0; use_riemann=3; use_muscl=1; av_mode=0;
+    extreme_hll=1; geom_face=1;
+    av_alpha=0; av_beta=0;
+    shock_th=0; face_dp=0; face_dv=0; prev_dt=0;
+    use_AA=0; alpha_u=0; nu_phys=0; nu_coeff=0;
+    cd_amax=0; cd_amin=0;
+}
 static void set_method_hllc_cd10(void){
+    geom_face=0; extreme_hll=0;
     w_coeff=0; use_riemann=3; use_muscl=1; av_mode=2;
     cd_amax=1.0; cd_ell=0.05; cd_amin=0; av_beta=1.0;
     shock_th=0; face_dp=0; face_dv=0; prev_dt=0;
@@ -1925,6 +2141,40 @@ int main(int argc, char **argv)
                    names[k], wcs[k], m.t_end, m.nstep,
                    m.l1_rho, m.eng_err, rmax, m.failed, n_face_clamp,
                    n_limiter, n_limiter_early, n_outside, max_abs_R);
+            fflush(stdout);
+        }
+        return 0;
+    }
+    if(argc >= 2 && strcmp(argv[1], "gfs") == 0){
+        int np = (argc >= 3) ? atoi(argv[2]) : 200;
+        const char *names[] = {"sod","blast","shuosher","noh","lax","dblfan","collision","contact"};
+        const char *refs[] = {
+            "sod/ref.dat","blast/ref.dat","shuosher/ref.dat","noh/ref.dat",
+            "lax/ref.dat","dblfan/ref.dat","collision/ref.dat","contact/ref.dat"
+        };
+        const char *only = (argc >= 4) ? argv[3] : NULL;
+        printf("# GFS  w=0  geometric ordinary faces  HLL extreme  N=%d\n", np);
+        printf("# %-10s %12s %12s %12s %12s %6s\n",
+               "problem","L1_rho","L1_v","L1_p","eng_err","nstep");
+        for(int pid=0; pid<8; pid++){
+            if(only && strcmp(names[pid], only) != 0) continue;
+            setup_problem(pid);
+            if(has_exact_sol) exact_riemann(&ps_exact, &vs_exact);
+            else read_reference(refs[pid]);
+            set_method_gfs();
+            char out[256];
+            const char *pref = getenv("GFS_PREFIX");
+            if(!pref || !pref[0]) pref = "gfs";
+            snprintf(out, sizeof(out), "%s_%s.dat", pref, names[pid]);
+            Metrics m = run_sim(VORONOI, np, out, 0);
+            printf("  %-10s %12.4e %12.4e %12.4e %12.4e %6d  N=%d  npair=%ld  fail=%d  dtmin=%.3e  retry=%ld  efloor=%ld  nwlim=%ld  nde=%ld  deinj=%.3e",
+                   names[pid], m.l1_rho, m.l1_vel, m.l1_pre, m.eng_err, m.nstep, N,
+                   n_pair_1d, m.failed, dt_min_1d, n_retry_1d, n_efloor_1d,
+                   n_wlim_1d, n_de_1d, de_inj_1d);
+            if(es_on_1d || half_on_1d)
+                printf("  nes=%ld  esde=%.3e  nhalf=%ld  hlde=%.3e",
+                       n_es_1d, es_de_1d, n_half_1d, hl_de_1d);
+            printf("\n");
             fflush(stdout);
         }
         return 0;

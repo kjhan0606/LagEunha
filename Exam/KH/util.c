@@ -423,17 +423,93 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
         }
         char iregion = 0;
 #else
-        /* Default: Lecoanet et al. (2016) Section 3.2 KH IC. */
         {
+        const char *eic = getenv("EUNHA_IC");
+        if(eic && strcmp(eic, "gresho") == 0){
+            rho = 1.0;
+            postype dx_c = x - 0.5*Lx, dy_c = y - 0.5*Ly;
+            postype r = sqrt(dx_c*dx_c + dy_c*dy_c) + 1e-30;
+            postype uphi;
+            if(r < 0.2) {
+                uphi = 5.0 * r;
+                press = 5.0 + 12.5 * r * r;
+            } else if(r < 0.4) {
+                uphi = 2.0 - 5.0 * r;
+                press = 9.0 + 12.5 * r * r - 20.0 * r + 4.0 * log(5.0 * r);
+            } else {
+                uphi = 0.0;
+                press = 3.0 + 4.0 * log(2.0);
+            }
+            vx = -uphi * dy_c / r;
+            vy_seed = uphi * dx_c / r;
+        } else if(eic && strcmp(eic, "noh") == 0){
+            rho = 1.0;
+            press = 1.0e-6;
+            postype dx_c = x - 0.5*Lx, dy_c = y - 0.5*Ly;
+            postype r = sqrt(dx_c*dx_c + dy_c*dy_c) + 1e-30;
+            vx = -dx_c / r;
+            vy_seed = -dy_c / r;
+        } else if(eic && strcmp(eic, "kepler") == 0){
+            const char *cxs = getenv("EUNHA_KEPLER_CX");
+            const char *cys = getenv("EUNHA_KEPLER_CY");
+            postype cx = (cxs && cxs[0]) ? atof(cxs) : (postype)0.5*Lx;
+            postype cy = (cys && cys[0]) ? atof(cys) : (postype)0.5*Ly;
+            postype dx_c = x - cx, dy_c = y - cy;
+            postype R = sqrt(dx_c*dx_c + dy_c*dy_c);
+            const char *es = getenv("EUNHA_KEPLER_EPS");
+            const char *rins = getenv("EUNHA_KEPLER_RIN");
+            const char *routs = getenv("EUNHA_KEPLER_ROUT");
+            postype eps = (es && es[0]) ? atof(es) : (postype)0.0;
+            /* Annulus Sigma falls as 1/R. Pressure is spatially constant and
+             * tiny, as in the GIZMO cold Keplerian disk, so dP/dR = 0 and the
+             * circular speed below is the radial equilibrium. */
+            postype Rin = (rins && rins[0]) ? atof(rins) : (postype)2.0;
+            postype Rout = (routs && routs[0]) ? atof(routs) : (postype)8.0;
+            const char *profs = getenv("EUNHA_KEPLER_PROFILE");
+            if(profs && strcmp(profs, "hopkins") == 0){
+                /* Hopkins (2015, arXiv:1409.7395) Eq. 34, the mesh-code
+                 * version of the cold Keplerian disk, scaled from his
+                 * (0.5, 2) to (Rin, Rout):
+                 *   rho = floor + (R/Rin)^3           R < Rin
+                 *               + 1                   Rin <= R <= Rout
+                 *               + [1+(R-Rout)/w]^-3   R > Rout
+                 * floor 0.01 and w = 0.1*Rout/2 (0.4 for Rout = 8; the
+                 * same as 0.1*Rin/0.5). EUNHA_KEPLER_FLOOR and
+                 * EUNHA_KEPLER_WIDTH override them. P and v as below. */
+                const char *fls = getenv("EUNHA_KEPLER_FLOOR");
+                const char *ws = getenv("EUNHA_KEPLER_WIDTH");
+                postype hfloor = (fls && fls[0]) ? atof(fls) : (postype)0.01;
+                postype hw = (ws && ws[0]) ? atof(ws) : (postype)0.05*Rout;
+                postype shape;
+                if(R < Rin) { postype q = R/Rin; shape = q*q*q; }
+                else if(R <= Rout) shape = 1;
+                else { postype q = 1 + (R-Rout)/hw; shape = 1/(q*q*q); }
+                rho = hfloor + shape;
+            } else {
+            postype edge = (postype)0.25;
+            postype inner = (postype)0.5*(1+tanh((R-Rin)/edge));
+            postype outer = (postype)0.5*(1+tanh((Rout-R)/edge));
+            postype floor = (postype)1.0e-3;
+            rho = floor + (Rin / (R + (postype)1e-6)) * inner * outer;
+            }
+            postype Rsafe = (R > (postype)1e-8) ? R : (postype)1e-8;
+            postype vamp = (eps > 0)
+                ? R * pow(R*R + eps*eps, (postype)-0.75)
+                : (postype)1.0 / sqrt(Rsafe);
+            press = (postype)1.0e-6;
+            if(R < 1e-8){ vx = 0; vy_seed = 0; }
+            else { vx = -dy_c/R*vamp; vy_seed = dx_c/R*vamp; }
+        } else {
         postype profile = 0.5*(tanh((y-z1)/deltay) - tanh((y-z2)/deltay));
         rho = rho1 + (rho2-rho1)*profile;
         vx  = U1   + (U2-U1)*profile;
         press = KH_Pressure(simpar);
-        }
-        char iregion = (y > z1 && y < z2) ? 1 : 0;
         vy_seed = dvy0*sin(2.0*M_PI*x)
                  *(exp(-(y-z1)*(y-z1)/(sigma*sigma))
                   +exp(-(y-z2)*(y-z2)/(sigma*sigma)));
+        }
+        }
+        char iregion = (y > z1 && y < z2) ? 1 : 0;
 #endif
         {
             postype vy = vy_seed;

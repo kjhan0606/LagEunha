@@ -213,6 +213,9 @@ typedef struct {
     double K_floor;
     /* SEDOV_PHASE1: extreme faces use the HLL mean state, and die is dE/dt. */
     int    phase1;
+    /* GFS_LAGUERRE_ROTATION: face-rotation correction on Laguerre faces
+     * too, about the anchor fact1 (x_j - x_i) (0 = w = 0 faces only). */
+    int    laguerre_rot;
 } GPUPhysicsParams;
 
 /* ================================================================
@@ -235,6 +238,8 @@ void gpu_download_results(GPUContext *ctx, int n_particles);
 /* --- Force kernel launch (exam_gpu.cu) --- */
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                const GPUPhysicsParams *params);
+/* Face-ends inside the pair cutoff on the latest launch. */
+long long gpu_take_pair_hits(void);
 
 /* --- GPU tessellation (exam_gpu.cu) --- */
 void gpu_alloc_tess_buffers(GPUContext *ctx, int max_particles,
