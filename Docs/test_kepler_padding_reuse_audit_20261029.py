@@ -59,6 +59,17 @@ class AcceptanceGateTests(unittest.TestCase):
         b[1]['force'][0] = ('1', '73728', '442395')
         self.assertTrue(self.compare(a, b, exact=False)['passed'])
 
+    def test_halo_width_change_still_requires_owned_face_count_parity(self):
+        a = self.fixture()
+        b = deepcopy(a)
+        b[1]['tessellation'][0] = ('147456', '160000', '884790')
+        self.assertFalse(self.compare(a, b)['passed'])
+        with patch.object(audit, 'load', side_effect=[a, b]):
+            self.assertTrue(audit.compare('a', 'b', exact=True, same_padding=False)['passed'])
+        b[1]['tessellation'][0] = ('147456', '160000', '884788')
+        with patch.object(audit, 'load', side_effect=[a, b]):
+            self.assertFalse(audit.compare('a', 'b', exact=True, same_padding=False)['passed'])
+
     def test_invalid_device_mapping_rejected_despite_equal_endpoint(self):
         a = self.fixture()
         b = deepcopy(a)

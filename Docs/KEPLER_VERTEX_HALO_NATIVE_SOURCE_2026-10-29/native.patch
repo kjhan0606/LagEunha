@@ -1,0 +1,280 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -1962,6 +1962,17 @@
+ 	}
+ }
+ 
++static int gfs_kepler_vertex_halo_requested(SimParameters *simpar,
++    void (*padding)(SimParameters *,postype)){
++    const char *setting=getenv("GFS_GPU_VERTEX_HALO_CERT");
++    const char *ic=getenv("EUNHA_IC");
++    /* Only this callback supplies the complete periodic rectangle used in
++     * the initial qualification. MPI and weighted paths retain the old test. */
++    return setting && atoi(setting)>0 && ic && strcmp(ic,"kepler")==0 &&
++        NID(simpar)==1 && GAS_Kappa(simpar)==0 &&
++        padding==paddingTreeVorork4Particles;
++}
++
+ postype gfs_kepler_halo_width(postype cellsize){
+ 	const char *s = getenv("GFS_KEPLER_HALO_CELLS");
+ 	if(!s || !s[0]) return cellsize;
+@@ -3258,7 +3269,8 @@
+ 			cellsize, xmin, ymin, boxsize, global_w2_max, all_weights_zero, OoA, av_mode, Gamma,
+ 			nu_phys_val, GAS_PRANDTL(simpar), GAS_CDAMAX(simpar),
+ 			GAS_GRADIENT_METHOD(simpar),
+-			GAS_ENTROPY_MODE(simpar), GAS_K_FLOOR(simpar));
++			GAS_ENTROPY_MODE(simpar), GAS_K_FLOOR(simpar),
++			gfs_kepler_vertex_halo_requested(simpar,paddingAllTreeParticles) && all_weights_zero, xmax, ymax);
+ 		double _tess_t_gpu = _tess_profile ? MPI_Wtime() : 0.0;
+ 		if (gpu_geometry_trial_active()) {
+ 			int local_failed=gpu_geometry_trial_failed(),any_failed=0;
+@@ -8252,7 +8264,8 @@
+     const char *gpu_final = getenv("GFS_GPU_FINAL_VOLUME");
+     if (GAS_GPU_ENABLED(simpar) && gpu_final && atoi(gpu_final) > 0) {
+         gpu_refresh_final_volumes(simpar, mx, my, cellsize, xmin, ymin,
+-                                  boxsize, VoroAccuracyOrder(simpar));
++                                  boxsize, VoroAccuracyOrder(simpar), xmax, ymax,
++                                  gfs_kepler_vertex_halo_requested(simpar,paddingAllTreeParticles));
+     } else
+ #endif
+     {
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -21,6 +21,7 @@
+ /* CUB for device-wide reduction */
+ #include <cub/cub.cuh>
+ #include "gfs_pair.h"
++#include "gfs_vertex_halo.h"
+ #include "gfs_velocity_limiter.h"
+ #include "gfs_thermal64.h"
+ 
+@@ -35,6 +36,7 @@
+ static __device__ unsigned long long d_gfs_tess_geometry_errors;
+ static __device__ unsigned long long d_gfs_stencil_expanded_cells;
+ static __device__ unsigned long long d_gfs_stencil_halo_clipped_cells;
++static __device__ unsigned long long d_gfs_vertex_halo_recertified_cells;
+ static long long h_gfs_pair_hits = 0;
+ static __device__ unsigned long long d_varpress_geom_max_key;
+ static double h_varpress_geom_max_rate=0;
+@@ -2647,7 +2649,8 @@
+     double boxsize, double global_w2_max, int all_weights_zero,
+     double OoA, int av_mode,
+     int gradient_method, int raw_volume, int limit_velocity, int merge_small_faces,
+-    int thermal64, double *__restrict__ out_V64)
++    int thermal64, double *__restrict__ out_V64,
++    int vertex_halo, double complete_xmax, double complete_ymax)
+ {
+     int i = blockIdx.x * blockDim.x + threadIdx.x;
+     if (i >= nbp) return;
+@@ -3316,6 +3319,18 @@
+         po->halo_clipped =
+             (xi - final_search_radius < xmin || xi + final_search_radius > grid_xmax ||
+              yi - final_search_radius < ymin || yi + final_search_radius > grid_ymax);
++        if(vertex_halo){
++            int old_clipped=po->halo_clipped, complete=1;
++            /* Use actual padding bounds, never rounded-up grid allocation.
++             * Strict directed bounds protect the represented vertices;
++             * search, clipping, gradients and force arithmetic are unchanged. */
++            for(int e=0;e<nc && complete;e++)
++                complete=gfs_vertex_halo_disk_inside(xi,yi,poly_x[e],poly_y[e],
++                    xmin,ymin,complete_xmax,complete_ymax);
++            po->halo_clipped=!complete;
++            if(old_clipped && complete)
++                atomicAdd(&d_gfs_vertex_halo_recertified_cells,1ull);
++        }
+         if (po->halo_clipped)
+             atomicAdd(&d_gfs_stencil_halo_clipped_cells, 1ull);
+     } else {
+@@ -3466,7 +3481,7 @@
+     double OoA, int av_mode, double Gamma,
+     double nu_phys, double prandtl, double cd_amax,
+     int gradient_method,
+-    int entropy_mode, double K_floor)
++    int entropy_mode, double K_floor, int vertex_halo, double complete_xmax, double complete_ymax)
+ {
+     h_diag_tess_mx = mx; h_diag_tess_my = my;
+     h_diag_tess_cellsize = cellsize;
+@@ -3526,6 +3541,13 @@
+     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_stencil_halo_clipped_cells, &zero_fallbacks, sizeof(zero_fallbacks), 0,
+                                        cudaMemcpyHostToDevice, s));
+ 
++    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_vertex_halo_recertified_cells,&zero_fallbacks,
++        sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
++    if(vertex_halo){
++        static int banner=0;
++        if(!banner++) fprintf(stderr,"[VERTEX_HALO] force=1 actual_rectangle=[%.17g,%.17g]x[%.17g,%.17g] W0_only=1\n",
++            xmin,complete_xmax,ymin,complete_ymax);
++    }
+     if (tess_profile) CUDA_CHECK(cudaEventRecord(tess_events[0], s));
+     /* Kernel A reads neighbor densities while publishing each cell's new
+      * density. Passing d_parts.den as both input and output made those reads
+@@ -3556,7 +3578,7 @@
+         nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max,
+         all_weights_zero, OoA, av_mode,
+         gradient_method, raw_geometry, limit_velocity, merge_small_faces,
+-        thermal64, ctx->d_parts.E_inv_xy);
++        thermal64, ctx->d_parts.E_inv_xy, vertex_halo, complete_xmax, complete_ymax);
+     CUDA_CHECK(cudaGetLastError());
+     if (tess_profile) CUDA_CHECK(cudaEventRecord(tess_events[1], s));
+ 
+@@ -3609,6 +3631,11 @@
+                                        sizeof(h_stencil_expanded)));
+         CUDA_CHECK(cudaMemcpyFromSymbol(&h_halo_clipped, d_gfs_stencil_halo_clipped_cells,
+                                        sizeof(h_halo_clipped)));
++        if(vertex_halo){
++            unsigned long long recertified=0;
++            CUDA_CHECK(cudaMemcpyFromSymbol(&recertified,d_gfs_vertex_halo_recertified_cells,sizeof(recertified)));
++            fprintf(stderr,"[VERTEX_HALO] recertified=%llu incomplete=%llu\n",recertified,h_halo_clipped);
++        }
+         if (h_stencil_expanded > 0 || h_halo_clipped > 0)
+             fprintf(stderr, "[GPU_STENCIL_EXPANSION] expanded_cells=%llu halo_clipped_cells=%llu\n",
+                     h_stencil_expanded, h_halo_clipped);
+@@ -3694,7 +3721,7 @@
+ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
+     int mx, int my, double cellsize, double xmin, double ymin,
+     double boxsize, double global_w2_max, double OoA, int av_mode,
+-    int gradient_method)
++    int gradient_method, int vertex_halo, double complete_xmax, double complete_ymax)
+ {
+     ctx->tess_faces_on_device = 0;
+     if (nbp <= 0) return 0;
+@@ -3704,6 +3731,12 @@
+     unsigned long long zero = 0;
+     const char *raw_env=getenv("GFS_GPU_RAW_FACES");
+     int raw_geometry=(raw_env && atoi(raw_env)>0) ? 2 : 1;
++    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_vertex_halo_recertified_cells,&zero,sizeof(zero),0,cudaMemcpyHostToDevice,s));
++    if(vertex_halo){
++        static int banner=0;
++        if(!banner++) fprintf(stderr,"[VERTEX_HALO] final_volume=1 actual_rectangle=[%.17g,%.17g]x[%.17g,%.17g] W0_only=1\n",
++            xmin,complete_xmax,ymin,complete_ymax);
++    }
+     int thermal64=gfs_thermal64_requested();
+     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_tess_geometry_errors,&zero,sizeof(zero),0,cudaMemcpyHostToDevice,s));
+     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_invalid_raw_volume_cells, &zero,
+@@ -3735,7 +3768,7 @@
+         nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max,
+         0, OoA, av_mode,
+         gradient_method, raw_geometry, 1, 0,
+-        thermal64, ctx->d_parts.E_inv_xy);
++        thermal64, ctx->d_parts.E_inv_xy, vertex_halo, complete_xmax, complete_ymax);
+     CUDA_CHECK(cudaGetLastError());
+     unsigned long long invalid = 0, clipped = 0, geometry_errors=0;
+     CUDA_CHECK(cudaMemcpyFromSymbolAsync(&geometry_errors,d_gfs_tess_geometry_errors,sizeof(geometry_errors),0,cudaMemcpyDeviceToHost,s));
+--- a/Exam/exam_gpu.h
++++ b/Exam/exam_gpu.h
+@@ -293,15 +293,16 @@
+     double OoA, int av_mode, double Gamma,
+     double nu_phys, double prandtl, double cd_amax,
+     int gradient_method,
+-    int entropy_mode, double K_floor);
++    int entropy_mode, double K_floor, int vertex_halo, double complete_xmax, double complete_ymax);
+ void gpu_download_tess_results(GPUContext *ctx, int nbp, int has_stress);
+ /* Raw geometric area for the end-of-step volume refresh; no EOS or force. */
+ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
+     int mx, int my, double cellsize, double xmin, double ymin,
+     double boxsize, double global_w2_max, double OoA, int av_mode,
+-    int gradient_method);
++    int gradient_method, int vertex_halo, double complete_xmax, double complete_ymax);
+ void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
+-    double cellsize, double xmin, double ymin, double boxsize, double OoA);
++    double cellsize, double xmin, double ymin, double boxsize, double OoA,
++    double complete_xmax, double complete_ymax, int vertex_halo);
+ 
+ /* --- CPU-side helpers for GPU tessellation (exam_gpu_extract.c) --- */
+ GPUContext *gpu_get_context(void);
+--- a/Exam/exam_gpu_extract.c
++++ b/Exam/exam_gpu_extract.c
+@@ -678,6 +678,62 @@
+  * ================================================================ */
+ 
+ static int gpu_call_count = 0;
++
++/* Read-only native validation output. At most four force calls per rank;
++ * normal runs allocate/write nothing. Fixed-size arrays use native little
++ * endian double/float/int32/int64 layout, validated by the Python reader. */
++static void gfs_dump_geometry_force(SimParameters *simpar, GPUContext *ctx,
++                                   int nbp, int n_total, int n_faces, int call)
++{
++    const char *setting=getenv("GFS_GEOM_FORCE_DUMP_MAXCALL");
++    int maximum=setting ? atoi(setting) : 0;
++    if(maximum<=0 || call>maximum) return;
++    if(maximum>4 || sizeof(int)!=4 || sizeof(long long)!=8 ||
++       sizeof(double)!=8 || sizeof(float)!=4) {
++        fprintf(stderr,"[GEOM_FORCE_DUMP] unsupported count or native layout\n");
++        MPI_Abort(MPI_COMM(simpar),94);
++    }
++    size_t nf=(size_t)n_faces;
++    int *offset=(int*)malloc(((size_t)nbp+1)*sizeof(int));
++    double *corners=(double*)malloc(4*nf*sizeof(double));
++    int *indices=(int*)malloc(4*nf*sizeof(int));
++    if(!offset || !corners || !indices) MPI_Abort(MPI_COMM(simpar),94);
++    gpu_download_face_csr(ctx,nbp,n_faces,offset,
++        corners,corners+nf,corners+2*nf,corners+3*nf,
++        indices,indices+nf,indices+2*nf,indices+3*nf);
++    char name[128];
++    snprintf(name,sizeof(name),"geom_force_rank%03d_call%03d.bin",MYID(simpar),call);
++    FILE *out=fopen(name,"wbx");
++    if(!out) {
++        fprintf(stderr,"[GEOM_FORCE_DUMP] cannot create %s\n",name);
++        MPI_Abort(MPI_COMM(simpar),94);
++    }
++    const char magic[8]={'G','F','S','F','G','0','1',0};
++    unsigned long long header[6]={(unsigned long long)nbp,(unsigned long long)n_total,
++        (unsigned long long)n_faces,(unsigned long long)call,
++        (unsigned long long)MYID(simpar),1ull};
++    int okay=fwrite(magic,1,8,out)==8 && fwrite(header,sizeof(header),1,out)==1;
++#define GFS_GF_WRITE(ptr,type,count) do { size_t n_=(size_t)(count); \
++    if(fwrite((ptr),sizeof(type),n_,out)!=n_) okay=0; } while(0)
++    GFS_GF_WRITE(ctx->h_parts.indx,long long,n_total);
++    GFS_GF_WRITE(ctx->h_parts.x,double,n_total);
++    GFS_GF_WRITE(ctx->h_parts.y,double,n_total);
++    GFS_GF_WRITE(offset,int,nbp+1);
++    GFS_GF_WRITE(corners,double,4*nf);
++    GFS_GF_WRITE(indices,int,4*nf);
++    GFS_GF_WRITE(ctx->h_parts.ax_out,double,nbp);
++    GFS_GF_WRITE(ctx->h_parts.ay_out,double,nbp);
++    GFS_GF_WRITE(ctx->h_parts.die_out,float,nbp);
++    GFS_GF_WRITE(ctx->h_parts.dK_out,float,nbp);
++    GFS_GF_WRITE(ctx->h_parts.dt_out,float,nbp);
++#undef GFS_GF_WRITE
++    if(fclose(out)!=0) okay=0;
++    free(offset);free(corners);free(indices);
++    if(!okay) MPI_Abort(MPI_COMM(simpar),94);
++    fprintf(stderr,"[GEOM_FORCE_DUMP] rank=%d call=%d np=%d faces=%d file=%s\n",
++            MYID(simpar),call,nbp,n_faces,name);
++}
++
+ 
+ double getAccVoro2DBlend_GPU(
+     SimParameters *simpar,
+@@ -945,6 +1001,7 @@
+                   MPI_COMM(simpar));
+ 
+     double t7_done = MPI_Wtime();
++    gfs_dump_geometry_force(simpar,&g_gpu_ctx,nbp,n_total,n_faces,gpu_call_count+1);
+ 
+     /* Free: fused path only has padding; fallback has cells + padding */
+     if (!fused && !reuse_tess_padding)
+@@ -1882,7 +1939,8 @@
+  * Write only the fields written by CPU exam2dUpdateVol. In particular, do not
+  * refresh pressure or stress before the caller books its thermal-energy floor. */
+ void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
+-    double cellsize, double xmin, double ymin, double boxsize, double OoA)
++    double cellsize, double xmin, double ymin, double boxsize, double OoA,
++    double complete_xmax, double complete_ymax, int vertex_halo)
+ {
+     SimParameters *simpar = (SimParameters *)simpar_opaque;
+     int nbp = VORO_NP(simpar), npad = VORO_NPAD(simpar);
+@@ -1905,9 +1963,11 @@
+             local_wmax = g_gpu_ctx.h_parts.w2[k];
+     MPI_Allreduce(&local_wmax, &global_wmax, 1, MPI_DOUBLE, MPI_MAX,
+                   MPI_COMM(simpar));
++    if(vertex_halo) for(int k=0;k<n_total;k++)
++        if(g_gpu_ctx.h_parts.w2[k]!=0) {vertex_halo=0;break;}
+     int failed = gpu_tessellate_raw_volume(&g_gpu_ctx, nbp, mx, my,
+         cellsize, xmin, ymin, boxsize, global_wmax, OoA, GAS_AVMODE(simpar),
+-        GAS_GRADIENT_METHOD(simpar));
++        GAS_GRADIENT_METHOD(simpar), vertex_halo, complete_xmax, complete_ymax);
+     for (int k = 0; k < nbp; k++)
+         if (!(g_gpu_ctx.h_parts.volume[k] > 0) ||
+             !isfinite(g_gpu_ctx.h_parts.volume[k])) failed = 1;

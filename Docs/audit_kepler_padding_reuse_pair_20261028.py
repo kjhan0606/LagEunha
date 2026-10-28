@@ -67,7 +67,7 @@ def load(name):
     return state, trace, metrics
 
 
-def compare(a_name, b_name, exact):
+def compare(a_name, b_name, exact, same_padding=True):
     a, ta, ma = load(a_name)
     b, tb, mb = load(b_name)
     checks = {'both_physics_gates': ma['all_native_physics_checks'] and mb['all_native_physics_checks'],
@@ -77,7 +77,14 @@ def compare(a_name, b_name, exact):
               'both_use_distinct_GPU_per_rank': ma['distinct_GPU_per_rank'] and mb['distinct_GPU_per_rank'],
               'same_GPU_model': {row[3] for row in ma['parsed_GPU_assignments']} == {row[3] for row in mb['parsed_GPU_assignments']}}
     if exact:
-        checks['stage_tessellation_counts_identical'] = bool(ta['tessellation']) and ta['tessellation'] == tb['tessellation']
+        if same_padding:
+            checks['stage_tessellation_counts_identical'] = bool(ta['tessellation']) and ta['tessellation'] == tb['tessellation']
+        else:
+            # Halo-width experiments change only the number of padding
+            # entries. Owned cells and effective face counts must still match.
+            checks['stage_owned_and_face_counts_identical'] = bool(ta['tessellation']) and [
+                (row[0], row[2]) for row in ta['tessellation']] == [
+                (row[0], row[2]) for row in tb['tessellation']]
         checks['force_face_counts_identical'] = bool(ta['force']) and ta['force'] == tb['force']
     differences = {}
     for f in FIELDS:

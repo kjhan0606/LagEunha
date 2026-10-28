@@ -1,0 +1,71 @@
+{
+  "recorded_at": "2026-10-29T00:51:00.272655+09:00",
+  "root": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029",
+  "start": 2.6549183918680868,
+  "target": 2.66,
+  "checkpoint": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/diag_clip_swap_t2_to65_a100_20261028/khdiag.step023008.start_geometry.dat",
+  "cases": [
+    {
+      "name": "qualifier_old",
+      "binary_sha256": "6718551061d70e24e09f0fe000a35b5cf1ac8c1a15b579f1e97e6d907b42baa0",
+      "vertex_certificate": 0,
+      "halo": 40,
+      "target": 2.654928391868087,
+      "read_only_force_dumps": 0
+    },
+    {
+      "name": "qualifier_new",
+      "binary_sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+      "vertex_certificate": 0,
+      "halo": 40,
+      "target": 2.654928391868087,
+      "read_only_force_dumps": 0
+    },
+    {
+      "name": "control40",
+      "binary_sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+      "vertex_certificate": 0,
+      "halo": 40,
+      "target": 2.66,
+      "read_only_force_dumps": 4
+    },
+    {
+      "name": "vertex40",
+      "binary_sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+      "vertex_certificate": 1,
+      "halo": 40,
+      "target": 2.66,
+      "read_only_force_dumps": 4
+    },
+    {
+      "name": "vertex20",
+      "binary_sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+      "vertex_certificate": 1,
+      "halo": 20,
+      "target": 2.66,
+      "read_only_force_dumps": 4
+    }
+  ],
+  "native_binary": {
+    "binary": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/eunha2.vertex.exe",
+    "sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+    "build_seconds": 86.86380153696518,
+    "production_promoted": false,
+    "runtime_validation": "Not performed; existing long trajectory untouched"
+  },
+  "qualifier": "Canonical executable vs candidate with all new options off; exact fields and accepted-step trace",
+  "gate": "Exact ten endpoint fields, accepted-step traces, owned/face counts, all four RK4 per-cell force/work/timestep arrays and complete face geometry plus normalized neighbor/image identities",
+  "safety": "Existing 15 physics checks and every energy ledger injection/count zero; actual-padding domain banners required; reduced halo must exercise the new certificate",
+  "relationship_to_job_439029": "Independent experiment: this changes geometric halo certification/width; 439029 measures redundant host padding and MPI/local alias refresh. New feature stays off in that job.",
+  "storage_policy": "Five endpoint dumps about 425 MB plus twelve binary face/force audits about 650 MB; parent states linked. About 1.2 GB total including executables/logs.",
+  "resources": {
+    "partition": "a100_pcie",
+    "GPU": 1,
+    "CPUs": 2,
+    "memory_GB": 48,
+    "minutes": 40
+  },
+  "production_modified": false,
+  "production_promoted": false,
+  "job_id": 439065
+}
