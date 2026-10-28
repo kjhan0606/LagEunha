@@ -1,0 +1,314 @@
+{
+  "passed": true,
+  "checks": {
+    "full_59_step_state_and_trace_exact": true,
+    "four_geometry_and_force_calls_exact": true,
+    "requested_flags_exact": true,
+    "same_actual_reference_host_GPU": true,
+    "honest_current_execution": true,
+    "correct_native_binary": true,
+    "padding_reuse_executed": true,
+    "local_alias_executed": true,
+    "no_host_alias_fallback": true,
+    "halo40_executed": true
+  },
+  "state": {
+    "control": "control40",
+    "candidate": "combined40",
+    "checks": {
+      "both_physics_gates": true,
+      "all_ledgers_positive_without_injection": true,
+      "same_endpoint": true,
+      "printed_step_trace_identical": true,
+      "both_use_distinct_GPU_per_rank": true,
+      "same_GPU_model": true,
+      "stage_tessellation_counts_identical": true,
+      "force_face_counts_identical": true,
+      "x_exact": true,
+      "y_exact": true,
+      "vx_exact": true,
+      "vy_exact": true,
+      "mass_exact": true,
+      "volume_exact": true,
+      "ie_exact": true,
+      "den_exact": true,
+      "pressure_exact": true,
+      "w2_exact": true
+    },
+    "passed": true,
+    "field_differences": {
+      "x": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "y": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "vx": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "vy": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "mass": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "volume": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "ie": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "den": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "pressure": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      },
+      "w2": {
+        "bitwise_equal": true,
+        "max_absolute_difference": 0.0,
+        "normalized_rms_difference": 0.0
+      }
+    },
+    "metrics": [
+      {
+        "time": 2.66,
+        "wall_seconds": 247.482,
+        "steps": 59,
+        "tessellation_records": 236,
+        "force_records": 59,
+        "all_native_physics_checks": true,
+        "every_ledger_positive_and_injection_free": true,
+        "reuse_ranks": [],
+        "GPU_assignments": [
+          "[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)"
+        ],
+        "parsed_GPU_assignments": [
+          [
+            0,
+            0,
+            1,
+            "NVIDIA RTX 5000 Ada Generation (32229 MB)"
+          ]
+        ],
+        "distinct_GPU_per_rank": true,
+        "local_periodic_sync_used": false,
+        "host_refresh_or_alias_fallback": true,
+        "force_wrapper_mean_ms": 161.93220338983053,
+        "force_sync_SoA_mean_ms": 80.83728813559321
+      },
+      {
+        "time": 2.66,
+        "wall_seconds": 220.06,
+        "steps": 59,
+        "tessellation_records": 236,
+        "force_records": 59,
+        "all_native_physics_checks": true,
+        "every_ledger_positive_and_injection_free": true,
+        "reuse_ranks": [
+          0
+        ],
+        "GPU_assignments": [
+          "[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)"
+        ],
+        "parsed_GPU_assignments": [
+          [
+            0,
+            0,
+            1,
+            "NVIDIA RTX 5000 Ada Generation (32229 MB)"
+          ]
+        ],
+        "distinct_GPU_per_rank": true,
+        "local_periodic_sync_used": true,
+        "host_refresh_or_alias_fallback": false,
+        "force_wrapper_mean_ms": 28.93050847457627,
+        "force_sync_SoA_mean_ms": 0.2779661016949153
+      }
+    ],
+    "wall_speedup_control_over_candidate": 1.1246114695992002
+  },
+  "four_force_calls": [
+    {
+      "passed": true,
+      "checks": {
+        "same_owned_size_call_rank": true,
+        "owned_ID_order_identical": true,
+        "CSR_offsets_identical": true,
+        "owned_x_exact": true,
+        "owned_y_exact": true,
+        "c1x_exact": true,
+        "c1y_exact": true,
+        "c2x_exact": true,
+        "c2y_exact": true,
+        "is_ghost_exact": true,
+        "ax_exact": true,
+        "ay_exact": true,
+        "die_exact": true,
+        "dK_exact": true,
+        "dt_exact": true,
+        "neighbor_ID_exact": true,
+        "neighbor_dx_exact": true,
+        "neighbor_dy_exact": true,
+        "kp_ID_exact": true,
+        "kp_dx_exact": true,
+        "kp_dy_exact": true,
+        "km_ID_exact": true,
+        "km_dx_exact": true,
+        "km_dy_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/control40/geom_force_rank000_call001.bin",
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/combined40/geom_force_rank000_call001.bin"
+      ],
+      "force_call": 1,
+      "owned_cells": 147456,
+      "faces": 884768,
+      "padding_counts": [
+        337440,
+        337440
+      ]
+    },
+    {
+      "passed": true,
+      "checks": {
+        "same_owned_size_call_rank": true,
+        "owned_ID_order_identical": true,
+        "CSR_offsets_identical": true,
+        "owned_x_exact": true,
+        "owned_y_exact": true,
+        "c1x_exact": true,
+        "c1y_exact": true,
+        "c2x_exact": true,
+        "c2y_exact": true,
+        "is_ghost_exact": true,
+        "ax_exact": true,
+        "ay_exact": true,
+        "die_exact": true,
+        "dK_exact": true,
+        "dt_exact": true,
+        "neighbor_ID_exact": true,
+        "neighbor_dx_exact": true,
+        "neighbor_dy_exact": true,
+        "kp_ID_exact": true,
+        "kp_dx_exact": true,
+        "kp_dy_exact": true,
+        "km_ID_exact": true,
+        "km_dx_exact": true,
+        "km_dy_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/control40/geom_force_rank000_call002.bin",
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/combined40/geom_force_rank000_call002.bin"
+      ],
+      "force_call": 2,
+      "owned_cells": 147456,
+      "faces": 884776,
+      "padding_counts": [
+        337429,
+        337429
+      ]
+    },
+    {
+      "passed": true,
+      "checks": {
+        "same_owned_size_call_rank": true,
+        "owned_ID_order_identical": true,
+        "CSR_offsets_identical": true,
+        "owned_x_exact": true,
+        "owned_y_exact": true,
+        "c1x_exact": true,
+        "c1y_exact": true,
+        "c2x_exact": true,
+        "c2y_exact": true,
+        "is_ghost_exact": true,
+        "ax_exact": true,
+        "ay_exact": true,
+        "die_exact": true,
+        "dK_exact": true,
+        "dt_exact": true,
+        "neighbor_ID_exact": true,
+        "neighbor_dx_exact": true,
+        "neighbor_dy_exact": true,
+        "kp_ID_exact": true,
+        "kp_dx_exact": true,
+        "kp_dy_exact": true,
+        "km_ID_exact": true,
+        "km_dx_exact": true,
+        "km_dy_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/control40/geom_force_rank000_call003.bin",
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/combined40/geom_force_rank000_call003.bin"
+      ],
+      "force_call": 3,
+      "owned_cells": 147456,
+      "faces": 884778,
+      "padding_counts": [
+        337429,
+        337429
+      ]
+    },
+    {
+      "passed": true,
+      "checks": {
+        "same_owned_size_call_rank": true,
+        "owned_ID_order_identical": true,
+        "CSR_offsets_identical": true,
+        "owned_x_exact": true,
+        "owned_y_exact": true,
+        "c1x_exact": true,
+        "c1y_exact": true,
+        "c2x_exact": true,
+        "c2y_exact": true,
+        "is_ghost_exact": true,
+        "ax_exact": true,
+        "ay_exact": true,
+        "die_exact": true,
+        "dK_exact": true,
+        "dt_exact": true,
+        "neighbor_ID_exact": true,
+        "neighbor_dx_exact": true,
+        "neighbor_dy_exact": true,
+        "kp_ID_exact": true,
+        "kp_dx_exact": true,
+        "kp_dy_exact": true,
+        "km_ID_exact": true,
+        "km_dx_exact": true,
+        "km_dy_exact": true
+      },
+      "paths": [
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/control40/geom_force_rank000_call004.bin",
+        "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_reuse_alias_t2654918_ada_20261029/combined40/geom_force_rank000_call004.bin"
+      ],
+      "force_call": 4,
+      "owned_cells": 147456,
+      "faces": 884776,
+      "padding_counts": [
+        337431,
+        337431
+      ]
+    }
+  ],
+  "production_promoted": false,
+  "scope": "Exact halo40 reuse+alias implementation check, not halo20 acceptance, net speed or long-time stability",
+  "auditor_sha256": "966bba7cd25568b9cf2ae9eba631d62f4d98cc4674fac860597b4da0809bfedf"
+}
