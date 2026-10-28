@@ -1,0 +1,11 @@
+import os, pathlib, subprocess
+pid=3947439
+root=pathlib.Path('/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2')
+assert os.stat(f'/proc/{pid}').st_uid==os.getuid()
+assert pathlib.Path(f'/proc/{pid}/cwd').resolve()==root/'to0p825'
+assert pathlib.Path(f'/proc/{pid}/exe').resolve()==pathlib.Path('/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v2/eunha2.exe')
+os.kill(pid,19)
+with (root/'disable_full_audit.log').open('x') as out:
+ result=subprocess.run(['/usr/bin/gdb','-q','-batch','-x',str(root/'disable_full_audit.gdb')],stdout=out,stderr=subprocess.STDOUT,timeout=45)
+print('gdb_exit',result.returncode)
+raise SystemExit(result.returncode)

@@ -1,0 +1,92 @@
+--- a/Exam/gfs_wall_events.inc
++++ b/Exam/gfs_wall_events.inc
+@@ -4,0 +5,2 @@
++#include <limits.h>
++#include <stdint.h>
+@@ -7 +9 @@
+-typedef struct { double x,y,m; int seen; } GfsWallBase;
++typedef struct { double x,y,m; unsigned int present,seen; } GfsWallBase;
+@@ -10 +12 @@
+-    ptrdiff_t np,total;size_t bytes;void *backup;GfsWallBase *base;
++    ptrdiff_t np,total;size_t bytes,extent;unsigned int generation;void *backup;GfsWallBase *base;
+@@ -81,3 +83,7 @@
+-    w->np=VORO_NP(s);w->total=VORO_TNP(s);w->bytes=(size_t)w->np*sizeof(treevorostressrk4particletype);
+-    w->backup=malloc(w->bytes?w->bytes:1);w->base=calloc((size_t)(w->np?w->np:1),sizeof(*w->base));
+-    if(!w->backup || !w->base)MPI_Abort(MPI_COMM(s),99);
++    w->np=VORO_NP(s);w->total=VORO_TNP(s);
++    if(w->np<=0 || w->np>INT_MAX || (size_t)w->np>SIZE_MAX/sizeof(treevorostressrk4particletype)){
++        fprintf(stderr,"[WALL_EVENTS] invalid owned count for bounded event transaction\n");MPI_Abort(MPI_COMM(s),99);
++    }
++    w->bytes=(size_t)w->np*sizeof(treevorostressrk4particletype);
++    w->backup=malloc(w->bytes);
++    if(!w->backup)MPI_Abort(MPI_COMM(s),99);
+@@ -91,0 +98,4 @@
++    /* Preserve global IDs. Bound the direct lookup allocation before indexing;
++     * the intended truncated Q1 and remapped Q2 fixtures use less than 3*N.
++     */
++    size_t id_limit=(size_t)w->np<=(SIZE_MAX-1024)/8?(size_t)w->np*8+1024:SIZE_MAX;
+@@ -94,3 +104,13 @@
+-        if(id>=(size_t)w->np || w->base[id].seen || !isfinite(p[i].mass) || !(p[i].mass>0) || !(p[i].ie>0) ||
+-           !(p[i].volume>0) || p[i].w2!=0)gfs_wall_stop(s,w,"invalid_accepted_ID_mass_W0_state");
+-        w->base[id]=(GfsWallBase){p[i].x,p[i].y,p[i].mass,1};
++        if(id>(size_t)INT_MAX || id>=id_limit)gfs_wall_stop(s,w,"unsupported_accepted_ID_range");
++        if(id+1>w->extent)w->extent=id+1;
++    }
++    if(w->extent>SIZE_MAX/sizeof(*w->base))gfs_wall_stop(s,w,"ID_lookup_allocation_overflow");
++    w->base=calloc(w->extent,sizeof(*w->base));
++    if(!w->base)gfs_wall_stop(s,w,"ID_lookup_allocation_failed");
++    for(ptrdiff_t i=0;i<w->np;i++){
++        size_t id=(size_t)PINDX((treevorork4particletype*)(p+i));
++        if(w->base[id].present || !isfinite(p[i].mass) || !(p[i].mass>0) || !(p[i].ie>0) ||
++           !(p[i].volume>0) || p[i].w2!=0 || !isfinite(p[i].ie) || !isfinite(p[i].volume) ||
++           !isfinite(p[i].x) || !isfinite(p[i].y) || !isfinite(p[i].vx) || !isfinite(p[i].vy))
++            gfs_wall_stop(s,w,"invalid_accepted_ID_mass_W0_state");
++        w->base[id]=(GfsWallBase){p[i].x,p[i].y,p[i].mass,1,0};
+@@ -105,0 +126,13 @@
++}
++static void gfs_wall_new_generation(GfsWallEventStep *w){
++    if(++w->generation==0){
++        for(size_t i=0;i<w->extent;i++)w->base[i].seen=0;
++        w->generation=1;
++    }
++}
++static int gfs_wall_identity(GfsWallEventStep *w,treevorostressrk4particletype *p){
++    size_t id=(size_t)PINDX((treevorork4particletype*)p);
++    if(id>=w->extent || !w->base[id].present || w->base[id].seen==w->generation || p->mass!=w->base[id].m){
++        w->reason="trial_ID_or_mass_changed";return 0;
++    }
++    w->base[id].seen=w->generation;return 1;
+@@ -119 +152,6 @@
+-    for(ptrdiff_t i=0;i<w->np;i++){
++    gfs_wall_new_generation(w);
++    for(ptrdiff_t i=0;i<w->np;i++){
++        /* N distinct members of the immutable N-member initial ID set imply
++         * exact set equality, even after native particle reordering.
++         */
++        if(!gfs_wall_identity(w,p+i))return 0;
+@@ -124,0 +163,11 @@
++        }
++    }
++    return 1;
++}
++static int gfs_wall_endpoint_inside(SimParameters *s,GfsWallEventStep *w,double h){
++    treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
++    for(ptrdiff_t i=0;i<w->np;i++){
++        double x=p[i].x-3.,y=p[i].y-3.,tol=gfs_wall_tolerance(p[i].x,p[i].y);
++        if(hypot(x,y)<gfs_wall_apothem()-tol)continue;
++        for(int k=0;k<1024;k++)if(x*gfs_wall_nx[k]+y*gfs_wall_ny[k]-gfs_wall_apothem()>tol){
++            w->reason="unresolved_outside_endpoint";w->ceiling=.5*h;w->search=0;return 0;
+@@ -164 +213,2 @@
+-    for(ptrdiff_t i=0;i<w->np;i++)w->base[i].seen=0;
++    if(VORO_NP(s)!=w->np)gfs_wall_stop(s,w,"owned_count");
++    gfs_wall_new_generation(w);
+@@ -167,2 +217 @@
+-        if(id>=(size_t)w->np || w->base[id].seen || p[i].mass!=w->base[id].m)gfs_wall_stop(s,w,"trial_ID_or_mass_changed");
+-        w->base[id].seen=1;
++        if(!gfs_wall_identity(w,p+i))gfs_wall_stop(s,w,"trial_ID_or_mass_changed");
+@@ -236 +285 @@
+-            if(h<=w->lo && first_id<0 && gap < -tol){w->search=0;return 1;}
++            if(h<=w->lo && first_id<0 && gap < -tol){w->search=0;return gfs_wall_endpoint_inside(s,w,h);}
+@@ -241 +290 @@
+-    if(first_id<0)return 1;
++    if(first_id<0)return gfs_wall_endpoint_inside(s,w,h);

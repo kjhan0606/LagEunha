@@ -1,5 +1,7 @@
 # Native RK4 polygon-wall events: frozen v1, 2026-10-29
 
+Follow-up: [v2](../KEPLER_SLIP_WALL_EVENTS_V2_2026-10-29/README.md) now passes native gapped-ID parity/rollback/collision tests and adds explicit endpoint checks. The preserved-ID Q1 IC has passed native initial-state validation and its H200 checkpoint chain has started; see [the Q1 experiment](../KEPLER_Q1_BOUNDED_GLOBAL_2026-10-29/README.md). The v1 evidence and earlier remaining-work list below are preserved.
+
 This opt-in implementation extends the user's native CUDA+MPI+OpenMP solver. It passed a local replay of the original late Q2 wall crossing. It has not been promoted to a production executable and does not establish Q1 accuracy or long-time Kepler stability.
 
 ## Source and reproduction

@@ -1,0 +1,17 @@
+set pagination off
+set debuginfod enabled off
+set auto-load python-scripts off
+attach 3947439
+printf "audit_min_before=%d audit_max=%d\n", *(int*)0xee14f4, *(int*)0xee14f8
+if *(int*)0xee14f4 != 0
+  detach
+  quit 2
+end
+if *(int*)0xee14f8 != 1000000
+  detach
+  quit 3
+end
+set {int}0xee14f4 = -1
+printf "audit_min_after=%d\n", *(int*)0xee14f4
+detach
+quit

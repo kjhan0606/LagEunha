@@ -41,13 +41,13 @@ def polygon(i,xy,tree):
     return poly,area,worst
 
 
-def reconstruct(i,xy,p,poly):
+def reconstruct(i,xy,p,poly,edge_resolution=0.):
     vi=np.array([p['vx'][i],p['vy'][i]],dtype=float)
     force=np.zeros(2);vdot=0.;closure=np.zeros(2);rows=[]
     for k,a in enumerate(poly):
         b=poly[(k+1)%len(poly)];va=np.asarray(a[:2]);vb=np.asarray(b[:2])
         segment=vb-va;length=float(np.linalg.norm(segment))
-        if length==0:continue
+        if length<=edge_resolution:continue
         outward=np.array([segment[1],-segment[0]])/length
         closure+=length*outward
         j=a[2]

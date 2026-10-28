@@ -1,0 +1,85 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat",
+  "preflight": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/preflight_audit.json",
+  "ID_regression": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v2/global_ID_audit.json",
+  "hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v2/eunha2.exe": "f26816122df101ea71f72b4f3fb9233e965d06784ed94e88cfb46245fa251444",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/run_kepler_q1_bounded_chain_20261029.py": "78207cd7663a1e846d3da86d9b8f4a3f9d3cbb910ff3f2f721440bde27db6149",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/audit_kepler_q1_bounded_gate_20261029.py": "d06fcb8fcf193f23417ba49f695c36d3abc8663a54aca60d387b5bcd5d323ea1",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/kepler_native_global_ids_20261029.py": "3f2dd650e61ab8fb84742f0c468a860fcd631629a7d28a7c14cf8107b87ed53a",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/audit_kepler_native_radial_20261026.py": "4970c8568d455522c5ce04d7fb493e60c2147584ca7037b312f3443b2be47fc2",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/audit_snapshot.py": "d163c40164bc03b45b4afd202c1a0d6577e849d5ed01bea64b31a543c587e6a2",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/snapshot_offsets.json": "c9be19a29148fdd8991050f97a7ac189248eedeb2494997bdcda42e1c3785d03",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/run.sh": "65fa491a31bcbe25b582c0778f024c93f2f559abc6990237449eb2a12d13c7ed",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/run.sh": "22036782ee614db76c970f06f364e3c28670af67d962660cda3043ecbb57792e",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to3p0/run.sh": "c0146337fc1572dcef52f06d56243b0195cf7dc14571c960ece2b6031c4702d4",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to3p0/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to6p5/run.sh": "755a35578863dae7a517bc6e22266f3d8c87a5952f6251799f1481b0e1996ea0",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to6p5/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0/run.sh": "a06d26d261b44fb126a4f90122d97f7dc06eb600d2c4b24f9ba11c520a23e83e",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43"
+  },
+  "stages": [
+    {
+      "directory": "to0p825",
+      "time": 0.825
+    },
+    {
+      "directory": "to2p5",
+      "time": 2.5
+    },
+    {
+      "directory": "to3p0",
+      "time": 3.0
+    },
+    {
+      "directory": "to6p5",
+      "time": 6.5
+    },
+    {
+      "directory": "to10p0",
+      "time": 10.0
+    }
+  ],
+  "output_policy": "Five exact accepted endpoints ~52MB each, total~260MB plus small ledgers; no periodic/face/tess dumps. Each successor reads its predecessor, never t0 again.",
+  "physics": "native GPU W0 fixed mass, Re infinity, no steering or intrinsic spin; polygon wall events v2; geometry CFL .1 and gravity DTETA 0 as in original Q1",
+  "approval": "User preauthorized Kepler tests; exact t3 and later use original radial thresholds.",
+  "diagnostic_correction": {
+    "first_stage_live_process": 3947439,
+    "native_diagnostic_static_symbol": "gfs_rk4_stage_diagnostic.audit_min",
+    "before": 0,
+    "after": -1,
+    "scope": "Only full TSV emission disabled. No physical state, executable or timestep changed. Same MPI process continues. Later stages unset audit range.",
+    "future_stage_changes": [
+      {
+        "path": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/run.sh",
+        "before": "0c048637c12701d4677539c13be73aa9dfcad62a8279541d9a1fbdc1ba90dbcc",
+        "after": "22036782ee614db76c970f06f364e3c28670af67d962660cda3043ecbb57792e"
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to3p0/run.sh",
+        "before": "f28542d68382e61b430d9a0f4a75dbfce492648c31eda451315c821bfa3f251b",
+        "after": "c0146337fc1572dcef52f06d56243b0195cf7dc14571c960ece2b6031c4702d4"
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to6p5/run.sh",
+        "before": "83b41f791dd45bd2d5dc3f8ebd055b176d8de5c6f7a1eb339fbddb7859dc7940",
+        "after": "755a35578863dae7a517bc6e22266f3d8c87a5952f6251799f1481b0e1996ea0"
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0/run.sh",
+        "before": "7e7ef2afed12619c52d25634a995b133174449d0da3b86f7058b9043fb9ba979",
+        "after": "a06d26d261b44fb126a4f90122d97f7dc06eb600d2c4b24f9ba11c520a23e83e"
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/run.sh",
+        "before": "d0d3c1d70e6e1879d41ae129e24ed34af6e9ba744b8046f250298667d6c59298",
+        "after": "65fa491a31bcbe25b582c0778f024c93f2f559abc6990237449eb2a12d13c7ed",
+        "note": "Atomic file replacement preserves the current shell open inode; native process already corrected separately and is not restarted."
+      }
+    ]
+  }
+}

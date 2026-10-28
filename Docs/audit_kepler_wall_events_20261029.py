@@ -11,18 +11,18 @@ from audit_kepler_native_radial_20261026 import ordered,energy
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def analyze(root):
+def analyze(root, reader=ordered):
     stage=json.loads((root/'stage.json').read_text())
-    initial=root/'khout.011580.dat';a,m0=ordered(initial)
+    initial=root/'khout.011580.dat';a,m0=reader(initial)
     endpoint=None
     for p in root.glob('khout.*.dat'):
         if p.name==initial.name:continue
-        _,meta=ordered(p)
+        _,meta=reader(p)
         if meta['t']==stage['target_time']:
             if endpoint is not None:raise ValueError('Repeated exact-time endpoint')
             endpoint=p
     if endpoint is None:raise ValueError('Missing complete exact-time endpoint')
-    b,meta=ordered(endpoint);text=(root/'log').read_text(errors='replace')
+    b,meta=reader(endpoint);text=(root/'log').read_text(errors='replace')
     impacts=[]
     pattern=r'\[WALL_IMPACT\] step=(\d+) t=(\S+) id=(\d+) side=(\d+) gap=(\S+) tolerance=(\S+) vn_before=(\S+) kinetic_roundoff=(\S+)'
     for q in re.finditer(pattern,text):
