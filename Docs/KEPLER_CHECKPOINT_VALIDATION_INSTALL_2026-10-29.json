@@ -1,0 +1,22 @@
+{
+  "recorded_at": "2026-10-29T01:57:29.011217+09:00",
+  "parent_job": 438957,
+  "standalone_request": 439115,
+  "installed_before_native_time": 2.85936,
+  "checker": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_from_t2654918_a100_20261028/check_radial_and_next.py",
+  "old_checker_sha256": "618a76315a1cafa0fd767fb2006134df907b4e15c0e7f8a844117d9ffc994841",
+  "new_checker_sha256": "8cd88388425ae22587a36f0a02e7dbf708244a4049371c449cd952cbaaf33943",
+  "runner": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_from_t2654918_a100_20261028/run_kepler_checkpoint_validation_20261029.py",
+  "runner_sha256": "a6824db73a0e9f0bd023604778a167a9c4505ab0bb2b2ddba17f537e2bde5ab9",
+  "config": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo40_from_t2654918_a100_20261028/checkpoint_validation_config_20261029.json",
+  "config_sha256": "f685d24252172c414f81f1e0cd4157c420fdee4a95151fe820b703ed1f1170d4",
+  "trigger": "After exact t=3 and native 15+radial 9 checks pass, original numeric MPI steps gone, original allocation still active and >=45 minutes remain",
+  "standalone_policy": "If pending/unstarted, hold, recheck, atomic claim, pending-only cancellation and confirm cancellation before using frozen batch in existing allocation; running/completed/partial workloads skipped",
+  "resource_policy": "Existing one GPU/two CPU/32 GiB allocation; no new allocation and no concurrency with original native simulation. Prior one/two-rank native MaxRSS was about 1.04/1.81 GiB per task.",
+  "deadline_policy": "At most 40 minutes, absolute allocation end with cleanup reserve; terminate auxiliary group and only numeric auxiliary Slurm steps; never cancel parent/batch/extern/other jobs",
+  "continuation_policy": "No automatic promotion; normal auxiliary failure with confirmed cleanup keeps original next job. Unverified residual ranks or interruption causes an operational stop at the preserved checkpoint.",
+  "native_binary_parameters_IC_stop_restart_metadata_unchanged": true,
+  "automatic_promotion": false,
+  "tests": "[POST_CHECKPOINT_VALIDATION] accepted t=3; starting frozen seven-case validation inside existing allocation\n[POST_CHECKPOINT_VALIDATION] accepted t=3; starting frozen seven-case validation inside existing allocation\n[POST_CHECKPOINT_VALIDATION] accepted t=3; starting frozen seven-case validation inside existing allocation\n........\n----------------------------------------------------------------------\nRan 8 tests in 0.025s\n\nOK\n",
+  "astra_decision": "Inline validation approved in principle; automatic promotion deferred pending direct old-production performance evidence and full continuation contract review"
+}
