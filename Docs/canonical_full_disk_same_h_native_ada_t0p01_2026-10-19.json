@@ -1,0 +1,814 @@
+{
+  "status": "completed_checkpoint_actual_cell_error_difference_diagnostics",
+  "time": 0.01,
+  "source_A": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0002/physics",
+    "fields_sha256": "13686bc34498e4753d18fbdc15369b44ea5140701e8588556c9c197aa45888bf",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "96cc4e983a86a3dd61e6143094ca4ab016cf5422a2949c88625df43629ba059f",
+    "physical_gate_sha256": "aaa631bb00e4dd4af1a572a8b22bc4ad46ce529d37d2ecdd53c503d17f54a897",
+    "density_report_sha256": "b09e7a8f67852bf7203c46997c439c15268a7cdfe05e820720405c5bab88ebd9",
+    "reference_report_sha256": "4265cbaba348bc23e222da74b8f1bbc50bf1ecda5f4357d88508919b5a8788d7"
+  },
+  "source_B": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/mpi_coarse/candidate_audit_0002/physics",
+    "fields_sha256": "559abe058a8fbd277d9739f5b2ed4bdbe42590578b1034e7474c5ba4eca93550",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "782aa32edc5e81ae85cfc0ad1a1a5cc7d33ec15dd788dc2eb0bff6809960a46a",
+    "physical_gate_sha256": "5c83d4f0d90da8723bc0ccb56820bd53221ed3c8e395b526cec00270aa6304c3",
+    "density_report_sha256": "6c359209231700bd1e36dc76241eae644d58896a265ff3f8e46ffb2774d4157a",
+    "reference_report_sha256": "52d8341b197708356ef1867a54ef1473ee6950f3e01d9d18964dd7bf09007259"
+  },
+  "regions": {
+    "all": {
+      "cells": 19945,
+      "cells_A": 19945,
+      "cells_B": 19945,
+      "intersection_cells": 19945,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 3.4700301978219276e-12,
+      "relative_pressure_error_difference_maximum": 2.939443599549868e-11,
+      "relative_density_error_difference_RMS": 1.2998081749702617e-12,
+      "velocity_error_difference_relative_RMS": 1.490686292892331e-14,
+      "phase_error_difference_degrees": {
+        "cells": 19945,
+        "RMS": 8.446452205020806e-13,
+        "maximum": 8.844835974741727e-11
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 9.584252852120296e-16,
+          "maximum_absolute_error_difference": 1.0671476723123074e-14,
+          "reference_A_RMS": 0.0009657966898021917,
+          "error_difference_relative_RMS": 9.923675400133418e-13
+        },
+        "density": {
+          "error_difference_RMS": 9.81450658197356e-13,
+          "maximum_absolute_error_difference": 1.0931922034274066e-11,
+          "reference_A_RMS": 0.9889493888955405,
+          "error_difference_relative_RMS": 9.924174777977677e-13
+        },
+        "centroid": {
+          "error_difference_RMS": 2.9847766540448157e-14,
+          "maximum_absolute_error_difference": 4.944933351680447e-12,
+          "reference_A_RMS": 1.463351339151561,
+          "error_difference_relative_RMS": 2.03968559988838e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 1.3322669926752748e-14,
+          "maximum_absolute_error_difference": 9.51627665557453e-13,
+          "reference_A_RMS": 0.8937272711418844,
+          "error_difference_relative_RMS": 1.490686292892331e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 1.2573888589775125e-14,
+          "maximum_absolute_error_difference": 9.777040288483363e-13,
+          "reference_A_RMS": 4.7339736023090865e-05,
+          "error_difference_relative_RMS": 2.6560960508191195e-10
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 4.405284323167036e-15,
+          "maximum_absolute_error_difference": 8.6897156137411e-13,
+          "reference_A_RMS": 0.893727269888118,
+          "error_difference_relative_RMS": 4.929114811186767e-15
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 2.6186838295502076e-19,
+          "maximum_absolute_error_difference": 1.1655173354219173e-18,
+          "reference_A_RMS": 2.963634931180854e-08,
+          "error_difference_relative_RMS": 8.836054002463787e-12
+        },
+        "origin_L": {
+          "error_difference_RMS": 1.2276090608243995e-15,
+          "maximum_absolute_error_difference": 1.5030511557601045e-14,
+          "reference_A_RMS": 0.0011408442389883337,
+          "error_difference_relative_RMS": 1.07605317086319e-12
+        },
+        "R": {
+          "error_difference_RMS": 4.8780523574956605e-20,
+          "maximum_absolute_error_difference": 3.7917222087021593e-19,
+          "reference_A_RMS": 4.6796904388635694e-11,
+          "error_difference_relative_RMS": 1.0423878291146671e-09
+        },
+        "thermal": {
+          "error_difference_RMS": 1.4119594978514225e-19,
+          "maximum_absolute_error_difference": 1.1998751093449198e-18,
+          "reference_A_RMS": 4.070142242713414e-08,
+          "error_difference_relative_RMS": 3.4690667147547183e-12
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 3.1602906275003978e-15,
+          "maximum_absolute_error_difference": 1.3547149513293277e-12,
+          "reference_A_RMS": 0.0003364683927971972,
+          "error_difference_relative_RMS": 9.392533430042655e-12
+        },
+        "pressure": {
+          "error_difference_RMS": 9.638981421601865e-17,
+          "maximum_absolute_error_difference": 8.165092679670444e-16,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 3.4700309952807497e-12
+        },
+        "Psi": {
+          "error_difference_RMS": 6.344862121215398e-16,
+          "maximum_absolute_error_difference": 5.379409050981364e-15,
+          "reference_A_RMS": 0.0008282313306043815,
+          "error_difference_relative_RMS": 7.660736664701384e-13
+        }
+      }
+    },
+    "inner": {
+      "cells": 490,
+      "cells_A": 490,
+      "cells_B": 490,
+      "intersection_cells": 490,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 7.400096659206591e-14,
+      "relative_pressure_error_difference_maximum": 2.2967452863609933e-13,
+      "relative_density_error_difference_RMS": 9.430464179220912e-14,
+      "velocity_error_difference_relative_RMS": 8.007683303698563e-15,
+      "phase_error_difference_degrees": {
+        "cells": 490,
+        "RMS": 4.2216662963005914e-13,
+        "maximum": 1.5631940186722204e-12
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 9.221289314947841e-19,
+          "maximum_absolute_error_difference": 4.428288248245482e-18,
+          "reference_A_RMS": 9.781074881297242e-06,
+          "error_difference_relative_RMS": 9.427685021183319e-14
+        },
+        "density": {
+          "error_difference_RMS": 9.430464269240825e-16,
+          "maximum_absolute_error_difference": 4.52589354882349e-15,
+          "reference_A_RMS": 0.01,
+          "error_difference_relative_RMS": 9.430464269240824e-14
+        },
+        "centroid": {
+          "error_difference_RMS": 2.750938583426793e-15,
+          "maximum_absolute_error_difference": 9.103828801926284e-15,
+          "reference_A_RMS": 0.2758495770430646,
+          "error_difference_relative_RMS": 9.97260395653e-15
+        },
+        "velocity": {
+          "error_difference_RMS": 1.1933996915816993e-14,
+          "maximum_absolute_error_difference": 4.3853809472693683e-14,
+          "reference_A_RMS": 1.4903182934700925,
+          "error_difference_relative_RMS": 8.007683303698563e-15
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 1.1825000412714194e-14,
+          "maximum_absolute_error_difference": 4.451994328746878e-14,
+          "reference_A_RMS": 7.354931155057506e-05,
+          "error_difference_relative_RMS": 1.6077649353091378e-10
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 1.6221478099596957e-15,
+          "maximum_absolute_error_difference": 6.439293542825908e-15,
+          "reference_A_RMS": 1.4903182916552111,
+          "error_difference_relative_RMS": 1.0884572906624324e-15
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 2.1115660319179618e-21,
+          "maximum_absolute_error_difference": 1.1150394657214813e-20,
+          "reference_A_RMS": 7.253143571971529e-09,
+          "error_difference_relative_RMS": 2.911242568088311e-13
+        },
+        "origin_L": {
+          "error_difference_RMS": 5.10174762444214e-19,
+          "maximum_absolute_error_difference": 2.665612685009283e-18,
+          "reference_A_RMS": 4.287603520278589e-06,
+          "error_difference_relative_RMS": 1.1898832530370375e-13
+        },
+        "R": {
+          "error_difference_RMS": 3.901645519291241e-21,
+          "maximum_absolute_error_difference": 9.121007190718261e-21,
+          "reference_A_RMS": 2.1954503916521383e-11,
+          "error_difference_relative_RMS": 1.7771503897909272e-10
+        },
+        "thermal": {
+          "error_difference_RMS": 3.0129578367887452e-21,
+          "maximum_absolute_error_difference": 9.376919423901122e-21,
+          "reference_A_RMS": 4.0754486445371755e-08,
+          "error_difference_relative_RMS": 7.392947622655932e-14
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 4.848417706171788e-16,
+          "maximum_absolute_error_difference": 2.2499363483419188e-15,
+          "reference_A_RMS": 0.004166667461395264,
+          "error_difference_relative_RMS": 1.1636200275383223e-13
+        },
+        "pressure": {
+          "error_difference_RMS": 2.0555117906936055e-18,
+          "maximum_absolute_error_difference": 6.383240290508407e-18,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 7.399837506571824e-14
+        },
+        "Psi": {
+          "error_difference_RMS": 2.7270412049194274e-18,
+          "maximum_absolute_error_difference": 1.1736271795835097e-17,
+          "reference_A_RMS": 3.689299898868375e-05,
+          "error_difference_relative_RMS": 7.39175800198812e-14
+        }
+      }
+    },
+    "cavity": {
+      "cells": 754,
+      "cells_A": 754,
+      "cells_B": 754,
+      "intersection_cells": 754,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 8.022305185499318e-14,
+      "relative_pressure_error_difference_maximum": 3.263988471863266e-13,
+      "relative_density_error_difference_RMS": 8.95727250524207e-13,
+      "velocity_error_difference_relative_RMS": 2.3648708157674657e-14,
+      "phase_error_difference_degrees": {
+        "cells": 754,
+        "RMS": 1.0978209743575188e-12,
+        "maximum": 1.1880274541908875e-11
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 8.85298342378338e-18,
+          "maximum_absolute_error_difference": 1.4334677379563426e-16,
+          "reference_A_RMS": 9.779076040494838e-06,
+          "error_difference_relative_RMS": 9.052985565429148e-13
+        },
+        "density": {
+          "error_difference_RMS": 8.957272191387375e-15,
+          "maximum_absolute_error_difference": 1.454478898432754e-13,
+          "reference_A_RMS": 0.01,
+          "error_difference_relative_RMS": 8.957272191387375e-13
+        },
+        "centroid": {
+          "error_difference_RMS": 1.637084831217241e-14,
+          "maximum_absolute_error_difference": 2.307598556683388e-13,
+          "reference_A_RMS": 0.3422342632620585,
+          "error_difference_relative_RMS": 4.783521134363097e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 3.538129273926509e-14,
+          "maximum_absolute_error_difference": 3.921307722976053e-13,
+          "reference_A_RMS": 1.496119471024166,
+          "error_difference_relative_RMS": 2.3648708157674657e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 2.842726538281967e-14,
+          "maximum_absolute_error_difference": 3.024802630591239e-13,
+          "reference_A_RMS": 6.694626466516961e-05,
+          "error_difference_relative_RMS": 4.246281032257447e-10
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 2.1061290852529136e-14,
+          "maximum_absolute_error_difference": 3.6282088444750116e-13,
+          "reference_A_RMS": 1.496119469526357,
+          "error_difference_relative_RMS": 1.4077278774533119e-14
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 4.732071251339964e-21,
+          "maximum_absolute_error_difference": 5.987464145903836e-20,
+          "reference_A_RMS": 5.900594618301879e-09,
+          "error_difference_relative_RMS": 8.019651505396583e-13
+        },
+        "origin_L": {
+          "error_difference_RMS": 6.1331192739752605e-18,
+          "maximum_absolute_error_difference": 9.981775063623577e-17,
+          "reference_A_RMS": 5.152879946193518e-06,
+          "error_difference_relative_RMS": 1.1902313537317813e-12
+        },
+        "R": {
+          "error_difference_RMS": 3.76190618412416e-21,
+          "maximum_absolute_error_difference": 9.121007190718261e-21,
+          "reference_A_RMS": 1.825503674987226e-11,
+          "error_difference_relative_RMS": 2.0607497183759347e-10
+        },
+        "thermal": {
+          "error_difference_RMS": 3.2678253259784323e-21,
+          "maximum_absolute_error_difference": 1.3248124690649291e-20,
+          "reference_A_RMS": 4.074615794043987e-08,
+          "error_difference_relative_RMS": 8.019959405142272e-14
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 3.781952606760564e-15,
+          "maximum_absolute_error_difference": 6.107180733350148e-14,
+          "reference_A_RMS": 0.004166667461395264,
+          "error_difference_relative_RMS": 9.076684524985171e-13
+        },
+        "pressure": {
+          "error_difference_RMS": 2.2284449083630314e-18,
+          "maximum_absolute_error_difference": 9.066640667410031e-18,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 8.022396314578859e-14
+        },
+        "Psi": {
+          "error_difference_RMS": 1.847452439403031e-17,
+          "maximum_absolute_error_difference": 2.9558310212442076e-16,
+          "reference_A_RMS": 3.255902555979425e-05,
+          "error_difference_relative_RMS": 5.674163792187845e-13
+        }
+      }
+    },
+    "disk_core": {
+      "cells": 11812,
+      "cells_A": 11812,
+      "cells_B": 11812,
+      "intersection_cells": 11812,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 3.5033286450811452e-12,
+      "relative_pressure_error_difference_maximum": 2.939443599549868e-11,
+      "relative_density_error_difference_RMS": 9.677369283711527e-13,
+      "velocity_error_difference_relative_RMS": 1.4096619820880294e-14,
+      "phase_error_difference_degrees": {
+        "cells": 11812,
+        "RMS": 7.992566578408219e-13,
+        "maximum": 3.893774191965349e-12
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 9.450270336518752e-16,
+          "maximum_absolute_error_difference": 1.0671476723123074e-14,
+          "reference_A_RMS": 0.0009765956902420257,
+          "error_difference_relative_RMS": 9.676747942822408e-13
+        },
+        "density": {
+          "error_difference_RMS": 9.677369283837078e-13,
+          "maximum_absolute_error_difference": 1.0931922034274066e-11,
+          "reference_A_RMS": 0.9999999999999999,
+          "error_difference_relative_RMS": 9.67736928383708e-13
+        },
+        "centroid": {
+          "error_difference_RMS": 2.4954443921894865e-14,
+          "maximum_absolute_error_difference": 1.751931932858497e-13,
+          "reference_A_RMS": 1.449684863739477,
+          "error_difference_relative_RMS": 1.7213702471532066e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 1.2608013870280453e-14,
+          "maximum_absolute_error_difference": 8.079648061709577e-14,
+          "reference_A_RMS": 0.8943997944532152,
+          "error_difference_relative_RMS": 1.4096619820880294e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 1.2031134759057664e-14,
+          "maximum_absolute_error_difference": 7.732703366514215e-14,
+          "reference_A_RMS": 8.410313377107027e-06,
+          "error_difference_relative_RMS": 1.4305215774487733e-09
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 3.772788678829516e-15,
+          "maximum_absolute_error_difference": 4.596323321948148e-14,
+          "reference_A_RMS": 0.8943997944136728,
+          "error_difference_relative_RMS": 4.2182351811728474e-15
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 2.6345479689369787e-19,
+          "maximum_absolute_error_difference": 1.1655173354219173e-18,
+          "reference_A_RMS": 2.942433155258049e-08,
+          "error_difference_relative_RMS": 8.953637448752615e-12
+        },
+        "origin_L": {
+          "error_difference_RMS": 1.2035727851455238e-15,
+          "maximum_absolute_error_difference": 1.5030511557601045e-14,
+          "reference_A_RMS": 0.0011529389834124691,
+          "error_difference_relative_RMS": 1.0439171564684096e-12
+        },
+        "R": {
+          "error_difference_RMS": 4.894625167416415e-20,
+          "maximum_absolute_error_difference": 3.7917222087021593e-19,
+          "reference_A_RMS": 4.721872268522164e-11,
+          "error_difference_relative_RMS": 1.0365856781103311e-09
+        },
+        "thermal": {
+          "error_difference_RMS": 1.4255575359246113e-19,
+          "maximum_absolute_error_difference": 1.1998751093449198e-18,
+          "reference_A_RMS": 4.0691494854702965e-08,
+          "error_difference_relative_RMS": 3.5033304650390616e-12
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 1.5091582278653389e-16,
+          "maximum_absolute_error_difference": 1.2173557517938804e-15,
+          "reference_A_RMS": 4.1666674613952636e-05,
+          "error_difference_relative_RMS": 3.6219790560391335e-12
+        },
+        "pressure": {
+          "error_difference_RMS": 9.731477162433722e-17,
+          "maximum_absolute_error_difference": 8.165092679670444e-16,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 3.5033294397511052e-12
+        },
+        "Psi": {
+          "error_difference_RMS": 6.308308571416432e-16,
+          "maximum_absolute_error_difference": 5.379409050981364e-15,
+          "reference_A_RMS": 0.0008366777500601712,
+          "error_difference_relative_RMS": 7.539711162347461e-13
+        }
+      }
+    },
+    "inner_contact": {
+      "cells": 101,
+      "cells_A": 101,
+      "cells_B": 101,
+      "intersection_cells": 101,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 4.471790623377717e-12,
+      "relative_pressure_error_difference_maximum": 1.2426209041772884e-11,
+      "relative_density_error_difference_RMS": 8.788494500497555e-13,
+      "velocity_error_difference_relative_RMS": 2.3560316633874056e-14,
+      "phase_error_difference_degrees": {
+        "cells": 101,
+        "RMS": 1.3178896385973437e-12,
+        "maximum": 7.16227077646181e-12
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 4.3770629798610165e-16,
+          "maximum_absolute_error_difference": 2.3938099766307452e-15,
+          "reference_A_RMS": 0.0004965366540784363,
+          "error_difference_relative_RMS": 8.815186036939754e-13
+        },
+        "density": {
+          "error_difference_RMS": 4.5107528294000177e-13,
+          "maximum_absolute_error_difference": 2.459588088754572e-12,
+          "reference_A_RMS": 0.512112847281592,
+          "error_difference_relative_RMS": 8.808122766972336e-13
+        },
+        "centroid": {
+          "error_difference_RMS": 1.2969931580043839e-14,
+          "maximum_absolute_error_difference": 6.770278782042283e-14,
+          "reference_A_RMS": 0.5076830843355646,
+          "error_difference_relative_RMS": 2.5547299053736185e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 3.3059954069262046e-14,
+          "maximum_absolute_error_difference": 1.698086116164177e-13,
+          "reference_A_RMS": 1.4032049986004773,
+          "error_difference_relative_RMS": 2.3560316633874056e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 3.224641812291138e-14,
+          "maximum_absolute_error_difference": 1.7516543771023407e-13,
+          "reference_A_RMS": 0.0006708847335392551,
+          "error_difference_relative_RMS": 4.806551186937176e-11
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 7.251276768192233e-15,
+          "maximum_absolute_error_difference": 4.5075054799781356e-14,
+          "reference_A_RMS": 1.4032048382225026,
+          "error_difference_relative_RMS": 5.167653767056365e-15
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 2.1568707761280434e-19,
+          "maximum_absolute_error_difference": 8.961608581950498e-19,
+          "reference_A_RMS": 8.9815179857575e-08,
+          "error_difference_relative_RMS": 2.4014546088404155e-12
+        },
+        "origin_L": {
+          "error_difference_RMS": 3.1358688602131805e-16,
+          "maximum_absolute_error_difference": 1.7172678209997905e-15,
+          "reference_A_RMS": 0.00035381403165822653,
+          "error_difference_relative_RMS": 8.863042671078498e-13
+        },
+        "R": {
+          "error_difference_RMS": 1.0777066181993626e-19,
+          "maximum_absolute_error_difference": 2.1182393951113623e-19,
+          "reference_A_RMS": 7.055417933415638e-11,
+          "error_difference_relative_RMS": 1.5274879934399975e-09
+        },
+        "thermal": {
+          "error_difference_RMS": 1.8069577060787342e-19,
+          "maximum_absolute_error_difference": 4.9700319924636115e-19,
+          "reference_A_RMS": 4.0400136047849204e-08,
+          "error_difference_relative_RMS": 4.4726525275523964e-12
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 3.7130538160052537e-16,
+          "maximum_absolute_error_difference": 1.1634302462398827e-15,
+          "reference_A_RMS": 8.136481151471768e-05,
+          "error_difference_relative_RMS": 4.563463918715793e-12
+        },
+        "pressure": {
+          "error_difference_RMS": 1.2421655376996879e-16,
+          "maximum_absolute_error_difference": 3.451693141379164e-16,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 4.4717929504746106e-12
+        },
+        "Psi": {
+          "error_difference_RMS": 8.52870744131128e-16,
+          "maximum_absolute_error_difference": 4.652033589449482e-15,
+          "reference_A_RMS": 0.0009779893070389878,
+          "error_difference_relative_RMS": 8.72065510320685e-13
+        }
+      }
+    },
+    "outer_contact": {
+      "cells": 402,
+      "cells_A": 402,
+      "cells_B": 402,
+      "intersection_cells": 402,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 1.0411663705957802e-12,
+      "relative_pressure_error_difference_maximum": 3.6250275437387712e-12,
+      "relative_density_error_difference_RMS": 3.4856689750008327e-12,
+      "velocity_error_difference_relative_RMS": 2.7429212567580217e-14,
+      "phase_error_difference_degrees": {
+        "cells": 402,
+        "RMS": 1.5330062118656857e-12,
+        "maximum": 7.986500349943526e-12
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 1.7148669035718448e-15,
+          "maximum_absolute_error_difference": 8.904986123492442e-15,
+          "reference_A_RMS": 0.0004919423170998845,
+          "error_difference_relative_RMS": 3.4859105304894035e-12
+        },
+        "density": {
+          "error_difference_RMS": 1.7556362882216935e-12,
+          "maximum_absolute_error_difference": 9.116263299802085e-12,
+          "reference_A_RMS": 0.5036372858642455,
+          "error_difference_relative_RMS": 3.4859140446859647e-12
+        },
+        "centroid": {
+          "error_difference_RMS": 5.85137017514085e-14,
+          "maximum_absolute_error_difference": 2.4447111002245947e-13,
+          "reference_A_RMS": 1.9922413324406825,
+          "error_difference_relative_RMS": 2.9370789973383254e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 1.9432880338457797e-14,
+          "maximum_absolute_error_difference": 9.880984919163893e-14,
+          "reference_A_RMS": 0.7084738685289991,
+          "error_difference_relative_RMS": 2.7429212567580217e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 1.894735673135514e-14,
+          "maximum_absolute_error_difference": 9.883760476725456e-14,
+          "reference_A_RMS": 0.0001264721363800578,
+          "error_difference_relative_RMS": 1.4981447513796223e-10
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 4.308480118027192e-15,
+          "maximum_absolute_error_difference": 2.298161660974074e-14,
+          "reference_A_RMS": 0.7084738572405084,
+          "error_difference_relative_RMS": 6.0813537069788815e-15
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 2.278739682322872e-19,
+          "maximum_absolute_error_difference": 9.554531645028508e-19,
+          "reference_A_RMS": 1.1087155209405651e-08,
+          "error_difference_relative_RMS": 2.0552969984489182e-11
+        },
+        "origin_L": {
+          "error_difference_RMS": 2.4178629490242395e-15,
+          "maximum_absolute_error_difference": 1.2555277997816638e-14,
+          "reference_A_RMS": 0.0006943634819160709,
+          "error_difference_relative_RMS": 3.4821286141837906e-12
+        },
+        "R": {
+          "error_difference_RMS": 2.915626715278258e-21,
+          "maximum_absolute_error_difference": 7.834165558089913e-21,
+          "reference_A_RMS": 7.290008413392274e-14,
+          "error_difference_relative_RMS": 3.999483333821728e-08
+        },
+        "thermal": {
+          "error_difference_RMS": 4.237478624797815e-20,
+          "maximum_absolute_error_difference": 1.4754255149985844e-19,
+          "reference_A_RMS": 4.069912894886247e-08,
+          "error_difference_relative_RMS": 1.0411718221591697e-12
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 3.0196577314984313e-16,
+          "maximum_absolute_error_difference": 1.485926182445696e-15,
+          "reference_A_RMS": 8.273167049490693e-05,
+          "error_difference_relative_RMS": 3.649941689119314e-12
+        },
+        "pressure": {
+          "error_difference_RMS": 2.8921326590236946e-17,
+          "maximum_absolute_error_difference": 1.0069527676959122e-16,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 1.041167062194435e-12
+        },
+        "Psi": {
+          "error_difference_RMS": 8.626466869162378e-16,
+          "maximum_absolute_error_difference": 4.479737029461708e-15,
+          "reference_A_RMS": 0.0002469282549062997,
+          "error_difference_relative_RMS": 3.493511454343614e-12
+        }
+      }
+    },
+    "dynamic_buffer": {
+      "cells": 6407,
+      "cells_A": 6407,
+      "cells_B": 6407,
+      "intersection_cells": 6407,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 2.6725929852442417e-14,
+      "relative_pressure_error_difference_maximum": 1.871060650091047e-13,
+      "relative_density_error_difference_RMS": 9.758246872978234e-12,
+      "velocity_error_difference_relative_RMS": 6.661272491310676e-14,
+      "phase_error_difference_degrees": {
+        "cells": 6407,
+        "RMS": 2.7276773540888063e-12,
+        "maximum": 6.943423613847699e-11
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 9.556456360834025e-17,
+          "maximum_absolute_error_difference": 2.505379462377187e-15,
+          "reference_A_RMS": 9.780545136662564e-06,
+          "error_difference_relative_RMS": 9.770883143324457e-12
+        },
+        "density": {
+          "error_difference_RMS": 9.758246872872231e-14,
+          "maximum_absolute_error_difference": 2.5649898871549226e-12,
+          "reference_A_RMS": 0.01,
+          "error_difference_relative_RMS": 9.75824687287223e-12
+        },
+        "centroid": {
+          "error_difference_RMS": 2.0148511346364957e-13,
+          "maximum_absolute_error_difference": 4.944933351680447e-12,
+          "reference_A_RMS": 2.249619393452558,
+          "error_difference_relative_RMS": 8.956408984118168e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 4.45216656914036e-14,
+          "maximum_absolute_error_difference": 8.937850459744823e-13,
+          "reference_A_RMS": 0.6683657777020843,
+          "error_difference_relative_RMS": 6.661272491310676e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 3.300425132695013e-14,
+          "maximum_absolute_error_difference": 8.503302229012633e-13,
+          "reference_A_RMS": 9.942473928943818e-07,
+          "error_difference_relative_RMS": 3.319521032976563e-08
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 2.988032008882069e-14,
+          "maximum_absolute_error_difference": 8.6897156137411e-13,
+          "reference_A_RMS": 0.6683657777013448,
+          "error_difference_relative_RMS": 4.470653807498284e-14
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 5.154481193128466e-21,
+          "maximum_absolute_error_difference": 1.0587911840678754e-19,
+          "reference_A_RMS": 9.963968304283742e-11,
+          "error_difference_relative_RMS": 5.1731208246742766e-11
+        },
+        "origin_L": {
+          "error_difference_RMS": 1.3708929070558148e-16,
+          "maximum_absolute_error_difference": 3.5535979811974344e-15,
+          "reference_A_RMS": 1.4659904745974223e-05,
+          "error_difference_relative_RMS": 9.351308421238397e-12
+        },
+        "R": {
+          "error_difference_RMS": 6.717881519874687e-23,
+          "maximum_absolute_error_difference": 1.8567949999993885e-22,
+          "reference_A_RMS": 2.4628527541453888e-15,
+          "error_difference_relative_RMS": 2.727682971938692e-08
+        },
+        "thermal": {
+          "error_difference_RMS": 1.0899076597725178e-21,
+          "maximum_absolute_error_difference": 7.610061635487855e-21,
+          "reference_A_RMS": 4.0752279175639593e-08,
+          "error_difference_relative_RMS": 2.6744704390031506e-14
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 4.0662738111886546e-14,
+          "maximum_absolute_error_difference": 1.0687405821441232e-12,
+          "reference_A_RMS": 0.004166667461395264,
+          "error_difference_relative_RMS": 9.759055285460696e-12
+        },
+        "pressure": {
+          "error_difference_RMS": 7.423849005807521e-19,
+          "maximum_absolute_error_difference": 5.197394164352387e-18,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 2.672583857948256e-14
+        },
+        "Psi": {
+          "error_difference_RMS": 4.664406592688903e-17,
+          "maximum_absolute_error_difference": 1.2453199254027927e-15,
+          "reference_A_RMS": 4.375199580501155e-06,
+          "error_difference_relative_RMS": 1.0661014444864754e-11
+        }
+      }
+    },
+    "wall": {
+      "cells": 469,
+      "cells_A": 469,
+      "cells_B": 469,
+      "intersection_cells": 469,
+      "only_A_ids": [],
+      "only_B_ids": [],
+      "phase_excluded_cells": 0,
+      "relative_pressure_error_difference_RMS": 9.48483308277909e-13,
+      "relative_pressure_error_difference_maximum": 6.1921861814567646e-12,
+      "relative_density_error_difference_RMS": 1.1626721603665407e-11,
+      "velocity_error_difference_relative_RMS": 5.855327237050673e-14,
+      "phase_error_difference_degrees": {
+        "cells": 469,
+        "RMS": 3.27300397164745e-12,
+        "maximum": 8.844835974741727e-11
+      },
+      "fields": {
+        "mass": {
+          "error_difference_RMS": 9.076466911405594e-17,
+          "maximum_absolute_error_difference": 2.375276895744821e-15,
+          "reference_A_RMS": 1.3895615842122286e-05,
+          "error_difference_relative_RMS": 6.5318925152577755e-12
+        },
+        "density": {
+          "error_difference_RMS": 1.1626721652172934e-13,
+          "maximum_absolute_error_difference": 3.23804698332264e-12,
+          "reference_A_RMS": 0.009999999999999995,
+          "error_difference_relative_RMS": 1.162672165217294e-11
+        },
+        "centroid": {
+          "error_difference_RMS": 1.579139674388619e-13,
+          "maximum_absolute_error_difference": 3.997580044767801e-12,
+          "reference_A_RMS": 2.477905165267056,
+          "error_difference_relative_RMS": 6.372881805661951e-14
+        },
+        "velocity": {
+          "error_difference_RMS": 3.7197164127428035e-14,
+          "maximum_absolute_error_difference": 9.51627665557453e-13,
+          "reference_A_RMS": 0.6352704575084388,
+          "error_difference_relative_RMS": 5.855327237050673e-14
+        },
+        "radial_velocity": {
+          "error_difference_RMS": 3.6189112731594643e-14,
+          "maximum_absolute_error_difference": 9.777040288483363e-13,
+          "reference_A_RMS": 1.3444373727779534e-06,
+          "error_difference_relative_RMS": 2.691766345115699e-08
+        },
+        "azimuthal_velocity": {
+          "error_difference_RMS": 8.605370029995438e-15,
+          "maximum_absolute_error_difference": 2.0017321133991572e-13,
+          "reference_A_RMS": 0.6352704575070162,
+          "error_difference_relative_RMS": 1.3545994352964852e-14
+        },
+        "intrinsic_ell": {
+          "error_difference_RMS": 6.898894558285837e-21,
+          "maximum_absolute_error_difference": 1.3361944742936588e-19,
+          "reference_A_RMS": 1.0887338319981827e-10,
+          "error_difference_relative_RMS": 6.336621822088608e-11
+        },
+        "origin_L": {
+          "error_difference_RMS": 1.4314904739401394e-16,
+          "maximum_absolute_error_difference": 3.74635896306999e-15,
+          "reference_A_RMS": 2.1868305457251728e-05,
+          "error_difference_relative_RMS": 6.545959753207326e-12
+        },
+        "R": {
+          "error_difference_RMS": 6.552678061108181e-23,
+          "maximum_absolute_error_difference": 1.4759779777157353e-22,
+          "reference_A_RMS": 4.6690469224054445e-15,
+          "error_difference_relative_RMS": 1.4034294728681606e-08
+        },
+        "thermal": {
+          "error_difference_RMS": 5.094214320490625e-20,
+          "maximum_absolute_error_difference": 2.1821686303638912e-19,
+          "reference_A_RMS": 5.7898410385419603e-08,
+          "error_difference_relative_RMS": 8.798539176774163e-13
+        },
+        "specific_thermal": {
+          "error_difference_RMS": 4.882040357154325e-14,
+          "maximum_absolute_error_difference": 1.3547149513293277e-12,
+          "reference_A_RMS": 0.0041666674613952655,
+          "error_difference_relative_RMS": 1.1716894622350081e-11
+        },
+        "pressure": {
+          "error_difference_RMS": 2.634696130345961e-17,
+          "maximum_absolute_error_difference": 1.7200189840124724e-16,
+          "reference_A_RMS": 2.7777796321447566e-05,
+          "error_difference_relative_RMS": 9.484899737390907e-13
+        },
+        "Psi": {
+          "error_difference_RMS": 3.6485803247694525e-17,
+          "maximum_absolute_error_difference": 9.547208073262275e-16,
+          "reference_A_RMS": 5.610651986736607e-06,
+          "error_difference_relative_RMS": 6.502952479310023e-12
+        }
+      }
+    }
+  },
+  "existing_physical_monitors_both_passed": true,
+  "self_comparison_sanity_checked": false,
+  "thresholds_added": false,
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "limits": "Diagnostic only. Each reference is projected onto its own actual moving cell; same IDs do not imply identical cell geometry. No cross-host roundoff bound, convergence order or long-time stability is certified."
+}

@@ -1,0 +1,136 @@
+{
+  "status": "passed",
+  "manifest": {
+    "scope": "Saved stage0/half accumulation only; no fit, RHS, root or evolution.",
+    "provider_calls": 0,
+    "fits": 0,
+    "source_sha256": {
+      "/gpfs/kjhan/LagForce/check_saved_moment_flux_batch_20261018.py": "024ccb119d33339ec414132dbdc6eb17432a429eece2db6e460fd1227ec468ce",
+      "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_factor_rhs.py": "0f5e6e2cd7b12945edfa5e7f660c061a0b48993c884c0b44c87b51935c68e3a9",
+      "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/vector_moment_flux.py": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+    }
+  },
+  "stages": {
+    "stage0": {
+      "nodes": 251888,
+      "seconds": 25.8134352453053,
+      "comparisons": {
+        "dr": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "exterior_ledger": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "F": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "H": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "K": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "area_rates": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "ordered_incoming": {
+          "bitwise_equal": true,
+          "sample_columns": 2005152
+        },
+        "saved_CSR_incoming": {
+          "maximum_absolute_difference": 6.865202037496104e-18,
+          "maximum_tolerance_fraction": 0.0006683194810975133
+        },
+        "saved_face_dr": {
+          "maximum_absolute_difference": 8.673617379884035e-19,
+          "maximum_tolerance_fraction": 1.0792106516629126e-05
+        },
+        "saved_F": {
+          "maximum_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "saved_H": {
+          "maximum_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "saved_K": {
+          "maximum_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        }
+      }
+    },
+    "midpoint": {
+      "nodes": 272336,
+      "seconds": 28.15596961416304,
+      "comparisons": {
+        "dr": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "exterior_ledger": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "F": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "H": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "K": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "area_rates": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "ordered_incoming": {
+          "bitwise_equal": true,
+          "sample_columns": 2168480
+        },
+        "saved_CSR_incoming": {
+          "maximum_absolute_difference": 6.865202037496104e-18,
+          "maximum_tolerance_fraction": 0.0006683194810975133
+        },
+        "saved_face_dr": {
+          "maximum_absolute_difference": 8.673617379884035e-19,
+          "maximum_tolerance_fraction": 1.0797669621038125e-05
+        },
+        "saved_F": {
+          "maximum_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "saved_H": {
+          "maximum_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        },
+        "saved_K": {
+          "maximum_absolute_difference": 0.0,
+          "maximum_tolerance_fraction": 0.0
+        }
+      }
+    }
+  },
+  "limits": "Saved captures lack density and mesh-normal speed. Test uses rho=1 with stored internal energy converted to pressure, and reconstructs wn from saved geometry/rates. Same records feed scalar/candidate; independent CSR comparisons retain existing 1e-14+1e-10 component gate. Ordered incoming scalar/candidate must be bitwise. No provider execution."
+}

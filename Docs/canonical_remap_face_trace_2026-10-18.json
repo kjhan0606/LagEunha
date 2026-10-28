@@ -1,0 +1,142 @@
+{
+  "source_time": 2.0029059177634028,
+  "scope": "Diagnostic donor versus affine face traces, not an Euler or ALE update.",
+  "frame": "Each receiver mean velocity is the fixed diagnostic face velocity. Not the true evolving Laguerre face speed.",
+  "cases": {
+    "0.25": {
+      "eligible_faces": 7165,
+      "retained_faces": 5448,
+      "excluded_coincident_or_uncovered_faces": 1717,
+      "minimum_sampled_density": 0.009411865452011609,
+      "regions": {
+        "inner": {
+          "faces": 4768,
+          "components": [
+            "mass",
+            "relative_px",
+            "relative_py",
+            "relative_K"
+          ],
+          "donor_flux_L2": [
+            0.005911236828750989,
+            0.0002554528010992638,
+            0.0002647273741635478,
+            1.257167444323862e-05
+          ],
+          "affine_minus_donor_flux_L2": [
+            0.005026661654369388,
+            0.00024145716335967766,
+            0.00025384657756915343,
+            1.2305717374817252e-05
+          ],
+          "relative_L2_difference": [
+            0.8503570064932575,
+            0.9452124318881604,
+            0.9588981055367843,
+            0.9788447378571431
+          ],
+          "order8_vs12_max_absolute_difference": 4.606341350021914e-15
+        },
+        "edge": {
+          "faces": 680,
+          "components": [
+            "mass",
+            "relative_px",
+            "relative_py",
+            "relative_K"
+          ],
+          "donor_flux_L2": [
+            0.004539250606617934,
+            0.0001938244550998283,
+            0.00019814558477958442,
+            8.999883726753142e-06
+          ],
+          "affine_minus_donor_flux_L2": [
+            0.00452180972075418,
+            0.00019381548402833926,
+            0.0001981374174490393,
+            8.999868538307023e-06
+          ],
+          "relative_L2_difference": [
+            0.9961577609664631,
+            0.999953715481958,
+            0.9999587811630816,
+            0.9999983123730728
+          ],
+          "order8_vs12_max_absolute_difference": 4.8263937334550033e-17
+        }
+      }
+    },
+    "1.0": {
+      "eligible_faces": 7165,
+      "retained_faces": 5439,
+      "excluded_coincident_or_uncovered_faces": 1726,
+      "minimum_sampled_density": 0.00941436061914713,
+      "regions": {
+        "inner": {
+          "faces": 4768,
+          "components": [
+            "mass",
+            "relative_px",
+            "relative_py",
+            "relative_K"
+          ],
+          "donor_flux_L2": [
+            0.006006261365834494,
+            0.0002577236784247471,
+            0.0002549218187225432,
+            1.213066173030411e-05
+          ],
+          "affine_minus_donor_flux_L2": [
+            0.004283539998520137,
+            0.00020889981437267346,
+            0.00021904150334111903,
+            1.0708198396336816e-05
+          ],
+          "relative_L2_difference": [
+            0.7131790872249184,
+            0.8105573211181302,
+            0.859249727774474,
+            0.8827381914035424
+          ],
+          "order8_vs12_max_absolute_difference": 6.6318478486593335e-15
+        },
+        "edge": {
+          "faces": 671,
+          "components": [
+            "mass",
+            "relative_px",
+            "relative_py",
+            "relative_K"
+          ],
+          "donor_flux_L2": [
+            0.004090210715753356,
+            0.00016452975081679652,
+            0.00017941665934033906,
+            7.772909732569878e-06
+          ],
+          "affine_minus_donor_flux_L2": [
+            0.0040258385962007185,
+            0.0001644210597504111,
+            0.0001792519585688782,
+            7.772496507224521e-06
+          ],
+          "relative_L2_difference": [
+            0.9842619062864635,
+            0.9993393835106062,
+            0.9990820207439687,
+            0.9999468377532258
+          ],
+          "order8_vs12_max_absolute_difference": 2.6868478009969485e-16
+        }
+      }
+    }
+  },
+  "limitations": [
+    "One-sided receiver reconstruction; no common Riemann flux, pressure work, gravity, time update or stability claim.",
+    "Same donor density used for both velocity traces to isolate velocity reconstruction.",
+    "Coincident donor-boundary traces excluded; not a full closed-cell balance.",
+    "Relative kinetic flux is measured in receiver-mean frame, not lab-frame total energy."
+  ],
+  "script_sha256": "4f649bc7eabcd27824240f5fdbfa54eb439b818cd5eb1f65f9b15dc69f4fab40"
+}

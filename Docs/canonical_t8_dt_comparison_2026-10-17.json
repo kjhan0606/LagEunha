@@ -1,0 +1,36 @@
+{
+  "fine_snapshot": "/gpfs/kjhan/LagForce/Codex_maxdt_validation_20261017/cap00125_t10/khout.003564.dat",
+  "coarse_snapshot": "/gpfs/kjhan/LagForce/Codex_maxdt_validation_20261017/cap0025_t10/khout.001967.dat",
+  "fine_time": 8.0005381505479,
+  "coarse_time": 8.00153798321584,
+  "time_difference": 0.000999832667940126,
+  "scope": "Both restart from same t=4.005538150548695 state; timestep CAPS 0.00125 and 0.0025, adaptive actual steps may be smaller. Near times, not a formal temporal convergence order measurement. Inherited t4 error remains.",
+  "regions": {
+    "initial_inner_background": {
+      "coarse_pressure_relative_rms": 3.2535870505107076,
+      "fine_pressure_relative_rms": 3.223750454699992,
+      "relative_reduction": 0.009170369609761031,
+      "coarse_phase_rms_deg": 29.04998569348461,
+      "fine_phase_rms_deg": 29.072251871129406
+    },
+    "initial_disk_inner_edge": {
+      "coarse_pressure_relative_rms": 2.4132579294859573,
+      "fine_pressure_relative_rms": 2.382343670824977,
+      "relative_reduction": 0.01281017593820366,
+      "coarse_phase_rms_deg": 0.5490762253417573,
+      "fine_phase_rms_deg": 0.549974677887298
+    },
+    "initial_disk_core": {
+      "coarse_pressure_relative_rms": 0.0031816753175115966,
+      "fine_pressure_relative_rms": 0.0031800894271824818,
+      "relative_reduction": 0.0004984450551526187,
+      "coarse_phase_rms_deg": 0.0021897223844465426,
+      "fine_phase_rms_deg": 0.002189049550034567
+    }
+  },
+  "mass_max_abs_change": [
+    0.0,
+    0.0
+  ],
+  "conclusion": "Reducing the timestep cap does not remove the large inner-background and inner-edge physical errors through t8. This does not isolate their initial cause or prove temporal convergence."
+}

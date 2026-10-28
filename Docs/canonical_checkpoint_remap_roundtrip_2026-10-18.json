@@ -1,0 +1,86 @@
+{
+  "scope": "Actual t2 central1590cell patch, fixed generators. Sequential retained-fragment remap 0 ->1 ->.25 ->0. No physical time, pressure/gravity update, compact closure or MPI.",
+  "source": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat",
+  "source_time": 2.0029059177634028,
+  "invariant_layout": [
+    "M",
+    "Px",
+    "Py",
+    "Lz",
+    "E_hydro",
+    "E_potential"
+  ],
+  "rows": [
+    {
+      "weight_fraction": 1.0,
+      "fragments": 5741,
+      "quadrature_atoms": 1808512,
+      "CPU_OMP4_CUDA_bitwise_equal": true,
+      "minimum_sampled_density_factor": 0.7264490796825842,
+      "maximum_fragment_area_closure_error": 4.90059381963448e-17,
+      "discarded_positive_sliver_area": 2.2078902525818866e-16,
+      "receiver_coverage_max_relative_error": 5.1958437552457326e-14,
+      "aggregate_invariant_change_from_start": [
+        5.88418203051333e-15,
+        1.0755285551056204e-16,
+        4.3021142204224816e-16,
+        4.440892098500626e-15,
+        4.9960036108132044e-15,
+        -1.021405182655144e-14
+      ],
+      "unresolved_kinetic_over_initial_thermal": 0.08018691985530138
+    },
+    {
+      "weight_fraction": 0.25,
+      "fragments": 12941,
+      "quadrature_atoms": 3816576,
+      "CPU_OMP4_CUDA_bitwise_equal": true,
+      "minimum_sampled_density_factor": 0.7262685213691324,
+      "maximum_fragment_area_closure_error": 4.911435841359335e-17,
+      "discarded_positive_sliver_area": 2.7952930544954856e-16,
+      "receiver_coverage_max_relative_error": 1.5365486660812167e-13,
+      "aggregate_invariant_change_from_start": [
+        1.7763568394002505e-14,
+        -5.342948306008566e-16,
+        1.1449174941446927e-16,
+        1.3655743202889425e-14,
+        1.5210055437364645e-14,
+        -3.042011087472929e-14
+      ],
+      "unresolved_kinetic_over_initial_thermal": 0.020854807945806225
+    },
+    {
+      "weight_fraction": 0.0,
+      "fragments": 20988,
+      "quadrature_atoms": 6041152,
+      "CPU_OMP4_CUDA_bitwise_equal": true,
+      "minimum_sampled_density_factor": 0.7262033433966011,
+      "maximum_fragment_area_closure_error": 5.594483210025203e-17,
+      "discarded_positive_sliver_area": 8.347382482396983e-16,
+      "receiver_coverage_max_relative_error": 3.561595462997502e-13,
+      "aggregate_invariant_change_from_start": [
+        4.1522341120980855e-14,
+        -1.97758476261356e-15,
+        -3.122502256758253e-16,
+        3.186340080674199e-14,
+        3.5416114485542494e-14,
+        -7.105427357601002e-14
+      ],
+      "unresolved_kinetic_over_initial_thermal": 5.3503206022486994e-11,
+      "return_mass_max_relative_error": 6.836531341036789e-12,
+      "return_thermal_max_relative_error": 7.364540088872218e-10,
+      "return_velocity_max_absolute_error": 3.0464519795714295e-13,
+      "return_all17_moments_max_absolute_error": 6.032500887709347e-16
+    }
+  ],
+  "seconds": 37.7460294496268,
+  "zero_weight_interpretation": "Return uses intersections and original donor fields carried through prior fragments. No mass reset, thermal correction or discarded velocity moments. Round-trip identity here is a pure-remap component test, not the complete fixed-mass Voronoi evolution limit.",
+  "sha256": {
+    "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/lift_coefficients.npz": "b54018c44dd927dac6253f0e82d6d18c024184ea05fafb816f6855e4dbecd2cd",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/weight_remap_moments.h": "ca8d21a8da3f6cf004ee941928e352f6f0bebb3b27958e5bb38c4220137ab87e",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/cpu.so": "83f6e458ad150336f75a9bfdc1c285bc0fb8291588e2e4bc0215639f664d908c",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/cuda.so": "c66d97889358d3c0c73a6fd82df1361b5832000c8d539c67174455a12660b615",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_remap_roundtrip_20261018/audit.py": "e31ec394c18ad3f2520317645a57eb9bbd787e80d0a729c4818a02febfc55818"
+  }
+}

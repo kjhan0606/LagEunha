@@ -1,0 +1,73 @@
+{
+  "status": "passed_native_MPI_owned_CPU_component",
+  "original_executable": true,
+  "binary_sha256": "de12466a194ad9fbf1e1e18d5f4a54943071822e95b4e77f27e32461c14ce03a",
+  "host": "syn104",
+  "cells": 19945,
+  "one_rank_workers": 7,
+  "two_rank_workers": 14,
+  "one_rank_seconds": 129.93481277232058,
+  "two_rank_seconds": 70.75803340855055,
+  "component_speedup": 1.8363259479257799,
+  "component_efficiency": 0.9181629739628899,
+  "exact_same_host_original_reference": {
+    "status": "passed_original_same_host_cpu_reference",
+    "host": "syn104",
+    "cells": 19945,
+    "original_density_and_velocity_bitwise": true,
+    "independent_q48_all_passed": true,
+    "original_gravity_nodes_bitwise": true,
+    "gravity_nodes": 91678224,
+    "gravity_file": "/dev/shm/eunha_fmp_30070707052764844_r0/gravity.bin",
+    "original_sources": {
+      "full_disk_density_memory.py": "9bef65fb742c3eab0e493b49ff8582f2b398abe034ec3c30c68ee5c18cf8f4d6",
+      "full_disk_velocity_memory.py": "2529b18822ce6fde7fd324d5cf107adfca147dadcc62ac88e4593789b5effc21"
+    },
+    "seconds": 162.87561224005185,
+    "evolution_steps": 0,
+    "provider_calls": 0
+  },
+  "comparison": {
+    "status": "passed_native_MPI_owned_provider_bitwise",
+    "ranks": 2,
+    "cells": 19945,
+    "global_density_bounds_bitwise": true,
+    "density_priors_parameters_bitwise": true,
+    "velocity_metadata_moments_gravity_bitwise": true,
+    "all_gravity_node_values_bitwise": true,
+    "gravity_nodes": 91678224,
+    "rank_rows": [
+      {
+        "rank": 0,
+        "lo": 0,
+        "hi": 9972,
+        "gravity_nodes": 46294536,
+        "bounds_seconds": 2.383066618349403,
+        "density_seconds": 42.29507606383413,
+        "velocity_seconds": 25.00846058013849
+      },
+      {
+        "rank": 1,
+        "lo": 9972,
+        "hi": 19945,
+        "gravity_nodes": 45383688,
+        "bounds_seconds": 2.383066618349403,
+        "density_seconds": 42.29507606383413,
+        "velocity_seconds": 25.00846058013849
+      }
+    ],
+    "max_wall_seconds": 70.75803340855055,
+    "validation_seconds": 3.9331023099366575,
+    "provider_calls": 0,
+    "evolution_steps": 0,
+    "same_host_reference": "/gpfs/kjhan/LagForce/Codex_full_disk_native_MPI_cpu_samehost_gate_20261019/reference",
+    "limits": "CPU preparation component only; not an accepted MPI time evolution or whole solver speedup"
+  },
+  "first_cross_host_bitwise_comparison_failed": true,
+  "cross_host_difference_witness": "/gpfs/kjhan/LagForce/Codex_full_disk_native_MPI_cpu_gate_20261019/ranks1/difference_witness.json",
+  "failure_preserved": true,
+  "native_MPI_evolution_verified": false,
+  "evolution_steps": 0,
+  "physical_providers": 0,
+  "limits": "Owned CPU preparation speed only. End-to-end MPI evolution and solver speed still unverified. Original standalone CPU functions on the same node independently matched every density/velocity field and all 91678224x7 gravity inputs, q48 all cells passed. CPU/libm dispatch is a possible cause of cross-node differences; not independently isolated."
+}

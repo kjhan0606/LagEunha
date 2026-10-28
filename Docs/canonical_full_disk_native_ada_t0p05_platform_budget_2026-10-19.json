@@ -1,0 +1,174 @@
+{
+  "status": "passed_platform_physical_difference_budget",
+  "time": 0.05,
+  "kind": "platform",
+  "budget": {
+    "pressure": 0.0002,
+    "density": 0.0002,
+    "velocity": 0.0002,
+    "phase_degrees": 0.02
+  },
+  "strict_less_than": true,
+  "regions": {
+    "all": {
+      "metrics": {
+        "pressure": 7.207579912034163e-12,
+        "density": 1.6444862734616212e-11,
+        "velocity": 1.88435304651091e-13,
+        "phase_degrees": 1.0091086065543818e-11
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 19945,
+      "cells_B": 19945,
+      "intersection_cells": 19945,
+      "phase_excluded_cells": 0
+    },
+    "inner": {
+      "metrics": {
+        "pressure": 2.2864379232862193e-13,
+        "density": 8.102926733052399e-13,
+        "velocity": 9.767269732722637e-14,
+        "phase_degrees": 5.145389633896787e-12
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 490,
+      "cells_B": 490,
+      "intersection_cells": 490,
+      "phase_excluded_cells": 0
+    },
+    "cavity": {
+      "metrics": {
+        "pressure": 4.4796760844141e-13,
+        "density": 1.3700803463376726e-11,
+        "velocity": 5.719722956042683e-13,
+        "phase_degrees": 3.100055681369955e-11
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 754,
+      "cells_B": 754,
+      "intersection_cells": 754,
+      "phase_excluded_cells": 0
+    },
+    "disk_core": {
+      "metrics": {
+        "pressure": 7.2664221751873884e-12,
+        "density": 1.0524170059229351e-11,
+        "velocity": 1.6336604239830767e-13,
+        "phase_degrees": 9.06316345925899e-12
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 11812,
+      "cells_B": 11812,
+      "intersection_cells": 11812,
+      "phase_excluded_cells": 0
+    },
+    "inner_contact": {
+      "metrics": {
+        "pressure": 1.0056695559637267e-11,
+        "density": 2.2726850451699008e-11,
+        "velocity": 6.133373760640139e-13,
+        "phase_degrees": 3.439295400994031e-11
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 101,
+      "cells_B": 101,
+      "intersection_cells": 101,
+      "phase_excluded_cells": 0
+    },
+    "outer_contact": {
+      "metrics": {
+        "pressure": 3.106228745261618e-12,
+        "density": 3.713024173464043e-11,
+        "velocity": 2.807725931178295e-13,
+        "phase_degrees": 1.5437713573369068e-11
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 402,
+      "cells_B": 402,
+      "intersection_cells": 402,
+      "phase_excluded_cells": 0
+    },
+    "dynamic_buffer": {
+      "metrics": {
+        "pressure": 5.432040854838149e-13,
+        "density": 1.5086291361938305e-10,
+        "velocity": 1.159355350742317e-12,
+        "phase_degrees": 4.5584685710407606e-11
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 6408,
+      "cells_B": 6408,
+      "intersection_cells": 6408,
+      "phase_excluded_cells": 0
+    },
+    "wall": {
+      "metrics": {
+        "pressure": 1.0874254180888508e-12,
+        "density": 1.8328804318470882e-10,
+        "velocity": 9.284240648797198e-13,
+        "phase_degrees": 5.2021916662371654e-11
+      },
+      "components_passed": {
+        "pressure": true,
+        "density": true,
+        "velocity": true,
+        "phase_degrees": true
+      },
+      "passed": true,
+      "cells_A": 468,
+      "cells_B": 468,
+      "intersection_cells": 468,
+      "phase_excluded_cells": 0
+    }
+  },
+  "comparison_path": "/gpfs/kjhan/LagForce/Codex_full_disk_native_ada_t0p05_comparison_20261019/report.json",
+  "comparison_sha256": "2c430a5891a4a21153835a9e749f77fc0ac72a351b37cff4a175412ae6ef1202",
+  "automatic_extension_authorized": false,
+  "backend_or_seed_bounds_changed": false,
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "plan": "Docs/astra_kepler_plan_review_2026-10-18.md density and platform budget amendment 2026-10-19",
+  "limits": "Physical error difference only at this checkpoint. Missing times, individual density monitors, restart equivalence and contact growth still require separate evaluation."
+}

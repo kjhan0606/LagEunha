@@ -1,0 +1,114 @@
+{
+  "scope": "Instantaneous complete perturbation kinetic-power budget at t6 plus finite-dt consistency checks. Not a long-term growth exponent.",
+  "definition": "K_delta=sum_i m_i |v_i-v_circular(x_i)|^2/2, fixed initial material regions.",
+  "script_sha256": "d144e37d035f79341c7178e9ed0cceba85f375d24ef732a0f91c518784cb49bd",
+  "regions": {
+    "initial_inner": {
+      "cells": 803,
+      "pressure": 4.441457323419548e-06,
+      "TCF": -3.676832558706604e-06,
+      "HG": -1.546858785718028e-06,
+      "differential_rotation": 8.3920157265551e-07,
+      "full_instantaneous_power": 5.6967551650426194e-08,
+      "chi_zero_instantaneous_power": 8.261921113613969e-07,
+      "finite_dt_checks": [
+        {
+          "dt": 0.001000000000000334,
+          "measured_mean_power": 5.027315544128759e-08,
+          "difference_from_instantaneous": -6.694396209138603e-09
+        },
+        {
+          "dt": 0.0004999999999997229,
+          "measured_mean_power": 5.2395955884031304e-08,
+          "difference_from_instantaneous": -4.571595766394891e-09
+        },
+        {
+          "dt": 0.00025000000000030553,
+          "measured_mean_power": 5.506150724414841e-08,
+          "difference_from_instantaneous": -1.906044406277783e-09
+        }
+      ],
+      "extrapolated_power_coarse": 5.4518756326775016e-08,
+      "extrapolated_power_fine": 5.772705860426552e-08,
+      "extrapolated_error_coarse": -2.4487953236511784e-09,
+      "extrapolated_error_fine": 7.595069538393247e-10
+    },
+    "initial_inner_edge": {
+      "cells": 390,
+      "pressure": 4.211777905044008e-08,
+      "TCF": 2.456666593290546e-09,
+      "HG": 2.2049047844058625e-09,
+      "differential_rotation": 1.1621998677726962e-08,
+      "full_instantaneous_power": 5.8401349105863445e-08,
+      "chi_zero_instantaneous_power": 5.52708384880402e-08,
+      "finite_dt_checks": [
+        {
+          "dt": 0.001000000000000334,
+          "measured_mean_power": 5.8763920017643025e-08,
+          "difference_from_instantaneous": 3.6257091177957987e-10
+        },
+        {
+          "dt": 0.0004999999999997229,
+          "measured_mean_power": 5.8551022083333464e-08,
+          "difference_from_instantaneous": 1.4967297747001847e-10
+        },
+        {
+          "dt": 0.00025000000000030553,
+          "measured_mean_power": 5.8475054906563544e-08,
+          "difference_from_instantaneous": 7.370580070009925e-11
+        }
+      ],
+      "extrapolated_power_coarse": 5.83381241490239e-08,
+      "extrapolated_power_fine": 5.8399087729793625e-08,
+      "extrapolated_error_coarse": -6.322495683954294e-11,
+      "extrapolated_error_fine": -2.2613760698199567e-12
+    },
+    "initial_disk_core": {
+      "cells": 10304,
+      "pressure": -1.5760064756046618e-12,
+      "TCF": -3.4701675572806374e-13,
+      "HG": -2.1074872032817246e-13,
+      "differential_rotation": 3.1709515786823597e-12,
+      "full_instantaneous_power": 1.0371796270214616e-12,
+      "chi_zero_instantaneous_power": 1.1147110370536268e-12,
+      "finite_dt_checks": [
+        {
+          "dt": 0.001000000000000334,
+          "measured_mean_power": 1.0343608756992202e-12,
+          "difference_from_instantaneous": -2.818751322241411e-15
+        },
+        {
+          "dt": 0.0004999999999997229,
+          "measured_mean_power": 1.0352709597064762e-12,
+          "difference_from_instantaneous": -1.908667314985402e-15
+        },
+        {
+          "dt": 0.00025000000000030553,
+          "measured_mean_power": 1.0363017747890548e-12,
+          "difference_from_instantaneous": -8.778522324068543e-16
+        }
+      ],
+      "extrapolated_power_coarse": 1.0361810437137322e-12,
+      "extrapolated_power_fine": 1.0373325898716333e-12,
+      "extrapolated_error_coarse": -9.985833077293932e-16,
+      "extrapolated_error_fine": 1.529628501716935e-16
+    }
+  },
+  "accepted_step_sources": [
+    {
+      "run": "/gpfs/kjhan/LagForce/Codex_early_growth_budget_20261017/t6_full",
+      "dt": 0.001000000000000334,
+      "end_sha256": "760995f33c03e8e0ac55772a1af50bc635182eb32227afbad890ce400e6edde4"
+    },
+    {
+      "run": "/gpfs/kjhan/LagForce/Codex_early_growth_budget_20261017/t6_half",
+      "dt": 0.0004999999999997229,
+      "end_sha256": "325883886083c9b6840c1e0ad2dd9719885193d9d5b03f1648d4eeab8d778064"
+    },
+    {
+      "run": "/gpfs/kjhan/LagForce/Codex_early_growth_budget_20261017/t6_quarter",
+      "dt": 0.00025000000000030553,
+      "end_sha256": "e2759a289e58de0546d0166ea16ba5dbff5961b37a1f61c6f2cecb40472dece6"
+    }
+  ]
+}

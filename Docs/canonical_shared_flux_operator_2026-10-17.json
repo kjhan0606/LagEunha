@@ -1,0 +1,78 @@
+{
+  "scope": "Static feasibility of shared reconstructed face-volume flux using actual C QR gradients and paired real faces at t2 circular diagnostic geometry. No time evolution, no production physics changed.",
+  "source": "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator",
+  "operator_sha256": "616f4b4b8262d0179986b85dedbf48af81ba8bc442182810087f8fd99c7a7b50",
+  "gamma": 1.6666669845581055,
+  "edges": 110579,
+  "unpaired_excluded": [
+    [
+      36852,
+      36860
+    ]
+  ],
+  "checks": {
+    "translation_x_max_active": 8.326672684688674e-17,
+    "translation_y_max_active": 6.938893903907228e-17,
+    "rotation_max_active": 1.6653345369377348e-16,
+    "isotropic_expansion_relative_max_active": 1.772618386834676e-13,
+    "global_volume_sum_random_velocity": -3.885780586188048e-16,
+    "constant_pressure_force_max": 0.0,
+    "adjoint_energy_relative_residual": 1.138338566767584e-18,
+    "net_force_active_pressure": [
+      2.0097855671363796e-15,
+      2.8697679540883037e-15
+    ],
+    "net_torque_active_pressure": -1.0373646386341306e-15,
+    "all_affine_relative_max_active": {
+      "dv0_dx0": 1.8103809339226328e-13,
+      "dv0_dx1": 1.3159782382487634e-13,
+      "dv1_dx0": 1.4213266749953987e-13,
+      "dv1_dx1": 1.3039882557458938e-13
+    }
+  },
+  "regions": {
+    "inner": {
+      "n": 795,
+      "candidate_divergence_rms": 0.003429506002225165,
+      "original_geometric_divergence_rms": 0.1333226296092813,
+      "raw_QR_divergence_rms": 0.00042601314149275733,
+      "candidate_compression_pressure_variance_rate": 5.9175105357590824e-06,
+      "original_compression_pressure_variance_rate": 0.00039840740090206364,
+      "divergence_reduction_factor": 38.87517022066083
+    },
+    "disk_edge": {
+      "n": 399,
+      "candidate_divergence_rms": 0.001408840541930288,
+      "original_geometric_divergence_rms": 0.07554014289867637,
+      "raw_QR_divergence_rms": 0.00029548581804169553,
+      "candidate_compression_pressure_variance_rate": -7.1544741537259805e-06,
+      "original_compression_pressure_variance_rate": -7.64854116267083e-05,
+      "divergence_reduction_factor": 53.618660629383164
+    },
+    "disk_core": {
+      "n": 10304,
+      "candidate_divergence_rms": 0.0002463686239123338,
+      "original_geometric_divergence_rms": 0.015007763075655043,
+      "raw_QR_divergence_rms": 3.2072388617522576e-05,
+      "candidate_compression_pressure_variance_rate": -3.258420896952264e-07,
+      "original_compression_pressure_variance_rate": 1.1380753525134392e-05,
+      "divergence_reduction_factor": 60.9158862737136
+    }
+  },
+  "limitations": [
+    "Far frozen cap edges are absent; this operator is not a complete boundary model.",
+    "Stored geometric volumes remain the normalization here; adopting independent volumes requires positivity and physical meaning.",
+    "Weight-based realization would need a compatible work/force model and proof against secular weight growth.",
+    "Affine and conservation checks do not establish shock or long-term Kepler stability."
+  ],
+  "decision": "Static algebraic candidate passes active-region affine/rigid-motion and full paired-graph adjoint/constant-pressure tests. Not adopted into evolution. Must resolve geometric versus thermodynamic volume compatibility before any long-time claim.",
+  "attempt_history": "Initial raw-face attempt failed reciprocity assertion; final uses actual C shf_common exported shared geometry. No averaging of unequal raw faces. One existing unpaired far-frozen face omitted and reported. Earlier v3 pressure-rate diagnostic used ideal 5/3 float; final reads actual params gamma.",
+  "definition": {
+    "face_velocity": "v_face = 0.5*(v_i + G_i*(c-x_i) + v_j + G_j*(c-x_j)); G from actual C QR linear map.",
+    "volume_rate": "Bv = signed incidence times face_area*(normal dot v_face).",
+    "pressure_force": "F = B^T P using the transpose of the full reconstruction, including neighbor contributions.",
+    "internal_energy_rate": "Udot_i = -P_i*(Bv)_i; this is a proposed compatible pair, not the implemented original geometric-volume equation.",
+    "invariance_scope": "Affine and rigid modes tested in r<2.5; net force/torque measured for pressure supported there to avoid periodic/cap boundary ambiguity.",
+    "pressure_variance_scope": "Instantaneous compression contribution only, current-radius membership; no TCF/HG or evolved trajectory."
+  }
+}

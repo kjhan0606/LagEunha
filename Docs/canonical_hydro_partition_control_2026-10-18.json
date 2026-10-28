@@ -1,0 +1,101 @@
+{
+  "partition": "[ACCEPTED_HYDRO_PARTITION] step=1 phase1=1 all=-2.3988237764037803e-23 frozen=1.8144138976794475e-11 active=-1.8144138976813536e-11 partition_residual=-4.9275407583725281e-24 scope=raw_die_RK_integral_not_closed_boundary_balance",
+  "time": 0.4025000000000003,
+  "physical_fields_bitwise_equal": {
+    "id": true,
+    "x": true,
+    "y": true,
+    "vx": true,
+    "vy": true,
+    "mass": true,
+    "volume": true,
+    "den": true,
+    "pressure": true,
+    "ie": true,
+    "w2": true
+  },
+  "auxiliary_state_bitwise_equal": true,
+  "max_abs_difference": {
+    "x": 0.0,
+    "y": 0.0,
+    "vx": 0.0,
+    "vy": 0.0,
+    "mass": 0.0,
+    "volume": 0.0,
+    "den": 0.0,
+    "pressure": 0.0,
+    "ie": 0.0,
+    "w2": 0.0
+  },
+  "scope": "Hydro partition diagnostic, actual nonzero-memory RK4 step versus preserved old output. State invariance only; not full boundary closure or long-term physics.",
+  "accepted_records": {
+    "ACCEPTED_STATE": {
+      "step": "1",
+      "elapsed": "0.0025000000000000001",
+      "dt": "0.0025000000000000001",
+      "retries": "0",
+      "finite": "1",
+      "M": "12.19100448537078",
+      "Px": "0.013032650240790944",
+      "Py": "-0.011009361664250407",
+      "Lz": "14.405898147672477",
+      "K": "4.8064225419999671",
+      "U": "0.0014993627617374313",
+      "Phi": "-9.6198021167274863",
+      "E": "-4.8118802119657822",
+      "dM0": "0",
+      "dPx0": "2.122606515996342e-05",
+      "dPy0": "2.1343193494220702e-05",
+      "dLz0": "-7.3363537467230344e-11",
+      "dE0": "-2.0464518968310585e-11",
+      "dEstep": "-2.0464518968310585e-11",
+      "hg_dE": "-1.4767917791425056e-14",
+      "hg_dPx": "1.9878543255913428e-13",
+      "hg_dPy": "4.4775294583132563e-13",
+      "hg_dLz": "1.2789769243681803e-13",
+      "hg_dU": "1.1522985256945395e-12",
+      "boundary_corrected": "0"
+    },
+    "ACCEPTED_RK_BUDGET": {
+      "step": "1",
+      "stage_mask_min": "15",
+      "stage_mask_max": "15",
+      "rk_dPx": "2.1226064961190842e-05",
+      "rk_dPy": "2.1343193046668744e-05",
+      "rk_dLz": "-7.3455203047426143e-11",
+      "rk_dEh": "-2.9793394035961713e-10",
+      "rk_dPhi": "2.775285871660148e-10",
+      "residual_Px": "-1.214306433183765e-17",
+      "residual_Py": "-2.0122792321330962e-16",
+      "residual_Lz": "-3.5527136788005009e-14",
+      "residual_E": "-4.3520742565306136e-14",
+      "scope": "actual_stage_increments_plus_HG"
+    },
+    "ACCEPTED_HYDRO_PARTITION": {
+      "step": "1",
+      "phase1": "1",
+      "all": "-2.3988237764037803e-23",
+      "frozen": "1.8144138976794475e-11",
+      "active": "-1.8144138976813536e-11",
+      "partition_residual": "-4.9275407583725281e-24",
+      "scope": "raw_die_RK_integral_not_closed_boundary_balance"
+    },
+    "RMEM_ACCEPTED": {
+      "dt": "0.0025000000000000001",
+      "retries": "0",
+      "Eaux": "4.0970581388336045e-10",
+      "dEaux": "2.1171685055383671e-12",
+      "dEhydro": "-2.0464518968310585e-11",
+      "boundary_work": "-1.4404571134971208e-13",
+      "augmented_residual": "-1.8203304751422494e-11",
+      "scope": "step_hydro_plus_aux_minus_aux_boundary"
+    },
+    "ACCEPTED_HG_BOUNDARY": {
+      "work": "3.8377383449573604e-14",
+      "heat_out": "3.2851292480830113e-16",
+      "measured_dE": "-1.4767917791425056e-14",
+      "residual": "-5.2816788316190357e-14"
+    }
+  },
+  "augmented_change_minus_aux_frozen_hydro_and_HG_terms": -9.72146451527974e-14
+}

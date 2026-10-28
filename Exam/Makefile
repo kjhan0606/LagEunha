@@ -78,6 +78,15 @@ EXLIB       = libexam.a
 #CC            =  mpiicc
 
 EXOBJ       = exam.o mpirks.exam2d.o exam3d_gfs.o # exam.stress.o
+ifdef USE_FULL_MOMENT_KEPLER
+CCFLAGS += -DUSE_FULL_MOMENT_KEPLER
+FULL_MOMENT_OBJECTS = full_moment_kepler.o full_moment_update.o full_moment_provider.o full_moment_provider_mpi.o full_moment_cpu_mpi.o full_moment_native_stage.o full_moment_state_io.o full_moment_native_factor.o full_moment_coupled_state.o full_moment_coupled_control.o full_moment_evolution.o
+EXOBJ += $(FULL_MOMENT_OBJECTS)
+endif
+
+ifdef USE_FULL_MOMENT_KEPLER
+full_moment_evolution.o: full_moment_coupled_runtime.inc full_moment_coupled_control.h full_moment_coupled_state.h
+endif
 
 ifdef USE_CUDA
 CUDA_HOME  ?= /opt/ohpc/pub/cuda/13.0.2
@@ -156,7 +165,7 @@ lag3d.exe: exam3d_main.c exam3d_gfs.c exam3d_gfs.h gfs_riemann.h gfs_pair.h $(VO
 	$(CC) $(CCFLAGS) -I. -I.. -I$(VORO) -o $@ exam3d_main.c exam3d_gfs.c $(VORO)/voro.c -lm
 
 ifdef USE_CUDA
-exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_pair.h
+exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_pair.h power_polygon_clip.h moment_geometry.h moment_geometry_impl.cuh
 	$(NVCC) $(NVCCFLAGS) $(INCLUDES) -c $< -o $@
 
 exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_pair.h
@@ -164,3 +173,9 @@ exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_pair.h
 endif
 
 #include ../sRules.make
+ifdef USE_FULL_MOMENT_KEPLER
+# Match the strict arithmetic of the validated standalone native builds.
+# Keep these flags local to the opt-in moment controller/update objects.
+$(FULL_MOMENT_OBJECTS): CCFLAGS += -fno-fast-math -ffp-contract=off
+$(FULL_MOMENT_OBJECTS): $(wildcard full_moment*.h) moment_owned_backend.h
+endif

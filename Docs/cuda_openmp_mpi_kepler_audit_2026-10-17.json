@@ -1,0 +1,82 @@
+{
+  "objective": "CUDA+OpenMP+MPI implementation consistency and long-term Kepler stability",
+  "as_of": "2026-10-17T18:05:44.096055+09:00",
+  "complete": false,
+  "baseline": {
+    "run": "/gpfs/kjhan/LagForce/KepFloor01Rot_192_9303006",
+    "force_gpu_enabled": false,
+    "mpi_ranks": 1,
+    "omp_threads": 8,
+    "TCF": true,
+    "last_logged_t": 13.535,
+    "note": "GPU nearest-neighbor kernels do not establish GPU TCF force support; baseline instability also occurs with CPU force.",
+    "source_identity": {
+      "Exam/exam.c": "e22b229963a1249ac1b3966d41745d71792e74996ad69eae0c20b3473b9643df",
+      "Exam/exam_gpu.cu": "ffb962c126e98f1da224acb3c73ffd6b3e5fa2b1b441f885be36e31b83460288",
+      "Exam/exam_gpu.h": "a1f8b58c89ea72990cd12268ac081011dbcdafb4a8aaa2fe22eefbebe6bfff4c",
+      "comparison": "Retained Claude_build_tcf_9303006/src and current worktree are byte-identical for these three files."
+    }
+  },
+  "findings": [
+    {
+      "id": "GPU-MODE-01",
+      "state": "source-confirmed",
+      "detail": "GPU force dispatcher has no TCF implementation or parameter. GFS_DYN_W2 is disabled in GPU integrator. Reject these requests in GPU force wrapper instead of silently comparing different equations."
+    },
+    {
+      "id": "GPU-VALIDATE-01",
+      "state": "patched-not-GPU-runtime-tested",
+      "detail": "Original verdict checked ax and energy only; ay and dt differences did not fail, vsig unused, NaN could pass, FAIL did not abort. Now all five fields checked, nonfinite rejected, MPI-global verdict and abort."
+    },
+    {
+      "id": "GPU-VALIDATE-02",
+      "state": "open",
+      "detail": "CSR CPU reference shares GPU geometry/data; this comparison alone does not cover production CPU geometry, halo exchange, force path, or long-time stability."
+    },
+    {
+      "id": "MPI-CANONICAL-01",
+      "state": "source-confirmed-not-implemented",
+      "detail": "Canonical GFS_SHARED_GEOM and GFS_HG_AFFINE explicitly reject NID>1 (Exam/exam.c:4317,10320). shf_common reads peer geometry from rank-local ID-indexed arrays; removing the guard is not an MPI implementation. Implement owner/halo face geometry and HG operator exchange without changing equations before canonical MPI1/4 equivalence claims."
+    }
+  ],
+  "validation": {
+    "root": "/gpfs/kjhan/LagForce/Codex_GPU_contract_20261017",
+    "scalar_cases_passed": 12,
+    "syntax_check_exit": 0,
+    "syntax_defines": [
+      "INTEL",
+      "XYZDBL",
+      "GOTPM",
+      "USE_CUDA",
+      "GPU_VALIDATE"
+    ],
+    "syntax_headers": "retained Claude_build_tcf_9303006/src",
+    "syntax_warnings": "MPI wrapper link flags unused in syntax-only mode",
+    "GPU_runtime_tested": false,
+    "full_executable_built": false
+  },
+  "next_required": [
+    "Verify supported CPU/GPU physics feature intersection and baseline force/energy formula differences",
+    "Build baseline CUDA/OpenMP executable; first compare canonical owned-particle state/RHS with MPI1 OMP1/8. Separately validate common CPU/GPU supported physics; label it noncanonical. Implement canonical MPI geometry and HG exchange, then require canonical MPI1/4 parity.",
+    "Fix measured rank/thread/device discrepancies; retain failing evidence",
+    "Run identical canonical Kepler through t1,t6,t10 and beyond previous failure, then canonical192 100orbits; do not equate kernel parity with physical stability"
+  ],
+  "prior_moment_runs": "Preserve active runs and results; no automatic renewal or new moment-model experiments under this replacement objective",
+  "source_hashes": {
+    "Exam/exam_gpu_extract.c": "3dec7fcbb170b80b681673c338c191ff18d911391b3befd1ad1f9610b90b13f8",
+    "Exam/gpu_validation_check.h": "b732b9b8e223ed863733622d9daee60fedfa8429aab916f48e57376954fc160b",
+    "Exam/test_gpu_validation_check.c": "a4cbb4361f972384e895609e06ca69e7bf25cac4ab58b98ea492924f1f010631"
+  },
+  "build": {
+    "job_id": 426313,
+    "root": "/gpfs/kjhan/LagForce/Codex_GPU_baseline_build_20261017",
+    "state_observed": "PENDING",
+    "reason_observed": "QOSGrpGRES",
+    "partition": "h200",
+    "gres": "gpu:H200:1",
+    "memory": "16G",
+    "basis": "Retained baseline source.tar plus the three validation files listed in provenance.json",
+    "clean_build": "Exclude .o/.a/.mod/.exe from archive extraction; fail-fast subdirectory make; USE_CUDA=1 GPU_VALIDATE=1",
+    "runtime_verified": false
+  }
+}

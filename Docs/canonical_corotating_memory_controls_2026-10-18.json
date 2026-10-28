@@ -1,0 +1,609 @@
+{
+  "checks": {
+    "off_vs_preserved": {
+      "time": 0.4025000000000003,
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "sidecar_bytes_equal": true
+    },
+    "restart": {
+      "time": 0.4050000000000003,
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "sidecar_bytes_equal": true
+    },
+    "retry": {
+      "time": 0.4012500000000003,
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "sidecar_bytes_equal": true
+    },
+    "parallel_rows": {
+      "time": 0.4025000000000003,
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "sidecar_bytes_equal": true
+    }
+  },
+  "records": {
+    "off": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/off/khout.000162.dat",
+      "time": 0.4025000000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.0025000000000000001",
+          "dt": "0.0025000000000000001",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013032650240790944",
+          "Py": "-0.011009361664250407",
+          "Lz": "14.405898147672477",
+          "K": "4.8064225419999671",
+          "U": "0.0014993627617374313",
+          "Phi": "-9.6198021167274863",
+          "E": "-4.8118802119657822",
+          "dM0": "0",
+          "dPx0": "2.122606515996342e-05",
+          "dPy0": "2.1343193494220702e-05",
+          "dLz0": "-7.3363537467230344e-11",
+          "dE0": "-2.0464518968310585e-11",
+          "dEstep": "-2.0464518968310585e-11",
+          "hg_dE": "-1.4767917791425056e-14",
+          "hg_dPx": "1.9878543255913428e-13",
+          "hg_dPy": "4.4775294583132563e-13",
+          "hg_dLz": "1.2789769243681803e-13",
+          "hg_dU": "1.1522985256945395e-12",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": []
+    },
+    "on_full": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_full/khout.000163.dat",
+      "time": 0.4050000000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.0025000000000000001",
+          "dt": "0.0025000000000000001",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013032650240790667",
+          "Py": "-0.011009361664250424",
+          "Lz": "14.405898147672463",
+          "K": "4.8064225419999387",
+          "U": "0.0014993627617374409",
+          "Phi": "-9.6198021167274863",
+          "E": "-4.8118802119658106",
+          "dM0": "0",
+          "dPx0": "2.1226065159685864e-05",
+          "dPy0": "2.1343193494203355e-05",
+          "dLz0": "-7.3377748321945546e-11",
+          "dE0": "-2.0492940677740989e-11",
+          "dEstep": "-2.0492940677740989e-11",
+          "hg_dE": "-1.4768134631859553e-14",
+          "hg_dPx": "1.9884441315731749e-13",
+          "hg_dPy": "4.4764539297581507e-13",
+          "hg_dLz": "1.2789769243681803e-13",
+          "hg_dU": "1.152298308854105e-12",
+          "boundary_corrected": "0"
+        },
+        {
+          "step": "2",
+          "elapsed": "0.0050000000000000001",
+          "dt": "0.0025000000000000001",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013053785663970625",
+          "Py": "-0.01098791861632116",
+          "Lz": "14.405898147599199",
+          "K": "4.8064225414831592",
+          "U": "0.0014993629730061897",
+          "Phi": "-9.6198021164425054",
+          "E": "-4.81188021198634",
+          "dM0": "0",
+          "dPx0": "4.2361488339644204e-05",
+          "dPy0": "4.2786241423467541e-05",
+          "dLz0": "-1.4664180980616948e-10",
+          "dE0": "-4.1022296670689684e-11",
+          "dEstep": "-2.0529355992948695e-11",
+          "hg_dE": "1.5291370600301057e-14",
+          "hg_dPx": "2.1500856650646938e-13",
+          "hg_dPy": "4.3424985829432217e-13",
+          "hg_dLz": "9.5923269327613525e-14",
+          "hg_dU": "1.1521597478164614e-12",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": [
+        {
+          "max_spin": "8.8050407062072455",
+          "frequency_bound": "13.223844619687227",
+          "dt_limit": "0.018905243307820493",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050373060897371",
+          "frequency_bound": "13.223600428591871",
+          "dt_limit": "0.018905592417890499",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.80504433177998",
+          "frequency_bound": "13.22415000831683",
+          "dt_limit": "0.018904806724271271",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.805040917341854",
+          "frequency_bound": "13.223903533405551",
+          "dt_limit": "0.01890515908320586",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050408159497255",
+          "frequency_bound": "13.223903337335747",
+          "dt_limit": "0.018905159363511208",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050373775863395",
+          "frequency_bound": "13.223654379646479",
+          "dt_limit": "0.018905515285153988",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050444030182433",
+          "frequency_bound": "13.224203974944867",
+          "dt_limit": "0.018904729575682629",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050409503730602",
+          "frequency_bound": "13.22399801806619",
+          "dt_limit": "0.018905024006995331",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        }
+      ]
+    },
+    "on_first": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_first/khout.000162.dat",
+      "time": 0.4025000000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.0025000000000000001",
+          "dt": "0.0025000000000000001",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013032650240790667",
+          "Py": "-0.011009361664250424",
+          "Lz": "14.405898147672463",
+          "K": "4.8064225419999387",
+          "U": "0.0014993627617374409",
+          "Phi": "-9.6198021167274863",
+          "E": "-4.8118802119658106",
+          "dM0": "0",
+          "dPx0": "2.1226065159685864e-05",
+          "dPy0": "2.1343193494203355e-05",
+          "dLz0": "-7.3377748321945546e-11",
+          "dE0": "-2.0492940677740989e-11",
+          "dEstep": "-2.0492940677740989e-11",
+          "hg_dE": "-1.4768134631859553e-14",
+          "hg_dPx": "1.9884441315731749e-13",
+          "hg_dPy": "4.4764539297581507e-13",
+          "hg_dLz": "1.2789769243681803e-13",
+          "hg_dU": "1.152298308854105e-12",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": [
+        {
+          "max_spin": "8.8050407062072455",
+          "frequency_bound": "13.223844619687227",
+          "dt_limit": "0.018905243307820493",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050373060897371",
+          "frequency_bound": "13.223600428591871",
+          "dt_limit": "0.018905592417890499",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.80504433177998",
+          "frequency_bound": "13.22415000831683",
+          "dt_limit": "0.018904806724271271",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.805040917341854",
+          "frequency_bound": "13.223903533405551",
+          "dt_limit": "0.01890515908320586",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        }
+      ]
+    },
+    "on_resume": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_resume/khout.000163.dat",
+      "time": 0.4050000000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.0025000000000000001",
+          "dt": "0.0025000000000000001",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013053785663970625",
+          "Py": "-0.01098791861632116",
+          "Lz": "14.405898147599199",
+          "K": "4.8064225414831592",
+          "U": "0.0014993629730061897",
+          "Phi": "-9.6198021164425054",
+          "E": "-4.81188021198634",
+          "dM0": "0",
+          "dPx0": "2.113542317995834e-05",
+          "dPy0": "2.1443047929264186e-05",
+          "dLz0": "-7.326406148422393e-11",
+          "dE0": "-2.0529355992948695e-11",
+          "dEstep": "-2.0529355992948695e-11",
+          "hg_dE": "1.5291370600301057e-14",
+          "hg_dPx": "2.1500856650646938e-13",
+          "hg_dPy": "4.3424985829432217e-13",
+          "hg_dLz": "9.5923269327613525e-14",
+          "hg_dU": "1.1521597478164614e-12",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": [
+        {
+          "max_spin": "8.8050408159497255",
+          "frequency_bound": "13.223903337335747",
+          "dt_limit": "0.018905159363511208",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050373775863395",
+          "frequency_bound": "13.223654379646479",
+          "dt_limit": "0.018905515285153988",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050444030182433",
+          "frequency_bound": "13.224203974944867",
+          "dt_limit": "0.018904729575682629",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050409503730602",
+          "frequency_bound": "13.22399801806619",
+          "dt_limit": "0.018905024006995331",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        }
+      ]
+    },
+    "on_direct_half": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_direct_half/khout.000162.dat",
+      "time": 0.4012500000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.00125",
+          "dt": "0.00125",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013022048497372282",
+          "Py": "-0.011020045778964479",
+          "Lz": "14.405898147708882",
+          "K": "4.8064225422551248",
+          "U": "0.0014993626563791756",
+          "Phi": "-9.619802116867243",
+          "E": "-4.8118802119557387",
+          "dM0": "0",
+          "dPx0": "1.0624321741301013e-05",
+          "dPy0": "1.065907878014874e-05",
+          "dLz0": "-3.6958880400561611e-11",
+          "dE0": "-1.0420997398341569e-11",
+          "dEstep": "-1.0420997398341569e-11",
+          "hg_dE": "-8.4645832010288302e-14",
+          "hg_dPx": "9.5229379937222802e-14",
+          "hg_dPy": "2.2514282105312589e-13",
+          "hg_dLz": "3.907985046680551e-14",
+          "hg_dU": "5.7615891224660487e-13",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": [
+        {
+          "max_spin": "8.8050407301598295",
+          "frequency_bound": "13.22384464037782",
+          "dt_limit": "0.018905243278240544",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050399106759087",
+          "frequency_bound": "13.223791533385928",
+          "dt_limit": "0.018905319202047945",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050416671815306",
+          "frequency_bound": "13.22392893354017",
+          "dt_limit": "0.018905122770731093",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050408431606595",
+          "frequency_bound": "13.223875237346128",
+          "dt_limit": "0.018905199535909412",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        }
+      ]
+    },
+    "on_retry": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_retry/khout.000162.dat",
+      "time": 0.4012500000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.00125",
+          "dt": "0.00125",
+          "retries": "1",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013022048497372282",
+          "Py": "-0.011020045778964479",
+          "Lz": "14.405898147708882",
+          "K": "4.8064225422551248",
+          "U": "0.0014993626563791756",
+          "Phi": "-9.619802116867243",
+          "E": "-4.8118802119557387",
+          "dM0": "0",
+          "dPx0": "1.0624321741301013e-05",
+          "dPy0": "1.065907878014874e-05",
+          "dLz0": "-3.6958880400561611e-11",
+          "dE0": "-1.0420997398341569e-11",
+          "dEstep": "-1.0420997398341569e-11",
+          "hg_dE": "-8.4645832010288302e-14",
+          "hg_dPx": "9.5229379937222802e-14",
+          "hg_dPy": "2.2514282105312589e-13",
+          "hg_dLz": "3.907985046680551e-14",
+          "hg_dU": "5.7615891224660487e-13",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": [
+        {
+          "max_spin": "8.8050407062072455",
+          "frequency_bound": "13.223844619687227",
+          "dt_limit": "0.018905243307820493",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050373060897371",
+          "frequency_bound": "13.223600428591871",
+          "dt_limit": "0.018905592417890499",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.80504433177998",
+          "frequency_bound": "13.22415000831683",
+          "dt_limit": "0.018904806724271271",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.805040917341854",
+          "frequency_bound": "13.223903533405551",
+          "dt_limit": "0.01890515908320586",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050407301598295",
+          "frequency_bound": "13.22384464037782",
+          "dt_limit": "0.018905243278240544",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050399106759087",
+          "frequency_bound": "13.223791533385928",
+          "dt_limit": "0.018905319202047945",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050416671815306",
+          "frequency_bound": "13.22392893354017",
+          "dt_limit": "0.018905122770731093",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050408431606595",
+          "frequency_bound": "13.223875237346128",
+          "dt_limit": "0.018905199535909412",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        }
+      ]
+    },
+    "on_parallel4": {
+      "final": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_parallel4/khout.000162.dat",
+      "time": 0.4025000000000003,
+      "accepted": [
+        {
+          "step": "1",
+          "elapsed": "0.0025000000000000001",
+          "dt": "0.0025000000000000001",
+          "retries": "0",
+          "finite": "1",
+          "M": "12.19100448537078",
+          "Px": "0.013032650240790667",
+          "Py": "-0.011009361664250424",
+          "Lz": "14.405898147672463",
+          "K": "4.8064225419999387",
+          "U": "0.0014993627617374409",
+          "Phi": "-9.6198021167274863",
+          "E": "-4.8118802119658106",
+          "dM0": "0",
+          "dPx0": "2.1226065159685864e-05",
+          "dPy0": "2.1343193494203355e-05",
+          "dLz0": "-7.3377748321945546e-11",
+          "dE0": "-2.0492940677740989e-11",
+          "dEstep": "-2.0492940677740989e-11",
+          "hg_dE": "-1.4768134631859553e-14",
+          "hg_dPx": "1.9884441315731749e-13",
+          "hg_dPy": "4.4764539297581507e-13",
+          "hg_dLz": "1.2789769243681803e-13",
+          "hg_dU": "1.152298308854105e-12",
+          "boundary_corrected": "0"
+        }
+      ],
+      "spin_records": [
+        {
+          "max_spin": "8.8050407062072455",
+          "frequency_bound": "13.223844619687227",
+          "dt_limit": "0.018905243307820493",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.8050373060897371",
+          "frequency_bound": "13.223600428591871",
+          "dt_limit": "0.018905592417890499",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.80504433177998",
+          "frequency_bound": "13.22415000831683",
+          "dt_limit": "0.018904806724271271",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        },
+        {
+          "max_spin": "8.805040917341854",
+          "frequency_bound": "13.223903533405551",
+          "dt_limit": "0.01890515908320586",
+          "scope": "frozen_B_spin_block_not_full_nonlinear_bound"
+        }
+      ]
+    }
+  },
+  "manifest": {
+    "binary_sha256": "36af3ebd200196c7c2eed6dd93a88def07b0909650e972fcc35094fe53af61a3",
+    "expected_source_and_final_bytes": 334431944,
+    "free_bytes": 285175208476672,
+    "scope": "Deliberate nonzero-z t.4 model branches for implementation controls only. No z reset, no long-time physics.",
+    "cases": {
+      "off": {
+        "source": "/gpfs/kjhan/LagForce/Codex_memory_orbit_work_control_20261018/control/khout.000161.dat",
+        "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+        "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+        "start_time": 0.4000000000000003,
+        "steps": 1,
+        "corotate": 0,
+        "parallel_rows": 0
+      },
+      "on_full": {
+        "source": "/gpfs/kjhan/LagForce/Codex_memory_orbit_work_control_20261018/control/khout.000161.dat",
+        "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+        "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+        "start_time": 0.4000000000000003,
+        "steps": 2,
+        "corotate": 1,
+        "parallel_rows": 0
+      },
+      "on_first": {
+        "source": "/gpfs/kjhan/LagForce/Codex_memory_orbit_work_control_20261018/control/khout.000161.dat",
+        "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+        "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+        "start_time": 0.4000000000000003,
+        "steps": 1,
+        "corotate": 1,
+        "parallel_rows": 0
+      },
+      "on_resume": {
+        "source": "/gpfs/kjhan/LagForce/Codex_corotating_memory_controls_20261018/on_first/khout.000162.dat",
+        "source_sha256": "c4bec84de0f42d917d233df6fa270d30bfd06f1d3730d4d7dcd9130d624eb2ed",
+        "sidecar_sha256": "1df4b72063ba914f7a3a2f753c55f0bf17b67679ab2ac3b8fd8bdb2b519cc504",
+        "start_time": 0.4025000000000003,
+        "steps": 1,
+        "corotate": 1,
+        "parallel_rows": 0
+      },
+      "on_direct_half": {
+        "source": "/gpfs/kjhan/LagForce/Codex_memory_orbit_work_control_20261018/control/khout.000161.dat",
+        "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+        "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+        "start_time": 0.4000000000000003,
+        "steps": 1,
+        "corotate": 1,
+        "parallel_rows": 0
+      },
+      "on_retry": {
+        "source": "/gpfs/kjhan/LagForce/Codex_memory_orbit_work_control_20261018/control/khout.000161.dat",
+        "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+        "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+        "start_time": 0.4000000000000003,
+        "steps": 1,
+        "corotate": 1,
+        "parallel_rows": 0
+      },
+      "on_parallel4": {
+        "source": "/gpfs/kjhan/LagForce/Codex_memory_orbit_work_control_20261018/control/khout.000161.dat",
+        "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+        "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+        "start_time": 0.4000000000000003,
+        "steps": 1,
+        "corotate": 1,
+        "parallel_rows": 1
+      }
+    }
+  },
+  "scope": "Implementation controls only. Auxiliary transport remains MPI1 host; same restart environment required. Not a Kepler stability result."
+}

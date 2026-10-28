@@ -1,0 +1,480 @@
+{
+  "status": "completed_saved_contract_analysis",
+  "scope": "Source/IC boundary contract and saved-stage timestep design diagnostics.\n\nNo timestep increase, domain extension, geometry solve or evolution.\n",
+  "full_initial_registry": {
+    "cells": 36864,
+    "bounds_minimum": [
+      -2.9999826502439864,
+      -2.9999826502439864
+    ],
+    "bounds_maximum": [
+      2.9997197994012197,
+      2.999219289623311
+    ],
+    "radial_maximum": 4.09375,
+    "density_min": 0.009999999999729597,
+    "density_max": 1.0000000000168905,
+    "density_profile_error_max": 0.005609136991277516,
+    "pressure_min": 2.7777796321447566e-05,
+    "pressure_max": 2.7777796321447566e-05,
+    "circular_velocity_error_max": 6.560657218687885e-15,
+    "weights_zero": true,
+    "outside_original_evolve_radius_cells": 16919,
+    "within_disk_cells": 12237
+  },
+  "boundary_contract": {
+    "original_source_BC": "KH non-Sod periodic padding/post-stage; outer r>=2.5 has RK increments frozen in original Kepler source.",
+    "moment_patch_BC": "Embedded nonperiodic power cells; j<0 uses zero-normal-speed mirror states; frozen r>=.60 raw storage masked. Not a physical long-time outer BC.",
+    "point_field_opposite_x_velocity_jump_max": 1.153793364205411,
+    "point_field_opposite_x_mass_flux_jump_max": 0.0,
+    "point_field_opposite_x_tangential_momentum_flux_jump_max": 0.0025650390356168166,
+    "point_field_box_normal_velocity_max": 0.3431888040940305,
+    "conclusion": "The globally rotating floor has nonzero normal box velocity and an opposite-edge tangential momentum flux jump. Neither naive periodic identification nor stationary reflecting box walls reproduce this whole steady Kepler field. Dynamic buffer and an explicit compatible outer physical BC remain required.",
+    "full_builder_limit": "Current EmbeddedLaguerreGeometry rejects unmatched bounding-box faces; it cannot simply promote all registry IDs to active boundary cells."
+  },
+  "timestep": {
+    "stage0": {
+      "outgoing_mass_fraction": {
+        "active": {
+          "cells": 1194,
+          "minimum": 4.370607059959848e-06,
+          "median": 0.0001458866389532182,
+          "p90": 0.0002513180739603562,
+          "maximum": 0.0006864813419717738
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0039643486251464966,
+          "median": 0.004572127556221765,
+          "p90": 0.004893034375591155,
+          "maximum": 0.005066444945175914
+        }
+      },
+      "relative_sample_speed": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.003335832900472468,
+          "median": 0.06332723616751712,
+          "p90": 0.08445443282447891,
+          "maximum": 0.6618371387972898
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 1.2160443332696016,
+          "median": 1.2461772611358677,
+          "p90": 1.278879566069766,
+          "maximum": 1.2804971457222143
+        }
+      },
+      "sound_speed": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.00680414109441298,
+          "median": 0.06804141094417177,
+          "p90": 0.06804141094530637,
+          "maximum": 0.08171937980068382
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.006804141094414694,
+          "median": 0.006804141094484168,
+          "p90": 0.0068041410946715515,
+          "maximum": 0.006804141094961722
+        }
+      },
+      "signal_Courant_hydraulic": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0002916359850593391,
+          "median": 0.0007940440737915107,
+          "p90": 0.0009789929517926516,
+          "maximum": 0.004227554647462139
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0073069722950009726,
+          "median": 0.007635704377986765,
+          "p90": 0.007969382200746519,
+          "maximum": 0.008178060662776824
+        }
+      },
+      "signal_Courant_minimum_width": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.00015291052883228026,
+          "median": 0.00040824517705656093,
+          "p90": 0.00048751636163120394,
+          "maximum": 0.002084690788903459
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.003825307116432235,
+          "median": 0.00393982484227415,
+          "p90": 0.004045886045984213,
+          "maximum": 0.004056330447492973
+        }
+      },
+      "omega_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.00021850790146458508,
+          "median": 0.00034505278872651963,
+          "p90": 0.0007456660093597363,
+          "maximum": 0.0009182834661907866
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.00017538263674287056,
+          "median": 0.0001880981943760015,
+          "p90": 0.00020240404786039734,
+          "maximum": 0.0002024205884537722
+        }
+      },
+      "strain_norm_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 3.8086420295284843e-06,
+          "median": 0.00020781299567545727,
+          "p90": 0.00027265152289976207,
+          "maximum": 0.00027342760402963764
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.00013149122314496566,
+          "median": 0.00014107627945037513,
+          "p90": 0.00015198726150529931,
+          "maximum": 0.00015217322597253834
+        }
+      },
+      "covariance_generator_norm_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.00018616313871975022,
+          "median": 0.0007348463574665691,
+          "p90": 0.0009823557577405813,
+          "maximum": 0.0022248125208200456
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0
+        }
+      },
+      "effective_factor_generator_norm_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.00026135714176470245,
+          "median": 0.000786053743989647,
+          "p90": 0.0012887049671164038,
+          "maximum": 0.0022253085218444653
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0
+        }
+      },
+      "minimum_width": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.03125006982752998,
+          "median": 0.032039440332114005,
+          "p90": 0.03277976117208663,
+          "maximum": 0.0372440667699128
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.03125584641273216,
+          "median": 0.03181277203745694,
+          "p90": 0.03189550166401765,
+          "maximum": 0.03197518862113887
+        }
+      },
+      "hydraulic_length": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.015724984973170104,
+          "median": 0.016400877111000862,
+          "p90": 0.01669692411272471,
+          "maximum": 0.01677738845865834
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.01571718017038321,
+          "median": 0.016400009954954116,
+          "p90": 0.016689498396167686,
+          "maximum": 0.01673623884565064
+        }
+      },
+      "minimum_encoded_edge": {
+        "active": {
+          "cells": 1194,
+          "minimum": 1.324479266318377e-15,
+          "median": 0.0073710498938762605,
+          "p90": 0.014414006197876302,
+          "maximum": 0.018289141353696303
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.00012103932003708195,
+          "median": 0.0072801476780607645,
+          "p90": 0.01424753882781363,
+          "maximum": 0.017613230156892597
+        }
+      },
+      "area": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0009281818227377988,
+          "median": 0.0009764243410298513,
+          "p90": 0.0009821015961705792,
+          "maximum": 0.001102211255307017
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0009688239014658671,
+          "median": 0.0009761983986284256,
+          "p90": 0.0009789721919143696,
+          "maximum": 0.0009826494197616043
+        }
+      }
+    },
+    "midpoint": {
+      "outgoing_mass_fraction": {
+        "active": {
+          "cells": 1194,
+          "minimum": 4.369364268584503e-06,
+          "median": 0.00014595278703600804,
+          "p90": 0.0002512908614038302,
+          "maximum": 0.0006881432526228285
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0039643486251464966,
+          "median": 0.004572127323563243,
+          "p90": 0.004893034510739257,
+          "maximum": 0.005074944584351256
+        }
+      },
+      "relative_sample_speed": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0033211369287468578,
+          "median": 0.06367060794173252,
+          "p90": 0.08490825339226218,
+          "maximum": 0.6686628079579312
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 1.216077873398414,
+          "median": 1.2463502916525537,
+          "p90": 1.2789231727919241,
+          "maximum": 1.2810366350813034
+        }
+      },
+      "sound_speed": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.006804641155957215,
+          "median": 0.068049165843942,
+          "p90": 0.06805151233167156,
+          "maximum": 0.08187265151861695
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.006804141094415622,
+          "median": 0.006804151795799724,
+          "p90": 0.006812332917700698,
+          "maximum": 0.006819036277387317
+        }
+      },
+      "signal_Courant_hydraulic": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0002918412506737347,
+          "median": 0.0007986534219835803,
+          "p90": 0.00097811547313947,
+          "maximum": 0.004230233397686932
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.007307637321129626,
+          "median": 0.007635704377986765,
+          "p90": 0.00797058352253642,
+          "maximum": 0.008184240495492042
+        }
+      },
+      "signal_Courant_minimum_width": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0001530190135993189,
+          "median": 0.0004098871243527372,
+          "p90": 0.0004888857846566627,
+          "maximum": 0.0021083008617928645
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0038261528252756987,
+          "median": 0.003940452755165516,
+          "p90": 0.004045809278623641,
+          "maximum": 0.004056480176857171
+        }
+      },
+      "omega_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.00021850777632668677,
+          "median": 0.0003450528107550381,
+          "p90": 0.0007456662662077605,
+          "maximum": 0.0009182834650725936
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.00017538263674287056,
+          "median": 0.0001880981943760015,
+          "p90": 0.00020240404786039734,
+          "maximum": 0.0002024205884537722
+        }
+      },
+      "strain_norm_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 3.8086257947444518e-06,
+          "median": 0.00020781331365576038,
+          "p90": 0.00027265081436542014,
+          "maximum": 0.0002734274908369752
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.00013149122314496566,
+          "median": 0.00014107627945037513,
+          "p90": 0.00015198726150529931,
+          "maximum": 0.00015217322597253834
+        }
+      },
+      "covariance_generator_norm_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.000186166536072425,
+          "median": 0.0007348625779939762,
+          "p90": 0.0009822974428363221,
+          "maximum": 0.0022248085949114443
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0
+        }
+      },
+      "effective_factor_generator_norm_dt": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0002618105265564052,
+          "median": 0.0007872445112913067,
+          "p90": 0.0012901960119988513,
+          "maximum": 0.002225308276722102
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0
+        }
+      },
+      "minimum_width": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.03125014926913228,
+          "median": 0.03203911593765515,
+          "p90": 0.032779712570962176,
+          "maximum": 0.03724414121195463
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.03125584641273216,
+          "median": 0.03181277203745679,
+          "p90": 0.03189550166401765,
+          "maximum": 0.03197518862113887
+        }
+      },
+      "hydraulic_length": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.015724924615218197,
+          "median": 0.016401185774080097,
+          "p90": 0.016696947022371258,
+          "maximum": 0.016777487769937108
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.01571718017038321,
+          "median": 0.016399018605055285,
+          "p90": 0.016689954101980008,
+          "maximum": 0.01673623884565064
+        }
+      },
+      "minimum_encoded_edge": {
+        "active": {
+          "cells": 1194,
+          "minimum": 4.0839270511837407e-10,
+          "median": 0.00735655655583182,
+          "p90": 0.014408771778253412,
+          "maximum": 0.01829402622509067
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.00012103932003708195,
+          "median": 0.007280147678060685,
+          "p90": 0.01427478182383312,
+          "maximum": 0.017613230156893065
+        }
+      },
+      "area": {
+        "active": {
+          "cells": 1194,
+          "minimum": 0.0009281819680970133,
+          "median": 0.0009764243232968887,
+          "p90": 0.0009821016514805314,
+          "maximum": 0.0011022115981479856
+        },
+        "frozen": {
+          "cells": 396,
+          "minimum": 0.0009688438332017331,
+          "median": 0.0009761983986284256,
+          "p90": 0.0009789726662070434,
+          "maximum": 0.0009826494197616043
+        }
+      }
+    }
+  },
+  "cost": {
+    "patch_cells": 1590,
+    "full_registry_cells": 36864,
+    "cell_ratio": 23.184905660377357,
+    "patch_stage_seconds_observed": 109.03531125560403,
+    "fixed_dt": 0.0001,
+    "patch_t10_days_two_stages": 252.39655383241674,
+    "full_registry_t10_days_naive_cell_linear": 5851.790289608937,
+    "full_registry_stage_seconds_naive_cell_linear": 2527.973405111061,
+    "full_registry_peak_RSS_MiB_naive_linear": 39909.28301886792,
+    "node_scaling_caveat": "Only current patch node inventory known. Full-domain face count, adaptive face splits, priors and outer BC not built; cell-linear values are scenarios, not measurements or rigorous lower/upper bounds. Geometry global registry already contributes fixed cost. Native face-record and production diagnostic policies may change cost."
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/audit_saved_kepler_boundary_timestep_contract_20261019.py": "e43dc7a232279ae738a63868a708f55552eb2d9f032547a905d88df41e97f367",
+    "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+    "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/environment.json": "7ed3814a2735e0e22b78e1c1f690cb7c5ccd8d52bb6c6990aea08b7209d6d77f",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/manifest.json": "85edff6b685c889d37354d678ec776b3def05894e90311f4925a1258e0641203",
+    "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/kh.c": "4a4584d22cfed9fffd69aed40d61c07f039daab3f17da90440a383b07561cd2b",
+    "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/params.dat": "e02681e03237a0c9104653e92f21205bac4f73800573ea73e71f5ab372f792a9",
+    "/gpfs/kjhan/LagForce/Codex_accepted_ledger_build_20261017/src/Exam/KH/util.c": "5f427acc548fcd3fb0d92a29c8cdfd0597a1f790a82c34a7f77dda0ed57cfdea",
+    "/gpfs/kjhan/LagForce/Codex_accepted_ledger_build_20261017/src/Exam/exam.c": "4c851a8ac0d404d5e8007b3fe5d7ca5d67a2843b7db634f6a7c5518bd6d0e392"
+  },
+  "limits": "Dimensionless saved-state diagnostics do not guarantee positivity/realizability and do not authorize a larger timestep. No new full-domain topology, boundary extension or trajectory."
+}

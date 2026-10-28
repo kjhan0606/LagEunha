@@ -19,6 +19,8 @@
 /* CUB for device-wide reduction */
 #include <cub/cub.cuh>
 #include "gfs_pair.h"
+#include "power_polygon_clip.h"
+#include "moment_geometry_impl.cuh"
 
 extern "C" {
 #include "exam_gpu.h"
@@ -1738,6 +1740,7 @@ void gpu_alloc_tree_buffers(GPUContext *ctx, int max_tree_nodes)
     if (ctx->d_tree_cx)       { cudaFree(ctx->d_tree_cx);       ctx->d_tree_cx = NULL; }
     if (ctx->d_tree_cy)       { cudaFree(ctx->d_tree_cy);       ctx->d_tree_cy = NULL; }
     if (ctx->d_tree_size)     { cudaFree(ctx->d_tree_size);     ctx->d_tree_size = NULL; }
+    if (ctx->d_tree_nn2) { cudaFree(ctx->d_tree_nn2); ctx->d_tree_nn2 = NULL; }
     if (ctx->h_tree_type)     { cudaFreeHost(ctx->h_tree_type);     ctx->h_tree_type = NULL; }
     if (ctx->h_tree_sibling)  { cudaFreeHost(ctx->h_tree_sibling);  ctx->h_tree_sibling = NULL; }
     if (ctx->h_tree_daughter) { cudaFreeHost(ctx->h_tree_daughter); ctx->h_tree_daughter = NULL; }
@@ -1745,9 +1748,10 @@ void gpu_alloc_tree_buffers(GPUContext *ctx, int max_tree_nodes)
     if (ctx->h_tree_cx)       { cudaFreeHost(ctx->h_tree_cx);       ctx->h_tree_cx = NULL; }
     if (ctx->h_tree_cy)       { cudaFreeHost(ctx->h_tree_cy);       ctx->h_tree_cy = NULL; }
     if (ctx->h_tree_size)     { cudaFreeHost(ctx->h_tree_size);     ctx->h_tree_size = NULL; }
+    if (ctx->h_tree_nn2) { cudaFreeHost(ctx->h_tree_nn2); ctx->h_tree_nn2 = NULL; }
 
     size_t si = max_tree_nodes * sizeof(int);
-    size_t sf = max_tree_nodes * sizeof(float);
+    size_t sf = max_tree_nodes * sizeof(double);
 
     CUDA_CHECK(cudaMalloc(&ctx->d_tree_type,     si));
     CUDA_CHECK(cudaMalloc(&ctx->d_tree_sibling,  si));
@@ -1756,6 +1760,7 @@ void gpu_alloc_tree_buffers(GPUContext *ctx, int max_tree_nodes)
     CUDA_CHECK(cudaMalloc(&ctx->d_tree_cx,       sf));
     CUDA_CHECK(cudaMalloc(&ctx->d_tree_cy,       sf));
     CUDA_CHECK(cudaMalloc(&ctx->d_tree_size,     sf));
+    CUDA_CHECK(cudaMalloc(&ctx->d_tree_nn2,      sf));
 
     CUDA_CHECK(cudaMallocHost(&ctx->h_tree_type,     si));
     CUDA_CHECK(cudaMallocHost(&ctx->h_tree_sibling,  si));
@@ -1764,10 +1769,11 @@ void gpu_alloc_tree_buffers(GPUContext *ctx, int max_tree_nodes)
     CUDA_CHECK(cudaMallocHost(&ctx->h_tree_cx,       sf));
     CUDA_CHECK(cudaMallocHost(&ctx->h_tree_cy,       sf));
     CUDA_CHECK(cudaMallocHost(&ctx->h_tree_size,     sf));
+    CUDA_CHECK(cudaMallocHost(&ctx->h_tree_nn2,      sf));
 
     ctx->max_tree_nodes = max_tree_nodes;
     fprintf(stderr, "[GPU] Tree buffers allocated: %d nodes (%.1f MB total)\n",
-            max_tree_nodes, max_tree_nodes * (4*sizeof(int)+3*sizeof(float)) / 1048576.0);
+            max_tree_nodes, max_tree_nodes * (4*sizeof(int)+4*sizeof(double)) / 1048576.0);
 }
 
 extern "C"
@@ -1780,6 +1786,7 @@ void gpu_free_tree_buffers(GPUContext *ctx)
     if (ctx->d_tree_cx)       { cudaFree(ctx->d_tree_cx);       ctx->d_tree_cx = NULL; }
     if (ctx->d_tree_cy)       { cudaFree(ctx->d_tree_cy);       ctx->d_tree_cy = NULL; }
     if (ctx->d_tree_size)     { cudaFree(ctx->d_tree_size);     ctx->d_tree_size = NULL; }
+    if (ctx->d_tree_nn2) { cudaFree(ctx->d_tree_nn2); ctx->d_tree_nn2 = NULL; }
     if (ctx->h_tree_type)     { cudaFreeHost(ctx->h_tree_type);     ctx->h_tree_type = NULL; }
     if (ctx->h_tree_sibling)  { cudaFreeHost(ctx->h_tree_sibling);  ctx->h_tree_sibling = NULL; }
     if (ctx->h_tree_daughter) { cudaFreeHost(ctx->h_tree_daughter); ctx->h_tree_daughter = NULL; }
@@ -1787,6 +1794,7 @@ void gpu_free_tree_buffers(GPUContext *ctx)
     if (ctx->h_tree_cx)       { cudaFreeHost(ctx->h_tree_cx);       ctx->h_tree_cx = NULL; }
     if (ctx->h_tree_cy)       { cudaFreeHost(ctx->h_tree_cy);       ctx->h_tree_cy = NULL; }
     if (ctx->h_tree_size)     { cudaFreeHost(ctx->h_tree_size);     ctx->h_tree_size = NULL; }
+    if (ctx->h_tree_nn2) { cudaFreeHost(ctx->h_tree_nn2); ctx->h_tree_nn2 = NULL; }
     ctx->max_tree_nodes = 0;
     ctx->n_tree_nodes = 0;
 }
@@ -1796,7 +1804,7 @@ void gpu_upload_tree(GPUContext *ctx, int n_nodes)
 {
     cudaStream_t s = (cudaStream_t)ctx->stream;
     size_t si = n_nodes * sizeof(int);
-    size_t sf = n_nodes * sizeof(float);
+    size_t sf = n_nodes * sizeof(double);
 
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_type,     ctx->h_tree_type,     si, cudaMemcpyHostToDevice, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_tree_sibling,  ctx->h_tree_sibling,  si, cudaMemcpyHostToDevice, s));
@@ -1959,55 +1967,11 @@ void voronoi_tessellate_kernel(
         int j_soa = n_soa_idx[ni];
 
         int out_count = 0;
-        for (int e = 0; e < nc; e++) {
-            int e_next = (e + 1) % nc;
-            double ax = poly_x[e],    ay = poly_y[e];
-            double bx = poly_x[e_next], by = poly_y[e_next];
-            double da = ax * nx_n + ay * ny_n;  /* dot(A, neigh) */
-            double db = bx * nx_n + by * ny_n;  /* dot(B, neigh) */
-            int a_in = (da <= threshold);
-            int b_in = (db <= threshold);
-
-            if (a_in && b_in) {
-                /* Both inside: output A with original edge_neigh */
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax;
-                    tmp_y[out_count] = ay;
-                    tmp_neigh[out_count] = poly_neigh[e];
-                    out_count++;
-                }
-            } else if (a_in && !b_in) {
-                /* A in, B out: output A, then intersection with neighbor ni */
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax;
-                    tmp_y[out_count] = ay;
-                    tmp_neigh[out_count] = poly_neigh[e];
-                    out_count++;
-                }
-                /* Intersection: t = (threshold - da) / (db - da) */
-                double denom = db - da;
-                double t = (fabs(denom) > 1e-30) ? (threshold - da) / denom : wfrac;
-                t = fmax(1e-9, fmin(1.0 - 1e-9, t));
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax + t * (bx - ax);
-                    tmp_y[out_count] = ay + t * (by - ay);
-                    tmp_neigh[out_count] = j_soa;  /* new face starts */
-                    out_count++;
-                }
-            } else if (!a_in && b_in) {
-                /* A out, B in: output intersection with original edge_neigh */
-                double denom = db - da;
-                double t = (fabs(denom) > 1e-30) ? (threshold - da) / denom : wfrac;
-                t = fmax(1e-9, fmin(1.0 - 1e-9, t));
-                if (out_count < GPU_MAX_CORNERS) {
-                    tmp_x[out_count] = ax + t * (bx - ax);
-                    tmp_y[out_count] = ay + t * (by - ay);
-                    tmp_neigh[out_count] = poly_neigh[e];
-                    out_count++;
-                }
-            }
-            /* both out: skip */
-        }
+        /* Shared production clipping primitive. mode0 preserves this legacy
+         * path's endpoint clamp/truncation; explicit moment export uses mode1. */
+        power_polygon_clip(nc, poly_x, poly_y, poly_neigh,
+            nx_n, ny_n, threshold, j_soa, GPU_MAX_CORNERS,
+            tmp_x, tmp_y, tmp_neigh, 0, wfrac, &out_count);
 
         nc = out_count;
         for (int e = 0; e < nc; e++) {
@@ -3500,46 +3464,48 @@ void nearest_neighbor_tree_kernel(
     const int   *__restrict__ tree_sibling,
     const int   *__restrict__ tree_daughter,
     const int   *__restrict__ tree_ptl_idx,
-    const float *__restrict__ tree_cx,
-    const float *__restrict__ tree_cy,
-    const float *__restrict__ tree_size,
+    const double *__restrict__ tree_cx,
+    const double *__restrict__ tree_cy,
+    const double *__restrict__ tree_size,
     int root_idx, int n_tree_nodes,
     /* Output */
-    float *__restrict__ w2ceil_out,
-    float *__restrict__ w2_out,
+    double *__restrict__ w2ceil_out,
     int n_particles,
     float kappa)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
+    w2ceil_out[i] = NAN;
     if (pindx[i] == MAX_INDEX_GPU) return;
 
-    float qx = (float)px[i];
-    float qy = (float)py[i];
+    double qx = px[i];
+    double qy = py[i];
     /* Self skip: when ptl[] is built by det2d_dpqRK4_GPU, real particle i
      * occupies ptl[i] with indx=i (matches SoA index). */
     int self_ptl_idx = i;
 
-    float mindist2 = 1.0e23f;
-    float mindist  = 1.0e23f;
+    double mindist2 = 1.0e23;
+    double mindist  = 1.0e23;
 
     int cur = root_idx;
     /* Safety bound on iterations to guard against any cycles (should not
      * happen by construction).  Use 4*n_tree_nodes as a generous cap. */
-    int iter = 0;
-    int iter_max = 4 * n_tree_nodes;
+    long long iter = 0;
+    long long iter_max = 4LL * n_tree_nodes;
 
     while (cur >= 0 && cur < n_tree_nodes && iter < iter_max) {
         ++iter;
         int type = tree_type[cur];
         if (type == 0) {
             /* TREE node: test bounding sphere */
-            float cx = tree_cx[cur];
-            float cy = tree_cy[cur];
-            float dx = qx - cx;
-            float dy = qy - cy;
-            float dist = sqrtf(dx*dx + dy*dy);
-            if (dist - tree_size[cur] > mindist) {
+            double cx = tree_cx[cur];
+            double cy = tree_cy[cur];
+            double dx = qx - cx;
+            double dy = qy - cy;
+            double dist = sqrt(dx*dx + dy*dy);
+            /* Open borderline nodes conservatively under double roundoff. */
+            double tol = 16*DBL_EPSILON*(fabs(qx)+fabs(qy)+fabs(cx)+fabs(cy)+tree_size[cur]+dist+mindist);
+            if (dist - tree_size[cur] > mindist + tol) {
                 cur = tree_sibling[cur];     /* prune subtree */
             } else {
                 cur = tree_daughter[cur];    /* descend */
@@ -3548,25 +3514,23 @@ void nearest_neighbor_tree_kernel(
             /* PTL leaf */
             int pidx = tree_ptl_idx[cur];
             if (pidx != self_ptl_idx) {
-                float cx = tree_cx[cur];
-                float cy = tree_cy[cur];
-                float dx = qx - cx;
-                float dy = qy - cy;
-                float d2 = dx*dx + dy*dy;
-                if (d2 < mindist2 && d2 > 0.0f) {
+                double cx = tree_cx[cur];
+                double cy = tree_cy[cur];
+                double dx = qx - cx;
+                double dy = qy - cy;
+                double d2 = dx*dx + dy*dy;
+                if (d2 < mindist2) {
                     mindist2 = d2;
-                    mindist  = sqrtf(d2);
+                    mindist  = sqrt(d2);
                 }
             }
             cur = tree_sibling[cur];
         }
     }
 
+    /* Invalid topology or traversal exhaustion must not look successful. */
+    if (cur != -1) return;
     w2ceil_out[i] = mindist2;
-    if (kappa == 0.0f)
-        w2_out[i] = 0.0f;
-    else if (kappa > 0.0f)
-        w2_out[i] = fminf(w2_out[i], mindist2);
 }
 
 extern "C"
@@ -3587,11 +3551,12 @@ void gpu_launch_nearest_neighbor_tree(GPUContext *ctx, int n_particles,
         ctx->d_tree_cx, ctx->d_tree_cy,
         ctx->d_tree_size,
         ctx->tree_root_idx, ctx->n_tree_nodes,
-        ctx->d_parts.w2ceil, ctx->d_parts.w2,
+        ctx->d_tree_nn2,
         n_particles,
         kappa);
 
     CUDA_CHECK(cudaGetLastError());
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_tree_nn2, ctx->d_tree_nn2, n_particles*sizeof(double), cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaStreamSynchronize(s));
 }
 

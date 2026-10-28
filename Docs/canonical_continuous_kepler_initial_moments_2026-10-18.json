@@ -1,0 +1,123 @@
+{
+  "scope": "Project configured continuous t0 field onto original cells; not a restart.\nMeasure quadrature convergence including the density discontinuity. No evolution.\n",
+  "source": {
+    "source": "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat",
+    "source_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+    "binary": "/gpfs/kjhan/LagForce/Codex_mpi_hg_modes_20261017/eunha2.exe",
+    "binary_sha256": "cd730d83c1e404ce3418c9751dbd71a37d58ffdf853ca86b3bba87844a2a1f8a",
+    "purpose": "Read-only HG mode/RHS assembly at saved state.",
+    "epoch": "t0",
+    "source_time": 0.0,
+    "source_copy": "khout.000001.dat",
+    "restart_index": 1,
+    "time_evolution": false,
+    "ranks": 1,
+    "threads": 1
+  },
+  "environment": {
+    "SEDOV_PHASE1": "1",
+    "EUNHA_IC": "kepler",
+    "EUNHA_DBG_LO": "1000000000",
+    "EUNHA_DBG_HI": "0",
+    "EUNHA_KEPLER_PROFILE": "pakmor",
+    "EUNHA_KEPLER_FLOOR": "0.01",
+    "EUNHA_KEPLER_SOFT": "spline",
+    "EUNHA_KEPLER_RC": "0.5",
+    "EUNHA_KEPLER_BG_ROTATE": "1",
+    "EUNHA_KEPLER_EVOLVE_R": "2.5",
+    "LAGMFM_GLASS_FILE": "/gpfs/kjhan/LagForce/glass_keprings_192.bin",
+    "EUNHA_IC_CELLVOL": "/gpfs/kjhan/LagForce/ICgraded/keprings_192_cellvol.bin",
+    "EUNHA_KEPLER_CX": "3",
+    "EUNHA_KEPLER_CY": "3",
+    "EUNHA_KEPLER_RIN": "0.5",
+    "EUNHA_KEPLER_ROUT": "2",
+    "HYDRO_TSTOP": "0.000001",
+    "EUNHA_DUMP_DT": "1000000",
+    "GFS_E_AUDIT": "1",
+    "GFS_TORQUE_AUDIT": "1",
+    "GFS_TCF": "1",
+    "GFS_TCF_FACE_Z": "1",
+    "GFS_SHARED_GEOM": "1",
+    "GFS_HG_AFFINE": "1",
+    "GFS_HG_SPLIT": "1",
+    "EUNHA_LSF_ORDER": "2",
+    "GFS_TCF_QBP": "1",
+    "GFS_Q2_RANK": "1",
+    "GFS_Q3": "1",
+    "GFS_QBP_CHI": "1",
+    "GFS_QBP_EDGE_INNER": "3",
+    "GFS_HG_QUAD": "1",
+    "OMP_NUM_THREADS": "8",
+    "OMP_STACKSIZE": "256M",
+    "I_MPI_HYDRA_BOOTSTRAP": "fork",
+    "GFS_HG_TRANSFER_AUDIT": "1",
+    "EUNHA_DUMP_INITIAL": "1",
+    "EUNHA_INITIAL_ONLY": "1"
+  },
+  "results": [
+    {
+      "order": 4,
+      "cells": 1590,
+      "crossing_cells": 101,
+      "minimum_thermal": 3.867424999060234e-08,
+      "max_volume_relative_error": 2.6645352591003757e-15,
+      "mass_difference_from_point": -5.4464530871671e-05,
+      "max_cell_relative_mass_difference": 52.50942928791294,
+      "angular_difference_from_point": 0.00025560255280275925,
+      "total_energy_difference_from_point": 0.0007591644413875824,
+      "sum_internal_kinetic": 0.0001848227737847952
+    },
+    {
+      "order": 8,
+      "cells": 1590,
+      "crossing_cells": 101,
+      "minimum_thermal": 3.867424999060234e-08,
+      "max_volume_relative_error": 2.4424906541753444e-15,
+      "mass_difference_from_point": 5.543914501927047e-05,
+      "max_cell_relative_mass_difference": 51.11726363840657,
+      "angular_difference_from_point": 0.00033310311534017444,
+      "total_energy_difference_from_point": 0.0006486580134566348,
+      "sum_internal_kinetic": 0.00018473968457158758,
+      "successive_relative_mass_max": {
+        "crossing": 0.09436078035135598,
+        "noncrossing": 4.440892098500626e-16
+      },
+      "successive_moment_max_abs": 8.71857599049309e-05
+    },
+    {
+      "order": 16,
+      "cells": 1590,
+      "crossing_cells": 101,
+      "minimum_thermal": 3.8674249990602335e-08,
+      "max_volume_relative_error": 2.7755575615628914e-15,
+      "mass_difference_from_point": 2.4605060552943328e-05,
+      "max_cell_relative_mass_difference": 50.597310788865315,
+      "angular_difference_from_point": 0.00031129538766820185,
+      "total_energy_difference_from_point": 0.0006794786971619795,
+      "sum_internal_kinetic": 0.0001847098127943953,
+      "successive_relative_mass_max": {
+        "crossing": 0.020882227985645763,
+        "noncrossing": 4.440892098500626e-16
+      },
+      "successive_moment_max_abs": 2.1225682309946974e-05
+    },
+    {
+      "order": 32,
+      "cells": 1590,
+      "crossing_cells": 101,
+      "minimum_thermal": 3.8674249990602335e-08,
+      "max_volume_relative_error": 2.886579864025407e-15,
+      "mass_difference_from_point": 1.0900495193923079e-05,
+      "max_cell_relative_mass_difference": 50.378782326410544,
+      "angular_difference_from_point": 0.00030160496278807043,
+      "total_energy_difference_from_point": 0.0006931837326488843,
+      "sum_internal_kinetic": 0.00018470558268700147,
+      "successive_relative_mass_max": {
+        "crossing": 0.009838226194998523,
+        "noncrossing": 4.440892098500626e-16
+      },
+      "successive_moment_max_abs": 9.683713754014573e-06
+    }
+  ],
+  "limits": "Finite patch r(generator)<.7. Continuous radial density differs from point-sampled IC mass. Positive thermal energy is constructed, not earned by evolution. Unsplitted circle interface quadrature must converge before use. No force, restart, CUDA/MPI, or stability pass."
+}

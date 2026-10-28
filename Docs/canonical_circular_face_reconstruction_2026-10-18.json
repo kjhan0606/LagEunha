@@ -1,0 +1,54 @@
+{
+  "scope": "Analytic circular field on saved canonical t0 polygons; diagnostic lift only.\nUniform density, no discontinuous disk interface; not a restart conversion.\n",
+  "source_sha256": {
+    "raw_faces.dat.rhs.rank0000": "2804b130248c67fcdc724f7444c4b12b985d1136869a3b2c7c49b8d842d18538",
+    "raw_faces.dat.rank0000": "71148bcd780cb928cb444621d8790255f676290e0b35e42ab490fccfea9d6994"
+  },
+  "reconstruction_cells": 1590,
+  "evaluation_region": ".1<generator radius<.45; neighbors from r<.7",
+  "results": [
+    {
+      "mode": "affine",
+      "cells": 622,
+      "velocity_face_RMS": 0.0026825037947968804,
+      "relative_velocity_RMS": 0.0017437876232975808,
+      "max_velocity_error": 0.006693225488509325,
+      "diagnostic": {}
+    },
+    {
+      "mode": "dominant",
+      "cells": 622,
+      "velocity_face_RMS": 0.0020003677840833636,
+      "relative_velocity_RMS": 0.0013003584899651205,
+      "max_velocity_error": 0.005922249680064621,
+      "diagnostic": {
+        "velocity_fit": "radial_fixed_mean",
+        "velocity_stencil": "area",
+        "velocity_quadratic_cells": 1590,
+        "velocity_quadratic_rank_deficient": 0,
+        "velocity_quadratic_covariance_split_error": 1.1262595872514504e-15,
+        "velocity_quadratic_orthogonality_error": 2.2900721575146166e-16,
+        "velocity_quadratic_max_resolved_fraction": 0.5409437260890791,
+        "velocity_quadratic_budget_backend": "scalar"
+      }
+    },
+    {
+      "mode": "projected",
+      "cells": 622,
+      "velocity_face_RMS": 8.209740173886219e-05,
+      "relative_velocity_RMS": 5.336821268801124e-05,
+      "max_velocity_error": 0.00034015567229600573,
+      "diagnostic": {
+        "velocity_fit": "radial_fixed_mean",
+        "velocity_stencil": "area",
+        "velocity_quadratic_cells": 1590,
+        "velocity_quadratic_rank_deficient": 0,
+        "velocity_quadratic_covariance_split_error": 1.6548803882272149e-15,
+        "velocity_quadratic_orthogonality_error": 2.2900721575146166e-16,
+        "velocity_quadratic_max_resolved_fraction": 0.9999999999980014,
+        "velocity_quadratic_budget_backend": "scalar"
+      }
+    }
+  ],
+  "limits": "Uses analytic circular velocity integrated into new diagnostic moments, not stored production p/D/Pi. Uniform density excludes density-interface errors. One canonical mesh is not a resolution study or physical evolution."
+}

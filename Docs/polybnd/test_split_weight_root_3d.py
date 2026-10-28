@@ -34,3 +34,17 @@ class SplitWeightRootTests(unittest.TestCase):
             z,d=solve(g,x,np.zeros(2),r,L,np.zeros_like(x))
         self.assertLess(d['residual'],2e-13);self.assertEqual(z[-1],0.)
         np.testing.assert_array_equal(r,original);np.testing.assert_array_equal(x,sites)
+
+    def test_preparation_reuse_matches_reconstruction_and_is_local(self):
+        g,x,r,L,states=self.fixture();r[1,1]=1.
+        build=g.build
+        with patch.object(g,'build',side_effect=build) as builds,patch('split_face_mass_3d.decode',side_effect=lambda p,q:states[int(q[1])]):
+            cached,cd=solve(g,x,np.zeros(2),r,L,np.zeros_like(x))
+            self.assertEqual(builds.call_count,1)
+            builds.reset_mock()
+            reference,rd=solve(g,x,np.zeros(2),r,L,np.zeros_like(x),reuse_geometry=False)
+            self.assertGreater(builds.call_count,1)
+            np.testing.assert_array_equal(cached,reference);self.assertEqual(cd,rd)
+            builds.reset_mock()
+            solve(g,x,np.zeros(2),r,L,np.zeros_like(x))
+            self.assertEqual(builds.call_count,1)

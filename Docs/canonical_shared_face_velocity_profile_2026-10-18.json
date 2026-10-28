@@ -1,0 +1,554 @@
+{
+  "scope": "Profile one existing quadratic RHS evaluation; no time evolution or solver changes.",
+  "source": "/gpfs/kjhan/LagForce/Codex_quadratic_r060_dt5e5_20261018/step0002.npz",
+  "source_sha256": "779d72d9bda5ed945a2de7fca485ec13431251ebed48d222cb57a653bcd215a9",
+  "shared_face_velocity": true,
+  "wall_seconds": 98.4104650914669,
+  "mass_flux": 6.220662268920075e-15,
+  "min_pressure": 2.7776217849362098e-05,
+  "top_cumulative": [
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/kinetic_factor_rhs.py",
+      "line": 69,
+      "function": "rhs",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 18.885401564000002,
+      "cumulative_seconds": 97.95977086900001
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 153,
+      "function": "velocity_samples_and_mean",
+      "primitive_calls": 483320,
+      "calls": 483320,
+      "self_seconds": 10.239882289,
+      "cumulative_seconds": 22.849742650000003
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 10,
+      "function": "star",
+      "primitive_calls": 232256,
+      "calls": 232256,
+      "self_seconds": 3.25036278,
+      "cumulative_seconds": 15.356482565
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 129,
+      "function": "basis",
+      "primitive_calls": 532615,
+      "calls": 532615,
+      "self_seconds": 5.188816385,
+      "cumulative_seconds": 12.977949125
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 85,
+      "function": "value",
+      "primitive_calls": 483320,
+      "calls": 483320,
+      "self_seconds": 2.651446655,
+      "cumulative_seconds": 11.059666042
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/lib/_shape_base_impl.py",
+      "line": 628,
+      "function": "column_stack",
+      "primitive_calls": 1556503,
+      "calls": 1556503,
+      "self_seconds": 6.234917827,
+      "cumulative_seconds": 8.745964964
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/scipy/optimize/_zeros_py.py",
+      "line": 724,
+      "function": "brentq",
+      "primitive_calls": 232256,
+      "calls": 232256,
+      "self_seconds": 0.40665809,
+      "cumulative_seconds": 7.739832351
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 48,
+      "function": "features",
+      "primitive_calls": 484910,
+      "calls": 484910,
+      "self_seconds": 3.0491899300000003,
+      "cumulative_seconds": 7.577383739
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method scipy.optimize._zeros._brentq>",
+      "primitive_calls": 232256,
+      "calls": 232256,
+      "self_seconds": 0.78409852,
+      "cumulative_seconds": 7.11611684
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/lib/_index_tricks_impl.py",
+      "line": 344,
+      "function": "__getitem__",
+      "primitive_calls": 271562,
+      "calls": 271562,
+      "self_seconds": 4.4925341880000005,
+      "cumulative_seconds": 6.640827598
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/scipy/optimize/_zeros_py.py",
+      "line": 106,
+      "function": "f_raise",
+      "primitive_calls": 1760379,
+      "calls": 1760379,
+      "self_seconds": 2.375182192,
+      "cumulative_seconds": 6.33201832
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 22,
+      "function": "residual",
+      "primitive_calls": 2108609,
+      "calls": 2108609,
+      "self_seconds": 1.41329122,
+      "cumulative_seconds": 5.0813721570000006
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_quadratic_split_modules_20261018/quadratic_upwind_face_nodes.py",
+      "line": 27,
+      "function": "__call__",
+      "primitive_calls": 4912,
+      "calls": 4912,
+      "self_seconds": 0.28424271700000003,
+      "cumulative_seconds": 4.202081297
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 18,
+      "function": "wave",
+      "primitive_calls": 4681730,
+      "calls": 4681730,
+      "self_seconds": 4.025579395,
+      "cumulative_seconds": 4.025579395
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 197,
+      "function": "prepare",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.268443586,
+      "cumulative_seconds": 3.9141300770000003
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 242,
+      "function": "<genexpr>",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 0.001410421,
+      "cumulative_seconds": 3.2235471020000004
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 171,
+      "function": "covariance_budget",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 0.0034955750000000003,
+      "cumulative_seconds": 3.2221366810000003
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 79,
+      "function": "projected_budget",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 1.344860884,
+      "cumulative_seconds": 3.211610992
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/numeric.py",
+      "line": 910,
+      "function": "outer",
+      "primitive_calls": 985028,
+      "calls": 985028,
+      "self_seconds": 2.4029842880000003,
+      "cumulative_seconds": 3.0176108800000003
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_quadratic_split_modules_20261018/quadratic_upwind_face_nodes.py",
+      "line": 31,
+      "function": "relative",
+      "primitive_calls": 24560,
+      "calls": 24560,
+      "self_seconds": 0.362323002,
+      "cumulative_seconds": 2.926460705
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/shape_base.py",
+      "line": 80,
+      "function": "atleast_2d",
+      "primitive_calls": 1546960,
+      "calls": 1546960,
+      "self_seconds": 1.635344842,
+      "cumulative_seconds": 2.255247395
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 89,
+      "function": "decode",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 0.054235899000000004,
+      "cumulative_seconds": 2.247136386
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/fromnumeric.py",
+      "line": 2338,
+      "function": "sum",
+      "primitive_calls": 488989,
+      "calls": 488989,
+      "self_seconds": 0.46135347000000004,
+      "cumulative_seconds": 2.1639823170000003
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 54,
+      "function": "__init__",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 0.114315524,
+      "cumulative_seconds": 2.102418809
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 141,
+      "function": "velocity_samples",
+      "primitive_calls": 47705,
+      "calls": 47705,
+      "self_seconds": 0.795201048,
+      "cumulative_seconds": 2.093300106
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method numpy.array>",
+      "primitive_calls": 7602143,
+      "calls": 7602143,
+      "self_seconds": 2.003549662,
+      "cumulative_seconds": 2.003549662
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/linalg/_linalg.py",
+      "line": 1689,
+      "function": "svd",
+      "primitive_calls": 104940,
+      "calls": 104940,
+      "self_seconds": 1.080157856,
+      "cumulative_seconds": 1.821464071
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/frozen_weight_root.py",
+      "line": 8,
+      "function": "solve",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.112693707,
+      "cumulative_seconds": 1.765267963
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/fromnumeric.py",
+      "line": 69,
+      "function": "_wrapreduction",
+      "primitive_calls": 498980,
+      "calls": 498980,
+      "self_seconds": 0.666354412,
+      "cumulative_seconds": 1.650819829
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'append' of 'list' objects>",
+      "primitive_calls": 11184855,
+      "calls": 11184855,
+      "self_seconds": 1.553098904,
+      "cumulative_seconds": 1.553098904
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/numeric.py",
+      "line": 171,
+      "function": "ones",
+      "primitive_calls": 535795,
+      "calls": 535795,
+      "self_seconds": 1.149340842,
+      "cumulative_seconds": 1.496899871
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/density_quadrature.py",
+      "line": 19,
+      "function": "rule",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 0.7960644090000001,
+      "cumulative_seconds": 1.430426809
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.all>",
+      "primitive_calls": 232256,
+      "calls": 232256,
+      "self_seconds": 0.26622031100000004,
+      "cumulative_seconds": 1.3960403380000002
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/lib/_shape_base_impl.py",
+      "line": 624,
+      "function": "_column_stack_dispatcher",
+      "primitive_calls": 1556503,
+      "calls": 1556503,
+      "self_seconds": 0.492050566,
+      "cumulative_seconds": 1.391549559
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_quadratic_thermal_audit_modules_20261018/embedded_laguerre_geometry.py",
+      "line": 21,
+      "function": "__call__",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.462368429,
+      "cumulative_seconds": 1.235696565
+    }
+  ],
+  "top_self": [
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/kinetic_factor_rhs.py",
+      "line": 69,
+      "function": "rhs",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 18.885401564000002,
+      "cumulative_seconds": 97.95977086900001
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 153,
+      "function": "velocity_samples_and_mean",
+      "primitive_calls": 483320,
+      "calls": 483320,
+      "self_seconds": 10.239882289,
+      "cumulative_seconds": 22.849742650000003
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/lib/_shape_base_impl.py",
+      "line": 628,
+      "function": "column_stack",
+      "primitive_calls": 1556503,
+      "calls": 1556503,
+      "self_seconds": 6.234917827,
+      "cumulative_seconds": 8.745964964
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 129,
+      "function": "basis",
+      "primitive_calls": 532615,
+      "calls": 532615,
+      "self_seconds": 5.188816385,
+      "cumulative_seconds": 12.977949125
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/lib/_index_tricks_impl.py",
+      "line": 344,
+      "function": "__getitem__",
+      "primitive_calls": 271562,
+      "calls": 271562,
+      "self_seconds": 4.4925341880000005,
+      "cumulative_seconds": 6.640827598
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 18,
+      "function": "wave",
+      "primitive_calls": 4681730,
+      "calls": 4681730,
+      "self_seconds": 4.025579395,
+      "cumulative_seconds": 4.025579395
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 10,
+      "function": "star",
+      "primitive_calls": 232256,
+      "calls": 232256,
+      "self_seconds": 3.25036278,
+      "cumulative_seconds": 15.356482565
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 48,
+      "function": "features",
+      "primitive_calls": 484910,
+      "calls": 484910,
+      "self_seconds": 3.0491899300000003,
+      "cumulative_seconds": 7.577383739
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 85,
+      "function": "value",
+      "primitive_calls": 483320,
+      "calls": 483320,
+      "self_seconds": 2.651446655,
+      "cumulative_seconds": 11.059666042
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/numeric.py",
+      "line": 910,
+      "function": "outer",
+      "primitive_calls": 985028,
+      "calls": 985028,
+      "self_seconds": 2.4029842880000003,
+      "cumulative_seconds": 3.0176108800000003
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/scipy/optimize/_zeros_py.py",
+      "line": 106,
+      "function": "f_raise",
+      "primitive_calls": 1760379,
+      "calls": 1760379,
+      "self_seconds": 2.375182192,
+      "cumulative_seconds": 6.33201832
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method numpy.array>",
+      "primitive_calls": 7602143,
+      "calls": 7602143,
+      "self_seconds": 2.003549662,
+      "cumulative_seconds": 2.003549662
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/shape_base.py",
+      "line": 80,
+      "function": "atleast_2d",
+      "primitive_calls": 1546960,
+      "calls": 1546960,
+      "self_seconds": 1.635344842,
+      "cumulative_seconds": 2.255247395
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'append' of 'list' objects>",
+      "primitive_calls": 11184855,
+      "calls": 11184855,
+      "self_seconds": 1.553098904,
+      "cumulative_seconds": 1.553098904
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 22,
+      "function": "residual",
+      "primitive_calls": 2108609,
+      "calls": 2108609,
+      "self_seconds": 1.41329122,
+      "cumulative_seconds": 5.0813721570000006
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/quadratic_velocity_reconstruction.py",
+      "line": 79,
+      "function": "projected_budget",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 1.344860884,
+      "cumulative_seconds": 3.211610992
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "line": 107,
+      "function": "affine_velocity",
+      "primitive_calls": 484910,
+      "calls": 484910,
+      "self_seconds": 1.205596911,
+      "cumulative_seconds": 1.205596911
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_shared_face_velocity_modules_20261018/kinetic_factor_rhs.py",
+      "line": 119,
+      "function": "pressure",
+      "primitive_calls": 483320,
+      "calls": 483320,
+      "self_seconds": 1.195309352,
+      "cumulative_seconds": 1.195309352
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "primitive_calls": 554899,
+      "calls": 554899,
+      "self_seconds": 1.190135721,
+      "cumulative_seconds": 1.190135721
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/_core/numeric.py",
+      "line": 171,
+      "function": "ones",
+      "primitive_calls": 535795,
+      "calls": 535795,
+      "self_seconds": 1.149340842,
+      "cumulative_seconds": 1.496899871
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+      "line": 12,
+      "function": "<genexpr>",
+      "primitive_calls": 1393536,
+      "calls": 1393536,
+      "self_seconds": 1.129820027,
+      "cumulative_seconds": 1.129820027
+    },
+    {
+      "file": "/home/kjhan/miniconda3/lib/python3.13/site-packages/numpy/linalg/_linalg.py",
+      "line": 1689,
+      "function": "svd",
+      "primitive_calls": 104940,
+      "calls": 104940,
+      "self_seconds": 1.080157856,
+      "cumulative_seconds": 1.821464071
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.sum>",
+      "primitive_calls": 490720,
+      "calls": 490720,
+      "self_seconds": 0.8429087380000001,
+      "cumulative_seconds": 0.8624854150000001
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/vector_kinetic_root.py",
+      "line": 13,
+      "function": "record_arrays",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.8144068120000001,
+      "cumulative_seconds": 1.222375559
+    },
+    {
+      "file": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/density_quadrature.py",
+      "line": 19,
+      "function": "rule",
+      "primitive_calls": 1590,
+      "calls": 1590,
+      "self_seconds": 0.7960644090000001,
+      "cumulative_seconds": 1.430426809
+    }
+  ],
+  "limits": "Profiler overhead included; one hydro RHS with supplied split seed, not the outer fixed point or gravity. No physical validation claim."
+}

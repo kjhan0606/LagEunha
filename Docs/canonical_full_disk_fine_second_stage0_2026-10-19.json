@@ -1,0 +1,366 @@
+{
+  "status": "passed_actual_full_moving_stage",
+  "scope": "One actual moving full-disk stage, reusing its prepared physics.\n\nBudget: one explicitly indexed unique stage of the approved five-stage dt bundle.\nNo time evolution or automatic fallback. Actual line/arc nodes go to the\nexisting native exact-star, closed root and existing compiled moment stage.\n",
+  "provider_calls": 1,
+  "unique_provider_budget": 5,
+  "time": 0.0005,
+  "cells": 19945,
+  "nodes": 4339368,
+  "gravity_nodes": 91719312,
+  "outer": [
+    {
+      "iteration": 0,
+      "nodes": 4341312,
+      "geometry_seconds": 58.67721400037408,
+      "face_state_seconds": 11.866474367678165,
+      "record": {
+        "nodes": 4341312,
+        "star_calls": 4341312,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.3290299717336893,
+            "process_cpu_seconds": 1.320192499000001
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.128538439050317,
+            "process_cpu_seconds": 2.1157476080000066
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 8.577784972265363,
+            "process_cpu_seconds": 8.524114741999995
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 28.815418234094977,
+      "mass_residual": 1.0449395484023074e-16,
+      "weight_rate_change": 0.0007540887144817128,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00015067257028579867,
+            "compatibility_residual": -1.8340910286015772e-18,
+            "compatibility_bound": 1.683411742560157e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.355814411637709,
+            "nullspace_residual_max": 5.925815393936773e-15,
+            "nullspace_bound_max": 1.2614648057614892e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 7.837609791411267e-07,
+            "compatibility_residual": -7.939382089679916e-18,
+            "compatibility_bound": 1.6843243763318195e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358175844722444,
+            "nullspace_residual_max": 5.259681579161679e-15,
+            "nullspace_bound_max": 1.261466065463384e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.869072740867927e-10,
+            "compatibility_residual": -1.8281948217077736e-18,
+            "compatibility_bound": 1.6843244208131678e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358175959817601,
+            "nullspace_residual_max": 5.037636974236648e-15,
+            "nullspace_bound_max": 1.2614655075892226e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.0449395484023074e-16,
+            "compatibility_residual": -4.2003221392250126e-19,
+            "compatibility_bound": 1.6843244208155762e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358175959823833,
+            "nullspace_residual_max": 5.037636974236648e-15,
+            "nullspace_bound_max": 1.2614655075892226e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": 2.7755575615628914e-17,
+        "fallback": false
+      }
+    },
+    {
+      "iteration": 1,
+      "nodes": 4339368,
+      "geometry_seconds": 57.893101600930095,
+      "face_state_seconds": 11.554243590682745,
+      "record": {
+        "nodes": 4339368,
+        "star_calls": 4339368,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.2441333513706923,
+            "process_cpu_seconds": 1.2359398090000013
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.113014852628112,
+            "process_cpu_seconds": 2.100089887999985
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 8.684458380565047,
+            "process_cpu_seconds": 8.630028492000008
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 28.780559428036213,
+      "mass_residual": 5.626744577403751e-17,
+      "weight_rate_change": 8.862836167115688e-08,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00015066936405317438,
+            "compatibility_residual": -1.724691429507764e-18,
+            "compatibility_bound": 1.6826583961259835e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.35581114139152,
+            "nullspace_residual_max": 5.218048215738236e-15,
+            "nullspace_bound_max": 1.2614648056913835e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 7.735215399434335e-07,
+            "compatibility_residual": -5.8752455152824416e-18,
+            "compatibility_bound": 1.6835723639926884e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.35817708344869,
+            "nullspace_residual_max": 5.495603971894525e-15,
+            "nullspace_bound_max": 1.2614741562207452e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.5050371826565814e-10,
+            "compatibility_residual": -2.9620328376572985e-18,
+            "compatibility_bound": 1.6835725067582424e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358177453018607,
+            "nullspace_residual_max": 5.995204332975845e-15,
+            "nullspace_bound_max": 1.2614738674644606e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 5.626744577403751e-17,
+            "compatibility_residual": 2.6772103829106625e-18,
+            "compatibility_bound": 1.683572506756137e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358177453013157,
+            "nullspace_residual_max": 5.995204332975845e-15,
+            "nullspace_bound_max": 1.2614738674644606e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": 0.0,
+        "fallback": false
+      }
+    },
+    {
+      "iteration": 2,
+      "nodes": 4339368,
+      "geometry_seconds": 57.936174131929874,
+      "face_state_seconds": 11.793046282604337,
+      "record": {
+        "nodes": 4339368,
+        "star_calls": 4339368,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.1818138509988785,
+            "process_cpu_seconds": 1.1741113090000113
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.099273020401597,
+            "process_cpu_seconds": 2.0866802179999695
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 8.808696497231722,
+            "process_cpu_seconds": 8.753626562000022
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 28.846134250983596,
+      "mass_residual": 7.531118164803754e-17,
+      "weight_rate_change": 3.0971194575971084e-13,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00015066936403613056,
+            "compatibility_residual": -6.032277482769508e-18,
+            "compatibility_bound": 1.6826583963056415e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.3558111418565915,
+            "nullspace_residual_max": 5.051514762044462e-15,
+            "nullspace_bound_max": 1.2614648056913957e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 7.735202667348086e-07,
+            "compatibility_residual": 1.3941103520621716e-18,
+            "compatibility_bound": 1.6835723639936274e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358177083451121,
+            "nullspace_residual_max": 4.6074255521944e-15,
+            "nullspace_bound_max": 1.2614741562208017e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.5058796483132456e-10,
+            "compatibility_residual": -1.1354021796990968e-17,
+            "compatibility_bound": 1.6835725067584244e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358177453019078,
+            "nullspace_residual_max": 5.10702591327572e-15,
+            "nullspace_bound_max": 1.2614738682856684e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 7.531118164803754e-17,
+            "compatibility_residual": 3.951658053471207e-19,
+            "compatibility_bound": 1.6835725067562065e-08,
+            "wall_mass_flux_max": 1.4270341861358115e-21,
+            "wall_mass_flux_bound_max": 2.0018748191493138e-18,
+            "primitive_mass_flux_absolute_sum": 4.358177453013337,
+            "nullspace_residual_max": 5.10702591327572e-15,
+            "nullspace_bound_max": 1.2614738682856684e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": -2.7755575615628914e-17,
+        "fallback": false
+      }
+    }
+  ],
+  "final_mass_residual": 7.531118164803754e-17,
+  "compiled_mass_rate_max": 7.531189964080923e-17,
+  "generator_velocity_defect": 0.0,
+  "wall_zero": {
+    "nodes": 28400,
+    "mass_flux_max": 1.4270341861358115e-21,
+    "energy_flux_max": 2.9135270150116898e-22,
+    "Phi_flux_max": 5.708136744543246e-22,
+    "origin_torque_max": 2.2631661559450837e-21,
+    "mass_bound_sum": 1.150429843016965e-13,
+    "energy_bound_sum": 7.721926484787599e-14,
+    "torque_bound_sum": 2.339365517230606e-13
+  },
+  "wall_order8_vs16": {
+    "dr": {
+      "maximum_difference": 2.224925023521427e-20,
+      "maximum_bound_fraction": 2.2249250235214266e-06
+    },
+    "F": {
+      "maximum_difference": 2.752857078576476e-21,
+      "maximum_bound_fraction": 2.707593981479958e-07
+    },
+    "H": {
+      "maximum_difference": 1.4227506535912076e-22,
+      "maximum_bound_fraction": 1.4226054253645272e-08
+    },
+    "K": {
+      "maximum_difference": 3.2644107686094492e-15,
+      "maximum_bound_fraction": 0.2591571281695086
+    },
+    "incoming": {
+      "maximum_difference": 1.0734188600635488e-29,
+      "maximum_bound_fraction": 1.0734188600635483e-15
+    },
+    "area": {
+      "maximum_difference": 0.0,
+      "maximum_bound_fraction": 0.0
+    }
+  },
+  "central_gravity_origin_torque": 7.67209542514081e-18,
+  "central_gravity_torque_bound": 1.194360856430353e-10,
+  "global_ledger_residual": [
+    7.84158378139522e-17,
+    -6.933046098867996e-17,
+    -3.303081078434499e-19,
+    -9.560054046153071e-19
+  ],
+  "global_ledger_bound": [
+    6.448886425299823e-08,
+    6.427677617120644e-08,
+    1.7009876297479723e-08,
+    1.7582068940016696e-07
+  ],
+  "combined_hydro_Psi_boundary_rate_residual": 4.257453559308111e-18,
+  "combined_energy_bound": 5.081156586141847e-08,
+  "compiled_seconds": 5.802195345982909,
+  "total_seconds": 394.7656711023301,
+  "peak_RSS_KiB": 20261300,
+  "node_inputs_sha256": "4d24f531db54502968b0e5399e8ae990b8155bce3df976861610e0ebd1340e87",
+  "node_extra_sha256": "6fa1607d102bda385465a8807292d41d0161d78af806ea33f59219c6e45e41fd",
+  "gravity_maximum_difference": 2.7321894746634712e-17,
+  "gravity_maximum_bound_fraction": 0.013397690613644899,
+  "limits": "One moving stage only. No accepted time step, two-dt comparison or long-time stability claim. Existing compiled moment/factor ABI retained; all fluid active, no physical viscosity, fallback or energy correction."
+}

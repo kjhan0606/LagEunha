@@ -1,0 +1,130 @@
+{
+  "scope": "Actual t2 finite weight-remapped 17-moment states; compact static reconstruction only, no physical-time evolution, no force change, no MPI.",
+  "source_time": 2.0029059177634028,
+  "lineage": "2026-10-09 affine projection; new actual checkpoint and shared C/OpenMP/CUDA recovery. Quadratic density is a new bounded-cost candidate, not an adopted closure.",
+  "density_integration": "Degree<=4 polynomial geometry moments, three-point tensor Gauss per centroid triangle. No subcell gravity evaluation.",
+  "minimum_method": "Vertices, edge stationary minima, interior stationary point; floating arithmetic, not certified interval bounds.",
+  "rows": [
+    {
+      "weight_fraction": 0.25,
+      "cells": 1590,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "affine_B_numpy_max_absolute_error": 4.440892098500626e-16,
+      "angular_recovery_max_absolute_error": 8.271806125530277e-25,
+      "kinetic_decomposition_max_absolute_error": 2.168404344971009e-19,
+      "minimum_eigenvalue_R_per_mass": -1.2632955641475817e-14,
+      "affine_kinetic_over_total_thermal": 0.0020641546584575466,
+      "residual_kinetic_over_total_thermal": 0.018790653272190785,
+      "residual_over_cell_thermal_quantiles": [
+        -1.5400838532439882e-10,
+        1.1212002198198288e-10,
+        0.045693845224820666,
+        0.2405797718124803,
+        1.334770990007749
+      ],
+      "quadratic_density_minimum_factor": -0.6380924858272958,
+      "negative_density_cells": 7,
+      "negative_density_ids": [
+        665,
+        678,
+        691,
+        754,
+        798,
+        807,
+        808
+      ],
+      "quadratic_density_minimum_quantiles": [
+        -0.6380924858272958,
+        0.4232484572623488,
+        0.9806153297612559,
+        0.9975779594922819,
+        0.998651771757414
+      ],
+      "polynomial_moment_fit_max_error": 4.440892098500626e-16,
+      "max_polynomial_gram_condition": 381.09214909145066
+    },
+    {
+      "weight_fraction": 1.0,
+      "cells": 1590,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "affine_B_numpy_max_absolute_error": 8.881784197001252e-16,
+      "angular_recovery_max_absolute_error": 6.617444900424222e-24,
+      "kinetic_decomposition_max_absolute_error": 4.336808689942018e-19,
+      "minimum_eigenvalue_R_per_mass": -1.620839727629886e-14,
+      "affine_kinetic_over_total_thermal": 0.017534296156394544,
+      "residual_kinetic_over_total_thermal": 0.0626526236985542,
+      "residual_over_cell_thermal_quantiles": [
+        -1.5400838532439882e-10,
+        1.1066843847642838e-10,
+        0.15109064482789883,
+        0.7057517102152472,
+        4.4674434171843265
+      ],
+      "quadratic_density_minimum_factor": -1.2529447854542826,
+      "negative_density_cells": 28,
+      "negative_density_ids": [
+        664,
+        665,
+        674,
+        675,
+        678,
+        691,
+        692,
+        694,
+        706,
+        707,
+        718,
+        722,
+        723,
+        737,
+        740,
+        741,
+        754,
+        777,
+        798,
+        807,
+        808,
+        811,
+        819,
+        821,
+        828,
+        837,
+        851,
+        854
+      ],
+      "quadratic_density_minimum_quantiles": [
+        -1.2529447854542826,
+        -0.43389866431283625,
+        0.9790364938952238,
+        0.9979669182294946,
+        0.9990662474297046
+      ],
+      "polynomial_moment_fit_max_error": 4.440892098500626e-16,
+      "max_polynomial_gram_condition": 410.05013602893126
+    }
+  ],
+  "invalid_mass_rejected_CPU_CUDA": true,
+  "seconds": 5.794167913496494,
+  "limits": [
+    "Positive covariance alone does not prove spatial density feasibility.",
+    "R is unresolved kinetic covariance and cannot be silently discarded or heated. Its physical stress/energy transport remains open.",
+    "Quadratic density matches m,q,Q only; it does not preserve the nonlinear potential moment.",
+    "No long-term Kepler stability claim."
+  ],
+  "sha256": {
+    "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+    "/gpfs/kjhan/LagForce/Codex_paired_response_20261017/layout.json": "de7c25081c54c12de84873f6decf355924591b22c697aabf0741fbc8df776437",
+    "/gpfs/kjhan/LagForce/Codex_paired_response_20261017/run.py": "59235bbac5ac13c7608c8f68cf270ec6cf24c9d1b247c25104eb10c96931bed8",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+    "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef",
+    "/gpfs/kjhan/LagForce/Codex_evolving_weight_transport_20261017/weights_0.npz": "6a485c7eebb09b108f0c34f7bab9b47c84cf862abb63c8d6f6bb8bb32e3c224a",
+    "/gpfs/kjhan/LagForce/Codex_compact_reconstruction_20261018/audit.py": "c833d29186b37237bbebe7ccd8020703ee8bfee3d1db2d3852770599801cdd23",
+    "/gpfs/kjhan/LagForce/Codex_compact_reconstruction_20261018/moment_affine_recovery.h": "50b4a777c5868da5a0e1d9517f3874006c7d7b85bfdf88d3b77f22cce5a70119",
+    "/gpfs/kjhan/LagForce/Codex_compact_reconstruction_20261018/probe.c": "955a8fc08b7235bed925dfde882933aeb8e14f448ea4cccaa01252309f23e905",
+    "/gpfs/kjhan/LagForce/Codex_compact_reconstruction_20261018/probe.cu": "ec61ca5a7708fe882f26ef75d5dc455023fba9fd34c69416f6bbe39446c09130",
+    "/gpfs/kjhan/LagForce/Codex_compact_reconstruction_20261018/cpu.so": "3a83a43d92a339acae90dd7ca32711f7d6b8b924744983aebaa97e25e425d6b3",
+    "/gpfs/kjhan/LagForce/Codex_compact_reconstruction_20261018/cuda.so": "4fcc03ef1a7a892d438f5ab36804ffb34cf7144bb922aa95f5f9f4cbe45db0e5",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/state_w0.25_q8.npz": "d7e3aaf2a3823b172c8cea51fa65e702cef4f193858b778ffd7e84786127bf93",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/state_w1_q8.npz": "48ec05745b6da5f7baca16015e1ee35c3e71f9acd014356e9db0858688afdc6e"
+  }
+}

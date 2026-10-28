@@ -1,0 +1,357 @@
+{
+  "scope": "One actual accepted HG/RK4/HG step from existing evolved checkpoints. Per-cell log entropy change minus integrated TCF heat/U at four RK stages and exact HG log1p(dU/U). Residual includes time quadrature, geometric-volume evolution, roundoff and any unaccounted sources; not automatically pure RK truncation. Fixed INITIAL material bins. Frozen cells excluded. No long-time pass inferred.",
+  "cases": {
+    "t2_full": {
+      "start_time": 2.0029059177634028,
+      "dt": 0.001,
+      "diagnostic_on_off_physical_fields_bitwise_equal": {
+        "x": true,
+        "y": true,
+        "mass": true,
+        "vx": true,
+        "vy": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "volume": true,
+        "w2": true,
+        "w2ceil": true,
+        "csound": true
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "start_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+      "end_sha256": "dcbf9c0e533100f28d6fd8a297e46827f0662f5ca635865e7a9bbc63e558d808",
+      "accepted_budget_residual_E": -1.687538997430238e-14,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "measured_entropy_rate_mean": 0.003884257526097639,
+          "heat_entropy_rate_mean": 0.0038842593806969012,
+          "unexplained_entropy_rate_mean": -1.8545992627203857e-09,
+          "unexplained_entropy_rate_RMS": 1.3864571341367752e-05,
+          "heat_entropy_rate_RMS": 0.004941099328881521,
+          "unexplained_over_heat_RMS": 0.0028059689592409326,
+          "entropy_residual_max_abs": 1.6121673213754075e-07,
+          "negative_heat_cells": 0
+        },
+        "disk_inner_edge": {
+          "cells": 390,
+          "measured_entropy_rate_mean": 0.0007990846626951726,
+          "heat_entropy_rate_mean": 0.0007990834534886644,
+          "unexplained_entropy_rate_mean": 1.209206508116627e-09,
+          "unexplained_entropy_rate_RMS": 2.1578168446913877e-05,
+          "heat_entropy_rate_RMS": 0.0022581752697288906,
+          "unexplained_over_heat_RMS": 0.009555577344315032,
+          "entropy_residual_max_abs": 2.0028741234677781e-07,
+          "negative_heat_cells": 0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "measured_entropy_rate_mean": 5.527484788042389e-06,
+          "heat_entropy_rate_mean": 5.527479879339609e-06,
+          "unexplained_entropy_rate_mean": 4.908702780301164e-12,
+          "unexplained_entropy_rate_RMS": 1.5757619022877808e-06,
+          "heat_entropy_rate_RMS": 1.289136955390978e-05,
+          "unexplained_over_heat_RMS": 0.12223386318250985,
+          "entropy_residual_max_abs": 4.83437595278744e-08,
+          "negative_heat_cells": 0
+        }
+      },
+      "logged_floor_dual_energy_and_entropy_floor_injection_zero": true
+    },
+    "t2_half": {
+      "start_time": 2.0029059177634028,
+      "dt": 0.0005,
+      "diagnostic_on_off_physical_fields_bitwise_equal": {
+        "x": true,
+        "y": true,
+        "mass": true,
+        "vx": true,
+        "vy": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "volume": true,
+        "w2": true,
+        "w2ceil": true,
+        "csound": true
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "start_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+      "end_sha256": "f37dc4ab534112aa0d7768fc228ca9b162417a15c81e60f2df5147997c47a3dd",
+      "accepted_budget_residual_E": -1.0036416142611415e-13,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "measured_entropy_rate_mean": 0.0038832114060156154,
+          "heat_entropy_rate_mean": 0.0038832107100751773,
+          "unexplained_entropy_rate_mean": 6.959404377505641e-10,
+          "unexplained_entropy_rate_RMS": 9.579154723594564e-06,
+          "heat_entropy_rate_RMS": 0.00493938348789854,
+          "unexplained_over_heat_RMS": 0.0019393421764200807,
+          "entropy_residual_max_abs": 9.642285736144037e-08,
+          "negative_heat_cells": 0
+        },
+        "disk_inner_edge": {
+          "cells": 390,
+          "measured_entropy_rate_mean": 0.000799163127343204,
+          "heat_entropy_rate_mean": 0.0007991640006579144,
+          "unexplained_entropy_rate_mean": -8.733147105387938e-10,
+          "unexplained_entropy_rate_RMS": 1.387855377652457e-05,
+          "heat_entropy_rate_RMS": 0.002258676636282585,
+          "unexplained_over_heat_RMS": 0.006144550996625359,
+          "entropy_residual_max_abs": 9.708196075322408e-08,
+          "negative_heat_cells": 0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "measured_entropy_rate_mean": 5.523448227565911e-06,
+          "heat_entropy_rate_mean": 5.5234475300688745e-06,
+          "unexplained_entropy_rate_mean": 6.974970372719867e-13,
+          "unexplained_entropy_rate_RMS": 2.0067481442230996e-07,
+          "heat_entropy_rate_RMS": 1.2878258889804128e-05,
+          "unexplained_over_heat_RMS": 0.015582449160203373,
+          "entropy_residual_max_abs": 4.83451751170334e-09,
+          "negative_heat_cells": 0
+        }
+      },
+      "logged_floor_dual_energy_and_entropy_floor_injection_zero": true
+    },
+    "t4_full": {
+      "start_time": 4.005538150548695,
+      "dt": 0.001,
+      "diagnostic_on_off_physical_fields_bitwise_equal": {
+        "x": true,
+        "y": true,
+        "mass": true,
+        "vx": true,
+        "vy": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "volume": true,
+        "w2": true,
+        "w2ceil": true,
+        "csound": true
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "start_sha256": "ea303303b3ad6a0155baba9d4c91c359ab68c3b95021c9bde7c7d6c0b2f6a729",
+      "end_sha256": "196151400de9935bcbd121939f41aaaf8899109288f52fd395e1ad6be45030f0",
+      "accepted_budget_residual_E": -1.5631940186722204e-13,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "measured_entropy_rate_mean": 0.09923843094841467,
+          "heat_entropy_rate_mean": 0.09923850205379754,
+          "unexplained_entropy_rate_mean": -7.110538287617097e-08,
+          "unexplained_entropy_rate_RMS": 2.1597790370941814e-05,
+          "heat_entropy_rate_RMS": 0.15926227832176812,
+          "unexplained_over_heat_RMS": 0.00013561146178824824,
+          "entropy_residual_max_abs": 4.5980483655967913e-07,
+          "negative_heat_cells": 0
+        },
+        "disk_inner_edge": {
+          "cells": 390,
+          "measured_entropy_rate_mean": 0.032534543512050706,
+          "heat_entropy_rate_mean": 0.032534543586873556,
+          "unexplained_entropy_rate_mean": -7.482285259636819e-11,
+          "unexplained_entropy_rate_RMS": 1.4345995246655461e-05,
+          "heat_entropy_rate_RMS": 0.06807342517250797,
+          "unexplained_over_heat_RMS": 0.00021074296188711852,
+          "entropy_residual_max_abs": 1.419581501590493e-07,
+          "negative_heat_cells": 0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "measured_entropy_rate_mean": 5.2335901072279255e-06,
+          "heat_entropy_rate_mean": 5.233572243994741e-06,
+          "unexplained_entropy_rate_mean": 1.7863233184761927e-11,
+          "unexplained_entropy_rate_RMS": 1.7364937643460986e-06,
+          "heat_entropy_rate_RMS": 1.3196860948941725e-05,
+          "unexplained_over_heat_RMS": 0.13158384945211918,
+          "entropy_residual_max_abs": 6.451352482675615e-08,
+          "negative_heat_cells": 0
+        }
+      },
+      "logged_floor_dual_energy_and_entropy_floor_injection_zero": true
+    },
+    "t4_half": {
+      "start_time": 4.005538150548695,
+      "dt": 0.0005,
+      "diagnostic_on_off_physical_fields_bitwise_equal": {
+        "x": true,
+        "y": true,
+        "mass": true,
+        "vx": true,
+        "vy": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "volume": true,
+        "w2": true,
+        "w2ceil": true,
+        "csound": true
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "start_sha256": "ea303303b3ad6a0155baba9d4c91c359ab68c3b95021c9bde7c7d6c0b2f6a729",
+      "end_sha256": "e144f9c9e9909f7ae013474a70e6ffa5c82e8ef188157ecd0fc51215beb346df",
+      "accepted_budget_residual_E": -1.5720758028692217e-13,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "measured_entropy_rate_mean": 0.09916105080324951,
+          "heat_entropy_rate_mean": 0.09916103206859246,
+          "unexplained_entropy_rate_mean": 1.873465705025242e-08,
+          "unexplained_entropy_rate_RMS": 5.203067530287863e-06,
+          "heat_entropy_rate_RMS": 0.1591767461002629,
+          "unexplained_over_heat_RMS": 3.268735954063626e-05,
+          "entropy_residual_max_abs": 4.4663189795616305e-08,
+          "negative_heat_cells": 0
+        },
+        "disk_inner_edge": {
+          "cells": 390,
+          "measured_entropy_rate_mean": 0.032474134104795674,
+          "heat_entropy_rate_mean": 0.03247413410898963,
+          "unexplained_entropy_rate_mean": -4.193964524409421e-12,
+          "unexplained_entropy_rate_RMS": 4.745659872048241e-11,
+          "heat_entropy_rate_RMS": 0.06798426051498137,
+          "unexplained_over_heat_RMS": 6.980527310438955e-10,
+          "entropy_residual_max_abs": 1.818749991377381e-13,
+          "negative_heat_cells": 0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "measured_entropy_rate_mean": 5.2298906200382155e-06,
+          "heat_entropy_rate_mean": 5.229890701384155e-06,
+          "unexplained_entropy_rate_mean": -8.13459388269285e-14,
+          "unexplained_entropy_rate_RMS": 1.837703143623279e-07,
+          "heat_entropy_rate_RMS": 1.3113653982072602e-05,
+          "unexplained_over_heat_RMS": 0.014013661990285578,
+          "entropy_residual_max_abs": 2.413558508001421e-09,
+          "negative_heat_cells": 0
+        }
+      },
+      "logged_floor_dual_energy_and_entropy_floor_injection_zero": true
+    },
+    "t6_half": {
+      "start_time": 6.002110493120864,
+      "dt": 0.0005,
+      "diagnostic_on_off_physical_fields_bitwise_equal": {
+        "x": true,
+        "y": true,
+        "mass": true,
+        "vx": true,
+        "vy": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "volume": true,
+        "w2": true,
+        "w2ceil": true,
+        "csound": true
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "start_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386",
+      "end_sha256": "014881e41d8ccf1813282770d2801296f118fa5493aafbb479a091e58b84738e",
+      "accepted_budget_residual_E": -1.1546319456101628e-14,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "measured_entropy_rate_mean": 0.26276652638174763,
+          "heat_entropy_rate_mean": 0.26276652660478617,
+          "unexplained_entropy_rate_mean": -2.2303857553104145e-10,
+          "unexplained_entropy_rate_RMS": 2.4143755452074267e-09,
+          "heat_entropy_rate_RMS": 0.3892302490724788,
+          "unexplained_over_heat_RMS": 6.202949413517562e-09,
+          "entropy_residual_max_abs": 2.1783242012485618e-11,
+          "negative_heat_cells": 0
+        },
+        "disk_inner_edge": {
+          "cells": 390,
+          "measured_entropy_rate_mean": 0.16191403699658977,
+          "heat_entropy_rate_mean": 0.16191403715669161,
+          "unexplained_entropy_rate_mean": -1.6010181762082782e-10,
+          "unexplained_entropy_rate_RMS": 1.536829438718599e-09,
+          "heat_entropy_rate_RMS": 0.342421597342378,
+          "unexplained_over_heat_RMS": 4.488120640305189e-09,
+          "entropy_residual_max_abs": 1.2587565863773909e-11,
+          "negative_heat_cells": 0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "measured_entropy_rate_mean": 1.0315058358744393e-05,
+          "heat_entropy_rate_mean": 1.031505938723789e-05,
+          "unexplained_entropy_rate_mean": -1.0284934966020977e-12,
+          "unexplained_entropy_rate_RMS": 2.594128385306903e-07,
+          "heat_entropy_rate_RMS": 0.0001437020539241371,
+          "unexplained_over_heat_RMS": 0.0018052131576883309,
+          "entropy_residual_max_abs": 5.260252810050301e-09,
+          "negative_heat_cells": 0
+        }
+      },
+      "logged_floor_dual_energy_and_entropy_floor_injection_zero": true
+    },
+    "t6_quarter": {
+      "start_time": 6.002110493120864,
+      "dt": 0.00025,
+      "diagnostic_on_off_physical_fields_bitwise_equal": {
+        "x": true,
+        "y": true,
+        "mass": true,
+        "vx": true,
+        "vy": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "volume": true,
+        "w2": true,
+        "w2ceil": true,
+        "csound": true
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "start_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386",
+      "end_sha256": "165f468267dd1db3138b07104d13eb21798699237abb4e99f713c7a34639230b",
+      "accepted_budget_residual_E": 9.414691248821327e-14,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "measured_entropy_rate_mean": 0.26277393868261967,
+          "heat_entropy_rate_mean": 0.2627739387520283,
+          "unexplained_entropy_rate_mean": -6.940872224643575e-11,
+          "unexplained_entropy_rate_RMS": 1.0362761285261744e-09,
+          "heat_entropy_rate_RMS": 0.3891885307451222,
+          "unexplained_over_heat_RMS": 2.6626584461319263e-09,
+          "entropy_residual_max_abs": 5.4261275309638694e-12,
+          "negative_heat_cells": 0
+        },
+        "disk_inner_edge": {
+          "cells": 390,
+          "measured_entropy_rate_mean": 0.16165278391498802,
+          "heat_entropy_rate_mean": 0.16165278395142343,
+          "unexplained_entropy_rate_mean": -3.6435462905862843e-11,
+          "unexplained_entropy_rate_RMS": 6.685300636108817e-10,
+          "heat_entropy_rate_RMS": 0.3416668660646982,
+          "unexplained_over_heat_RMS": 1.9566722149881768e-09,
+          "entropy_residual_max_abs": 3.1195131113687102e-12,
+          "negative_heat_cells": 0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "measured_entropy_rate_mean": 1.03012411840823e-05,
+          "heat_entropy_rate_mean": 1.0301241320848905e-05,
+          "unexplained_entropy_rate_mean": -1.3676660712106722e-13,
+          "unexplained_entropy_rate_RMS": 7.15689691189967e-08,
+          "heat_entropy_rate_RMS": 0.00014260324465993005,
+          "unexplained_over_heat_RMS": 0.0005018747595096397,
+          "entropy_residual_max_abs": 8.046928359798674e-10,
+          "negative_heat_cells": 0
+        }
+      },
+      "logged_floor_dual_energy_and_entropy_floor_injection_zero": true
+    }
+  },
+  "case_runner": "/gpfs/kjhan/LagForce/Codex_entropy_step_audit_20261017/run.py",
+  "manifest": "/gpfs/kjhan/LagForce/Codex_entropy_step_audit_20261017/manifest.json",
+  "interpretation": "At these one-step checkpoints, the measured inner entropy increase is overwhelmingly accounted for by actual TCF+HG entropy production. Diagnostic on/off equality establishes passive instrumentation for tested fields. This does not prove RK4 order, exclude all geometric/time errors, or establish long-term physical accuracy. A smaller dt alone cannot remove the explicitly modeled dissipation measured here.",
+  "next_action": "Keep source of nonphysical shear/compression modes distinct from their dissipative heating. Need a compatible spatial treatment that reduces mode generation while preserving conservation, not an unexplained heating fix."
+}

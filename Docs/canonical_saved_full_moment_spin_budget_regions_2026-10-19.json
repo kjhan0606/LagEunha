@@ -1,0 +1,487 @@
+{
+  "status": "completed_readonly_saved_full_moment_spin_budget",
+  "scope": "One saved instantaneous RHS at t=.025; no provider replay or state update.",
+  "cells": 19945,
+  "time": 0.025,
+  "physical_providers_replayed": 0,
+  "accepted_steps": 0,
+  "capture_report_status": "completed_single_saved_state_rhs_budget_capture",
+  "angular_momentum": {
+    "internal_spin": {
+      "sum": 0.0003125002800564638,
+      "abs_sum": 0.0003125314332617251,
+      "max_abs": 1.0267627209112148e-07,
+      "p95_abs": 5.286806907439161e-08
+    },
+    "internal_spin_rate": {
+      "sum": 8.841544615651975e-06,
+      "abs_sum": 0.0002886716270940533,
+      "max_abs": 3.5639323981778254e-07,
+      "p95_abs": 7.189057247077588e-08
+    },
+    "centroid_orbital_rate": {
+      "sum": -8.841544615653203e-06,
+      "abs_sum": 0.0013263617230085995,
+      "max_abs": 2.21606397765508e-06,
+      "p95_abs": 2.940366752226053e-07
+    },
+    "raw_total_rate": {
+      "sum": -1.2278008302222866e-18,
+      "abs_sum": 0.0014665557435309747,
+      "max_abs": 2.151568220911445e-06,
+      "p95_abs": 3.288739777383712e-07
+    },
+    "spin_plus_centroid_closure_max_abs": 1.3645895167710728e-22,
+    "saved_global_ledger_rate": -2.959034208687504e-18,
+    "global_rate_minus_ledger": 1.7312333784652173e-18
+  },
+  "rotational_projection": {
+    "energy": {
+      "sum": 4.9997456729310767e-05,
+      "abs_sum": 4.9997456729310767e-05,
+      "max_abs": 9.648375683944681e-08,
+      "p95_abs": 1.0800155645424426e-08
+    },
+    "rate": {
+      "sum": -3.4885203171300694e-07,
+      "abs_sum": 0.00010134587584390169,
+      "max_abs": 3.2213126982877784e-07,
+      "p95_abs": 2.090481873242566e-08
+    },
+    "torque_power": {
+      "sum": 2.0681510988182197e-06,
+      "abs_sum": 0.00011067074810857918,
+      "max_abs": 3.6896895323274106e-07,
+      "p95_abs": 2.207298753553193e-08
+    },
+    "inertia_change": {
+      "sum": -2.4170031305312265e-06,
+      "abs_sum": 9.686495085138955e-06,
+      "max_abs": 1.1700879413280862e-07,
+      "p95_abs": 1.369527901288258e-09
+    },
+    "chain_rule_max_abs": 1.2924697071141057e-26,
+    "thermal_rate": {
+      "sum": 5.230549563694506e-07,
+      "abs_sum": 7.958019149619914e-06,
+      "max_abs": 1.4389063859501453e-07,
+      "p95_abs": 9.7100790120334e-10
+    }
+  },
+  "total_energy_partition_rate": {
+    "centroid_kinetic": {
+      "sum": 2.1901472861592383e-05,
+      "abs_sum": 0.0018788117337706655,
+      "max_abs": 6.058104027638815e-06,
+      "p95_abs": 4.918338279016003e-07
+    },
+    "affine_kinetic": {
+      "sum": -2.3297417324675255e-05,
+      "abs_sum": 0.00015789719983249666,
+      "max_abs": 3.78245276980798e-07,
+      "p95_abs": 3.4958069579015834e-08
+    },
+    "residual_kinetic": {
+      "sum": 1.0778626232305343e-06,
+      "abs_sum": 1.0809179729468294e-06,
+      "max_abs": 3.608416104151051e-09,
+      "p95_abs": 2.2032905382980153e-10
+    },
+    "thermal": {
+      "sum": 5.230549563694506e-07,
+      "abs_sum": 7.958019149619914e-06,
+      "max_abs": 1.4389063859501453e-07,
+      "p95_abs": 9.7100790120334e-10
+    },
+    "partition": {
+      "sum": 2.0497311651711596e-07,
+      "abs_sum": 0.0017981872469538572,
+      "max_abs": 6.115176812747987e-06,
+      "p95_abs": 4.5824651274349774e-07
+    },
+    "stored_hydro": {
+      "sum": 2.0497311651711458e-07,
+      "abs_sum": 0.0017981872469538572,
+      "max_abs": 6.115176812747987e-06,
+      "p95_abs": 4.582465127434978e-07
+    },
+    "max_cell_abs_difference": 4.235164736271502e-22
+  },
+  "radial_regions": {
+    "radius": 2.5,
+    "masks": "Exact cell radial bounds from the saved curved mesh; fixed thresholds 0.4, 0.5, and 2.0.",
+    "reports": {
+      "all": {
+        "cells": 19945,
+        "mass": 11.859512267301469,
+        "signed_rates": {
+          "spin": 8.841544615651975e-06,
+          "centroid_orbital": -8.841544615653203e-06,
+          "total_angular": -1.2278008302222866e-18,
+          "rotational_projection": -3.4885203171300694e-07,
+          "torque_power": 2.0681510988182197e-06,
+          "inertia_change": -2.4170031305312265e-06,
+          "centroid_kinetic": 2.1901472861592383e-05,
+          "affine_kinetic": -2.3297417324675255e-05,
+          "residual_kinetic": 1.0778626232305343e-06,
+          "thermal": 5.230549563694506e-07,
+          "hydro_energy": 2.0497311651711458e-07
+        },
+        "abs_rate_sums": {
+          "spin": 0.0002886716270940533,
+          "centroid_orbital": 0.0013263617230085995,
+          "total_angular": 0.0014665557435309747,
+          "rotational_projection": 0.00010134587584390169,
+          "torque_power": 0.00011067074810857918,
+          "inertia_change": 9.686495085138955e-06,
+          "centroid_kinetic": 0.0018788117337706655,
+          "affine_kinetic": 0.00015789719983249666,
+          "residual_kinetic": 1.0809179729468294e-06,
+          "thermal": 7.958019149619914e-06,
+          "hydro_energy": 0.0017981872469538572
+        },
+        "mass_weighted_RMS": {
+          "spin": 4.85444234387089e-08,
+          "centroid_orbital": 1.9123479039256458e-07,
+          "total_angular": 2.0390429854624585e-07,
+          "rotational_projection": 2.3800126348807862e-08,
+          "torque_power": 2.6474816170193005e-08,
+          "inertia_change": 3.6850572105225307e-09,
+          "centroid_kinetic": 3.5744925889029714e-07,
+          "affine_kinetic": 3.713248785208267e-08,
+          "residual_kinetic": 3.1937442863753483e-10,
+          "thermal": 1.6892459303528132e-09,
+          "hydro_energy": 3.4337389221264394e-07
+        }
+      },
+      "inner": {
+        "cells": 490,
+        "mass": 0.004790796295813505,
+        "signed_rates": {
+          "spin": -7.993600339251093e-08,
+          "centroid_orbital": 4.3589832799505465e-07,
+          "total_angular": 3.559623246025437e-07,
+          "rotational_projection": -1.1456815218671441e-06,
+          "torque_power": -7.048130385350685e-07,
+          "inertia_change": -4.408684833320756e-07,
+          "centroid_kinetic": 4.2439709344996835e-06,
+          "affine_kinetic": -3.2510342707488007e-06,
+          "residual_kinetic": 1.1786342519097003e-07,
+          "thermal": 2.341034692642103e-07,
+          "hydro_energy": 1.3449035582060634e-06
+        },
+        "abs_rate_sums": {
+          "spin": 1.5305902403972855e-06,
+          "centroid_orbital": 1.864968638165011e-05,
+          "total_angular": 1.9532334477395734e-05,
+          "rotational_projection": 3.97983839231055e-06,
+          "torque_power": 4.788721834089266e-06,
+          "inertia_change": 9.99123647381353e-07,
+          "centroid_kinetic": 3.1949146828389035e-05,
+          "affine_kinetic": 4.954722836944491e-06,
+          "residual_kinetic": 1.1796496964961882e-07,
+          "thermal": 6.521214293633846e-07,
+          "hydro_energy": 3.251912748138892e-05
+        },
+        "mass_weighted_RMS": {
+          "spin": 3.912676717312497e-09,
+          "centroid_orbital": 5.1091397344024114e-08,
+          "total_angular": 5.3147171382387344e-08,
+          "rotational_projection": 1.007414363633577e-08,
+          "torque_power": 1.2029216402941917e-08,
+          "inertia_change": 2.8684630990233677e-09,
+          "centroid_kinetic": 9.579740841177413e-08,
+          "affine_kinetic": 1.2732379520150318e-08,
+          "residual_kinetic": 2.849366189253733e-10,
+          "thermal": 1.7381266417479687e-09,
+          "hydro_energy": 9.93896137108359e-08
+        }
+      },
+      "cavity": {
+        "cells": 754,
+        "mass": 0.007367903345084809,
+        "signed_rates": {
+          "spin": 2.1927841868857108e-07,
+          "centroid_orbital": -3.4370844936687325e-07,
+          "total_angular": -1.244300306783022e-07,
+          "rotational_projection": -9.19832068469896e-07,
+          "torque_power": -4.6963171449365723e-07,
+          "inertia_change": -4.502003539762387e-07,
+          "centroid_kinetic": 5.597598255950734e-06,
+          "affine_kinetic": -3.639483025447175e-06,
+          "residual_kinetic": 1.481728275143408e-07,
+          "thermal": 2.649847854931088e-06,
+          "hydro_energy": 4.7561359129489885e-06
+        },
+        "abs_rate_sums": {
+          "spin": 2.5366695313839354e-06,
+          "centroid_orbital": 2.8022714752710164e-05,
+          "total_angular": 2.846791730002983e-05,
+          "rotational_projection": 4.805387520957928e-06,
+          "torque_power": 5.637234890036757e-06,
+          "inertia_change": 1.039842065573571e-06,
+          "centroid_kinetic": 5.8802556963345395e-05,
+          "affine_kinetic": 6.090357890871571e-06,
+          "residual_kinetic": 1.482743719729896e-07,
+          "thermal": 4.3638476982752184e-06,
+          "hydro_energy": 6.200617344901038e-05
+        },
+        "mass_weighted_RMS": {
+          "spin": 4.174595871302379e-09,
+          "centroid_orbital": 5.1530553411388596e-08,
+          "total_angular": 5.224274411183529e-08,
+          "rotational_projection": 8.429246497242553e-09,
+          "torque_power": 9.969521612846382e-09,
+          "inertia_change": 2.3168077104242542e-09,
+          "centroid_kinetic": 1.2327145166260525e-07,
+          "affine_kinetic": 1.0718433918601457e-08,
+          "residual_kinetic": 2.414282332015357e-10,
+          "thermal": 1.4246312771703774e-08,
+          "hydro_energy": 1.3324647907786482e-07
+        }
+      },
+      "disk_core": {
+        "cells": 11812,
+        "mass": 11.535532943420229,
+        "signed_rates": {
+          "spin": 9.182389542400557e-06,
+          "centroid_orbital": -3.238889928914856e-05,
+          "total_angular": -2.3206509746748007e-05,
+          "rotational_projection": 2.506966693997729e-06,
+          "torque_power": 3.5765457215203994e-06,
+          "inertia_change": -1.06957902752267e-06,
+          "centroid_kinetic": -1.3524534348919334e-05,
+          "affine_kinetic": -1.5449152338363777e-05,
+          "residual_kinetic": 6.56340605778992e-07,
+          "thermal": -1.1019406098419543e-07,
+          "hydro_energy": -2.8427540142488314e-05
+        },
+        "abs_rate_sums": {
+          "spin": 0.00027302259597166865,
+          "centroid_orbital": 0.001213320771956171,
+          "total_angular": 0.0013634807673827036,
+          "rotational_projection": 7.93342844637592e-05,
+          "torque_power": 8.294510035198813e-05,
+          "inertia_change": 3.709535753644521e-06,
+          "centroid_kinetic": 0.0017255233800959364,
+          "affine_kinetic": 0.00013740389782028125,
+          "residual_kinetic": 6.592843986007431e-07,
+          "thermal": 5.362526495965912e-07,
+          "hydro_energy": 0.0016287888380769537
+        },
+        "mass_weighted_RMS": {
+          "spin": 4.844951367516905e-08,
+          "centroid_orbital": 1.8698106948497894e-07,
+          "total_angular": 2.0209724238958213e-07,
+          "rotational_projection": 2.0760012514332556e-08,
+          "torque_power": 2.172878482114644e-08,
+          "inertia_change": 1.0454027166516104e-09,
+          "centroid_kinetic": 3.560927452815234e-07,
+          "affine_kinetic": 3.61533123335747e-08,
+          "residual_kinetic": 2.698141157957809e-10,
+          "thermal": 4.24994100981814e-10,
+          "hydro_energy": 3.3981205867244656e-07
+        }
+      },
+      "inner_contact": {
+        "cells": 101,
+        "mass": 0.05013601797915661,
+        "signed_rates": {
+          "spin": -5.52998908991718e-07,
+          "centroid_orbital": 2.4302970235122806e-05,
+          "total_angular": 2.374997132613109e-05,
+          "rotational_projection": -1.9341460177341626e-06,
+          "torque_power": -1.0363620331613769e-06,
+          "inertia_change": -8.977839845727856e-07,
+          "centroid_kinetic": 2.980423873918562e-05,
+          "affine_kinetic": -4.205903755855803e-06,
+          "residual_kinetic": 2.7335277724289026e-07,
+          "thermal": -2.030125802880965e-06,
+          "hydro_energy": 2.3841561957691743e-05
+        },
+        "abs_rate_sums": {
+          "spin": 1.2083485569697729e-05,
+          "centroid_orbital": 6.883180924766948e-05,
+          "total_angular": 5.751705977692886e-05,
+          "rotational_projection": 1.704428082356897e-05,
+          "torque_power": 2.1886217533725283e-05,
+          "inertia_change": 4.8967295011037025e-06,
+          "centroid_kinetic": 8.858039552779248e-05,
+          "affine_kinetic": 1.4260310039214505e-05,
+          "residual_kinetic": 2.7335277724289026e-07,
+          "thermal": 2.0835441232138353e-06,
+          "hydro_energy": 0.00010117109663727919
+        },
+        "mass_weighted_RMS": {
+          "spin": 1.3161426939109602e-07,
+          "centroid_orbital": 7.76080968435652e-07,
+          "total_angular": 6.577970068942675e-07,
+          "rotational_projection": 1.865967429719494e-07,
+          "torque_power": 2.3906367011911236e-07,
+          "inertia_change": 5.440525771160609e-08,
+          "centroid_kinetic": 1.0225161535538643e-06,
+          "affine_kinetic": 1.593844823271557e-07,
+          "residual_kinetic": 2.714612028029173e-09,
+          "thermal": 2.4434113612861473e-08,
+          "hydro_energy": 1.1482914157787258e-06
+        }
+      },
+      "outer_contact": {
+        "cells": 402,
+        "mass": 0.1977586570283156,
+        "signed_rates": {
+          "spin": -1.1535776905071153e-08,
+          "centroid_orbital": -4.6566235005021333e-07,
+          "total_angular": -4.771981269552845e-07,
+          "rotational_projection": -2.1822010591145866e-09,
+          "torque_power": -2.733566584280166e-09,
+          "inertia_change": 5.513655251655795e-10,
+          "centroid_kinetic": 4.516187193756428e-08,
+          "affine_kinetic": -2.8990468431188334e-09,
+          "residual_kinetic": -3.809296752758321e-12,
+          "thermal": -3.4543038821931093e-07,
+          "hydro_energy": -3.0317137242161825e-07
+        },
+        "abs_rate_sums": {
+          "spin": 8.403946832473684e-07,
+          "centroid_orbital": 1.1417673902306108e-05,
+          "total_angular": 1.225515512055677e-05,
+          "rotational_projection": 1.5079916299478403e-07,
+          "torque_power": 1.9049372624514208e-07,
+          "inertia_change": 3.976459551052991e-08,
+          "centroid_kinetic": 4.4775298638756715e-06,
+          "affine_kinetic": 1.2371530110284918e-07,
+          "residual_kinetic": 4.775295867957247e-12,
+          "thermal": 3.470731377449827e-07,
+          "hydro_energy": 4.582498020892364e-06
+        },
+        "mass_weighted_RMS": {
+          "spin": 2.3249473746527292e-09,
+          "centroid_orbital": 3.099844761462214e-08,
+          "total_angular": 3.33004896428918e-08,
+          "rotational_projection": 4.1771859674154537e-10,
+          "torque_power": 5.283391014040433e-10,
+          "inertia_change": 1.1083342978831123e-10,
+          "centroid_kinetic": 1.2163268055000503e-08,
+          "affine_kinetic": 3.4253412561632667e-10,
+          "residual_kinetic": 1.4690541214163107e-14,
+          "thermal": 1.257902261019703e-09,
+          "hydro_energy": 1.2448008927048172e-08
+        }
+      },
+      "dynamic_buffer": {
+        "cells": 6407,
+        "mass": 0.06264419479153593,
+        "signed_rates": {
+          "spin": 4.235802093727631e-09,
+          "centroid_orbital": 5.582751737469125e-08,
+          "total_angular": 6.006331946841889e-08,
+          "rotational_projection": 3.165681766510978e-10,
+          "torque_power": 2.9525939108728776e-10,
+          "inertia_change": 2.130878556381005e-11,
+          "centroid_kinetic": -2.1653817011214565e-08,
+          "affine_kinetic": -7.285592160131116e-12,
+          "residual_kinetic": 1.681256297487027e-13,
+          "thermal": 3.591913535958938e-07,
+          "hydro_energy": 3.3753041911814883e-07
+        },
+        "abs_rate_sums": {
+          "spin": 1.7790344711604725e-07,
+          "centroid_orbital": 3.7874069671112878e-06,
+          "total_angular": 3.85369050527364e-06,
+          "rotational_projection": 1.0878876082347495e-08,
+          "torque_power": 1.1328213182403675e-08,
+          "inertia_change": 4.892484549681644e-10,
+          "centroid_kinetic": 1.1739910521600334e-06,
+          "affine_kinetic": 1.814854177230878e-08,
+          "residual_kinetic": 1.5619617801784083e-12,
+          "thermal": 6.258570088869956e-07,
+          "hydro_energy": 1.3838384643776894e-06
+        },
+        "mass_weighted_RMS": {
+          "spin": 3.372792939093973e-11,
+          "centroid_orbital": 1.3104203765686076e-09,
+          "total_angular": 1.3083287893524273e-09,
+          "rotational_projection": 2.094363750313213e-12,
+          "torque_power": 2.179580664539815e-12,
+          "inertia_change": 1.0383715551321117e-13,
+          "centroid_kinetic": 3.7465082079230603e-10,
+          "affine_kinetic": 3.471294202908455e-12,
+          "residual_kinetic": 3.167321331511543e-16,
+          "thermal": 5.269579452391618e-10,
+          "hydro_energy": 5.194146755297979e-10
+        }
+      },
+      "wall": {
+        "cells": 469,
+        "mass": 0.0060725507371459765,
+        "signed_rates": {
+          "spin": 1.755383659090084e-10,
+          "centroid_orbital": -2.0722795850519994e-09,
+          "total_angular": -1.8967412191429882e-09,
+          "rotational_projection": 2.4993375785796252e-11,
+          "torque_power": 3.743214604746808e-11,
+          "inertia_change": -1.2438770261671827e-11,
+          "centroid_kinetic": 6.621604490120572e-10,
+          "affine_kinetic": 2.8127426779621826e-11,
+          "residual_kinetic": 5.3865434152738375e-14,
+          "thermal": -2.3400007305933765e-10,
+          "hydro_energy": 4.5634166816649337e-10
+        },
+        "abs_rate_sums": {
+          "spin": 1.0577890939586165e-08,
+          "centroid_orbital": 9.813461826312793e-07,
+          "total_angular": 9.811534454819804e-07,
+          "rotational_projection": 2.4499653846503777e-10,
+          "torque_power": 3.733934014660246e-10,
+          "inertia_change": 1.339208516625832e-10,
+          "centroid_kinetic": 2.538802675555316e-07,
+          "affine_kinetic": 7.702392541705392e-10,
+          "residual_kinetic": 8.78725582564503e-14,
+          "thermal": 1.444531902291938e-09,
+          "hydro_energy": 2.54802305343875e-07
+        },
+        "mass_weighted_RMS": {
+          "spin": 3.4041351228281645e-11,
+          "centroid_orbital": 4.23766696941955e-09,
+          "total_angular": 4.2121202895383195e-09,
+          "rotational_projection": 7.877096671382385e-13,
+          "torque_power": 1.3382638793900967e-12,
+          "inertia_change": 6.155584302318648e-13,
+          "centroid_kinetic": 1.0861184666972463e-09,
+          "affine_kinetic": 2.137019395163328e-12,
+          "residual_kinetic": 2.4831344888207874e-16,
+          "thermal": 4.66997312185801e-12,
+          "hydro_energy": 1.0913326085905327e-09
+        }
+      }
+    }
+  },
+  "mass_rate": {
+    "max_abs": 6.092776991021648e-14,
+    "signed_sum": -3.4303133890602504e-18
+  },
+  "input_sha256": {
+    "checkpoint": "e0a29e270f4f46b86e06175f4388a1364de94e9ab8375bf36578828d57be6a72",
+    "capture_report": "a44aca7fc7ae514ecb89e34104f11f64e681e5fe0e0e5824b2c072f382e53699",
+    "stage_compact": "5699c800eb1f7864511d9a19434c64a1faf95a092b343dfe8f69ae4bc8914932",
+    "initial": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46",
+    "disk_cell_geometry_module": "d420df9e823ac878b27912519e69edf330799679f41f78a26089c156147a5427",
+    "saved_state_payload": "6f7d4735665ff709a6327e048463740475bc2d4fe3e44cb4deef9115a088ccce",
+    "verified_sources": {
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/accepted.npz": "e0a29e270f4f46b86e06175f4388a1364de94e9ab8375bf36578828d57be6a72",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/geometry/mesh.npz": "3d3191678110bccee64ebc926358ad086a66c59ac466ff7e9307697692b0efaa",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/geometry/full_exact_supports.json": "a507ec2b738c1315fb2b378a8b1f3cf7f130293b8b3fec91cc7577f154964c59",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/density/cells.jsonl": "e3dcee17d0626e677255552bbf2cec82e97a3d1196f782315acef5483987d25f",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/steps/coarse_0006_start/report.json": "8383e13d9ef6a5888df69f28c5d32dc8d31b4d6a49f4153bf5eeb3f1c4950537",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/steps/coarse_0006_start/preparation.json": "f85a74ce74a4e6c3555c8b15c88a3a1c92bd806aaab22ba44c93454ef41961ce"
+    }
+  },
+  "limits": [
+    "Instantaneous tangent only; no finite-step relaxation rate or t6-10 claim.",
+    "Krot is a rigid-rotation projection inside affine kinetic energy, not additional stored energy.",
+    "Its derivative is not heat: torque work and inertia-change work both contribute.",
+    "Regional sums use overlapping named masks; they are diagnostics, not disjoint partitions.",
+    "The saved RHS already existed; no new physical provider or accepted step was executed."
+  ]
+}

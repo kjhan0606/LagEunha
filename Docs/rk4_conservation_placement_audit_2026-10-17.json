@@ -1,0 +1,39 @@
+{
+  "as_of": "2026-10-17T18:09:15.049275+09:00",
+  "scope": "RK4 conservation diagnostic placement in existing production solver",
+  "source": "/tmp/lageunha-push/Exam/exam.c",
+  "sha256": "4c851a8ac0d404d5e8007b3fe5d7ca5d67a2843b7db634f6a7c5518bd6d0e392",
+  "implemented": [
+    "Capture M,Px,Py,Lz,K,U,Phi before first trial; retain as initial reference on first accepted step",
+    "Emit final global owned-target-cell totals only after both HG half steps and retry acceptance",
+    "Reset attempt-local HG deltas on each retry; include only accepted attempt",
+    "Report elapsed time since diagnostic start, retry count, finite flag and uncorrected raw changes"
+  ],
+  "not_claimed": [
+    "No physical update equations changed",
+    "No external impulse/boundary work correction implemented",
+    "No canonical MPI support added",
+    "No long-time stability established"
+  ],
+  "remaining": [
+    "Legacy RK4E/TORQ diagnostics still execute during trials; do not use cumulative values as accepted-step evidence",
+    "Replace torque call averaging by explicit RK4 weighted stage accumulation",
+    "Account for frozen-region exchange and external impulse/torque",
+    "Runtime validate ledger through forced rejection and HG transfer; compare diagnostic-on/off trajectories",
+    "Rebuild and run canonical failure interval and long-term Kepler"
+  ],
+  "checks": {
+    "diff_check": "pass",
+    "syntax_initial": "failed: omitted OST include path; retained syntax.log",
+    "syntax_fullincludes_exit": 0,
+    "warnings": "Existing npad printf format mismatch and unused MPI wrapper linker flags",
+    "runtime": "Production canonical192: OMP1 first accepted step exited0; OMP8 t20 run alive at verified t0.18508489735662809. First-step printed aggregate fields match exactly; forced-retry path and per-particle parity remain unverified."
+  },
+  "queued_baseline_build": {
+    "job": 426313,
+    "contains_this_change": false,
+    "note": "Existing immutable baseline validator build left unchanged",
+    "state": "Cancelled pending duplicate after successful lageunha build"
+  },
+  "runtime_evidence": "/gpfs/kjhan/LagForce/Codex_canonical192_accepted_20261017/first_step_comparison.json"
+}

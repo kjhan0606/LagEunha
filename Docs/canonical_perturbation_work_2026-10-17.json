@@ -1,0 +1,84 @@
+{
+  "cases": {
+    "t4": {
+      "directional_derivative_checks": [
+        {
+          "epsilon": 1e-05,
+          "relative_L1_error": 1.920643382062543e-07
+        },
+        {
+          "epsilon": 1e-06,
+          "relative_L1_error": 1.463399423213429e-08
+        }
+      ],
+      "inner": {
+        "cells": 803,
+        "perturbation_kinetic_energy": 2.8008291985970134e-07,
+        "pressure_work": 9.164328535361285e-07,
+        "Q_work": -5.260029047571278e-07,
+        "differential_rotation_work": 3.086600075944769e-07,
+        "total_RHS": 6.990899563734775e-07,
+        "Q_heat": 3.408738708528522e-06
+      },
+      "disk": {
+        "cells": 12068,
+        "perturbation_kinetic_energy": 2.04359808331731e-09,
+        "pressure_work": 7.509205024953993e-09,
+        "Q_work": -3.753854208138676e-09,
+        "differential_rotation_work": 3.6555996624983934e-09,
+        "total_RHS": 7.410950479313715e-09,
+        "Q_heat": 4.7456676077800044e-07
+      },
+      "outer_active": {
+        "cells": 6984,
+        "perturbation_kinetic_energy": 6.930363583262599e-11,
+        "pressure_work": 1.1552017591064735e-10,
+        "Q_work": -8.63042442735022e-11,
+        "differential_rotation_work": -2.2099635509537273e-13,
+        "total_RHS": 2.899493528204977e-11,
+        "Q_heat": 8.463381444647542e-09
+      }
+    },
+    "t6": {
+      "directional_derivative_checks": [
+        {
+          "epsilon": 1e-05,
+          "relative_L1_error": 1.204224916049618e-07
+        },
+        {
+          "epsilon": 1e-06,
+          "relative_L1_error": 7.0985276274020175e-09
+        }
+      ],
+      "inner": {
+        "cells": 803,
+        "perturbation_kinetic_energy": 1.6811301127895273e-06,
+        "pressure_work": 4.365906496448509e-06,
+        "Q_work": -3.649063225851431e-06,
+        "differential_rotation_work": 8.636854180938956e-07,
+        "total_RHS": 1.5805286886909733e-06,
+        "Q_heat": 1.501352451816674e-05
+      },
+      "disk": {
+        "cells": 12053,
+        "perturbation_kinetic_energy": 3.200791279800253e-08,
+        "pressure_work": 1.1980351829259938e-07,
+        "Q_work": -2.5528668296911518e-08,
+        "differential_rotation_work": -1.272375894456357e-08,
+        "total_RHS": 8.155109105112425e-08,
+        "Q_heat": 2.9926506525513226e-06
+      },
+      "outer_active": {
+        "cells": 6999,
+        "perturbation_kinetic_energy": 5.983567011780183e-11,
+        "pressure_work": 1.0826383481526984e-10,
+        "Q_work": -7.381881525499469e-11,
+        "differential_rotation_work": 2.6428431602666357e-13,
+        "total_RHS": 3.470930387630182e-11,
+        "Q_heat": 7.886139252651859e-09
+      }
+    }
+  },
+  "scope": "Instantaneous material sum for cells currently in each region, not derivative of a fixed Eulerian-region integral. Excludes HG split kicks. Q force reconstructed from 7-digit directed-face output; pressure force is total minus Q. Canonical unweighted TCF, no other viscosity.",
+  "interpretation": "At both sampled states pressure does positive work on velocity perturbations; Q damps them. Differential rotation supplies additional perturbation energy in the inner background. Instantaneous signs do not prove an exponential instability mechanism; pressure-work phase and time-integrated budget remain open."
+}

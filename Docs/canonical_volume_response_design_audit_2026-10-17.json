@@ -1,0 +1,47 @@
+{
+  "scope": "Research decision audit using historical repository results and current C-solver t2 geometry; no replacement solver or production modification.",
+  "constraints": [
+    "No kinematic steering",
+    "Preserve fixed particle mass",
+    "Retain existing C/CUDA/OpenMP implementation and long-run reference",
+    "Weights allowed, but prior DAE secular failure must not be ignored"
+  ],
+  "historical_evidence": [
+    {
+      "path": "HANDOVER_2026-10-09.md",
+      "section": "3.3",
+      "finding": "Strong residual dissipation needed to suppress modes previously caused excessive heating; simple smoothed volumes did not meet long-time target."
+    },
+    {
+      "path": "dae_periodic_verification_2026-10-09.md",
+      "finding": "Material-volume-following Laguerre weights grew secularly and suppression degraded near t10, even with cleaned periodic boundaries."
+    },
+    {
+      "path": "audit_impl28_astra.md",
+      "finding": "Independent thermodynamic volumes require a new compatible model; variational restoration requires energy accounting and tests of artificial elasticity."
+    }
+  ],
+  "new_evidence": "canonical_t2_gradient_divergence_candidate_2026-10-17.json",
+  "candidate_status": "Kinematic evidence supports evaluating a reconstructed-divergence operator, but no conservative or stable evolution is established. A smaller divergence alone is not sufficient.",
+  "derived_contract": {
+    "definition": "Vdot = B(q,V) v; Udot_i = -P_i (B v)_i; F_pressure = transpose(B) P; qdot=v; particle masses fixed.",
+    "energy_identity": "v^T F_pressure + sum(Udot) = v^T B^T P - P^T B v = 0 at the semidiscrete instantaneous level. This does not imply exact finite-step RK4 conservation.",
+    "linear_momentum": "B applied to either uniform translation mode must vanish, with boundary traction accounted separately.",
+    "angular_momentum": "B applied to rigid rotation velocity must vanish for a closed nonperiodic system; periodic/frozen boundaries require their own torque accounting.",
+    "constant_pressure_and_volume": "For a closed volume partition, 1^T B=0 is needed both for constant total volume and to make B^T P0*1 vanish. Raw local least-squares divergence does not automatically meet this condition.",
+    "consistency": "Affine velocity divergence and compression/expansion must be reproduced; smooth Kepler flow must not be special-cased.",
+    "remaining": [
+      "Construct the actual coefficients and their transpose, rather than changing only the pressure or volume formula.",
+      "Check conservation identities, constant-pressure response, translation and rotation modes, and volume positivity.",
+      "Assess whether an independent thermodynamic volume remains physically compatible with geometric volume and boundary transport.",
+      "Only then evaluate evolved snapshots and complete t6-t10+ runs, shocks and resolution dependence."
+    ]
+  },
+  "decision": "Do not reactivate historical DAE or strengthen damping blindly. Do not substitute stored gradient divergence into the current energy equation. Next research gate is feasibility of a compatible operator, with existing physical long runs preserved.",
+  "actual_C_operator_test": {
+    "evidence": "canonical_gradient_operator_audit_2026-10-17.json",
+    "status": "raw gradient/transpose candidate rejected before evolution",
+    "reason": "Interior constant-pressure forces are nonzero; energy matching alone is insufficient.",
+    "code_change": "Opt-in QR coefficient exporter only, gated to single-rank terminal geometry diagnostic. Original RHS unchanged in export-on/off comparison."
+  }
+}

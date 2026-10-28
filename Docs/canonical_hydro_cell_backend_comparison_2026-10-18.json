@@ -1,0 +1,149 @@
+{
+  "cells": 1590,
+  "nodes": 213064,
+  "maximum_S_condition": 4.824814713064484,
+  "maximum_covariance_roundoff_perturbation": 4.8647409291062386e-11,
+  "backends": {
+    "cpu1": {
+      "F": {
+        "maximum_absolute_difference": 0.0,
+        "maximum_tolerance_fraction": 0.0
+      },
+      "Hface": {
+        "maximum_absolute_difference": 0.0,
+        "maximum_tolerance_fraction": 0.0
+      },
+      "source": {
+        "maximum_absolute_difference": 1.0842021724855044e-19,
+        "maximum_tolerance_fraction": 1.4511682814665087e-05
+      },
+      "unmasked_hydro": {
+        "maximum_absolute_difference": 2.862251383714369e-17,
+        "maximum_tolerance_fraction": 0.009180805800060313
+      },
+      "masked_hydro": {
+        "maximum_absolute_difference": 3.3610267347050637e-18,
+        "maximum_tolerance_fraction": 0.009180805800060313
+      },
+      "pressure": {
+        "maximum_absolute_difference": 6.28657265540301e-22,
+        "maximum_tolerance_fraction": 8.457470198885943e-07
+      },
+      "transport_remainder": {
+        "maximum_absolute_difference": 3.3610267347050637e-18,
+        "maximum_tolerance_fraction": 0.005944735120731151
+      },
+      "maximum_solve_backward_residual": 1.6712926887294508e-16,
+      "A": {
+        "maximum_absolute_difference": 1.6653345369377348e-16,
+        "maximum_tolerance_fraction": 0.006153867863929847
+      },
+      "a0": {
+        "maximum_absolute_difference": 8.326672684688674e-17,
+        "maximum_tolerance_fraction": 4.738451225868127e-05
+      },
+      "ledger": {
+        "maximum_absolute_difference": 1.1882855810441129e-16,
+        "maximum_tolerance_fraction": 4.16217466395339e-05
+      },
+      "sha256": "8caa6ab384d93749bd20e0d6f50cf160af2e4d6df181e216efc162ed057e38a2"
+    },
+    "omp4": {
+      "F": {
+        "maximum_absolute_difference": 0.0,
+        "maximum_tolerance_fraction": 0.0
+      },
+      "Hface": {
+        "maximum_absolute_difference": 0.0,
+        "maximum_tolerance_fraction": 0.0
+      },
+      "source": {
+        "maximum_absolute_difference": 1.0842021724855044e-19,
+        "maximum_tolerance_fraction": 1.4511682814665087e-05
+      },
+      "unmasked_hydro": {
+        "maximum_absolute_difference": 2.862251383714369e-17,
+        "maximum_tolerance_fraction": 0.009180805800060313
+      },
+      "masked_hydro": {
+        "maximum_absolute_difference": 3.3610267347050637e-18,
+        "maximum_tolerance_fraction": 0.009180805800060313
+      },
+      "pressure": {
+        "maximum_absolute_difference": 6.28657265540301e-22,
+        "maximum_tolerance_fraction": 8.457470198885943e-07
+      },
+      "transport_remainder": {
+        "maximum_absolute_difference": 3.3610267347050637e-18,
+        "maximum_tolerance_fraction": 0.005944735120731151
+      },
+      "maximum_solve_backward_residual": 1.6712926887294508e-16,
+      "A": {
+        "maximum_absolute_difference": 1.6653345369377348e-16,
+        "maximum_tolerance_fraction": 0.006153867863929847
+      },
+      "a0": {
+        "maximum_absolute_difference": 8.326672684688674e-17,
+        "maximum_tolerance_fraction": 4.738451225868127e-05
+      },
+      "ledger": {
+        "maximum_absolute_difference": 1.1882855810441129e-16,
+        "maximum_tolerance_fraction": 4.16217466395339e-05
+      },
+      "sha256": "8caa6ab384d93749bd20e0d6f50cf160af2e4d6df181e216efc162ed057e38a2"
+    },
+    "cuda": {
+      "F": {
+        "maximum_absolute_difference": 0.0,
+        "maximum_tolerance_fraction": 0.0
+      },
+      "Hface": {
+        "maximum_absolute_difference": 9.926167350636332e-24,
+        "maximum_tolerance_fraction": 0.003922434077522187
+      },
+      "source": {
+        "maximum_absolute_difference": 1.2312417981729306e-19,
+        "maximum_tolerance_fraction": 0.00010835407170416116
+      },
+      "unmasked_hydro": {
+        "maximum_absolute_difference": 2.8623360870090944e-17,
+        "maximum_tolerance_fraction": 0.009180805800060313
+      },
+      "masked_hydro": {
+        "maximum_absolute_difference": 3.3610267347050637e-18,
+        "maximum_tolerance_fraction": 0.009180805800060313
+      },
+      "pressure": {
+        "maximum_absolute_difference": 6.614989207980705e-22,
+        "maximum_tolerance_fraction": 0.0018063494696969316
+      },
+      "transport_remainder": {
+        "maximum_absolute_difference": 3.3610267347050637e-18,
+        "maximum_tolerance_fraction": 0.008704539221037616
+      },
+      "maximum_solve_backward_residual": 1.7130578565548416e-16,
+      "A": {
+        "maximum_absolute_difference": 1.416249929830915e-14,
+        "maximum_tolerance_fraction": 0.006153867863929847
+      },
+      "a0": {
+        "maximum_absolute_difference": 4.974373777472119e-15,
+        "maximum_tolerance_fraction": 0.0013184823852947943
+      },
+      "ledger": {
+        "maximum_absolute_difference": 1.1882855810441129e-16,
+        "maximum_tolerance_fraction": 4.16217466395339e-05
+      },
+      "sha256": "d44a4e04075359fa6e2da2148b60ca5151ad78519591385ffbfe92f15e20e893"
+    }
+  },
+  "cpu_omp_bitwise_equal": true,
+  "cpu_cuda_bitwise_equal": false,
+  "tolerance": "Node absolute elementary terms and ordered sum gamma_n; F/H absolute traction sums plus centroid/subtraction roundoff; source S/H perturbation bound solve(I-abs(invS)@dS,g) with column-norm solve roundoff. Solve backward residual <64eps checked separately.",
+  "scope": "Actual backend node flux, CSR cell assembly, compatible pressure/volume source and exterior/frozen ledger on fixed captured state; excludes factor K/Qfactor, gravity, massroot, geometry/reconstruction, MPI, evolution and Psi.",
+  "provenance": {
+    "moment_hydro_cell_source.h": "0e1c01d6eaeb581f6701dcdfb0be455316f8a7d541e89bb5f96f6195f71ab36b",
+    "moment_hydro_cell_harness.cu": "6de3975c0283488b31c802bed3d946e01c80a16798bff8646e5ee85115292e1d",
+    "hydro_harness": "55c89b21dd2149457ed80f3674721e3aafaaafb2b2c372f65e776249c1a683d3"
+  }
+}

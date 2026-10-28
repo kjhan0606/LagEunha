@@ -1,0 +1,101 @@
+{
+  "manifest": {
+    "purpose": "Export current pre-HG raw face endpoints from canonical t10, audit on/off parity",
+    "snapshots": 2,
+    "estimated_total_output_bytes": 85000000,
+    "MPI": 1,
+    "OMP": 8,
+    "time_reference": 10.0020667693911,
+    "raw_geometry": "full precision relative endpoints before common-segment clipping"
+  },
+  "source_sha256": "870a5e6c3ed004d6d84fa5a7ac8e2fd2131910d3b70cf3f559773e91eb94d9cc",
+  "comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_shf_raw_geometry_20261017/control/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_shf_raw_geometry_20261017/audit/khout.002306.dat",
+    "reference_sha256": "6fe1b39b0271276edbda76cd6b9c062b999b17c521f8cd5c8371445934142d6a",
+    "candidate_sha256": "a4c82923340c64bc7f816ac351c270bc350af05f567d772ec9e7ef3c79ea48a6",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "reconstruction": {
+    "raw_records": 221159,
+    "active_force_records": 120130,
+    "missing_own_records": 0,
+    "mismatches_above_print_precision": 0,
+    "worst_relative_area_error": 4.97828622890415e-07,
+    "worst_absolute_area_error": 4.999991812942861e-09,
+    "examples": [],
+    "raw_sha256": "681e72383eef941918093360f486d50c7a3569b8054a18e9a10184f2b613f06d",
+    "scope": "Rebuild common lengths from serial raw endpoints, compare with existing canonical pre-HG printed force faces. MPI raw-geometry exchange not covered."
+  },
+  "raw_file": "/gpfs/kjhan/LagForce/Codex_shf_raw_geometry_20261017/audit/raw_faces.dat",
+  "next_step": "Partition raw endpoint records and exchange reciprocal endpoints across MPI ranks, recompute common segments, compare with this single-rank reference."
+}

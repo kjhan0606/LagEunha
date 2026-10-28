@@ -1,0 +1,170 @@
+{
+  "cases": {
+    "t4": {
+      "inner": {
+        "directed_faces": 4820,
+        "heat": 3.4087386920602014e-06,
+        "cell_heat": 3.4087387085285226e-06,
+        "approaching_face_heat_fraction": 0.6308130869453819,
+        "receding_face_heat_fraction": 0.3691869130546182,
+        "heat_weighted_chi": 0.057890645328985704,
+        "chi_ge_half_heat_fraction": 0.0,
+        "delta_only_heat_fixed_Z": 2.272882079001853e-06,
+        "chi_bins": [
+          {
+            "range": [
+              0,
+              0.01
+            ],
+            "heat_fraction": 0.24003191158014534
+          },
+          {
+            "range": [
+              0.01,
+              0.1
+            ],
+            "heat_fraction": 0.5097916678084854
+          },
+          {
+            "range": [
+              0.1,
+              0.5
+            ],
+            "heat_fraction": 0.25017642061136924
+          },
+          {
+            "range": [
+              0.5,
+              1.000001
+            ],
+            "heat_fraction": 0.0
+          }
+        ]
+      },
+      "disk": {
+        "directed_faces": 72406,
+        "heat": 4.7456675764929563e-07,
+        "cell_heat": 4.745667607780005e-07,
+        "approaching_face_heat_fraction": 0.4598160658454589,
+        "receding_face_heat_fraction": 0.540183934154541,
+        "heat_weighted_chi": 0.023161064801496052,
+        "chi_ge_half_heat_fraction": 0.0,
+        "delta_only_heat_fixed_Z": 2.307542548662453e-07,
+        "chi_bins": [
+          {
+            "range": [
+              0,
+              0.01
+            ],
+            "heat_fraction": 0.26092427975914895
+          },
+          {
+            "range": [
+              0.01,
+              0.1
+            ],
+            "heat_fraction": 0.728859702842015
+          },
+          {
+            "range": [
+              0.1,
+              0.5
+            ],
+            "heat_fraction": 0.010216017398836066
+          },
+          {
+            "range": [
+              0.5,
+              1.000001
+            ],
+            "heat_fraction": 0.0
+          }
+        ]
+      }
+    },
+    "t6": {
+      "inner": {
+        "directed_faces": 4828,
+        "heat": 1.501352483932766e-05,
+        "cell_heat": 1.501352451816674e-05,
+        "approaching_face_heat_fraction": 0.7291827249303955,
+        "receding_face_heat_fraction": 0.27081727506960457,
+        "heat_weighted_chi": 0.12122590233825155,
+        "chi_ge_half_heat_fraction": 0.002936003671837432,
+        "delta_only_heat_fixed_Z": 9.827639026793221e-06,
+        "chi_bins": [
+          {
+            "range": [
+              0,
+              0.01
+            ],
+            "heat_fraction": 0.22101147497108292
+          },
+          {
+            "range": [
+              0.01,
+              0.1
+            ],
+            "heat_fraction": 0.25742746686948864
+          },
+          {
+            "range": [
+              0.1,
+              0.5
+            ],
+            "heat_fraction": 0.518625054487591
+          },
+          {
+            "range": [
+              0.5,
+              1.000001
+            ],
+            "heat_fraction": 0.002936003671837432
+          }
+        ]
+      },
+      "disk": {
+        "directed_faces": 72307,
+        "heat": 2.9926506830143387e-06,
+        "cell_heat": 2.992650652551322e-06,
+        "approaching_face_heat_fraction": 0.5269873667992123,
+        "receding_face_heat_fraction": 0.47301263320078774,
+        "heat_weighted_chi": 0.18745538350968513,
+        "chi_ge_half_heat_fraction": 0.14251143604928385,
+        "delta_only_heat_fixed_Z": 1.3689834470151288e-06,
+        "chi_bins": [
+          {
+            "range": [
+              0,
+              0.01
+            ],
+            "heat_fraction": 0.22294679731884567
+          },
+          {
+            "range": [
+              0.01,
+              0.1
+            ],
+            "heat_fraction": 0.4375586052186994
+          },
+          {
+            "range": [
+              0.1,
+              0.5
+            ],
+            "heat_fraction": 0.19698316141317118
+          },
+          {
+            "range": [
+              0.5,
+              1.000001
+            ],
+            "heat_fraction": 0.14251143604928385
+          }
+        ]
+      }
+    }
+  },
+  "scope": "Instantaneous directed-face contributions to owner-cell heat. Approaching faces in shear do not establish physical compression; chi is reconstructed compression share, not an independent truth. Delta-only fixed-Z probe is not an evolved alternative.",
+  "interpretation": "TCF heat is not restricted to approaching faces. At t6 receding faces contribute 27.1% in the inner background and 47.3% in the disk. With impedance frozen, removing chi leaves about 65.5% and 45.7% of heat respectively. This motivates separating curved-flow reconstruction residual from evolved perturbations, not disabling dissipation without shock validation."
+}

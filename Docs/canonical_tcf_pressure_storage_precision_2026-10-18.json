@@ -1,0 +1,28 @@
+{
+  "scope": "Isolate GPU-style pressure storage rounding on preserved actual face inputs.\n\nBoth evaluations use float64 arithmetic and identical geometry, velocity, Q.\nOnly Pi/Pj are rounded through float32. This is not the unsupported GPU TCF\npath, not a QBP replay, and not a complete mixed-precision error estimate.\n",
+  "faces": 68988,
+  "owners": 11498,
+  "pressure_storage": {
+    "relative_L2": 2.09838050462976e-08,
+    "max_absolute": 6.6111615693639075e-12
+  },
+  "independent_FP64_vs_saved_CPU_max_abs": 0.0,
+  "face_force": {
+    "relative_L2": 1.5698556493663075e-08,
+    "max_absolute": 1.7612170148526745e-13
+  },
+  "summed_cell_force": {
+    "relative_L2": 7.177274833592565e-08,
+    "max_absolute": 1.852065813131307e-13
+  },
+  "face_energy_work": {
+    "relative_L2": 1.719432649895205e-08,
+    "max_absolute": 2.1048227908732542e-13
+  },
+  "summed_cell_energy_work": {
+    "relative_L2": 6.458906694475354e-08,
+    "max_absolute": 2.6617493677368563e-13
+  },
+  "volume_and_heat_unchanged": true,
+  "limitations": "Pressure quantization only. Frozen rounded Q means density/sound-speed/QBP sensitivity is excluded. Full GPU equations remain unimplemented. An observed rounding difference alone does not demonstrate orbital instability."
+}

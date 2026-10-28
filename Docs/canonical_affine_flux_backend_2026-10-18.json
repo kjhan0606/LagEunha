@@ -1,0 +1,51 @@
+{
+  "manifest": {
+    "actual_geometry_faces": 68986,
+    "manufactured_general_affine_cases": 128,
+    "scope": "Straight-face algebra only; no production integration or MPI.",
+    "reference": "Two-point Gauss, exact to degree3."
+  },
+  "backends": {
+    "cpu1": {
+      "bitwise_equal_to_cpu1": true,
+      "max_abs_error_vs_gauss_per_component": [
+        2.220446049250313e-16,
+        8.881784197001252e-16,
+        8.881784197001252e-16,
+        8.881784197001252e-16,
+        4.440892098500626e-16,
+        1.7763568394002505e-15
+      ],
+      "max_scaled_error_vs_gauss": 3.56328705546366e-16
+    },
+    "cpu4": {
+      "bitwise_equal_to_cpu1": true,
+      "max_abs_error_vs_gauss_per_component": [
+        2.220446049250313e-16,
+        8.881784197001252e-16,
+        8.881784197001252e-16,
+        8.881784197001252e-16,
+        4.440892098500626e-16,
+        1.7763568394002505e-15
+      ],
+      "max_scaled_error_vs_gauss": 3.56328705546366e-16
+    },
+    "cuda": {
+      "bitwise_equal_to_cpu1": true,
+      "max_abs_error_vs_gauss_per_component": [
+        2.220446049250313e-16,
+        8.881784197001252e-16,
+        8.881784197001252e-16,
+        8.881784197001252e-16,
+        4.440892098500626e-16,
+        1.7763568394002505e-15
+      ],
+      "max_scaled_error_vs_gauss": 3.56328705546366e-16
+    }
+  },
+  "compiler_flags": "nvcc -O2 --fmad=false -Xcompiler=-fopenmp,-ffp-contract=off",
+  "FMA_scope": "Default optimized/FMA-enabled build not checked.",
+  "inputs_sha256": "334e2e6c9cf8aaa18fc5ac34891b8bdf24da6e7149b80592a1bcd3581e855896",
+  "binary_sha256": "ed51dba164424e9a4f5a9107305c7af146c3b872baea97363c5c314ed275cab5",
+  "header_sha256": "10f74c08ed700dabf01860da75105cb08549e83cb1787c672a1f33a43900af43"
+}

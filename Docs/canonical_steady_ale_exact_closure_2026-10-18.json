@@ -1,0 +1,137 @@
+{
+  "scope": "Independent exact-field ALE face flux plus discontinuity-split volume/gravity closure; constant-pressure Pi force source=0 explicitly.",
+  "results": [
+    {
+      "volume_order": 8,
+      "maximum_quad_vec_error_estimate": 1.0830469833919027e-14,
+      "checks": [
+        {
+          "face_motion": "actual",
+          "active_max_abs": 1.3381443441382382e-15,
+          "all_cells_max_abs": 1.3381443441382382e-15,
+          "active_column_max_abs": [
+            2.3042006670748183e-16,
+            9.410874857174178e-17,
+            1.1820514185523212e-16,
+            4.6214117602194626e-17,
+            1.9678269430611905e-17,
+            1.9678269430611905e-17,
+            5.884507291165075e-17,
+            1.0788988992027453e-15,
+            1.3381443441382382e-15,
+            4.3151246464923076e-17,
+            1.1405806854547507e-16,
+            1.6566609195578508e-16,
+            4.412702842016003e-17,
+            4.410534437671032e-16,
+            1.199127602768968e-16,
+            1.199127602768968e-16,
+            3.194059600142296e-16,
+            2.2502616089936645e-16,
+            4.537386091851836e-16
+          ],
+          "shared_boundary_global_sum_max": 8.630249292984615e-17
+        },
+        {
+          "face_motion": "exact_mass",
+          "active_max_abs": 1.3381426500723437e-15,
+          "all_cells_max_abs": 1.3381426500723437e-15,
+          "active_column_max_abs": [
+            2.2896655816999345e-16,
+            9.110008754309451e-17,
+            1.1499319291924381e-16,
+            4.615990749357035e-17,
+            1.680513367352532e-17,
+            1.680513367352532e-17,
+            5.992588695234724e-17,
+            1.0789039814004288e-15,
+            1.3381426500723437e-15,
+            4.5319650809894085e-17,
+            1.2224379494774062e-16,
+            1.6358577903732852e-16,
+            4.575333167888829e-17,
+            4.4352000370950773e-16,
+            1.205632815803881e-16,
+            1.205632815803881e-16,
+            3.0184188481996443e-16,
+            2.1916744576144526e-16,
+            4.356885488374313e-16
+          ],
+          "shared_boundary_global_sum_max": 8.912141857830846e-17
+        }
+      ],
+      "initial_raw_projection_max_difference": 6.288372600415926e-18,
+      "central_gravity_origin_torque_max": 2.168404344971009e-19,
+      "gravity_internal_identity_max": 2.168404344971009e-19,
+      "circular_gravity_work_max": 2.8927873819207815e-20,
+      "model_minus_exact_gravity_max": 8.807976740760753e-09
+    },
+    {
+      "volume_order": 16,
+      "maximum_quad_vec_error_estimate": 1.0830470268098648e-14,
+      "checks": [
+        {
+          "face_motion": "actual",
+          "active_max_abs": 1.3381578966653943e-15,
+          "all_cells_max_abs": 1.3381578966653943e-15,
+          "active_column_max_abs": [
+            2.3042006670748183e-16,
+            9.410874857174178e-17,
+            1.1820514185523212e-16,
+            4.6227670129350695e-17,
+            1.962405932198763e-17,
+            1.962405932198763e-17,
+            5.884507291165075e-17,
+            1.0794232125970957e-15,
+            1.3381578966653943e-15,
+            4.336808689942018e-17,
+            1.140851735997872e-16,
+            1.6566609195578508e-16,
+            4.401860820291148e-17,
+            4.410534437671032e-16,
+            1.199127602768968e-16,
+            1.199127602768968e-16,
+            3.191891195797325e-16,
+            2.2502616089936645e-16,
+            4.537386091851836e-16
+          ],
+          "shared_boundary_global_sum_max": 8.630249292984615e-17
+        },
+        {
+          "face_motion": "exact_mass",
+          "active_max_abs": 1.3381562025994997e-15,
+          "all_cells_max_abs": 1.3381562025994997e-15,
+          "active_column_max_abs": [
+            2.2896655816999345e-16,
+            9.110008754309451e-17,
+            1.1499319291924381e-16,
+            4.618701254788249e-17,
+            1.6750923564901044e-17,
+            1.6750923564901044e-17,
+            5.992588695234724e-17,
+            1.0794282947947792e-15,
+            1.3381562025994997e-15,
+            4.5536491244391186e-17,
+            1.2224379494774062e-16,
+            1.6359255530090655e-16,
+            4.5644911461639737e-17,
+            4.4352000370950773e-16,
+            1.205632815803881e-16,
+            1.205632815803881e-16,
+            3.017334646027159e-16,
+            2.1916755164056367e-16,
+            4.356885488374313e-16
+          ],
+          "shared_boundary_global_sum_max": 8.912141857830846e-17
+        }
+      ],
+      "initial_raw_projection_max_difference": 6.288372600415926e-18,
+      "central_gravity_origin_torque_max": 2.168404344971009e-19,
+      "gravity_internal_identity_max": 2.168404344971009e-19,
+      "circular_gravity_work_max": 3.470865506092402e-20,
+      "model_minus_exact_gravity_max": 8.807976741194434e-09,
+      "successive_volume_max_abs": 1.734723475976807e-18
+    }
+  ],
+  "limits": "Reference identity, not model improvement or production/backend/long-time validation. Frozen cells are not forced to zero in reference. Numerical potential evolution remains unavailable. Exact-mass and actual face motions share volume integrals."
+}

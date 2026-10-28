@@ -1,0 +1,893 @@
+{
+  "status": "completed_physical_state_comparison",
+  "time": 0.01,
+  "scope": "Physical diagnostics against the steady field on each actual moving cell.\n\nReference data are diagnostic only. No state reset, provider, or evolution.\n",
+  "state_sha256": "7abeafdefc76c6297676b6eca2b54fd1a92d96204c9b6f49be6392a617780e2a",
+  "diagnostics": {
+    "minimum_thermal": 2.0246858904180113e-08,
+    "minimum_R_eigenvalue": 1.368907498160054e-16,
+    "maximum_Pi_factor_defect": 5.421010862427522e-20,
+    "minimum_pressure": 2.7776729380397788e-05,
+    "maximum_pressure": 2.7784256897369063e-05
+  },
+  "reference_diagnostics": {
+    "minimum_thermal": 2.0246860425219577e-08,
+    "minimum_R_eigenvalue": 1.368884356694088e-16,
+    "maximum_Pi_factor_defect": 1.0842021724855044e-18,
+    "minimum_pressure": 2.777779632144756e-05,
+    "maximum_pressure": 2.7777796321447573e-05
+  },
+  "regions": {
+    "all": {
+      "cells": 19945,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 3.5251165808895726e-06,
+          "mass_weighted_RMS_error": 1.1776735147720999e-07,
+          "reference_mass_weighted_RMS": 0.0033174782265528863,
+          "relative_RMS": 3.549905784900336e-05
+        },
+        "mass": {
+          "maximum_absolute_error": 1.8329628305638725e-06,
+          "mass_weighted_RMS_error": 4.027756177664058e-08,
+          "reference_mass_weighted_RMS": 0.0009657963193856215,
+          "relative_RMS": 4.170399179224727e-05
+        },
+        "density": {
+          "maximum_absolute_error": 0.0018776715909216701,
+          "mass_weighted_RMS_error": 4.135550432139092e-05,
+          "reference_mass_weighted_RMS": 0.9889491423872557,
+          "relative_RMS": 4.1817624940309425e-05
+        },
+        "centroid": {
+          "maximum_absolute_error": 0.00030515873398240245,
+          "mass_weighted_RMS_error": 2.7907842134561355e-06,
+          "reference_mass_weighted_RMS": 1.4633514448833054,
+          "relative_RMS": 1.9071182272818175e-06
+        },
+        "velocity": {
+          "maximum_absolute_error": 0.0006062694604823671,
+          "mass_weighted_RMS_error": 6.702885269003276e-06,
+          "reference_mass_weighted_RMS": 0.893727093525588,
+          "relative_RMS": 7.499923989728938e-06
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 0.0005326036139697843,
+          "mass_weighted_RMS_error": 6.32459318819823e-06,
+          "reference_mass_weighted_RMS": 4.7294260443410495e-05,
+          "relative_RMS": 0.13372855667689026
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 0.0004984592630090656,
+          "mass_weighted_RMS_error": 2.219953137617564e-06,
+          "reference_mass_weighted_RMS": 0.8937270922742289,
+          "relative_RMS": 2.4839273160764825e-06
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 5.47982784406746e-10,
+          "mass_weighted_RMS_error": 2.284000525787174e-11,
+          "reference_mass_weighted_RMS": 2.963665531541172e-08,
+          "relative_RMS": 0.0007706674391828025
+        },
+        "origin_L": {
+          "maximum_absolute_error": 1.3148696895971747e-06,
+          "mass_weighted_RMS_error": 2.9136539716167766e-08,
+          "reference_mass_weighted_RMS": 0.0011408440295993857,
+          "relative_RMS": 2.5539459347829726e-05
+        },
+        "R": {
+          "maximum_absolute_error": 4.12184323942985e-12,
+          "mass_weighted_RMS_error": 1.6202458650385835e-13,
+          "reference_mass_weighted_RMS": 4.6795649074109824e-11,
+          "relative_RMS": 0.0034623857069972803
+        },
+        "thermal": {
+          "maximum_absolute_error": 9.444943457847402e-12,
+          "mass_weighted_RMS_error": 1.240891987228599e-12,
+          "reference_mass_weighted_RMS": 4.0701458656263064e-08,
+          "relative_RMS": 3.0487653961208903e-05
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 5.146081438004834e-05,
+          "mass_weighted_RMS_error": 1.89878147616432e-07,
+          "reference_mass_weighted_RMS": 0.00033646841135323964,
+          "relative_RMS": 0.000564326817048776
+        },
+        "pressure": {
+          "maximum_absolute_error": 6.460575921496978e-09,
+          "mass_weighted_RMS_error": 8.482836915449955e-10,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 3.0538192509174154e-05
+        },
+        "Psi": {
+          "maximum_absolute_error": 3.5618859646791947e-06,
+          "mass_weighted_RMS_error": 7.780903676759849e-08,
+          "reference_mass_weighted_RMS": 0.0008282301704898856,
+          "relative_RMS": 9.394615113039849e-05
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 3.053819250917449e-05,
+        "maximum": 0.0002325805779095835
+      },
+      "relative_mass_reference_error": {
+        "RMS": 7.585543073041173e-05,
+        "maximum": 0.012207507607432994
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 19945,
+        "RMS": 0.0002585136927451036,
+        "maximum": 0.020897529019195494
+      }
+    },
+    "inner": {
+      "cells": 490,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 4.996966454845004e-09,
+          "mass_weighted_RMS_error": 2.1511349536045674e-09,
+          "reference_mass_weighted_RMS": 3.127038269710348e-05,
+          "relative_RMS": 6.879144954640492e-05
+        },
+        "mass": {
+          "maximum_absolute_error": 2.1169361940052446e-09,
+          "mass_weighted_RMS_error": 6.118122634406151e-10,
+          "reference_mass_weighted_RMS": 9.781135580112509e-06,
+          "relative_RMS": 6.255022828684455e-05
+        },
+        "density": {
+          "maximum_absolute_error": 2.1779647723669388e-06,
+          "mass_weighted_RMS_error": 6.264807824158676e-07,
+          "reference_mass_weighted_RMS": 0.01,
+          "relative_RMS": 6.264807824158677e-05
+        },
+        "centroid": {
+          "maximum_absolute_error": 1.0625717565035386e-05,
+          "mass_weighted_RMS_error": 4.019553362804506e-06,
+          "reference_mass_weighted_RMS": 0.2758496234639059,
+          "relative_RMS": 1.4571538334292678e-05
+        },
+        "velocity": {
+          "maximum_absolute_error": 4.983949539083543e-05,
+          "mass_weighted_RMS_error": 1.7206469063679226e-05,
+          "reference_mass_weighted_RMS": 1.4903169293257001,
+          "relative_RMS": 1.1545510035549528e-05
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 5.0707463924604124e-05,
+          "mass_weighted_RMS_error": 1.6598132339558175e-05,
+          "reference_mass_weighted_RMS": 7.355911253339277e-05,
+          "relative_RMS": 0.22564345555451498
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 2.0074176487305806e-05,
+          "mass_weighted_RMS_error": 4.534818681916e-06,
+          "reference_mass_weighted_RMS": 1.4903169275103334,
+          "relative_RMS": 3.0428552465626855e-06
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 6.23671434837536e-12,
+          "mass_weighted_RMS_error": 2.6247466651089606e-12,
+          "reference_mass_weighted_RMS": 7.253055890642705e-09,
+          "relative_RMS": 0.0003618814889452586
+        },
+        "origin_L": {
+          "maximum_absolute_error": 1.2439474142248935e-09,
+          "mass_weighted_RMS_error": 3.1769504867960227e-10,
+          "reference_mass_weighted_RMS": 4.287661516712534e-06,
+          "relative_RMS": 7.40951792582703e-05
+        },
+        "R": {
+          "maximum_absolute_error": 2.6465018161067336e-13,
+          "mass_weighted_RMS_error": 1.1241219250955129e-13,
+          "reference_mass_weighted_RMS": 2.1954270568165624e-11,
+          "relative_RMS": 0.005120288199078337
+        },
+        "thermal": {
+          "maximum_absolute_error": 1.9076935663489836e-12,
+          "mass_weighted_RMS_error": 7.525061267760493e-13,
+          "reference_mass_weighted_RMS": 4.0754739357150274e-08,
+          "relative_RMS": 1.8464260565661666e-05
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 9.277323877636759e-07,
+          "mass_weighted_RMS_error": 2.6385839662937104e-07,
+          "reference_mass_weighted_RMS": 0.004166667461395264,
+          "relative_RMS": 6.33260031125725e-05
+        },
+        "pressure": {
+          "maximum_absolute_error": 1.3075045725277818e-09,
+          "mass_weighted_RMS_error": 5.136239706478025e-10,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 1.8490450599611725e-05
+        },
+        "Psi": {
+          "maximum_absolute_error": 6.704333307477167e-09,
+          "mass_weighted_RMS_error": 1.9726502659299033e-09,
+          "reference_mass_weighted_RMS": 3.6893063142659355e-05,
+          "relative_RMS": 5.346940855255071e-05
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 1.8490450599607903e-05,
+        "maximum": 4.7070133188291906e-05
+      },
+      "relative_mass_reference_error": {
+        "RMS": 6.26480782415892e-05,
+        "maximum": 0.0002177964772366513
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 490,
+        "RMS": 0.0006414922440731157,
+        "maximum": 0.0017819478018714404
+      }
+    },
+    "cavity": {
+      "cells": 754,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 2.2556799470569423e-07,
+          "mass_weighted_RMS_error": 5.506409688514985e-08,
+          "reference_mass_weighted_RMS": 3.136281163792919e-05,
+          "relative_RMS": 0.0017557130247390534
+        },
+        "mass": {
+          "maximum_absolute_error": 1.214241971579833e-07,
+          "mass_weighted_RMS_error": 1.7838130033643393e-08,
+          "reference_mass_weighted_RMS": 9.778703243919382e-06,
+          "relative_RMS": 0.0018241815493005727
+        },
+        "density": {
+          "maximum_absolute_error": 0.00012207507607433013,
+          "mass_weighted_RMS_error": 1.8147223465064637e-05,
+          "reference_mass_weighted_RMS": 0.01,
+          "relative_RMS": 0.0018147223465064637
+        },
+        "centroid": {
+          "maximum_absolute_error": 0.00030515873398240245,
+          "mass_weighted_RMS_error": 5.199197570303167e-05,
+          "reference_mass_weighted_RMS": 0.3422336336736667,
+          "relative_RMS": 0.0001519195385471905
+        },
+        "velocity": {
+          "maximum_absolute_error": 0.0006062694604823671,
+          "mass_weighted_RMS_error": 0.00010152036007064057,
+          "reference_mass_weighted_RMS": 1.4961192353950643,
+          "relative_RMS": 6.785579495863721e-05
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 0.0005326036139697843,
+          "mass_weighted_RMS_error": 7.193346721494375e-05,
+          "reference_mass_weighted_RMS": 6.696367671938927e-05,
+          "relative_RMS": 1.0742162130132185
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 0.0004984592630090656,
+          "mass_weighted_RMS_error": 7.163769819940697e-05,
+          "reference_mass_weighted_RMS": 1.4961192338964757,
+          "relative_RMS": 4.788234558875002e-05
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 5.714737555879064e-11,
+          "mass_weighted_RMS_error": 9.848065849241041e-12,
+          "reference_mass_weighted_RMS": 5.900533554546436e-09,
+          "relative_RMS": 0.0016690127694728523
+        },
+        "origin_L": {
+          "maximum_absolute_error": 8.464237353530987e-08,
+          "mass_weighted_RMS_error": 1.223697915318157e-08,
+          "reference_mass_weighted_RMS": 5.15254619333591e-06,
+          "relative_RMS": 0.0023749382720737898
+        },
+        "R": {
+          "maximum_absolute_error": 4.283155569773652e-13,
+          "mass_weighted_RMS_error": 1.243129129137927e-13,
+          "reference_mass_weighted_RMS": 1.8254553315256228e-11,
+          "relative_RMS": 0.006809967396457644
+        },
+        "thermal": {
+          "maximum_absolute_error": 2.2080265970420824e-12,
+          "mass_weighted_RMS_error": 7.133021115553321e-13,
+          "reference_mass_weighted_RMS": 4.07446046210792e-08,
+          "relative_RMS": 1.7506664212083326e-05
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 5.146081438004834e-05,
+          "mass_weighted_RMS_error": 7.600550310814837e-06,
+          "reference_mass_weighted_RMS": 0.004166667461395264,
+          "relative_RMS": 0.0018241317266700454
+        },
+        "pressure": {
+          "maximum_absolute_error": 1.5088774362920806e-09,
+          "mass_weighted_RMS_error": 4.869430256932171e-10,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 1.7529937222458595e-05
+        },
+        "Psi": {
+          "maximum_absolute_error": 2.503612381216237e-07,
+          "mass_weighted_RMS_error": 3.799509120674791e-08,
+          "reference_mass_weighted_RMS": 3.255850226455603e-05,
+          "relative_RMS": 0.0011669790857704865
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 1.7529937222452266e-05,
+        "maximum": 5.431955144417523e-05
+      },
+      "relative_mass_reference_error": {
+        "RMS": 0.001814722346506463,
+        "maximum": 0.012207507607432994
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 754,
+        "RMS": 0.0027912706724849486,
+        "maximum": 0.020897529019195494
+      }
+    },
+    "disk_core": {
+      "cells": 11812,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 2.64347340317027e-06,
+          "mass_weighted_RMS_error": 9.113199554494145e-08,
+          "reference_mass_weighted_RMS": 0.003347811092211509,
+          "relative_RMS": 2.7221367345653054e-05
+        },
+        "mass": {
+          "maximum_absolute_error": 1.3509227275533336e-06,
+          "mass_weighted_RMS_error": 3.1222655768298615e-08,
+          "reference_mass_weighted_RMS": 0.000976595178824309,
+          "relative_RMS": 3.1970929659806995e-05
+        },
+        "density": {
+          "maximum_absolute_error": 0.0013880913143127227,
+          "mass_weighted_RMS_error": 3.203876413397973e-05,
+          "reference_mass_weighted_RMS": 0.9999999999999999,
+          "relative_RMS": 3.203876413397973e-05
+        },
+        "centroid": {
+          "maximum_absolute_error": 3.657673887424995e-05,
+          "mass_weighted_RMS_error": 1.146224046266302e-06,
+          "reference_mass_weighted_RMS": 1.4496849717533096,
+          "relative_RMS": 7.906711241408612e-07
+        },
+        "velocity": {
+          "maximum_absolute_error": 5.2500283622594623e-05,
+          "mass_weighted_RMS_error": 1.8833474513414454e-06,
+          "reference_mass_weighted_RMS": 0.8943996202214101,
+          "relative_RMS": 2.1057113719203274e-06
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 4.936843155681214e-05,
+          "mass_weighted_RMS_error": 1.4812516971821878e-06,
+          "reference_mass_weighted_RMS": 8.411279867839046e-06,
+          "relative_RMS": 0.17610300934651202
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 4.6346787213158436e-05,
+          "mass_weighted_RMS_error": 1.1631384406282143e-06,
+          "reference_mass_weighted_RMS": 0.8943996201818586,
+          "relative_RMS": 1.3004683973274863e-06
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 2.980228566099724e-10,
+          "mass_weighted_RMS_error": 1.785125860812657e-11,
+          "reference_mass_weighted_RMS": 2.9424561576862425e-08,
+          "relative_RMS": 0.0006066788305917749
+        },
+        "origin_L": {
+          "maximum_absolute_error": 9.609595832340981e-07,
+          "mass_weighted_RMS_error": 2.2642119623699287e-08,
+          "reference_mass_weighted_RMS": 0.0011529387207643257,
+          "relative_RMS": 1.963861497225888e-05
+        },
+        "R": {
+          "maximum_absolute_error": 4.12184323942985e-12,
+          "mass_weighted_RMS_error": 1.5648036155216496e-13,
+          "reference_mass_weighted_RMS": 4.7217295804900524e-11,
+          "relative_RMS": 0.003314047509174051
+        },
+        "thermal": {
+          "maximum_absolute_error": 9.444943457847402e-12,
+          "mass_weighted_RMS_error": 1.1793762656599574e-12,
+          "reference_mass_weighted_RMS": 4.069147354562737e-08,
+          "relative_RMS": 2.8983375702468045e-05
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 4.95304542441681e-08,
+          "mass_weighted_RMS_error": 1.39574958782906e-09,
+          "reference_mass_weighted_RMS": 4.1666674613952636e-05,
+          "relative_RMS": 3.34979837186641e-05
+        },
+        "pressure": {
+          "maximum_absolute_error": 6.460575921496978e-09,
+          "mass_weighted_RMS_error": 8.055916392814539e-10,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 2.9001279653686824e-05
+        },
+        "Psi": {
+          "maximum_absolute_error": 2.6670421052232328e-06,
+          "mass_weighted_RMS_error": 6.022058391794901e-08,
+          "reference_mass_weighted_RMS": 0.0008366759376640983,
+          "relative_RMS": 7.197599597052817e-05
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 2.900127965368733e-05,
+        "maximum": 0.0002325805779095835
+      },
+      "relative_mass_reference_error": {
+        "RMS": 3.203876413397961e-05,
+        "maximum": 0.0013880913143127054
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 11812,
+        "RMS": 6.575728930420117e-05,
+        "maximum": 0.0020620562515419076
+      }
+    },
+    "inner_contact": {
+      "cells": 101,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 3.5251165808895726e-06,
+          "mass_weighted_RMS_error": 1.1659848739220153e-06,
+          "reference_mass_weighted_RMS": 0.00146035165631622,
+          "relative_RMS": 0.0007984274670275284
+        },
+        "mass": {
+          "maximum_absolute_error": 1.8329628305638725e-06,
+          "mass_weighted_RMS_error": 3.987166304892041e-07,
+          "reference_mass_weighted_RMS": 0.0004966008116907998,
+          "relative_RMS": 0.0008028916205989981
+        },
+        "density": {
+          "maximum_absolute_error": 0.0018776715909216701,
+          "mass_weighted_RMS_error": 0.0004097426754264419,
+          "reference_mass_weighted_RMS": 0.5120116921623048,
+          "relative_RMS": 0.0008002603879923816
+        },
+        "centroid": {
+          "maximum_absolute_error": 7.571395193606972e-05,
+          "mass_weighted_RMS_error": 3.370678761797897e-05,
+          "reference_mass_weighted_RMS": 0.5076839339104987,
+          "relative_RMS": 6.639325250722086e-05
+        },
+        "velocity": {
+          "maximum_absolute_error": 0.00019911916189255252,
+          "mass_weighted_RMS_error": 9.108417172725142e-05,
+          "reference_mass_weighted_RMS": 1.403203834941529,
+          "relative_RMS": 6.49115755381661e-05
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 0.00020193965160357485,
+          "mass_weighted_RMS_error": 9.053225574305864e-05,
+          "reference_mass_weighted_RMS": 0.0006701218618238345,
+          "relative_RMS": 0.13509819765715728
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 3.51553197754928e-05,
+          "mass_weighted_RMS_error": 1.0011843452302923e-05,
+          "reference_mass_weighted_RMS": 1.40320367492795,
+          "relative_RMS": 7.134989475292671e-06
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 5.47982784406746e-10,
+          "mass_weighted_RMS_error": 2.2374208827283458e-10,
+          "reference_mass_weighted_RMS": 8.982173465224986e-08,
+          "relative_RMS": 0.0024909571067522275
+        },
+        "origin_L": {
+          "maximum_absolute_error": 1.3148696895971747e-06,
+          "mass_weighted_RMS_error": 2.8634332101403294e-07,
+          "reference_mass_weighted_RMS": 0.00035386004424055415,
+          "relative_RMS": 0.0008091993591098311
+        },
+        "R": {
+          "maximum_absolute_error": 1.2721280199742015e-12,
+          "mass_weighted_RMS_error": 7.574084180027872e-13,
+          "reference_mass_weighted_RMS": 7.057695838085998e-11,
+          "relative_RMS": 0.010731667039482275
+        },
+        "thermal": {
+          "maximum_absolute_error": 9.023811434747513e-12,
+          "mass_weighted_RMS_error": 6.64314224343819e-12,
+          "reference_mass_weighted_RMS": 4.0413269711443866e-08,
+          "relative_RMS": 0.00016438022191401762
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 3.153038193507671e-07,
+          "mass_weighted_RMS_error": 7.333460413770628e-08,
+          "reference_mass_weighted_RMS": 8.138102738735264e-05,
+          "relative_RMS": 0.0009011265462237597
+        },
+        "pressure": {
+          "maximum_absolute_error": 6.242666251614966e-09,
+          "mass_weighted_RMS_error": 4.567349333507754e-09,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 0.0001644244662410909
+        },
+        "Psi": {
+          "maximum_absolute_error": 3.5618859646791947e-06,
+          "mass_weighted_RMS_error": 7.729071971682718e-07,
+          "reference_mass_weighted_RMS": 0.0009781140582711544,
+          "relative_RMS": 0.0007902015011770796
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 0.00016442446624108554,
+        "maximum": 0.00022473583503076266
+      },
+      "relative_mass_reference_error": {
+        "RMS": 0.0007983095365810419,
+        "maximum": 0.0036619079038064414
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 101,
+        "RMS": 0.0036965117376932836,
+        "maximum": 0.008245888053096336
+      }
+    },
+    "outer_contact": {
+      "cells": 402,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 3.637734840528182e-07,
+          "mass_weighted_RMS_error": 5.0018124644741685e-08,
+          "reference_mass_weighted_RMS": 0.002386370820851066,
+          "relative_RMS": 2.0959912938804463e-05
+        },
+        "mass": {
+          "maximum_absolute_error": 1.0956818109525337e-07,
+          "mass_weighted_RMS_error": 1.0374638992841732e-08,
+          "reference_mass_weighted_RMS": 0.000491941509766126,
+          "relative_RMS": 2.1089171754938797e-05
+        },
+        "density": {
+          "maximum_absolute_error": 0.0001121905078853569,
+          "mass_weighted_RMS_error": 1.0622196810883074e-05,
+          "reference_mass_weighted_RMS": 0.5036343316971847,
+          "relative_RMS": 2.1091089590909336e-05
+        },
+        "centroid": {
+          "maximum_absolute_error": 3.88197465617246e-06,
+          "mass_weighted_RMS_error": 1.1140627849804054e-06,
+          "reference_mass_weighted_RMS": 1.9922413485613923,
+          "relative_RMS": 5.592007142030637e-07
+        },
+        "velocity": {
+          "maximum_absolute_error": 1.6512518080658012e-06,
+          "mass_weighted_RMS_error": 3.9158292146151053e-07,
+          "reference_mass_weighted_RMS": 0.7084738656623774,
+          "relative_RMS": 5.527132904124922e-07
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 1.6182989721613694e-06,
+          "mass_weighted_RMS_error": 3.8976822004886727e-07,
+          "reference_mass_weighted_RMS": 0.00012647308375525484,
+          "relative_RMS": 0.0030818274408737404
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 4.089469360923914e-07,
+          "mass_weighted_RMS_error": 3.765526550804069e-08,
+          "reference_mass_weighted_RMS": 0.7084738543737175,
+          "relative_RMS": 5.314983083084626e-08
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 7.78304348324644e-12,
+          "mass_weighted_RMS_error": 8.822338804952616e-13,
+          "reference_mass_weighted_RMS": 1.108713768375994e-08,
+          "relative_RMS": 7.957273605319501e-05
+        },
+        "origin_L": {
+          "maximum_absolute_error": 1.5425460171160626e-07,
+          "mass_weighted_RMS_error": 1.4611437758655716e-08,
+          "reference_mass_weighted_RMS": 0.0006943623451962402,
+          "relative_RMS": 2.1042958132365663e-05
+        },
+        "R": {
+          "maximum_absolute_error": 7.554929789314298e-17,
+          "mass_weighted_RMS_error": 2.093028102528046e-17,
+          "reference_mass_weighted_RMS": 7.289994823360589e-14,
+          "relative_RMS": 0.0002871096829617759
+        },
+        "thermal": {
+          "maximum_absolute_error": 2.388762507298057e-14,
+          "mass_weighted_RMS_error": 7.649108043090636e-15,
+          "reference_mass_weighted_RMS": 4.0699300219248915e-08,
+          "relative_RMS": 1.8794200396283364e-07
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 1.8512604095738752e-08,
+          "mass_weighted_RMS_error": 1.7572515903091037e-09,
+          "reference_mass_weighted_RMS": 8.273215267957204e-05,
+          "relative_RMS": 2.1240249810917815e-05
+        },
+        "pressure": {
+          "maximum_absolute_error": 1.6307897740541755e-11,
+          "mass_weighted_RMS_error": 5.220840834616679e-12,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 1.8795014457592542e-07
+        },
+        "Psi": {
+          "maximum_absolute_error": 5.5280609072246075e-08,
+          "mass_weighted_RMS_error": 5.230440772406844e-09,
+          "reference_mass_weighted_RMS": 0.00024692784766901417,
+          "relative_RMS": 2.1182061163946993e-05
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 1.8795014458008213e-07,
+        "maximum": 5.870839267386461e-07
+      },
+      "relative_mass_reference_error": {
+        "RMS": 2.1124741159803397e-05,
+        "maximum": 0.0002231901879447925
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 402,
+        "RMS": 3.152163683439459e-05,
+        "maximum": 0.00013087817562419817
+      }
+    },
+    "dynamic_buffer": {
+      "cells": 6407,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 1.867178468773872e-08,
+          "mass_weighted_RMS_error": 1.8872237570333753e-09,
+          "reference_mass_weighted_RMS": 5.78536574475933e-05,
+          "relative_RMS": 3.262064734183687e-05
+        },
+        "mass": {
+          "maximum_absolute_error": 6.241181046347344e-09,
+          "mass_weighted_RMS_error": 3.8072860629296103e-10,
+          "reference_mass_weighted_RMS": 9.78054136565571e-06,
+          "relative_RMS": 3.892715055936335e-05
+        },
+        "density": {
+          "maximum_absolute_error": 6.385660959763728e-06,
+          "mass_weighted_RMS_error": 3.8979130803720844e-07,
+          "reference_mass_weighted_RMS": 0.01,
+          "relative_RMS": 3.897913080372084e-05
+        },
+        "centroid": {
+          "maximum_absolute_error": 1.7659453022123017e-05,
+          "mass_weighted_RMS_error": 1.1722953065745752e-06,
+          "reference_mass_weighted_RMS": 2.2496194087478667,
+          "relative_RMS": 5.211082825903748e-07
+        },
+        "velocity": {
+          "maximum_absolute_error": 5.34338231428233e-06,
+          "mass_weighted_RMS_error": 2.52363350197212e-07,
+          "reference_mass_weighted_RMS": 0.6683657752394381,
+          "relative_RMS": 3.7758269430657834e-07
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 5.4180643108692195e-06,
+          "mass_weighted_RMS_error": 1.7449453792585586e-07,
+          "reference_mass_weighted_RMS": 9.942461132230077e-07,
+          "relative_RMS": 0.17550437020085893
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 2.8679443970780483e-06,
+          "mass_weighted_RMS_error": 1.823154320319362e-07,
+          "reference_mass_weighted_RMS": 0.6683657752386986,
+          "relative_RMS": 2.7277792907158433e-07
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 2.6994710483065846e-13,
+          "mass_weighted_RMS_error": 1.802091060139645e-14,
+          "reference_mass_weighted_RMS": 9.9639706908598e-11,
+          "relative_RMS": 0.00018086073474631438
+        },
+        "origin_L": {
+          "maximum_absolute_error": 8.860181784632357e-09,
+          "mass_weighted_RMS_error": 5.411407304166735e-10,
+          "reference_mass_weighted_RMS": 1.465989941610796e-05,
+          "relative_RMS": 3.6912990673188417e-05
+        },
+        "R": {
+          "maximum_absolute_error": 1.908454397927737e-17,
+          "mass_weighted_RMS_error": 1.1643798765591323e-18,
+          "reference_mass_weighted_RMS": 2.462848212913991e-15,
+          "relative_RMS": 0.0004727777661870044
+        },
+        "thermal": {
+          "maximum_absolute_error": 2.2276565555184137e-14,
+          "mass_weighted_RMS_error": 1.6916970901132412e-15,
+          "reference_mass_weighted_RMS": 4.075226346310804e-08,
+          "relative_RMS": 4.15117332475211e-08
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 2.6619134899860675e-06,
+          "mass_weighted_RMS_error": 1.625079847070803e-07,
+          "reference_mass_weighted_RMS": 0.004166667461395264,
+          "relative_RMS": 3.900190889067551e-05
+        },
+        "pressure": {
+          "maximum_absolute_error": 1.5198448514395233e-11,
+          "mass_weighted_RMS_error": 1.1472548068094654e-12,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 4.130114547364783e-08
+        },
+        "Psi": {
+          "maximum_absolute_error": 3.096813616485411e-09,
+          "mass_weighted_RMS_error": 1.884929652943671e-10,
+          "reference_mass_weighted_RMS": 4.375197663772984e-06,
+          "relative_RMS": 4.308215988847891e-05
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 4.130114547386714e-08,
+        "maximum": 5.471437813822712e-07
+      },
+      "relative_mass_reference_error": {
+        "RMS": 3.8979130803722374e-05,
+        "maximum": 0.0006385660959763858
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 6407,
+        "RMS": 1.4299730394532319e-05,
+        "maximum": 0.0004424422229937872
+      }
+    },
+    "wall": {
+      "cells": 469,
+      "fields": {
+        "raw": {
+          "maximum_absolute_error": 6.42797580517173e-10,
+          "mass_weighted_RMS_error": 2.1925755734312313e-10,
+          "reference_mass_weighted_RMS": 9.61205852554423e-05,
+          "relative_RMS": 2.2810676481051583e-06
+        },
+        "mass": {
+          "maximum_absolute_error": 1.0915329538904587e-10,
+          "mass_weighted_RMS_error": 3.0913869897236694e-11,
+          "reference_mass_weighted_RMS": 1.3895623736389552e-05,
+          "relative_RMS": 2.224719845880695e-06
+        },
+        "density": {
+          "maximum_absolute_error": 1.0738296530275748e-07,
+          "mass_weighted_RMS_error": 2.4178750211860725e-08,
+          "reference_mass_weighted_RMS": 0.009999999999999995,
+          "relative_RMS": 2.4178750211860737e-06
+        },
+        "centroid": {
+          "maximum_absolute_error": 8.172063634681592e-07,
+          "mass_weighted_RMS_error": 5.286986016485079e-07,
+          "reference_mass_weighted_RMS": 2.4779051711680755,
+          "relative_RMS": 2.1336514722203082e-07
+        },
+        "velocity": {
+          "maximum_absolute_error": 1.7579683675439384e-07,
+          "mass_weighted_RMS_error": 1.2748140986961538e-07,
+          "reference_mass_weighted_RMS": 0.6352704567375748,
+          "relative_RMS": 2.0067265605942848e-07
+        },
+        "radial_velocity": {
+          "maximum_absolute_error": 1.7082442935190123e-07,
+          "mass_weighted_RMS_error": 1.2573548966205345e-07,
+          "reference_mass_weighted_RMS": 1.3444308844488061e-06,
+          "relative_RMS": 0.09352320830802906
+        },
+        "azimuthal_velocity": {
+          "maximum_absolute_error": 7.774638255408917e-08,
+          "mass_weighted_RMS_error": 2.102609098804493e-08,
+          "reference_mass_weighted_RMS": 0.6352704567361521,
+          "relative_RMS": 3.3097857400879777e-08
+        },
+        "intrinsic_ell": {
+          "maximum_absolute_error": 2.4606196579937808e-14,
+          "mass_weighted_RMS_error": 6.263064348823257e-15,
+          "reference_mass_weighted_RMS": 1.0887280858659045e-10,
+          "relative_RMS": 5.752643318503184e-05
+        },
+        "origin_L": {
+          "maximum_absolute_error": 1.7282843162651869e-10,
+          "mass_weighted_RMS_error": 4.8892479259221985e-11,
+          "reference_mass_weighted_RMS": 2.1868317908889837e-05,
+          "relative_RMS": 2.235767719443404e-06
+        },
+        "R": {
+          "maximum_absolute_error": 8.734088322323694e-19,
+          "mass_weighted_RMS_error": 6.561290378589226e-19,
+          "reference_mass_weighted_RMS": 4.669051117750724e-15,
+          "relative_RMS": 0.00014052727659469432
+        },
+        "thermal": {
+          "maximum_absolute_error": 7.196153208782643e-15,
+          "mass_weighted_RMS_error": 1.8404786452217493e-15,
+          "reference_mass_weighted_RMS": 5.789844327820565e-08,
+          "relative_RMS": 3.178805061093152e-08
+        },
+        "specific_thermal": {
+          "maximum_absolute_error": 4.398791444547995e-08,
+          "mass_weighted_RMS_error": 1.0132878537283796e-08,
+          "reference_mass_weighted_RMS": 0.0041666674613952655,
+          "relative_RMS": 2.43189038510183e-06
+        },
+        "pressure": {
+          "maximum_absolute_error": 6.472012345265423e-12,
+          "mass_weighted_RMS_error": 1.409153087731445e-12,
+          "reference_mass_weighted_RMS": 2.7777796321447566e-05,
+          "relative_RMS": 5.072947729274771e-08
+        },
+        "Psi": {
+          "maximum_absolute_error": 4.355734054610086e-11,
+          "mass_weighted_RMS_error": 1.2370553884443345e-11,
+          "reference_mass_weighted_RMS": 5.610655159737481e-06,
+          "relative_RMS": 2.204832329246582e-06
+        }
+      },
+      "relative_pressure_error": {
+        "RMS": 5.072947729182468e-08,
+        "maximum": 2.3299228889040075e-07
+      },
+      "relative_mass_reference_error": {
+        "RMS": 2.4178750211889338e-06,
+        "maximum": 1.0738296530258005e-05
+      },
+      "velocity_direction_error_degrees": {
+        "cells": 469,
+        "RMS": 1.1337206523299552e-05,
+        "maximum": 1.5402674994308714e-05
+      }
+    }
+  },
+  "global_values": {
+    "raw_totals_minus_reference": [
+      -1.0712425683925136e-17,
+      -7.523477733438871e-15,
+      -2.2696471929722337e-14,
+      -2.041881164831835e-13,
+      1.466309940228651e-14,
+      1.466309940228651e-14,
+      -2.264061300366844e-13,
+      -5.218670167508808e-12,
+      -6.648032011166808e-12,
+      -2.8160408513874904e-11,
+      2.359219749630621e-12,
+      2.3592001076493712e-12,
+      -3.279199772647099e-11,
+      -4.7646153405155e-09,
+      7.008259459449736e-12,
+      7.008259459449736e-12,
+      -4.762651320587005e-09,
+      4.729860905040766e-11
+    ],
+    "origin_L_change": 1.1584081316473303e-17,
+    "hydro_energy_change": 4.7298607535700994e-11,
+    "Psi_change": -4.729860624023896e-11,
+    "combined_energy_change": 1.2954620329800163e-18,
+    "stored_P_E_L_ledger": [
+      -5.218665338400223e-12,
+      -6.648022148937437e-12,
+      4.729860628560747e-11,
+      1.385524001749923e-20
+    ],
+    "Psi_reconstruction_q48_defect_signed": -6.14408884894836e-16,
+    "Psi_reconstruction_q48_defect_absolute_sum": 6.4595132704166315e-15,
+    "initial_Psi_reconstruction_q48_defect_signed": -1.2443331181639662e-15,
+    "combined_energy_change_using_q48_Psi_vs_IC_target": -6.13113422861856e-16,
+    "combined_energy_change_q48_vs_initial_q48": 6.312196953021101e-16,
+    "measured_reconstruction_defect_absolute_sums": 1.2641414287413956e-14,
+    "P_E_L_update_ledger_residual": [
+      -4.622619282355077e-18,
+      -6.529024132433562e-18,
+      1.2500935222140012e-18,
+      1.1569518862881465e-17
+    ]
+  },
+  "mask_definition": {
+    "inner": "Original stable registry radius<0.4, retained from previous inner diagnostics",
+    "contact": "Working radial-bound envelope of each actual curved cell; density radii0.5/2.0",
+    "disk_core": "Cell entirely between density contacts",
+    "buffer": "Cell entirely beyond r2 and not touching wall",
+    "wall": "Actual circular boundary arcs"
+  },
+  "phase_speed_roundoff": 1.8662173833721317e-13,
+  "provider_calls": 0,
+  "evolution_steps": 0,
+  "limits": "One state against its actual-cell steady reference. Numerical positivity/conservation alone does not prove physical accuracy; no time-order or long-term stability claim."
+}

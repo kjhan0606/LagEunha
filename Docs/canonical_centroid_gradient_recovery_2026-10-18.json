@@ -1,0 +1,53 @@
+{
+  "scope": "Affine reconstruction from manufactured cell averages on actual t0 geometry.\nUses uniform density so geometric centroid equals mass centroid.\n",
+  "common_face_area_relative_error_max": 5.974577499401335e-10,
+  "closed_polygon_area_relative_error_max": 4.440892098500626e-16,
+  "cases": {
+    "shear": {
+      "mass_centroid": {
+        "max_gradient_error": 4.409757605799217e-15,
+        "gradient_error_volume_RMS": 1.179795116445518e-15,
+        "max_generator_velocity_error": 2.220446049250313e-16,
+        "normal_matrix_max_condition": 1.3907131070748788
+      },
+      "generator": {
+        "max_gradient_error": 0.046625364261706076,
+        "gradient_error_volume_RMS": 0.0037815594584960535,
+        "max_generator_velocity_error": 4.306123165943865e-05,
+        "normal_matrix_max_condition": 1.4225419743628713
+      }
+    },
+    "rotation": {
+      "mass_centroid": {
+        "max_gradient_error": 4.7590665726343624e-15,
+        "gradient_error_volume_RMS": 1.674782636995193e-15,
+        "max_generator_velocity_error": 2.220446049250313e-16,
+        "normal_matrix_max_condition": 1.3907131070748788
+      },
+      "generator": {
+        "max_gradient_error": 0.054663049414901806,
+        "gradient_error_volume_RMS": 0.005366928377309856,
+        "max_generator_velocity_error": 4.436861368997257e-05,
+        "normal_matrix_max_condition": 1.4225419743628713
+      }
+    },
+    "general": {
+      "mass_centroid": {
+        "max_gradient_error": 1.1619745019114395e-14,
+        "gradient_error_volume_RMS": 2.866976065339789e-15,
+        "max_generator_velocity_error": 8.95090418262362e-16,
+        "normal_matrix_max_condition": 1.3907131070748788
+      },
+      "generator": {
+        "max_gradient_error": 0.06231474192855321,
+        "gradient_error_volume_RMS": 0.005521381627654706,
+        "max_generator_velocity_error": 5.9473854082493664e-05,
+        "normal_matrix_max_condition": 1.4225419743628713
+      }
+    }
+  },
+  "limits": [
+    "Prescribed affine averages, not canonical point momenta reinterpreted as averages.",
+    "No nonuniform-density centroid, limiter, evolved gradient, shock or long-time test."
+  ]
+}

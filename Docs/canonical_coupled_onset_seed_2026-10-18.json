@@ -1,0 +1,30 @@
+{
+  "time": 2.0029059177634028,
+  "source": "/gpfs/kjhan/LagForce/Codex_onset_velocity_tangent_20261018/reference/khout.000184.dat",
+  "source_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+  "baseline_geometry_max_relative_error": 3.241851231905457e-14,
+  "cases": {
+    "reference": {
+      "epsilon": 0.0,
+      "max_relative_volume_change": 0.0,
+      "entropy_relative_error": 0.0,
+      "r_gt_1_volume_change": 0.0,
+      "snapshot_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840"
+    },
+    "plus": {
+      "epsilon": 0.001,
+      "max_relative_volume_change": 3.74809934804432e-05,
+      "entropy_relative_error": 4.440892098500626e-16,
+      "r_gt_1_volume_change": 0.0,
+      "snapshot_sha256": "938e4c8340b60213c1466472e2a6fb36d65a791ee9e1894551e41425deeb4a2f"
+    },
+    "minus": {
+      "epsilon": -0.001,
+      "max_relative_volume_change": 3.747850717239487e-05,
+      "entropy_relative_error": 4.440892098500626e-16,
+      "r_gt_1_volume_change": 0.0,
+      "snapshot_sha256": "b505c0284c4dd9b61947620da86fa0d439fdbb79b7e3bc09d41f3fc97aed07d2"
+    }
+  },
+  "scope": "Initial diagnostic branches only. Position and velocity seeds follow actual departure from exact circular trajectories inside current r<.6, translation removed. Rebuilt volume ratios and fixed cell entropy/mass determine thermodynamics. No entropy perturbation; not a full eigenvector. Solver initialization consistency still requires a check before interpreting evolved response."
+}

@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "scalar_report": "/gpfs/kjhan/LagForce/Codex_face_state_provider_comparison_20261018/scalar/report.json",
+  "batch_report": "/gpfs/kjhan/LagForce/Codex_face_state_provider_comparison_20261018/batch/report.json",
+  "numerical_bitwise_all": true,
+  "iterations": 3,
+  "mass_residual": 6.949735925632083e-17,
+  "provider_speedup": {
+    "wall_seconds": 1.9281968529138078,
+    "process_cpu_seconds": 1.9280834263527156
+  },
+  "scalar_peak_RSS_MiB": 1826.8671875,
+  "batch_peak_RSS_MiB": 1533.671875,
+  "batch_rhs_calls": [
+    {
+      "nodes": 272376,
+      "batch": {
+        "nodes": 272376,
+        "cell_batches": 1590,
+        "point_sides": 542200,
+        "maximum_cell_batch": 520,
+        "minimum_cell_batch": 48,
+        "branch_counts_low_flat_high": [
+          254728,
+          27656,
+          259816
+        ],
+        "array_bytes": 95915656,
+        "scalar_face_density_calls": 0,
+        "scalar_face_sample_calls": 0,
+        "cache_scope": "this outer RHS evaluation only"
+      }
+    },
+    {
+      "nodes": 272336,
+      "batch": {
+        "nodes": 272336,
+        "cell_batches": 1590,
+        "point_sides": 542120,
+        "maximum_cell_batch": 520,
+        "minimum_cell_batch": 48,
+        "branch_counts_low_flat_high": [
+          254704,
+          27544,
+          259872
+        ],
+        "array_bytes": 95901576,
+        "scalar_face_density_calls": 0,
+        "scalar_face_sample_calls": 0,
+        "cache_scope": "this outer RHS evaluation only"
+      }
+    },
+    {
+      "nodes": 272336,
+      "batch": {
+        "nodes": 272336,
+        "cell_batches": 1590,
+        "point_sides": 542120,
+        "maximum_cell_batch": 520,
+        "minimum_cell_batch": 48,
+        "branch_counts_low_flat_high": [
+          254704,
+          27544,
+          259872
+        ],
+        "array_bytes": 95901576,
+        "scalar_face_density_calls": 0,
+        "scalar_face_sample_calls": 0,
+        "cache_scope": "this outer RHS evaluation only"
+      }
+    }
+  ],
+  "profile_fraction_Amdahl_estimate": 1.7782278913919325,
+  "limits": "One call each on shared host. Earlier nested per-call profile had instrumentation overhead: its fractions give an estimate, not a strict bound on this uninstrumented comparison. No evolution or long-time success. No repeats/tuning."
+}

@@ -144,3 +144,10 @@ default: all
 
 include Rules.make
 include sRules.make
+ifdef USE_FULL_MOMENT_KEPLER
+ifeq ($(strip $(MOMENT_LIBDIR)),)
+$(error USE_FULL_MOMENT_KEPLER requires MOMENT_LIBDIR for the checked owned-stage library)
+endif
+specialrules += -DUSE_FULL_MOMENT_KEPLER
+LIBS += -L$(MOMENT_LIBDIR) -llagmoment_owned -Wl,-rpath,$(MOMENT_LIBDIR)
+endif

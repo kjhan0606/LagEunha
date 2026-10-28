@@ -1,0 +1,34 @@
+{
+  "scope": "Kinematic diagnostic of existing circular-state stored velocity-gradient trace; no solver change, no proof of conservative closure. Current-radius bins differ from initial-material pressure analysis. Gradient output has limited printed precision.",
+  "regions": {
+    "inner": {
+      "n": 795,
+      "geometric_divergence_RMS": 0.1333226296092813,
+      "stored_gradient_trace_RMS": 0.00840754722012288,
+      "ratio_gradient_to_geometric": 0.0630616666110041,
+      "geometric_pressure_variance_rate": 0.0003984074009020635,
+      "gradient_pressure_variance_rate": -1.3503091451711686e-07,
+      "change_in_region_pressure_work_if_only_volume_rate_replaced": 6.59234383613034e-08
+    },
+    "disk_inner_edge": {
+      "n": 399,
+      "geometric_divergence_RMS": 0.07554014289867637,
+      "stored_gradient_trace_RMS": 0.0002954965191248977,
+      "ratio_gradient_to_geometric": 0.003911781309723673,
+      "geometric_pressure_variance_rate": -7.64854116267083e-05,
+      "gradient_pressure_variance_rate": -1.894106637757106e-07,
+      "change_in_region_pressure_work_if_only_volume_rate_replaced": -5.731588577505754e-08
+    },
+    "disk_core": {
+      "n": 10304,
+      "geometric_divergence_RMS": 0.015007763075655043,
+      "stored_gradient_trace_RMS": 3.2067153377140723e-05,
+      "ratio_gradient_to_geometric": 0.0021367043986161203,
+      "geometric_pressure_variance_rate": 1.1380753525134396e-05,
+      "gradient_pressure_variance_rate": 7.317044628896579e-09,
+      "change_in_region_pressure_work_if_only_volume_rate_replaced": 1.3034844335691158e-09
+    }
+  },
+  "whole_dump_change_in_pressure_work": 1.236604932523141e-06,
+  "warning": "Replacing geometric Vdot alone would require matching pressure-force and energy redesign; this result does not authorize such replacement."
+}

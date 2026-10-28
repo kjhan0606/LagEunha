@@ -1,4 +1,5 @@
 #ifdef USE_CUDA
+#include "gpu_validation_check.h"
 /* ================================================================
  *  exam_gpu_extract.c
  *
@@ -711,6 +712,16 @@ double getAccVoro2DBlend_GPU(
     void (*mkLinkedList2D)(SimParameters *, postype, postype, postype, postype, postype,
         void (*)(SimParameters *, postype)))
 {
+    /* These CPU-only equations have no corresponding GPU force branch.
+     * Reject the request instead of silently running different physics. */
+    const char *requested_tcf = getenv("GFS_TCF");
+    const char *requested_dynw2 = getenv("GFS_DYN_W2");
+    if ((requested_tcf && atoi(requested_tcf) > 0) ||
+        (requested_dynw2 && atoi(requested_dynw2) > 0)) {
+        fprintf(stderr, "[GPU_UNSUPPORTED] rank=%d: GFS_TCF/GFS_DYN_W2 require CPU force; GPU equivalents are not implemented. Set gpu_enabled=0 or implement and validate the matching GPU equations.\n", MYID(simpar));
+        MPI_Abort(MPI_COMM(simpar), 1);
+        abort();
+    }
     double t0_total = MPI_Wtime();
     int nbp  = VORO_NP(simpar);
     int npad;
@@ -1704,7 +1715,8 @@ double getAccVoro2DBlend_GPU_validate(
     double max_rel_ax = 0, max_rel_ay = 0, max_rel_die = 0, max_rel_dt = 0;
     double max_abs_ax = 0, max_abs_die = 0;
     int worst_rel_ax = 0, worst_abs_ax = 0;
-    int n_mismatch_ax = 0, n_mismatch_die = 0;
+    int n_mismatch_ax = 0, n_mismatch_ay = 0, n_mismatch_die = 0;
+    int n_mismatch_dt = 0, n_mismatch_vsig = 0;
     int i;
 
     for (i = 0; i < nbp; i++) {
@@ -1720,27 +1732,23 @@ double getAccVoro2DBlend_GPU_validate(
         if (abs_ax > max_abs_ax) { max_abs_ax = abs_ax; worst_abs_ax = i; }
 
         /* ax relative error */
-        scale = fmax(fabs(gpu_ax), fabs(ref_ax[i])) + 1.0e-30;
-        err = fabs(gpu_ax - ref_ax[i]) / scale;
+        n_mismatch_ax += gpu_validation_mismatch(gpu_ax, ref_ax[i], 1.0e-6, 1.0e-11, &err);
         if (err > max_rel_ax) { max_rel_ax = err; worst_rel_ax = i; }
-        /* Count as mismatch only if BOTH relative and absolute exceed threshold */
-        if (err > 1.0e-6 && abs_ax > 1.0e-11) n_mismatch_ax++;
 
         /* ay relative error */
-        scale = fmax(fabs(gpu_ay), fabs(ref_ay[i])) + 1.0e-30;
-        err = fabs(gpu_ay - ref_ay[i]) / scale;
+        n_mismatch_ay += gpu_validation_mismatch(gpu_ay, ref_ay[i], 1.0e-6, 1.0e-11, &err);
         if (err > max_rel_ay) max_rel_ay = err;
 
         /* die relative error */
-        scale = fmax(fabs(gpu_die), fabs(ref_die[i])) + 1.0e-30;
-        err = fabs(gpu_die - ref_die[i]) / scale;
+        n_mismatch_die += gpu_validation_mismatch(gpu_die, ref_die[i], 1.0e-6, 1.0e-8, &err);
         if (err > max_rel_die) max_rel_die = err;
-        if (err > 1.0e-6 && fabs(gpu_die - ref_die[i]) > 1.0e-8) n_mismatch_die++;
 
         /* dt relative error */
-        scale = fmax(fabs(gpu_dt), fabs(ref_dt[i])) + 1.0e-30;
-        err = fabs(gpu_dt - ref_dt[i]) / scale;
+        n_mismatch_dt += gpu_validation_mismatch(gpu_dt, ref_dt[i], 1.0e-6, 0., &err)
+            || gpu_dt <= 0 || ref_dt[i] <= 0;
         if (err > max_rel_dt) max_rel_dt = err;
+        n_mismatch_vsig += gpu_validation_mismatch(g_gpu_ctx.h_parts.vsig_max_out[i],
+            ref_vsig[i], 1.0e-6, 1.0e-11, &err);
     }
 
     fprintf(stderr,
@@ -1766,14 +1774,19 @@ double getAccVoro2DBlend_GPU_validate(
             g_gpu_ctx.h_parts.die_out[wi], ref_die[wi]);
     }
 
-    /* PASS if no real mismatches (abs threshold filters out near-zero noise) */
-    if (n_mismatch_ax == 0 && n_mismatch_die == 0)
-        fprintf(stderr, "  >>> PASS: GPU kernel matches CPU reference\n");
-    else
-        fprintf(stderr, "  >>> FAIL: %d ax + %d die real mismatches\n",
-                n_mismatch_ax, n_mismatch_die);
+    /* A validation failure on any rank invalidates the entire comparison. */
+    int local_counts[5] = {n_mismatch_ax,n_mismatch_ay,n_mismatch_die,n_mismatch_dt,n_mismatch_vsig};
+    int global_counts[5];
+    MPI_Allreduce(local_counts,global_counts,5,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+    int failed = 0;
+    for (i=0;i<5;i++) failed |= global_counts[i] != 0;
+    if (MYID(simpar) == 0) {
+        fprintf(stderr,"  >>> %s: CSR kernel comparison only; mismatches ax=%d ay=%d energy=%d dt=%d vsig=%d\n",
+            failed ? "FAIL" : "PASS",global_counts[0],global_counts[1],global_counts[2],global_counts[3],global_counts[4]);
+    }
 
     free(ref_ax); free(ref_ay); free(ref_die); free(ref_dt); free(ref_vsig);
+    if (failed) { MPI_Abort(MPI_COMM(simpar),1); abort(); }
 
     /* GPU results already in particles from writeBackResults — keep them */
     return Dtime_gpu;
@@ -1964,8 +1977,8 @@ void gpu_serialize_ost_tree(GPUContext *ctx,
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < nptl; i++) {
         ctx->h_tree_type[i]     = 1;  /* TYPE_PTL */
-        ctx->h_tree_cx[i]       = (float)ptl[i].x;
-        ctx->h_tree_cy[i]       = (float)ptl[i].y;
+        ctx->h_tree_cx[i]       = (double)ptl[i].x;
+        ctx->h_tree_cy[i]       = (double)ptl[i].y;
         ctx->h_tree_size[i]     = 0.f;
         ctx->h_tree_ptl_idx[i]  = (int)ptl[i].indx;
         ctx->h_tree_daughter[i] = -1;
@@ -1978,9 +1991,9 @@ void gpu_serialize_ost_tree(GPUContext *ctx,
     for (int j = 0; j < max_tree_slots; j++) {
         int gi = nptl + j;
         ctx->h_tree_type[gi]     = 0;  /* TYPE_TREE */
-        ctx->h_tree_cx[gi]       = (float)tree[j].monox;
-        ctx->h_tree_cy[gi]       = (float)tree[j].monoy;
-        ctx->h_tree_size[gi]     = (float)tree[j].nodesize;
+        ctx->h_tree_cx[gi]       = (double)tree[j].monox;
+        ctx->h_tree_cy[gi]       = (double)tree[j].monoy;
+        ctx->h_tree_size[gi]     = (double)tree[j].nodesize;
         ctx->h_tree_ptl_idx[gi]  = -1;
         ctx->h_tree_daughter[gi] = ost_ptr_to_idx(tree[j].daughter,
                                                    ptl, nptl, tree, max_tree_slots);
@@ -2026,6 +2039,19 @@ void det2d_dpqRK4_GPU(
     void mkLinkedList2D(SimParameters *, postype, postype, postype, postype, postype,
         void (*)(SimParameters *, postype)))
 {
+    /* Diagnostic backend selection for the nearest-distance/weight-ceiling
+     * calculation only. This does not select the force/tessellation backend. */
+    const char *cpu_dpq = getenv("GFS_DPQ_CPU");
+    if(cpu_dpq && atoi(cpu_dpq)>0){
+        extern void det2d_dpqRK4(SimParameters *, void (*)(SimParameters *, postype));
+        static int announced = 0;
+        if(!announced){
+            fprintf(stderr,"[DPQ_BACKEND] rank=%d CPU nearest-distance reference; force backend unchanged\n",MYID(simpar));
+            announced=1;
+        }
+        det2d_dpqRK4(simpar,paddingAllTreeParticles);
+        return;
+    }
     double t0 = MPI_Wtime();
 
     /* --- Build OST tree on CPU (includes padding via callback) --- */
@@ -2079,7 +2105,7 @@ void det2d_dpqRK4_GPU(
                                       (float)GAS_Kappa(simpar));
 
     /* --- Download w2ceil + w2 --- */
-    gpu_download_w2ceil(&g_gpu_ctx, nbp);
+    /* Tree launcher downloads its dedicated double result buffer. */
     double t2 = MPI_Wtime();
 
     /* --- Write back to particle struct --- */
@@ -2089,8 +2115,15 @@ void det2d_dpqRK4_GPU(
     for (i = 0; i < nbp; i++) {
         treevorork4particletype *bpi =
             (treevorork4particletype *)(bp_raw + i * p_size);
-        bpi->w2ceil = g_gpu_ctx.h_parts.w2ceil[i];
-        bpi->w2     = g_gpu_ctx.h_parts.w2[i];
+        bpi->w2ceil = g_gpu_ctx.h_tree_nn2[i];
+        if (!isfinite((double)bpi->w2ceil) || bpi->w2ceil < 0) {
+            fprintf(stderr,"[GPU dpq-tree] invalid or incomplete nearest search at particle %d\n",i);
+            abort();
+        }
+        /* Keep original postype weights; never round-trip them through float.
+         * Dynamic-weight mode is dispatched to the CPU by the caller. */
+        if (GAS_Kappa(simpar) == 0) bpi->w2 = 0;
+        else if (GAS_Kappa(simpar) > 0) bpi->w2 = MIN(bpi->w2,bpi->w2ceil);
     }
 
     /* --- Free CPU tree + ptl + padding --- */

@@ -1,0 +1,124 @@
+{
+  "cases": {
+    "t4": {
+      "heat_by_material": {
+        "inner_background": {
+          "total_heat": 3.361486525890661e-06,
+          "neighbor_groups": {
+            "inner_background": {
+              "faces": 4562,
+              "heat": 3.224376436678222e-06,
+              "fraction": 0.9592114714259905
+            },
+            "disk_inner_edge": {
+              "faces": 263,
+              "heat": 1.3711008921243906e-07,
+              "fraction": 0.04078852857400947
+            },
+            "remaining_disk": {
+              "faces": 0,
+              "heat": 0.0,
+              "fraction": 0.0
+            },
+            "other": {
+              "faces": 0,
+              "heat": 0.0,
+              "fraction": 0.0
+            }
+          }
+        },
+        "disk_inner_edge": {
+          "total_heat": 5.181316023566122e-07,
+          "neighbor_groups": {
+            "inner_background": {
+              "faces": 263,
+              "heat": 1.3711008921243903e-07,
+              "fraction": 0.264624061896288
+            },
+            "disk_inner_edge": {
+              "faces": 1832,
+              "heat": 3.8093671959073966e-07,
+              "fraction": 0.7352122855624506
+            },
+            "remaining_disk": {
+              "faces": 245,
+              "heat": 8.479355343349354e-11,
+              "fraction": 0.00016365254126138602
+            },
+            "other": {
+              "faces": 0,
+              "heat": 0.0,
+              "fraction": 0.0
+            }
+          }
+        }
+      },
+      "interface_pairs": 263,
+      "Q_force_pair_residual_L1": 0.0,
+      "Q_force_pair_relative_L1": 0.0,
+      "half_heat_pair_residual_L1": 0.0,
+      "half_heat_pair_relative_L1": 0.0
+    },
+    "t6": {
+      "heat_by_material": {
+        "inner_background": {
+          "total_heat": 1.418197151179602e-05,
+          "neighbor_groups": {
+            "inner_background": {
+              "faces": 4494,
+              "heat": 1.3058397244868276e-05,
+              "fraction": 0.9207744659483205
+            },
+            "disk_inner_edge": {
+              "faces": 308,
+              "heat": 1.1235742669277482e-06,
+              "fraction": 0.07922553405167977
+            },
+            "remaining_disk": {
+              "faces": 0,
+              "heat": 0.0,
+              "fraction": 0.0
+            },
+            "other": {
+              "faces": 0,
+              "heat": 0.0,
+              "fraction": 0.0
+            }
+          }
+        },
+        "disk_inner_edge": {
+          "total_heat": 3.818601508832432e-06,
+          "neighbor_groups": {
+            "inner_background": {
+              "faces": 308,
+              "heat": 1.1235742669277482e-06,
+              "fraction": 0.29423710861919444
+            },
+            "disk_inner_edge": {
+              "faces": 1810,
+              "heat": 2.692421714339978e-06,
+              "fraction": 0.7050805663048113
+            },
+            "remaining_disk": {
+              "faces": 245,
+              "heat": 2.6055275647058964e-09,
+              "fraction": 0.000682325075994263
+            },
+            "other": {
+              "faces": 0,
+              "heat": 0.0,
+              "fraction": 0.0
+            }
+          }
+        }
+      },
+      "interface_pairs": 308,
+      "Q_force_pair_residual_L1": 0.0,
+      "Q_force_pair_relative_L1": 0.0,
+      "half_heat_pair_residual_L1": 0.0,
+      "half_heat_pair_relative_L1": 0.0
+    }
+  },
+  "scope": "Material membership from actual initial density and radius, persistent IDs. Q force only, printed precision, two snapshots. Does not establish pressure-force symmetry, physical interface stability, or later topology correctness.",
+  "interpretation": "At t6, about 29.4% of the initial disk-inner-edge material Q heat arises on faces shared with initial inner-background material; 70.5% arises within the edge material. Inner-background heat is 92.1% on background-background faces. Q force antisymmetry and equal half-heat hold at printed precision for all 308 interface pairs. The interface is not the sole direct heat source; this does not exclude pressure-mediated feedback across it."
+}

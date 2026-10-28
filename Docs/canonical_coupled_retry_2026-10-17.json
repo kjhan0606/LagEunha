@@ -1,0 +1,52 @@
+{
+  "scope": "MPI1, real HG half/RK4/HG half, forced final rejection then half-dt retry versus direct half-dt. CPU force/HG; CPU or CUDA nearest-neighbor backend, OMP1/8. No long-time or multi-rank evolution claim.",
+  "cases": {
+    "cpu1": {
+      "physical_fields_bitwise_equal": true,
+      "one_rejected_trial": true,
+      "accepted_ledger_equal_except_retry_count": true,
+      "accepted_RK_budget_equal": true,
+      "accepted_HG_boundary_equal": true,
+      "accepted_steps": 1,
+      "accepted_elapsed": 0.0005,
+      "t": 10.0025667693911,
+      "dt": 0.0005
+    },
+    "cpu8": {
+      "physical_fields_bitwise_equal": true,
+      "one_rejected_trial": true,
+      "accepted_ledger_equal_except_retry_count": true,
+      "accepted_RK_budget_equal": true,
+      "accepted_HG_boundary_equal": true,
+      "accepted_steps": 1,
+      "accepted_elapsed": 0.0005,
+      "t": 10.0025667693911,
+      "dt": 0.0005
+    },
+    "gpu1": {
+      "physical_fields_bitwise_equal": true,
+      "one_rejected_trial": true,
+      "accepted_ledger_equal_except_retry_count": true,
+      "accepted_RK_budget_equal": true,
+      "accepted_HG_boundary_equal": true,
+      "accepted_steps": 1,
+      "accepted_elapsed": 0.0005,
+      "t": 10.0025667693911,
+      "dt": 0.0005
+    },
+    "gpu8": {
+      "physical_fields_bitwise_equal": true,
+      "one_rejected_trial": true,
+      "accepted_ledger_equal_except_retry_count": true,
+      "accepted_RK_budget_equal": true,
+      "accepted_HG_boundary_equal": true,
+      "accepted_steps": 1,
+      "accepted_elapsed": 0.0005,
+      "t": 10.0025667693911,
+      "dt": 0.0005
+    }
+  },
+  "binary_sha256": "368bbe7c1f8bf4998ed936bfa59957bd8a049201093552c50a2810c598651a65",
+  "exam_sha256": "94163f5c4737e3fb9ea27e5a2d7fa38115974ea638a8ce7a641471c19998958a",
+  "run_directory": "/gpfs/kjhan/LagForce/Codex_coupled_retry_20261017"
+}

@@ -1,0 +1,55 @@
+{
+  "valid_cells": 1590,
+  "invalid_cases": 2,
+  "results": [
+    {
+      "file": "mpi2_cpu1.bin",
+      "ranks": 2,
+      "backend": "cpu1",
+      "bitwise_equal_to_serial_backend": true,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "mpi2_omp4.bin",
+      "ranks": 2,
+      "backend": "omp4",
+      "bitwise_equal_to_serial_backend": true,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "mpi2_cuda.bin",
+      "ranks": 2,
+      "backend": "cuda",
+      "bitwise_equal_to_serial_backend": true,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "mpi4_cpu1.bin",
+      "ranks": 4,
+      "backend": "cpu1",
+      "bitwise_equal_to_serial_backend": true,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "mpi4_omp4.bin",
+      "ranks": 4,
+      "backend": "omp4",
+      "bitwise_equal_to_serial_backend": true,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "mpi4_cuda.bin",
+      "ranks": 4,
+      "backend": "cuda",
+      "bitwise_equal_to_serial_backend": true,
+      "maximum_absolute_difference": 0.0
+    }
+  ],
+  "sha256": {
+    "moment_gravity_quadrature.h": "0377647838cdf83a066c1957759db5397ff6112b3bfd863667eb24880541f8e0",
+    "check_gravity_quadrature_backends.cu": "1475d9e9b4bacf2e44a6dfb8e3b001ff25a5c87b52138e7553ddb3138c604b34",
+    "probe_mpi": "2b9984f1af4921292371e671bb50055ca183fdaca622f421be19b4a711eef51b"
+  },
+  "reference_report_sha256": "38bd1551e2c5dc48ac9323055377c3e19497ef1a71c2c4641859e73636271ab0",
+  "limits": "Independent cell partition and MPI result collection on one node; GPU ranks share one Ada. No halo exchange, full hydro, multi-GPU or long-term stability validation."
+}

@@ -1,0 +1,88 @@
+{
+  "cases": {
+    "t4": {
+      "rhs_sha256": "b2e3490034636bdc5674501cf5847f1ae5c6d143afe446e32ee1a635d69e946d",
+      "regions": {
+        "inner": {
+          "n": 803,
+          "dU_rate": 4.100613020315663e-06,
+          "compression_rate": 6.918743117871323e-07,
+          "TCF_heat_rate": 3.4087387085285226e-06,
+          "heat_min": 0.0,
+          "residual_abs_sum": 4.924158690285921e-19,
+          "residual_max": 3.6338044309454506e-21
+        },
+        "disk": {
+          "n": 12068,
+          "dU_rate": 4.392244001470006e-07,
+          "compression_rate": -3.53423606309908e-08,
+          "TCF_heat_rate": 4.745667607780005e-07,
+          "heat_min": 0.0,
+          "residual_abs_sum": 4.099172993878863e-18,
+          "residual_max": 2.940148863834381e-21
+        },
+        "outer_active": {
+          "n": 6984,
+          "dU_rate": 6.1209931609604e-09,
+          "compression_rate": -2.342388283677966e-09,
+          "TCF_heat_rate": 8.463381444647542e-09,
+          "heat_min": 0.0,
+          "residual_abs_sum": 1.8190026323574974e-18,
+          "residual_max": 1.4792752006447091e-21
+        },
+        "all": {
+          "n": 36864,
+          "dU_rate": 0.0037647772633876402,
+          "compression_rate": 2.0759177288058348e-06,
+          "TCF_heat_rate": 0.0037633092505960416,
+          "heat_min": 0.0,
+          "residual_abs_sum": 1.4078139580970258e-06,
+          "residual_max": 3.6167321465651564e-07
+        }
+      }
+    },
+    "t6": {
+      "rhs_sha256": "8993962558a09133ea517dd95255248ea6e5871dca9ec0dbb68a083a2fc95906",
+      "regions": {
+        "inner": {
+          "n": 803,
+          "dU_rate": 1.579603477105276e-05,
+          "compression_rate": 7.825102528860435e-07,
+          "TCF_heat_rate": 1.501352451816674e-05,
+          "heat_min": 0.0,
+          "residual_abs_sum": 9.924487874099488e-19,
+          "residual_max": 1.0587911840678754e-20
+        },
+        "disk": {
+          "n": 12053,
+          "dU_rate": 3.4007769263406454e-06,
+          "compression_rate": 4.0812627378932837e-07,
+          "TCF_heat_rate": 2.992650652551322e-06,
+          "heat_min": 0.0,
+          "residual_abs_sum": 4.2647758411384205e-18,
+          "residual_max": 4.004381345369207e-21
+        },
+        "outer_active": {
+          "n": 6999,
+          "dU_rate": 5.475340745550231e-09,
+          "compression_rate": -2.410798507092391e-09,
+          "TCF_heat_rate": 7.886139252651859e-09,
+          "heat_min": 2.3461915764830264e-19,
+          "residual_abs_sum": 1.8342793686528115e-18,
+          "residual_max": 1.3905470542771299e-21
+        },
+        "all": {
+          "n": 36864,
+          "dU_rate": 0.0037794338660252624,
+          "compression_rate": 2.6103076046877275e-06,
+          "TCF_heat_rate": 0.003777431463357782,
+          "heat_min": 0.0,
+          "residual_abs_sum": 1.4078139580977052e-06,
+          "residual_max": 3.6167321465651564e-07
+        }
+      }
+    }
+  },
+  "scope": "One pre-HG force evaluation per saved state; instantaneous radial regions. Raw force RHS includes frozen cells; all-region values are not actual applied increments. No time-integrated or long-term stability claim.",
+  "interpretation": "Active cells satisfy dU/dt = -P dV/dt + TCF_heat to rounding precision at both snapshots. Inner TCF heat supplies about 83% and 95% of the instantaneous non-HG internal-energy increase at t4 and t6. This establishes the immediate source term, not the cause of its growth or whether dissipation is excessive. Frozen-region raw RHS is not applied by RK4."
+}

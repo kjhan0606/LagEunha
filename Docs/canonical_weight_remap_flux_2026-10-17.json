@@ -1,0 +1,206 @@
+{
+  "status": "Standalone experimental face kernel only; not connected to production integrator.",
+  "device": "NVIDIA RTX 5000 Ada Generation, 8.9",
+  "reports": {
+    "actual_weight_faces": {
+      "donor": {
+        "faces": 4912,
+        "openmp_1_4_bitwise_equal": true,
+        "cpu_cuda_bitwise_equal": true,
+        "oracle_max_abs_difference": 0.0,
+        "galilean_max_scaled_difference": 2.5650652918279934e-17,
+        "reverse_flux_check": true,
+        "zero_mass_rate_zero_flux": true,
+        "semidiscrete": {
+          "global_mass_momentum_energy_rates": [
+            -2.617331807015788e-19,
+            -5.753471294224835e-19,
+            -6.635709048349392e-19,
+            -2.0339378645943887e-19
+          ],
+          "kinetic_energy_rate": -0.00038314744188653314,
+          "thermal_energy_rate": 0.00038314744188653216,
+          "donor_mixing_reference": 0.00038314744188653444,
+          "uniform_specific_thermal_transport_max_residual": 1.3232027884134246e-05,
+          "point_sample_angular_momentum_rate": -5.5983752162847965e-05,
+          "point_sample_torque_over_patch_L": -0.005626721769593511
+        }
+      },
+      "centered_kinetic_compatible": {
+        "faces": 4912,
+        "openmp_1_4_bitwise_equal": true,
+        "cpu_cuda_bitwise_equal": true,
+        "oracle_max_abs_difference": 0.0,
+        "galilean_max_scaled_difference": 1.3348359163013222e-17,
+        "reverse_flux_check": true,
+        "zero_mass_rate_zero_flux": true,
+        "semidiscrete": {
+          "global_mass_momentum_energy_rates": [
+            -2.617331807015788e-19,
+            -5.081138892341734e-19,
+            4.2791045704103185e-19,
+            6.279690512706569e-19
+          ],
+          "kinetic_energy_rate": 2.168404344971009e-19,
+          "thermal_energy_rate": -3.4728350837426314e-19,
+          "donor_mixing_reference": 0.00038314744188653444,
+          "uniform_specific_thermal_transport_max_residual": 8.978549240895584e-19,
+          "point_sample_angular_momentum_rate": -4.3152071669595466e-07,
+          "point_sample_torque_over_patch_L": -4.337056586705574e-05
+        }
+      },
+      "kinetic_compatible_thermal_donor": {
+        "faces": 4912,
+        "openmp_1_4_bitwise_equal": true,
+        "cpu_cuda_bitwise_equal": true,
+        "oracle_max_abs_difference": 0.0,
+        "galilean_max_scaled_difference": 1.3348359163013222e-17,
+        "reverse_flux_check": true,
+        "zero_mass_rate_zero_flux": true,
+        "semidiscrete": {
+          "global_mass_momentum_energy_rates": [
+            -2.617331807015788e-19,
+            -5.081138892341734e-19,
+            4.2791045704103185e-19,
+            6.279690512706569e-19
+          ],
+          "kinetic_energy_rate": 2.168404344971009e-19,
+          "thermal_energy_rate": -3.4728350837426314e-19,
+          "donor_mixing_reference": 0.00038314744188653444,
+          "uniform_specific_thermal_transport_max_residual": 8.978549240895584e-19,
+          "point_sample_angular_momentum_rate": -4.3152071669595466e-07,
+          "point_sample_torque_over_patch_L": -4.337056586705574e-05
+        }
+      }
+    },
+    "synthetic_states": {
+      "donor": {
+        "faces": 2048,
+        "openmp_1_4_bitwise_equal": true,
+        "cpu_cuda_bitwise_equal": true,
+        "oracle_max_abs_difference": 0.0,
+        "galilean_max_scaled_difference": 5.1441185209597e-16,
+        "reverse_flux_check": true,
+        "zero_mass_rate_zero_flux": true
+      },
+      "centered_kinetic_compatible": {
+        "faces": 2048,
+        "openmp_1_4_bitwise_equal": true,
+        "cpu_cuda_bitwise_equal": true,
+        "oracle_max_abs_difference": 0.0,
+        "galilean_max_scaled_difference": 4.387357592355167e-16,
+        "reverse_flux_check": true,
+        "zero_mass_rate_zero_flux": true
+      },
+      "kinetic_compatible_thermal_donor": {
+        "faces": 2048,
+        "openmp_1_4_bitwise_equal": true,
+        "cpu_cuda_bitwise_equal": true,
+        "oracle_max_abs_difference": 0.0,
+        "galilean_max_scaled_difference": 4.1917590080419024e-16,
+        "reverse_flux_check": true,
+        "zero_mass_rate_zero_flux": true
+      }
+    }
+  },
+  "uniform_pressure_contact_checks": [
+    {
+      "density_ratio": 1.0,
+      "weight_swept_volume_rate": -0.1,
+      "tangential_velocity_jump": 0.0,
+      "max_pressure_rate_error_by_mode": {
+        "0": 1.3877787807814457e-17,
+        "1": 1.3877787807814457e-17,
+        "2": 1.3877787807814457e-17
+      }
+    },
+    {
+      "density_ratio": 1.0,
+      "weight_swept_volume_rate": -0.1,
+      "tangential_velocity_jump": 0.1,
+      "max_pressure_rate_error_by_mode": {
+        "0": 0.0003333334922790421,
+        "1": 2.7755575615628914e-17,
+        "2": 2.7755575615628914e-17
+      }
+    },
+    {
+      "density_ratio": 1.0,
+      "weight_swept_volume_rate": 0.1,
+      "tangential_velocity_jump": 0.0,
+      "max_pressure_rate_error_by_mode": {
+        "0": 1.3877787807814457e-17,
+        "1": 1.3877787807814457e-17,
+        "2": 1.3877787807814457e-17
+      }
+    },
+    {
+      "density_ratio": 1.0,
+      "weight_swept_volume_rate": 0.1,
+      "tangential_velocity_jump": 0.1,
+      "max_pressure_rate_error_by_mode": {
+        "0": 0.0003333334922790421,
+        "1": 2.7755575615628914e-17,
+        "2": 2.7755575615628914e-17
+      }
+    },
+    {
+      "density_ratio": 100.0,
+      "weight_swept_volume_rate": -0.1,
+      "tangential_velocity_jump": 0.0,
+      "max_pressure_rate_error_by_mode": {
+        "0": 1.249000902703301e-16,
+        "1": 4.95,
+        "2": 1.249000902703301e-16
+      }
+    },
+    {
+      "density_ratio": 100.0,
+      "weight_swept_volume_rate": -0.1,
+      "tangential_velocity_jump": 0.1,
+      "max_pressure_rate_error_by_mode": {
+        "0": 0.03333334922790562,
+        "1": 4.95,
+        "2": 1.249000902703301e-16
+      }
+    },
+    {
+      "density_ratio": 100.0,
+      "weight_swept_volume_rate": 0.1,
+      "tangential_velocity_jump": 0.0,
+      "max_pressure_rate_error_by_mode": {
+        "0": 1.3877787807814457e-17,
+        "1": 0.0495,
+        "2": 1.3877787807814457e-17
+      }
+    },
+    {
+      "density_ratio": 100.0,
+      "weight_swept_volume_rate": 0.1,
+      "tangential_velocity_jump": 0.1,
+      "max_pressure_rate_error_by_mode": {
+        "0": 0.0003333334922790421,
+        "1": 0.0495,
+        "2": 2.7755575615628914e-17
+      }
+    }
+  ],
+  "sha256": {
+    "weight_remap_flux.h": "9995461c28a770961e5c87f1a753db87dd861b7ef6e2b856f8b842d046c8b27e",
+    "probe.c": "7ce8b552ac1132cca71745acce3a6844741829f2434e5dab11ec403d9b2f0294",
+    "probe.cu": "cb4919d657fbb47a6e0bc596426021e6f68bf87ca1ae0958d1f8139f4498d685",
+    "cpu.so": "a62a090a5ef2141fb1fb0becb53e8ec4e172525c8664240d38f4aaf32cd43b3c",
+    "cuda.so": "86192e953d3ab92d315d48bf7eb8bbc727d7ad6c906ca10552f80474694e2e55",
+    "check.py": "f0f8df9034adba8883f33c73f6be4783be3c50e9a6a8a1f73770be712adb99c7"
+  },
+  "derivation": "dp_i=f*(vi+vj)/2, dm_i=f, opposite for j: sum Kdot=0. dE_i=f*(e_face+vi.vj/2) yields Udot_i=f*e_face. e_face=e_donor and f=rho_donor*swept_volume_rate preserve uniform pressure in pure weight remapping.",
+  "primary_related_literature": "https://arxiv.org/abs/1209.4994",
+  "scope_of_literature": "Related semidiscrete kinetic-energy preservation; this remap-only kernel is not the complete entropy-stable Euler flux from that paper.",
+  "limitations": [
+    "No MPI owner exchange or full CUDA hydrodynamic integration is verified by this batch.",
+    "Central transport need not be positive, monotone or entropy stable.",
+    "Point-sampled angular momentum is not conserved by this flux; consistent cell moments/torque treatment remain necessary.",
+    "Finite time integration and gravity potential work are not included.",
+    "A zero-rate remap is inert, but the complete equal-weight/fixed-mass Voronoi limit is not implemented."
+  ]
+}

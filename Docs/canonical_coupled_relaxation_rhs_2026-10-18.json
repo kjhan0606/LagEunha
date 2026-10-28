@@ -1,0 +1,36 @@
+{
+  "scope": "Experimental full moment hydro RHS with opt-in affine contact relaxation.\n\nInstantaneous small shear patch only. Existing donor residual closure is still\nan unvalidated research assumption; this is not a complete Euler/Kepler test.\n",
+  "cases": [
+    {
+      "amplitude": 0.0,
+      "heat": 5.777559613662708e-28,
+      "thermal_rate_sum": 4.426255369172072e-17,
+      "minimum_thermal_rate": -1.7780915628762273e-17,
+      "energy_residual": 4.146395683399251e-17,
+      "angular_residual": 6.948957915674353e-17,
+      "momentum_residual": 2.0075358476284721e-16,
+      "residual_covariance_rate_max": 8.52074487355231e-17,
+      "max_RHS_change": 1.5437304212717606e-14,
+      "default_equals_explicit_off": true,
+      "contacts": 132
+    },
+    {
+      "amplitude": 0.01,
+      "heat": 0.00015659713085414752,
+      "thermal_rate_sum": 0.00015659713085412215,
+      "minimum_thermal_rate": 3.0919398418360173e-07,
+      "energy_residual": -2.710505431213761e-17,
+      "angular_residual": -1.0928757898653885e-16,
+      "momentum_residual": 9.107298248878237e-17,
+      "residual_covariance_rate_max": 5.560771298724482e-17,
+      "max_RHS_change": 0.00333663832995997,
+      "default_equals_explicit_off": true,
+      "contacts": 132
+    }
+  ],
+  "limits": [
+    "Single RHS, not a time evolution or source of long-term stability evidence.",
+    "No boundary damping; no production C/CUDA/MPI caller connected.",
+    "alpha=1 is a diagnostic value, not a validated Kepler viscosity."
+  ]
+}

@@ -19,7 +19,9 @@ def gaussian_flux(v,R,rho,n,fm):
     return p+sn,Pi+np.outer(v,sn)+np.outer(sn,v),E+v@sn
 
 
-def rhs(t,flat,mass,residual_stress=False,linear_pressure=False,covariance_factors=None,return_covariance_terms=False):
+def rhs(t,flat,mass,residual_stress=False,linear_pressure=False,covariance_factors=None,return_covariance_terms=False,relaxation_alpha=0.):
+    if not np.isfinite(relaxation_alpha) or relaxation_alpha<0:
+        raise ValueError('relaxation_alpha must be finite and nonnegative')
     count=len(mass);y=flat[:-4].reshape(count,20);x=y[:,:2];w=y[:,2]
     polys,edges=base.geometry(x,w,t);raw=np.column_stack([mass,y[:,3:]])
     states=[base.decode(poly,r) for poly,r in zip(polys,raw)]
@@ -56,6 +58,7 @@ def rhs(t,flat,mass,residual_stress=False,linear_pressure=False,covariance_facto
     z,values,mass_residual=base.solve(records,count)
     derivative=np.zeros((count,18));ledger=np.zeros(4);F=np.zeros((count,2));H=np.zeros((count,2,2))
     outgoing=np.zeros(count);incoming=[[] for _ in range(count)]
+    relaxation_heat=0.;relaxation_contacts=0
     for rec,value,info in zip(records,values,data):
         i,j,length,_,_,fan=rec;flux,branch,wn=value;point,n=info
         uf=fan[1][branch];vf=uf[1:3]/uf[0];fm=flux[0]
@@ -83,6 +86,24 @@ def rhs(t,flat,mass,residual_stress=False,linear_pressure=False,covariance_facto
         if j>=0:
             derivative[j]+=ff;F[j]+=traction;H[j]+=np.outer(point-states[j]['c'],traction)
         else:ledger-=length*np.r_[fp,fe,point[0]*fp[1]-point[1]*fp[0]]
+        if relaxation_alpha>0 and j>=0:
+            si,sj=states[i],states[j]
+            if 'velocity_quadratic' in si or 'velocity_quadratic' in sj:
+                raise ValueError('affine relaxation does not close quadratic velocity work')
+            vi=base.affine_velocity(si,point);vj=base.affine_velocity(sj,point)
+            rhoi=float(si['density'].value(point)[0]);rhoj=float(sj['density'].value(point)[0])
+            Zi=np.sqrt(base.GAMMA*pressure_at(i,point)*rhoi)
+            Zj=np.sqrt(base.GAMMA*pressure_at(j,point)*rhoj)
+            coefficient=relaxation_alpha*length*2*Zi*Zj/(Zi+Zj)
+            tangent=np.array([-n[1],n[0]]);slip=float((vi-vj)@tangent)
+            force=-coefficient*slip*tangent;heat=coefficient*slip**2
+            for owner,sign,vface in ((i,1.,vi),(j,-1.,vj)):
+                applied=sign*force
+                derivative[owner,7:9]+=applied
+                derivative[owner,9:13]+=np.outer(point,applied).ravel()
+                derivative[owner,13:17]+=(np.outer(vface,applied)+np.outer(applied,vface)).ravel()
+                derivative[owner,17]+=vface@applied+.5*heat
+            relaxation_heat+=heat;relaxation_contacts+=1
     for i,s in enumerate(states):
         r=raw[i];p=r[7:9];D=r[9:13].reshape(2,2);Pi=r[13:17].reshape(2,2)
         area=s['density'].area;PV=s['P']*area
@@ -99,6 +120,9 @@ def rhs(t,flat,mass,residual_stress=False,linear_pressure=False,covariance_facto
         density_fit_iterations=max(s['density'].iterations for s in states),
         residual_covariance_min=min(float(np.linalg.eigvalsh(s['R']).min()/mass[i]) for i,s in enumerate(states)),
         residual_covariance_max=max(float(np.max(abs(s['R']))/mass[i]) for i,s in enumerate(states)))
+    if relaxation_alpha>0:
+        diag.update(relaxation_heat_rate=relaxation_heat,relaxation_contacts=relaxation_contacts,
+                    relaxation_scope='experimental_affine_tangential_impedance_no_Euler_closure_claim')
     if return_covariance_terms:
         diag['cov_A']=[-s['B']-.5*outgoing[i]/mass[i]*np.eye(2) for i,s in enumerate(states)]
         diag['cov_Qfactor']=[np.concatenate(a,axis=1) if a else np.zeros((2,0)) for a in incoming]

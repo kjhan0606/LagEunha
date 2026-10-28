@@ -1,0 +1,32 @@
+{
+  "scope": "Diagnostic position drift, actual migration, last-rank rejection, collective owned-state restore, cache rebuild and second HG application. Not production RK retry; no trial ledger or clock mutation is exercised.",
+  "cases": {
+    "np1": {
+      "ownership_crossings_before_reject": 0,
+      "single_requester": 0,
+      "all_ranks_rejected": true,
+      "owned_state_and_25_RK_scalars_restored_bitwise": true,
+      "original_ownership_restored": true,
+      "rebuilt_cache_bitwise_matches_no_drift_control": true,
+      "second_HG_state_bitwise_matches_no_drift_control": true
+    },
+    "np2": {
+      "ownership_crossings_before_reject": 25,
+      "single_requester": 1,
+      "all_ranks_rejected": true,
+      "owned_state_and_25_RK_scalars_restored_bitwise": true,
+      "original_ownership_restored": true,
+      "rebuilt_cache_bitwise_matches_no_drift_control": true,
+      "second_HG_state_bitwise_matches_no_drift_control": true
+    },
+    "np4": {
+      "ownership_crossings_before_reject": 55,
+      "single_requester": 3,
+      "all_ranks_rejected": true,
+      "owned_state_and_25_RK_scalars_restored_bitwise": true,
+      "original_ownership_restored": true,
+      "rebuilt_cache_bitwise_matches_no_drift_control": true,
+      "second_HG_state_bitwise_matches_no_drift_control": true
+    }
+  }
+}

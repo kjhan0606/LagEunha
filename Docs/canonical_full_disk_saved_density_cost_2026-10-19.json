@@ -1,0 +1,83 @@
+{
+  "status": "completed_saved_density_preparation_cost_summary",
+  "source": "/gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/mpi_coarse/candidate_audit_0010/density/cells.jsonl",
+  "source_sha256": "7c793973e145ecd91c94e182ec82e075d2e73146e9c649426acf38d347b78b04",
+  "groups": {
+    "all": {
+      "cells": 19945,
+      "nodes24": {
+        "total": 91599552,
+        "median": 4608.0,
+        "p95": 4608.0,
+        "maximum": 26496,
+        "maximum_id": 3
+      },
+      "nodes48": {
+        "total": 366398208,
+        "median": 18432.0,
+        "p95": 18432.0,
+        "maximum": 105984,
+        "maximum_id": 3
+      },
+      "summed_cell_wall_seconds": {
+        "baseline_fit": 159.3942585051991,
+        "geometry_and_prior": 92.98758010030724,
+        "independent_q48": 422.2657410460524,
+        "potential_fit": 256.6987963374704
+      }
+    },
+    "flat_prior": {
+      "cells": 709,
+      "nodes24": {
+        "total": 2041920,
+        "median": 2880.0,
+        "p95": 3456.0,
+        "maximum": 8064,
+        "maximum_id": 198
+      },
+      "nodes48": {
+        "total": 8167680,
+        "median": 11520.0,
+        "p95": 13824.0,
+        "maximum": 32256,
+        "maximum_id": 198
+      },
+      "summed_cell_wall_seconds": {
+        "baseline_fit": 3.264033132698387,
+        "geometry_and_prior": 0.4778727344237268,
+        "independent_q48": 10.046211754670367,
+        "potential_fit": 4.857992315897718
+      }
+    },
+    "nonflat_prior": {
+      "cells": 19236,
+      "nodes24": {
+        "total": 89557632,
+        "median": 4608.0,
+        "p95": 4608.0,
+        "maximum": 26496,
+        "maximum_id": 3
+      },
+      "nodes48": {
+        "total": 358230528,
+        "median": 18432.0,
+        "p95": 18432.0,
+        "maximum": 105984,
+        "maximum_id": 3
+      },
+      "summed_cell_wall_seconds": {
+        "baseline_fit": 156.13022537250072,
+        "geometry_and_prior": 92.50970736588351,
+        "independent_q48": 412.21952929138206,
+        "potential_fit": 251.8408040215727
+      }
+    }
+  },
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "limits": [
+    "Summed per-cell wall times overlap across workers; these are not job wall times.",
+    "Independent q48 is checkpoint validation, not every-RHS evolution cost.",
+    "Node counts alone do not justify quadrature-order reduction."
+  ]
+}

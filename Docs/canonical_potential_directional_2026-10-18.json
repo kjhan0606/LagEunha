@@ -1,0 +1,320 @@
+{
+  "status": "completed_derivative_requires_evaluation",
+  "manifest": {
+    "scope": "Fixed four-state saved midpoint density derivative, not time evolution.\n\nOnly x/W/q/Q follow the saved actual stage direction. Mass and frozen rows\nremain exact, factors/velocities/Pi remain untouched. No RHS or weight solve.\n",
+    "epsilon": 1.25e-05,
+    "scales": [
+      1.0,
+      -1.0,
+      0.5,
+      -0.5
+    ],
+    "provider_calls": 0,
+    "expected_newton_fits": 6360,
+    "sources": {
+      "/gpfs/kjhan/LagForce/audit_saved_potential_directional_20261018.py": "63a74c274ff08549cf6dbaca25a5e637c87628e38d2285f13bfbe02dcc74e2a1",
+      "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef",
+      "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+      "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/coefficients.npz": "6b2e37445c6d120575237904b94a8b532beb11d7a27bcce7d7dc92bdd8280727",
+      "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/midpoint_integrals.npz": "4427072652ef67e64563a367d21c94ca62bb618429c4253ed1875ddf25f22be4",
+      "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/inputs.npz": "8eb57f0abbe8ef0c0f7b6e50e776d2181da25f6d7d4ccfb2a3e4ceead2a20fa9",
+      "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/reference.npz": "71d715ea09d22eac39ce6fdba81208e4f75b05a8abe8a15b10611a4456ab5d37",
+      "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/cuda.npz": "7ba3370a920c2fa60333324002526b75ac2d04613134e6a2a4978e3f6607ed20"
+    },
+    "runtime_modules": {
+      "__main__": {
+        "path": "/gpfs/kjhan/LagForce/audit_saved_potential_directional_20261018.py",
+        "sha256": "63a74c274ff08549cf6dbaca25a5e637c87628e38d2285f13bfbe02dcc74e2a1"
+      },
+      "density_quadrature": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+        "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+      },
+      "contact_prior_density": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_prior_density.py",
+        "sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+      },
+      "saved_potential_taylor": {
+        "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/saved_potential_taylor.py",
+        "sha256": "6c9db0c324e3153c6f1a872058ae8b708068c801c6fb118599a498c4b96ba69f"
+      },
+      "embedded_laguerre_geometry": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+        "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+      },
+      "run_canonical_av_branches_20261018": {
+        "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+        "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+      },
+      "geometry_uncertainty": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/geometry_uncertainty.py",
+        "sha256": "a58bfe8407a40e3aa31dff10c6f19fddb3059bdf420750b4286c433907be20e4"
+      }
+    }
+  },
+  "states": {
+    "plus": {
+      "seconds": 66.26414933800697,
+      "newton_fits": 1590,
+      "fit_residual_max": 2.9419522373785867e-13,
+      "graph_added": 0,
+      "graph_removed": 0,
+      "prior_branch_changed": 41,
+      "prior_branch_changed_ids": [
+        45,
+        190,
+        238,
+        239,
+        422,
+        444,
+        454,
+        473,
+        510,
+        513,
+        527,
+        540,
+        609,
+        624,
+        639,
+        667,
+        668,
+        680,
+        681,
+        700,
+        707,
+        708,
+        713,
+        716,
+        722,
+        731,
+        901,
+        902,
+        1099,
+        1116,
+        1133,
+        1151,
+        1166,
+        1333,
+        1334,
+        1352,
+        1371,
+        1390,
+        1409,
+        1428,
+        1447
+      ],
+      "active_prior_branch_changed": 33,
+      "same_graph_and_prior_branch": false,
+      "quadrature_remainder_difference_absolute_sum": 5.616631333424479e-19,
+      "P2_fit_constraint_error_absolute_sum": 3.906590398991963e-16,
+      "remainder_summation_roundoff_bound": 9.807901277008992e-21,
+      "perturbation_roundoff_max": 5.501987212185033e-17
+    },
+    "minus": {
+      "seconds": 66.18281451240182,
+      "newton_fits": 1590,
+      "fit_residual_max": 2.9419522373785867e-13,
+      "graph_added": 0,
+      "graph_removed": 0,
+      "prior_branch_changed": 53,
+      "prior_branch_changed_ids": [
+        49,
+        198,
+        206,
+        241,
+        251,
+        424,
+        435,
+        436,
+        447,
+        448,
+        472,
+        475,
+        476,
+        507,
+        513,
+        522,
+        527,
+        668,
+        669,
+        681,
+        713,
+        727,
+        731,
+        732,
+        860,
+        878,
+        893,
+        1008,
+        1099,
+        1116,
+        1133,
+        1146,
+        1151,
+        1166,
+        1337,
+        1338,
+        1356,
+        1357,
+        1358,
+        1374,
+        1375,
+        1376,
+        1377,
+        1393,
+        1412,
+        1431,
+        1432,
+        1450,
+        1451,
+        1473,
+        1475,
+        1550,
+        1552
+      ],
+      "active_prior_branch_changed": 34,
+      "same_graph_and_prior_branch": false,
+      "quadrature_remainder_difference_absolute_sum": 5.672542967410938e-19,
+      "P2_fit_constraint_error_absolute_sum": 3.944221276968001e-16,
+      "remainder_summation_roundoff_bound": 9.776162405988397e-21,
+      "perturbation_roundoff_max": 5.501987212185033e-17
+    },
+    "plus_half": {
+      "seconds": 66.54956357739866,
+      "newton_fits": 1590,
+      "fit_residual_max": 2.9419522373785867e-13,
+      "graph_added": 0,
+      "graph_removed": 0,
+      "prior_branch_changed": 24,
+      "prior_branch_changed_ids": [
+        422,
+        444,
+        454,
+        473,
+        510,
+        513,
+        527,
+        540,
+        624,
+        667,
+        668,
+        707,
+        708,
+        712,
+        713,
+        716,
+        722,
+        901,
+        902,
+        1099,
+        1116,
+        1133,
+        1151,
+        1166
+      ],
+      "active_prior_branch_changed": 24,
+      "same_graph_and_prior_branch": false,
+      "quadrature_remainder_difference_absolute_sum": 5.648314244823212e-19,
+      "P2_fit_constraint_error_absolute_sum": 3.8211793685344325e-16,
+      "remainder_summation_roundoff_bound": 9.810371196526363e-21,
+      "perturbation_roundoff_max": 5.51831377224336e-17
+    },
+    "minus_half": {
+      "seconds": 66.73029389418662,
+      "newton_fits": 1590,
+      "fit_residual_max": 2.9500117166964375e-13,
+      "graph_added": 0,
+      "graph_removed": 0,
+      "prior_branch_changed": 22,
+      "prior_branch_changed_ids": [
+        49,
+        198,
+        206,
+        251,
+        436,
+        448,
+        507,
+        513,
+        522,
+        713,
+        727,
+        878,
+        893,
+        1008,
+        1026,
+        1043,
+        1099,
+        1116,
+        1133,
+        1146,
+        1151,
+        1166
+      ],
+      "active_prior_branch_changed": 22,
+      "same_graph_and_prior_branch": false,
+      "quadrature_remainder_difference_absolute_sum": 5.32368559070468e-19,
+      "P2_fit_constraint_error_absolute_sum": 4.134198260066279e-16,
+      "remainder_summation_roundoff_bound": 9.770699524933948e-21,
+      "perturbation_roundoff_max": 5.51831377224336e-17
+    }
+  },
+  "all_same_graph_and_prior_branch": false,
+  "derivatives": {
+    "centered": {
+      "signed_sum": -2.0086865028351278e-06,
+      "absolute_sum": 0.003336340719184299,
+      "maximum": 3.0564369631721404e-05
+    },
+    "centered_half": {
+      "signed_sum": -2.004425178107658e-06,
+      "absolute_sum": 0.0033363393167073927,
+      "maximum": 3.056436922461196e-05
+    },
+    "forward": {
+      "signed_sum": -1.949497437129103e-06,
+      "absolute_sum": 0.003336343879057449,
+      "maximum": 3.056431513296089e-05
+    },
+    "backward": {
+      "signed_sum": -2.0678755685411524e-06,
+      "absolute_sum": 0.003336337559311149,
+      "maximum": 3.0564424130481916e-05
+    },
+    "forward_half": {
+      "signed_sum": -1.9744256574744065e-06,
+      "absolute_sum": 0.003336343212293706,
+      "maximum": 3.0564341958341866e-05
+    },
+    "backward_half": {
+      "signed_sum": -2.0344246987409103e-06,
+      "absolute_sum": 0.00333633542112108,
+      "maximum": 3.056439649088205e-05
+    },
+    "scale_difference": {
+      "signed_sum": 4.261324727469375e-09,
+      "absolute_sum": 8.0480408089071e-09,
+      "maximum": 6.589287365323473e-10
+    },
+    "candidate_closure_defect": {
+      "signed_sum": 6.454062604439017e-07,
+      "absolute_sum": 8.360818702761912e-07,
+      "maximum": 3.892666346458052e-08
+    },
+    "quadrature_derivative_difference": {
+      "signed_sum": 8.777599868422313e-14,
+      "absolute_sum": 8.777599868422313e-14,
+      "maximum": 9.311076251038684e-16
+    },
+    "P2_constraint_derivative_effect": {
+      "signed_sum": 6.364302102880569e-11,
+      "absolute_sum": 6.364302102880569e-11,
+      "maximum": 2.8484108653562337e-12
+    },
+    "remainder_summation_derivative_bound": {
+      "signed_sum": 1.5664856577168249e-15,
+      "absolute_sum": 1.5664856577168249e-15,
+      "maximum": 5.116221423806041e-18
+    }
+  },
+  "interpretation": "Candidate closure derivative is unconfirmed if graph/prior branches change or two scales are unstable. No automatic epsilon sweep. P2 raw evaluation uses longdouble; remainder directly integrated with original binary64 density. Fit residual and P2 quadrature constraint defects are separately retained, not hidden by thermal correction."
+}

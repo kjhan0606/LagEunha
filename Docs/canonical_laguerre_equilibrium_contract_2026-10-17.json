@@ -1,0 +1,113 @@
+{
+  "status": "Mathematical design constraints; no production correction enabled.",
+  "user_constraints": {
+    "steering": false,
+    "Laguerre_weights": "time dependent allowed",
+    "fixed_cell_mass": "Baseline, with relaxation explicitly coupled to time-dependent Laguerre weights."
+  },
+  "definition": {
+    "cell": "C_i(X,w), positive partition of the domain",
+    "equilibrium": "rho_eq(r), P_eq=P0, v_eq=v_c(r)e_phi with matching softened gravitational acceleration",
+    "state": "Q_i = integral_Ci U; include velocity moments when using high-order reconstruction",
+    "weight_condition": "Derive coupled weight evolution and conservative cell-mass relaxation; generic independent variable-mass ALE is not the adopted formulation."
+  },
+  "necessary_conditions": [
+    {
+      "name": "Global equilibrium mass compatibility",
+      "equation": "sum_i m_i = integral_domain rho_eq is necessary if every cell is required to have zero density perturbation.",
+      "observed": "canonical_equilibrium_mass_compatibility_2026-10-17.json: existing total mass differs from analytic sharp-ring mass by 1.39598675%.",
+      "action": "Preserve old masses and nonzero initial perturbation. Do not reset density, change ring radii, or redefine benchmark accuracy to force equality."
+    },
+    {
+      "name": "Geometric conservation",
+      "equation": "Vdot_i = integral_boundary s_f; rho_i=m_i/V_i. At uniform rho equilibrium with fixed m_i, Vdot_i must be zero.",
+      "action": "Changing only the pressure force cannot keep both density and ideal-gas pressure at their equilibrium values while Vdot is nonzero."
+    },
+    {
+      "name": "Moment kinematics",
+      "equation": "p_i/m_i generally differs from v_rec(X_i); q_i/m_i generally differs from X_i.",
+      "action": "Use existing affine/moment formulation explicitly. Do not silently reinterpret old particle momenta or infer new internal moments uniquely from restart fields."
+    },
+    {
+      "name": "Equilibrium differentiation on moving cells",
+      "equation": "Qeq_i(t)=integral_Ci(t) Ueq; Qeq_dot is generally nonzero even for a stationary Eulerian equilibrium.",
+      "action": "Evaluate moving-cell equilibrium integrals and fluxes consistently. Do not subtract R_h(Qeq) alone and incorrectly set Qeq_dot=0."
+    },
+    {
+      "name": "Conservative candidate, conditional",
+      "equation": "Qdot_i=R_h(Q)_i-R_h(Qeq)_i+Qeq_dot_i is a possible semidiscrete consistency template, not a complete scheme.",
+      "action": "Realize changes through shared antisymmetric face fluxes and compatible gravity work. Audit total energy including external potential and frozen-boundary exchange; angular momentum needs matching internal moments. Every RK stage and topology event must follow the same definition."
+    },
+    {
+      "name": "No double weight work",
+      "equation": "ALE momentum/energy transport already contains moving-face work.",
+      "action": "Do not append a separately derived weight-work term without proving it is absent from ALE flux."
+    },
+    {
+      "name": "Finite time realization",
+      "equation": "Existence of a positive-state fixed-geometry HLLC weight rate is not existence of its long-time evolution.",
+      "action": "Track actual cells, mass residual, connectivity, conditioning and state positivity. Absolute weight size is gauge dependent; weight differences alone are diagnostics, not a universal failure theorem."
+    }
+  ],
+  "history_sources": [
+    "staggered_fixedmass_weights_2026-10-09.md",
+    "staggered_hllc_fixedmass_2026-10-09.md",
+    "staggered_affine_moment_closure_2026-10-09.md",
+    "dae_periodic_verification_2026-10-09.md"
+  ],
+  "external_primary_source": "https://arxiv.org/html/2403.10917v2",
+  "external_scope": "Published rotating-equilibrium preservation does not prove fixed cell mass and no-steering compatibility for this code.",
+  "next_gate": "Actual t2 initialization/remap component checks completed. Next: approved zero-weight identity/round-trip with retained moments, then pressure/gravity evolution closure; production full-solver reduction and long stability unverified.",
+  "weight_coupled_mass_relaxation": {
+    "user_instruction": "고정질량완화는 가중치의 변동으로 연결시켜서 저장해.",
+    "scope": "Project-local research constraint, supersedes the earlier broad variable-mass interpretation.",
+    "decision": "Relaxation of fixed cell mass must be explicitly coupled to time-dependent Laguerre weights.",
+    "not_authorized_by_this_decision": "Treating ordinary unconstrained variable-mass ALE at fixed weights as the adopted replacement.",
+    "required_definition": "Derive and record the relation between weight evolution, geometric face motion and conservative cell-mass transfer. Do not silently choose an independent mass-relaxation law.",
+    "conservation": "Shared-face mass transfers must be equal and opposite. Momentum and total energy must be transported consistently with the same moving-face flux.",
+    "kinematics": "No generator steering. Weight changes move the cell boundary; mass must not be reassigned without conservative flux.",
+    "zero_weight_rate_limit": "Must explicitly derive and report whether the proposed coupling recovers fixed mass when weight rates vanish. Generic ALE does not guarantee this because generator motion also moves faces. Do not drop physical flux terms to force the limit.",
+    "open_mathematics": "No coupling law has yet been selected or verified. This saved constraint is not a claim of existence or stability."
+  },
+  "approved_voronoi_reduction": {
+    "status": "Approved by user; implementation and physical consistency remain unverified.",
+    "approval": "자네의 환원조건은 승인함.",
+    "condition": "When all weight differences remain zero in time, recover the original fixed-cell-mass Voronoi model. Relaxation of fixed cell mass is explicitly coupled to changing Laguerre weights.",
+    "gauge": "Common weights and common weight rates do not change geometry; use differences, not absolute weights.",
+    "instantaneous_caveat": "Equal weights at one instant do not imply zero relative weight rates or zero ensuing exchange.",
+    "return_to_zero": "Returning weights to a common value does not reset cell masses to initial values; the fixed-mass limit retains masses reached at that time.",
+    "physical_gate": "Derive compatibility of the mass equation with moving faces and momentum/energy transport. Merely suppressing an ALE mass flux is not a consistency proof.",
+    "no_steering": true
+  },
+  "experimental_remap_evidence": [
+    "canonical_weight_remap_flux_2026-10-17.json",
+    "canonical_weight_remap_finite_step_2026-10-17.json"
+  ],
+  "weight_remap_moment_initialization_progress_2026_10_18": {
+    "moment_transport_evidence": "canonical_weight_remap_moments_2026-10-18.json",
+    "initial_lift_evidence": "canonical_weight_remap_initialization_2026-10-18.json",
+    "minimum_distortion_evidence": "canonical_weight_remap_initialization_check_2026-10-18.json",
+    "continuous_positivity_evidence": "canonical_weight_remap_lift_positivity_2026-10-18.json",
+    "scope": "Central r<.7 patch only: 1590 of 36864 canonical cells. No hydrodynamic evolution or production restart conversion.",
+    "lineage": "Builds on 2026-10-09 affine/subcell formulation; new evidence is actual canonical geometry and shared C/OpenMP/CUDA implementation.",
+    "transport": "Finite overlap remap with 17 moments conserves integrated L and hydrodynamic/potential integrals at stated precision, keeps uniform pressure and positive atomic representation. CPU OMP1/4 and CUDA agree bitwise.",
+    "initialization": "Uniform density conversion fails point L/Phi preservation. Positive entropy-style fit preserves aggregate invariants but has 18.76% volume-weighted density-factor RMS. A minimum-L2 fit reduces this to 3.752746%.",
+    "L2_constraints": "Per-cell mass unchanged; constant per-cell velocity preserves each p and K, uniform thermal energy per volume preserves U and pressure. Global patch qx/qy/L/Phi matched. Per-cell q/L/Phi need not match old point convention.",
+    "L2_quadrature": "Order8/12 give density RMS .0375274603241 and maximum per-cell mass mismatch about2.52e-11 with original order4 normalization; global centered constraint residual <=1.79e-14. These are measured quadrature errors, not exact continuum equality.",
+    "L2_positivity": "Adaptive triangle bounds cover all1590cells. Conservative density-factor lower bound .0003979867>0 after <=1 subdivision; sampled factors .73594..1.19662 are not whole-cell extrema. Uses floating margin1e-11, not interval arithmetic.",
+    "L2_candidate": "/gpfs/kjhan/LagForce/Codex_weight_remap_initialization_check_v3_20261018/l2_candidate.npz",
+    "status": "Conditional initialization candidate only; no production switch. Approved zero-weight fixed-mass reduction, gravity-work evolution, density/velocity closure and long Kepler accuracy remain unverified."
+  },
+  "actual_checkpoint_weight_remap_2026_10_18": {
+    "evidence": "canonical_checkpoint_weight_remap_2026-10-18.json",
+    "positivity_evidence": "canonical_checkpoint_lift_positivity_2026-10-18.json",
+    "source_time": 2.0029059177634028,
+    "source": "Actual original C restart khout.000184.dat; saved vx/vy/ie retained, not manufactured circular/common-pressure fields.",
+    "scope": "Central r<.7 patch only,1590cells. Refitted positive density plus finite weight remaps .25 and1 times target; orders4/8. No time evolution or MPI.",
+    "implementation": "Shared C/CUDA wm_lift_atom evaluates donor density and all17moments; wrappers compare CPU OMP1/4 and CUDA, reject negative thermal input.",
+    "result": "Order8 post minus original point aggregate invariants <=1.03e-14, CPU/OMP/CUDA bitwise equal, positive thermal energies. Thermal-overlap error <=1.63e-10.",
+    "kinetic_information": "Cell mean alone loses kinetic energy equal to2.0855%/8.0187% of patch initial thermal energy for quarter/full target; retained in Pi, not heated.",
+    "positive_density": "Continuous triangle bounds for actual-state coefficients positive on all1590cells with conservative floating margin; lower bound .0004031763. No arbitrary-precision interval claim.",
+    "remaining": "Does not close physical-time pressure/gravity moment evolution, compact reconstruction, MPI, or approved zero-weight fixed-mass reduction."
+  }
+}

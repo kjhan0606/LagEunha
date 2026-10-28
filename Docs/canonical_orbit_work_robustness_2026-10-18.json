@@ -1,0 +1,53 @@
+{
+  "cases": {
+    "omp4": {
+      "reader_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "discarded_stage_records": 0,
+      "accepted_stage_max_abs_difference": {
+        "wdt": 0.0,
+        "hydro_minus_TCF": 0.0,
+        "TCF": 0.0,
+        "shear": 0.0,
+        "total": 0.0
+      },
+      "retries": 0
+    },
+    "retry": {
+      "reader_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "discarded_stage_records": 4,
+      "accepted_stage_max_abs_difference": {
+        "wdt": 0.0,
+        "hydro_minus_TCF": 0.0,
+        "TCF": 0.0,
+        "shear": 0.0,
+        "total": 0.0
+      },
+      "retries": 1
+    }
+  },
+  "scope": "MPI1 one accepted step. OMP1 vs4 and forced final rejection .005 then .0025. Parser discards rejected stage/HG rows on retry markers. No production MPI or CUDA force extension and no long-time stability claim."
+}

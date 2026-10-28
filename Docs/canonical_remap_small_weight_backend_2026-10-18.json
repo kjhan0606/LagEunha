@@ -1,0 +1,153 @@
+{
+  "scope": "Actual t2 restart fields, central r<.7 patch of1590cells only. Conditional initialization plus finite weight remapping; no physical time evolution or MPI.",
+  "source": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat",
+  "source_time": 2.0029059177634028,
+  "invariant_layout": [
+    "M",
+    "Px",
+    "Py",
+    "Lz",
+    "E_hydro",
+    "E_potential"
+  ],
+  "initialization_error_order8": [
+    1.1102230246251565e-16,
+    1.3877787807814457e-17,
+    -6.938893903907228e-18,
+    1.1102230246251565e-16,
+    1.1102230246251565e-16,
+    0.0
+  ],
+  "original_thermal_min": 3.755646963198527e-08,
+  "original_thermal_sum": 6.488644187182621e-05,
+  "original_pressure_range": [
+    2.5759845499375074e-05,
+    3.000129814315634e-05
+  ],
+  "reports": [
+    {
+      "weight_fraction": 0.0625,
+      "order": 8,
+      "fragments": 5732,
+      "atoms": 1805312,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "mass_oracle_max_absolute_error": 3.3881317890172014e-21,
+      "minimum_sampled_density_factor": 0.7262233878605844,
+      "all_mass_and_thermal_positive": true,
+      "shared_atom_invariant_changes": [
+        0.0,
+        5.204170427930421e-18,
+        -6.938893903907228e-18,
+        1.1102230246251565e-16,
+        -1.1102230246251565e-16,
+        -2.220446049250313e-16
+      ],
+      "independent_donor_quadrature_invariant_difference": [
+        5.218048215738236e-15,
+        -5.707240235963695e-16,
+        3.8163916471489756e-17,
+        3.9968028886505635e-15,
+        4.440892098500626e-15,
+        -8.881784197001252e-15
+      ],
+      "post_minus_original_point_invariants": [
+        5.329070518200751e-15,
+        -5.516420653606247e-16,
+        2.42861286636753e-17,
+        4.218847493575595e-15,
+        4.440892098500626e-15,
+        -9.103828801926284e-15
+      ],
+      "thermal_overlap_max_relative_error": 1.1676215549982771e-10,
+      "unresolved_kinetic_over_initial_thermal": 0.005337409081229605
+    },
+    {
+      "weight_fraction": 0.015625,
+      "order": 8,
+      "fragments": 5747,
+      "atoms": 1809664,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "mass_oracle_max_absolute_error": 3.3881317890172014e-21,
+      "minimum_sampled_density_factor": 0.726217105754855,
+      "all_mass_and_thermal_positive": true,
+      "shared_atom_invariant_changes": [
+        1.1102230246251565e-16,
+        5.898059818321144e-17,
+        6.938893903907228e-18,
+        0.0,
+        0.0,
+        -2.220446049250313e-16
+      ],
+      "independent_donor_quadrature_invariant_difference": [
+        5.551115123125783e-15,
+        -8.847089727481716e-17,
+        -3.8163916471489756e-17,
+        4.218847493575595e-15,
+        4.773959005888173e-15,
+        -9.547918011776346e-15
+      ],
+      "post_minus_original_point_invariants": [
+        5.773159728050814e-15,
+        -1.5612511283791264e-17,
+        -3.8163916471489756e-17,
+        4.3298697960381105e-15,
+        4.884981308350689e-15,
+        -9.769962616701378e-15
+      ],
+      "thermal_overlap_max_relative_error": 1.6535683933227574e-10,
+      "unresolved_kinetic_over_initial_thermal": 0.0013468277560570044
+    },
+    {
+      "weight_fraction": 0.00390625,
+      "order": 8,
+      "fragments": 5743,
+      "atoms": 1808768,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "mass_oracle_max_absolute_error": 3.3881317890172014e-21,
+      "minimum_sampled_density_factor": 0.726209284137111,
+      "all_mass_and_thermal_positive": true,
+      "shared_atom_invariant_changes": [
+        0.0,
+        3.469446951953614e-17,
+        1.0408340855860843e-17,
+        0.0,
+        0.0,
+        -2.220446049250313e-16
+      ],
+      "independent_donor_quadrature_invariant_difference": [
+        5.218048215738236e-15,
+        -4.354155924701786e-16,
+        -6.245004513516506e-17,
+        4.107825191113079e-15,
+        4.440892098500626e-15,
+        -9.103828801926284e-15
+      ],
+      "post_minus_original_point_invariants": [
+        5.329070518200751e-15,
+        -3.86843335142828e-16,
+        -5.898059818321144e-17,
+        4.218847493575595e-15,
+        4.551914400963142e-15,
+        -9.325873406851315e-15
+      ],
+      "thermal_overlap_max_relative_error": 1.6345835796016672e-10,
+      "unresolved_kinetic_over_initial_thermal": 0.00033763752387597375
+    }
+  ],
+  "negative_thermal_input_rejected_cpu_cuda": true,
+  "remaining": [
+    "Continuous positivity for these newly fitted actual-velocity coefficients remains to be bounded; positive quadrature atoms alone do not prove it.",
+    "Retaining moments and potential does not define a pressure/gravity evolution closure or generator motion.",
+    "No production checkpoint changed; approved zero-weight fixed-mass reduction remains a full-solver requirement."
+  ],
+  "seconds": 24.607408130541444,
+  "sha256": {
+    "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+    "/gpfs/kjhan/LagForce/Codex_remap_small_weight_limit_20261018/weight_remap_moments.h": "ca8d21a8da3f6cf004ee941928e352f6f0bebb3b27958e5bb38c4220137ab87e",
+    "/gpfs/kjhan/LagForce/Codex_remap_small_weight_limit_20261018/probe.c": "3d16c0c07025031523fb6c61f2cd3d32e561c74b5245821ec4bda48eeb11e4ff",
+    "/gpfs/kjhan/LagForce/Codex_remap_small_weight_limit_20261018/probe.cu": "01ca383340334816a304a99929dc3113b2b7fcc141170e94c2409c6f475a7c5f",
+    "/gpfs/kjhan/LagForce/Codex_remap_small_weight_limit_20261018/cpu.so": "83f6e458ad150336f75a9bfdc1c285bc0fb8291588e2e4bc0215639f664d908c",
+    "/gpfs/kjhan/LagForce/Codex_remap_small_weight_limit_20261018/cuda.so": "c66d97889358d3c0c73a6fd82df1361b5832000c8d539c67174455a12660b615",
+    "/gpfs/kjhan/LagForce/Codex_remap_small_weight_limit_20261018/audit.py": "d223ffcaca59b87b0ebab98b6060b118317e57fca120ddd28050ad68403e187a"
+  }
+}

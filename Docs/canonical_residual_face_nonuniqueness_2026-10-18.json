@@ -1,0 +1,77 @@
+{
+  "scope": "Construct two smooth positive-pressure fields with identical stored moments.\n\nTheir face fluxes differ: covariance alone cannot recover subcell face traces.\nThis is an information-loss audit, not a proof that moment closures cannot converge.\n",
+  "moments_P2": [
+    3.999999999999999,
+    -3.642919299551295e-17,
+    -1.5612511283791264e-16,
+    1.3333333333333344,
+    6.4549601347765014e-18,
+    1.3333333333333355,
+    8.803721640582296e-17,
+    0.0,
+    2.5970092397714818e-20,
+    0.0,
+    -1.3666023347511084e-19,
+    0.0,
+    0.008,
+    0.0,
+    0.0,
+    0.020666666666666663,
+    0.0
+  ],
+  "moments_P3": [
+    3.999999999999999,
+    -3.642919299551295e-17,
+    -1.5612511283791264e-16,
+    1.3333333333333344,
+    6.4549601347765014e-18,
+    1.3333333333333355,
+    -2.168404344971009e-19,
+    0.0,
+    6.599937504458511e-19,
+    0.0,
+    -1.7632607357589214e-20,
+    0.0,
+    0.007999999999999983,
+    0.0,
+    0.0,
+    0.020666666666666653,
+    0.0
+  ],
+  "maximum_moment_difference": 8.825405684032006e-17,
+  "faces": {
+    "2": {
+      "-1.0": {
+        "velocity": 0.1,
+        "mass": 0.1,
+        "momentum_x": 0.01277777777777778,
+        "total_energy": 0.0011944444444444446
+      },
+      "1.0": {
+        "velocity": 0.1,
+        "mass": 0.1,
+        "momentum_x": 0.01277777777777778,
+        "total_energy": 0.0011944444444444446
+      }
+    },
+    "3": {
+      "-1.0": {
+        "velocity": -0.11832159566199232,
+        "mass": -0.11832159566199232,
+        "momentum_x": 0.016777777777777777,
+        "total_energy": -0.0016499289172866708
+      },
+      "1.0": {
+        "velocity": 0.11832159566199232,
+        "mass": 0.11832159566199232,
+        "momentum_x": 0.016777777777777777,
+        "total_energy": 0.0016499289172866708
+      }
+    }
+  },
+  "affine_reconstruction_velocity": 0.0,
+  "residual_covariance_per_mass_xx": 0.002,
+  "donor_predicted_right_momentum_flux": 0.002777777777777778,
+  "gaussian_predicted_right_momentum_flux": 0.004777777777777778,
+  "conclusion": "Neither stored affine velocity nor residual covariance selects the true face flux. Additional spatial reconstruction/closure and its convergence evidence are needed. No production force has been changed."
+}

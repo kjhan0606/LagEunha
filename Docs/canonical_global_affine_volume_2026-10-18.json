@@ -1,0 +1,126 @@
+{
+  "scope": "Uniform affine-field checks on saved t0 common faces; no evolution.",
+  "boundary_limit": "Only r<1.9 assessed, no global boundary or evolution claim.",
+  "cases": {
+    "rotation": {
+      "gradient": [
+        [
+          0.0,
+          -1.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ],
+      "expected_material_volume_rate": 0.0,
+      "regions": {
+        "inner_background": {
+          "error_mass_RMS": 5.8528119136492234e-15,
+          "error_max_abs": 2.3277235628472826e-14,
+          "error_mass_mean": -2.1206615575216134e-17
+        },
+        "inner_disk_edge": {
+          "error_mass_RMS": 9.089071282142381e-15,
+          "error_max_abs": 2.819784146460883e-14,
+          "error_mass_mean": -2.4871547671127882e-17
+        },
+        "disk_core": {
+          "error_mass_RMS": 2.285203022660806e-14,
+          "error_max_abs": 1.2782788549308726e-13,
+          "error_mass_mean": 3.297647316000338e-17
+        }
+      }
+    },
+    "dilation": {
+      "gradient": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "expected_material_volume_rate": 2.0,
+      "regions": {
+        "inner_background": {
+          "error_mass_RMS": 5.757792427080136e-15,
+          "error_max_abs": 2.708944180085382e-14,
+          "error_mass_mean": -7.075195549635221e-16
+        },
+        "inner_disk_edge": {
+          "error_mass_RMS": 9.53630687550132e-15,
+          "error_max_abs": 4.085620730620576e-14,
+          "error_mass_mean": -1.0314116196330407e-15
+        },
+        "disk_core": {
+          "error_mass_RMS": 2.2063181132845938e-14,
+          "error_max_abs": 1.2811973704174306e-13,
+          "error_mass_mean": -8.960572885994756e-16
+        }
+      }
+    },
+    "simple_shear": {
+      "gradient": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "expected_material_volume_rate": 0.0,
+      "regions": {
+        "inner_background": {
+          "error_mass_RMS": 0.030786695942987812,
+          "error_max_abs": 0.33160915692248655,
+          "error_mass_mean": -6.39753861136584e-05
+        },
+        "inner_disk_edge": {
+          "error_mass_RMS": 0.009392080886270715,
+          "error_max_abs": 0.04413591384506039,
+          "error_mass_mean": 0.00013192255986565487
+        },
+        "disk_core": {
+          "error_mass_RMS": 0.00526369038872001,
+          "error_max_abs": 0.03614372216271226,
+          "error_mass_mean": -2.5716291351303234e-12
+        }
+      }
+    },
+    "diagonal_strain": {
+      "gradient": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0
+        ]
+      ],
+      "expected_material_volume_rate": 0.0,
+      "regions": {
+        "inner_background": {
+          "error_mass_RMS": 0.06203495531529148,
+          "error_max_abs": 0.626169541574118,
+          "error_mass_mean": 9.672318609442762e-06
+        },
+        "inner_disk_edge": {
+          "error_mass_RMS": 0.018644205379883278,
+          "error_max_abs": 0.10483470507041932,
+          "error_mass_mean": -1.994512431287118e-05
+        },
+        "disk_core": {
+          "error_mass_RMS": 0.010288698766386026,
+          "error_max_abs": 0.0839611450386889,
+          "error_mass_mean": -1.4084037500849204e-12
+        }
+      }
+    }
+  }
+}

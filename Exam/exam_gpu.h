@@ -4,6 +4,8 @@
 #ifdef USE_CUDA
 
 #include <stddef.h>
+#include "moment_geometry.h"
+#include "moment_geometry_v2.h"
 
 /* ================================================================
  *  GPU Data Structures for Voronoi Force Loop + GPU Tessellation
@@ -169,16 +171,18 @@ typedef struct {
     int   *d_tree_sibling;        /* sibling index, -1 if NULL */
     int   *d_tree_daughter;       /* first daughter index, -1 if leaf/NULL */
     int   *d_tree_ptl_idx;        /* SoA particle index for PTL nodes, -1 for TREE */
-    float *d_tree_cx, *d_tree_cy;/* centroid (TREE) or position (PTL) */
-    float *d_tree_size;           /* nodesize (TREE), 0 (PTL) */
+    double *d_tree_cx, *d_tree_cy;/* centroid (TREE) or position (PTL) */
+    double *d_tree_size;
+    double *d_tree_nn2; /* double nearest-distance result, tree-capacity sized */           /* nodesize (TREE), 0 (PTL) */
 
     /* host-side pinned staging */
     int   *h_tree_type;
     int   *h_tree_sibling;
     int   *h_tree_daughter;
     int   *h_tree_ptl_idx;
-    float *h_tree_cx, *h_tree_cy;
-    float *h_tree_size;
+    double *h_tree_cx, *h_tree_cy;
+    double *h_tree_size;
+    double *h_tree_nn2; /* double nearest-distance result, tree-capacity sized */
 
     int initialized;
 } GPUContext;

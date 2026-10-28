@@ -1,0 +1,68 @@
+{
+  "status": "completed_saved_pressure_error_product_decomposition",
+  "time": 0.05,
+  "equation": "delta(P/P_ref) = delta(rho/rho_ref)*mean(u/u_ref) + delta(u/u_ref)*mean(rho/rho_ref); each branch uses its own moving-cell steady reference",
+  "regions": {
+    "all": {
+      "cells": 19945,
+      "pressure_error_difference_RMS": 0.0012179274835881749,
+      "density_contribution_RMS": 0.00023609219638399343,
+      "specific_thermal_contribution_RMS": 0.0012527128695364322,
+      "density_thermal_contribution_correlation": -0.24491901291459187,
+      "identity_residual_RMS": 1.9712235030245746e-16,
+      "identity_residual_maximum": 9.256432701195148e-16
+    },
+    "cavity": {
+      "cells": 754,
+      "pressure_error_difference_RMS": 0.0005550416936121904,
+      "density_contribution_RMS": 0.004186038703414098,
+      "specific_thermal_contribution_RMS": 0.004239182094072233,
+      "density_thermal_contribution_correlation": -0.9960174104744097,
+      "identity_residual_RMS": 2.207722698328468e-16,
+      "identity_residual_maximum": 7.284065123869276e-16
+    },
+    "inner_contact": {
+      "cells": 101,
+      "pressure_error_difference_RMS": 0.007562729379940019,
+      "density_contribution_RMS": 0.0026203727595816165,
+      "specific_thermal_contribution_RMS": 0.007229571679830064,
+      "density_thermal_contribution_correlation": -0.9760074669499879,
+      "identity_residual_RMS": 2.0571102578602397e-16,
+      "identity_residual_maximum": 6.599159576675369e-16
+    },
+    "disk_core": {
+      "cells": 11812,
+      "pressure_error_difference_RMS": 0.001129703105981602,
+      "density_contribution_RMS": 0.0001273610062965372,
+      "specific_thermal_contribution_RMS": 0.0011724646865760274,
+      "density_thermal_contribution_correlation": -0.3845925763578449,
+      "identity_residual_RMS": 1.9638772185156453e-16,
+      "identity_residual_maximum": 7.951939160544975e-16
+    }
+  },
+  "source_coarse": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0010/physics",
+    "fields_sha256": "b90a4d64edefa1351e16a85d2e4fd4aa160f693599379d7163158c489eaea870",
+    "physical_monitor_passed": true,
+    "physical_monitor_status": "passed_checkpoint_physical_monitor",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "ea05cce31c79c2050f2feaefd07fa820fd3cf56c4a4687a8a595d63687e0fe50",
+    "physical_gate_sha256": "cef2596e6b09a990dd26a267840af6c87f47e8f1fc3c77028a8d12ad690dc987",
+    "density_report_sha256": "533f04e961e8a9f9e9343b38e737ffe01ab80a6d95933495fe3007197f97be96",
+    "reference_report_sha256": "b212fe03d97c2138f6cd952fa9acfa2faa9585b32521939c6efbd04a0fcb2a75"
+  },
+  "source_fine": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0020/physics",
+    "fields_sha256": "01a45ae5e71b7bb209de118d3d339fdd047e5a96d44dbf35d524ae57c59ffdb2",
+    "physical_monitor_passed": true,
+    "physical_monitor_status": "passed_checkpoint_physical_monitor",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "896b69144cde5e74034c1d64c67087c075bbd203fcd1d2069893e8307a63e0a3",
+    "physical_gate_sha256": "5dbae6b2d77399707c3a2423219b899c7de5229a017db367d9ac00170d3aa82f",
+    "density_report_sha256": "f3516604eb9ab393e318d326d6ef207d669ec5a4705914f78617fce29c0050f6",
+    "reference_report_sha256": "413413b3d241d40ded12a5fc993123ed030fbff9e46978ad56a3e241cc489d93"
+  },
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "limits": "Exact algebraic decomposition of the difference between two checkpoint-relative pressure errors. It does not identify causal force or heating sources and does not establish convergence order."
+}

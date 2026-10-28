@@ -1,0 +1,74 @@
+{
+  "scope": "Instantaneous auxiliary work split on an unchanged saved physical state.\n\nv = v_circular(x) + u is diagnostic only. B and z use the actual evolved\nstate; no force is altered and no reference velocity enters the simulation.\n",
+  "snapshot": "/gpfs/kjhan/LagForce/Codex_reversible_memory_physical_to_t10_20261018/memory_from_t0/khout.000161.dat",
+  "snapshot_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+  "sidecar_sha256": "37bde74b34aa7bbaa821df3b0d4a0033e4815042963d32e571412cef6a50b376",
+  "time": 0.4000000000000003,
+  "regions": {
+    "all_active": {
+      "cells": 19855,
+      "owner_auxiliary_power": 8.547604359495765e-10,
+      "owner_power_from_circular_velocity": 8.056594127317427e-10,
+      "owner_power_from_departure_velocity": 4.910102321784315e-11,
+      "Bv_L2": 9.708848422478224e-05,
+      "Bvcircular_L2": 9.523954791235714e-05,
+      "Bdeparture_L2": 1.8386208067479475e-05,
+      "force_work_on_actual_velocity_free": -9.11723121462671e-10,
+      "force_work_on_circular_velocity_free": -8.626220591228505e-10,
+      "force_work_on_departure_velocity_free": -4.910106233983646e-11
+    },
+    "inner_background": {
+      "cells": 804,
+      "owner_auxiliary_power": 7.620457497664482e-10,
+      "owner_power_from_circular_velocity": 7.201854569169666e-10,
+      "owner_power_from_departure_velocity": 4.1860292849485213e-11,
+      "Bv_L2": 9.552513082652831e-05,
+      "Bvcircular_L2": 9.384430837223158e-05,
+      "Bdeparture_L2": 1.7620605026034986e-05,
+      "force_work_on_actual_velocity_free": 5.1215708210946686e-08,
+      "force_work_on_circular_velocity_free": 5.126116176630504e-08,
+      "force_work_on_departure_velocity_free": -4.545355535834795e-11
+    },
+    "inner_shear_band": {
+      "cells": 521,
+      "owner_auxiliary_power": 4.15070143268824e-10,
+      "owner_power_from_circular_velocity": 4.088068887429173e-10,
+      "owner_power_from_departure_velocity": 6.263254525899609e-12,
+      "Bv_L2": 3.935100830902679e-05,
+      "Bvcircular_L2": 3.889931071479889e-05,
+      "Bdeparture_L2": 7.289783924089461e-06,
+      "force_work_on_actual_velocity_free": 5.133298544510823e-08,
+      "force_work_on_circular_velocity_free": 5.134278627883299e-08,
+      "force_work_on_departure_velocity_free": -9.800833724765123e-12
+    },
+    "inner_disk_edge": {
+      "cells": 390,
+      "owner_auxiliary_power": 8.87672289808251e-11,
+      "owner_power_from_circular_velocity": 8.518996773912245e-11,
+      "owner_power_from_departure_velocity": 3.5772612417084215e-12,
+      "Bv_L2": 1.6596396283957257e-05,
+      "Bvcircular_L2": 1.6216935227368915e-05,
+      "Bdeparture_L2": 1.6467510490301167e-06,
+      "force_work_on_actual_velocity_free": -5.855670487657692e-08,
+      "force_work_on_circular_velocity_free": -5.855672096244941e-08,
+      "force_work_on_departure_velocity_free": 1.6085872501718678e-14
+    },
+    "disk_core": {
+      "cells": 10304,
+      "owner_auxiliary_power": 2.9373659024708016e-13,
+      "owner_power_from_circular_velocity": 2.8406455972232807e-13,
+      "owner_power_from_departure_velocity": 9.672030524583542e-15,
+      "Bv_L2": 9.43883260315428e-07,
+      "Bvcircular_L2": 9.099038900883037e-07,
+      "Bdeparture_L2": 2.488392646211055e-07,
+      "force_work_on_actual_velocity_free": 6.488892595561453e-09,
+      "force_work_on_circular_velocity_free": 6.4889023205149086e-09,
+      "force_work_on_departure_velocity_free": -9.724953455793394e-15
+    }
+  },
+  "max_moment": 1.0957283226940693e-14,
+  "velocity_split_relative_error": 7.417634085755546e-13,
+  "global_power_closure_relative": 6.613477328997618e-18,
+  "frozen_boundary_external_power": -5.696268551310854e-11,
+  "limitations": "Instantaneous auxiliary contribution only, not full departure-energy derivative or accumulated energy attribution. Owner regions and recipient-force regions differ because coupling crosses region boundaries. Circular-reference work is not automatically erroneous dissipation. SVD reconstruction is independently parity-checked elsewhere; no live state changed."
+}

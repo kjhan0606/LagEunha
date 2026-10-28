@@ -49,7 +49,7 @@ def least_squares(centers,means,neighbors):
     return np.array(gradients)
 
 
-def affine_case(n=4):
+def affine_case(n=4, capture=None):
     xx,yy=np.meshgrid((np.arange(n)+.5)/n,(np.arange(n)+.5)/n)
     x=np.column_stack([xx.ravel(),yy.ravel()])+np.random.default_rng(731).uniform(-.15,.15,(n*n,2))/n
     w=np.zeros(n*n);B=np.array([[0.,1.1],[0.,0.]]);b=np.array([.2,0.])
@@ -94,10 +94,16 @@ def affine_case(n=4):
         derivative[i,9:13]+=(Pi+pressures[i]*s['area']*np.eye(2)).ravel()
         derivative[i,13:17]+=(pressures[i]*s['area']*(gradients[i]+gradients[i].T)).ravel()
     errors=[]
+    if capture is not None:
+        capture.update(raw=np.array([s['raw'] for s in mom]),rate=derivative.copy(),finite_states=[])
     for eps in (1e-4,1e-5,1e-6):
         plus=bounded_mesh(x+eps*generator_velocity,w+eps*z)[0]
         minus=bounded_mesh(x-eps*generator_velocity,w-eps*z)[0]
-        fd=(np.array([integrate(p,velocity)['raw'] for p in plus])-np.array([integrate(p,velocity)['raw'] for p in minus]))/(2*eps)
+        raw_plus=np.array([integrate(p,velocity)['raw'] for p in plus])
+        raw_minus=np.array([integrate(p,velocity)['raw'] for p in minus])
+        fd=(raw_plus-raw_minus)/(2*eps)
+        if capture is not None:
+            capture['finite_states'].append((eps,raw_plus,raw_minus))
         errors.append(dict(eps=eps,max_raw_moment_rhs_error=float(np.max(abs(fd-derivative)))))
     kinetic_rate=.5*(derivative[:,13]+derivative[:,16])
     pressure_rate=(GAMMA-1)*(derivative[:,-1]-kinetic_rate)/np.array([s['area'] for s in mom])-np.array(pressures)*area_rate/np.array([s['area'] for s in mom])

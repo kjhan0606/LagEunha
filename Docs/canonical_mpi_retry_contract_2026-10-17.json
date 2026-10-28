@@ -1,0 +1,43 @@
+{
+  "scope": "Source audit before enabling collective production retry",
+  "exam_sha256": "8798cc9f202b3dde0fbabfd59c8da41ef19f8f806181a2746918b0ff63c273b5",
+  "confirmed": [
+    "Accepted ledger captures state before first HG trial and commits after second HG and final rejection checks.",
+    "Diagnostic elapsed clock advances only after acceptance.",
+    "RK budget is reset by gfs_eaud_start.",
+    "RK4 stage data live in the migrated particle record; stage code refreshes sbp after postStage.",
+    "Production retry remains explicitly restricted to one MPI rank."
+  ],
+  "required_before_full_mpi": [
+    "Collective global failure decision before any rank-dependent split/collective branch.",
+    "Global minimum dt/cap and identical retry count on every rank.",
+    "Restore checkpoint allocation, owned count, ownership, VORO_TNP and NPSUM after particle migration.",
+    "Rebuild geometry, reconstruction and ghost state with fresh stage identity after restore.",
+    "Restore or reset trial entropy accumulators, HG boundary terms, RK budget, floor diagnostics and any physical auxiliary state.",
+    "Integrate ordered distributed HG and remote reconstruction exchange into each real RK/HG phase.",
+    "Forced rejection during a real coupled RK step must match a direct smaller accepted step; ledger and clock must count accepted evolution only."
+  ],
+  "diagnostic_limit": "Position drift rollback alone does not exercise a coupled RK trial, physical source terms, or mutated ledger/clock. No production MPI guard removed.",
+  "serial_coupled_retry_progress": {
+    "evidence": "canonical_coupled_retry_2026-10-17.json",
+    "passed": "CPU/CUDA nearest neighbor x OMP1/8, real split-HG/RK4 final-trial rejection and direct-step equivalence",
+    "not_covered": [
+      "MPI coupled RK stages",
+      "rejection at intermediate stages",
+      "active entropy accumulator output",
+      "long-time physical stability"
+    ]
+  },
+  "coupled_mpi_step_recovered_2026_10_18": {
+    "evidence": "canonical_mpi_coupled_step_recovered_2026-10-18.json",
+    "status": "Existing completed outputs revalidated; MPI1/2/4 full step and MPI2/4 final-trial rejection match serial listed physical fields bitwise.",
+    "supersedes": "Earlier no coupled MPI runtime coverage statements; experimental flag required.",
+    "remaining": [
+      "Repeated coupled steps and ownership changes",
+      "Intermediate-stage rejection",
+      "Active entropy output",
+      "Long-term physical accuracy",
+      "CUDA TCF and dynamic weights"
+    ]
+  }
+}

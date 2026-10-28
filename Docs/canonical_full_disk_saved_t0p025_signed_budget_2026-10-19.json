@@ -1,0 +1,787 @@
+{
+  "status": "completed_single_saved_state_signed_pressure_density_budget",
+  "time": 0.025,
+  "source": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/physics",
+    "fields_sha256": "58707d61e0523223ac9c77e86475e539ad9e94639c0b6def6bdc43fcf06bd7c6",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "f40899cbb71b8593743bff0f701c9b12f520784fe76d413f5935e645dd1fb54f",
+    "physical_gate_sha256": "43335db97866c5843e6e2ffd65a841b98990122a403e237b25c4d59fefb7b391",
+    "density_report_sha256": "5789050feabcc789e51d49e8e54eef26f0214554e6e94bb6fd72798297926cf9",
+    "reference_report_sha256": "27e370b3078724b9dc02a52b995047b0fb42d4e43c367979f54082015ce604e5"
+  },
+  "capture": {
+    "status": "completed_single_saved_state_rhs_budget_capture",
+    "time": 0.025,
+    "physical_providers": 1,
+    "accepted_time_steps": 0,
+    "original_sources_unchanged": true,
+    "source_sha256": {
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/accepted.npz": "e0a29e270f4f46b86e06175f4388a1364de94e9ab8375bf36578828d57be6a72",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/geometry/mesh.npz": "3d3191678110bccee64ebc926358ad086a66c59ac466ff7e9307697692b0efaa",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/geometry/full_exact_supports.json": "a507ec2b738c1315fb2b378a8b1f3cf7f130293b8b3fec91cc7577f154964c59",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/density/cells.jsonl": "e3dcee17d0626e677255552bbf2cec82e97a3d1196f782315acef5483987d25f",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/steps/coarse_0006_start/report.json": "8383e13d9ef6a5888df69f28c5d32dc8d31b4d6a49f4153bf5eeb3f1c4950537",
+      "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/steps/coarse_0006_start/preparation.json": "f85a74ce74a4e6c3555c8b15c88a3a1c92bd806aaab22ba44c93454ef41961ce"
+    },
+    "source_operator_sha256": "81406a35766f6d65e7eccb8e8a2a7319c5a4f058cc497954be0b284275608142",
+    "source_velocity_sha256": "2529b18822ce6fde7fd324d5cf107adfca147dadcc62ac88e4593789b5effc21",
+    "actual_backend_sha256": "980ec3d35e3bc3e69e6a4bfcf53c5c3f9123d3b733308dbbe02c7adf0eb4fe54",
+    "input_weight_rate_seed_sha256": "335528def3b5f9da0317fe231a59850eecf9fb8dafd71478082f134a15c201e7",
+    "original_node_hashes_identical": true,
+    "capture": {
+      "nodes": 4325120,
+      "total_volume_rate": -2.7050253596555973e-19
+    },
+    "limits": "One instantaneous RHS, not a trajectory or finite-step volume-map audit. Longdouble signed flux sums use different accumulation order and are diagnostic. No factor/time update, tolerance change or state repair."
+  },
+  "regions": {
+    "all": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.042634870235895406,
+        "signed_mean": 0.00307977743641282,
+        "maximum": 3.417274574265406,
+        "maximum_signed": -3.417274574265406,
+        "maximum_id": 734
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.04262789964826545,
+        "signed_mean": 0.0030794289060361185,
+        "maximum": 3.417406130397676,
+        "maximum_signed": -3.417406130397676,
+        "maximum_id": 734
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.04225405414551203,
+        "signed_mean": -0.0026426015101874752,
+        "maximum": 3.46885683899572,
+        "maximum_signed": 3.46885683899572,
+        "maximum_id": 734
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 4.594205253189745e-09,
+        "signed_mean": 1.793004775479574e-13,
+        "maximum": 3.6246562043702577e-06,
+        "maximum_signed": 3.6246562043702577e-06,
+        "maximum_id": 642
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 2.6433757886720986e-11,
+        "signed_mean": -1.233032751392164e-13,
+        "maximum": 3.7865231650972586e-10,
+        "maximum_signed": -3.7865231650972586e-10,
+        "maximum_id": 894
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 1.718231157716523e-09,
+        "signed_mean": -1.2479269512921905e-10,
+        "maximum": 1.438495617961088e-07,
+        "maximum_signed": 1.438495617961088e-07,
+        "maximum_id": 734
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 3.41632432742806e-07,
+        "signed_mean": -1.3307391716864404e-09,
+        "maximum": 6.125673697221294e-06,
+        "maximum_signed": 6.125673697221294e-06,
+        "maximum_id": 935
+      },
+      "pressure_power_rate": {
+        "RMS": 2.6025598255454546e-09,
+        "signed_mean": 2.9995545793438145e-11,
+        "maximum": 3.251226368109115e-08,
+        "maximum_signed": -3.251226368109115e-08,
+        "maximum_id": 816
+      },
+      "signed_mass_rate": {
+        "RMS": 7.822245862705126e-17,
+        "signed_mean": -1.4326137478106954e-21,
+        "maximum": 6.092777483090715e-14,
+        "maximum_signed": -6.092777483090715e-14,
+        "maximum_id": 642
+      },
+      "native_mass_rate": {
+        "RMS": 7.822242836868025e-17,
+        "signed_mean": -1.5924999789094938e-21,
+        "maximum": 6.092776991021648e-14,
+        "maximum_signed": -6.092776991021648e-14,
+        "maximum_id": 642
+      },
+      "signed_minus_native_mass": {
+        "RMS": 8.733212900353388e-20,
+        "signed_mean": 1.5988623109879845e-22,
+        "maximum": 9.965739671140869e-19,
+        "maximum_signed": 9.965739671140869e-19,
+        "maximum_id": 972
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 0.0018168545444527228,
+        "signed_mean": 0.0004368273960279439,
+        "maximum": 0.05145070860143164,
+        "maximum_signed": 0.05145070860143164,
+        "maximum_id": 734
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 5.442195604257182e-20,
+        "signed_mean": 4.34539634968381e-23,
+        "maximum": 8.038585653748248e-19,
+        "maximum_signed": 8.038585653748248e-19,
+        "maximum_id": 845
+      }
+    },
+    "inner": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.03898105293947809,
+        "signed_mean": -0.0010008102876977567,
+        "maximum": 0.15290736168992985,
+        "maximum_signed": 0.15290736168992985,
+        "maximum_id": 259
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.038979707260157696,
+        "signed_mean": -0.0009990821383230198,
+        "maximum": 0.1529112988527746,
+        "maximum_signed": 0.1529112988527746,
+        "maximum_id": 259
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.04276884809549133,
+        "signed_mean": 0.011730327142687819,
+        "maximum": 0.1296415394132433,
+        "maximum_signed": -0.1296415394132433,
+        "maximum_id": 259
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 1.3280920925397867e-12,
+        "signed_mean": -2.8377820168817527e-14,
+        "maximum": 9.387986763191147e-12,
+        "maximum_signed": -9.387986763191147e-12,
+        "maximum_id": 447
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 3.3144539747558785e-12,
+        "signed_mean": -1.5943846302065912e-13,
+        "maximum": 2.0045416492374214e-11,
+        "maximum_signed": -2.0045416492374214e-11,
+        "maximum_id": 193
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 1.6122663057453274e-09,
+        "signed_mean": 3.194186480143361e-11,
+        "maximum": 6.254651746124624e-09,
+        "maximum_signed": -6.254651746124624e-09,
+        "maximum_id": 259
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 1.0009254870156182e-07,
+        "signed_mean": 3.0042025158800728e-09,
+        "maximum": 3.9246901336393383e-07,
+        "maximum_signed": 3.9246901336393383e-07,
+        "maximum_id": 96
+      },
+      "pressure_power_rate": {
+        "RMS": 5.117959153648892e-09,
+        "signed_mean": -3.2953798743236595e-10,
+        "maximum": 1.7870625763198332e-08,
+        "maximum_signed": -1.7870625763198332e-08,
+        "maximum_id": 252
+      },
+      "signed_mass_rate": {
+        "RMS": 6.618422776967954e-20,
+        "signed_mean": 7.626427582849053e-23,
+        "maximum": 8.012399122827169e-19,
+        "maximum_signed": -8.012399122827169e-19,
+        "maximum_id": 3
+      },
+      "native_mass_rate": {
+        "RMS": 6.621823913348272e-20,
+        "signed_mean": 1.3702034770210012e-22,
+        "maximum": 8.008162984794313e-19,
+        "maximum_signed": -8.008162984794313e-19,
+        "maximum_id": 3
+      },
+      "signed_minus_native_mass": {
+        "RMS": 2.716791966196022e-21,
+        "signed_mean": -6.075607187360958e-23,
+        "maximum": 1.072300077446632e-20,
+        "maximum_signed": 1.072300077446632e-20,
+        "maximum_id": 444
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 0.013252054312453633,
+        "signed_mean": 0.01073124500433642,
+        "maximum": 0.030494103430113002,
+        "maximum_signed": 0.030494103430113002,
+        "maximum_id": 443
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 3.754794123715572e-21,
+        "signed_mean": -8.162939549092676e-23,
+        "maximum": 1.7878719726018787e-20,
+        "maximum_signed": 1.7878719726018787e-20,
+        "maximum_id": 331
+      }
+    },
+    "cavity": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.34056936661360077,
+        "signed_mean": -0.07554412496503575,
+        "maximum": 3.417274574265406,
+        "maximum_signed": -3.417274574265406,
+        "maximum_id": 734
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.3405907204312741,
+        "signed_mean": -0.07554825162026346,
+        "maximum": 3.417406130397676,
+        "maximum_signed": -3.417406130397676,
+        "maximum_id": 734
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.34533400935810876,
+        "signed_mean": 0.08523137137732889,
+        "maximum": 3.46885683899572,
+        "maximum_signed": 3.46885683899572,
+        "maximum_id": 734
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 1.8412793699307752e-07,
+        "signed_mean": 8.456042389116678e-11,
+        "maximum": 3.6246562043702577e-06,
+        "maximum_signed": 3.6246562043702577e-06,
+        "maximum_id": 642
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 2.9740846019868814e-12,
+        "signed_mean": -1.5402074264445346e-13,
+        "maximum": 2.0045416492374214e-11,
+        "maximum_signed": -2.0045416492374214e-11,
+        "maximum_id": 193
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 1.421685378615761e-08,
+        "signed_mean": 3.146829398589203e-09,
+        "maximum": 1.438495617961088e-07,
+        "maximum_signed": 1.438495617961088e-07,
+        "maximum_id": 734
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 1.2529823117544967e-07,
+        "signed_mean": 3.2786614084405824e-09,
+        "maximum": 1.075257622198038e-06,
+        "maximum_signed": 1.075257622198038e-06,
+        "maximum_id": 734
+      },
+      "pressure_power_rate": {
+        "RMS": 4.8294644365554155e-09,
+        "signed_mean": -1.5039559795819868e-10,
+        "maximum": 1.7870625763198332e-08,
+        "maximum_signed": -1.7870625763198332e-08,
+        "maximum_id": 252
+      },
+      "signed_mass_rate": {
+        "RMS": 3.1337137233244006e-15,
+        "signed_mean": 5.700299958211101e-19,
+        "maximum": 6.092777483090715e-14,
+        "maximum_signed": -6.092777483090715e-14,
+        "maximum_id": 642
+      },
+      "native_mass_rate": {
+        "RMS": 3.1337135238445006e-15,
+        "signed_mean": 5.69996541927218e-19,
+        "maximum": 6.092776991021648e-14,
+        "maximum_signed": -6.092776991021648e-14,
+        "maximum_id": 642
+      },
+      "signed_minus_native_mass": {
+        "RMS": 3.3420496969061084e-21,
+        "signed_mean": 3.3453893892154295e-23,
+        "maximum": 1.934087858877347e-20,
+        "maximum_signed": -1.934087858877347e-20,
+        "maximum_id": 734
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 0.012642403492880249,
+        "signed_mean": 0.009683119841625846,
+        "maximum": 0.05145070860143164,
+        "maximum_signed": 0.05145070860143164,
+        "maximum_id": 734
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 4.067266007116202e-21,
+        "signed_mean": -4.885421603306122e-23,
+        "maximum": 2.5572999495415763e-20,
+        "maximum_signed": -2.5572999495415763e-20,
+        "maximum_id": 713
+      }
+    },
+    "disk_core": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.010825347768455802,
+        "signed_mean": 0.0006460204067063007,
+        "maximum": 0.5607930905763127,
+        "maximum_signed": 0.5607930905763127,
+        "maximum_id": 899
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.010828340710517114,
+        "signed_mean": 0.0006461313601302313,
+        "maximum": 0.5609518089431932,
+        "maximum_signed": 0.5609518089431932,
+        "maximum_id": 899
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.010471126619614676,
+        "signed_mean": -0.0002297290147026594,
+        "maximum": 0.5528153099511471,
+        "maximum_signed": -0.5528153099511471,
+        "maximum_id": 899
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 6.53910178872582e-11,
+        "signed_mean": 1.548975885943424e-14,
+        "maximum": 5.025204606028027e-10,
+        "maximum_signed": -5.025204606028027e-10,
+        "maximum_id": 1004
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 2.639700092091114e-11,
+        "signed_mean": -1.3193273424255054e-13,
+        "maximum": 3.7865231650972586e-10,
+        "maximum_signed": -3.7865231650972586e-10,
+        "maximum_id": 894
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 4.441887599756009e-10,
+        "signed_mean": -2.644632830078893e-11,
+        "maximum": 2.2957888605457566e-08,
+        "maximum_signed": -2.2957888605457566e-08,
+        "maximum_id": 899
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 3.3817409915116527e-07,
+        "signed_mean": -2.503995406792924e-09,
+        "maximum": 6.125673697221294e-06,
+        "maximum_signed": 6.125673697221294e-06,
+        "maximum_id": 935
+      },
+      "pressure_power_rate": {
+        "RMS": 2.3851490111388045e-09,
+        "signed_mean": 5.433864969675977e-11,
+        "maximum": 2.869781821030336e-08,
+        "maximum_signed": 2.869781821030336e-08,
+        "maximum_id": 1130
+      },
+      "signed_mass_rate": {
+        "RMS": 2.22265891541135e-18,
+        "signed_mean": -5.821220171721335e-23,
+        "maximum": 1.187532416552771e-17,
+        "maximum_signed": -1.187532416552771e-17,
+        "maximum_id": 3105
+      },
+      "native_mass_rate": {
+        "RMS": 2.2227177984896e-18,
+        "signed_mean": -9.09910300956755e-23,
+        "maximum": 1.1960105215230721e-17,
+        "maximum_signed": -1.1960105215230721e-17,
+        "maximum_id": 3105
+      },
+      "signed_minus_native_mass": {
+        "RMS": 8.733172232019672e-20,
+        "signed_mean": 3.2778828378462157e-23,
+        "maximum": 9.965739671140869e-19,
+        "maximum_signed": 9.965739671140869e-19,
+        "maximum_id": 972
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 0.0017506127926856603,
+        "signed_mean": 0.0004164023454430617,
+        "maximum": 0.0161329851757188,
+        "maximum_signed": 0.0161329851757188,
+        "maximum_id": 953
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 5.27507388316916e-20,
+        "signed_mean": -1.871165643632398e-23,
+        "maximum": 5.857311412421679e-19,
+        "maximum_signed": -5.857311412421679e-19,
+        "maximum_id": 1007
+      }
+    },
+    "inner_contact": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.6180540590754726,
+        "signed_mean": 0.5094248359420456,
+        "maximum": 1.5296904682437429,
+        "maximum_signed": 1.5296904682437429,
+        "maximum_id": 789
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.6179265224598807,
+        "signed_mean": 0.5093174978060108,
+        "maximum": 1.5293665289777048,
+        "maximum_signed": 1.5293665289777048,
+        "maximum_id": 789
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.6128584890652742,
+        "signed_mean": -0.5031894618384158,
+        "maximum": 1.520986414159191,
+        "maximum_signed": -1.520986414159191,
+        "maximum_id": 789
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 3.0660824996923874e-09,
+        "signed_mean": 2.6357252707105576e-11,
+        "maximum": 2.316045571300835e-08,
+        "maximum_signed": 2.316045571300835e-08,
+        "maximum_id": 835
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 7.036466523659328e-11,
+        "signed_mean": 1.5623371219056027e-12,
+        "maximum": 2.677905803485254e-10,
+        "maximum_signed": -2.677905803485254e-10,
+        "maximum_id": 760
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 2.483293953228994e-08,
+        "signed_mean": -2.0578842598986037e-08,
+        "maximum": 6.061709106202954e-08,
+        "maximum_signed": -6.061709106202954e-08,
+        "maximum_id": 789
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 1.1367811947270287e-06,
+        "signed_mean": 2.6047882027339944e-07,
+        "maximum": 2.3976409940019117e-06,
+        "maximum_signed": 2.3976409940019117e-06,
+        "maximum_id": 795
+      },
+      "pressure_power_rate": {
+        "RMS": 1.7024581699823452e-08,
+        "signed_mean": -5.404959034898329e-09,
+        "maximum": 3.251226368109115e-08,
+        "maximum_signed": -3.251226368109115e-08,
+        "maximum_id": 816
+      },
+      "signed_mass_rate": {
+        "RMS": 5.5466472054057607e-17,
+        "signed_mean": -4.178902133524952e-19,
+        "maximum": 4.200712390789066e-16,
+        "maximum_signed": -4.200712390789066e-16,
+        "maximum_id": 835
+      },
+      "native_mass_rate": {
+        "RMS": 5.545745678277683e-17,
+        "signed_mean": -4.459549843254096e-19,
+        "maximum": 4.2011860095923954e-16,
+        "maximum_signed": -4.2011860095923954e-16,
+        "maximum_id": 835
+      },
+      "signed_minus_native_mass": {
+        "RMS": 2.1699796731852335e-19,
+        "signed_mean": 2.806477097291439e-20,
+        "maximum": 8.1174534477460575e-19,
+        "maximum_signed": 8.1174534477460575e-19,
+        "maximum_id": 779
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 0.0072258365170956495,
+        "signed_mean": 0.006128035993952257,
+        "maximum": 0.014917555486505186,
+        "maximum_signed": 0.014917555486505186,
+        "maximum_id": 848
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 2.4532585769452354e-19,
+        "signed_mean": 1.4381758179608853e-20,
+        "maximum": 8.038585653748248e-19,
+        "maximum_signed": 8.038585653748248e-19,
+        "maximum_id": 845
+      }
+    },
+    "outer_contact": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.03091611827336919,
+        "signed_mean": 0.0211094638250613,
+        "maximum": 0.13219118314611567,
+        "maximum_signed": 0.13219118314611567,
+        "maximum_id": 12974
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.03091610448642735,
+        "signed_mean": 0.02110945691222637,
+        "maximum": 0.13219095776363018,
+        "maximum_signed": 0.13219095776363018,
+        "maximum_id": 12974
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.030931077910046217,
+        "signed_mean": -0.021116960472366,
+        "maximum": 0.13223398389099947,
+        "maximum_signed": -0.13223398389099947,
+        "maximum_id": 12974
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 1.3624815056328445e-11,
+        "signed_mean": 1.5934699037775123e-14,
+        "maximum": 4.1696235546992205e-11,
+        "maximum_signed": 4.1696235546992205e-11,
+        "maximum_id": 13041
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 1.5600722396196032e-12,
+        "signed_mean": -8.897405871269554e-14,
+        "maximum": 7.200037991238092e-12,
+        "maximum_signed": 7.200037991238092e-12,
+        "maximum_id": 13029
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 1.2577527931028706e-09,
+        "signed_mean": -8.58907523159123e-10,
+        "maximum": 5.376572211362453e-09,
+        "maximum_signed": -5.376572211362453e-09,
+        "maximum_id": 12974
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 1.1788927585148858e-08,
+        "signed_mean": 9.947523006775429e-11,
+        "maximum": 1.6715320759392073e-08,
+        "maximum_signed": 1.6715320759392073e-08,
+        "maximum_id": 13056
+      },
+      "pressure_power_rate": {
+        "RMS": 3.538801024361659e-11,
+        "signed_mean": 5.014488952707851e-12,
+        "maximum": 5.695148135828757e-11,
+        "maximum_signed": 5.695148135828757e-11,
+        "maximum_id": 12989
+      },
+      "signed_mass_rate": {
+        "RMS": 9.83979736052242e-19,
+        "signed_mean": 2.2201402443908102e-21,
+        "maximum": 3.0601836274613652e-18,
+        "maximum_signed": -3.0601836274613652e-18,
+        "maximum_id": 13041
+      },
+      "native_mass_rate": {
+        "RMS": 9.844634998333558e-19,
+        "signed_mean": 1.6608589270818444e-21,
+        "maximum": 3.0034928041800435e-18,
+        "maximum_signed": -3.0034928041800435e-18,
+        "maximum_id": 13041
+      },
+      "signed_minus_native_mass": {
+        "RMS": 2.3678410533150897e-20,
+        "signed_mean": 5.5928131730896575e-22,
+        "maximum": 9.454095375052319e-20,
+        "maximum_signed": 9.454095375052319e-20,
+        "maximum_id": 13067
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 2.325814283987261e-05,
+        "signed_mean": -7.503560123697085e-06,
+        "maximum": 5.5780056316510826e-05,
+        "maximum_signed": -5.5780056316510826e-05,
+        "maximum_id": 12756
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 6.404594873410983e-21,
+        "signed_mean": 5.29411337481565e-23,
+        "maximum": 2.147666741221784e-20,
+        "maximum_signed": -2.147666741221784e-20,
+        "maximum_id": 12906
+      }
+    },
+    "dynamic_buffer": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 0.012938384020053541,
+        "signed_mean": -0.0013740807108963099,
+        "maximum": 0.36630753362853735,
+        "maximum_signed": -0.36630753362853735,
+        "maximum_id": 13111
+      },
+      "relative_pressure_volume": {
+        "RMS": 0.01293838345618213,
+        "signed_mean": -0.0013740811654562627,
+        "maximum": 0.3663065476053754,
+        "maximum_signed": -0.3663065476053754,
+        "maximum_id": 13111
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 0.01294423122964453,
+        "signed_mean": 0.0013750497593170894,
+        "maximum": 0.36641136639263583,
+        "maximum_signed": 0.36641136639263583,
+        "maximum_id": 13111
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 2.1718152905366106e-13,
+        "signed_mean": 6.975410327106463e-16,
+        "maximum": 7.870459468862183e-13,
+        "maximum_signed": -7.870459468862183e-13,
+        "maximum_id": 15431
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 3.027486943682757e-14,
+        "signed_mean": -1.9615392035756883e-16,
+        "maximum": 1.8502052439353775e-13,
+        "maximum_signed": 1.8502052439353775e-13,
+        "maximum_id": 13617
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 5.269322009941603e-10,
+        "signed_mean": 5.59555362739732e-11,
+        "maximum": 1.4926286513941578e-08,
+        "maximum_signed": 1.4926286513941578e-08,
+        "maximum_id": 13111
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 3.7300935099197747e-10,
+        "signed_mean": -3.3568793189168243e-12,
+        "maximum": 5.6032318205840596e-09,
+        "maximum_signed": -5.6032318205840596e-09,
+        "maximum_id": 13111
+      },
+      "pressure_power_rate": {
+        "RMS": 2.99146961495835e-12,
+        "signed_mean": 5.404687340435545e-14,
+        "maximum": 1.3711379051066656e-11,
+        "maximum_signed": 1.3711379051066656e-11,
+        "maximum_id": 19501
+      },
+      "signed_mass_rate": {
+        "RMS": 1.755858300418869e-20,
+        "signed_mean": -6.975119291404712e-23,
+        "maximum": 5.885170823140723e-20,
+        "maximum_signed": 5.885170823140723e-20,
+        "maximum_id": 15431
+      },
+      "native_mass_rate": {
+        "RMS": 1.756628428855808e-20,
+        "signed_mean": -6.984864060532705e-23,
+        "maximum": 5.855776992385394e-20,
+        "maximum_signed": 5.855776992385394e-20,
+        "maximum_id": 15431
+      },
+      "signed_minus_native_mass": {
+        "RMS": 3.0094114231304405e-22,
+        "signed_mean": 9.744769127992875e-26,
+        "maximum": 2.7707577840200065e-21,
+        "maximum_signed": 2.7707577840200065e-21,
+        "maximum_id": 13178
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 9.359995773721573e-06,
+        "signed_mean": 9.685938615241823e-07,
+        "maximum": 0.0001173792600822553,
+        "maximum_signed": 0.0001173792600822553,
+        "maximum_id": 13381
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 2.0682044890008197e-22,
+        "signed_mean": 1.4769368413291887e-24,
+        "maximum": 1.085794631227398e-21,
+        "maximum_signed": -1.085794631227398e-21,
+        "maximum_id": 16513
+      }
+    },
+    "wall": {
+      "cell_mean_density_fractional_rate": {
+        "RMS": 8.581416928873936e-05,
+        "signed_mean": 6.0344175401347476e-06,
+        "maximum": 0.00032389724769764334,
+        "maximum_signed": 0.00032389724769764334,
+        "maximum_id": 20262
+      },
+      "relative_pressure_volume": {
+        "RMS": 8.581415623844966e-05,
+        "signed_mean": 6.034402469191026e-06,
+        "maximum": 0.0003238969662068331,
+        "maximum_signed": 0.0003238969662068331,
+        "maximum_id": 20262
+      },
+      "relative_pressure_raw_thermal": {
+        "RMS": 9.010226522878618e-05,
+        "signed_mean": -9.246947124068144e-06,
+        "maximum": 0.0003066680319193069,
+        "maximum_signed": -0.0003066680319193069,
+        "maximum_id": 20262
+      },
+      "relative_pressure_factor_minus_raw": {
+        "RMS": 4.5024313965787274e-13,
+        "signed_mean": 9.541653014633493e-15,
+        "maximum": 1.1524718062946263e-11,
+        "maximum_signed": 1.1524718062946263e-11,
+        "maximum_id": 20349
+      },
+      "relative_pressure_direct_gravity_thermal": {
+        "RMS": 2.5171072174551313e-14,
+        "signed_mean": 1.782485859424595e-15,
+        "maximum": 9.477108313644953e-14,
+        "maximum_signed": 9.477108313644953e-14,
+        "maximum_id": 19569
+      },
+      "advected_internal_energy_rate": {
+        "RMS": 4.687212267327635e-12,
+        "signed_mean": -1.994137563948611e-13,
+        "maximum": 1.6030281217612933e-11,
+        "maximum_signed": 1.6030281217612933e-11,
+        "maximum_id": 19480
+      },
+      "advected_kinetic_energy_rate": {
+        "RMS": 1.0845127647864464e-09,
+        "signed_mean": 2.387523837518365e-12,
+        "maximum": 3.6863222928815964e-09,
+        "maximum_signed": 3.6863222928815964e-09,
+        "maximum_id": 19641
+      },
+      "pressure_power_rate": {
+        "RMS": 3.400738264367403e-12,
+        "signed_mean": 5.662990069696001e-13,
+        "maximum": 1.3152194720621456e-11,
+        "maximum_signed": 1.3152194720621456e-11,
+        "maximum_id": 19781
+      },
+      "signed_mass_rate": {
+        "RMS": 3.790520985224196e-20,
+        "signed_mean": -3.044280421680562e-22,
+        "maximum": 7.742523592283969e-19,
+        "maximum_signed": -7.742523592283969e-19,
+        "maximum_id": 20349
+      },
+      "native_mass_rate": {
+        "RMS": 3.7921677509179955e-20,
+        "signed_mean": -3.275304596754487e-22,
+        "maximum": 7.743344053305088e-19,
+        "maximum_signed": -7.743344053305088e-19,
+        "maximum_id": 20349
+      },
+      "signed_minus_native_mass": {
+        "RMS": 5.8600602957582425e-22,
+        "signed_mean": 2.3102417507392532e-23,
+        "maximum": 2.7189586079835418e-21,
+        "maximum_signed": -2.7189586079835418e-21,
+        "maximum_id": 19826
+      },
+      "relative_pressure_factor_total": {
+        "RMS": 1.2865034749930785e-05,
+        "signed_mean": -3.212544645335465e-06,
+        "maximum": 6.629170333302517e-05,
+        "maximum_signed": -6.629170333302517e-05,
+        "maximum_id": 20145
+      },
+      "signed_energy_minus_native_hydro": {
+        "RMS": 1.6842872857630598e-22,
+        "signed_mean": -8.971543484054014e-24,
+        "maximum": 6.831063132412788e-22,
+        "maximum_signed": -6.831063132412788e-22,
+        "maximum_id": 19652
+      }
+    }
+  },
+  "physical_providers_added": 0,
+  "accepted_time_steps": 0,
+  "limits": "Instantaneous algebraic tangent, not a new accepted state or finite-step attribution. Density rate is dlog(m/V)/dt for fixed mass, not the derivative of error against a varying actual-cell reference at contacts. Gravity thermal subset is already contained in raw thermal and is not added again. Factor Pi tangent is infinitesimal exponential/QR, not a replacement integrator."
+}

@@ -1,0 +1,336 @@
+{
+  "status": "passed_identities",
+  "manifest": {
+    "scope": "Saved degree-two potential identities and direct remainder decomposition.\n\nNo fitted state is recomputed; archived theta is restored. No RHS or evolution.\nLocal Taylor coefficients are frozen at each actual midpoint cell centroid.\n",
+    "provider_calls": 0,
+    "newton_fits": 0,
+    "source_sha256": {
+      "/gpfs/kjhan/LagForce/audit_saved_potential_polynomial_20261018.py": "485378e011ab954cfca853a7e84719ec76ce124f9803243f931f218c53d0fc59",
+      "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+      "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/saved_potential_taylor.py": "6c9db0c324e3153c6f1a872058ae8b708068c801c6fb118599a498c4b96ba69f"
+    },
+    "runtime_modules": {
+      "__main__": {
+        "path": "/gpfs/kjhan/LagForce/audit_saved_potential_polynomial_20261018.py",
+        "sha256": "485378e011ab954cfca853a7e84719ec76ce124f9803243f931f218c53d0fc59"
+      },
+      "density_quadrature": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+        "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+      },
+      "contact_prior_density": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_prior_density.py",
+        "sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+      },
+      "saved_potential_taylor": {
+        "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/saved_potential_taylor.py",
+        "sha256": "6c9db0c324e3153c6f1a872058ae8b708068c801c6fb118599a498c4b96ba69f"
+      },
+      "saved_contact_density_restore": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_state_batch_api_modules_20261018/saved_contact_density_restore.py",
+        "sha256": "fc7956d7a42ff160cc5cc2ef50e27f2bf50e5a777d688cce8a51ef4f2c31d745"
+      },
+      "audit_canonical_pair_history": {
+        "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+        "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+      }
+    },
+    "fit_archives": {
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/initial_reconstruction.npz": "324429353c0e7a613b7643831ff8e045b9a9d3ee765bcf270c4c9dbbb997b735",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/initial_priors.json": "72b9f0b8dcdcc916ce6626dfbf3f87d7a7a455b869f00bf6e1266afca35703ad",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/initial_fits.json": "af5fd00dd4aecc9c0712bef3d3284ce551bfd9215d8b2bc454d2d0df0c6eaa9e",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_reconstruction.npz": "23c2190f182ca6aa01343a117ea9d7a5bf9bba495813f1b2a8ce5f911200870a",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_priors.json": "28740a568f41b692679b036b23d803d8c8fe3991ddac75bceb0ab41c0061a542",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_fits.json": "890219469932dfcc13836f55a47fd256b70cc2bc04952d9f62cd8885238ed2bc",
+      "/gpfs/kjhan/LagForce/Codex_adjacency_prior_impact_20261018/midpoint/common_inputs.npz": "2354dd28a6d690e3e0d410d60d21f248f2c972b4a0294b92221d40b7d30d4228",
+      "/gpfs/kjhan/LagForce/Codex_adjacency_prior_impact_20261018/midpoint/priors.json": "5f855e8cf6c36a32e25364da30c2482fa5f0df69dd1a07d6ca45d141438fd4b3",
+      "/gpfs/kjhan/LagForce/Codex_adjacency_prior_impact_20261018/midpoint/fit_residuals.json": "409285a764cfdc7e698b6fcc4a6e26bc81c4e71004c497a67be2dc7e070d0962"
+    }
+  },
+  "results": {
+    "stage0": {
+      "constant": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": -3.1509310103607926e-17,
+          "absolute_sum": 2.630267203890422e-16,
+          "maximum": 5.780576348536973e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        }
+      },
+      "x": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 3.448609819959006e-18,
+          "absolute_sum": 9.455010341499849e-17,
+          "maximum": 4.030606279509588e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        }
+      },
+      "y": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": -2.054736626394567e-17,
+          "absolute_sum": 1.0457147481450623e-16,
+          "maximum": 3.927321199503767e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        }
+      },
+      "xx_half": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 1.4308977890985316e-18,
+          "absolute_sum": 1.86441035997781e-17,
+          "maximum": 8.59070079528172e-19
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        }
+      },
+      "xy": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": -1.9104368668495736e-19,
+          "absolute_sum": 3.4727696754858254e-17,
+          "maximum": 9.335494218824466e-19
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        }
+      },
+      "yy_half": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 7.172114818360132e-20,
+          "absolute_sum": 2.59076303756312e-17,
+          "maximum": 1.1028898368843024e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        }
+      },
+      "local_Taylor": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": -4.594895414852728e-17,
+          "absolute_sum": 1.80053334284304e-15,
+          "maximum": 3.870646831946756e-17
+        },
+        "mass_rate_residual": {
+          "signed_sum": -6.824635420006757e-17,
+          "absolute_sum": 2.4397359959008993e-15,
+          "maximum": 5.843637951460055e-16
+        },
+        "volume_quad_minus_raw": {
+          "signed_sum": 3.366325668123145e-17,
+          "absolute_sum": 2.8083793842945724e-16,
+          "maximum": 7.10363351449267e-18
+        },
+        "remainder_transport_rate": {
+          "signed_sum": -9.92278596210979e-09,
+          "absolute_sum": 7.402471177725313e-05,
+          "maximum": 3.9316687214475544e-07
+        }
+      }
+    },
+    "midpoint": {
+      "constant": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 4.347946222819183e-17,
+          "absolute_sum": 3.0036377852962966e-16,
+          "maximum": 9.056939493186009e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        }
+      },
+      "x": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 8.624643880299195e-18,
+          "absolute_sum": 9.908755605870049e-17,
+          "maximum": 4.0035012251974506e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        }
+      },
+      "y": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": -6.253426468432851e-18,
+          "absolute_sum": 1.067575645976287e-16,
+          "maximum": 3.576173103307656e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        }
+      },
+      "xx_half": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 2.6644660511215713e-18,
+          "absolute_sum": 2.2469240910938597e-17,
+          "maximum": 1.0812904967293178e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        }
+      },
+      "xy": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 1.9930630876308696e-18,
+          "absolute_sum": 3.5814825416418376e-17,
+          "maximum": 1.0325861022621955e-18
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        }
+      },
+      "yy_half": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": 5.757841095934393e-19,
+          "absolute_sum": 2.3440212459725302e-17,
+          "maximum": 8.388802551369777e-19
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        }
+      },
+      "local_Taylor": {
+        "passed": true,
+        "identity_defect": {
+          "signed_sum": -3.4333283178041753e-16,
+          "absolute_sum": 1.9059874127870484e-15,
+          "maximum": 6.548347732802615e-17
+        },
+        "mass_rate_residual": {
+          "signed_sum": 7.342693231034625e-17,
+          "absolute_sum": 1.423506715986132e-15,
+          "maximum": 6.934669327082798e-17
+        },
+        "volume_quad_minus_raw": {
+          "signed_sum": -6.924888954747891e-19,
+          "absolute_sum": 1.0006773646119333e-16,
+          "maximum": 1.0818069676242806e-18
+        },
+        "remainder_transport_rate": {
+          "signed_sum": 3.2051561376479884e-08,
+          "absolute_sum": 7.405141642743562e-05,
+          "maximum": 3.934538801099412e-07
+        }
+      }
+    },
+    "initial_reconstruction": {
+      "remainder_q48": {
+        "signed_sum": -8.73118574996051e-08,
+        "absolute_sum": 1.8976235777098127e-07,
+        "maximum": 1.50695177710906e-09
+      },
+      "remainder_q48_minus_q24": {
+        "signed_sum": 3.117913249576697e-20,
+        "absolute_sum": 5.553228714244801e-19,
+        "maximum": 5.693429175752839e-21
+      },
+      "P2_q48_minus_raw": {
+        "signed_sum": -2.549443257802601e-16,
+        "absolute_sum": 4.953402998629723e-16,
+        "maximum": 1.800844985421846e-17
+      },
+      "fit_residual_max": 2.9924673849990313e-13
+    },
+    "midpoint_reconstruction": {
+      "remainder_q48": {
+        "signed_sum": -8.726905172417921e-08,
+        "absolute_sum": 1.8968564436884508e-07,
+        "maximum": 1.5062830682066986e-09
+      },
+      "remainder_q48_minus_q24": {
+        "signed_sum": 4.8882253113256785e-20,
+        "absolute_sum": 5.444181308143695e-19,
+        "maximum": 4.286910250365204e-21
+      },
+      "P2_q48_minus_raw": {
+        "signed_sum": -2.8159628198570446e-16,
+        "absolute_sum": 3.945096218989123e-16,
+        "maximum": 1.8035872545885817e-17
+      },
+      "fit_residual_max": 2.9419522373785867e-13
+    },
+    "accepted_reconstruction": {
+      "remainder_q48": {
+        "signed_sum": -8.7244050740784e-08,
+        "absolute_sum": 1.8965902920014885e-07,
+        "maximum": 1.505682086334253e-09
+      },
+      "remainder_q48_minus_q24": {
+        "signed_sum": 1.7435020842512327e-20,
+        "absolute_sum": 5.759491286228959e-19,
+        "maximum": 6.78581043581826e-21
+      },
+      "P2_q48_minus_raw": {
+        "signed_sum": -2.261924640563703e-16,
+        "absolute_sum": 7.391191349398385e-16,
+        "maximum": 2.6469038447868038e-17
+      },
+      "fit_residual_max": 2.982088785623063e-13
+    }
+  },
+  "full_step": {
+    "P2_increment_minus_transport": {
+      "signed_sum": 1.4102607511318821e-18,
+      "absolute_sum": 8.141450127895612e-17,
+      "maximum": 6.710342391624713e-19
+    },
+    "remainder_increment_minus_transport": {
+      "signed_sum": 6.460160268345759e-11,
+      "absolute_sum": 8.740741910726965e-11,
+      "maximum": 3.900669916533142e-12
+    },
+    "volume_quadrature_minus_raw_increment": {
+      "signed_sum": -6.924888954747891e-23,
+      "absolute_sum": 1.0006773646119333e-20,
+      "maximum": 1.0818069676242807e-22
+    },
+    "combined_defect": {
+      "signed_sum": 6.460160409371835e-11,
+      "absolute_sum": 8.740741836162489e-11,
+      "maximum": 3.9006702203375625e-12
+    },
+    "note": "Each cell has its own fixed Taylor coefficients. Only actual Phi, not P2 alone, admits global shared-face cancellation. Fixed mass endpoints vs stored nonzero dm recorded separately."
+  },
+  "limits": "Longdouble remainder arithmetic reduces cancellation; density and its quadrature weights remain original binary64. No evolved Psi claim or epsilon sweep."
+}

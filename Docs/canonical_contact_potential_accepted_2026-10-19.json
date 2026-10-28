@@ -1,0 +1,41 @@
+{
+  "status": "completed_offline_reconstruction",
+  "manifest": {
+    "scope": "One constrained fit per saved accepted active cell; no RHS/evolution.",
+    "provider_calls": 0,
+    "evolution_steps": 0,
+    "active_cells": 1194,
+    "expected_constrained_fit_calls": 1194,
+    "fit_order": 24,
+    "independent_order": 48,
+    "potential_spline_radii": [
+      0.25,
+      0.5
+    ],
+    "target": "Psi_initial numerical q48 + h * stored half-step Psi transport; raw18 untouched",
+    "input_sha256": {
+      "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/accepted.npz": "76fe9ceac6a746a3c4a84c8fed87200c60c8685ebbab7a572eb5129931236072",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_reconstruction.npz": "23c2190f182ca6aa01343a117ea9d7a5bf9bba495813f1b2a8ce5f911200870a",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_priors.json": "28740a568f41b692679b036b23d803d8c8fe3991ddac75bceb0ab41c0061a542",
+      "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_fits.json": "890219469932dfcc13836f55a47fd256b70cc2bc04952d9f62cd8885238ed2bc",
+      "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/initial_integrals.npz": "170fa00c4017f2d718c056e920dc08005fc1f360d539b70b9f6ab32ccecb97d6",
+      "/gpfs/kjhan/LagForce/Codex_saved_midpoint_Phi_flux_20261018/midpoint.npz": "cc7856ca002a45cdcec73506231c912beecd1f2fe21e089413eb7b629e1401f9"
+    },
+    "source_sha256": {
+      "/gpfs/kjhan/LagForce/audit_contact_potential_accepted_once_20261019.py": "d78f376a67235eb65198ecb5b91fc92479b9df7f413e8d559209561f2cc69f11",
+      "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/contact_potential_density.py": "cffec5e3e603b61850b45fdf562b982c4d74c154aecfe32ef41cb3f65c48436e",
+      "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/positive_radial_quadrature.py": "6734a6929ea47a5b8e452ded440ff14dae4ce1022dc409918c81e07ffc9e3446",
+      "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+      "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef"
+    }
+  },
+  "constrained_fit_calls": 1194,
+  "counts": {
+    "passed": 1194
+  },
+  "seconds": 109.16408547200263,
+  "raw_state_unchanged": true,
+  "maximum_independent_Psi_error": 1.4092510659943422e-17,
+  "unresolved_or_failed_ids": [],
+  "limits": "One constrained fit per active cell; old fit restored without Newton. No fallback. Independent q48 uses same prior and spline splits. Sampled positivity and numerical hull checks do not establish continuous realizability or evolved stability. Frozen cells are not assigned a replacement closure. Failed fit traces remain NaN, never filled from old density."
+}

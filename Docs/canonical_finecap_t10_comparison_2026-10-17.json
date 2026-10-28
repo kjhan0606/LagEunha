@@ -1,0 +1,55 @@
+{
+  "scope": "Original C code restarted from the same t4 state. Final saved times differ by 0.0001522; not exact matched-time convergence and no asymptotic order inferred.",
+  "snapshots": [
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_maxdt_validation_20261017/cap00125_t10/khout.005212.dat",
+      "time": 10.000445285677227,
+      "mass_max_abs_change": 0.0,
+      "regions": {
+        "initial_inner_background": {
+          "pressure_relative_rms": 6.565124206706979,
+          "phase_error_rms_rad": 0.9838101094399968,
+          "radial_displacement_rms": 0.02805270571396026
+        },
+        "initial_disk_inner_edge": {
+          "pressure_relative_rms": 5.533204473775025,
+          "phase_error_rms_rad": 0.033766149367332056,
+          "radial_displacement_rms": 0.0023234073808527872
+        },
+        "initial_disk_core": {
+          "pressure_relative_rms": 0.005314556891956492,
+          "phase_error_rms_rad": 7.044996833071993e-05,
+          "radial_displacement_rms": 8.415416057587935e-06
+        }
+      }
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_maxdt_validation_20261017/cap0025_t10/khout.003124.dat",
+      "time": 10.000293080555045,
+      "mass_max_abs_change": 0.0,
+      "regions": {
+        "initial_inner_background": {
+          "pressure_relative_rms": 6.486860721092815,
+          "phase_error_rms_rad": 0.969146303714586,
+          "radial_displacement_rms": 0.027129796355210466
+        },
+        "initial_disk_inner_edge": {
+          "pressure_relative_rms": 5.2110072770054305,
+          "phase_error_rms_rad": 0.032432839487866384,
+          "radial_displacement_rms": 0.0021682825997803475
+        },
+        "initial_disk_core": {
+          "pressure_relative_rms": 0.005136678417248882,
+          "phase_error_rms_rad": 7.049180087654714e-05,
+          "radial_displacement_rms": 8.310592637835036e-06
+        }
+      }
+    }
+  ],
+  "fine_to_coarse_pressure_RMS_ratio": {
+    "initial_inner_background": 1.012064924619035,
+    "initial_disk_inner_edge": 1.0618301183710397,
+    "initial_disk_core": 1.0346290852295323
+  },
+  "conclusion": "Time ceiling reduction from .0025 to .00125 after t4 does not cure the large t10 inner physical errors. Earlier t4 error is inherited; not a proof that all temporal error is absent."
+}

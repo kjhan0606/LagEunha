@@ -1,0 +1,202 @@
+{
+  "scope": "Diagnostic uniform-density affine lift; no state modification or evolution.\nHold original cell mass, mean velocity and hydro energy; charge gradient kinetic\nenergy against stored ie. This is a feasibility check, not an approved restart.\n",
+  "manifest": {
+    "source": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat",
+    "source_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+    "binary": "/gpfs/kjhan/LagForce/Codex_mpi_hg_modes_20261017/eunha2.exe",
+    "binary_sha256": "cd730d83c1e404ce3418c9751dbd71a37d58ffdf853ca86b3bba87844a2a1f8a",
+    "purpose": "Read-only HG mode/RHS assembly at saved state.",
+    "epoch": "t2",
+    "source_time": 2.0029059177634028,
+    "source_copy": "khout.000184.dat",
+    "restart_index": 184,
+    "time_evolution": false,
+    "ranks": 1,
+    "threads": 1
+  },
+  "time": 2.0029059177634028,
+  "regions": {
+    "all_r_lt_07": {
+      "cells": 1590,
+      "nonpositive_thermal": 849,
+      "ratio_quantiles": [
+        0.0864507871286519,
+        1.5038972017820973,
+        6.779031232015445,
+        9.312900827749925,
+        9.716690372987914
+      ],
+      "sum_kinetic": 0.00018800403474178234,
+      "sum_thermal": 6.488644187182621e-05,
+      "sum_angular_change": 7.475672754887627e-05,
+      "maximum_volume_relative_error": 4.440892098500626e-16
+    },
+    "inner_r_lt_05": {
+      "cells": 795,
+      "nonpositive_thermal": 85,
+      "ratio_quantiles": [
+        0.0902020654077293,
+        0.2103022607311393,
+        1.0903471657912431,
+        9.485390862891613,
+        9.716690372987914
+      ],
+      "sum_kinetic": 1.9772170011169456e-05,
+      "sum_thermal": 3.253694447183872e-05,
+      "sum_angular_change": 6.644705693778618e-06,
+      "maximum_volume_relative_error": 4.440892098500626e-16
+    },
+    "interface_045_055": {
+      "cells": 302,
+      "nonpositive_thermal": 158,
+      "ratio_quantiles": [
+        0.0864507871286519,
+        7.507229738675102,
+        9.131794259961858,
+        9.567103280566235,
+        9.716690372987914
+      ],
+      "sum_kinetic": 5.334311496884816e-05,
+      "sum_thermal": 1.2288471402295156e-05,
+      "sum_angular_change": 1.9070515775321716e-05,
+      "maximum_volume_relative_error": 3.3306690738754696e-16
+    }
+  },
+  "failed_face": [
+    {
+      "id": 755,
+      "radius": 0.49999971381319325,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.851900587839051e-07,
+      "rotational": 3.3283171036101675e-08,
+      "thermal": 4.0729463481519535e-08,
+      "ratio": 9.457282906726235,
+      "remaining_thermal": -3.4446059530238556e-07,
+      "angular_change": 1.84772485567084e-07
+    },
+    {
+      "id": 864,
+      "radius": 0.531250972386583,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.1095865747830767e-07,
+      "rotational": 2.1251726184953597e-08,
+      "thermal": 4.065636756540928e-08,
+      "ratio": 7.648461387457385,
+      "remaining_thermal": -2.703022899128984e-07,
+      "angular_change": 1.4845012268438388e-07
+    }
+  ],
+  "worst_cells": [
+    {
+      "id": 824,
+      "radius": 0.49999631393092786,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.928490127899393e-07,
+      "rotational": 3.6449136984733646e-08,
+      "thermal": 4.043033149250561e-08,
+      "ratio": 9.716690372987914,
+      "remaining_thermal": -3.524186812974337e-07,
+      "angular_change": 1.7717368068111486e-07
+    },
+    {
+      "id": 825,
+      "radius": 0.49999569595199983,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.9188574327387483e-07,
+      "rotational": 3.69981488663492e-08,
+      "thermal": 4.059198221922906e-08,
+      "ratio": 9.654264754979923,
+      "remaining_thermal": -3.5129376105464575e-07,
+      "angular_change": 2.1110280764536192e-07
+    },
+    {
+      "id": 842,
+      "radius": 0.4999993482996461,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.876103588225753e-07,
+      "rotational": 3.2764574443860484e-08,
+      "thermal": 4.040487188960707e-08,
+      "ratio": 9.593158960671678,
+      "remaining_thermal": -3.4720548693296823e-07,
+      "angular_change": -1.3915694414381692e-08
+    },
+    {
+      "id": 809,
+      "radius": 0.49999282177795695,
+      "volume_relative_error": -2.220446049250313e-16,
+      "kinetic": 3.8702375648884066e-07,
+      "rotational": 3.3481171093044285e-08,
+      "thermal": 4.0453501488869396e-08,
+      "ratio": 9.567126262119203,
+      "remaining_thermal": -3.465702549999713e-07,
+      "angular_change": 1.2311773266038515e-07
+    },
+    {
+      "id": 806,
+      "radius": 0.4999910851066098,
+      "volume_relative_error": 2.220446049250313e-16,
+      "kinetic": 3.8209572288302534e-07,
+      "rotational": 3.004989340783492e-08,
+      "thermal": 3.994799682918343e-08,
+      "ratio": 9.56482810682239,
+      "remaining_thermal": -3.421477260538419e-07,
+      "angular_change": 6.610361959412182e-08
+    },
+    {
+      "id": 823,
+      "radius": 0.49999176166253245,
+      "volume_relative_error": 2.220446049250313e-16,
+      "kinetic": 3.86271999835302e-07,
+      "rotational": 3.278992144605219e-08,
+      "thermal": 4.040460407582739e-08,
+      "ratio": 9.560098624166312,
+      "remaining_thermal": -3.458673957594746e-07,
+      "angular_change": 1.3847656269121756e-07
+    },
+    {
+      "id": 810,
+      "radius": 0.499993785323477,
+      "volume_relative_error": -1.1102230246251565e-16,
+      "kinetic": 3.8825866579105623e-07,
+      "rotational": 3.4509233931951044e-08,
+      "thermal": 4.064032176964693e-08,
+      "ratio": 9.553533261664166,
+      "remaining_thermal": -3.476183440214093e-07,
+      "angular_change": 1.8795090298270515e-07
+    },
+    {
+      "id": 794,
+      "radius": 0.49998946671649336,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.8396025296090585e-07,
+      "rotational": 3.119894105906182e-08,
+      "thermal": 4.043559211858483e-08,
+      "ratio": 9.495601099023641,
+      "remaining_thermal": -3.43524660842321e-07,
+      "angular_change": 1.202071204018269e-07
+    },
+    {
+      "id": 792,
+      "radius": 0.49999080059050544,
+      "volume_relative_error": 0.0,
+      "kinetic": 3.7975905077662297e-07,
+      "rotational": 2.93274310367857e-08,
+      "thermal": 4.003895573123094e-08,
+      "ratio": 9.484739145691696,
+      "remaining_thermal": -3.39720095045392e-07,
+      "angular_change": 2.987112845746496e-08
+    },
+    {
+      "id": 839,
+      "radius": 0.4999924622654481,
+      "volume_relative_error": -1.1102230246251565e-16,
+      "kinetic": 3.8677144666490357e-07,
+      "rotational": 3.442892275012784e-08,
+      "thermal": 4.078091695399109e-08,
+      "ratio": 9.484128252958557,
+      "remaining_thermal": -3.459905297109125e-07,
+      "angular_change": 2.8345224737042324e-07
+    }
+  ],
+  "limitations": "Uniform density on original unweighted polygons; gradient centered to preserve mean p. Does not preserve original angular momentum automatically, pressure, or generator velocity. Stored ie used directly including any original subcell convention. No general impossibility claim for alternative coupled representations."
+}

@@ -1,0 +1,76 @@
+{
+  "scope": "Compare saved residual velocity covariance scale to thermal pressure; no closure adopted.",
+  "comparison_gamma": 1.6666666666666667,
+  "definition": "Residual stress scale R/V versus P=(gamma-1)U/V; volume cancels in ratio.",
+  "rows": [
+    {
+      "subdivisions": 4,
+      "regions": {
+        "inner": {
+          "cells": 795,
+          "residual_stress_max_eigenvalue_over_P_median": 0.09558205907608476,
+          "ratio_p95": 0.4560388612644511,
+          "ratio_max": 3.4971036573102263,
+          "sum_max_eigenvalues_over_sum_thermal_pressure_times_volume": 0.15500623662512272,
+          "anisotropy_energy_weighted": 0.5395812617012458,
+          "cells_ratio_above_one": 9
+        },
+        "edge": {
+          "cells": 399,
+          "residual_stress_max_eigenvalue_over_P_median": 8.234280807814675e-11,
+          "ratio_p95": 0.18284600529145892,
+          "ratio_max": 1.3713606686576323,
+          "sum_max_eigenvalues_over_sum_thermal_pressure_times_volume": 0.025575623608385136,
+          "anisotropy_energy_weighted": 0.8381297440189837,
+          "cells_ratio_above_one": 1
+        },
+        "patch": {
+          "cells": 1590,
+          "residual_stress_max_eigenvalue_over_P_median": 0.020998780911399763,
+          "ratio_p95": 0.35177253496061056,
+          "ratio_max": 3.4971036573102263,
+          "sum_max_eigenvalues_over_sum_thermal_pressure_times_volume": 0.08412894756588088,
+          "anisotropy_energy_weighted": 0.5588480493568238,
+          "cells_ratio_above_one": 10
+        }
+      }
+    },
+    {
+      "subdivisions": 8,
+      "regions": {
+        "inner": {
+          "cells": 795,
+          "residual_stress_max_eigenvalue_over_P_median": 0.09562703663242032,
+          "ratio_p95": 0.456020891194053,
+          "ratio_max": 3.4960401424873138,
+          "sum_max_eigenvalues_over_sum_thermal_pressure_times_volume": 0.15497114020035072,
+          "anisotropy_energy_weighted": 0.5395246138431885,
+          "cells_ratio_above_one": 9
+        },
+        "edge": {
+          "cells": 399,
+          "residual_stress_max_eigenvalue_over_P_median": 1.2685609858221756e-10,
+          "ratio_p95": 0.18285073390358847,
+          "ratio_max": 1.3714096135569236,
+          "sum_max_eigenvalues_over_sum_thermal_pressure_times_volume": 0.02557376068181578,
+          "anisotropy_energy_weighted": 0.8381685947712164,
+          "cells_ratio_above_one": 1
+        },
+        "patch": {
+          "cells": 1590,
+          "residual_stress_max_eigenvalue_over_P_median": 0.020996799961384253,
+          "ratio_p95": 0.3516258705836431,
+          "ratio_max": 3.4960401424873138,
+          "sum_max_eigenvalues_over_sum_thermal_pressure_times_volume": 0.08411088237042141,
+          "anisotropy_energy_weighted": 0.5587992894464103,
+          "cells_ratio_above_one": 10
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Residual covariance of diagnostic remapped velocity structure, not molecular thermal stress or an established turbulence model.",
+    "No claim that cell-integrated R uniquely determines face traction; a spatial closure is required.",
+    "No production pressure or force modified."
+  ]
+}

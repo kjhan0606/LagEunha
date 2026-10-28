@@ -1,0 +1,59 @@
+{
+  "scope": "One actual accepted split-HG/RK4/HG step at two dt; compare pressure secant to independent t0 RHS. Local consistency, not long-time stability.",
+  "cases": {
+    "dt1e4": {
+      "time": 0.0001,
+      "snapshot_sha256": "b26ac9275c606e0b7f3a070e2f696f4b1dd40940bf726b0c68b346163df27274",
+      "regions": {
+        "inner": {
+          "measured_relative_pressure_rate_RMS": 0.19858709036989242,
+          "predicted_relative_pressure_rate_RMS": 0.19860277543710655,
+          "full_prediction_error_relative_L2": 0.0025946314611442743,
+          "compression_only_error_relative_L2": 0.012174924108283372,
+          "heating_only_error_relative_L2": 1.0000090896088538
+        },
+        "edge": {
+          "measured_relative_pressure_rate_RMS": 0.08566012486268876,
+          "predicted_relative_pressure_rate_RMS": 0.08562070666584053,
+          "full_prediction_error_relative_L2": 0.0027585422259586824,
+          "compression_only_error_relative_L2": 0.0030445842497847323,
+          "heating_only_error_relative_L2": 1.0004451241328214
+        },
+        "core": {
+          "measured_relative_pressure_rate_RMS": 0.022017309705695834,
+          "predicted_relative_pressure_rate_RMS": 0.022013141834746473,
+          "full_prediction_error_relative_L2": 0.0020523113214751887,
+          "compression_only_error_relative_L2": 0.0021568558639643086,
+          "heating_only_error_relative_L2": 1.0001828889973752
+        }
+      }
+    },
+    "dt5e5": {
+      "time": 5e-05,
+      "snapshot_sha256": "2016a2c3654260bfafe25136e157e0c525dc541d8bac2cfb8c9a989e58f34a2f",
+      "regions": {
+        "inner": {
+          "measured_relative_pressure_rate_RMS": 0.19859476421918057,
+          "predicted_relative_pressure_rate_RMS": 0.19860277543710655,
+          "full_prediction_error_relative_L2": 0.001297318748434958,
+          "compression_only_error_relative_L2": 0.011900016894576359,
+          "heating_only_error_relative_L2": 1.0000485100022005
+        },
+        "edge": {
+          "measured_relative_pressure_rate_RMS": 0.08564033489518791,
+          "predicted_relative_pressure_rate_RMS": 0.08562070666584053,
+          "full_prediction_error_relative_L2": 0.001379268751282976,
+          "compression_only_error_relative_L2": 0.0017611155337866693,
+          "heating_only_error_relative_L2": 1.0002142156565015
+        },
+        "core": {
+          "measured_relative_pressure_rate_RMS": 0.022015214107550463,
+          "predicted_relative_pressure_rate_RMS": 0.022013141834746473,
+          "full_prediction_error_relative_L2": 0.0010261572103380573,
+          "compression_only_error_relative_L2": 0.001152285165659115,
+          "heating_only_error_relative_L2": 1.0000877734236806
+        }
+      }
+    }
+  }
+}

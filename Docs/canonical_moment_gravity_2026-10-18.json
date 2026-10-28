@@ -1,0 +1,47 @@
+{
+  "scope": "Actual t2 central1590cell positive density representation, zero weights. Material-quadrature gravity/kinematic source only; no pressure, remap, boundary flux, finite step or MPI.",
+  "source": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat",
+  "source_time": 2.0029059177634028,
+  "atoms": 610624,
+  "cpu_omp1_4_bitwise_equal": true,
+  "cpu_cuda_bitwise_equal": true,
+  "cpu_cuda_max_scaled_difference": 0.0,
+  "spline_potential_numpy_max_absolute_difference": 1.1546319456101628e-14,
+  "maximum_thermal_source_per_mass_residual": 3.352380520223606e-15,
+  "maximum_central_torque_per_mass_residual": 1.1570493752029515e-15,
+  "total_hydro_plus_potential_source": 0.0,
+  "finite_difference_checks": [
+    {
+      "epsilon": 0.0001,
+      "first16_max_scaled_error": 4.430309922647262e-12,
+      "potential_rate_max_scaled_error": 1.486288161137579e-07
+    },
+    {
+      "epsilon": 5e-05,
+      "first16_max_scaled_error": 7.674760909806962e-12,
+      "potential_rate_max_scaled_error": 3.715662105234119e-08
+    },
+    {
+      "epsilon": 2.5e-05,
+      "first16_max_scaled_error": 1.4302489527382274e-11,
+      "potential_rate_max_scaled_error": 9.293186157411055e-09
+    }
+  ],
+  "zero_weight_force_comparison": {
+    "integrated_vs_point_acceleration_mass_weighted_RMS": 0.0058574421228181775,
+    "fraction_of_point_acceleration_RMS": 0.0019931735618114376,
+    "integrated_gravity_power": 2.0636602941978317e-06,
+    "point_gravity_power": -2.137875142285877e-07
+  },
+  "interpretation": "Correct moment gravity work does not imply exact recovery of the old point-force baseline. The measured zero-weight force difference must be addressed by the full reduction contract, not silently enabled.",
+  "sha256": {
+    "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/lift_coefficients.npz": "b54018c44dd927dac6253f0e82d6d18c024184ea05fafb816f6855e4dbecd2cd",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_20261018/moment_spline_gravity.h": "d4dfe98fcdf9668bb39e3794cafa8bbd5d3d0262ecc58a27865f81a0faa7ffdb",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_20261018/probe.c": "65d7fb4851ca7baa1f65ebd4358282cec8bff8ba5a1c05bd8d66ddf46e51affd",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_20261018/probe.cu": "1f9912dbc953aed7f44ebe2b5ee12464c755324fab9f8de55c121df9cf757adc",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_20261018/cpu.so": "9438d439cfe3e95434b3c4384afb2102c62d93d6662cb28635c3a9386dd224d9",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_20261018/cuda.so": "dc94e0c20ca99ce780e27ada2ca3526ebb6c2c5f21b4179295aa89a1e9eaf268",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_20261018/audit.py": "c529bb84960bdede0552fe538867490f2ebc50070902052176e2ce9ba1cc9d05"
+  }
+}

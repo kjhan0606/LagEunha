@@ -1,0 +1,86 @@
+{
+  "reference": "/gpfs/kjhan/LagForce/Codex_DPQ_backend_parity_20261017/cpu/khout.000001.dat",
+  "candidate": "/gpfs/kjhan/LagForce/Codex_DPQ_backend_parity_20261017/gpu/khout.000001.dat",
+  "reference_sha256": "7b8106671da2992da8fb0c933cc6992f42c459a5250e58abbebab8808dd91e4e",
+  "candidate_sha256": "bd122384ae6b87c4a1a1ca27c5e166285513f763e06dd38e2312bcd4d2de0c89",
+  "n": 36864,
+  "t": 0.010887299956438503,
+  "dt": 0.010887299956438503,
+  "fields": {
+    "x": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "y": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "mass": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vx": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vy": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "den": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "pressure": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "ie": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "volume": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "w2": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "w2ceil": {
+      "bitwise_different_particles": 36864,
+      "max_abs_difference": 3.678283440680663e-08,
+      "worst_particle_id": 10259
+    },
+    "csound": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    }
+  },
+  "all_physical_fields_bitwise_equal": false,
+  "scope": "Canonical192 first accepted step: CPU vs CUDA nearest-distance/weight-ceiling only. Both use CPU TCF force and CPU tessellation.",
+  "finding": "All fields except w2ceil are bitwise equal. GPU tree kernel converts queries and tree coordinates/distances to float, CPU uses double under XYZDBL. Current W=0 means this does not establish weighted-cell equivalence.",
+  "binary_sha256": "3d2659e97ee853394aa22d89654bec7b6ee51d5aff131bcd2ba2608b03a6b148",
+  "exit_codes": {
+    "cpu": 0,
+    "gpu": 0
+  },
+  "open_requirements": [
+    "Double-precision geometric ceiling and conservative pruning on CUDA",
+    "Weighted-cell parity",
+    "TCF GPU force implementation/equivalence",
+    "Canonical MPI multi-rank support",
+    "Long-time physical stability"
+  ]
+}

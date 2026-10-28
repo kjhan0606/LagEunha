@@ -1,0 +1,2024 @@
+{
+  "status": "completed_bundle_for_Astra_evaluation",
+  "reports": {
+    "closure_fixtures": {
+      "status": "passed",
+      "results": {
+        "constant": {
+          "status": "passed",
+          "residual": 1.527250548249981e-13
+        },
+        "linear": {
+          "status": "passed",
+          "residual": 1.527250548249981e-13
+        },
+        "quadratic": {
+          "status": "passed",
+          "residual": 1.527250548249981e-13
+        },
+        "nonpolynomial_and_gauge": {
+          "status": "passed",
+          "residual": 3.00454106039183e-15,
+          "independent_q48_Psi_error": 7.94100005495807e-19,
+          "independent_q48_moment_error": 2.220446049250313e-15,
+          "sigma": 9.699938377895187e-06,
+          "rank_error": 6.39452807553792e-16,
+          "condition": 174.36755418960877,
+          "gauge_density_max_difference": 2.2026824808563106e-13
+        },
+        "infeasible_target": {
+          "status": "passed",
+          "failure": "outside_quadrature_moment_hull",
+          "witness": {
+            "feature": 5,
+            "target": 100.03411299957251,
+            "minimum": -1.730790794616302,
+            "maximum": 4.436305110135324,
+            "witness": "coordinate separating hyperplane"
+          }
+        },
+        "unresolved_rank": {
+          "status": "passed",
+          "failure": "unresolved_potential_rank"
+        }
+      },
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/check_contact_potential_density_fixtures_20261019.py": "83790ec4f894977f4c0cb5bcd457863338b1bbbbffadc1ac11488b82a2fdaf60",
+        "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/contact_potential_density.py": "cffec5e3e603b61850b45fdf562b982c4d74c154aecfe32ef41cb3f65c48436e",
+        "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/positive_radial_quadrature.py": "6734a6929ea47a5b8e452ded440ff14dae4ce1022dc409918c81e07ffc9e3446"
+      },
+      "limits": "Synthetic numerical realizability fixtures; no dynamics or proof of continuous moment hull membership."
+    },
+    "closure": {
+      "status": "completed_offline_reconstruction",
+      "manifest": {
+        "scope": "One constrained fit per saved accepted active cell; no RHS/evolution.",
+        "provider_calls": 0,
+        "evolution_steps": 0,
+        "active_cells": 1194,
+        "expected_constrained_fit_calls": 1194,
+        "fit_order": 24,
+        "independent_order": 48,
+        "potential_spline_radii": [
+          0.25,
+          0.5
+        ],
+        "target": "Psi_initial numerical q48 + h * stored half-step Psi transport; raw18 untouched",
+        "input_sha256": {
+          "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/accepted.npz": "76fe9ceac6a746a3c4a84c8fed87200c60c8685ebbab7a572eb5129931236072",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_reconstruction.npz": "23c2190f182ca6aa01343a117ea9d7a5bf9bba495813f1b2a8ce5f911200870a",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_priors.json": "28740a568f41b692679b036b23d803d8c8fe3991ddac75bceb0ab41c0061a542",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_fits.json": "890219469932dfcc13836f55a47fd256b70cc2bc04952d9f62cd8885238ed2bc",
+          "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/initial_integrals.npz": "170fa00c4017f2d718c056e920dc08005fc1f360d539b70b9f6ab32ccecb97d6",
+          "/gpfs/kjhan/LagForce/Codex_saved_midpoint_Phi_flux_20261018/midpoint.npz": "cc7856ca002a45cdcec73506231c912beecd1f2fe21e089413eb7b629e1401f9"
+        },
+        "source_sha256": {
+          "/gpfs/kjhan/LagForce/audit_contact_potential_accepted_once_20261019.py": "d78f376a67235eb65198ecb5b91fc92479b9df7f413e8d559209561f2cc69f11",
+          "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/contact_potential_density.py": "cffec5e3e603b61850b45fdf562b982c4d74c154aecfe32ef41cb3f65c48436e",
+          "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/positive_radial_quadrature.py": "6734a6929ea47a5b8e452ded440ff14dae4ce1022dc409918c81e07ffc9e3446",
+          "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+          "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef"
+        }
+      },
+      "constrained_fit_calls": 1194,
+      "counts": {
+        "passed": 1194
+      },
+      "seconds": 109.16408547200263,
+      "raw_state_unchanged": true,
+      "maximum_independent_Psi_error": 1.4092510659943422e-17,
+      "unresolved_or_failed_ids": [],
+      "limits": "One constrained fit per active cell; old fit restored without Newton. No fallback. Independent q48 uses same prior and spline splits. Sampled positivity and numerical hull checks do not establish continuous realizability or evolved stability. Frozen cells are not assigned a replacement closure. Failed fit traces remain NaN, never filled from old density."
+    },
+    "closure_summary": {
+      "status": "completed_offline_all_active_passed",
+      "cells": 1194,
+      "statistics": {
+        "dual_residual": {
+          "minimum": 2.7755575615628914e-17,
+          "median": 1.2311215724339797e-15,
+          "maximum": 2.902955653638628e-13,
+          "maximum_absolute": 2.902955653638628e-13,
+          "maximum_absolute_id": 867
+        },
+        "condition": {
+          "minimum": 191.59507704324406,
+          "median": 275.611946038974,
+          "maximum": 1555.0091650358265,
+          "maximum_absolute": 1555.0091650358265,
+          "maximum_absolute_id": 764
+        },
+        "sigma": {
+          "minimum": 9.217872593211116e-06,
+          "median": 3.1069595376298965e-05,
+          "maximum": 9.011618656009057e-05,
+          "maximum_absolute": 9.011618656009057e-05,
+          "maximum_absolute_id": 97
+        },
+        "rank_error": {
+          "minimum": 5.935930715821857e-16,
+          "median": 3.571421972128915e-15,
+          "maximum": 3.9096218814186286e-14,
+          "maximum_absolute": 3.9096218814186286e-14,
+          "maximum_absolute_id": 213
+        },
+        "independent_q48_normalized_moment_error": {
+          "minimum": 1.60529684163635e-16,
+          "median": 1.3804265347992783e-15,
+          "maximum": 2.9118237497832017e-13,
+          "maximum_absolute": 2.9118237497832017e-13,
+          "maximum_absolute_id": 867
+        },
+        "independent_q48_scaled_remainder_residual": {
+          "minimum": 1.0061615673892189e-16,
+          "median": 7.991841286762167e-14,
+          "maximum": 9.140703998228363e-13,
+          "maximum_absolute": 9.140703998228363e-13,
+          "maximum_absolute_id": 833
+        },
+        "self_control_normalized_moment_residual": {
+          "minimum": 1.0541438507420052e-16,
+          "median": 1.6751194615444165e-15,
+          "maximum": 2.9410827954255973e-13,
+          "maximum_absolute": 2.9410827954255973e-13,
+          "maximum_absolute_id": 1140
+        },
+        "self_control_scaled_remainder_residual": {
+          "minimum": 3.347871707677407e-16,
+          "median": 6.928823834742996e-12,
+          "maximum": 3.6540544765493746e-09,
+          "maximum_absolute": 3.6540544765493746e-09,
+          "maximum_absolute_id": 760
+        },
+        "density_relative_L1_mass": {
+          "minimum": 8.799199113385962e-10,
+          "median": 5.006378560421016e-07,
+          "maximum": 0.00020724608749748535,
+          "maximum_absolute": 0.00020724608749748535,
+          "maximum_absolute_id": 1021
+        },
+        "face_relative_change_max": {
+          "minimum": 4.6359245331473176e-09,
+          "median": 2.7771203535698064e-06,
+          "maximum": 0.0015883989197373882,
+          "maximum_absolute": 0.0015883989197373882,
+          "maximum_absolute_id": 797
+        },
+        "old_Psi_minus_target": {
+          "minimum": -1.226141570863727e-12,
+          "median": -1.6966315606145564e-17,
+          "maximum": 3.900675265848161e-12,
+          "maximum_absolute": 3.900675265848161e-12,
+          "maximum_absolute_id": 1021
+        },
+        "entropy_change_q24_vs_old_q48": {
+          "minimum": -3.9925774780280753e-19,
+          "median": 5.669214796027647e-18,
+          "maximum": 3.9276362751632933e-11,
+          "maximum_absolute": 3.9276362751632933e-11,
+          "maximum_absolute_id": 1021
+        }
+      },
+      "candidate_Psi_error_signed_sum": -4.944220582455058e-16,
+      "candidate_Psi_error_absolute_sum": 6.233373196051152e-16,
+      "old_Psi_error_signed_sum": 6.460162915496468e-11,
+      "old_Psi_error_absolute_sum": 8.74072874371053e-11,
+      "limits": "Stored-state constrained fit only. No coupled evolution or long-time pass."
+    },
+    "boundary_timestep": {
+      "status": "completed_saved_contract_analysis",
+      "scope": "Source/IC boundary contract and saved-stage timestep design diagnostics.\n\nNo timestep increase, domain extension, geometry solve or evolution.\n",
+      "full_initial_registry": {
+        "cells": 36864,
+        "bounds_minimum": [
+          -2.9999826502439864,
+          -2.9999826502439864
+        ],
+        "bounds_maximum": [
+          2.9997197994012197,
+          2.999219289623311
+        ],
+        "radial_maximum": 4.09375,
+        "density_min": 0.009999999999729597,
+        "density_max": 1.0000000000168905,
+        "density_profile_error_max": 0.005609136991277516,
+        "pressure_min": 2.7777796321447566e-05,
+        "pressure_max": 2.7777796321447566e-05,
+        "circular_velocity_error_max": 6.560657218687885e-15,
+        "weights_zero": true,
+        "outside_original_evolve_radius_cells": 16919,
+        "within_disk_cells": 12237
+      },
+      "boundary_contract": {
+        "original_source_BC": "KH non-Sod periodic padding/post-stage; outer r>=2.5 has RK increments frozen in original Kepler source.",
+        "moment_patch_BC": "Embedded nonperiodic power cells; j<0 uses zero-normal-speed mirror states; frozen r>=.60 raw storage masked. Not a physical long-time outer BC.",
+        "point_field_opposite_x_velocity_jump_max": 1.153793364205411,
+        "point_field_opposite_x_mass_flux_jump_max": 0.0,
+        "point_field_opposite_x_tangential_momentum_flux_jump_max": 0.0025650390356168166,
+        "point_field_box_normal_velocity_max": 0.3431888040940305,
+        "conclusion": "The globally rotating floor has nonzero normal box velocity and an opposite-edge tangential momentum flux jump. Neither naive periodic identification nor stationary reflecting box walls reproduce this whole steady Kepler field. Dynamic buffer and an explicit compatible outer physical BC remain required.",
+        "full_builder_limit": "Current EmbeddedLaguerreGeometry rejects unmatched bounding-box faces; it cannot simply promote all registry IDs to active boundary cells."
+      },
+      "timestep": {
+        "stage0": {
+          "outgoing_mass_fraction": {
+            "active": {
+              "cells": 1194,
+              "minimum": 4.370607059959848e-06,
+              "median": 0.0001458866389532182,
+              "p90": 0.0002513180739603562,
+              "maximum": 0.0006864813419717738
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0039643486251464966,
+              "median": 0.004572127556221765,
+              "p90": 0.004893034375591155,
+              "maximum": 0.005066444945175914
+            }
+          },
+          "relative_sample_speed": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.003335832900472468,
+              "median": 0.06332723616751712,
+              "p90": 0.08445443282447891,
+              "maximum": 0.6618371387972898
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 1.2160443332696016,
+              "median": 1.2461772611358677,
+              "p90": 1.278879566069766,
+              "maximum": 1.2804971457222143
+            }
+          },
+          "sound_speed": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.00680414109441298,
+              "median": 0.06804141094417177,
+              "p90": 0.06804141094530637,
+              "maximum": 0.08171937980068382
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.006804141094414694,
+              "median": 0.006804141094484168,
+              "p90": 0.0068041410946715515,
+              "maximum": 0.006804141094961722
+            }
+          },
+          "signal_Courant_hydraulic": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0002916359850593391,
+              "median": 0.0007940440737915107,
+              "p90": 0.0009789929517926516,
+              "maximum": 0.004227554647462139
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0073069722950009726,
+              "median": 0.007635704377986765,
+              "p90": 0.007969382200746519,
+              "maximum": 0.008178060662776824
+            }
+          },
+          "signal_Courant_minimum_width": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.00015291052883228026,
+              "median": 0.00040824517705656093,
+              "p90": 0.00048751636163120394,
+              "maximum": 0.002084690788903459
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.003825307116432235,
+              "median": 0.00393982484227415,
+              "p90": 0.004045886045984213,
+              "maximum": 0.004056330447492973
+            }
+          },
+          "omega_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.00021850790146458508,
+              "median": 0.00034505278872651963,
+              "p90": 0.0007456660093597363,
+              "maximum": 0.0009182834661907866
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.00017538263674287056,
+              "median": 0.0001880981943760015,
+              "p90": 0.00020240404786039734,
+              "maximum": 0.0002024205884537722
+            }
+          },
+          "strain_norm_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 3.8086420295284843e-06,
+              "median": 0.00020781299567545727,
+              "p90": 0.00027265152289976207,
+              "maximum": 0.00027342760402963764
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.00013149122314496566,
+              "median": 0.00014107627945037513,
+              "p90": 0.00015198726150529931,
+              "maximum": 0.00015217322597253834
+            }
+          },
+          "covariance_generator_norm_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.00018616313871975022,
+              "median": 0.0007348463574665691,
+              "p90": 0.0009823557577405813,
+              "maximum": 0.0022248125208200456
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0,
+              "median": 0.0,
+              "p90": 0.0,
+              "maximum": 0.0
+            }
+          },
+          "effective_factor_generator_norm_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.00026135714176470245,
+              "median": 0.000786053743989647,
+              "p90": 0.0012887049671164038,
+              "maximum": 0.0022253085218444653
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0,
+              "median": 0.0,
+              "p90": 0.0,
+              "maximum": 0.0
+            }
+          },
+          "minimum_width": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.03125006982752998,
+              "median": 0.032039440332114005,
+              "p90": 0.03277976117208663,
+              "maximum": 0.0372440667699128
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.03125584641273216,
+              "median": 0.03181277203745694,
+              "p90": 0.03189550166401765,
+              "maximum": 0.03197518862113887
+            }
+          },
+          "hydraulic_length": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.015724984973170104,
+              "median": 0.016400877111000862,
+              "p90": 0.01669692411272471,
+              "maximum": 0.01677738845865834
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.01571718017038321,
+              "median": 0.016400009954954116,
+              "p90": 0.016689498396167686,
+              "maximum": 0.01673623884565064
+            }
+          },
+          "minimum_encoded_edge": {
+            "active": {
+              "cells": 1194,
+              "minimum": 1.324479266318377e-15,
+              "median": 0.0073710498938762605,
+              "p90": 0.014414006197876302,
+              "maximum": 0.018289141353696303
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.00012103932003708195,
+              "median": 0.0072801476780607645,
+              "p90": 0.01424753882781363,
+              "maximum": 0.017613230156892597
+            }
+          },
+          "area": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0009281818227377988,
+              "median": 0.0009764243410298513,
+              "p90": 0.0009821015961705792,
+              "maximum": 0.001102211255307017
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0009688239014658671,
+              "median": 0.0009761983986284256,
+              "p90": 0.0009789721919143696,
+              "maximum": 0.0009826494197616043
+            }
+          }
+        },
+        "midpoint": {
+          "outgoing_mass_fraction": {
+            "active": {
+              "cells": 1194,
+              "minimum": 4.369364268584503e-06,
+              "median": 0.00014595278703600804,
+              "p90": 0.0002512908614038302,
+              "maximum": 0.0006881432526228285
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0039643486251464966,
+              "median": 0.004572127323563243,
+              "p90": 0.004893034510739257,
+              "maximum": 0.005074944584351256
+            }
+          },
+          "relative_sample_speed": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0033211369287468578,
+              "median": 0.06367060794173252,
+              "p90": 0.08490825339226218,
+              "maximum": 0.6686628079579312
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 1.216077873398414,
+              "median": 1.2463502916525537,
+              "p90": 1.2789231727919241,
+              "maximum": 1.2810366350813034
+            }
+          },
+          "sound_speed": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.006804641155957215,
+              "median": 0.068049165843942,
+              "p90": 0.06805151233167156,
+              "maximum": 0.08187265151861695
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.006804141094415622,
+              "median": 0.006804151795799724,
+              "p90": 0.006812332917700698,
+              "maximum": 0.006819036277387317
+            }
+          },
+          "signal_Courant_hydraulic": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0002918412506737347,
+              "median": 0.0007986534219835803,
+              "p90": 0.00097811547313947,
+              "maximum": 0.004230233397686932
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.007307637321129626,
+              "median": 0.007635704377986765,
+              "p90": 0.00797058352253642,
+              "maximum": 0.008184240495492042
+            }
+          },
+          "signal_Courant_minimum_width": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0001530190135993189,
+              "median": 0.0004098871243527372,
+              "p90": 0.0004888857846566627,
+              "maximum": 0.0021083008617928645
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0038261528252756987,
+              "median": 0.003940452755165516,
+              "p90": 0.004045809278623641,
+              "maximum": 0.004056480176857171
+            }
+          },
+          "omega_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.00021850777632668677,
+              "median": 0.0003450528107550381,
+              "p90": 0.0007456662662077605,
+              "maximum": 0.0009182834650725936
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.00017538263674287056,
+              "median": 0.0001880981943760015,
+              "p90": 0.00020240404786039734,
+              "maximum": 0.0002024205884537722
+            }
+          },
+          "strain_norm_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 3.8086257947444518e-06,
+              "median": 0.00020781331365576038,
+              "p90": 0.00027265081436542014,
+              "maximum": 0.0002734274908369752
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.00013149122314496566,
+              "median": 0.00014107627945037513,
+              "p90": 0.00015198726150529931,
+              "maximum": 0.00015217322597253834
+            }
+          },
+          "covariance_generator_norm_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.000186166536072425,
+              "median": 0.0007348625779939762,
+              "p90": 0.0009822974428363221,
+              "maximum": 0.0022248085949114443
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0,
+              "median": 0.0,
+              "p90": 0.0,
+              "maximum": 0.0
+            }
+          },
+          "effective_factor_generator_norm_dt": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0002618105265564052,
+              "median": 0.0007872445112913067,
+              "p90": 0.0012901960119988513,
+              "maximum": 0.002225308276722102
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0,
+              "median": 0.0,
+              "p90": 0.0,
+              "maximum": 0.0
+            }
+          },
+          "minimum_width": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.03125014926913228,
+              "median": 0.03203911593765515,
+              "p90": 0.032779712570962176,
+              "maximum": 0.03724414121195463
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.03125584641273216,
+              "median": 0.03181277203745679,
+              "p90": 0.03189550166401765,
+              "maximum": 0.03197518862113887
+            }
+          },
+          "hydraulic_length": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.015724924615218197,
+              "median": 0.016401185774080097,
+              "p90": 0.016696947022371258,
+              "maximum": 0.016777487769937108
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.01571718017038321,
+              "median": 0.016399018605055285,
+              "p90": 0.016689954101980008,
+              "maximum": 0.01673623884565064
+            }
+          },
+          "minimum_encoded_edge": {
+            "active": {
+              "cells": 1194,
+              "minimum": 4.0839270511837407e-10,
+              "median": 0.00735655655583182,
+              "p90": 0.014408771778253412,
+              "maximum": 0.01829402622509067
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.00012103932003708195,
+              "median": 0.007280147678060685,
+              "p90": 0.01427478182383312,
+              "maximum": 0.017613230156893065
+            }
+          },
+          "area": {
+            "active": {
+              "cells": 1194,
+              "minimum": 0.0009281819680970133,
+              "median": 0.0009764243232968887,
+              "p90": 0.0009821016514805314,
+              "maximum": 0.0011022115981479856
+            },
+            "frozen": {
+              "cells": 396,
+              "minimum": 0.0009688438332017331,
+              "median": 0.0009761983986284256,
+              "p90": 0.0009789726662070434,
+              "maximum": 0.0009826494197616043
+            }
+          }
+        }
+      },
+      "cost": {
+        "patch_cells": 1590,
+        "full_registry_cells": 36864,
+        "cell_ratio": 23.184905660377357,
+        "patch_stage_seconds_observed": 109.03531125560403,
+        "fixed_dt": 0.0001,
+        "patch_t10_days_two_stages": 252.39655383241674,
+        "full_registry_t10_days_naive_cell_linear": 5851.790289608937,
+        "full_registry_stage_seconds_naive_cell_linear": 2527.973405111061,
+        "full_registry_peak_RSS_MiB_naive_linear": 39909.28301886792,
+        "node_scaling_caveat": "Only current patch node inventory known. Full-domain face count, adaptive face splits, priors and outer BC not built; cell-linear values are scenarios, not measurements or rigorous lower/upper bounds. Geometry global registry already contributes fixed cost. Native face-record and production diagnostic policies may change cost."
+      },
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/audit_saved_kepler_boundary_timestep_contract_20261019.py": "e43dc7a232279ae738a63868a708f55552eb2d9f032547a905d88df41e97f367",
+        "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+        "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/environment.json": "7ed3814a2735e0e22b78e1c1f690cb7c5ccd8d52bb6c6990aea08b7209d6d77f",
+        "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/manifest.json": "85edff6b685c889d37354d678ec776b3def05894e90311f4925a1258e0641203",
+        "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/kh.c": "4a4584d22cfed9fffd69aed40d61c07f039daab3f17da90440a383b07561cd2b",
+        "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/params.dat": "e02681e03237a0c9104653e92f21205bac4f73800573ea73e71f5ab372f792a9",
+        "/gpfs/kjhan/LagForce/Codex_accepted_ledger_build_20261017/src/Exam/KH/util.c": "5f427acc548fcd3fb0d92a29c8cdfd0597a1f790a82c34a7f77dda0ed57cfdea",
+        "/gpfs/kjhan/LagForce/Codex_accepted_ledger_build_20261017/src/Exam/exam.c": "4c851a8ac0d404d5e8007b3fe5d7ca5d67a2843b7db634f6a7c5518bd6d0e392"
+      },
+      "limits": "Dimensionless saved-state diagnostics do not guarantee positivity/realizability and do not authorize a larger timestep. No new full-domain topology, boundary extension or trajectory."
+    },
+    "native_fixtures": {
+      "status": "passed",
+      "fixtures": [
+        {
+          "name": "equal",
+          "status": "passed",
+          "native_status": 0,
+          "scalar": [
+            1.0,
+            0.0
+          ],
+          "native": [
+            1.0,
+            0.0
+          ],
+          "difference": [
+            0.0,
+            0.0
+          ],
+          "error_envelope": [
+            2.901383289437981e-14,
+            5.503840889622145e-14
+          ],
+          "bracket": [
+            1.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "iterations": 1095227392
+        },
+        {
+          "name": "Sod",
+          "status": "passed",
+          "native_status": 0,
+          "scalar": [
+            0.29394517850351043,
+            0.8411947625818282
+          ],
+          "native": [
+            0.29394517850351043,
+            0.8411947625818282
+          ],
+          "difference": [
+            0.0,
+            0.0
+          ],
+          "error_envelope": [
+            1.3111244319372143e-14,
+            8.948968092568431e-14
+          ],
+          "bracket": [
+            0.29394517850351043,
+            0.29394517850351043,
+            0.0,
+            0.0
+          ],
+          "iterations": 9
+        },
+        {
+          "name": "strong_shock",
+          "status": "passed",
+          "native_status": 0,
+          "scalar": [
+            133.35584805714393,
+            0.0
+          ],
+          "native": [
+            133.35584805714393,
+            0.0
+          ],
+          "difference": [
+            0.0,
+            0.0
+          ],
+          "error_envelope": [
+            8.4660384978157e-12,
+            8.634841943199432e-13
+          ],
+          "bracket": [
+            13335.584805714392,
+            13335.584805714405,
+            -3.552713678800501e-15,
+            7.105427357601002e-15
+          ],
+          "iterations": 7
+        },
+        {
+          "name": "rarefaction",
+          "status": "passed",
+          "native_status": 0,
+          "scalar": [
+            0.22461424321571505,
+            0.0
+          ],
+          "native": [
+            0.22461424321571505,
+            0.0
+          ],
+          "difference": [
+            0.0,
+            0.0
+          ],
+          "error_envelope": [
+            1.9673187788146507e-14,
+            1.4108069330467112e-13
+          ],
+          "bracket": [
+            0.22461424321571485,
+            0.22461424321571505,
+            -1.3322676295501878e-15,
+            2.220446049250313e-16
+          ],
+          "iterations": 11
+        },
+        {
+          "name": "near_vacuum",
+          "status": "passed",
+          "native_status": 0,
+          "scalar": [
+            1.0000098816671643e-15,
+            0.0
+          ],
+          "native": [
+            1.0000098816671643e-15,
+            0.0
+          ],
+          "difference": [
+            0.0,
+            0.0
+          ],
+          "error_envelope": [
+            1.6565812639695778e-25,
+            3.849384745115631e-13
+          ],
+          "bracket": [
+            1.0000098816671643e-15,
+            1.0000098816671643e-15,
+            0.0,
+            0.0
+          ],
+          "iterations": 22
+        },
+        {
+          "name": "vacuum",
+          "status": "passed",
+          "native_status": 2,
+          "scalar_failure": "Euler vacuum requires a separate vacuum model",
+          "expected_status": 2
+        },
+        {
+          "name": "negative_pressure",
+          "status": "passed",
+          "native_status": 1,
+          "scalar_failure": "positive finite Euler states required",
+          "expected_status": 1
+        },
+        {
+          "name": "gamma_one",
+          "status": "passed",
+          "native_status": 1,
+          "scalar_failure": "positive finite Euler states required",
+          "expected_status": 1
+        },
+        {
+          "name": "nonfinite_velocity",
+          "status": "passed",
+          "native_status": 1,
+          "scalar_failure": "finite velocity required",
+          "expected_status": 1
+        },
+        {
+          "name": "nonfinite_pressure",
+          "status": "passed",
+          "native_status": 1,
+          "scalar_failure": "positive finite Euler states required",
+          "expected_status": 1
+        },
+        {
+          "name": "bracket_overflow",
+          "status": "passed",
+          "native_status": 3,
+          "scalar_failure": "Euler star pressure bracket overflow",
+          "expected_status": 3
+        }
+      ],
+      "provenance": {
+        "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+        "scipy_version": "1.18.0",
+        "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+        "xtol": 2.2250738585072014e-308,
+        "rtol": 1.7763568394002505e-15,
+        "maxiter": 200
+      },
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/check_native_euler_star_fixtures_v2_20261019.py": "b032b39dc84f163f3ae2bdb1aec449edef29f838c1f30c11b710361ad6156ef1",
+        "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.py": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268",
+        "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.cpp": "6fae6e14ac6b1359c8e9de7b7bc77c62b99dfc8cf9c779d3d44283a405dba65b",
+        "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so": "b65b4882edf1895746108178e1a3288923401ef4802292702b0b5235ba0e9733"
+      },
+      "limits": "Same installed SciPy Brent kernel; wave/bracket roundoff envelopes assume usual libm accuracy and are not interval proofs. Extreme overflow is explicitly rejected, no alternate solver."
+    },
+    "native_saved": {
+      "status": "passed",
+      "manifest": {
+        "scope": "Actual saved stage0/half Riemann states; no fit, RHS/root or evolution.",
+        "newton_fits": 0,
+        "provider_calls": 0,
+        "source_sha256": {
+          "/gpfs/kjhan/LagForce/check_saved_face_record_native_20261019.py": "9df75f28f583fb88b541114bb320d75a21ed67fa5ec2cffa0fc17fcf18d40c94",
+          "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/face_record_batch.py": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c",
+          "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.py": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268",
+          "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.cpp": "6fae6e14ac6b1359c8e9de7b7bc77c62b99dfc8cf9c779d3d44283a405dba65b",
+          "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so": "b65b4882edf1895746108178e1a3288923401ef4802292702b0b5235ba0e9733"
+        }
+      },
+      "stages": {
+        "stage0": {
+          "nodes": 251888,
+          "actual_star_calls": 241240,
+          "seconds": 23.73735355399549,
+          "comparisons": {
+            "native_vs_scalar_star": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "native_vs_original_capture": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "left_internal_energy": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "right_internal_energy": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "samples_L": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "samples_R": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "root_error_envelope": {
+              "passed": true,
+              "maximum_fraction": 0.0
+            }
+          },
+          "native_record_stats": {
+            "nodes": 251888,
+            "star_calls": 241240,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.09971240721642971,
+                "process_cpu_seconds": 0.09912025000000035
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.12381068803369999,
+                "process_cpu_seconds": 0.12313732999999871
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5405599400401115,
+                "process_cpu_seconds": 0.5374369990000005
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          }
+        },
+        "midpoint": {
+          "nodes": 272336,
+          "actual_star_calls": 258800,
+          "seconds": 25.815881345421076,
+          "comparisons": {
+            "native_vs_scalar_star": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "native_vs_original_capture": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "left_internal_energy": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "right_internal_energy": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "samples_L": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "samples_R": {
+              "passed": true,
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "root_error_envelope": {
+              "passed": true,
+              "maximum_fraction": 0.0
+            }
+          },
+          "native_record_stats": {
+            "nodes": 272336,
+            "star_calls": 258800,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.09918236918747425,
+                "process_cpu_seconds": 0.09857544900000192
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.13127471320331097,
+                "process_cpu_seconds": 0.13050571000000133
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5657946728169918,
+                "process_cpu_seconds": 0.5628584500000002
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          }
+        }
+      },
+      "limits": "Stored original points/normals/measures with exact old polynomial fit restoration. No new face splitting or provider call. Actual full provider comparison is still required. Root envelopes assume ordinary libm rounding, not certified intervals."
+    },
+    "provider_comparison": {
+      "status": "passed",
+      "reports": {
+        "scalar": {
+          "status": "passed",
+          "manifest": {
+            "scope": "One scalar/native face-record comparison; approved state and accumulation batches remain enabled.\n\nOriginal saved midpoint, original initial seed and stopping rule. Large-region\ntimers only; no evolution/update/backend-shadow or automatic repeated replay.\n",
+            "mode": "scalar",
+            "flags": {
+              "LAGFORCE_QUADRATIC_VELOCITY": "1",
+              "LAGFORCE_QUADRATIC_BUDGET": "projected",
+              "LAGFORCE_VELOCITY_FIT": "radial_fixed_mean",
+              "LAGFORCE_VELOCITY_STENCIL": "area",
+              "LAGFORCE_QUADRATIC_PRESSURE": "0",
+              "LAGFORCE_KINETIC_SMOOTHING": "0",
+              "LAGFORCE_PRESSURE_RIEMANN": "exact_euler_star",
+              "LAGFORCE_VECTOR_KINETIC_ROOT": "0",
+              "LAGFORCE_SHARED_FACE_VELOCITY": "1",
+              "LAGFORCE_CAPTURE_PRESSURE_RATES": "1",
+              "LAGFORCE_BATCH_FACE_STATE": "1",
+              "LAGFORCE_VECTOR_MOMENT_FLUX": "1",
+              "LAGFORCE_BATCH_FACE_RECORDS": "0"
+            },
+            "time": 5e-05,
+            "seed": "stage0/inputs.npz:weight_rates",
+            "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+            "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+            "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+            "runtime_sources": {
+              "__main__": {
+                "path": "/gpfs/kjhan/LagForce/run_face_record_provider_comparison_once_20261019.py",
+                "sha256": "8decfde7d128c994a0c772b8928e40dd98dc3f2804ea9df63c9045857662fcda"
+              },
+              "subcell_exact_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/subcell_exact_geometry.py",
+                "sha256": "d8bea6ef22cf128d02c6971f433e8b1945b1ec2a65229f87f80006e95fe0f8c5"
+              },
+              "weighted_mass_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/weighted_mass_patch.py",
+                "sha256": "376b63ec29960702a41536a7bc3c8c3f3daceb0c1f83b47da363de1085c3eaca"
+              },
+              "fixedmass_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_ale_evolve.py",
+                "sha256": "67bf6dad2f980904d1ef285ca9b351a7556b9219fa72b0ecc92d1c680ceac425"
+              },
+              "fixedmass_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_hllc.py",
+                "sha256": "3d8ded18572ef0a3c56b2ddf9af3785494da16874677aa5ff8a43f1a54b4865c"
+              },
+              "periodic2d_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/periodic2d_hllc.py",
+                "sha256": "f1c556a55b40b9b9d7eb74ad83dd22653c61c640a4d3a0ecbd4237c76bc4ef65"
+              },
+              "affine_moment_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/affine_moment_patch.py",
+                "sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4"
+              },
+              "moment_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+                "sha256": "893d1f715adfe41a3e7af4a0486746b0ecd39788767095a297bc4ecca97987cf"
+              },
+              "quadratic_velocity_reconstruction": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/quadratic_velocity_reconstruction.py",
+                "sha256": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c"
+              },
+              "kinetic_factor_rhs": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/kinetic_factor_rhs.py",
+                "sha256": "774aec5188f789e9e22d702ed44aa8e05f269498ace020738290b010d3ee257c"
+              },
+              "density_quadrature": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+                "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+              },
+              "contact_prior_density": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/contact_prior_density.py",
+                "sha256": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d"
+              },
+              "quadratic_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_upwind_face_nodes.py",
+                "sha256": "8719430a44250e24f4914702eb68a4950b07c72db63a106cb5f562d550096f2a"
+              },
+              "contact_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+                "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+              },
+              "moment_gravity_source": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+                "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+              },
+              "embedded_laguerre_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+                "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+              },
+              "kinetic_face_capture": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+                "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+              },
+              "vector_moment_flux": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/vector_moment_flux.py",
+                "sha256": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+              },
+              "native_euler_star": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.py",
+                "sha256": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268"
+              },
+              "face_record_batch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/face_record_batch.py",
+                "sha256": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c"
+              },
+              "audit_canonical_pair_history": {
+                "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+                "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+              },
+              "run_canonical_av_branches_20261018": {
+                "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+                "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+              }
+            },
+            "runner_sha256": "8decfde7d128c994a0c772b8928e40dd98dc3f2804ea9df63c9045857662fcda",
+            "affinity": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "load_average_start": [
+              22.25,
+              22.36,
+              22.39
+            ],
+            "environment": {
+              "OMP_NUM_THREADS": "1",
+              "OPENBLAS_NUM_THREADS": "1",
+              "MKL_NUM_THREADS": null
+            },
+            "native_star_provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "candidate_manifest": {
+              "python_modules": {
+                "contact_prior_density": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d",
+                "quadratic_velocity_reconstruction": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c",
+                "kinetic_factor_rhs": "774aec5188f789e9e22d702ed44aa8e05f269498ace020738290b010d3ee257c",
+                "vector_moment_flux": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3",
+                "native_euler_star": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268",
+                "face_record_batch": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c"
+              },
+              "native_files": {
+                "native_euler_star.cpp": "6fae6e14ac6b1359c8e9de7b7bc77c62b99dfc8cf9c779d3d44283a405dba65b",
+                "libnative_euler_star.so": "b65b4882edf1895746108178e1a3288923401ef4802292702b0b5235ba0e9733"
+              },
+              "compile_flags": [
+                "g++",
+                "-O3",
+                "-std=c++17",
+                "-fPIC",
+                "-shared",
+                "-fno-fast-math",
+                "-ffp-contract=off"
+              ]
+            }
+          },
+          "iterations": 3,
+          "original_iterations": 3,
+          "mass_residual": 6.949735925632083e-17,
+          "comparisons": {
+            "weight_rates": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "hydro": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "gravity": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "raw_source": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            }
+          },
+          "timers": {
+            "decode_total": {
+              "calls": 1,
+              "wall_seconds": 12.916449336335063,
+              "process_cpu_seconds": 12.848269757999999
+            },
+            "rhs_total": {
+              "calls": 3,
+              "wall_seconds": 76.07808107323945,
+              "process_cpu_seconds": 75.586713289
+            },
+            "diagnostic_capture": {
+              "calls": 1,
+              "wall_seconds": 17.263096652925014,
+              "process_cpu_seconds": 17.157161615000007
+            },
+            "provider_total": {
+              "calls": 1,
+              "wall_seconds": 108.57777527160943,
+              "process_cpu_seconds": 107.895743199
+            }
+          },
+          "rhs_calls": [
+            {
+              "nodes": 272376,
+              "batch": {
+                "nodes": 272376,
+                "cell_batches": 1590,
+                "point_sides": 542200,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254728,
+                  27656,
+                  259816
+                ],
+                "array_bytes": 95915656,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              },
+              "record_total": {
+                "wall_seconds": 13.403514320030808,
+                "process_cpu_seconds": 13.321215686999999
+              },
+              "accumulation": {
+                "wall_seconds": 1.5138673577457666,
+                "process_cpu_seconds": 1.504423458000005
+              },
+              "native_records": null
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              },
+              "record_total": {
+                "wall_seconds": 13.476436028257012,
+                "process_cpu_seconds": 13.392997537
+              },
+              "accumulation": {
+                "wall_seconds": 1.530603263527155,
+                "process_cpu_seconds": 1.5213142989999966
+              },
+              "native_records": null
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              },
+              "record_total": {
+                "wall_seconds": 13.576798440888524,
+                "process_cpu_seconds": 13.494378658000002
+              },
+              "accumulation": {
+                "wall_seconds": 1.506739804521203,
+                "process_cpu_seconds": 1.4980113089999918
+              },
+              "native_records": null
+            }
+          ],
+          "peak_RSS_MiB": 1723.7734375,
+          "load_average_end": [
+            23.35,
+            22.74,
+            22.53
+          ],
+          "excluding_face_export": {
+            "wall_seconds": 91.31467861868441,
+            "process_cpu_seconds": 90.73858158399999
+          },
+          "limits": "One provider call per mode, no update. Large inclusive regions overlap and must not be summed. Peak RSS includes imports/input/density/diagnostic data. Shared-host wall times are not private CPU allocation. Scalar records retain their original loop: record_total includes scalar star and cannot be split without perturbing that oracle. Native array preparation/star/packing are separate large regions. excluding_face_export subtracts only capture(), retaining gravity/moment-defect audit overhead; it is not a production-step timing."
+        },
+        "batch": {
+          "status": "passed",
+          "manifest": {
+            "scope": "One scalar/native face-record comparison; approved state and accumulation batches remain enabled.\n\nOriginal saved midpoint, original initial seed and stopping rule. Large-region\ntimers only; no evolution/update/backend-shadow or automatic repeated replay.\n",
+            "mode": "batch",
+            "flags": {
+              "LAGFORCE_QUADRATIC_VELOCITY": "1",
+              "LAGFORCE_QUADRATIC_BUDGET": "projected",
+              "LAGFORCE_VELOCITY_FIT": "radial_fixed_mean",
+              "LAGFORCE_VELOCITY_STENCIL": "area",
+              "LAGFORCE_QUADRATIC_PRESSURE": "0",
+              "LAGFORCE_KINETIC_SMOOTHING": "0",
+              "LAGFORCE_PRESSURE_RIEMANN": "exact_euler_star",
+              "LAGFORCE_VECTOR_KINETIC_ROOT": "0",
+              "LAGFORCE_SHARED_FACE_VELOCITY": "1",
+              "LAGFORCE_CAPTURE_PRESSURE_RATES": "1",
+              "LAGFORCE_BATCH_FACE_STATE": "1",
+              "LAGFORCE_VECTOR_MOMENT_FLUX": "1",
+              "LAGFORCE_BATCH_FACE_RECORDS": "1"
+            },
+            "time": 5e-05,
+            "seed": "stage0/inputs.npz:weight_rates",
+            "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+            "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+            "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+            "runtime_sources": {
+              "__main__": {
+                "path": "/gpfs/kjhan/LagForce/run_face_record_provider_comparison_once_20261019.py",
+                "sha256": "8decfde7d128c994a0c772b8928e40dd98dc3f2804ea9df63c9045857662fcda"
+              },
+              "subcell_exact_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/subcell_exact_geometry.py",
+                "sha256": "d8bea6ef22cf128d02c6971f433e8b1945b1ec2a65229f87f80006e95fe0f8c5"
+              },
+              "weighted_mass_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/weighted_mass_patch.py",
+                "sha256": "376b63ec29960702a41536a7bc3c8c3f3daceb0c1f83b47da363de1085c3eaca"
+              },
+              "fixedmass_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_ale_evolve.py",
+                "sha256": "67bf6dad2f980904d1ef285ca9b351a7556b9219fa72b0ecc92d1c680ceac425"
+              },
+              "fixedmass_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_hllc.py",
+                "sha256": "3d8ded18572ef0a3c56b2ddf9af3785494da16874677aa5ff8a43f1a54b4865c"
+              },
+              "periodic2d_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/periodic2d_hllc.py",
+                "sha256": "f1c556a55b40b9b9d7eb74ad83dd22653c61c640a4d3a0ecbd4237c76bc4ef65"
+              },
+              "affine_moment_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/affine_moment_patch.py",
+                "sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4"
+              },
+              "moment_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+                "sha256": "893d1f715adfe41a3e7af4a0486746b0ecd39788767095a297bc4ecca97987cf"
+              },
+              "quadratic_velocity_reconstruction": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/quadratic_velocity_reconstruction.py",
+                "sha256": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c"
+              },
+              "kinetic_factor_rhs": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/kinetic_factor_rhs.py",
+                "sha256": "774aec5188f789e9e22d702ed44aa8e05f269498ace020738290b010d3ee257c"
+              },
+              "density_quadrature": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+                "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+              },
+              "contact_prior_density": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/contact_prior_density.py",
+                "sha256": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d"
+              },
+              "quadratic_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_upwind_face_nodes.py",
+                "sha256": "8719430a44250e24f4914702eb68a4950b07c72db63a106cb5f562d550096f2a"
+              },
+              "contact_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+                "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+              },
+              "moment_gravity_source": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+                "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+              },
+              "embedded_laguerre_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+                "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+              },
+              "kinetic_face_capture": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+                "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+              },
+              "vector_moment_flux": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/vector_moment_flux.py",
+                "sha256": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+              },
+              "native_euler_star": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.py",
+                "sha256": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268"
+              },
+              "face_record_batch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/face_record_batch.py",
+                "sha256": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c"
+              },
+              "audit_canonical_pair_history": {
+                "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+                "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+              },
+              "run_canonical_av_branches_20261018": {
+                "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+                "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+              }
+            },
+            "runner_sha256": "8decfde7d128c994a0c772b8928e40dd98dc3f2804ea9df63c9045857662fcda",
+            "affinity": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "load_average_start": [
+              22.73,
+              22.65,
+              22.52
+            ],
+            "environment": {
+              "OMP_NUM_THREADS": "1",
+              "OPENBLAS_NUM_THREADS": "1",
+              "MKL_NUM_THREADS": null
+            },
+            "native_star_provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "candidate_manifest": {
+              "python_modules": {
+                "contact_prior_density": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d",
+                "quadratic_velocity_reconstruction": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c",
+                "kinetic_factor_rhs": "774aec5188f789e9e22d702ed44aa8e05f269498ace020738290b010d3ee257c",
+                "vector_moment_flux": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3",
+                "native_euler_star": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268",
+                "face_record_batch": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c"
+              },
+              "native_files": {
+                "native_euler_star.cpp": "6fae6e14ac6b1359c8e9de7b7bc77c62b99dfc8cf9c779d3d44283a405dba65b",
+                "libnative_euler_star.so": "b65b4882edf1895746108178e1a3288923401ef4802292702b0b5235ba0e9733"
+              },
+              "compile_flags": [
+                "g++",
+                "-O3",
+                "-std=c++17",
+                "-fPIC",
+                "-shared",
+                "-fno-fast-math",
+                "-ffp-contract=off"
+              ]
+            }
+          },
+          "iterations": 3,
+          "original_iterations": 3,
+          "mass_residual": 6.949735925632083e-17,
+          "comparisons": {
+            "weight_rates": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "hydro": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "gravity": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "raw_source": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            }
+          },
+          "timers": {
+            "decode_total": {
+              "calls": 1,
+              "wall_seconds": 12.677811972796917,
+              "process_cpu_seconds": 12.609812879
+            },
+            "rhs_total": {
+              "calls": 3,
+              "wall_seconds": 36.795517820864916,
+              "process_cpu_seconds": 36.595935116
+            },
+            "diagnostic_capture": {
+              "calls": 1,
+              "wall_seconds": 16.93840265646577,
+              "process_cpu_seconds": 16.848254634000007
+            },
+            "provider_total": {
+              "calls": 1,
+              "wall_seconds": 68.54393728077412,
+              "process_cpu_seconds": 68.172734227
+            }
+          },
+          "rhs_calls": [
+            {
+              "nodes": 272376,
+              "batch": {
+                "nodes": 272376,
+                "cell_batches": 1590,
+                "point_sides": 542200,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254728,
+                  27656,
+                  259816
+                ],
+                "array_bytes": 95915656,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              },
+              "record_total": {
+                "wall_seconds": 0.8180124592036009,
+                "process_cpu_seconds": 0.8139665290000018
+              },
+              "accumulation": {
+                "wall_seconds": 1.3825869988650084,
+                "process_cpu_seconds": 1.374621947999998
+              },
+              "native_records": {
+                "nodes": 272376,
+                "star_calls": 258840,
+                "frozen_skipped": 13536,
+                "timers": {
+                  "record_array_prepare": {
+                    "wall_seconds": 0.15579680539667606,
+                    "process_cpu_seconds": 0.15498104999999995
+                  },
+                  "exact_star_native": {
+                    "wall_seconds": 0.1308900211006403,
+                    "process_cpu_seconds": 0.1302211590000013
+                  },
+                  "record_tuple_pack": {
+                    "wall_seconds": 0.5308278799057007,
+                    "process_cpu_seconds": 0.528295
+                  }
+                },
+                "provenance": {
+                  "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+                  "scipy_version": "1.18.0",
+                  "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+                  "xtol": 2.2250738585072014e-308,
+                  "rtol": 1.7763568394002505e-15,
+                  "maxiter": 200
+                },
+                "cache_scope": "this RHS outer only"
+              }
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              },
+              "record_total": {
+                "wall_seconds": 0.8008285351097584,
+                "process_cpu_seconds": 0.7968947700000015
+              },
+              "accumulation": {
+                "wall_seconds": 1.3947434071451426,
+                "process_cpu_seconds": 1.3868683090000005
+              },
+              "native_records": {
+                "nodes": 272336,
+                "star_calls": 258800,
+                "frozen_skipped": 13536,
+                "timers": {
+                  "record_array_prepare": {
+                    "wall_seconds": 0.14707363583147526,
+                    "process_cpu_seconds": 0.146337299999999
+                  },
+                  "exact_star_native": {
+                    "wall_seconds": 0.12470896542072296,
+                    "process_cpu_seconds": 0.12415868999999446
+                  },
+                  "record_tuple_pack": {
+                    "wall_seconds": 0.5286661125719547,
+                    "process_cpu_seconds": 0.5260403300000007
+                  }
+                },
+                "provenance": {
+                  "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+                  "scipy_version": "1.18.0",
+                  "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+                  "xtol": 2.2250738585072014e-308,
+                  "rtol": 1.7763568394002505e-15,
+                  "maxiter": 200
+                },
+                "cache_scope": "this RHS outer only"
+              }
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              },
+              "record_total": {
+                "wall_seconds": 0.8072224520146847,
+                "process_cpu_seconds": 0.8033167589999977
+              },
+              "accumulation": {
+                "wall_seconds": 1.3906483203172684,
+                "process_cpu_seconds": 1.383004888000002
+              },
+              "native_records": {
+                "nodes": 272336,
+                "star_calls": 258800,
+                "frozen_skipped": 13536,
+                "timers": {
+                  "record_array_prepare": {
+                    "wall_seconds": 0.15400547720491886,
+                    "process_cpu_seconds": 0.153213700000002
+                  },
+                  "exact_star_native": {
+                    "wall_seconds": 0.1252761296927929,
+                    "process_cpu_seconds": 0.12471465899999856
+                  },
+                  "record_tuple_pack": {
+                    "wall_seconds": 0.5275526437908411,
+                    "process_cpu_seconds": 0.5250221599999989
+                  }
+                },
+                "provenance": {
+                  "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+                  "scipy_version": "1.18.0",
+                  "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+                  "xtol": 2.2250738585072014e-308,
+                  "rtol": 1.7763568394002505e-15,
+                  "maxiter": 200
+                },
+                "cache_scope": "this RHS outer only"
+              }
+            }
+          ],
+          "peak_RSS_MiB": 1949.19921875,
+          "load_average_end": [
+            23.27,
+            22.8,
+            22.58
+          ],
+          "excluding_face_export": {
+            "wall_seconds": 51.60553462430835,
+            "process_cpu_seconds": 51.324479593
+          },
+          "limits": "One provider call per mode, no update. Large inclusive regions overlap and must not be summed. Peak RSS includes imports/input/density/diagnostic data. Shared-host wall times are not private CPU allocation. Scalar records retain their original loop: record_total includes scalar star and cannot be split without perturbing that oracle. Native array preparation/star/packing are separate large regions. excluding_face_export subtracts only capture(), retaining gravity/moment-defect audit overhead; it is not a production-step timing."
+        }
+      },
+      "record_totals": {
+        "scalar": {
+          "wall_seconds": 40.456748789176345,
+          "process_cpu_seconds": 40.208591882
+        },
+        "batch": {
+          "wall_seconds": 2.426063446328044,
+          "process_cpu_seconds": 2.414178058000001
+        }
+      },
+      "speedup": {
+        "wall_seconds": 1.5840609626325681,
+        "process_cpu_seconds": 1.5826817630598653
+      },
+      "export_excluded_speedup": {
+        "wall_seconds": 1.7694745201936424,
+        "process_cpu_seconds": 1.7679396323850025
+      },
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_face_record_provider_comparison_20261019/scalar/report.json": "de6e6b248d57c2a7041526e6523699d9f905eb587d76872c515f79107613ed4a",
+        "/gpfs/kjhan/LagForce/Codex_face_record_provider_comparison_20261019/batch/report.json": "54c7b50d27f5d2d7e2c248c2b719034d47dc08d26f1e06849011f0d9a05a6add"
+      },
+      "limits": "One call each, shared-host observation. Scalar record total includes exact-star calls inside original scalar loop; native subregions separate preparation/star/packing. Export-excluded timing subtracts only the face export, not all diagnostic work. No closure change or new evolution in this comparison."
+    }
+  },
+  "source_sha256": {
+    "Docs/canonical_contact_potential_fixtures_2026-10-19.json": "47b09893e0a1b270164029a5fcc01833825e3721a19908568c598a3ca6dd2816",
+    "Docs/canonical_contact_potential_accepted_2026-10-19.json": "57e815510e7abee405ea516b86702bd019037871f7de7e900b52eba6be4ea790",
+    "Docs/canonical_contact_potential_accepted_summary_2026-10-19.json": "169dd786e59fd87ca6e08cdc7600c50fd7479c6a27c0fec7bd9212a71060c6c0",
+    "Docs/canonical_boundary_timestep_contract_2026-10-19.json": "8070475581bac57dd5cf761814e53231f87154d3777e847cfa9d835e5a151daa",
+    "Docs/canonical_native_star_fixtures_v2_2026-10-19.json": "7cc5d65dd65008943241f2e6dc56795550fa871379612c11ac2dfb6ed23567c9",
+    "Docs/canonical_face_record_native_saved_2026-10-19.json": "cd6058acff2c298ab11fd5a508c88a2c94e044b317762485f2ee120c4dd25c0f",
+    "Docs/canonical_face_record_provider_comparison_2026-10-19.json": "32a57d67541e9ede198f317fad1c8ccfe8fad5aa08a34f04b6659da3c537bf04"
+  },
+  "limits": "Offline density realizability and unchanged-closure provider optimization. No new coupled Psi RHS, trajectory, enlarged boundary or timestep."
+}

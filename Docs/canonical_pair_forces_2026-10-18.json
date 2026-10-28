@@ -1,0 +1,2961 @@
+{
+  "scope": "Existing pre-HG saved RHS, one rank; no new evolution.",
+  "script_sha256": "370bf2f022e2fd3d1cef826721672dc7509191cb516478092f5174fa220c8350",
+  "formula": "d_double_dot=n.(a_j-a_i)+|v_relative_transverse|^2/d",
+  "limits": [
+    "HG excluded; no total applied-step acceleration claim.",
+    "TCF reconstruction limited by printed face precision (~7 significant digits).",
+    "Pressure force inferred as saved hydro force minus reconstructed TCF Q.",
+    "Instantaneous acceleration does not establish a mode stiffness or continuous binding."
+  ],
+  "cases": {
+    "t2": {
+      "time": 2.0029059177634028,
+      "source": "/gpfs/kjhan/LagForce/Codex_t2_onset_rhs_20261017/t2",
+      "rhs_sha256": "18f759f6ebd7793ebe8691370084cb1c3e43076db3cb23872a56fb8ff0f8f550",
+      "face_sha256": "b81728826193bbe7b2a6307804d17837f9fc1c47fd40a69f06bf722a4f826879",
+      "snapshot_match_max_abs": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "pressure": 0.0,
+        "mass": 0.0
+      },
+      "TCF_heat_reconstruction_relative_L1": 1.3024735621887274e-07,
+      "closest_pairs": [
+        {
+          "ids": [
+            1,
+            2
+          ],
+          "gap": 0.03114204534758919,
+          "gap_over_initial_h": 0.9386795376038187,
+          "separation_rate": -3.7813018870645754e-05,
+          "relative_speed": 0.28576642085318055,
+          "radial_relative_acceleration": {
+            "gravity": -2.62227825956034,
+            "pressure": 3.874698047873569e-05,
+            "TCF_Q": -4.164312716479232e-06
+          },
+          "transverse_kinematic_term": 2.6222569823511757,
+          "separation_second_derivative_without_HG": 1.330545859801191e-05,
+          "relative_kinetic_power": {
+            "gravity": 4.3997134893911036e-10,
+            "pressure": -6.164084502093365e-10,
+            "TCF_Q": -1.1467406683001642e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21037383788351963,
+          "other_faces_pressure_radial_relative_acceleration": -0.2103350909030409,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -4.164312716479232e-06,
+          "cell_pressure": [
+            2.7879136431779396e-05,
+            2.7981248140690794e-05
+          ],
+          "cell_density": [
+            0.010021228687299715,
+            0.010043133862160124
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0006813760742688506,
+            0.0003077074185912595
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            2.6204369900986357,
+            2.623334241823859
+          ],
+          "cell_pressure_specific_torque": [
+            -1.5693379946748638e-05,
+            -5.608056429563338e-07
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003149778
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            3.781302e-05
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            1.898677e-06
+          ]
+        },
+        {
+          "ids": [
+            0,
+            1
+          ],
+          "gap": 0.031120348741632435,
+          "gap_over_initial_h": 0.9389656074226786,
+          "separation_rate": -5.490088535251014e-05,
+          "relative_speed": 0.2855742938928033,
+          "radial_relative_acceleration": {
+            "gravity": -2.6204793239829822,
+            "pressure": 3.461086043298855e-05,
+            "TCF_Q": 1.549549622503727e-06
+          },
+          "transverse_kinematic_term": 2.6205578541337413,
+          "separation_second_derivative_without_HG": 0.00011469056081470086,
+          "relative_kinetic_power": {
+            "gravity": 8.19711783662694e-10,
+            "pressure": -1.6600807157256615e-09,
+            "TCF_Q": -1.0503252555010179e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21007001509309645,
+          "other_faces_pressure_radial_relative_acceleration": -0.21003540423266345,
+          "direct_shared_face_TCF_radial_relative_acceleration": 5.028360913773479e-05,
+          "other_faces_TCF_radial_relative_acceleration": -4.8734059515231066e-05,
+          "cell_pressure": [
+            2.7804397052112512e-05,
+            2.7879136431779396e-05
+          ],
+          "cell_density": [
+            0.01000509299132111,
+            0.010021228687299715
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0013923095739057174,
+            0.0006813760742688506
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            2.6212493679884643,
+            2.6204369900986357
+          ],
+          "cell_pressure_specific_torque": [
+            -3.761563651233537e-05,
+            -1.5693379946748638e-05
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            6.664371e-09
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003147426
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            5.490089e-05
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            3.371851e-05
+          ]
+        },
+        {
+          "ids": [
+            2,
+            3
+          ],
+          "gap": 0.03118389115862566,
+          "gap_over_initial_h": 0.9394742883372733,
+          "separation_rate": -3.0134813872317867e-05,
+          "relative_speed": 0.28616118121033135,
+          "radial_relative_acceleration": {
+            "gravity": -2.6256889209555494,
+            "pressure": -0.00027998466382769653,
+            "TCF_Q": 3.369487626327227e-06
+          },
+          "transverse_kinematic_term": 2.625978275354976,
+          "separation_second_derivative_without_HG": 1.2739223225199936e-05,
+          "relative_kinetic_power": {
+            "gravity": 2.343026517324921e-10,
+            "pressure": 2.3964755669222305e-11,
+            "TCF_Q": -1.561060254546295e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21245650509345457,
+          "other_faces_pressure_radial_relative_acceleration": -0.21273648975728227,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": 3.369487626327227e-06,
+          "cell_pressure": [
+            2.7981248140690794e-05,
+            2.7909403659399072e-05
+          ],
+          "cell_density": [
+            0.010043133862160124,
+            0.010027575862423962
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0003077074185912595,
+            0.00032354728563694355
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            2.623334241823859,
+            2.6288268444187683
+          ],
+          "cell_pressure_specific_torque": [
+            -5.608056429563338e-07,
+            6.98772868507237e-07
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.000316029
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            3.013481e-05
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -1.168057e-05
+          ]
+        },
+        {
+          "ids": [
+            0,
+            5
+          ],
+          "gap": 0.031163114662703332,
+          "gap_over_initial_h": 0.9405692997089157,
+          "separation_rate": -6.438859182013312e-05,
+          "relative_speed": 0.2859564804797741,
+          "radial_relative_acceleration": {
+            "gravity": -2.6240163936793937,
+            "pressure": -0.00022434034459517267,
+            "TCF_Q": 8.056003518832456e-05
+          },
+          "transverse_kinematic_term": 2.6239708536051456,
+          "separation_second_derivative_without_HG": -0.00018932038365493398,
+          "relative_kinetic_power": {
+            "gravity": 1.0713138746694029e-09,
+            "pressure": -2.079673170404391e-09,
+            "TCF_Q": -9.927602725351162e-11
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21176077001465204,
+          "other_faces_pressure_radial_relative_acceleration": -0.21198511035924722,
+          "direct_shared_face_TCF_radial_relative_acceleration": 5.993995209520503e-05,
+          "other_faces_TCF_radial_relative_acceleration": 2.0620083093119532e-05,
+          "cell_pressure": [
+            2.7804397052112512e-05,
+            2.7713251729925062e-05
+          ],
+          "cell_density": [
+            0.01000509299132111,
+            0.009985434714545178
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0013923095739057174,
+            0.0017636797334517902
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            2.6212493679884643,
+            2.6251984807818984
+          ],
+          "cell_pressure_specific_torque": [
+            -3.761563651233537e-05,
+            -5.2163374130376265e-05
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            7.857275e-09
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003147041
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            6.438859e-05
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            3.98173e-05
+          ]
+        },
+        {
+          "ids": [
+            3,
+            4
+          ],
+          "gap": 0.03121728264277038,
+          "gap_over_initial_h": 0.9412316982797437,
+          "separation_rate": -5.309967164379703e-05,
+          "relative_speed": 0.2864889061033652,
+          "radial_relative_acceleration": {
+            "gravity": -2.628413682988599,
+            "pressure": -0.0010902778362931,
+            "TCF_Q": 2.904888691600001e-05
+          },
+          "transverse_kinematic_term": 2.629181131488895,
+          "separation_second_derivative_without_HG": -0.00029378044908145995,
+          "relative_kinetic_power": {
+            "gravity": 7.315300817997438e-10,
+            "pressure": -8.333324295437267e-10,
+            "TCF_Q": -1.7247222772600288e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21635423879644955,
+          "other_faces_pressure_radial_relative_acceleration": -0.21744451663274264,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": 2.904888691600001e-05,
+          "cell_pressure": [
+            2.7909403659399072e-05,
+            2.768115390032871e-05
+          ],
+          "cell_density": [
+            0.010027575862423962,
+            0.009978407865601025
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.00032354728563694355,
+            0.0009462532549828296
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            2.6288268444187683,
+            2.6298083784288133
+          ],
+          "cell_pressure_specific_torque": [
+            6.98772868507237e-07,
+            -2.8674899995595824e-05
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003156375
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            5.309967e-05
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -1.337007e-06
+          ]
+        },
+        {
+          "ids": [
+            4,
+            5
+          ],
+          "gap": 0.031211637315657157,
+          "gap_over_initial_h": 0.9418432354498918,
+          "separation_rate": -5.565044198081043e-05,
+          "relative_speed": 0.2864308851431446,
+          "radial_relative_acceleration": {
+            "gravity": -2.6279869695197218,
+            "pressure": -0.0010490796434682694,
+            "TCF_Q": 1.1096751747634096e-05
+          },
+          "transverse_kinematic_term": 2.6285916383424497,
+          "separation_second_derivative_without_HG": -0.0004333140689927184,
+          "relative_kinetic_power": {
+            "gravity": 9.720050040843485e-10,
+            "pressure": -1.5874146176985508e-09,
+            "TCF_Q": -1.7765931983635672e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.2159407168567585,
+          "other_faces_pressure_radial_relative_acceleration": -0.21698979650022676,
+          "direct_shared_face_TCF_radial_relative_acceleration": 3.922411175017454e-05,
+          "other_faces_TCF_radial_relative_acceleration": -2.8127360002540443e-05,
+          "cell_pressure": [
+            2.768115390032871e-05,
+            2.7713251729925062e-05
+          ],
+          "cell_density": [
+            0.009978407865601025,
+            0.009985434714545178
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0009462532549828296,
+            0.0017636797334517902
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            2.6298083784288133,
+            2.6251984807818984
+          ],
+          "cell_pressure_specific_torque": [
+            -2.8674899995595824e-05,
+            -5.2163374130376265e-05
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            5.031002e-09
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003148423
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            5.565044e-05
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            3.083247e-05
+          ]
+        },
+        {
+          "ids": [
+            453,
+            454
+          ],
+          "gap": 0.0298812701998239,
+          "gap_over_initial_h": 0.9503406879653008,
+          "separation_rate": -0.002743371124067008,
+          "relative_speed": 0.12671679780208184,
+          "radial_relative_acceleration": {
+            "gravity": -0.5427424831355206,
+            "pressure": 0.003267309694783893,
+            "TCF_Q": -0.0003023372270148173
+          },
+          "transverse_kinematic_term": 0.5371130695837661,
+          "separation_second_derivative_without_HG": -0.002664441083985447,
+          "relative_kinetic_power": {
+            "gravity": -8.233597635805575e-09,
+            "pressure": 3.475533431113488e-10,
+            "TCF_Q": 8.845544601475633e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.17211674289398715,
+          "other_faces_pressure_radial_relative_acceleration": -0.16884943319920326,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.0003023372270148173,
+          "cell_pressure": [
+            2.9663804666885895e-05,
+            2.9804544077483812e-05
+          ],
+          "cell_density": [
+            0.010359587386808748,
+            0.01038918756308784
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.003373999652017814,
+            0.002338266470285501
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.827979134815133,
+            6.812783387782871
+          ],
+          "cell_pressure_specific_torque": [
+            -0.000762397307989909,
+            0.0003967665585514256
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003624072
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.002743371
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.0001178073
+          ]
+        },
+        {
+          "ids": [
+            240,
+            241
+          ],
+          "gap": 0.02974212659174285,
+          "gap_over_initial_h": 0.9522116497961529,
+          "separation_rate": -0.0016252424370875457,
+          "relative_speed": 0.17227021259447894,
+          "radial_relative_acceleration": {
+            "gravity": -1.003350827244425,
+            "pressure": 0.005106632664351558,
+            "TCF_Q": 0.00012028042960646583
+          },
+          "transverse_kinematic_term": 0.9977223599944599,
+          "separation_second_derivative_without_HG": -0.00040155415600695576,
+          "relative_kinetic_power": {
+            "gravity": -1.0958515983018264e-08,
+            "pressure": 9.478628959232742e-10,
+            "TCF_Q": 5.291578336105609e-11
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.1750062736758637,
+          "other_faces_pressure_radial_relative_acceleration": -0.16989964101151214,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": 0.00012028042960646583,
+          "cell_pressure": [
+            2.86117321344399e-05,
+            2.9765103332596078e-05
+          ],
+          "cell_density": [
+            0.01012643000507286,
+            0.010370089660800235
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.00499225877705085,
+            0.00028185288806914223
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            9.48531325809237,
+            9.47584569236073
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0013420795296463762,
+            7.518695479182035e-05
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003630749
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.001625242
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -7.143803e-05
+          ]
+        },
+        {
+          "ids": [
+            269,
+            270
+          ],
+          "gap": 0.029746915446802254,
+          "gap_over_initial_h": 0.952751966987184,
+          "separation_rate": -0.0015410826759749696,
+          "relative_speed": 0.17220523545019933,
+          "radial_relative_acceleration": {
+            "gravity": -0.9997946250644345,
+            "pressure": 0.0034394257778478828,
+            "TCF_Q": -0.00013101663443749534
+          },
+          "transverse_kinematic_term": 0.9968182493970809,
+          "separation_second_derivative_without_HG": 0.0003320334760567034,
+          "relative_kinetic_power": {
+            "gravity": -1.0458619660542625e-08,
+            "pressure": 2.7094751453592563e-09,
+            "TCF_Q": 3.028267078370317e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.16778545027557873,
+          "other_faces_pressure_radial_relative_acceleration": -0.16434602449773084,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.00013101663443749534,
+          "cell_pressure": [
+            2.9439357885138087e-05,
+            2.8294645443139847e-05
+          ],
+          "cell_density": [
+            0.010302715078359288,
+            0.010056982169795262
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0015775076046596805,
+            0.0062938488093638445
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            9.470193827636479,
+            9.461146409557491
+          ],
+          "cell_pressure_specific_torque": [
+            0.00024301423021263308,
+            0.0013080252859032397
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.000360279
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.001541083
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.0001280517
+          ]
+        },
+        {
+          "ids": [
+            474,
+            475
+          ],
+          "gap": 0.029899538649169624,
+          "gap_over_initial_h": 0.9529398591117284,
+          "separation_rate": -0.0029743876563753657,
+          "relative_speed": 0.12642972555583487,
+          "radial_relative_acceleration": {
+            "gravity": -0.5449052023029147,
+            "pressure": 0.003070052717637401,
+            "TCF_Q": -0.0002750481302366179
+          },
+          "transverse_kinematic_term": 0.5343102015601504,
+          "separation_second_derivative_without_HG": -0.007799996155363531,
+          "relative_kinetic_power": {
+            "gravity": -9.946205941599548e-09,
+            "pressure": -2.4035658407995365e-10,
+            "TCF_Q": 8.115913640731162e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.1475175523073058,
+          "other_faces_pressure_radial_relative_acceleration": -0.14444749958966838,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.0002750481302366179,
+          "cell_pressure": [
+            2.85474078268068e-05,
+            2.9341625093931684e-05
+          ],
+          "cell_density": [
+            0.010122301963913345,
+            0.010295457176852802
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0032245801606142913,
+            0.001455494162968121
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.844293744931664,
+            6.82672906071256
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0011206932589045908,
+            -1.2845784854884524e-05
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.000361272
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.002974388
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -7.362424e-05
+          ]
+        },
+        {
+          "ids": [
+            442,
+            443
+          ],
+          "gap": 0.02997720586277583,
+          "gap_over_initial_h": 0.953631053063197,
+          "separation_rate": -0.002660437123209621,
+          "relative_speed": 0.12685338670444476,
+          "radial_relative_acceleration": {
+            "gravity": -0.5449692845813242,
+            "pressure": 0.002372153119398181,
+            "TCF_Q": -0.0003036120486414801
+          },
+          "transverse_kinematic_term": 0.5365644772341513,
+          "separation_second_derivative_without_HG": -0.006336266276416147,
+          "relative_kinetic_power": {
+            "gravity": -8.082484207968424e-09,
+            "pressure": -2.3857417087903874e-11,
+            "TCF_Q": 7.676682884294394e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.1648975769680969,
+          "other_faces_pressure_radial_relative_acceleration": -0.16252542384869872,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.0003036120486414801,
+          "cell_pressure": [
+            2.929854462315322e-05,
+            2.9605037754364744e-05
+          ],
+          "cell_density": [
+            0.010283518866517488,
+            0.010348134754298296
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.002984370186490131,
+            0.00239898863153507
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.831321121844874,
+            6.816476692709772
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0006691488304831728,
+            0.0001495185970195729
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003584227
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.002660437
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -6.03946e-05
+          ]
+        },
+        {
+          "ids": [
+            464,
+            465
+          ],
+          "gap": 0.029988008342875277,
+          "gap_over_initial_h": 0.9541430840624386,
+          "separation_rate": -0.0029265877139793353,
+          "relative_speed": 0.1274700184190824,
+          "radial_relative_acceleration": {
+            "gravity": -0.544564544245118,
+            "pressure": 0.0022210727677707044,
+            "TCF_Q": -0.00014532893800151602
+          },
+          "transverse_kinematic_term": 0.5415511591976727,
+          "separation_second_derivative_without_HG": -0.0009376412176761439,
+          "relative_kinetic_power": {
+            "gravity": -7.245421313374809e-09,
+            "pressure": 4.388994889822663e-10,
+            "TCF_Q": 2.761212047081039e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.15975187657137516,
+          "other_faces_pressure_radial_relative_acceleration": -0.15753080380360446,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.00014532893800151602,
+          "cell_pressure": [
+            2.9398146035698893e-05,
+            2.9497455288585264e-05
+          ],
+          "cell_density": [
+            0.010303118330941177,
+            0.010323414369760505
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0030132453570931345,
+            0.001957916733177704
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.826560334611283,
+            6.811902481301468
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0005575826462110746,
+            0.00021355189914895668
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0003622668
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.002926588
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -1.083592e-05
+          ]
+        }
+      ]
+    },
+    "t4": {
+      "time": 4.005538150548695,
+      "source": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_identity_20261017/t4",
+      "rhs_sha256": "b2e3490034636bdc5674501cf5847f1ae5c6d143afe446e32ee1a635d69e946d",
+      "face_sha256": "9ba04bdb427ab45ea6a13803c66ff294dfce888ca50dbde1bbbe64cf64644e64",
+      "snapshot_match_max_abs": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "pressure": 0.0,
+        "mass": 0.0
+      },
+      "TCF_heat_reconstruction_relative_L1": 1.2996045697057608e-07,
+      "closest_pairs": [
+        {
+          "ids": [
+            240,
+            241
+          ],
+          "gap": 0.010306692245764885,
+          "gap_over_initial_h": 0.3299748051642565,
+          "separation_rate": -0.013301397428008722,
+          "relative_speed": 0.02064753228704529,
+          "radial_relative_acceleration": {
+            "gravity": 0.04344245047800896,
+            "pressure": 0.12532928216296177,
+            "TCF_Q": -0.02465990845110952
+          },
+          "transverse_kinematic_term": 0.024197231280406066,
+          "separation_second_derivative_without_HG": 0.16830905547026728,
+          "relative_kinetic_power": {
+            "gravity": -2.463264710429215e-08,
+            "pressure": -1.3560790634524564e-08,
+            "TCF_Q": 2.3420210779406693e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5708205798426986,
+          "other_faces_pressure_radial_relative_acceleration": -0.44549129767973683,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.02465990845110952,
+          "cell_pressure": [
+            4.9391427176314783e-05,
+            8.544344269413783e-05
+          ],
+          "cell_density": [
+            0.013520538386805746,
+            0.019277185705900538
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.12556190099764197,
+            0.04416278046663399
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            9.68003640243236,
+            9.481019117307792
+          ],
+          "cell_pressure_specific_torque": [
+            -0.013788137812594827,
+            -0.009776809665776095
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.001210804
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.0133014
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.001690062
+          ]
+        },
+        {
+          "ids": [
+            269,
+            270
+          ],
+          "gap": 0.011190824636766138,
+          "gap_over_initial_h": 0.35842641244451223,
+          "separation_rate": -0.01939829756103647,
+          "relative_speed": 0.03000659086652221,
+          "radial_relative_acceleration": {
+            "gravity": -0.028353121330629685,
+            "pressure": 0.12420111756187016,
+            "TCF_Q": -0.026171984071009298
+          },
+          "transverse_kinematic_term": 0.04683314806332204,
+          "separation_second_derivative_without_HG": 0.1165091602235532,
+          "relative_kinetic_power": {
+            "gravity": -3.3487857965359135e-08,
+            "pressure": -1.1394513600278319e-08,
+            "TCF_Q": 4.4903952031164925e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5547882406115967,
+          "other_faces_pressure_radial_relative_acceleration": -0.4305871230497266,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.026171984071009298,
+          "cell_pressure": [
+            8.850485829925459e-05,
+            4.548204702337448e-05
+          ],
+          "cell_density": [
+            0.01973719333329928,
+            0.012865343173956672
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.01828688227429425,
+            0.1201676110936715
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            9.460077854501272,
+            9.25618348749016
+          ],
+          "cell_pressure_specific_torque": [
+            0.002336898279050011,
+            0.027755378194174563
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.001041695
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.0193983
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.004097602
+          ]
+        },
+        {
+          "ids": [
+            486,
+            487
+          ],
+          "gap": 0.011794059131499831,
+          "gap_over_initial_h": 0.3763785966904261,
+          "separation_rate": -0.007966895592106508,
+          "relative_speed": 0.009374894466256216,
+          "radial_relative_acceleration": {
+            "gravity": 0.21886816630995024,
+            "pressure": 0.13440068641688893,
+            "TCF_Q": -0.020507248589428186
+          },
+          "transverse_kinematic_term": 0.0020702983261039667,
+          "separation_second_derivative_without_HG": 0.3348319024635149,
+          "relative_kinetic_power": {
+            "gravity": -3.217670257310064e-09,
+            "pressure": -5.125320562424451e-09,
+            "TCF_Q": 1.6320252152685298e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5457526693457436,
+          "other_faces_pressure_radial_relative_acceleration": -0.41135198292885466,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.020507248589428186,
+          "cell_pressure": [
+            6.803752150770089e-05,
+            5.285723352985774e-05
+          ],
+          "cell_density": [
+            0.016536432283638287,
+            0.01369093463385715
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.03504356409123531,
+            0.11276632230200842
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.864578966946257,
+            6.569178292673429
+          ],
+          "cell_pressure_specific_torque": [
+            -0.01236940120768262,
+            0.008784271699633427
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.000978587
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.007966896
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.005559749
+          ]
+        },
+        {
+          "ids": [
+            546,
+            547
+          ],
+          "gap": 0.01286434016605272,
+          "gap_over_initial_h": 0.41278961034686207,
+          "separation_rate": -0.014740315268708238,
+          "relative_speed": 0.014786992333582143,
+          "radial_relative_acceleration": {
+            "gravity": 0.1286697432293216,
+            "pressure": 0.08855293029755,
+            "TCF_Q": -0.01537991862105496
+          },
+          "transverse_kinematic_term": 0.0001071370964008598,
+          "separation_second_derivative_without_HG": 0.2019498920022175,
+          "relative_kinetic_power": {
+            "gravity": -7.730676796586101e-09,
+            "pressure": -6.19503161455613e-09,
+            "TCF_Q": 1.1015859219941333e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5120907238344666,
+          "other_faces_pressure_radial_relative_acceleration": -0.4235377935369166,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.01537991862105496,
+          "cell_pressure": [
+            5.211298401133356e-05,
+            5.5954765786452235e-05
+          ],
+          "cell_density": [
+            0.014120830797430947,
+            0.014759723223689411
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.04753965609239656,
+            0.045559994461810936
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.1798160494753915,
+            5.916679496685933
+          ],
+          "cell_pressure_specific_torque": [
+            -0.010026196882662038,
+            0.0044145615256844075
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0008932879
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01474032
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.008124885
+          ]
+        },
+        {
+          "ids": [
+            534,
+            535
+          ],
+          "gap": 0.012939778105126604,
+          "gap_over_initial_h": 0.4152272887535025,
+          "separation_rate": -0.013536770070944915,
+          "relative_speed": 0.013716567290951963,
+          "radial_relative_acceleration": {
+            "gravity": 0.1756715698325528,
+            "pressure": 0.11093706544424989,
+            "TCF_Q": 0.0018553678722022376
+          },
+          "transverse_kinematic_term": 0.00037868302329248604,
+          "separation_second_derivative_without_HG": 0.2888426861722974,
+          "relative_kinetic_power": {
+            "gravity": -8.875227229999586e-09,
+            "pressure": -7.390741096685653e-09,
+            "TCF_Q": -5.679879613040125e-11
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5300705657893213,
+          "other_faces_pressure_radial_relative_acceleration": -0.41913350034507146,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": 0.0018553678722022376,
+          "cell_pressure": [
+            5.1636766696980634e-05,
+            5.46599491414522e-05
+          ],
+          "cell_density": [
+            0.013673971500679456,
+            0.014537248018775964
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.07061517877565884,
+            0.04095058249281367
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.2309499971413285,
+            5.9467406409638235
+          ],
+          "cell_pressure_specific_torque": [
+            -0.01649937550622497,
+            0.011377345692881381
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0008795317
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01353677
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.007351007
+          ]
+        },
+        {
+          "ids": [
+            260,
+            261
+          ],
+          "gap": 0.012997400251296098,
+          "gap_over_initial_h": 0.4157683829952977,
+          "separation_rate": -0.020832559744612875,
+          "relative_speed": 0.05379494675444378,
+          "radial_relative_acceleration": {
+            "gravity": -0.23254852619129932,
+            "pressure": 0.11603238373331623,
+            "TCF_Q": -0.003651791561858982
+          },
+          "transverse_kinematic_term": 0.1892609832151069,
+          "separation_second_derivative_without_HG": 0.06909304919526484,
+          "relative_kinetic_power": {
+            "gravity": -5.668488131850347e-08,
+            "pressure": -4.582361234190988e-09,
+            "TCF_Q": -3.5556230612147327e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.4370998231123839,
+          "other_faces_pressure_radial_relative_acceleration": -0.3210674393790677,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.003651791561858982,
+          "cell_pressure": [
+            7.730710753180342e-05,
+            5.0912791389223166e-05
+          ],
+          "cell_density": [
+            0.01817590254777429,
+            0.014103539281795278
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.028861610726563652,
+            0.0913403483136424
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            9.482182215649743,
+            9.316109707510345
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0074341704925023275,
+            0.02538601442821692
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.001011309
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.02083256
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.003001859
+          ]
+        },
+        {
+          "ids": [
+            708,
+            709
+          ],
+          "gap": 0.013665932973114598,
+          "gap_over_initial_h": 0.4354513723454654,
+          "separation_rate": -0.01378496241207984,
+          "relative_speed": 0.013821756368323104,
+          "radial_relative_acceleration": {
+            "gravity": 0.1335732817080835,
+            "pressure": 0.06807650177572797,
+            "TCF_Q": -0.030046428024284085
+          },
+          "transverse_kinematic_term": 7.432792220074264e-05,
+          "separation_second_derivative_without_HG": 0.17167768338172812,
+          "relative_kinetic_power": {
+            "gravity": -8.14431183559785e-09,
+            "pressure": -4.7658349754323535e-09,
+            "TCF_Q": 2.0843563689562356e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5085925497757121,
+          "other_faces_pressure_radial_relative_acceleration": -0.4405160479999841,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.030046428024284085,
+          "cell_pressure": [
+            6.105182854704787e-05,
+            5.34530444651754e-05
+          ],
+          "cell_density": [
+            0.015497907946416171,
+            0.013987870441807599
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.02212770959114859,
+            0.055164058844681264
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.659177615832062,
+            4.443124009430251
+          ],
+          "cell_pressure_specific_torque": [
+            -0.010213814968617186,
+            0.019213984173781232
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0008488175
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01378496
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.00530875
+          ]
+        },
+        {
+          "ids": [
+            526,
+            527
+          ],
+          "gap": 0.014144850391016765,
+          "gap_over_initial_h": 0.45166677487091716,
+          "separation_rate": -0.005807553667141355,
+          "relative_speed": 0.008006454727688312,
+          "radial_relative_acceleration": {
+            "gravity": 0.14067660260416112,
+            "pressure": 0.09492550200161268,
+            "TCF_Q": -0.08478251936382633
+          },
+          "transverse_kinematic_term": 0.002147469705942366,
+          "separation_second_derivative_without_HG": 0.15296705494788984,
+          "relative_kinetic_power": {
+            "gravity": -1.1335170237711864e-08,
+            "pressure": -5.152237423966858e-10,
+            "TCF_Q": 2.085186706492934e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.36840371225046215,
+          "other_faces_pressure_radial_relative_acceleration": -0.27347821024884944,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.08478251936382633,
+          "cell_pressure": [
+            6.372423145482228e-05,
+            5.7248807074847496e-05
+          ],
+          "cell_density": [
+            0.01581241139771952,
+            0.013705658669598613
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.07256225035002525,
+            0.054787473376586966
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            5.92169898699767,
+            5.642325567439844
+          ],
+          "cell_pressure_specific_torque": [
+            -0.02962034668063093,
+            0.02085472386871128
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.001024036
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.005807554
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.009455124
+          ]
+        },
+        {
+          "ids": [
+            539,
+            540
+          ],
+          "gap": 0.014238185407136684,
+          "gap_over_initial_h": 0.45463471493513874,
+          "separation_rate": 0.03811785295278282,
+          "relative_speed": 0.04621750312233933,
+          "radial_relative_acceleration": {
+            "gravity": 0.3428795162793135,
+            "pressure": 0.14408270027874914,
+            "TCF_Q": -0.06466079494117381
+          },
+          "transverse_kinematic_term": 0.047975697857613575,
+          "separation_second_derivative_without_HG": 0.4702771194745024,
+          "relative_kinetic_power": {
+            "gravity": 4.841135885454174e-08,
+            "pressure": 3.542680885901283e-08,
+            "TCF_Q": -1.1797455447464783e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.2957738721611488,
+          "other_faces_pressure_radial_relative_acceleration": -0.15169117188239967,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.04619467666596897,
+          "other_faces_TCF_radial_relative_acceleration": -0.01846611827520484,
+          "cell_pressure": [
+            6.968209940296913e-05,
+            5.768312556740825e-05
+          ],
+          "cell_density": [
+            0.016658148931509666,
+            0.014767475076861691
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.089258786544668,
+            0.07292598445665645
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.145932181526887,
+            5.78469005289885
+          ],
+          "cell_pressure_specific_torque": [
+            0.02664570790066003,
+            -0.012071672330988575
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -9.946104e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.001318307
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.03811785
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.007574498
+          ]
+        },
+        {
+          "ids": [
+            512,
+            513
+          ],
+          "gap": 0.014364292902884596,
+          "gap_over_initial_h": 0.4589512476835936,
+          "separation_rate": 0.015475793662355894,
+          "relative_speed": 0.02048332430511098,
+          "radial_relative_acceleration": {
+            "gravity": 0.3277835328642261,
+            "pressure": 0.11034588819750256,
+            "TCF_Q": -0.12413935610108871
+          },
+          "transverse_kinematic_term": 0.012535694330792638,
+          "separation_second_derivative_without_HG": 0.3265257592914326,
+          "relative_kinetic_power": {
+            "gravity": 3.3652807067508465e-08,
+            "pressure": 6.498563579438979e-09,
+            "TCF_Q": -7.522932639281872e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5287859868844952,
+          "other_faces_pressure_radial_relative_acceleration": -0.4184400986869926,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.091826464871835,
+          "other_faces_TCF_radial_relative_acceleration": -0.03231289122925371,
+          "cell_pressure": [
+            5.7355096467796305e-05,
+            7.259386550309335e-05
+          ],
+          "cell_density": [
+            0.014629711489070787,
+            0.015969488017001814
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.07635598227760763,
+            0.03866461984107213
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            5.928631734698956,
+            5.577929053004927
+          ],
+          "cell_pressure_specific_torque": [
+            -0.01765216305286898,
+            0.004869500826982253
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -1.128316e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.0009175749
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01547579
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.01276525
+          ]
+        },
+        {
+          "ids": [
+            506,
+            507
+          ],
+          "gap": 0.014315076096537038,
+          "gap_over_initial_h": 0.45929485471226944,
+          "separation_rate": -0.023688498339158634,
+          "relative_speed": 0.027138553049189752,
+          "radial_relative_acceleration": {
+            "gravity": 0.03421816485711938,
+            "pressure": 0.08291671870813723,
+            "TCF_Q": -0.027748658299417847
+          },
+          "transverse_kinematic_term": 0.012249750323142572,
+          "separation_second_derivative_without_HG": 0.10163597558898133,
+          "relative_kinetic_power": {
+            "gravity": -2.2316027305599897e-08,
+            "pressure": -8.407383287950354e-09,
+            "TCF_Q": 3.072605045407258e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.3783415988901881,
+          "other_faces_pressure_radial_relative_acceleration": -0.2954248801820509,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.027748658299417847,
+          "cell_pressure": [
+            4.9196212223809145e-05,
+            5.455282067759616e-05
+          ],
+          "cell_density": [
+            0.01358618144258718,
+            0.014573069126869741
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.051914036854795835,
+            0.04561070701947336
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            6.056833994369379,
+            5.816862606854797
+          ],
+          "cell_pressure_specific_torque": [
+            -0.01194786993366552,
+            0.018784206927019372
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0008644175
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.0236885
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.006804813
+          ]
+        },
+        {
+          "ids": [
+            721,
+            722
+          ],
+          "gap": 0.015136526617234096,
+          "gap_over_initial_h": 0.4825391187145585,
+          "separation_rate": -0.014248081652754922,
+          "relative_speed": 0.014307487234003862,
+          "radial_relative_acceleration": {
+            "gravity": 0.0907114905569919,
+            "pressure": 0.07286759188784774,
+            "TCF_Q": -0.0398465876136734
+          },
+          "transverse_kinematic_term": 0.00011207063618417006,
+          "separation_second_derivative_without_HG": 0.12384456546735041,
+          "relative_kinetic_power": {
+            "gravity": -7.781238878328877e-09,
+            "pressure": -5.0627455616720325e-09,
+            "TCF_Q": 2.859309607255198e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.4424901744626274,
+          "other_faces_pressure_radial_relative_acceleration": -0.36962258257477965,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.0398465876136734,
+          "cell_pressure": [
+            4.9278787302192e-05,
+            5.608559855861368e-05
+          ],
+          "cell_density": [
+            0.013428291153487594,
+            0.01488652402258717
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.047702036981126184,
+            0.028316108299301448
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.7071724466894596,
+            4.489831697459084
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0192019387440732,
+            0.006121449770611386
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.0007337166
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01424808
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.01234502
+          ]
+        }
+      ]
+    },
+    "t6": {
+      "time": 6.002110493120864,
+      "source": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_identity_20261017/t6",
+      "rhs_sha256": "8993962558a09133ea517dd95255248ea6e5871dca9ec0dbb68a083a2fc95906",
+      "face_sha256": "97e03199688a5e74a5ac48a17c73cadbc256791cb31cec0a703531a4ed40cf3d",
+      "snapshot_match_max_abs": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "pressure": 0.0,
+        "mass": 0.0
+      },
+      "TCF_heat_reconstruction_relative_L1": 1.4480346279873702e-07,
+      "closest_pairs": [
+        {
+          "ids": [
+            803,
+            804
+          ],
+          "gap": 0.003580492130618063,
+          "gap_over_initial_h": 0.11500824826545243,
+          "separation_rate": -0.005106843642498364,
+          "relative_speed": 0.006259747449675616,
+          "radial_relative_acceleration": {
+            "gravity": 0.05547212287762621,
+            "pressure": -0.09103155071770425,
+            "TCF_Q": 0.08900961363806463
+          },
+          "transverse_kinematic_term": 0.003659995795754564,
+          "separation_second_derivative_without_HG": 0.05711018159374116,
+          "relative_kinetic_power": {
+            "gravity": -2.360490713780367e-09,
+            "pressure": -2.5046842852083836e-08,
+            "TCF_Q": 5.761624901161546e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.4502120717259615,
+          "other_faces_pressure_radial_relative_acceleration": -0.5412436224436658,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.25892895916926517,
+          "other_faces_TCF_radial_relative_acceleration": -0.16991934553120053,
+          "cell_pressure": [
+            6.651860469199617e-05,
+            0.00011372635626282668
+          ],
+          "cell_density": [
+            1.1707895748039494,
+            0.01973644409155135
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.005998826101026868,
+            0.8495009361102484
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.001805608735273,
+            3.9455024078040766
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0029637733185938946,
+            0.41638093818587235
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            5.183184e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.01049976
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.005106844
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.01422251
+          ]
+        },
+        {
+          "ids": [
+            730,
+            731
+          ],
+          "gap": 0.005949413609372675,
+          "gap_over_initial_h": 0.19062268571869312,
+          "separation_rate": -0.013654362406454174,
+          "relative_speed": 0.014094775460750362,
+          "radial_relative_acceleration": {
+            "gravity": 0.06924450776083231,
+            "pressure": -0.06828232827420702,
+            "TCF_Q": 0.04762583168341558
+          },
+          "transverse_kinematic_term": 0.0020541659001365345,
+          "separation_second_derivative_without_HG": 0.0506421770701774,
+          "relative_kinetic_power": {
+            "gravity": -3.2822549368099196e-09,
+            "pressure": 6.493894676721805e-09,
+            "TCF_Q": -3.2403201254449424e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.38344084398747424,
+          "other_faces_pressure_radial_relative_acceleration": -0.45172317226168124,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.06446506613530432,
+          "other_faces_TCF_radial_relative_acceleration": -0.016839234451888743,
+          "cell_pressure": [
+            2.9439274212055166e-05,
+            5.6344155445364095e-05
+          ],
+          "cell_density": [
+            0.007949797087695032,
+            0.0115009447627182
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0363461847431047,
+            0.09743412983954683
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.648681562926525,
+            4.549171990232396
+          ],
+          "cell_pressure_specific_torque": [
+            0.016775527601624957,
+            -0.045628736641886956
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            7.211066e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.002862463
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01365436
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.00181032
+          ]
+        },
+        {
+          "ids": [
+            818,
+            819
+          ],
+          "gap": 0.006266804115090874,
+          "gap_over_initial_h": 0.20131103112951476,
+          "separation_rate": 0.011846730724747073,
+          "relative_speed": 0.012270017884414626,
+          "radial_relative_acceleration": {
+            "gravity": 0.04674466653490185,
+            "pressure": 0.1017680452261006,
+            "TCF_Q": -0.00695792763430914
+          },
+          "transverse_kinematic_term": 0.001628949913179224,
+          "separation_second_derivative_without_HG": 0.14318373403987253,
+          "relative_kinetic_power": {
+            "gravity": 7.45938645908899e-09,
+            "pressure": 1.4349415131289103e-08,
+            "TCF_Q": -1.0316274859348555e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.40021285586356636,
+          "other_faces_pressure_radial_relative_acceleration": -0.29844481063746575,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.006123523921471005,
+          "other_faces_TCF_radial_relative_acceleration": -0.0008344037128381349,
+          "cell_pressure": [
+            0.00010696268193844553,
+            0.00012793673995278328
+          ],
+          "cell_density": [
+            1.6208742234827054,
+            0.021605682675442692
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0034022294611892006,
+            0.1354441119039632
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            3.988018600810984,
+            3.9087274137038523
+          ],
+          "cell_pressure_specific_torque": [
+            0.0014883313820234659,
+            0.008581186708468733
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -1.797059e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.007023208
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01184673
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.0001027923
+          ]
+        },
+        {
+          "ids": [
+            211,
+            212
+          ],
+          "gap": 0.007009077874215541,
+          "gap_over_initial_h": 0.2242485349119275,
+          "separation_rate": 0.015231982340249209,
+          "relative_speed": 0.023722577914302403,
+          "radial_relative_acceleration": {
+            "gravity": 0.03920036657729373,
+            "pressure": 0.014861678005922526,
+            "TCF_Q": -0.0020421102746627957
+          },
+          "transverse_kinematic_term": 0.047188435172508585,
+          "separation_second_derivative_without_HG": 0.09920836948106204,
+          "relative_kinetic_power": {
+            "gravity": 1.7447122952726787e-08,
+            "pressure": 1.4530098858311607e-09,
+            "TCF_Q": -6.080088682665107e-11
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.3655602277656432,
+          "other_faces_pressure_radial_relative_acceleration": -0.35069854975972065,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.01181745830489178,
+          "other_faces_TCF_radial_relative_acceleration": 0.009775348030228984,
+          "cell_pressure": [
+            4.412247490069834e-05,
+            3.1180073391132984e-05
+          ],
+          "cell_density": [
+            0.01202471391803494,
+            0.009318176496311057
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.027416671531486872,
+            0.03797709165112246
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            10.162264497736377,
+            10.053072381811548
+          ],
+          "cell_pressure_specific_torque": [
+            -0.006396074524813716,
+            -0.007332861326029657
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -1.217152e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.00165051
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01523198
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.0007399431
+          ]
+        },
+        {
+          "ids": [
+            478,
+            479
+          ],
+          "gap": 0.007079157728234741,
+          "gap_over_initial_h": 0.2259421364777893,
+          "separation_rate": -0.0006775881335903712,
+          "relative_speed": 0.007423327305326856,
+          "radial_relative_acceleration": {
+            "gravity": 0.20228624861974692,
+            "pressure": 0.014501107614718942,
+            "TCF_Q": -0.018042250648701644
+          },
+          "transverse_kinematic_term": 0.007719373504742563,
+          "separation_second_derivative_without_HG": 0.20646447909050678,
+          "relative_kinetic_power": {
+            "gravity": -2.578067303403568e-10,
+            "pressure": -3.755756798609934e-09,
+            "TCF_Q": 7.905186956364106e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.4689047691815131,
+          "other_faces_pressure_radial_relative_acceleration": -0.4544036615667941,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.018042250648701644,
+          "cell_pressure": [
+            6.768204779866056e-05,
+            2.863229654554179e-05
+          ],
+          "cell_density": [
+            0.011300872349083935,
+            0.007722128097171256
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0536544108290188,
+            0.08281684146794599
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            7.049398187657131,
+            6.846839481720278
+          ],
+          "cell_pressure_specific_torque": [
+            -0.013472331886969013,
+            0.024662275262975993
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.002090292
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.0006775881
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.002940096
+          ]
+        },
+        {
+          "ids": [
+            690,
+            691
+          ],
+          "gap": 0.007161684345223837,
+          "gap_over_initial_h": 0.22894886073220447,
+          "separation_rate": -0.002752756397924089,
+          "relative_speed": 0.0033738753100775757,
+          "radial_relative_acceleration": {
+            "gravity": 0.08620682924872161,
+            "pressure": 0.23690716622208488,
+            "TCF_Q": -0.06033708864006056
+          },
+          "transverse_kinematic_term": 0.0005313508161214716,
+          "separation_second_derivative_without_HG": 0.26330825764686744,
+          "relative_kinetic_power": {
+            "gravity": -3.3898963654783723e-10,
+            "pressure": -1.988527090290037e-09,
+            "TCF_Q": 1.2839506202915445e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.9379730589298608,
+          "other_faces_pressure_radial_relative_acceleration": -0.701065892707776,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.06033708864006056,
+          "cell_pressure": [
+            0.00016809192822342804,
+            7.24278366112598e-05
+          ],
+          "cell_density": [
+            0.024089372893728582,
+            0.014508663127124895
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.03551293684365704,
+            0.2531348916025803
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.521320350902911,
+            4.404012508749317
+          ],
+          "cell_pressure_specific_torque": [
+            0.01442620663537935,
+            0.017029448872117
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.002654863
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.002752756
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.001109276
+          ]
+        },
+        {
+          "ids": [
+            297,
+            298
+          ],
+          "gap": 0.00732673845646446,
+          "gap_over_initial_h": 0.23477513526825766,
+          "separation_rate": -0.011116816121394474,
+          "relative_speed": 0.03166053346755476,
+          "radial_relative_acceleration": {
+            "gravity": -0.12664143962603713,
+            "pressure": 0.19235303365098427,
+            "TCF_Q": -0.018562640409760463
+          },
+          "transverse_kinematic_term": 0.11994501837279035,
+          "separation_second_derivative_without_HG": 0.16709397198797704,
+          "relative_kinetic_power": {
+            "gravity": -1.587017407578739e-08,
+            "pressure": -2.2357676166242375e-08,
+            "TCF_Q": 5.123137329864866e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.9240480969685361,
+          "other_faces_pressure_radial_relative_acceleration": -0.7316950633175519,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.018562640409760463,
+          "cell_pressure": [
+            8.57910237000225e-05,
+            0.00014896174054193894
+          ],
+          "cell_density": [
+            0.01618015103174587,
+            0.02065508043942849
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.24021645281091755,
+            0.07282416363584329
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            8.643458238188874,
+            8.554892938313966
+          ],
+          "cell_pressure_specific_torque": [
+            -0.06436077666302824,
+            -0.020884050010186988
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.002476804
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01111682
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.00194106
+          ]
+        },
+        {
+          "ids": [
+            576,
+            692
+          ],
+          "gap": 0.0077730448142140085,
+          "gap_over_initial_h": 0.2484941955163952,
+          "separation_rate": -0.023105490536616848,
+          "relative_speed": 0.026189898610249732,
+          "radial_relative_acceleration": {
+            "gravity": 0.10018281831856847,
+            "pressure": 0.049492108575428975,
+            "TCF_Q": 0.0394199884065812
+          },
+          "transverse_kinematic_term": 0.019560815602070444,
+          "separation_second_derivative_without_HG": 0.2086557309026491,
+          "relative_kinetic_power": {
+            "gravity": -5.729983493737885e-09,
+            "pressure": 6.209420940764308e-09,
+            "TCF_Q": 6.002421596261645e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.5611927458661403,
+          "other_faces_pressure_radial_relative_acceleration": -0.5117006372907114,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.16676820073691895,
+          "other_faces_TCF_radial_relative_acceleration": -0.12734821233033775,
+          "cell_pressure": [
+            6.639589671455803e-05,
+            4.2920662740918496e-05
+          ],
+          "cell_density": [
+            0.010589399950780884,
+            0.0096746845423104
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.1411336954078199,
+            0.10529370896839214
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.601610715117988,
+            4.46968480734905
+          ],
+          "cell_pressure_specific_torque": [
+            0.06415606179322639,
+            -0.005885615260754158
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            1.624266e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.002006927
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.02310549
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.00195983
+          ]
+        },
+        {
+          "ids": [
+            602,
+            603
+          ],
+          "gap": 0.007863130939030096,
+          "gap_over_initial_h": 0.25163101078065037,
+          "separation_rate": -0.0006147427079874947,
+          "relative_speed": 0.006802242077637683,
+          "radial_relative_acceleration": {
+            "gravity": 0.13170019192278642,
+            "pressure": 0.16844774248754832,
+            "TCF_Q": -0.06670379521188169
+          },
+          "transverse_kinematic_term": 0.005836426868839805,
+          "separation_second_derivative_without_HG": 0.23928056606729287,
+          "relative_kinetic_power": {
+            "gravity": 2.379920360827785e-09,
+            "pressure": 7.936129056961057e-10,
+            "TCF_Q": 9.410975468819295e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.7467081254888212,
+          "other_faces_pressure_radial_relative_acceleration": -0.5782603830012728,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.06670379521188169,
+          "cell_pressure": [
+            8.204816880567405e-05,
+            7.383269818351561e-05
+          ],
+          "cell_density": [
+            0.011996247210312094,
+            0.010273062358874837
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.1325102983789249,
+            0.10974648312013334
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.915357244002843,
+            4.76218427489634
+          ],
+          "cell_pressure_specific_torque": [
+            0.030804295027749538,
+            0.04262273125674684
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.002269451
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.0006147427
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.003254081
+          ]
+        },
+        {
+          "ids": [
+            760,
+            761
+          ],
+          "gap": 0.008088968551051326,
+          "gap_over_initial_h": 0.2596100157149088,
+          "separation_rate": 0.012485177006903197,
+          "relative_speed": 0.012900971194865,
+          "radial_relative_acceleration": {
+            "gravity": 0.09491983754122207,
+            "pressure": 0.03910913541961242,
+            "TCF_Q": -0.018817073547531385
+          },
+          "transverse_kinematic_term": 0.0013049145648687587,
+          "separation_second_derivative_without_HG": 0.11651681397817186,
+          "relative_kinetic_power": {
+            "gravity": 9.168492645338416e-09,
+            "pressure": 2.840759905980514e-09,
+            "TCF_Q": -1.9278024726626062e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21228331081607646,
+          "other_faces_pressure_radial_relative_acceleration": -0.17317417539646404,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.017255392526455637,
+          "other_faces_TCF_radial_relative_acceleration": -0.0015616810210757476,
+          "cell_pressure": [
+            4.571616929516588e-05,
+            9.660049191580078e-05
+          ],
+          "cell_density": [
+            1.1683205470212055,
+            0.019421224020821814
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0011405597116727559,
+            0.07014635133403943
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.003799369511464,
+            3.8881171022241077
+          ],
+          "cell_pressure_specific_torque": [
+            7.352798630407734e-05,
+            0.019481561481624658
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -5.784086e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.004911766
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01248518
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.002029732
+          ]
+        },
+        {
+          "ids": [
+            319,
+            320
+          ],
+          "gap": 0.008115421512560448,
+          "gap_over_initial_h": 0.26011441716173256,
+          "separation_rate": 0.002593013925600783,
+          "relative_speed": 0.0027998537356402234,
+          "radial_relative_acceleration": {
+            "gravity": 0.22865018794432324,
+            "pressure": -0.0810127833881013,
+            "TCF_Q": 0.016313672275069774
+          },
+          "transverse_kinematic_term": 0.00013744938829024522,
+          "separation_second_derivative_without_HG": 0.16408852621958195,
+          "relative_kinetic_power": {
+            "gravity": 2.719835343165442e-09,
+            "pressure": -3.504006081555823e-10,
+            "TCF_Q": -1.1194329126254387e-11
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.8082709982660599,
+          "other_faces_pressure_radial_relative_acceleration": -0.8892837816541612,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": 0.016313672275069774,
+          "cell_pressure": [
+            7.93165969667606e-05,
+            0.00010180879979888821
+          ],
+          "cell_density": [
+            0.01392173088878772,
+            0.015583593340270211
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.08812960034983981,
+            0.20324705948233804
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            8.686647992350384,
+            8.456275895505069
+          ],
+          "cell_pressure_specific_torque": [
+            -0.006881537372875923,
+            0.032756951634782795
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.001896327
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.002593014
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.003189515
+          ]
+        },
+        {
+          "ids": [
+            839,
+            840
+          ],
+          "gap": 0.008382589276895832,
+          "gap_over_initial_h": 0.2687286201779626,
+          "separation_rate": 0.01969104376074911,
+          "relative_speed": 0.020804101575533758,
+          "radial_relative_acceleration": {
+            "gravity": 0.04503344200322469,
+            "pressure": 0.027433426136785025,
+            "TCF_Q": -0.010234848746844313
+          },
+          "transverse_kinematic_term": 0.005377030472150352,
+          "separation_second_derivative_without_HG": 0.06760904986531575,
+          "relative_kinetic_power": {
+            "gravity": 2.192082171199398e-09,
+            "pressure": 1.0978294513662526e-08,
+            "TCF_Q": -3.2466087622194125e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.21945884565457785,
+          "other_faces_pressure_radial_relative_acceleration": -0.19202541951779284,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.004466809727117921,
+          "other_faces_TCF_radial_relative_acceleration": -0.005768039019726392,
+          "cell_pressure": [
+            5.176868100594704e-05,
+            9.525329303839604e-05
+          ],
+          "cell_density": [
+            0.8866726171669247,
+            0.018019651028264947
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0006899232674107925,
+            0.09267236109582001
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.005696544773167,
+            3.9068963088493827
+          ],
+          "cell_pressure_specific_torque": [
+            0.00033926994276572313,
+            -0.04276512627895253
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -1.496224e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.005101032
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01969104
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.002882205
+          ]
+        }
+      ]
+    },
+    "t10": {
+      "time": 10.0020667693911,
+      "source": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_t10_20261017/t10",
+      "rhs_sha256": "d2cc3c5142b292107ac3202e255c13299e9e44c882e502a8ee2579b8a1cd9e65",
+      "face_sha256": "b94c77beef5a54b2a9b53f25bb2bd7d403cd6ed10dad8ade583891bcd7b033b9",
+      "snapshot_match_max_abs": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "pressure": 0.0,
+        "mass": 0.0
+      },
+      "TCF_heat_reconstruction_relative_L1": 1.5124201279052702e-07,
+      "closest_pairs": [
+        {
+          "ids": [
+            156,
+            157
+          ],
+          "gap": 0.0041316509264476275,
+          "gap_over_initial_h": 0.13224154319342554,
+          "separation_rate": 0.007113574232391834,
+          "relative_speed": 0.015691546936050318,
+          "radial_relative_acceleration": {
+            "gravity": -0.06729871540142962,
+            "pressure": 0.1171418876896476,
+            "TCF_Q": -0.008611107578303169
+          },
+          "transverse_kinematic_term": 0.047347104188861275,
+          "separation_second_derivative_without_HG": 0.0885791688987761,
+          "relative_kinetic_power": {
+            "gravity": 5.1020084348519905e-09,
+            "pressure": -1.0242026997653939e-08,
+            "TCF_Q": 1.7598516004971994e-11
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 1.1116317231492077,
+          "other_faces_pressure_radial_relative_acceleration": -0.99448983545956,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.030802845779248442,
+          "other_faces_TCF_radial_relative_acceleration": 0.022191738200945273,
+          "cell_pressure": [
+            0.00012778213685572137,
+            0.00016730889782694928
+          ],
+          "cell_density": [
+            0.015864596719997955,
+            0.017040468042318842
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.07947795297135742,
+            0.22060130702928477
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            10.476262040966308,
+            10.49490480891211
+          ],
+          "cell_pressure_specific_torque": [
+            -0.004001089943144412,
+            0.0477273707289798
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -4.088424e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.006395158
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.007113574
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.0005813747
+          ]
+        },
+        {
+          "ids": [
+            152,
+            153
+          ],
+          "gap": 0.004667553823245232,
+          "gap_over_initial_h": 0.14940171541027228,
+          "separation_rate": -0.00453028146675592,
+          "relative_speed": 0.017367162570507005,
+          "radial_relative_acceleration": {
+            "gravity": 0.013141626286157258,
+            "pressure": -0.27156913578273323,
+            "TCF_Q": 0.21231183248554963
+          },
+          "transverse_kinematic_term": 0.060223169614560354,
+          "separation_second_derivative_without_HG": 0.014107492603534014,
+          "relative_kinetic_power": {
+            "gravity": -1.5503406749475394e-09,
+            "pressure": 1.4324768939439052e-08,
+            "TCF_Q": -1.0266732520965665e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.9400327504717779,
+          "other_faces_pressure_radial_relative_acceleration": -1.211601886254511,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.1546441182085599,
+          "other_faces_TCF_radial_relative_acceleration": 0.057667714276989746,
+          "cell_pressure": [
+            9.59154488278067e-05,
+            8.573520698095931e-05
+          ],
+          "cell_density": [
+            0.01202232343903615,
+            0.011305835945523526
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.3461021611343877,
+            0.0614481274059225
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            10.506831040584046,
+            10.520920460728535
+          ],
+          "cell_pressure_specific_torque": [
+            0.01606471433804444,
+            -0.0021529725036547242
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            1.494161e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.004651756
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.004530281
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.00114649
+          ]
+        },
+        {
+          "ids": [
+            850,
+            851
+          ],
+          "gap": 0.005649291831309463,
+          "gap_over_initial_h": 0.18122855597693227,
+          "separation_rate": -0.009120782477189887,
+          "relative_speed": 0.010674579958713728,
+          "radial_relative_acceleration": {
+            "gravity": 0.0733512318958156,
+            "pressure": 0.2808195137869999,
+            "TCF_Q": 0.06319958434130335
+          },
+          "transverse_kinematic_term": 0.005444573446939317,
+          "separation_second_derivative_without_HG": 0.42281490347105816,
+          "relative_kinetic_power": {
+            "gravity": -4.054381491014475e-09,
+            "pressure": -8.153004792134202e-08,
+            "TCF_Q": 7.837987949681042e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 1.341610795951795,
+          "other_faces_pressure_radial_relative_acceleration": -1.0607912821647951,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.12640677737557143,
+          "other_faces_TCF_radial_relative_acceleration": -0.06320719303426808,
+          "cell_pressure": [
+            0.00036241469496534165,
+            0.0002256739140865329
+          ],
+          "cell_density": [
+            1.145125163734966,
+            0.020839832043226952
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.019956263479809982,
+            1.082591270682278
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            3.9524487753067405,
+            4.036846720569888
+          ],
+          "cell_pressure_specific_torque": [
+            0.00945679682766709,
+            -0.5360966537174665
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            2.77049e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.009533679
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.009120782
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.02496604
+          ]
+        },
+        {
+          "ids": [
+            824,
+            825
+          ],
+          "gap": 0.005888019463455942,
+          "gap_over_initial_h": 0.18876193340457978,
+          "separation_rate": 0.0016281431563867697,
+          "relative_speed": 0.008179864171880807,
+          "radial_relative_acceleration": {
+            "gravity": 0.08263114578545619,
+            "pressure": 0.008804757735868656,
+            "TCF_Q": -0.02296825252215493
+          },
+          "transverse_kinematic_term": 0.010913572574200276,
+          "separation_second_derivative_without_HG": 0.0793812235733702,
+          "relative_kinetic_power": {
+            "gravity": 2.0285662829497933e-07,
+            "pressure": 1.3378731772788854e-07,
+            "TCF_Q": -1.2788683099989349e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.0321077500767306,
+          "other_faces_pressure_radial_relative_acceleration": -0.023302992340861944,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.010912093639423233,
+          "other_faces_TCF_radial_relative_acceleration": -0.012056158882731696,
+          "cell_pressure": [
+            0.00024778158065678717,
+            0.0007291548308410139
+          ],
+          "cell_density": [
+            1.2249410332233945,
+            1.6422239728179875
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.016098354083470625,
+            0.01851505787998992
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            3.989703616818966,
+            3.9007032510434896
+          ],
+          "cell_pressure_specific_torque": [
+            0.0057191526753357464,
+            -0.00891566613393865
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -0.0001660101
+          ],
+          "direct_faces_applied_impedance": [
+            0.1019629
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.001628143
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.0002888792
+          ]
+        },
+        {
+          "ids": [
+            147,
+            149
+          ],
+          "gap": 0.006067112389684299,
+          "gap_over_initial_h": 0.19411276653321693,
+          "separation_rate": 0.012288310688210995,
+          "relative_speed": 0.02729329607165713,
+          "radial_relative_acceleration": {
+            "gravity": -0.06253671525469294,
+            "pressure": 0.1126861672374321,
+            "TCF_Q": -0.05296846073205855
+          },
+          "transverse_kinematic_term": 0.09789194475694202,
+          "separation_second_derivative_without_HG": 0.09507293600762264,
+          "relative_kinetic_power": {
+            "gravity": 1.420727556808593e-08,
+            "pressure": 8.14545908647228e-09,
+            "TCF_Q": 4.756441258110385e-10
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.8226356396334918,
+          "other_faces_pressure_radial_relative_acceleration": -0.7099494723960598,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.1069884586883417,
+          "other_faces_TCF_radial_relative_acceleration": 0.05401999795628315,
+          "cell_pressure": [
+            9.122092778990489e-05,
+            9.006831180075858e-05
+          ],
+          "cell_density": [
+            0.012428572951737228,
+            0.012347986688392293
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.037397314662346234,
+            0.08251837220421004
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            10.461709975285041,
+            10.493864934654406
+          ],
+          "cell_pressure_specific_torque": [
+            0.00018838295149736263,
+            0.01185179234292073
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -1.178885e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.003188829
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01228831
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.0009318963
+          ]
+        },
+        {
+          "ids": [
+            688,
+            808
+          ],
+          "gap": 0.006157793424393196,
+          "gap_over_initial_h": 0.19740368300466682,
+          "separation_rate": -0.010915919587953129,
+          "relative_speed": 0.0243886010818053,
+          "radial_relative_acceleration": {
+            "gravity": 0.10705068649416585,
+            "pressure": 0.16264924615693,
+            "TCF_Q": -0.01310072140299438
+          },
+          "transverse_kinematic_term": 0.07724302026641099,
+          "separation_second_derivative_without_HG": 0.3338422315145125,
+          "relative_kinetic_power": {
+            "gravity": -1.2378484415733557e-08,
+            "pressure": 1.194645728956165e-07,
+            "TCF_Q": -3.9320804629196616e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 1.8935377654236816,
+          "other_faces_pressure_radial_relative_acceleration": -1.7308885192667516,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.01310072140299438,
+          "cell_pressure": [
+            0.00018438283220623033,
+            0.0003193915118416896
+          ],
+          "cell_density": [
+            0.008889504927649665,
+            0.012210537000368065
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.39249306056135513,
+            0.8297691969255795
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.815564679829283,
+            4.937729927576876
+          ],
+          "cell_pressure_specific_torque": [
+            0.17799415145058034,
+            -0.35929763493100425
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.007064152
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.01091592
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.001739916
+          ]
+        },
+        {
+          "ids": [
+            697,
+            700
+          ],
+          "gap": 0.006222464879619065,
+          "gap_over_initial_h": 0.199166991240126,
+          "separation_rate": -0.020959534790163558,
+          "relative_speed": 0.022169361020547416,
+          "radial_relative_acceleration": {
+            "gravity": -0.01304291758602762,
+            "pressure": -0.5299064151444157,
+            "TCF_Q": 0.36980743535406246
+          },
+          "transverse_kinematic_term": 0.00838549842365442,
+          "separation_second_derivative_without_HG": -0.16475639895272648,
+          "relative_kinetic_power": {
+            "gravity": 3.5856339123200303e-09,
+            "pressure": 8.042735752313787e-08,
+            "TCF_Q": -3.912789259577764e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 1.419132330844672,
+          "other_faces_pressure_radial_relative_acceleration": -1.9490387459890877,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.43878903395388213,
+          "other_faces_TCF_radial_relative_acceleration": -0.06898159859981967,
+          "cell_pressure": [
+            0.00014362541705364407,
+            0.00011454177479062089
+          ],
+          "cell_density": [
+            0.008341969686532173,
+            0.008094746870986958
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.6705473512065901,
+            0.24384517424782862
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.007826565269403,
+            3.958810907673546
+          ],
+          "cell_pressure_specific_torque": [
+            0.2988659433046859,
+            -0.11526133507681972
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            3.991204e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.00428843
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.02095953
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.01020789
+          ]
+        },
+        {
+          "ids": [
+            634,
+            672
+          ],
+          "gap": 0.006587219990771311,
+          "gap_over_initial_h": 0.21082367626991122,
+          "separation_rate": -0.003470822394987373,
+          "relative_speed": 0.025052804216017743,
+          "radial_relative_acceleration": {
+            "gravity": -0.05585661339289706,
+            "pressure": -0.3151010361079574,
+            "TCF_Q": 0.22340666776801554
+          },
+          "transverse_kinematic_term": 0.09345313984518817,
+          "separation_second_derivative_without_HG": -0.05409784188765075,
+          "relative_kinetic_power": {
+            "gravity": 5.436852176629808e-09,
+            "pressure": -3.13249508774544e-08,
+            "TCF_Q": 2.5360231059363312e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 1.4269617900685856,
+          "other_faces_pressure_radial_relative_acceleration": -1.742062826176543,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.12260336354597193,
+          "other_faces_TCF_radial_relative_acceleration": 0.10080330422204362,
+          "cell_pressure": [
+            9.117621055604669e-05,
+            0.00020674661499507063
+          ],
+          "cell_density": [
+            0.007100255598375037,
+            0.009009876547859483
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.23473448569637545,
+            0.2496681849287867
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            4.537606792970921,
+            4.5124279730798245
+          ],
+          "cell_pressure_specific_torque": [
+            -0.0967881826347592,
+            0.019393529788264592
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            1.279864e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.00479202
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.003470822
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.002965341
+          ]
+        },
+        {
+          "ids": [
+            915,
+            916
+          ],
+          "gap": 0.006633894507337053,
+          "gap_over_initial_h": 0.21247451263783876,
+          "separation_rate": 0.011081882362186228,
+          "relative_speed": 0.011968304018212767,
+          "radial_relative_acceleration": {
+            "gravity": 0.06318066156955116,
+            "pressure": 0.003135516309335256,
+            "TCF_Q": -0.005378439836478984
+          },
+          "transverse_kinematic_term": 0.0030799682389335207,
+          "separation_second_derivative_without_HG": 0.06401770628134094,
+          "relative_kinetic_power": {
+            "gravity": 2.2515106754074666e-07,
+            "pressure": 2.115687972941714e-08,
+            "TCF_Q": -2.862532297711368e-08
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.018435497414569273,
+          "other_faces_pressure_radial_relative_acceleration": -0.015299981105234017,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.0053828670370911266,
+          "other_faces_TCF_radial_relative_acceleration": 4.427200612142773e-06,
+          "cell_pressure": [
+            0.00019670350741624311,
+            0.00022688708126416437
+          ],
+          "cell_density": [
+            1.310491586330723,
+            1.2576529172770639
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0008477929843434316,
+            0.003055941759932741
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            3.596357387598475,
+            3.516439749908238
+          ],
+          "cell_pressure_specific_torque": [
+            0.00044453717510305375,
+            -0.001199965454219249
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -6.18408e-05
+          ],
+          "direct_faces_applied_impedance": [
+            0.04669027
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.01108188
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            -0.001933744
+          ]
+        },
+        {
+          "ids": [
+            246,
+            343
+          ],
+          "gap": 0.006700633125149778,
+          "gap_over_initial_h": 0.21542540374443586,
+          "separation_rate": 0.0012370468205454518,
+          "relative_speed": 0.003253700745071788,
+          "radial_relative_acceleration": {
+            "gravity": 0.18326226022384262,
+            "pressure": 0.25528651250714807,
+            "TCF_Q": -0.17494225145958647
+          },
+          "transverse_kinematic_term": 0.0013515564175969812,
+          "separation_second_derivative_without_HG": 0.2649580776890012,
+          "relative_kinetic_power": {
+            "gravity": 1.312163030832124e-09,
+            "pressure": 7.096274233264919e-09,
+            "TCF_Q": -1.6338594791566219e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 1.6104471888689247,
+          "other_faces_pressure_radial_relative_acceleration": -1.3551606763617765,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.0,
+          "other_faces_TCF_radial_relative_acceleration": -0.17494225145958647,
+          "cell_pressure": [
+            0.0002944686463466728,
+            0.0001814818442458532
+          ],
+          "cell_density": [
+            0.01507454315337973,
+            0.011316591336113523
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.17532101037760445,
+            0.2888969350749391
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            8.819359068618487,
+            9.003058583362389
+          ],
+          "cell_pressure_specific_torque": [
+            0.048287802345429676,
+            -0.0642356000305309
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            0.0
+          ],
+          "direct_faces_applied_impedance": [
+            0.006145659
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.001237047
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.003780185
+          ]
+        },
+        {
+          "ids": [
+            846,
+            882
+          ],
+          "gap": 0.006734842738502926,
+          "gap_over_initial_h": 0.21575889499190168,
+          "separation_rate": -0.003825261265619739,
+          "relative_speed": 0.014187560356029819,
+          "radial_relative_acceleration": {
+            "gravity": 0.09185747856377616,
+            "pressure": -0.08068233162107943,
+            "TCF_Q": 0.04759724341017939
+          },
+          "transverse_kinematic_term": 0.027714714708725215,
+          "separation_second_derivative_without_HG": 0.08648710506160133,
+          "relative_kinetic_power": {
+            "gravity": -3.313817603056462e-09,
+            "pressure": 2.808346870489513e-08,
+            "TCF_Q": -6.722655270382586e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.8088199892330524,
+          "other_faces_pressure_radial_relative_acceleration": -0.8895023208541318,
+          "direct_shared_face_TCF_radial_relative_acceleration": 0.028155630859283663,
+          "other_faces_TCF_radial_relative_acceleration": 0.019441612550895725,
+          "cell_pressure": [
+            0.00017738103032502396,
+            0.0003108892237488845
+          ],
+          "cell_density": [
+            0.014693397926841238,
+            1.5917596409489079
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.2037564181604791,
+            0.00493988812265978
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            3.6423876862799682,
+            3.550528631120322
+          ],
+          "cell_pressure_specific_torque": [
+            0.09770415458358375,
+            -0.0023347114325448187
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            8.498527e-06
+          ],
+          "direct_faces_applied_impedance": [
+            0.008636809
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            0.003825261
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.0006893828
+          ]
+        },
+        {
+          "ids": [
+            121,
+            122
+          ],
+          "gap": 0.007074893075140495,
+          "gap_over_initial_h": 0.22595457511175498,
+          "separation_rate": 0.0013246655385348218,
+          "relative_speed": 0.027882256612984865,
+          "radial_relative_acceleration": {
+            "gravity": -0.052662651148987466,
+            "pressure": -0.03272470059999999,
+            "TCF_Q": -0.012803521353886635
+          },
+          "transverse_kinematic_term": 0.10963635588626236,
+          "separation_second_derivative_without_HG": 0.011445482783388264,
+          "relative_kinetic_power": {
+            "gravity": -3.1851147984156127e-09,
+            "pressure": -1.9513951894919908e-08,
+            "TCF_Q": -4.46330251747048e-09
+          },
+          "pressure_force_interpretation": "Total pressure acceleration from all faces, not direct pair attraction.",
+          "direct_shared_face_pressure_radial_relative_acceleration": 0.6614979574792397,
+          "other_faces_pressure_radial_relative_acceleration": -0.6942226580792397,
+          "direct_shared_face_TCF_radial_relative_acceleration": -0.005267238784021284,
+          "other_faces_TCF_radial_relative_acceleration": -0.007536282569865351,
+          "cell_pressure": [
+            6.04102282898977e-05,
+            9.501688597993827e-05
+          ],
+          "cell_density": [
+            0.011551307998864446,
+            0.016673826933311053
+          ],
+          "cell_pressure_acceleration_magnitude": [
+            0.0854816046337945,
+            0.16188185482028924
+          ],
+          "cell_gravity_acceleration_magnitude": [
+            10.494665438504997,
+            10.443407777070293
+          ],
+          "cell_pressure_specific_torque": [
+            0.0013188878500508573,
+            0.028265093149183282
+          ],
+          "share_recorded_face": true,
+          "direct_faces_Q": [
+            -6.188014e-07
+          ],
+          "direct_faces_applied_impedance": [
+            0.00233351
+          ],
+          "direct_faces_compressive_velocity_jump": [
+            -0.001324666
+          ],
+          "direct_faces_reconstructed_velocity_jump": [
+            0.002226313
+          ]
+        }
+      ]
+    }
+  }
+}

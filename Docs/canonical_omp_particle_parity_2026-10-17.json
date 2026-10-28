@@ -1,0 +1,94 @@
+{
+  "reference": "/gpfs/kjhan/LagForce/Codex_OMP_particle_parity_20261017/omp1/khout.000001.dat",
+  "candidate": "/gpfs/kjhan/LagForce/Codex_OMP_particle_parity_20261017/omp8/khout.000001.dat",
+  "reference_sha256": "cdbeb4952acca2df546924b89192037f27c6370ef585717cc99f7e79cd3416da",
+  "candidate_sha256": "ce407b2e6017e03148222fde7067c8e5f3b5e456f00cf1b7317d80961ba5aac5",
+  "n": 36864,
+  "t": 0.010887299956438503,
+  "dt": 0.010887299956438503,
+  "fields": {
+    "x": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "y": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "mass": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vx": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vy": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "den": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "pressure": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "ie": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "volume": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "w2": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "csound": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    }
+  },
+  "all_physical_fields_bitwise_equal": true,
+  "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded.",
+  "binary_sha256": "e6711ab77a4694348f3c2988403e6b000f52f60937c77b9ff1aa79fb36629d9f",
+  "exit_codes": {
+    "omp1": 0,
+    "omp8": 0
+  },
+  "runtime_omp_evidence": {
+    "omp1": [
+      "   _OPENMP='202111'",
+      "  [host] OMP_NUM_THREADS='1'"
+    ],
+    "omp8": [
+      "   _OPENMP='202111'",
+      "  [host] OMP_NUM_THREADS='8'"
+    ]
+  },
+  "library_provenance": {
+    "KH": "Local libkh.a, adds optional initial/final dumps; original evolution loop unchanged",
+    "Exam": "Codex_RK_budget_20261017/libexam.a with constrained HG and accepted RK budget",
+    "other_libraries": "Codex_accepted_ledger_build_20261017/src"
+  },
+  "not_proven": [
+    "Long-time thread parity",
+    "MPI multi-rank canonical support",
+    "GPU force equivalence for TCF",
+    "Long-term physical stability"
+  ]
+}

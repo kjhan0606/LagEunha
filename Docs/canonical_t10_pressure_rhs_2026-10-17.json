@@ -1,0 +1,74 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_t10_20261017/t10",
+  "rhs_sha256": "d2cc3c5142b292107ac3202e255c13299e9e44c882e502a8ee2579b8a1cd9e65",
+  "initial_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+  "gamma": 1.6666669845581055,
+  "pressure0": 2.7777796321447566e-05,
+  "equation": "Pdot/P0 = -gamma*(P/P0)*Vdot/V + (gamma-1)*TCF_heat/(P0*V)",
+  "scope": "Instantaneous pre-HG RHS, fixed initial material membership; split HG excluded; geometric Vdot chain rule, not a finite-step pressure budget.",
+  "regions": {
+    "inner_background": {
+      "n": 804,
+      "mean_pressure_rate_over_p0": 1.259832087250996,
+      "compression_mean_rate": -0.343361107296111,
+      "TCF_mean_rate": 1.6031931945471005,
+      "variance_growth_rate": -8.910462775355096,
+      "compression_variance_growth": -13.609248857500098,
+      "TCF_variance_growth": 4.698786082144979,
+      "chain_rule_relative_L1_residual": 9.682797096928524e-15
+    },
+    "disk_inner_edge": {
+      "n": 390,
+      "mean_pressure_rate_over_p0": 1.516098299797372,
+      "compression_mean_rate": 0.4108512228400444,
+      "TCF_mean_rate": 1.1052470769573373,
+      "variance_growth_rate": 20.033996665886818,
+      "compression_variance_growth": 12.686258809284567,
+      "TCF_variance_growth": 7.347737856602585,
+      "chain_rule_relative_L1_residual": 1.3403579468664262e-14
+    },
+    "inner_r0_0_0.125": {
+      "n": 50,
+      "mean_pressure_rate_over_p0": 0.16245359930014544,
+      "compression_mean_rate": 0.15057947610970657,
+      "TCF_mean_rate": 0.011874123190437768,
+      "variance_growth_rate": 0.2747201548847143,
+      "compression_variance_growth": 0.26887094307822157,
+      "TCF_variance_growth": 0.005849211806489832,
+      "chain_rule_relative_L1_residual": 2.630470976622317e-14
+    },
+    "inner_r0_0.125_0.25": {
+      "n": 150,
+      "mean_pressure_rate_over_p0": 0.25276927667412724,
+      "compression_mean_rate": -0.16520520738603423,
+      "TCF_mean_rate": 0.4179744840601607,
+      "variance_growth_rate": 2.8104075534615123,
+      "compression_variance_growth": 1.9947822025812105,
+      "TCF_variance_growth": 0.8156253508802437,
+      "chain_rule_relative_L1_residual": 1.3442269562530496e-14
+    },
+    "inner_r0_0.25_0.375": {
+      "n": 246,
+      "mean_pressure_rate_over_p0": 0.7089147072142226,
+      "compression_mean_rate": -1.4275195832093581,
+      "TCF_mean_rate": 2.136434290423582,
+      "variance_growth_rate": -37.6194169419236,
+      "compression_variance_growth": -39.4903961810014,
+      "TCF_variance_growth": 1.8709792390780828,
+      "chain_rule_relative_L1_residual": 9.570645640661622e-15
+    },
+    "inner_r0_0.375_0.5": {
+      "n": 357,
+      "mean_pressure_rate_over_p0": 2.2302215530988705,
+      "compression_mean_rate": 0.26697235597326646,
+      "TCF_mean_rate": 1.9632491971255883,
+      "variance_growth_rate": -1.6849534497771421,
+      "compression_variance_growth": -2.8103858598543408,
+      "TCF_variance_growth": 1.1254324100769986,
+      "chain_rule_relative_L1_residual": 9.262475606866691e-15
+    }
+  },
+  "membership_note": "Inner-background uses initial density <0.5 and r0<=0.5, matching canonical field analyzer (804 cells). Half-open sub-bins omit the one boundary cell at r0=0.5.",
+  "supersedes": "t10_pressure_rhs.json used r0<0.5 for the aggregate; v2 matches canonical membership.",
+  "interpretation": "At this pre-HG instant, TCF conversion supplies most positive mean pressure rate in r0=0.25-0.5. Q separately damps velocity perturbation energy, so identifying its heating does not establish Q as the initial instability source or justify deleting it. Mean pressure increase and variance growth need not have the same sign."
+}

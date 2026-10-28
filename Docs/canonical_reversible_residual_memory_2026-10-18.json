@@ -1,0 +1,81 @@
+{
+  "scope": "New auxiliary-energy candidate, linear 1D fixed lattice only.\n\nNo Kepler, nonlinear Euler, topology, shock, MPI or CUDA claim.\nu_dot=v; m v_dot=m*c^2*D0^2*u-B.T*z; z_dot=B*v.\nB=sqrt(m)*c/h*(I-neighbor_average), E_z=|z|^2/2.\n",
+  "relative_instantaneous_energy_closure": -2.933216776868645e-17,
+  "modes": [
+    {
+      "mode": 1,
+      "old_frequency": 6.273096981091879,
+      "new_frequency": 6.280662313909506,
+      "runs": [
+        {
+          "dt": 0.001,
+          "relative_energy_error": -8.517631044924201e-13,
+          "velocity_L2_error": 6.314482294004935e-13,
+          "auxiliary_energy_fraction": 1.5325767714938724e-08
+        },
+        {
+          "dt": 0.0005,
+          "relative_energy_error": -2.7644553313166398e-14,
+          "velocity_L2_error": 2.738086406277766e-14,
+          "auxiliary_energy_fraction": 1.532576678738616e-08
+        }
+      ]
+    },
+    {
+      "mode": 8,
+      "old_frequency": 45.25483399593904,
+      "new_frequency": 48.983479342731485,
+      "runs": [
+        {
+          "dt": 0.001,
+          "relative_energy_error": -1.9179397892088446e-07,
+          "velocity_L2_error": 2.2780589903458515e-06,
+          "auxiliary_energy_fraction": 0.134568699904437
+        },
+        {
+          "dt": 0.0005,
+          "relative_energy_error": -5.9949105679635295e-09,
+          "velocity_L2_error": 1.4161584083630045e-07,
+          "auxiliary_energy_fraction": 0.13456854890406109
+        }
+      ]
+    },
+    {
+      "mode": 32,
+      "old_frequency": 7.83773951454306e-15,
+      "new_frequency": 128.0,
+      "runs": [
+        {
+          "dt": 0.001,
+          "relative_energy_error": -6.095702323261065e-05,
+          "velocity_L2_error": 0.00022638935608354505,
+          "auxiliary_energy_fraction": 0.5201481001681207
+        },
+        {
+          "dt": 0.0005,
+          "relative_energy_error": -1.9078951953854784e-06,
+          "velocity_L2_error": 1.354568648037624e-05,
+          "auxiliary_energy_fraction": 0.5199122433860324
+        }
+      ]
+    }
+  ],
+  "smooth_mode_scaling": [
+    {
+      "n": 32,
+      "fixed_physical_mode_added_frequency_squared": 0.3780663799628601
+    },
+    {
+      "n": 64,
+      "fixed_physical_mode_added_frequency_squared": 0.09497336717906601
+    },
+    {
+      "n": 128,
+      "fixed_physical_mode_added_frequency_squared": 0.023771967547927157
+    },
+    {
+      "n": 256,
+      "fixed_physical_mode_added_frequency_squared": 0.005944782209424285
+    }
+  ]
+}

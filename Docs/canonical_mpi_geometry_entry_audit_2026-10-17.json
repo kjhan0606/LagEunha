@@ -1,0 +1,38 @@
+{
+  "scope": "Source inspection of production restart/stage geometry entry and measured single-rank t10 raw-face capacity; not distributed evolution validation",
+  "repository": "git@github.com:kjhan0606/LagEunha.git",
+  "findings": [
+    {
+      "source": "Exam/KH/kh.c:95-175",
+      "finding": "Rank zero reads the restart, other ranks initially own zero particles, and migrateTreeVorork4Particles redistributes before return. Fixture x-slab ownership must not be assumed to equal production ownership.",
+      "required": "Capture persistent ID and actual rank after migration; verify unique global ownership and preserved particle fields."
+    },
+    {
+      "source": "Exam/exam.c:13806 periodic_postStage_blend",
+      "finding": "Each stage wraps coordinates then migrates particles. Ownership is stage-dependent.",
+      "required": "Refresh ownership and invalidate ghost records after migration; use synchronized step/attempt/phase/stage/rebuild metadata."
+    },
+    {
+      "source": "Exam/exam.c:4376 updateDenW2Pressure2DBlend",
+      "finding": "Shared geometry rejects multiple ranks before nearest-neighbor search and linked-list padding. Centroid and QBP caches are separately initialized. CUDA nearest-neighbor search is selected by the compile-time USE_CUDA path unless dynamic weights are active.",
+      "required": "A diagnostic entry must perform actual distributed padding and cell construction, export owned raw geometry, and terminate before unsupported force/HG evolution. Preserve ordinary solver MPI guards."
+    },
+    {
+      "source": "Exam/exam.c:616 shf_ensure and :630 shf_record",
+      "finding": "Capacity follows maximum locally owned persistent ID. Raw records above SHF_K=64 are silently skipped. This is a latent completeness hazard, not evidence for the observed t10 instability.",
+      "required": "Distributed storage must account for imported IDs and explicitly reject overflow; received geometry must be complete before reciprocal reads."
+    }
+  ],
+  "measured_capacity_check": {
+    "execution_host": "lageunha",
+    "input": "/gpfs/kjhan/LagForce/Codex_shf_raw_geometry_20261017/audit/raw_faces.dat",
+    "cells": 36864,
+    "records": 221159,
+    "maximum_recorded_faces": 10,
+    "storage_limit": 64,
+    "histogram": {"3": 3, "4": 67, "5": 999, "6": 34800, "7": 896, "8": 82, "9": 11, "10": 6},
+    "conclusion": "No cell reaches the storage limit in this exported pre-HG t10 geometry. This does not cover other stages, future times, or distributed padding."
+  },
+  "next_gate": "Same t10 snapshot, actual restart migration and distributed geometry construction at 1/2/4 ranks; compare ownership, raw reciprocal endpoints, volume, centroids and QBP data by persistent ID/image before any evolution.",
+  "remaining": "Geometry-only distributed entry is not implemented. Full force exchange, ordered HG, collective rollback, CUDA canonical force and long-time physical accuracy remain unverified."
+}

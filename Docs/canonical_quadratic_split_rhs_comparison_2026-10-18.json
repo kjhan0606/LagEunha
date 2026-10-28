@@ -1,0 +1,234 @@
+{
+  "scope": "Compare quadratic split quadrature and affine hydro on identical moments.",
+  "report": {
+    "scope": "Instantaneous hydro moment RHS on new continuous t0 projection.\nFrozen outer patch, exact Euler pressure, no gravity or time evolution.\n",
+    "source": "/gpfs/kjhan/LagForce/Codex_continuous_kepler_interface_split_20261018/moments_split_q16.npz",
+    "sha256": "cc7a74956b9bb6a363cceb7b9cce365d4379397ceea9668ecfb3cc50c523037d",
+    "gamma": 1.6666669845581055,
+    "maximum_relative_pressure_decode_error": 6.276312802810935e-12,
+    "maximum_factor_recomposition_error": 5.169878828456423e-26,
+    "quadratic_velocity": true,
+    "results": [
+      {
+        "cutoff": 0.55,
+        "face_order": 4,
+        "active_cells": 962,
+        "split_history": [
+          {
+            "iteration": 0,
+            "weight_rate_change": 0.0010148344173794362,
+            "split_faces": 2613,
+            "nodes": 102568,
+            "mass_flux": 6.760167749750908e-14
+          },
+          {
+            "iteration": 1,
+            "weight_rate_change": 3.712188013623016e-06,
+            "split_faces": 2625,
+            "nodes": 102900,
+            "mass_flux": 8.22264348623869e-15
+          },
+          {
+            "iteration": 2,
+            "weight_rate_change": 4.945073434937941e-10,
+            "split_faces": 2625,
+            "nodes": 102896,
+            "mass_flux": 1.0728180496744066e-16
+          },
+          {
+            "iteration": 3,
+            "weight_rate_change": 6.149594722337781e-16,
+            "split_faces": 2625,
+            "nodes": 102896,
+            "mass_flux": 1.0463067125187351e-16
+          }
+        ],
+        "status": "completed",
+        "mass_flux": 1.0463067125187351e-16,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          -1.3781564865006368e-16,
+          1.1476279995759064e-16,
+          5.222042823117487e-17,
+          -1.0935322403995106e-16
+        ],
+        "maximum_active_pressure_rate": 1.2570658369269526e-07,
+        "weight_rate_range": 0.004265484174885419,
+        "seconds": 146.38488803617656
+      },
+      {
+        "cutoff": 0.55,
+        "face_order": 8,
+        "active_cells": 962,
+        "split_history": [
+          {
+            "iteration": 0,
+            "weight_rate_change": 0.001013869347018667,
+            "split_faces": 2613,
+            "nodes": 205136,
+            "mass_flux": 6.539094352803199e-18
+          },
+          {
+            "iteration": 1,
+            "weight_rate_change": 2.208582476551438e-06,
+            "split_faces": 2625,
+            "nodes": 205800,
+            "mass_flux": 3.346388830118295e-14
+          },
+          {
+            "iteration": 2,
+            "weight_rate_change": 2.2146366424752317e-10,
+            "split_faces": 2625,
+            "nodes": 205792,
+            "mass_flux": 7.163757010964248e-15
+          },
+          {
+            "iteration": 3,
+            "weight_rate_change": 1.044216796364239e-13,
+            "split_faces": 2625,
+            "nodes": 205792,
+            "mass_flux": 7.152899319129869e-15
+          }
+        ],
+        "status": "completed",
+        "mass_flux": 7.152899319129869e-15,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          6.933472893044801e-17,
+          -2.616112079571742e-16,
+          -3.204833859231371e-17,
+          2.81222561784953e-16
+        ],
+        "maximum_active_pressure_rate": 1.257065338199171e-07,
+        "weight_rate_range": 0.0042654789164761914,
+        "seconds": 261.3679174017161
+      }
+    ],
+    "limits": "Instantaneous fixed geometry only. Frozen reservoir affects adjacent active cells. No gravity, time evolution, production restart, GPU or MPI test. Cholesky uses positive raw covariance without clipping."
+  },
+  "comparisons": [
+    {
+      "cases": [
+        "quadratic4",
+        "quadratic8"
+      ],
+      "regions": {
+        "active": {
+          "pressure_rate": {
+            "first_l2": 1.0214151194125738e-06,
+            "second_l2": 1.02141440639749e-06,
+            "difference_l2": 3.6660523056574326e-12,
+            "relative_difference": 3.5891918918468485e-06
+          },
+          "momentum_rate": {
+            "first_l2": 0.001072608700447777,
+            "second_l2": 0.0010726003389065477,
+            "difference_l2": 2.2130700553456332e-08,
+            "relative_difference": 2.063275551079656e-05
+          },
+          "energy_rate": {
+            "first_l2": 0.0001178026342649602,
+            "second_l2": 0.00011780180884192889,
+            "difference_l2": 7.672246639590616e-09,
+            "relative_difference": 6.512842812019583e-05
+          },
+          "weight_rate": {
+            "first_l2": 0.060984505471518284,
+            "second_l2": 0.06098455887579258,
+            "difference_l2": 2.3745792135019644e-07,
+            "relative_difference": 3.893738443428404e-06
+          }
+        },
+        "inner": {
+          "pressure_rate": {
+            "first_l2": 3.96589343091297e-07,
+            "second_l2": 3.9658931848153e-07,
+            "difference_l2": 3.8930118609230656e-13,
+            "relative_difference": 9.81622973565883e-07
+          },
+          "momentum_rate": {
+            "first_l2": 5.489654622092043e-06,
+            "second_l2": 5.4896545492209955e-06,
+            "difference_l2": 7.3115053068571e-12,
+            "relative_difference": 1.3318698364899177e-06
+          },
+          "energy_rate": {
+            "first_l2": 1.9528119709134486e-06,
+            "second_l2": 1.9528117960304663e-06,
+            "difference_l2": 3.665715879238522e-12,
+            "relative_difference": 1.8771475503629804e-06
+          },
+          "weight_rate": {
+            "first_l2": 0.0479988777971679,
+            "second_l2": 0.04799891753125996,
+            "difference_l2": 6.585996753624816e-08,
+            "relative_difference": 1.3721136001318351e-06
+          }
+        }
+      }
+    },
+    {
+      "cases": [
+        "affine8",
+        "quadratic8"
+      ],
+      "regions": {
+        "active": {
+          "pressure_rate": {
+            "first_l2": 1.36749253628825e-05,
+            "second_l2": 1.02141440639749e-06,
+            "difference_l2": 1.3224249872614381e-05,
+            "relative_difference": 12.946997604288812
+          },
+          "momentum_rate": {
+            "first_l2": 0.0010874361731337287,
+            "second_l2": 0.0010726003389065477,
+            "difference_l2": 6.834914906185016e-05,
+            "relative_difference": 0.06372284865351437
+          },
+          "energy_rate": {
+            "first_l2": 0.00013028418781502836,
+            "second_l2": 0.00011780180884192889,
+            "difference_l2": 2.2502673183526188e-05,
+            "relative_difference": 0.19102145718085842
+          },
+          "weight_rate": {
+            "first_l2": 0.07233148290436789,
+            "second_l2": 0.06098455887579258,
+            "difference_l2": 0.013355224870779362,
+            "relative_difference": 0.21899354716953823
+          }
+        },
+        "inner": {
+          "pressure_rate": {
+            "first_l2": 1.0820104076382427e-05,
+            "second_l2": 3.9658931848153e-07,
+            "difference_l2": 1.050882059325282e-05,
+            "relative_difference": 26.497992012213604
+          },
+          "momentum_rate": {
+            "first_l2": 5.4458222682666565e-06,
+            "second_l2": 5.4896545492209955e-06,
+            "difference_l2": 3.386705744964809e-06,
+            "relative_difference": 0.6169251115164244
+          },
+          "energy_rate": {
+            "first_l2": 1.944661943639545e-06,
+            "second_l2": 1.9528117960304663e-06,
+            "difference_l2": 1.6918315882870295e-07,
+            "relative_difference": 0.08663567025383918
+          },
+          "weight_rate": {
+            "first_l2": 0.0602819392524233,
+            "second_l2": 0.04799891753125996,
+            "difference_l2": 0.013075788502940411,
+            "relative_difference": 0.2724184039030593
+          }
+        }
+      }
+    }
+  ],
+  "limits": "Instantaneous hydro only. Smaller pressure rate is not a long-time accuracy proof. Generator paths differ because reconstruction changes their material velocity; no steering imposed."
+}

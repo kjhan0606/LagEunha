@@ -1,0 +1,124 @@
+{
+  "scope": "Static diagnostic of scalar-weight rates enforcing zero NET mass transfer per active cell, with piecewise constant upwind density on shared reconstructed face-velocity residuals. Not a production ALE/Riemann solver or long-time result.",
+  "equation": "sum_j rho_upwind*[delta_face_volume_flux-A/(2d)*(Wdot_i-Wdot_j)] = 0, frozen weight rates=0.",
+  "iterations": [
+    {
+      "iteration": 0,
+      "relative_mass_balance_L2": 0.3985009519703045,
+      "objective": 0.00010860845745850291,
+      "alpha": 1.0
+    },
+    {
+      "iteration": 1,
+      "relative_mass_balance_L2": 0.10036340029333903,
+      "objective": 0.0001078173530842051,
+      "alpha": 1.0
+    },
+    {
+      "iteration": 2,
+      "relative_mass_balance_L2": 0.008231135641693992,
+      "objective": 0.00010774111873471456,
+      "alpha": 1.0
+    },
+    {
+      "iteration": 3,
+      "relative_mass_balance_L2": 3.4440922799112175e-06,
+      "objective": 0.00010773982414599423,
+      "alpha": 1.0
+    },
+    {
+      "iteration": 4,
+      "relative_mass_balance_L2": 2.907043383904408e-09,
+      "objective": 0.00010773982414566396,
+      "alpha": 1.0
+    },
+    {
+      "iteration": 5,
+      "relative_mass_balance_L2": 2.829698152183475e-16,
+      "objective": 0.00010773982414566395
+    }
+  ],
+  "seconds": 0.4812728874385357,
+  "regions": {
+    "inner": {
+      "n": 795,
+      "volume_matching_fractional_mass_rate_RMS": 0.9937351406440853,
+      "volume_matching_fractional_mass_rate_max": 23.96812321440174,
+      "mass_matching_fractional_mass_rate_RMS": 1.0144347003788174e-16,
+      "mass_matching_fractional_mass_rate_max": 2.6911007180664185e-15,
+      "additional_volume_divergence_RMS": 0.2439174240787093,
+      "weight_rate_over_volume_RMS": 0.15671542687927456,
+      "internal_face_mass_circulation_L1": 0.0012542676579709755,
+      "first_order_upwind_velocity_mixing_power": 1.2140199944802445e-05
+    },
+    "disk_edge": {
+      "n": 399,
+      "volume_matching_fractional_mass_rate_RMS": 0.2397789575867951,
+      "volume_matching_fractional_mass_rate_max": 21.396000025814345,
+      "mass_matching_fractional_mass_rate_RMS": 3.400771567914198e-17,
+      "mass_matching_fractional_mass_rate_max": 4.520668843111754e-15,
+      "additional_volume_divergence_RMS": 0.09216698038468052,
+      "weight_rate_over_volume_RMS": 0.09978096837723373,
+      "internal_face_mass_circulation_L1": 0.03339420192110086,
+      "first_order_upwind_velocity_mixing_power": 8.038237000951615e-05
+    },
+    "disk_core": {
+      "n": 10304,
+      "volume_matching_fractional_mass_rate_RMS": 3.3143517839067516e-05,
+      "volume_matching_fractional_mass_rate_max": 0.000497520610915799,
+      "mass_matching_fractional_mass_rate_RMS": 5.617934139764397e-18,
+      "mass_matching_fractional_mass_rate_max": 6.988321680258507e-17,
+      "additional_volume_divergence_RMS": 3.239474458060841e-05,
+      "weight_rate_over_volume_RMS": 0.032081693903736545,
+      "internal_face_mass_circulation_L1": 0.209365284758862,
+      "first_order_upwind_velocity_mixing_power": 0.00010929641698663846
+    },
+    "active": {
+      "n": 19855,
+      "volume_matching_fractional_mass_rate_RMS": 0.06404712550602158,
+      "volume_matching_fractional_mass_rate_max": 23.96812321440174,
+      "mass_matching_fractional_mass_rate_RMS": 9.345492471381625e-18,
+      "mass_matching_fractional_mass_rate_max": 4.520668843111754e-15,
+      "additional_volume_divergence_RMS": 0.019947028950102492,
+      "weight_rate_over_volume_RMS": 0.035959356510634706,
+      "internal_face_mass_circulation_L1": 0.26199863148303837,
+      "first_order_upwind_velocity_mixing_power": 0.0002120053700088974
+    }
+  },
+  "transport_algebra": {
+    "global_mass_rate": -2.19448431570904e-19,
+    "global_momentum_rate": [
+      -4.607859233063394e-19,
+      -1.3552527156068805e-19
+    ],
+    "global_total_energy_rate": 2.6152142246476523e-20,
+    "kinetic_transport_rate": -0.004823433458707346,
+    "negative_upwind_mixing_power": -0.004823433458707345,
+    "active_mass_rate_sum": 6.525090185032676e-20,
+    "frozen_mass_rate_L1": 0.02719178137329273
+  },
+  "limitations": [
+    "Net zero cell mass does not imply material faces or zero exchange through individual faces.",
+    "Remaining momentum and total-energy fluxes must be retained; setting them to zero is not an ALE discretization.",
+    "First-order donor mixing is only a diagnostic, not a recommended shear-stable transport method.",
+    "No nonlinear mesh update, time integration, shock test, positivity test, boundary model, or long-term weight bound is established."
+  ],
+  "volume_comparison": {
+    "inner": {
+      "original_geometric_divergence_RMS": 0.1333226296092813,
+      "mass_constrained_geometric_divergence_RMS": 0.24421085727920863
+    },
+    "disk_edge": {
+      "original_geometric_divergence_RMS": 0.07554014289867637,
+      "mass_constrained_geometric_divergence_RMS": 0.0920208240406408
+    },
+    "disk_core": {
+      "original_geometric_divergence_RMS": 0.015007763075655043,
+      "mass_constrained_geometric_divergence_RMS": 0.000255007471307301
+    }
+  },
+  "input_rhs_sha256": "709bf217329e3583132bfb68da0975331404248f3ef666b2e89a9c992b033c04",
+  "previous_volume_response": "canonical_shared_flux_weight_response_2026-10-17.json",
+  "interpretation": "For this diagnostic upwind density flux, zero net active-cell mass is feasible. Volume-matching alone does not conserve cell mass under these fluxes; density-dependent mass matching restores large volume response at the inner interface. This is not observed mass drift in the existing canonical solver, whose masses remain fixed. No implementation change justified yet.",
+  "decision": "Retain as a feasibility result only. A viable fixed-mass ALE candidate would require consistent reconstructed momentum/energy fluxes, contact/shock treatment, angular momentum audit and long-time nonlinear geometric evolution. Simple donor transport has substantial mixing and is not selected."
+}

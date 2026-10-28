@@ -1,0 +1,221 @@
+{
+  "scope": "Compare completed equal-time moving moment runs without inferring time order.",
+  "ready": true,
+  "runs": [
+    {
+      "dt": 0.0001,
+      "steps": 9,
+      "final": {
+        "time": 0.001,
+        "min_pressure": 2.775608656655024e-05,
+        "min_factor_eigenvalue": 7.518520510706391e-13,
+        "ledger_error": 1.3712073008155482e-16,
+        "active_hydro_energy": 0.35216790346198856,
+        "active_reconstructed_potential": -0.7111950299249699,
+        "active_pressure_relative_RMS": 1.1719771470485974e-06,
+        "max_generator_displacement": 0.0016431791135564362,
+        "maximum_relative_weight": 3.6040928783284338e-06,
+        "rebuild_thermal_partition": {
+          "half": {
+            "maximum_Pi_change": 2.1728387318564746e-14,
+            "thermal_change_sum": -6.479418388620386e-12,
+            "thermal_change_absolute_sum": 6.479418388620386e-12,
+            "specific_thermal_change_mass_RMS": 2.1599214930119382e-11,
+            "maximum_relative_thermal_change": 4.886563904456128e-07,
+            "minimum_provisional_thermal": 3.8674249078553646e-08,
+            "scope": "Active cells only; Pi reconstruction at unchanged Ehyd; not total physical heating."
+          },
+          "full": {
+            "maximum_Pi_change": 1.3738196778106948e-16,
+            "thermal_change_sum": 2.2699703203251795e-15,
+            "thermal_change_absolute_sum": 6.93360327159859e-15,
+            "specific_thermal_change_mass_RMS": 2.8098392608929897e-14,
+            "maximum_relative_thermal_change": 1.7545440234183335e-09,
+            "minimum_provisional_thermal": 3.867424903684977e-08,
+            "scope": "Active cells only; Pi reconstruction at unchanged Ehyd; not total physical heating."
+          }
+        }
+      },
+      "maximum_Pi_factor_mismatch": 1.6940658945086007e-21,
+      "minimum_thermal": 3.867424903685506e-08,
+      "reconstructed_energy_change": -5.6977344509157035e-09,
+      "energy_note": "Open active patch: this energy change includes reservoir exchange; it is not a closed-system conservation error."
+    },
+    {
+      "dt": 5e-05,
+      "steps": 18,
+      "final": {
+        "time": 0.001,
+        "min_pressure": 2.7756083798700824e-05,
+        "min_factor_eigenvalue": 7.51852052993806e-13,
+        "ledger_error": 1.2172018961999456e-16,
+        "active_hydro_energy": 0.3521679034310063,
+        "active_reconstructed_potential": -0.7111950298619768,
+        "active_pressure_relative_RMS": 1.1410039675511595e-06,
+        "max_generator_displacement": 0.0016431791007467506,
+        "maximum_relative_weight": 3.6040470108748107e-06,
+        "rebuild_thermal_partition": {
+          "half": {
+            "maximum_Pi_change": 5.432720245890366e-15,
+            "thermal_change_sum": -1.6198323520670905e-12,
+            "thermal_change_absolute_sum": 1.6198323520670905e-12,
+            "specific_thermal_change_mass_RMS": 5.399668118651394e-12,
+            "maximum_relative_thermal_change": 1.221621505885326e-07,
+            "minimum_provisional_thermal": 3.867424903552268e-08,
+            "scope": "Active cells only; Pi reconstruction at unchanged Ehyd; not total physical heating."
+          },
+          "full": {
+            "maximum_Pi_change": 1.7414997395548415e-17,
+            "thermal_change_sum": 1.2133055777298003e-16,
+            "thermal_change_absolute_sum": 8.107357474691325e-16,
+            "specific_thermal_change_mass_RMS": 3.3990449230011673e-15,
+            "maximum_relative_thermal_change": 2.1832262027622625e-10,
+            "minimum_provisional_thermal": 3.8674249013366626e-08,
+            "scope": "Active cells only; Pi reconstruction at unchanged Ehyd; not total physical heating."
+          }
+        }
+      },
+      "maximum_Pi_factor_mismatch": 1.6940658945086007e-21,
+      "minimum_thermal": 3.8674249013367897e-08,
+      "reconstructed_energy_change": -5.6657236680024425e-09,
+      "energy_note": "Open active patch: this energy change includes reservoir exchange; it is not a closed-system conservation error."
+    }
+  ],
+  "same_time_differences": {
+    "active": {
+      "cells": 1194,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 7.125912089133574e-11,
+          "mass_weighted_RMS": 4.444713764976455e-12
+        },
+        "weight": {
+          "maximum_absolute_difference": 8.353837981761731e-10,
+          "mass_weighted_RMS": 2.2748180894642923e-10
+        },
+        "centroid": {
+          "maximum_absolute_difference": 2.3750001632016904e-08,
+          "mass_weighted_RMS": 4.810882115069573e-09
+        },
+        "velocity": {
+          "maximum_absolute_difference": 4.20912675269669e-08,
+          "mass_weighted_RMS": 8.524268304596018e-09
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 1.8990898805783252e-13,
+          "mass_weighted_RMS": 5.5884484725565506e-14
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 4.0609108784006587e-10,
+          "mass_weighted_RMS": 9.550154822722898e-12
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 1.856625148376961e-15,
+          "mass_weighted_RMS": 2.956684356621586e-16
+        }
+      }
+    },
+    "common_inner": {
+      "cells": 490,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 7.125912089133574e-11,
+          "mass_weighted_RMS": 3.8725151895933265e-11
+        },
+        "weight": {
+          "maximum_absolute_difference": 2.53354290521087e-10,
+          "mass_weighted_RMS": 2.1703131594993862e-10
+        },
+        "centroid": {
+          "maximum_absolute_difference": 1.5241217593553458e-09,
+          "mass_weighted_RMS": 5.662820726525686e-10
+        },
+        "velocity": {
+          "maximum_absolute_difference": 7.28554283568883e-09,
+          "mass_weighted_RMS": 2.3561038660944215e-09
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 5.403936001699856e-16,
+          "mass_weighted_RMS": 2.349603010784608e-16
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 1.488514589365053e-10,
+          "mass_weighted_RMS": 3.9564193153973125e-11
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 1.87003996424283e-17,
+          "mass_weighted_RMS": 7.795017231907093e-18
+        }
+      }
+    },
+    "frozen_reservoir": {
+      "cells": 396,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "weight": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "centroid": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "velocity": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        }
+      }
+    },
+    "original_active": {
+      "cells": 962,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 7.125912089133574e-11,
+          "mass_weighted_RMS": 6.766186529144843e-12
+        },
+        "weight": {
+          "maximum_absolute_difference": 3.110959664363586e-10,
+          "mass_weighted_RMS": 1.8512283105258836e-10
+        },
+        "centroid": {
+          "maximum_absolute_difference": 4.4055235154383254e-09,
+          "mass_weighted_RMS": 1.907404524843442e-09
+        },
+        "velocity": {
+          "maximum_absolute_difference": 1.2062959464653744e-08,
+          "mass_weighted_RMS": 5.147048855677099e-09
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 2.786569794558497e-14,
+          "mass_weighted_RMS": 1.1136501756425186e-14
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 4.0609108784006587e-10,
+          "mass_weighted_RMS": 1.3361180697474758e-11
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 6.906007244854257e-17,
+          "mass_weighted_RMS": 3.7508927954826895e-17
+        }
+      }
+    }
+  },
+  "requested_checkpoint_time": null,
+  "full_run_completion_required": true,
+  "limits": "Three-level ratios, when available, are empirical and do not prove asymptotic convergence. Two levels do not establish order. Very short stage test, not historical Kepler validation. Potential transport closure, frozen-boundary effects and production CUDA/MPI remain unresolved."
+}

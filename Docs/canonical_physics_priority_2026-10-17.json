@@ -1,0 +1,1085 @@
+{
+  "current_reversible_memory_integration_2026_10_18": {
+    "supersedes": "Earlier next-action and live-run fields below are historical. Consult current runtime before reporting status.",
+    "report": "reversible_residual_memory_2026-10-18.md",
+    "status": "new_auxiliary_energy_method_physical_run_active_stability_unproven_production_ordered_openmp_control_passed",
+    "evidence": "canonical_memory_integration_controls_2026-10-18.json",
+    "result": "Actual restart, forced final rejection and OpenMP1/4 agree in all11 physical reader fields and auxiliary z. Default-off matches prior binary in all11 fields. These are short integration checks, not Kepler stability.",
+    "run": "/gpfs/kjhan/LagForce/Codex_reversible_memory_physical_to_t10_20261018/memory_from_t0",
+    "next": "Verify new process live, evaluate original-t0 trajectory through t6-10 and later long-time accuracy. Preserve existing adaptive and legacy checkpoints. Do not infer total-energy stability from legacy ACCEPTED_STATE E, which excludes auxiliary energy.",
+    "additional_evidence": ["canonical_memory_spatial_consistency_2026-10-18.json", "canonical_memory_cuda_row_2026-10-18.json", "canonical_memory_backend_assembly_2026-10-18.json", "canonical_memory_parallel_controls_2026-10-18.json", "canonical_memory_circular_work_t0p2_2026-10-18.json", "canonical_memory_circular_work_t0p4_2026-10-18.json"],
+    "backend_result": "CUDA row probe exposed mixed-type fmax overload; corrected to double zero and verified on actual Ada device. Standalone CPU/OpenMP/CUDA assembly passes. Separate production ordered-OpenMP binary agrees bitwise with old binary after nonzero-memory restart and one actual RK4 step. Live long run retains its original binary; no replacement or rerun.",
+    "physical_caution": "At t0.2/0.4, most instantaneous auxiliary-energy inflow comes from circular-reference velocity. Auxiliary force contributes negative departure work at those instants, but this is not a full growth-rate or long-time stability result. Preserve no steering: reference velocity is diagnostic only.",
+    "scope": "Live MPI1 CPU auxiliary assembly with existing CUDA-enabled build and OpenMP hydro; optional production OpenMP row path verified separately. No full CUDA auxiliary or MPI evolution validation yet. Fixed mass/no steering. Laguerre extendability remains required; time-varying weights are allowed if needed, not mandatory."
+  },
+  "current_decision_after_adaptive_t6_2026_10_18": {
+    "status": "reconstruction_repair_insufficient_for_physical_stability",
+    "supersedes": "Earlier live-run status and next-action fields below are historical observations, not current process status.",
+    "evidence": ["canonical_adaptive_qr_t6p0_comparison_2026-10-18.json", "canonical_legacy_t10_physical_2026-10-18.json"],
+    "result": "At identical t6.000405917763673, adaptive inner phase error is .4136% lower, pressure error 4.3992% higher, velocity error 1.9152% higher and entropy error 1.9261% higher. Legacy completed at actual t10.003304525260502 with exit0 but inner phase RMS55.4153deg and relative-pressure RMS6.32516.",
+    "execution": "Preserve completed legacy; do not relaunch. Adaptive process3267966/runner28624 retains its t10 endpoint. Revalidate process before reporting current progress.",
+    "next_physics": "Revisit coupled pressure/geometry and entropy feedback with complete actual force budgets, including gravity, circular-reference work, TCF and HG. Separate original-t0 entropy excess from inherited t2 entropy. Isolated velocity and pressure seeds did not establish sustained growth, whereas coupled position/velocity seeds did. Do not repeat those controls unchanged or infer a negative stiffness from positive pressure power.",
+    "candidate_constraints": "No steering; no pressure/entropy resets, disabled pressure work or arbitrary mass changes. Any mass relaxation must be weight-linked and obey the approved persistent-equal-weight fixed-mass Voronoi reduction. Moment components remain experimental, not a validated replacement.",
+    "remaining_scope": "Historical t6-10 and genuinely long physical accuracy; unresolved generator residual and field convergence; full CUDA hydro, MPI physics, and time-dependent Laguerre closure remain unverified. Component parity and small global conservation error do not close these requirements."
+  },
+  "adaptive_first_physical_comparison_2026_10_18": {
+    "status": "first_evolved_same_time_comparison_complete_no_appreciable_improvement",
+    "evidence": "canonical_adaptive_qr_t2p2_comparison_2026-10-18.json",
+    "result": "At t2.2004059,inner adaptive/legacy phase1.000030,pressure.999993,departure velocity1.000172. Fixed masses,weights0. Early physical errors essentially unchanged.",
+    "next": "Continue existing adaptive28624 and legacy82741. Analyze next checkpoints through3.8 and6-10; no early stability or improvement claim."
+  },
+  "adaptive_generator_residual_2026_10_18": {
+    "status": "matching_force_budget_analyzed_residual_remains",
+    "report": "adaptive_qr_support_2026-10-18.md",
+    "evidence": "canonical_adaptive_qr_generator_comparison_2026-10-18.json",
+    "result": "Inner forward-generator error+.10256% to+.08803% when dt halves; shear similarly not simple halving. Central improves, edge does not. Positive response persists. No full generator/map consistency pass.",
+    "next": "Maintain physical adaptive28624 and existing legacy. Evaluate new physical snapshots while retaining unresolved residual; do not equate reconstruction/parity checks with full dynamics or long-time accuracy."
+  },
+  "matched_legacy_t6_physical_2026_10_18": {
+    "status": "new_historical_failure_interval_snapshot_analyzed",
+    "evidence": "canonical_legacy_t6_physical_2026-10-18.json",
+    "result": "Existing matched legacy t6.0004059 inner phase RMS11.4708deg,relative-pressure RMS1.31701,velocity departure RMS.0206796. Physical degradation persists. Adaptive process3267966 live at t2.0979059; no evolved adaptive snapshot yet.",
+    "next": "Continue adaptive28624 and legacy82741, analyze saved actual-time states. Use generalized physical analyzer --root Codex_adaptive_qr_physical_to_t10_20261018 and comparator --case adaptive_from_t2. Preserve historical and long-time scope."
+  },
+  "adaptive_qr_physical_started_2026_10_18": {
+    "status": "actual_step_parity_and_raw_conservation_checked_physical_continuation_live",
+    "report": "adaptive_qr_support_2026-10-18.md",
+    "result": "OMP1/4 and forced retry match all11 reader fields, both branches. Raw hydro identities close. Inner departure derivative remains positive2.96438e-7. New adaptive physical process3267966 accepts4 finite no-retry steps from preserved t2.",
+    "next": "Monitor session28624/root Codex_adaptive_qr_physical_to_t10_20261018. Analyze .2-interval checkpoints, cross3.8 support failure and6-10 historical physical failure, retain existing legacy3186332 and original long runs. Fixed-support method remains failed, not running. No full MPI/CUDA hydro or Laguerre closure claim."
+  },
+  "adaptive_qr_periodic_terminal_2026_10_18": {
+    "status": "periodic_boundary_fixed_full_domain_terminal_validation_passed",
+    "report": "adaptive_qr_support_2026-10-18.md",
+    "evidence": "canonical_adaptive_qr_periodic_probes_2026-10-18.json",
+    "result": "All3 terminal probes exit0. Both +/- states all36864 cells have support mismatch0,rank9,independent gradient error<=1.583e-13,cubic moment error<=5.330e-15. MPI1 periodic full-cloud fallback used where finite padding strip is insufficient.",
+    "next": "Validate adaptive actual steps, OpenMP/rejection and hydro identities, then physical evolution across historical failure interval with intermediate restart checkpoints. Preserve failed runs and live legacy. No adaptive long-run stability or MPI/CUDA hydro claim."
+  },
+  "adaptive_qr_initial_boundary_gate_2026_10_18": {
+    "status": "candidate_implemented_built_terminal_probe_boundary_failure",
+    "report": "adaptive_qr_support_2026-10-18.md",
+    "result": "Independent legacy t3.4/t4 interior fits all rank9. Actual adaptive terminal probes both abort at outer owner36855,R14,candidates4290. Default-off probe exits0. No adaptive evolution started.",
+    "next": "Resolve full-domain boundary/padding coverage certificate before adopting adaptive QR. Preserve failed probes and live legacy. Interior feasibility is not full-domain correctness."
+  },
+  "smooth_qr_fixed_support_stop_2026_10_18": {
+    "status": "smooth_physical_run_aborted_legacy_remains_live",
+    "report": "smooth_qr_implementation_2026-10-18.md",
+    "evidence": "canonical_smooth_qr_rank_stop_2026-10-18.log",
+    "result": "Last accepted smooth time3.8129059. Next RK force aborts: owner539,nuse8,ncol9,nc140. Printed rank0 is the unattempted QR initializer, not measured matrix rank. Fixed support can lose enough samples during evolution. No evolved smooth snapshot exists before abort.",
+    "next": "Preserve live legacy and all outputs. Investigate continuous support adaptation with verified geometric coverage/conditioning; do not silently widen, lower order, disable guard, or repeat unchanged run. Current fixed-support option is not robust. Full physical and backend objective remains unresolved."
+  },
+  "coupled_t3p4_full_refinement_2026_10_18": {
+    "status": "all_five_refinement_branches_complete_physical_comparison_pending",
+    "report": "coupled_convergence_2026-10-18.md",
+    "evidence": "canonical_coupled_t3p4_convergence_2026-10-18.json",
+    "result": "All exit0; amplitude320/fine640 accepted finite no-retry steps. Departure squared growth coarse79.6249,half-amplitude79.6917,half-dt80.1938. Fine/coarse spatial departure response difference7.320%, so aggregate norm agreement does not establish field convergence.",
+    "next": "Refinement session23450 is complete; do not restart it. Maintain physical comparison82741 and original long runs. Latest direct observation: legacy t4.8429059, smooth t3.0054059, both actual executables live. Snapshot analysis still finds only copied source frames in the new physical run directories. Await actual evolved smooth output near t4, then compare physical errors through t6-10 and genuinely long times. MPI physics, full CUDA hydro and time-dependent Laguerre closure remain unverified."
+  },
+  "original_baseline_t16_physical_2026_10_18": {
+    "status": "new_preserved_long_run_snapshot_analyzed_physical_failure_confirmed",
+    "report": "original_baseline_t16_2026-10-18.md",
+    "evidence": "canonical_original_baseline_t16_physical_2026-10-18.json",
+    "result": "Original pre-constrained-HG baseline t16 inner phase RMS99.662deg, relative-pressure RMS44.8605, radial RMS.07422. Not current matched legacy or smooth method. Original processes remain live.",
+    "next": "Preserve all long runs. Maintain current smooth-vs-legacy82741 and refinement23450. Evaluate actual new physical dumps through t6-10, then genuinely long times; conservation alone is insufficient."
+  },
+  "coupled_t4_completed_audit_2026_10_18": {
+    "status": "original_response_continuation_and_matching_gravity_control_complete",
+    "report": "coupled_t4_completion_2026-10-18.md",
+    "result": "All3 branches760 finite accepted/no-retry steps,exit0. t4 departure squared growth1619.44 vs gravity.90438; even/odd4.245%, so no linear-mode or final hydro-convergence claim. Small energy drift coexists with physical errors.",
+    "next": "Existing legacy physical continuation already reuses final984; do not rerun it. Maintain physical82741 and fine23450, evaluate new saved physical times. New smooth method remains experimental."
+  },
+  "smooth_conservation_and_refinement_2026_10_18": {
+    "status": "raw_hydro_identities_passed_t3p0_refinement_and_t3p4_half_amplitude_completed",
+    "evidence": ["canonical_smooth_qr_hydro_conservation_2026-10-18.json", "canonical_coupled_t3p0_convergence_2026-10-18.json", "canonical_coupled_t3p4_amplitude_2026-10-18.json"],
+    "result": "Smooth raw hydro momentum/total-energy/thermodynamic identities close, no negative Qdu faces. Legacy t3.0 coarse16.4596/fine16.4062 squared response; t3.4 half-amplitude79.6917/coarse79.6249, spatial difference3.198%.",
+    "next": "Maintain physical82741 and remaining fine-dt23450. Analyze actual physical dumps through failure times. Do not equate raw conservation or robust response growth with physical stability."
+  },
+  "smooth_qr_threads_retry_2026_10_18": {
+    "status": "omp_and_forced_rejection_reader_field_parity_passed_physical_runs_live",
+    "evidence": ["canonical_smooth_qr_threads_2026-10-18.json", "canonical_smooth_qr_retry_2026-10-18.json", "canonical_smooth_qr_early_live_2026-10-18.json"],
+    "result": "Smooth +/- one-step OMP1/4 fields bitwise equal; rejected dt1e-4 then accepted5e-5 equals direct5e-5. Physical runs live at legacy4.13791/smooth2.16541, no accepted nonfinite or retries so far.",
+    "next": "Maintain physical82741/refined23450, collect new saved-time physical metrics. Keep prior physical-first MPI deferral; short new-option parity is not a full backend or long-time pass."
+  },
+  "physical_baseline_and_t2p8_refinement_2026_10_18": {
+    "status": "physical_pipeline_executed_baseline_saved_intermediate_refinement_analyzed",
+    "evidence": ["canonical_legacy_t4_physical_2026-10-18.json", "canonical_coupled_t2p8_convergence_2026-10-18.json"],
+    "result": "Legacy t4 inner background phase RMS1.51835deg, pressure relative RMS.338565. Smooth physical run currently has only copied t2 source snapshot, not an evolved improvement result. Legacy response t2.8 coarse8.35267 vs fine8.34561 squared growth; spatial response L2 difference1.735%.",
+    "next": "Maintain physical82741 and refined23450; analyze actual new snapshots with analyze_smooth_qr_physical_snapshots.py. Track physical errors through t6-10 and beyond, not conservation or short response norms alone."
+  },
+  "smooth_qr_generator_and_physical_2026_10_18": {
+    "status": "matching_generator_comparison_complete_physical_t10_pair_running",
+    "report": "smooth_qr_implementation_2026-10-18.md",
+    "evidence": "canonical_smooth_qr_generator_comparison_2026-10-18.json",
+    "result": "Inner smooth forward-generator errors+.05112%->+.02452% with dt halving; shear and central similarly improve. Edge~.16% remains, core tiny-signal limits. Positive growth persists.",
+    "next": "Maintain physical session82741: legacy3186276 from completedt4, smooth3186283 from preservedt2, targett10. Analyze actual-time phase/radius/velocity/pressure/entropy and conservation at dumps. Preserve refined23450 and original long runs; full objective not achieved."
+  },
+  "smooth_qr_implementation_2026_10_18": {
+    "status": "opt_in_built_terminal_and_four_actual_single_steps_completed",
+    "report": "smooth_qr_implementation_2026-10-18.md",
+    "evidence": "canonical_smooth_qr_probes_2026-10-18.json",
+    "result": "Both initial smooth states:11498 interior cells each, support mismatch0, cubic moment error<=2.687e-14, independent gradient error<=1.113e-12. Legacy off cross-build RHS difference<=2.711e-20, not bitwise.",
+    "next": "Smooth session10037 completed all four exit0; inner response rate2.72806e-7 at dt5e-5 versus legacy3.13788e-7, still positive. Reconstruct smooth-generator budget then longer matched evolution. Refined23450 still running; original coupled62605 completed t4 with all three exit0. Physical long-time stability remains unresolved."
+  },
+  "coupled_reconstruction_support_2026_10_18": {
+    "status": "hard_support_transition_reproduced_smooth_local_candidate_verified",
+    "report": "coupled_reconstruction_transition_2026-10-18.md",
+    "result": "Minus155 loses214 across radius2.5sqrtV, minus848 loses626; rank remains9. Independent fits reproduce printed gradients. Smooth row taper reduces gradient changes .02103->.000943 and .004540->.000419 with local cubic reproduction intact.",
+    "next": "Develop opt-in smooth reconstruction with explicit fallback/search coverage policy and preserve baseline. Validate actual production steps, budgets, then historical/long trajectories. This is not proof of full physical remedy; preserve running comparisons23450/62605."
+  },
+  "coupled_stage_transition_2026_10_18": {
+    "status": "rk_update_matches_stage_rhs_local_Q_reconstruction_transition_identified",
+    "evidence": ["canonical_coupled_stage_decomposition_2026-10-18.json", "canonical_coupled_face_transition_2026-10-18.json"],
+    "result": "Terminal and initial actual forces match; dump-on/off reader fields bitwise equal; RK weighted RHS matches update. Dominant response discrepancy occurs in changing RK forces. Minus cell154 transition is largely Q on face154-155, with altered neighbor155 gradient despite unchanged face-neighbor sets.",
+    "next": "Inspect reconstruction stencil/rank thresholds and QBP switching at cell155. Preserve running original62605/refined23450 and long runs. Local diagnostic transition is not yet the long-time failure cause."
+  },
+  "coupled_generator_omp_control_2026_10_18": {
+    "status": "saved_acceleration_localized_omp1_omp4_reader_fields_bitwise_equal",
+    "evidence": ["canonical_coupled_acceleration_discrepancy_2026-10-18.json", "canonical_coupled_generator_threads_2026-10-18.json"],
+    "result": "Per-branch total acceleration forward error halves with dt, but central-response acceleration L2 discrepancy3.513%->4.361%. OMP1 and OMP4 single-step physical reader fields bitwise equal for both branches; full snapshot hashes differ.",
+    "next": "Inspect stage force/geometry at cells154,156,103 and changing outliers312,734,848,849,863. Preserve refined23450 and original62605 plus long runs. No completed budget or stability claim."
+  },
+  "coupled_generator_step_discrepancy_2026_10_18": {
+    "status": "one_step_checks_completed_consistency_unresolved",
+    "evidence": "canonical_coupled_generator_step_2026-10-18.json",
+    "result": "Actual one-step response derivative differs from instantaneous generator by -.555% at dt1e-4 and -.586% at dt5e-5 in r<.5; central ~+7.7%, edge worsens to+14.65%. No generator/map convergence claim.",
+    "next": "Isolate per-branch acceleration and central-difference sensitivity using saved probe/step data. Preserve running refined23450 and coarse62605 plus original long runs. Do not adopt a physics change from an unclosed budget."
+  },
+  "coupled_t2p6_complete_and_t3p4_generator_2026_10_18": {
+    "status": "t2p6_refinement_completed_t3p4_continuation_submitted",
+    "evidence": ["canonical_coupled_t2p6_convergence_2026-10-18.json", "canonical_coupled_t3p4_generator_2026-10-18.json"],
+    "result": "Departure squared growth coarse3.901254 versus fine3.893643 (-0.1951%); field L2 difference1.8288%. t3.4 actual RHS/HG generator budget has pressure and gravity/reference driving, hydro remainder and HG damping inner response; total instantaneous generator+3.15637e-7. Not finite split-map closure.",
+    "next": "Maintain new refined continuation session23450 to t3.4 and original62605 to t4. Analyze matched checkpoints as saved. Original long runs remain live; no physical stability pass."
+  },
+  "coupled_t3p4_mechanism_2026_10_18": {
+    "status": "matched_time_gravity_and_pressure_geometry_diagnostics_complete_refined_dt_running",
+    "report": "coupled_t3p4_mechanism_2026-10-18.md",
+    "result": "At t3.4 hydro departure squared growth79.6249 versus gravity1.02864;95.23% of departure response in initial r.3-.5. Inner pressure-response power positive; explicit geometry component32.5%, seed-t2 isentropic component97.9% in a separate split. Not full power budget or converged mode.",
+    "amplitude_t2p6": "Completed half-amplitude growth3.898539 versus coarse3.901254; field L2 difference1.42177%. Fine-dt final still pending.",
+    "next": "Preserve running refined-to-t2p6 and coarse-to-t4 calculations. Complete t2p6 analysis before any refined continuation. Runner now accepts --source/--root/--coarse-step and checks every completed source endpoint before launching; no new continuation submitted this turn.",
+    "long_runs_observed_utc": "2026-10-17T21:09:18.499174+00:00",
+    "long_runs": "Live actual processes: baseline t15.968895, fixedHG t15.693690, from-t0 dtcap t12.743986. Latest accepted rows finite; this does not establish physical accuracy."
+  },
+  "coupled_t2p4_convergence_2026_10_18": {
+    "status": "intermediate_amplitude_and_dt_comparisons_completed",
+    "report": "coupled_convergence_2026-10-18.md",
+    "evidence": "canonical_coupled_t2p4_convergence_2026-10-18.json",
+    "result": "Departure squared growth coarse1.846103, half-amplitude1.846756, half-dt1.847030. Norm growth robust at ~.05%, but half-dt field L2 differs1.709%; not formal mode/long-time convergence.",
+    "next": "Maintain93108/62605. Analyze refined final t2.6004059 against coarse checkpoint423 when complete."
+  },
+  "coupled_t2p4_half_amplitude_2026_10_18": {
+    "status": "intermediate_amplitude_check_completed_fine_dt_pending",
+    "evidence": "canonical_coupled_t2p4_half_amplitude_2026-10-18.json",
+    "report": "coupled_convergence_2026-10-18.md",
+    "result": "At duration.3975 departure squared norm ratio half/full amplitude1.000354; field relative L2 difference1.090%. Growth norm persists at half amplitude; time convergence pending.",
+    "next": "When fine branches produce checkpoint502, analyze refined root with --coarse-step343 --intermediate (without --amplitude-only). Maintain93108/62605."
+  },
+  "coupled_pressure_response_2026_10_18": {
+    "status": "instantaneous_pressure_response_analyzed",
+    "report": "coupled_pressure_response_2026-10-18.md",
+    "evidence": "canonical_coupled_pressure_response_2026-10-18.json",
+    "result": "t2.8 inner delta_u dot delta_Fpressure +1.707e-8:97.38% pressure-value,2.62% explicit geometry-operator. Seed-entropy isentropic +1.730e-8; post-t2 entropy excess -2.296e-10. Positive displacement restoring projection overall. Not full response-power budget or causal fractions.",
+    "next": "Maintain62605/93108 and compare refined responses before proposing physics changes; distinguish transient shear/acoustic exchange from unstable modes."
+  },
+  "coupled_t2p8_regions_2026_10_18": {
+    "status": "intermediate_response_localized_refinement_pending",
+    "report": "coupled_t2p8_regions_2026-10-18.md",
+    "evidence": ["canonical_coupled_t2p8_comparison_2026-10-18.json", "canonical_coupled_t2p8_regions_2026-10-18.json"],
+    "result": "At t2.8 departure squared response hydro/gravity8.53081;91.25% of hydro departure response lies at initial r.3-.5, r<.2 velocity response damps. Association with inner shear band, not causal proof or monotonic inward trend.",
+    "next": "Maintain62605/93108; inspect refined convergence at matching horizons before adopting an instability or mechanism claim."
+  },
+  "coupled_t2p6_comparison_2026_10_18": {
+    "status": "intermediate_checkpoint_analyzed_convergence_pending",
+    "report": "coupled_t2p4_comparison_2026-10-18.md",
+    "evidence": "canonical_coupled_t2p6_comparison_2026-10-18.json",
+    "result": "At duration.5975 circular-departure squared response hydro/gravity4.05141; even/odd velocity.002512. Fluid response exceeds orbit-only comparison, but transient/mode and convergence unresolved.",
+    "next": "Complete fine dt46690 and restart28065 checks, then resume refined endpoints to at least current comparison horizon. Keep t4 continuation62605 alive."
+  },
+  "coupled_t2p4_comparison_2026_10_18": {
+    "status": "intermediate_checkpoint_analyzed_convergence_pending",
+    "report": "coupled_t2p4_comparison_2026-10-18.md",
+    "evidence": "canonical_coupled_t2p4_comparison_2026-10-18.json",
+    "result": "At duration.3975, circular-departure squared response hydro/gravity1.87814, versus1.00481 at.1 and1.08419 at.1975. Not yet a converged instability claim.",
+    "next": "Finish and analyze convergence batch46690, then continue its existing endpoints to duration.3975. Maintain t4 continuation62605."
+  },
+  "coupled_convergence_2026_10_18": {
+    "status": "initial_convergence_completed_refined_continuation_running",
+    "report": "coupled_convergence_2026-10-18.md",
+    "root": "/gpfs/kjhan/LagForce/Codex_coupled_convergence_20261018",
+    "session_id": 46690,
+    "cases": ["amplitude_plus", "amplitude_minus", "fine_reference", "fine_plus", "fine_minus"],
+    "target_time": 2.2004059177633986,
+    "amplitude_evidence": "canonical_coupled_half_amplitude_2026-10-18.json",
+    "amplitude_result": "Circular-departure central field differs.752% in L2; squared norm differs.0564%. Restart segmentation differs, so attribution remains qualified.",
+    "restart_control_session": 28065,
+    "restart_control_root": "/gpfs/kjhan/LagForce/Codex_coupled_restart_control_20261018",
+    "restart_control_result": "Completed both +/- cases: uninterrupted79 and restarted40+39 compared reader fields bitwise equal. This restart does not cause central-response differences at t2.2004059.",
+    "restart_control_evidence": "canonical_coupled_restart_control_2026-10-18.json",
+    "convergence_evidence": "canonical_coupled_convergence_2026-10-18.json",
+    "fine_dt_result": "Departure central field relative L2 difference1.552%; squared norm ratio.998976. Percent-level field sensitivity remains; restart control pending.",
+    "refined_continuation_session": 93108,
+    "refined_continuation_root": "/gpfs/kjhan/LagForce/Codex_coupled_refined_to_t2p6_20261018",
+    "next": "Maintain62605 and93108. After refined continuation completes, analyze with --coarse-step423 at t2.6004059. Restart control28065 completed successfully."
+  },
+  "coupled_t2p2_comparison_2026_10_18": {
+    "status": "intermediate_checkpoint_analyzed_continuation_running",
+    "report": "coupled_t2p2_comparison_2026-10-18.md",
+    "evidence": "canonical_coupled_t2p2_comparison_2026-10-18.json",
+    "result": "At actual duration.1975, circular-departure squared response hydro/gravity1.08419; raw velocity/displacement ratios remain below gravity control. No instability proof.",
+    "session_id": 62605,
+    "next": "Keep t4 continuation running; independent half-amplitude and half-hydro-dt checks at completed duration.1975. Use exact output times, not nominal .2 grid."
+  },
+  "coupled_orbit_series_2026_10_18": {
+    "status": "gravity_control_completed_hydro_running",
+    "report": "coupled_orbit_series_2026-10-18.md",
+    "evidence": "canonical_coupled_orbit_series_2026-10-18.json",
+    "result": "At t4 gravity-only raw velocity/displacement squared ratios17.49/18.83 while circular-departure ratio.90438; two dt controls agree within1e-8 in ratios.",
+    "hydro_session_id": 62605,
+    "checkpoint_analyzer": "analyze_coupled_onset_checkpoints.py",
+    "next": "Compare completed common hydro checkpoints with matching gravity-control durations; phase-sensitive norms alone are insufficient."
+  },
+  "circular_pressure_forcing_2026_10_18": {
+    "status": "diagnostic_completed_continuation_started",
+    "report": "circular_pressure_forcing_2026-10-18.md",
+    "evidence": "canonical_circular_pressure_forcing_2026-10-18.json",
+    "result": "t4 actual inner pressure acceleration26.5 times circular-reference value;94.5% of pressure work is isentropic. Evolved geometry response important before late entropy dominance. Not causal fractions.",
+    "continuation_root": "/gpfs/kjhan/LagForce/Codex_coupled_onset_to_t4_20261018",
+    "session_id": 62605,
+    "next": "Monitor the same coupled continuation through t4; preserve .2 checkpoints. Compare with gravity-only response over matching duration."
+  },
+  "coupled_orbit_control_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "report": "coupled_orbit_control_2026-10-18.md",
+    "evidence": ["canonical_coupled_orbit_control_2026-10-18.json", "canonical_coupled_orbit_pressure_proxy_2026-10-18.json"],
+    "result": "Gravity-only response has comparable or larger velocity/displacement growth. Isentropic geometric acoustic proxy1.54382 versus hydro1.49624. Prior coupled growth does not establish a hydrodynamic instability.",
+    "next": "Quantify exact-circular-reference geometric pressure forcing versus actual early trajectory. Half-amplitude/hydro dt checks remain pending if coupled tangent used quantitatively."
+  },
+  "coupled_onset_seed_2026_10_18": {
+    "status": "completed_first_coupled_response",
+    "report": "coupled_onset_seed_2026-10-18.md",
+    "root": "/gpfs/kjhan/LagForce/Codex_coupled_onset_seed_20261018",
+    "result": "Position/velocity +/- seeds with consistent isentropic geometry. Solver initial volumes/pressure agree within2.4e-14. Initial ID-type-bit analyzer bug corrected without rerunning probes.",
+    "evolution_report": "coupled_onset_evolution_2026-10-18.md",
+    "evolution_evidence": "canonical_coupled_onset_evolution_2026-10-18.json",
+    "evolution_result": "All40 steps exit0. Squared circular-departure response1.08275, acoustic1.49624, combined with displacement1.31170. Raw response includes orbital phase/shear effects; no instability proof.",
+    "next": "Half-amplitude and timestep refinement; kinematic orbit variational control. Preserve completed reference and all checkpoints."
+  },
+  "pressure_entropy_history_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "report": "pressure_entropy_history_2026-10-18.md",
+    "evidence": "canonical_pressure_entropy_history_2026-10-18.json",
+    "result": "Inner instantaneous entropy-excess pressure work fraction: t2 -3.05%, t6 +41.06%, t10 +88.72%. Early isentropic excitation precedes late entropy-dominated pressure feedback. Not cumulative heat fractions or unique causality.",
+    "next": "Early coupled position/pressure trajectory response; velocity-only tangent damped. Preserve original long simulations and historical failure gate."
+  },
+  "orbit_work_robustness_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "report": "orbit_work_robustness_2026-10-18.md",
+    "evidence": "canonical_orbit_work_robustness_2026-10-18.json",
+    "result": "OMP1/4 and forced final rejection/retry: compared endpoint fields bitwise equal, accepted RK work values exact. Rejected four-stage trial discarded by parser.",
+    "scope": "One MPI1 accepted step; no long-term physics or CUDA hydro validation."
+  },
+  "orbit_work_interval_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "root": "/gpfs/kjhan/LagForce/Codex_orbit_work_interval_20261018",
+    "session_id": 79130,
+    "pid": 3070553,
+    "start_time": 2.1054059177634006,
+    "target_time": 2.2054059177634007,
+    "report": "orbit_work_interval_2026-10-18.md",
+    "analyzer": "analyze_orbit_work_interval.py",
+    "result": "40 steps exit0 finite/no retries. Departure energy +12.956%; hydro-minus-TCF and shear positive, TCF and HG negative at every step. Closure residual0.04082% of net increase.",
+    "evidence": "canonical_orbit_work_interval_2026-10-18.json",
+    "next": "Distinguish entropy-generated pressure from isentropic geometric pressure along early trajectory with explicit pressure/non-pressure accounting. Preserve endpoint265; long physics unresolved."
+  },
+  "orbit_work_probe_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "report": "orbit_work_probe_2026-10-18.md",
+    "evidence": "canonical_orbit_work_probe_2026-10-18.json",
+    "result": "Opt-in stage work audit: on/off reader fields bitwise equal. TCF/HG damp, hydro-minus-TCF/shear supply departure. Half dt reduces closure residual from1.17e-15 to3.66e-17.",
+    "next": "Extend early-growth budget from saved endpoint; verify remaining hydro forces before identifying hydro-minus-TCF as pressure. Retry filtering and MPI instrumentation still unvalidated. Long-term physical stability unresolved."
+  },
+  "onset_operator_budget_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "report": "onset_operator_budget_2026-10-18.md",
+    "evidence": "canonical_onset_operator_budget_2026-10-18.json",
+    "result": "Global departure delta +1.15166e-10, directly measured HG -2.95625e-11, RK by subtraction +1.44729e-10. HG heats but directly damps departure. Four inner endpoint membership changes invalidate naive regional subtraction.",
+    "next": "Accepted-stage pressure/TCF/shear work with circular-reference position derivative and finite-step closure residual; use existing endpoint for prospective measurements."
+  },
+  "onset_velocity_tangent_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "report": "onset_velocity_tangent_2026-10-18.md",
+    "evidence": "canonical_onset_velocity_tangent_2026-10-18.json",
+    "root": "/gpfs/kjhan/LagForce/Codex_onset_velocity_tangent_20261018",
+    "result": "t2 to t2+.1: reference inner departure energy ratio1.16060; added velocity-pattern velocity/acoustic norm ratio.961746. No immediate self-amplification established for this velocity-only seed.",
+    "limitations": "No half-amplitude or timestep convergence. Positive diagnostic omits displacement/entropy. Baseline and tangent metrics have different supports. Historical t6-10 physical failure unresolved.",
+    "next": "Attribute reference departure growth to pressure, shear, TCF and split HG over this same interval; test coupled state response indicated by that budget. Preserve original long runs."
+  },
+  "pressure_feedback_followup_2026_10_18": {
+    "status": "completed_diagnostic_only",
+    "root": "/gpfs/kjhan/LagForce/Codex_pressure_followup_20261018",
+    "runner": "Docs/run_pressure_seed_followup.py",
+    "analyzer": "Docs/analyze_pressure_seed_followup.py",
+    "preserve_existing_outputs": true,
+    "preceding_evidence": [
+      "canonical_initial_pressure_step_2026-10-18.json",
+      "canonical_circular_kinematic_volumes_2026-10-18.json",
+      "canonical_pair_force_hessian_controls_2026-10-18.json",
+      "canonical_pair_tangent_resume_2026-10-18.json",
+      "canonical_pressure_seed_response_2026-10-18.json"
+    ],
+    "interpretation": "Local velocity seed damps in actual solver despite negative restricted thermal Hessian; distributed pressure seed nearly persists. No physical stability cure established.",
+    "report": "pressure_seed_followup_2026-10-18.md",
+    "result": "Short norm rise reproduced at half dt; .020 norm ratio .9994195. No sustained amplification established for this seed."
+  },
+  "mpi_multistep_2026_10_18": {
+    "report": "mpi_multistep_2026-10-18.md",
+    "result": "8 actual steps, MPI4 vs serial listed fields bitwise equal; 48 consecutive phases",
+    "remaining": "Measured ownership crossings, repeated/intermediate rejection, CUDA hydro, long-term physics"
+  },
+  "mpi_coupled_recovery_2026_10_18": {
+    "report": "mpi_coupled_recovered_2026-10-18.md",
+    "next": "Repeated real coupled steps; do not redo static MPI input/exchange gates.",
+    "physical_stability": "unproven"
+  },
+  "active_tcf_dependency_map_2026_10_18": {
+    "report": "active_tcf_dependency_map_2026-10-18.md",
+    "evidence": "canonical_active_face_z_dependency_2026-10-18.json",
+    "critical_finding": "FACE_Z=1 overwrites pressure-helper impedance. Earlier generic/TCF Pstar differences are not direct activeQ differences. AppliedQ uses face thermodynamic reconstruction+QBP/chi/minmod.",
+    "readback": "Four saved221159-face dumps: Q identity relativeL2~1.9e-7 at printedprecision;heat>=0; mostactivefaces use Zq differentfromlegacyZ.",
+    "next": "Isolate active face algebra with recordedinputs forCPU/OMP/CUDA comparison; verifycache/ownership/reconstruction separately before enablingGPU. Reuse priorheat tests.",
+    "limits": "PreHGface algebra, nofullforceGPUport, MPIownership orlongtimephysicsachievement."
+  },
+  "active_tcf_path_audit_2026_10_18": {
+    "report": "active_tcf_path_audit_2026-10-18.md",
+    "evidence": "canonical_active_tcf_pressure_2026-10-18.json",
+    "critical_scope": "ActiveTCF force is CPU/OpenMP: gpu_enabled0,OMP8; GPUentry rejectsTCF/DYN_W2. CPUcaller also restricts equalW. GenericHLLC helperCUDA parity is not activeTCF parity.",
+    "finding": "10736CPU TCF samples:9940positive/796zero; only10 differ fromgenericP by>1e-12,max4.425e-6, not308. Pstar feeds impedanceZ, not fullforce directly.",
+    "next": "Trace complete Z/QBP/work dependencies and existing tests. Preserve long CPUphysics reference; require full same-equation CUDA/MPI validation before objective completion.",
+    "limits": "No new full solver port, physical trajectory fix, equal-weight Laguerre extension or long-time achievement."
+  },
+  "existing_interface_backend_2026_10_18": {
+    "report": "existing_interface_backend_2026-10-18.md",
+    "evidence": [
+      "canonical_existing_interface_backend_2026-10-18.json",
+      "canonical_existing_interface_transforms_2026-10-18.json"
+    ],
+    "finding": "10736 actual midpoint donor samples+10controls: measuredOMPteams1/4 andCUDA bitwise parity. Boost/reversal errors<=1.78e-15. Generic expansion predicate catches788samples,308 below separateTCF vacuum threshold.",
+    "decision": "Active processes have GFS_TCF/QBP/FACE_Z=1 andphase1=1. Trace/test actualTCF path before attributing genericguard to current instability; do not change production on helper parity alone.",
+    "limits": "Generic helper-only, actual samplesphase1=0, not full caller/force/MPI or physical accuracy test."
+  },
+  "existing_contact_backend_2026_10_18": {
+    "report": "existing_contact_backend_2026-10-18.md",
+    "evidence": "canonical_existing_contact_backend_2026-10-18.json",
+    "result": "Existing extracted CPU/CUDA HLLC contact-state helpers on4096 exact contacts: bitwise agreement; P error1.70e-21,vn1.39e-17. OpenMP4 requested but actual team size not instrumented.",
+    "decision": "Reuse existing helper as comparison target, not complete ALE flux. Instrument teams and evaluate actual unequal donor states/branches before broader backend claim.",
+    "limits": "postype double,phase1=0,FMAoff; helper-only contact subset, not full force/flux, MPI, original reduction or long-time stability."
+  },
+  "moving_contact_flux_2026_10_18": {
+    "report": "moving_contact_flux_2026-10-18.md",
+    "evidence": "canonical_moving_contact_flux_2026-10-18.json",
+    "finding": "Manufactured exact contacts on all5371/5365segments;2540/2524 relative-speed sign crossings split. Analytic/quadrature agreement3.8e-19, orientation/boost/comoving controls<=4e-17. Pressure work remains at zero mass flux.",
+    "decision": "Compare existing general interface code against exact-contact controls. Comoving speed, not zero weights alone, yields zero mass flux; do not claim original-model reduction.",
+    "limits": "Modified common P/un control states, constant segment primitives; no general Riemann solution, residual closure, full moments, backend/MPI or physical trajectory."
+  },
+  "certified_face_segments_2026_10_18": {
+    "report": "certified_face_segments_2026-10-18.md",
+    "evidence": "canonical_certified_face_segments_2026-10-18.json",
+    "finding": "Lower-envelope distance partition covers3705/3705 selected faces for both fractions;5371/5365segments,1239/1233 discontinuous pairs,max3/face. Certificate residual<=6.93e-17, no outside-patch donors.",
+    "decision": "Use stored two-sided segments for exact contact/uniform controls and general interface physics; no arbitrary donor selection.",
+    "limits": "Selected internal geometry only, floating tolerance, no physical flux, full domain, reduction, backend/MPI or long-time proof."
+  },
+  "one_sided_face_probes_2026_10_18": {
+    "report": "one_sided_face_probes_2026-10-18.md",
+    "evidence": "canonical_one_sided_face_probes_2026-10-18.json",
+    "finding": "All945/955 excluded faces have stable expected side donors at three interior probes. Only913/922 pass endpoint nearest-owner certificate;32/33 contain other donor portions near ends.",
+    "decision": "Split at donor bisector crossings and certify two-sided subsegments. Interior/midpoint probing alone is insufficient; no arbitrary whole-face owner choice.",
+    "limits": "Geometry classification only; interface physics, global persistent reduction, full flux/backend/MPI and long-time goal remain open."
+  },
+  "excluded_face_classification_2026_10_18": {
+    "report": "excluded_face_classification_2026-10-18.md",
+    "evidence": "canonical_excluded_face_classification_2026-10-18.json",
+    "finding": "All945/955 excluded faces have both endpoint weights/rates exactlyzero and lie r~.498-.609.921/935 overlap donor intervals;24/20 undercovered. Normal velocity jumps up to.08865.",
+    "decision": "Retained-face success omits important density-interface cases. Build two-sided contact/general interface traces and fix undercoverage separately; no arbitrary donor or zero-flux switch.",
+    "limits": "Local pairwise instantaneous zero is not global persistent reduction. No shock diagnosis, complete interface solver, backend/MPI or physical stability claim."
+  },
+  "moving_compact_face_2026_10_18": {
+    "report": "moving_compact_face_2026-10-18.md",
+    "evidence": "canonical_moving_compact_face_2026-10-18.json",
+    "finding": "Actual generator velocities plus specifiedWdot give affine normal face speed. I0/I1 contraction vs direct error<=5.20e-19, kinematic identity<=4.35e-17. Shared-owner retained-face balance<=1.20e-18.",
+    "decision": "Resolve coincident donor-boundary two-sided interface states/pressure before full mesh claim; no arbitrary donor selection.",
+    "limits": "2760/2750 of3705 faces retained;945/955 excluded. Prescribed rate, advective-only, no full RHS, pressure work, MPI parity, production reduction or physical evolution."
+  },
+  "compact_face_trace_2026_10_18": {
+    "report": "compact_face_trace_2026-10-18.md",
+    "evidence": "canonical_compact_face_trace_2026-10-18.json",
+    "finding": "Retained saved faces require mean1.65 donor segments inner/1.14edge, max3. Order4 density integration relative flux L2 error<=2.284e-10, order8<=2.113e-12 vs12.",
+    "decision": "Evaluate I0,I1 segment representation with common affine moving-face speed before adding more volume moments. Maintain explicit topology/ownership/thermal/reduction gates.",
+    "limits": "~24percent ambiguous faces excluded, static known donor field, no persistence/performance or full physical/common-flux/backend/MPI proof."
+  },
+  "face_residual_expansion_2026_10_18": {
+    "report": "face_residual_expansion_2026-10-18.md",
+    "evidence": "canonical_face_residual_expansion_2026-10-18.json",
+    "finding": "Known donor-minus-affine residual: linear term restores mass, quadratic restores momentum, cubic needed for K. After quadratic correction K relative difference .752/.623 inner and .989/.956 edge. Full algebra closes<=3.26e-19 absolute.",
+    "decision": "Compare compact donor face representation before expanding volume-moment hierarchy. Face residual has nonzero local mean; do not identify its cubic term blindly with central skew.",
+    "limits": "Diagnostic known donor residual, frozen frame and retained faces; no predictive common flux, physical closure, reduction, backend/MPI or long-time validation."
+  },
+  "covariance_face_trace_2026_10_18": {
+    "report": "covariance_face_trace_2026-10-18.md",
+    "evidence": "canonical_covariance_face_trace_2026-10-18.json",
+    "finding": "Constant specific R/m, zero third central moment: inner K flux relative difference improves .979->.944 and .883->.831, edge remains~1. Mass differences unchanged .850/.713.",
+    "decision": "Not a validated physical closure. Diagnose spatial mean trace before adding more velocity moments; covariance alone cannot repair mean mass flux.",
+    "limits": "Conditional one-sided frozen-frame donor comparison; no common interface flux, full cell balance, physical trajectory, backend/MPI or long-time claim."
+  },
+  "residual_stress_closure_gate_2026_10_18": {
+    "report": "residual_stress_closure_gate_2026-10-18.md",
+    "evidence": "canonical_residual_stress_scale_2026-10-18.json",
+    "finding": "Saved N8 hybrid residual stress scale/P inner median.0956,p95.456,max3.496;9inner cells and1edge exceed1. Strong anisotropy.",
+    "decision": "Do not treat residual covariance as passive energy, arbitrary heat or isotropic pressure. Define common face residual transport/third-moment closure and work compatibility with approved reduction before physical integration.",
+    "limits": "Volume tensor scale only, gamma5/3 explicit assumption; no actual face stress/force measurement or production physics claim."
+  },
+  "cold_interface_remap_2026_10_18": {
+    "report": "cold_interface_remap_2026-10-18.md",
+    "evidence": "canonical_cold_interface_remap_2026-10-18.json",
+    "finding": "rho contrast100, constant thermal density1e-5, canonical circular samples: retained Pi preserves pressure within3.25e-11 relative. Hypothetical mean-only kinetic subtraction gives max pressure excess4.073 even at64^2.",
+    "decision": "Pressure fidelity requires explicit internal kinetic bookkeeping for new remap; design physical covariance transport and equal-weight reduction before new physical trajectory.",
+    "limits": "Synthetic one-remap conditional interpretation, not original-code bug, measured AV heating, coupled solver validation or long-time cure."
+  },
+  "irregular_circular_refinement_2026_10_18": {
+    "report": "irregular_circular_refinement_2026-10-18.md",
+    "evidence": "canonical_irregular_circular_refinement_2026-10-18.json",
+    "finding": "Perturbed2D N16/32/64 uniform-density canonical circular velocity one-remap: final-pair residual energy exponents2.001 inner/1.970 outer. Point change improves with resolution but recovery is not closer than mean in these cases.",
+    "decision": "Spatial decay extends beyond strip symmetry; previous40percent point-recovery reduction is case-specific. Assess canonical density-interface/pressure relevance before physical evolution.",
+    "limits": "Single remap, synthetic grids, uniform density, W~h^2; no production IC replacement, physical feedback, full reduction, backend/MPI or long-time stability."
+  },
+  "shear_remap_refinement_2026_10_18": {
+    "report": "shear_remap_refinement_2026-10-18.md",
+    "evidence": "canonical_shear_remap_refinement_2026-10-18.json",
+    "finding": "Analytic strip shear N16-128: point-init affine remap residualK scales~h^1.993, totalinternalK~h^1.990. Exact-affine control preserves v and zero residual. Whole-domain v h^1.5 is boundary dominated, interior~roundoff.",
+    "decision": "Time-step plateau is not spatial nonconvergence. Preserve cold point energy convention; extend relevance checks to irregular geometry/curved flow before production adoption.",
+    "limits": "Refine y only, W amplitude~h^2, analytic strips; not irregular Kepler, coupled physics, backend/MPI or long-time proof."
+  },
+  "hybrid_generator_recovery_2026_10_18": {
+    "report": "hybrid_generator_recovery_2026-10-18.md",
+    "evidence": "canonical_hybrid_generator_recovery_2026-10-18.json",
+    "finding": "N8 recovered generator change RMS .00025372 vs mean .00042321; inner .00125494 vs .00211872. Internal K/U=.0405659 remains ~89percent residual, U globally conserved~1.53e-13.",
+    "decision": "Separate point recovery from mean-velocity comparison. Do not call either physical trajectory improvement. Test spatial convergence on controlled shear before expanding production closure.",
+    "limits": "Saved pure-remap states, no steering/forces or new evolution. Residual physical closure and equal-weight reduction unresolved."
+  },
+  "hybrid_affine_path_2026_10_18": {
+    "report": "hybrid_affine_path_2026-10-18.md",
+    "evidence": "canonical_hybrid_affine_path_2026-10-18.json",
+    "result": "N4/N8 complete full fixed weight path, positive density, R within tolerance, moment drift<=1.33e-13, represented L conserved~1e-13. At most13/1590 exponential cells. Internal K/U remains .04057 vs piecewiseconstant .0427.",
+    "decision": "Representation/conservation gate passes but mixing improvement only~5percent. Do not adopt as Kepler cure or expand into production until physical relevance, spatial convergence and equal-weight reduction are established.",
+    "limits": "Uniform lift, unused potential, experimental residual covariance; no coupled physics or CUDA/OpenMP/MPI parity/full stability claim."
+  },
+  "positive_exponential_density_2026_10_18": {
+    "report": "positive_exponential_density_2026-10-18.md",
+    "evidence": "canonical_positive_exponential_density_2026-10-18.json",
+    "finding": "All five rejected density states admit positive exponential-quadratic fits of same m,q,Q; minimum rho/mean .213-.315. Order16 fits checked by32 have error<=5.83e-15; order8 checked by16 fails at up to2.79e-8.",
+    "decision": "Test hybrid positive quadratic/exponential reconstruction on same path with independent quadrature and aggregate conservation gates. Do not infer fit accuracy from optimizer convergence alone.",
+    "limits": "Five states only; no completed path, physical closure, original-model reduction, backend/MPI parity or long Kepler validation."
+  },
+  "quadratic_affine_path_2026_10_18": {
+    "report": "quadratic_affine_path_2026-10-18.md",
+    "evidence": "canonical_quadratic_affine_path_2026-10-18.json",
+    "result": "Repeated moment-aware quadratic density/affine velocity path rejects on negative density after2transitions atWfraction.125 for N4 and3 at.09375 for N8. Failed cells have positive R/U; aggregate moment drift<=2.16e-14. Neither round trip completed.",
+    "decision": "Reject unrestricted quadratic density for this path. Test positive density representation matching same moments on saved rejected states, with independent quadrature convergence; do not blindly reduce step.",
+    "limits": "Diagnostic remap only; residual covariance model and physical force/flux/reduction remain unvalidated. No backend/MPI or long-time claim."
+  },
+  "quadratic_density_reconstruction_2026_10_18": {
+    "report": "quadratic_density_reconstruction_2026-10-18.md",
+    "evidence": "canonical_quadratic_density_reconstruction_2026-10-18.json",
+    "finding": "Quadratic density matching actual m,q,Q is continuously positive on all1590cells for fractions .0625/.03125, minimum density/mean .13964/.48460. Fractions .25/.125 fail8/3cells. Moment residual<=4.45e-16.",
+    "decision": "Test repeated moment-aware remap on same fixed path with smaller increments and per-transition continuous density/R positivity gates. No clipping of failed larger-step fits.",
+    "limits": "First-remap density reconstruction only; no full path, physical flux, production reduction, MPI or long-time stability."
+  },
+  "remap_true_spatial_2026_10_18": {
+    "report": "remap_true_spatial_2026-10-18.md",
+    "evidence": "canonical_remap_true_spatial_2026-10-18.json",
+    "result": "Same first remaps with true transported q,Q have zero R-PSD failures in all four cases. Reduced state agrees with failed uniform reset within1.518e-18; min R eigenvalue -8.96e-19. Boost (7,-3) changes C<=1.735e-18,R<=3.146e-17,G<=2.102e-11.",
+    "decision": "Keep actual spatial moments and a positive density realization. Compare compact moment-preserving density reconstruction against overlap fragments before repeated remap.",
+    "limits": "First-remap state audit; no complete path, production reduction, force closure, MPI/backend or long-term stability proof."
+  },
+  "remap_affine_path_2026_10_18": {
+    "report": "remap_affine_path_2026-10-18.md",
+    "evidence": "canonical_remap_affine_path_2026-10-18.json",
+    "result": "Uniform-density projection preserving m,p,D,Pi,U fails R positivity after first remap for every subdivision count 1,2,4,8; 238,227,212,194 failing cells. Worst negative eigenvalues 4.91e-5 to 1.66e-6 in magnitude, far beyond tolerance.",
+    "decision": "Reject resetting spatial mass moments while retaining D. Restore consistent q,Q in existing 17-state interpretation before further reconstruction tests. No blanket rejection of affine recovery.",
+    "limits": "Reduced-state diagnostic; full true spatial moments not saved here. No production edits or physical trajectory/backend/MPI validation."
+  },
+  "remap_fixed_path_2026_10_18": {
+    "report": "remap_fixed_path_2026-10-18.md",
+    "evidence": "canonical_remap_fixed_path_2026-10-18.json",
+    "result": "Same 0->.25->0 path with 1,2,4,8 subdivisions per leg retains finite mixing Kinternal/U=.04256-.04270. Reconstructed L relative change ~-1.659e-5 despite auxiliary scalar L ledger conservation ~1e-13 absolute.",
+    "decision": "Require angular momentum of reconstructed spatial momentum, not just a conserved ledger. Compare cross-moment-constrained reconstruction on the same path.",
+    "limits": "Uniform lift and piecewise-constant projection diagnostic only; not original point Lz/Phi reduction, physical RK4 evolution, MPI or full solver stability."
+  },
+  "remap_cycles_2026_10_18": {
+    "report": "remap_cycles_2026-10-18.md",
+    "evidence": "canonical_remap_cycles_2026-10-18.json",
+    "finding": "At fixed total weight variation, piecewise-constant forward/reverse overlap projection yields internal K/U=.04256-.04260 for 1,4,16,64 cycles. U retained separately; covariance is not heat.",
+    "decision": "Small remap increments alone do not remove accumulated projection mixing in this sequence. Test reconstruction along a common fixed weight path with angular momentum compatibility.",
+    "limits": "Uniform lift, not prior fitted density; no point Lz/Phi preservation proof, physical evolution, full solver reduction or backend/MPI claim. Different reversal counts are not temporal convergence."
+  },
+  "remap_small_weight_limit_2026_10_18": {
+    "report": "remap_small_weight_limit_2026-10-18.md",
+    "evidence": [
+      "canonical_remap_small_weight_scaling_2026-10-18.json",
+      "canonical_remap_small_weight_backend_2026-10-18.json"
+    ],
+    "finding": "Three smaller finite remaps retain positive mass/U and CPU1/OMP4/CUDA bitwise atom parity. Mass change and internal K scale approximately linearly with weight displacement; final exponents 1.00004 and .99801.",
+    "correction": "Previous large stationary-face trace mismatch does not reject affine methods as a class. Exact donor discontinuity preservation is not required for convergence.",
+    "next": "Assess cumulative remap/projection effect with explicit internal kinetic bookkeeping. Single-remap limit does not prove full original-model reduction or long-time stability."
+  },
+  "remap_face_trace_2026_10_18": {
+    "evidence": "canonical_remap_face_trace_2026-10-18.json",
+    "report": "remap_face_trace_2026-10-18.md",
+    "result": "Reconstructed saved t2 donor fragments on retained weighted faces. Inner relative kinetic flux L2 difference affine versus donor .979/.883 for fractions .25/1. Quadrature8/12 absolute difference <=6.64e-15.",
+    "decision": "Affine-only recovered trace does not retain remapped velocity structure; do not adopt as complete closure. Specify residual-aware common face flux and original-model reduction before integration.",
+    "limits": "Frozen receiver-mean frame, same donor density, one-sided retained faces; excludes ambiguous donor boundaries. Representation comparison, not physical error or original-solver energy loss."
+  },
+  "remapped_moment_recovery_2026_10_18": {
+    "evidence": "canonical_remapped_moment_recovery_2026-10-18.json",
+    "decision_record": "remapped_moment_closure_gate_2026-10-18.md",
+    "finding": "Conditional conservative remap retains positive thermal energy and residual covariance PSD to roundoff; affine recovery captures only 10-23 percent of inner internal kinetic energy and 4-8 percent at edge.",
+    "decision": "Do not integrate affine-only flux for residual-bearing states or thermalize residual by fiat. Compare donor-subcell face reconstruction against moment trace before further component expansion.",
+    "limits": "Second moments do not determine third-moment flux. No original-model reduction or long-time stability established."
+  },
+  "restart_affine_energy_gate_2026_10_18": {
+    "evidence": "canonical_restart_affine_energy_2026-10-18.json",
+    "decision_record": "restart_affine_energy_gate_2026-10-18.md",
+    "finding": "Actual t0 point momenta retained while adding a resolved neighbor-affine internal velocity field requires K_aff/U_total=.3496 inner,6.9234 edge,.8069 core. At fixed total energy U becomes negative in390/390edge cells and22.78percent core mass.",
+    "decision": "Reject naive checkpoint conversion; do not wire experimental moment components into the original RHS before positive conservative mapping and approved reduction are established.",
+    "limits": "Hypothetical uniform-cell affine replacement, not a physical heating measurement or impossibility proof for all closures. Cross/residual basis terms can cancel added energy but must remain in the represented field and transport."
+  },
+  "pressure_moment_rate_2026_10_18": {
+    "code": "Voro/Laguerre/moment_pressure_rate.h",
+    "evidence": "canonical_pressure_rate_backend_2026-10-18.json",
+    "result": "68986 face/source contributions on11498 cells; CPU1/OMP4/CUDA bitwise equal with FMA disabled. Assembled pressure-gradient moment balance max volume-scaled error9.43e-16; Udot=-integral P div(v) error4.71e-16.",
+    "scope": "Manufactured smooth affine pressure/velocity, uniform density, closed polygon normals. No interface Riemann solver, nonlinear time integration, positivity or original-model reduction.",
+    "geometry_followup": "canonical_pressure_normal_audit_2026-10-18.json: generator/edge normal discrepancy .54 only on four ~4e-11 length faces. For A/d>1e-6 maximum discrepancy4.26e-13. Initial mixed-normal integration audit failed2.07e-10; diagnostic now uses consistent closed-polygon normals, no production normal changed."
+  },
+  "material_source_reynolds_2026_10_18": {
+    "code": "Voro/Laguerre/moment_material_drift.h md_material_rate",
+    "evidence": [
+      "canonical_affine_reynolds_balance_2026-10-18.json",
+      "canonical_material_rate_backend_2026-10-18.json"
+    ],
+    "result": "11498 closed t0 cells with manufactured steady simple shear: material source plus relative-face transport matches direct moving-boundary Reynolds derivative, max volume-normalized residual2.65e-13. CPU1/OMP4/CUDA material source matches independent array reference exactly.",
+    "reuse": "Instantaneous derivative of existing exact material drift; no old drift behavior changed.",
+    "limits": "No finite-time test, gravity, nonuniform-pressure closure, shared-face global accumulation, MPI or original-model reduction proved. Original production RHS untouched."
+  },
+  "affine_moment_backend_2026_10_18": {
+    "code": "Voro/Laguerre/affine_moment_flux.h",
+    "evidence": "canonical_affine_moment_backend_2026-10-18.json",
+    "reuse": "Uses existing weight_remap_moments.h wm_atom and 17-state layout; signed atoms represent flux, not positive volume quadrature states.",
+    "result": "69114 inputs, CPU1/OMP4/CUDA bitwise equal with FMA disabled. Independent 3-point Gauss maximum scaled error8.41e-16, max absolute error1.25e-14.",
+    "limits": "Transport-only affine traces. Thermal trace prescribed, potential flux zero. Missing pressure/volume-source/gravity terms, evolved positivity and original-model reduction. Not a complete RHS or production integration."
+  },
+  "affine_face_backend_2026_10_18": {
+    "code": "Exam/affine_face_transport.h",
+    "evidence": "canonical_affine_flux_backend_2026-10-18.json",
+    "result": "68986 actual-geometry face inputs plus128 manufactured affine cases. CPU1, actual OpenMP4 and CUDA outputs bitwise equal with FMA disabled. Maximum scaled error to independent Gaussian quadrature3.57e-16.",
+    "scope": "Experimental mass/spatial-first-moment/momentum/kinetic face flux only. No production RHS integration, thermal/pressure/Riemann closure, MPI, positivity or nonlinear-time claim.",
+    "next_gate": "Couple state interpretation and moment/thermal evolution with the approved original-model reduction before a physical trajectory test. Backend parity alone is not Kepler stability."
+  },
+  "affine_energy_transport_2026_10_18": {
+    "evidence": "canonical_affine_energy_transport_2026-10-18.json",
+    "finding": "Exact cubic face kinetic-energy flux agrees with independent Gauss quadrature within1.00e-19. Subtracting mean kinetic energy alone leaves signed internal kinetic-rate/volume RMS1.42e-5 inner,1.48e-5 core in manufactured simple shear.",
+    "decision": "Retain internal kinetic information in any cell-average transport candidate; do not interpret signed redistribution as AV heat. This does not identify a new bug in the original point-state solver.",
+    "remaining": "Complete evolved closure, original-model reduction, conservation/positivity, backend checks and long-time validation remain open."
+  },
+  "centroid_gradient_recovery_2026_10_18": {
+    "evidence": "canonical_centroid_gradient_recovery_2026-10-18.json",
+    "result": "Least-squares gradients from manufactured affine cell averages at true uniform-density polygon centroids reproduce shear, rotation and general affine fields: gradient maxerror<=1.17e-14, generator velocity maxerror<=8.96e-16. Same averages treated as generator samples give gradient maxerror .0466-.0623.",
+    "geometry_check": "Common-intersection-face area mismatch5.98e-10 triggered audit failure; original closed polygon vertices reproduce volume to4.45e-16 and were used for centroid integration. Tolerance not relaxed.",
+    "scope": "Actual t0 geometry, manufactured uniform-density averages. Not evidence of a bug in original point-state gradients or a long-time cure.",
+    "next_gate": "Consistent evolved moments and nonlinear velocity closure, including energy; approved original fixed-mass reduction remains unresolved."
+  },
+  "affine_generator_recovery_2026_10_18": {
+    "evidence": "canonical_affine_generator_recovery_2026-10-18.json",
+    "lineage": "staggered_affine_moment_closure_2026-10-09.md, confirmed on current t0 geometry",
+    "result": "Prescribed exact simple-shear gradient with centroid-aware v(X)=p/m+G(X-q/m) cancels transport-induced apparent generator acceleration. Independent two-point face quadrature agrees within7.28e-20.",
+    "limits": "Manufactured frozen-geometry identity only; no inferred G, nonlinear closure, original-model reduction, or long-time stability proven.",
+    "next_gate": "Recover gradients from cell-integrated fields at actual mass centroids; do not treat average velocity as a generator-position sample."
+  },
+  "relaxed_weight_face_moments_2026_10_18": {
+    "evidence": "canonical_affine_weight_transport_2026-10-18.json",
+    "finding": "Exact straight-face integration for uniform-density simple shear and W=0,LWdot=-Bv yields net mass-rate RMS<1.6e-14 but nonzero momentum transport; inner momentum-rate/mass RMS8.75e-4, midpoint omission RMS5.45e-4.",
+    "interpretation": "Cell-average velocity changes are not generator material acceleration. Candidate requires compatible first moments/face quadrature; no need inferred for expensive gravity integration or a full subcell expansion of original solver.",
+    "reduction_correction": "At fixed finite tau, candidate mdot tends to0 with relativeW. A stationary tau->0 path is distinct and cannot alone disprove the approved persistently-equal-weight reduction. Full original-model reduction remains unproved."
+  },
+  "relaxed_weight_tangent_2026_10_18": {
+    "evidence": "canonical_relaxed_weight_tangent_2026-10-18.json",
+    "derivation": "relaxed_weight_transport_candidate_2026-10-18.md",
+    "result": "Frozen t0 geometry L Wdot=-Bv-LW/tau admits bounded stationary W=-tau L^-1 Bv; actual sparse solve residual5.24e-16. Full uniform-density transport requires mdot=-rho LW/tau, not weight-swept-only mdot.",
+    "status": "Conditional mathematical candidate only. Nonlinear boundedness, interface flux, momentum/energy, and approved equal-weight original-model reduction unproved. No production adoption.",
+    "next_gate": "Determine whether full residual transport can meet the approved reduction without suppressing physical face flux; stationary nonzero weights retain mass flux and need explicit model interpretation."
+  },
+  "interior_pair_refinement_2026_10_18": {
+    "evidence": "canonical_pair_operator_interior_refined_2026-10-18.json",
+    "method": "Warm start from saved interior solution, column-scaled LSMR, 30000 additional iterations; no physical run restarted.",
+    "result": "Max interior constraint residual improved4.541e-5 to1.154e-6, still above1e-8. Stop7. Wall74.48s. Inner circular divergence RMS.01300 versus original.13332; nonzero uniform-pressure acceleration remains.",
+    "interpretation": "Observed residual reduction prevents an infeasibility claim. Current solve cost and residual do not support an every-RK-stage production implementation. Physical volume/reduction compatibility is still unresolved.",
+    "criteria": "pair_operator_acceptance_2026-10-18.md",
+    "decision": "No production adoption or blind repeated iteration extension. Require a viable volume/transport interpretation and efficient constraint solver before further evolution with this candidate."
+  },
+  "interior_pair_operator_audit_2026_10_18": {
+    "evidence": "canonical_pair_operator_interior_2026-10-18.json",
+    "change": "Static symmetric pair solve restricted closure/affine constraints to r<1.9, leaving outer rows unconstrained; same actual t2 support graph. No production modifications.",
+    "result": "5000 LSMR iterations, stop code7, maximum interior residual4.54e-5 versus required1e-8. Negative coefficient fraction10.86 percent. Circular divergence reduced but constant-pressure acceleration remains nonzero.",
+    "decision": "Not ready for evolution. Outer constraints alone do not explain lack of convergence under this solve budget. No infeasibility theorem claimed; geometric volume interpretation, positivity and boundary work remain unresolved."
+  },
+  "from_t0_t10_comparison_2026_10_18": {
+    "evidence": "canonical_from_t0_t10_comparison_2026-10-18.json",
+    "times": [
+      10.0020667693911,
+      10.000273756314511
+    ],
+    "finding": "From-t0 maxdt=.0025 leaves inner pressure relative-error RMS6.306 and wrapped phase RMS54.801deg versus adaptive6.732 and55.186deg. Disk inner-edge pressure RMS5.001 versus5.410. Disk core remains much quieter, pressure RMS.00512 versus.00559.",
+    "decision": "From-t0 timestep cap does not cure historical t6\u201310 physical failure. Continue geometry/material-transport research; no time-step-only stability claim.",
+    "limits": "Nearby snapshot times and audited binary differences; not formal time-order or exact causal attribution to dt alone. Phase is wrapped to [-pi,pi]. Original long processes preserved."
+  },
+  "weight_only_mass_cancellation_2026_10_18": {
+    "derivation": "weight_mass_shear_compatibility_2026-10-18.md",
+    "evidence": "canonical_weight_only_density_response_2026-10-18.json",
+    "finding": "At uniform density, Vdot=Bv+L Wdot and weight-swept-only mdot=rho L Wdot imply rhodot/rho=-Bv/V for any weight rate. Actual t0 geometry check agrees within 2.29e-16 over four amplitudes.",
+    "scope": "Manufactured uniform-density instantaneous identity, not actual ring mass evolution or a theorem against all weight-linked methods.",
+    "decision": "Do not promote the existing weight-only remap components as a shear cure. A coupled candidate must explicitly address generator-induced transport mismatch in addition to weight-swept transport and prove the approved reduction."
+  },
+  "uniform_affine_followup_2026_10_18": {
+    "evidence": "canonical_global_affine_volume_2026-10-18.json",
+    "finding": "Uniform rotation and isotropic dilation reproduce material divergence to <=1.3e-13 for r<1.9. Uniform unit simple shear gives geometric volume-rate RMS .0307867 inner, .00939208 edge, .00526369 core although material divergence is zero.",
+    "interpretation": "The local Taylor result is not solely a row-dependent field artifact. This is a geometric/material volume mismatch, not evidence of an erroneous Voronoi derivative.",
+    "historical_rejection_retained": "Unchanged volume-following DAE is not a cure: prior periodic runs showed secular weight growth and loss of suppression near t10. Scalar-weight face cycle mismatch also remains relevant.",
+    "next_requirement": "Derive a bounded weight/mass/face-transport coupling with pressure-work and equal-weight reduction; do not adopt a volume-only projection or AV reduction."
+  },
+  "local_shear_geometry_audit_2026_10_18": {
+    "evidence": "canonical_volume_shear_split_2026-10-18.json",
+    "method": "Reapply actual saved common-face geometric volume operator at t0 to local first-order Taylor expansion of circular flow. Full actual RHS reconstruction agrees within 3.90e-14 for r<1.9.",
+    "finding": "At r=.2-.3 actual Vdot/V RMS=.165156; local divergence-free affine approximation=.156796; curvature remainder=.0153682. Rigid rotation residual <=8.11e-14. Affine and remainder RMS are correlated and must not be interpreted as additive percentages.",
+    "implication": "Initial error is already prominent for local incompressible shear; higher-order circular curvature alone is insufficient as explanation. Voronoi cell volume does not generally follow material incompressibility under shear.",
+    "limits": "Each operator row uses its own local Taylor field; this is not one global velocity field, an evolved counterfactual, or a conservative correction. Translation closure max residual 4.95e-9 is small relative to measured rates but nonzero.",
+    "next_gate": "Evaluate a consistent shear/material-volume correction against historical failed DAE/gradient candidates and approved weight/mass reduction, not a pressure-only or heating-only suppression."
+  },
+  "latest_AV_decision_2026_10_18": {
+    "evidence": "canonical_av_branches_final_2026-10-18.json",
+    "status": "Both t6 restart branches completed 200 accepted steps to t6.202110493; final snapshot and log analysis passed, fixed masses, zero weights, no retries or logged energy floor injections.",
+    "finding": "Disabling compression blend reduces inner entropy increment from .05165765 to .03696482 but increases final circular velocity RMS from .02058475 to .02123840. Both pairs rebound. Sampled minimum gaps differ by only .35 percent.",
+    "decision": "Do not adopt chi=0 as a cure. Retain original AV pending a consistent volume/pressure and shear-response correction; heating reduction alone fails the orbital-accuracy criterion.",
+    "scope_limit": "Local .2 interval from already evolved state; not a long-time gate or from-t0 stability claim."
+  },
+  "initial_radial_noise_evidence_2026_10_18": {
+    "evidence": "canonical_initial_radial_noise_2026-10-18.json",
+    "finding": "Initial geometric Vdot/V RMS peaks among sampled radial bins at r=.2-.3 (.16516), not at the center r<.1 (.03825). Inner r<.5 density=.01 versus disk density=1. h/r and shear both vary; no single-factor attribution established.",
+    "next_action": "Separate geometry-forced pressure variation from residual dissipation, preserving pressure-volume work consistency. Explain softened-core and low-density background separately from physical disk interior."
+  },
+  "user_steering": "MPI is not the immediate priority while the canonical single-rank Kepler solution is unstable.",
+  "active_focus": "Original single-rank C/CUDA/OpenMP Kepler physical stability first; conservative Laguerre/ALE extension allowed. MPI expansion deferred while baseline remains physically inaccurate.",
+  "new_evidence": "canonical_early_growth_budget_2026-10-17.json",
+  "existing_long_runs": "Preserved; latest live handles in canonical_running_checkpoint_2026-10-17.json.",
+  "mpi_work": "Experimental opt-in changes and completed short runs preserved; no further MPI expansion scheduled. Coupled test runner session 37517 ended with exit 0; scientific parity verification has not been performed and is not claimed.",
+  "t2_onset_evidence": {
+    "pressure_rate": "canonical_t2_pressure_rhs_2026-10-17.json",
+    "perturbation_work": "canonical_t2_perturbation_work_2026-10-17.json",
+    "kinematic_volume_split": "canonical_t2_circular_volume_split_2026-10-17.json",
+    "finding": "At the t2 geometry, circular velocities alone give positive inner pressure-variance growth; velocity perturbation contribution and TCF contribution oppose it at that instant. Full HG contribution to pressure variance is not included.",
+    "next_action": "Geometry finite-displacement audit already completed; measure paired finite-time response at t2 before choosing a correction."
+  },
+  "geometry_derivative_evidence": "canonical_t2_volume_derivative_2026-10-17.json",
+  "t0_timecap_t4_evidence": "canonical_t0_cap_t4_comparison_2026-10-17.json",
+  "next_physical_focus": "Prioritize the user AV hypothesis on actual pair803/804: distinguish true compression from curved-shear activation of QBP/chi, measure neighboring-face momentum and heat transfer, and include HG through direct diagnostics or controlled branches. Use saved t4/t6 checkpoints; preserve t20 runs. Do not add subcell model complexity before causal evidence.",
+  "candidate_design_audit": "canonical_volume_response_design_audit_2026-10-17.json",
+  "candidate_kinematic_evidence": "canonical_t2_gradient_divergence_candidate_2026-10-17.json",
+  "raw_QR_candidate_rejected": "canonical_gradient_operator_audit_2026-10-17.json",
+  "pair_operator_feasibility": "canonical_pair_operator_feasibility_2026-10-17.json",
+  "candidate_status": "Experimental weight-linked remap component only. Contact/kinetic checks passed in stated scope; point angular and gravitational potential transport fail. Not adopted for production.",
+  "t10_timecap_evidence": "canonical_t10_cap_comparison_2026-10-17.json",
+  "t10_timecap_conclusion": "Maxdt 0.0025 after t4 does not remove the large inner pressure/phase errors at t10; physical discretization investigation remains necessary.",
+  "original_pressure_volume_adjoint_audit": "canonical_t2_pressure_adjoint_2026-10-17.json",
+  "original_pressure_operator_status": "At t2 the active-region geometric volume derivative, pressure force transpose and internal-energy chain rule agree to roundoff. No sign/transpose correction justified by this state. Finite-step stability and cap boundary balance not established.",
+  "shared_face_flux_candidate": "canonical_shared_flux_operator_2026-10-17.json",
+  "shared_flux_weight_response": "canonical_shared_flux_weight_response_2026-10-17.json",
+  "net_mass_constraint_evidence": "canonical_shared_flux_mass_constraint_2026-10-17.json",
+  "latest_long_time_evidence": "canonical_t14_field_comparison_2026-10-17.json",
+  "long_time_verdict": "Core pressure RMS grows from 0.56% to 2.24% to 14.98%. At t14, 2.16% of initial core mass has >10% local pressure error, and 0.446% has >100%. Large error remains concentrated near inner material radii; most outer disk remains much quieter. Long-time accuracy failed.",
+  "finite_step_entropy_audit": "canonical_entropy_step_audit_2026-10-17.json",
+  "entropy_audit_conclusion": "At these one-step checkpoints, the measured inner entropy increase is overwhelmingly accounted for by actual TCF+HG entropy production. Diagnostic on/off equality establishes passive instrumentation for tested fields. This does not prove RK4 order, exclude all geometric/time errors, or establish long-term physical accuracy. A smaller dt alone cannot remove the explicitly modeled dissipation measured here.",
+  "existing_mass_flux_path_audit": "canonical_existing_mass_flux_path_audit_2026-10-17.json",
+  "restart_policy": {
+    "user_authorization": "User explicitly confirms simulation restarts from intermediate outputs are available and should be used when useful.",
+    "candidate_branching": "Preserve running baselines and branch a new run from saved t2 and/or t4 checkpoints for controlled same-state comparisons. Existing one-step probes already use these restarts.",
+    "limitations": "A restart inherits prior errors. A changed discretization must define and verify any additional state and checkpoint compatibility; it must not silently reinterpret fields. Final from-initial-condition validation remains necessary for long-time accuracy.",
+    "checkpoints": {
+      "t2": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat",
+      "t4": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000368.dat"
+    }
+  },
+  "objective_constraints": {
+    "Laguerre_extension": true,
+    "time_dependent_weights": true,
+    "steering": false,
+    "fixed_cell_mass": "Baseline; relaxation is explicitly linked to weight variation.",
+    "variable_cell_mass": "Allowed as relaxation coupled to evolving Laguerre weights; not blanket approval for an independently varying mass scheme."
+  },
+  "paired_response_diagnostic": {
+    "root": "/gpfs/kjhan/LagForce/Codex_paired_response_20261017",
+    "source": "run_canonical_paired_response.py",
+    "cases": 8,
+    "horizon": 0.01,
+    "status": "All eight cases completed, exit 0; final analysis verified.",
+    "production_model_changed": false,
+    "session_id": null,
+    "partial_evidence": "canonical_paired_response_partial_2026-10-17.json",
+    "finding": "Seeded velocity mode decays over .01 at t2. At eps=.00025, norm gain .9745891109 for dt=.001 and .9745898209 for dt=.0005. Fixed material mode30 corotating amplitude gains .9739878736 and .9739885647.",
+    "linearity_limit": "Halving amplitude changes velocity response by .13-.14%, pressure by .52%, internal energy by 1.06%; halving dt changes velocity response by .007-.0074%, pressure by .112%, internal energy by .230%. Do not claim a complete linearized operator or all-mode stability.",
+    "evidence": "canonical_paired_response_2026-10-17.json",
+    "integrity": "Mass arrays unchanged, all 4 RK stages recorded, no accepted retries, logged floor/dual-energy/entropy-floor energy injections zero. Maximum accepted RK+HG energy budget residual 1.9452e-13.",
+    "interpretation_limit": "A single velocity-only seed does not reproduce the historical coupled position/pressure perturbation. Its damping does not rule out homogeneous growth in other directions or at later times."
+  },
+  "equilibrium_design_contract": "canonical_laguerre_equilibrium_contract_2026-10-17.json",
+  "initial_equilibrium_mass_audit": "canonical_equilibrium_mass_compatibility_2026-10-17.json",
+  "variable_mass_candidate": {
+    "authorization": "\uace0\uc815\uc9c8\ub7c9\uc644\ud654\ub294 \uac00\uc911\uce58\uc758 \ubcc0\ub3d9\uc73c\ub85c \uc5f0\uacb0\uc2dc\ucf1c\uc11c \uc800\uc7a5\ud574.",
+    "mass_flux": "dm_i/dt = -sum_faces integral rho (v-v_face).n dA; opposite shared flux to neighbor.",
+    "conserved_state": [
+      "m",
+      "p",
+      "E"
+    ],
+    "primitive_recovery": "v=p/m; U=E-|p|^2/(2m) for cell-constant baseline. Higher-order velocity moments require their kinetic energy as well.",
+    "generator_motion": "Pointwise reconstructed fluid velocity; no centroid correction.",
+    "weight_evolution": "Must be coupled explicitly to mass relaxation. No independent geometric-only weight law or free variable-mass replacement has been selected.",
+    "initial_mass_mismatch": "Actual mass remains globally conserved; reference perturbation need not vanish. Do not reassign mass to analytic profile.",
+    "known_existing_path": "LAGMFV is not a ready implementation; see canonical_existing_mass_flux_path_audit_2026-10-17.json.",
+    "status": "User constraint saved; weight-coupled mass-relaxation law remains to be derived and validated."
+  },
+  "weight_coupled_mass_relaxation": {
+    "user_instruction": "\uace0\uc815\uc9c8\ub7c9\uc644\ud654\ub294 \uac00\uc911\uce58\uc758 \ubcc0\ub3d9\uc73c\ub85c \uc5f0\uacb0\uc2dc\ucf1c\uc11c \uc800\uc7a5\ud574.",
+    "scope": "Project-local research constraint, supersedes the earlier broad variable-mass interpretation.",
+    "decision": "Relaxation of fixed cell mass must be explicitly coupled to time-dependent Laguerre weights.",
+    "not_authorized_by_this_decision": "Treating ordinary unconstrained variable-mass ALE at fixed weights as the adopted replacement.",
+    "required_definition": "Derive and record the relation between weight evolution, geometric face motion and conservative cell-mass transfer. Do not silently choose an independent mass-relaxation law.",
+    "conservation": "Shared-face mass transfers must be equal and opposite. Momentum and total energy must be transported consistently with the same moving-face flux.",
+    "kinematics": "No generator steering. Weight changes move the cell boundary; mass must not be reassigned without conservative flux.",
+    "zero_weight_rate_limit": "Must explicitly derive and report whether the proposed coupling recovers fixed mass when weight rates vanish. Generic ALE does not guarantee this because generator motion also moves faces. Do not drop physical flux terms to force the limit.",
+    "open_mathematics": "No coupling law has yet been selected or verified. This saved constraint is not a claim of existence or stability."
+  },
+  "user_proposed_voronoi_limit": {
+    "verbatim": "\uac00\uc911\uce58\uac00 0\uc774\uba74 \ubcf4\ub85c\ub178\uc774\uac00 \ub418\uace0, \uadf8\ub7ec\uba74 \uace0\uc815\uc9c8\ub7c9\uc73c\ub85c \uac00\uc57c\ud55c\ub2e4.",
+    "working_interpretation": "When all weights remain equal (choose zero gauge), the method should reduce to the original fixed-mass Voronoi model. This is a proposed design limit, not an automatic implication of ALE.",
+    "instantaneous_caveat": "Weights equal at an instant do not imply equal weight rates. Both must be distinguished.",
+    "status": "Approved by user; see approved_voronoi_reduction. Not implemented or physically verified."
+  },
+  "weight_only_remap_audit": {
+    "evidence": "canonical_weight_only_mass_audit_2026-10-17.json",
+    "ansatz": "mdot=rho*Vdot_weight at uniform density, with fixed-mass generator-motion baseline",
+    "identity": "rhodot/rho=-Vdot_generator/V independently of instantaneous weight rates",
+    "result": "Direct rate cancellation cannot cure generator-induced compression under this ansatz. Changing future geometry could still help. General weight-coupled schemes not ruled out.",
+    "next": "Assess admissible weighted geometry changing generator-induced volume response; do not mistake volume correction alone for density or pressure correction."
+  },
+  "weighted_geometry_shape_audit": {
+    "static_evidence": "canonical_weighted_compression_geometry_2026-10-17.json",
+    "persistence_evidence": "canonical_weighted_geometry_persistence_2026-10-17.json",
+    "baseline_C_parity": "Rebuilt W=0 geometry and geometric volume derivative compared to actual C dump; checks passed.",
+    "static_result": "Inner uniform-density-volume-weighted generator compression RMS .1516015 to .0674134 with bounded static weights. All sampled inequalities and measured cell positivity passed.",
+    "persistence_result": "Same weights lose the benefit under prescribed circular motion: at +.05 weighted .221578 vs Voronoi .159464; at +.1 weighted .263019 vs .158529.",
+    "decision": "Do not adopt fixed optimized weights as a long-time cure. Static feasibility does not establish useful evolving-weight behavior. Need evolution law, mass/energy consistency and sustained reduction.",
+    "numerical_limit": "Lowest damping LSMR hit 2000 iterations; not a nonexistence proof. Finite directional mixed derivative affected by topology switches; exact rebuilt response is reported."
+  },
+  "t10_full_cap_comparison": "canonical_finecap_t10_comparison_2026-10-17.json",
+  "approved_voronoi_reduction": {
+    "status": "Approved by user; implementation and physical consistency remain unverified.",
+    "approval": "\uc790\ub124\uc758 \ud658\uc6d0\uc870\uac74\uc740 \uc2b9\uc778\ud568.",
+    "condition": "When all weight differences remain zero in time, recover the original fixed-cell-mass Voronoi model. Relaxation of fixed cell mass is explicitly coupled to changing Laguerre weights.",
+    "gauge": "Common weights and common weight rates do not change geometry; use differences, not absolute weights.",
+    "instantaneous_caveat": "Equal weights at one instant do not imply zero relative weight rates or zero ensuing exchange.",
+    "return_to_zero": "Returning weights to a common value does not reset cell masses to initial values; the fixed-mass limit retains masses reached at that time.",
+    "physical_gate": "Derive compatibility of the mass equation with moving faces and momentum/energy transport. Merely suppressing an ALE mass flux is not a consistency proof.",
+    "no_steering": true
+  },
+  "evolving_weight_transport": {
+    "evidence": "canonical_evolving_weight_transport_2026-10-17.json",
+    "finding": "Independently recomputed targets at 11 prescribed circular samples reduce instantaneous generator-compression RMS to .3365-.4597 of Voronoi. At first .001 interval mass-change RMS is 2.226%; donor mixing heat rate / initial inner thermal energy is 11.7356 per time.",
+    "limit": "Not a smooth weight ODE, time-integrated remap or coupled Kepler evolution. Do not adopt targets solely from compression improvement."
+  },
+  "experimental_weight_remap_kernel": {
+    "evidence": "canonical_weight_remap_flux_2026-10-17.json",
+    "implementation": "Voro/Laguerre/weight_remap_flux.h; standalone only, no production build integration",
+    "finding": "Kinetic-compatible momentum plus donor thermal energy passes tested semidiscrete uniform-pressure contacts including density ratio 100 and tangential jump. Actual and synthetic face outputs agree bitwise across CPU OMP1/4 and Ada CUDA.",
+    "remaining": "Point angular momentum, gravity energy, finite evolving geometry and full hydrodynamics are not closed."
+  },
+  "weight_remap_finite_step": {
+    "evidence": "canonical_weight_remap_finite_step_2026-10-17.json",
+    "scope": "Frozen 2496 nonzero faces, 909 cells, manufactured uniform density at canonical geometry; horizon .001. C/CUDA face kernel, Python RK4 harness.",
+    "finding": "dt .001 to .0005 to .00025 gives thermal drift / initial U 1.849e-10,1.141e-11,7.033e-13. All stage thermal energies positive for tested steps. CPU OMP4 and CUDA final states bitwise equal.",
+    "failure": "Point L change converges to -5.5716971e-10 and point potential-energy change to -3.8892966e-9; neither vanishes with dt. Hydrodynamic total energy alone is conserved.",
+    "interpretation": "Local integration error is distinct from missing angular/potential transport. No long-time or general positivity claim."
+  },
+  "last_goal_turn_classification": {
+    "previous": "Progress: full material drift shared across C/OpenMP/CUDA and constructive positive density in6360end-state cell instances.",
+    "current": "Progress: cheap quadrupole gravity from a consistent discrete potential, actual dense-reference accuracy/work/torque audit, and finite KDK gravity+material convergence verified across C/OpenMP/CUDA. Explicit potential-conversion mismatch recorded; no production adoption."
+  },
+  "weight_remap_moments": {
+    "evidence": "canonical_weight_remap_moments_2026-10-18.json",
+    "lineage": "C/CUDA implementation of existing 2026-10-09 subcell/affine moment representation; not a new mathematical discovery.",
+    "scope": "1590 actual canonical cells, fixed generators, three finite weight changes including identity. Positive overlap quadrature, original cell masses, circular sampled velocities, common pressure.",
+    "result": "CPU OMP1/4 and Ada CUDA atom moments bitwise equal. Global integrated angular change <=1.12e-16; shared potential unchanged; pressure max relative error <=8.18e-11. Velocity variance retained as kinetic information.",
+    "restart_obstruction": "Uniform per-cell density initialization changes old point L by 1.54137e-5 and potential by -1.2793643e-4 (1.9773 times patch thermal energy). Cannot silently reinterpret old checkpoint.",
+    "production_integration": false
+  },
+  "positive_restart_lift": {
+    "evidence": "canonical_weight_remap_initialization_2026-10-18.json",
+    "scope": "Global first mass moment/L/Phi matched with positive within-cell exponential density, fixed local m,p,K,U.",
+    "result": "Quadrature invariants satisfied; CPU/CUDA equal. Density factor .3604 to 2.2157, volume-weighted fractional RMS .18757.",
+    "status": "Initial entropy fit superseded as the preferred candidate by minimum-L2 positive fit; see weight_remap_moment_initialization_progress_2026_10_18."
+  },
+  "weight_remap_moment_initialization_progress_2026_10_18": {
+    "moment_transport_evidence": "canonical_weight_remap_moments_2026-10-18.json",
+    "initial_lift_evidence": "canonical_weight_remap_initialization_2026-10-18.json",
+    "minimum_distortion_evidence": "canonical_weight_remap_initialization_check_2026-10-18.json",
+    "continuous_positivity_evidence": "canonical_weight_remap_lift_positivity_2026-10-18.json",
+    "scope": "Central r<.7 patch only: 1590 of 36864 canonical cells. No hydrodynamic evolution or production restart conversion.",
+    "lineage": "Builds on 2026-10-09 affine/subcell formulation; new evidence is actual canonical geometry and shared C/OpenMP/CUDA implementation.",
+    "transport": "Finite overlap remap with 17 moments conserves integrated L and hydrodynamic/potential integrals at stated precision, keeps uniform pressure and positive atomic representation. CPU OMP1/4 and CUDA agree bitwise.",
+    "initialization": "Uniform density conversion fails point L/Phi preservation. Positive entropy-style fit preserves aggregate invariants but has 18.76% volume-weighted density-factor RMS. A minimum-L2 fit reduces this to 3.752746%.",
+    "L2_constraints": "Per-cell mass unchanged; constant per-cell velocity preserves each p and K, uniform thermal energy per volume preserves U and pressure. Global patch qx/qy/L/Phi matched. Per-cell q/L/Phi need not match old point convention.",
+    "L2_quadrature": "Order8/12 give density RMS .0375274603241 and maximum per-cell mass mismatch about2.52e-11 with original order4 normalization; global centered constraint residual <=1.79e-14. These are measured quadrature errors, not exact continuum equality.",
+    "L2_positivity": "Adaptive triangle bounds cover all1590cells. Conservative density-factor lower bound .0003979867>0 after <=1 subdivision; sampled factors .73594..1.19662 are not whole-cell extrema. Uses floating margin1e-11, not interval arithmetic.",
+    "L2_candidate": "/gpfs/kjhan/LagForce/Codex_weight_remap_initialization_check_v3_20261018/l2_candidate.npz",
+    "status": "Conditional initialization candidate only; no production switch. Approved zero-weight fixed-mass reduction, gravity-work evolution, density/velocity closure and long Kepler accuracy remain unverified."
+  },
+  "actual_checkpoint_weight_remap_2026_10_18": {
+    "evidence": "canonical_checkpoint_weight_remap_2026-10-18.json",
+    "positivity_evidence": "canonical_checkpoint_lift_positivity_2026-10-18.json",
+    "source_time": 2.0029059177634028,
+    "source": "Actual original C restart khout.000184.dat; saved vx/vy/ie retained, not manufactured circular/common-pressure fields.",
+    "scope": "Central r<.7 patch only,1590cells. Refitted positive density plus finite weight remaps .25 and1 times target; orders4/8. No time evolution or MPI.",
+    "implementation": "Shared C/CUDA wm_lift_atom evaluates donor density and all17moments; wrappers compare CPU OMP1/4 and CUDA, reject negative thermal input.",
+    "result": "Order8 post minus original point aggregate invariants <=1.03e-14, CPU/OMP/CUDA bitwise equal, positive thermal energies. Thermal-overlap error <=1.63e-10.",
+    "kinetic_information": "Cell mean alone loses kinetic energy equal to2.0855%/8.0187% of patch initial thermal energy for quarter/full target; retained in Pi, not heated.",
+    "positive_density": "Continuous triangle bounds for actual-state coefficients positive on all1590cells with conservative floating margin; lower bound .0004031763. No arbitrary-precision interval claim.",
+    "remaining": "Does not close physical-time pressure/gravity moment evolution, compact reconstruction, MPI, or approved zero-weight fixed-mass reduction."
+  },
+  "from_initial_condition_t8_timecap": {
+    "evidence": "canonical_t0_cap_t8_comparison_2026-10-18.json",
+    "full_fields": "canonical_t0_cap_t8_fields_2026-10-18.json",
+    "times": [
+      8.001437224862402,
+      8.001109651109642
+    ],
+    "finding": "From-t0 maxdt .0025 gives inner pressure RMS3.181813 vs adaptive3.253401 (2.20% lower), edge2.281186 vs2.319794 (1.66% lower), core .00320296 vs .00317513. Large inner failure remains. Mass arrays unchanged.",
+    "scope": "Both start at t0, so this comparison does not inherit a t4 restart. Binaries differ and endpoint times differ .0003276; not a formal convergence-order study. Does not exclude all time-integration effects.",
+    "decision": "This tested time cap is not a physical stability cure. Preserve t20 runs, prioritize consistent transport/pressure work/kinetic moments."
+  },
+  "reduction_scope_clarification_pending": {
+    "question": "Does approved fixed-mass Voronoi reduction require the exact old point-force discretization, or allow force-integral accuracy improvements while preserving fixed mass and no steering?",
+    "reason": "Integrated gravity on the approved positive cell representation differs from old point gravity by .1993% acceleration RMS even at zero weights.",
+    "status": "Asked asynchronously; no answer yet. No production change or relaxation of approved condition assumed."
+  },
+  "gravity_cost_policy_2026_10_18": {
+    "user_concern": "\uc140 \ub0b4\ubd80 \uc911\ub825\uc744 \uc801\ubd84\ud55c\ub2e4\uace0 \ud588\ub294\ub370, \uc774\ub7f0 \uacc4\uc0b0\uc740 \ub108\ubb34 \ub290\ub9ac\uc9c0 \uc54a\ub098? Arepo\ub3c4 \uadf8\ub807\uac8c \uc548\ud558\ub294 \uac83 \uac19\uc740\ub370?",
+    "decision": "Keep existing point gravity as baseline. Dense positive quadrature is a diagnostic reference only, not a production requirement. Prioritize consistent weight-linked mass, momentum and gravity-energy transport with bounded per-cell work.",
+    "evidence": [
+      "canonical_checkpoint_remap_roundtrip_2026-10-18.json",
+      "canonical_moment_gravity_2026-10-18.json",
+      "canonical_moment_compression_gravity_2026-10-18.json"
+    ],
+    "limits": "0.1993% point/integrated acceleration difference is not proof of Kepler failure cause. Source-aware compression preserves sampled instantaneous sources only; 26-point quadrature is not adopted.",
+    "production_changed": false
+  },
+  "point_energy_budget_2026_10_18": {
+    "evidence": "canonical_point_energy_budget_2026-10-18.json",
+    "scope": "Actual t2 saved mass/vx/vy/ie at zero weights; weight-amplitude derivative only. No physical time integration, no pressure force, no MPI, no production changes.",
+    "parameter": "w(s)=s*w_target at s=0; rates per unit s, not per physical time",
+    "result": "CPU OMP1/4 and Ada CUDA bitwise equal. Shared pair potential correction gives total point-energy derivative residual -2.71e-20, but adds patch thermal source / initial U =1.10034 per unit weight amplitude. Point angular derivative remains -2.5040e-5 per unit amplitude. Not a finite weight step or physical-time heat measurement.",
+    "decision": "Reject this correction as a complete pure-remap closure; it balances energy by changing thermal energy and does not address angular momentum. No production adoption.",
+    "derivation": [
+      "At frozen generators Psi=sum(m_i phi_i), so Psi_s=sum(phi_i m_i,s).",
+      "Centered kinetic-compatible pair transport gives sum K_s=0.",
+      "If E_hydro+Psi is conserved, sum U_s=-Psi_s. A nonzero point-potential change cannot be removed without changing kinetic/thermal content or the potential representation.",
+      "Choosing a different face potential redistributes the source between cells but cannot change its pair sum."
+    ],
+    "next": "Investigate compact subcell kinetic/angular/potential representation using already implemented moments and existing 2026-10-09 closure history. Require realizable spatial/velocity reconstruction and physical-time energy work; a passive potential ledger alone is not a solution. Keep point gravity baseline and bounded computational cost."
+  },
+  "compact_reconstruction_2026_10_18": {
+    "evidence": "canonical_compact_reconstruction_2026-10-18.json",
+    "lineage": "2026-10-09 affine projection, now shared C/OpenMP/CUDA on actual remapped checkpoint states. No production model switch.",
+    "result": "CPU OMP1/4 and Ada CUDA bitwise equal; affine projection agrees with NumPy within8.89e-16; kinetic decomposition residual <=4.34e-19. Residual kinetic energy / total thermal =.01879065,.06265262 at quarter/full target; individual-cell ratios reach1.33477,4.46744.",
+    "realizability_limit": "Signed minimum eig(R/m) -1.26e-14,-1.62e-14 from rounded stored raw moments. No clipping and no exact PSD claim. Positive atomic origins do not eliminate rounded raw-moment reconstruction issues.",
+    "density": "Unconstrained quadratic density matching m,q,Q is negative in7/1590 and28/1590 cells; not an admissible universal density closure."
+  },
+  "positive_density_fallback_2026_10_18": {
+    "evidence": "canonical_positive_density_fallback_2026-10-18.json",
+    "result": "All35 failing instances obtain positive triangle Bernstein density with matching m,q,Q. Quarter:7 degree2; full:10 degree2,16 degree4,2 degree6. Whole-cell lower bound / mean density >=.08207735 and .03022735; normalized linear residual <=1.055e-15.",
+    "cost_scope": "Only exceptional cells solved with local LP. Analytic polynomial moments; no subcell gravity evaluation.35 cases took1.25seconds on lageunha including selected geometry and independent basis checks; not a production benchmark.",
+    "limits": "Density only. Internal triangle discontinuities allowed; nonlinear potential moment is not matched; velocity residual stress/energy evolution and physical-time positivity remain open. LP is CPU/Python, not a CUDA solver."
+  },
+  "finite_pressure_kick_2026_10_18": {
+    "evidence": "canonical_moment_pressure_kick_2026-10-18.json",
+    "independent_atomic_oracle": "canonical_affine_kick_atomic_validation_2026-10-18.json",
+    "implementation": "Voro/Laguerre/moment_affine_kick.h; shared C/OpenMP/CUDA finite affine acceleration substep. Not enabled in production.",
+    "scope": "Finite pressure kick on frozen actual remapped t2 geometry,1590 cells; shared face pressure work plus affine acceleration preserving residual covariance algebraically. Exterior checkpoint pressure/velocity prescribed.",
+    "finding": "Six actual quarter/full remap pressure kicks at dt .001,.0005,.00025 agree bitwise across OMP1/4/CUDA. Boundary-corrected energy residual <=9.77e-19, angular residual <=1.56e-18, covariance-oracle error <=8.68e-19. R change / mass <=1.26e-15; minimum thermal ratio .999097. Uniform pressure force residual <=2.06e-15.",
+    "independent_check": "31 manufactured positive atoms with general velocity scatter and affine acceleration, dt0,.001,.1,1,-1; direct atom update, inverse kick and unchanged thermal energy checked. This tests the finite dt^2 term independently of the raw covariance formula.",
+    "limits": [
+      "Not the old production pressure force; no adoption or zero-weight reduction claim.",
+      "No drift, mass remap, gravity, shock treatment, physical-time weight law or MPI in this diagnostic.",
+      "Face pressures frozen over each kick. Geometric/transport coupling and full time-order remain unverified.",
+      "R inherited from rounded raw moments can have tiny negative eigenvalues; the kick preserves R algebraically, not a general numerical positivity guarantee."
+    ],
+    "physical_caveat": "Fixed-geometry pressure operator only: geometric drift, residual-motion advection, gravity, shock treatment and weight evolution are not coupled. Preservation of R by an affine acceleration does not close its transport. Existing Voronoi force/reduction equivalence is not established."
+  },
+  "material_drift_2026_10_18": {
+    "evidence": "canonical_material_drift_support_2026-10-18.json",
+    "independent_atoms": "canonical_material_drift_atomic_validation_2026-10-18.json",
+    "implementation": "Voro/Laguerre/moment_material_drift.h;16hydro moments only, deliberately excludes potential-energy evolution.",
+    "lineage": "Exact positive material-fragment drift existed on2026-10-09. New shared C/OpenMP/CUDA compact full-moment implementation and actual canonical-state support tests.",
+    "result": "12 actual quarter/full weight cases,dt0,.001,.005,.02,.05,.1, CPU OMP1/4/CUDA bitwise equal. Mass,p,Pi,E_hydro unchanged; L preserved to<=3e-18 and reverse drift <=1.1e-19. No necessary halfspace support failures. Independent41positive-atom oracle error<=1.07e-14.",
+    "residual_motion": "At full weight, dropping R loses up to .00114415 and .0183064 of the initial spatial-covariance trace fordt .005,.02, respectively; atdt .1 up to .45766. These are component diagnostics, not accepted evolution timesteps.",
+    "limits": "A material packet is not automatically the contents of the new power cell. Passing necessary support tests does not prove positive density or moving-face flux consistency. No pressure/gravity/weight evolution coupled."
+  },
+  "drift_positive_density_2026_10_18": {
+    "evidence": "canonical_drift_density_reconstruction_2026-10-18.json",
+    "result": "All1590cells in each of4cases (quarter/full weights,dt .005/.02) admit a positive polynomial density matching transported m,q,Q. Minimum density factor over allcases .0184293; normalized moment residual<=2.45e-15. No mass reset or clipping.",
+    "fallback_counts": [
+      {
+        "fraction": 0.25,
+        "dt": 0.005,
+        "count": 7,
+        "degree_counts": {
+          "2": 7
+        }
+      },
+      {
+        "fraction": 0.25,
+        "dt": 0.02,
+        "count": 7,
+        "degree_counts": {
+          "2": 5,
+          "4": 2
+        }
+      },
+      {
+        "fraction": 1.0,
+        "dt": 0.005,
+        "count": 28,
+        "degree_counts": {
+          "2": 10,
+          "6": 2,
+          "4": 16
+        }
+      },
+      {
+        "fraction": 1.0,
+        "dt": 0.02,
+        "count": 30,
+        "degree_counts": {
+          "2": 13,
+          "6": 4,
+          "4": 13
+        }
+      }
+    ],
+    "limits": "Static constructive endpoint feasibility, not complete Euler or Kepler evolution. Does not close nonlinear potential energy, residual-motion face transport or approved fixed-mass Voronoi reduction. Density fitting is CPU/Python."
+  },
+  "cheap_quadrupole_gravity_2026_10_18": {
+    "evidence": "canonical_quadrupole_gravity_2026-10-18.json",
+    "implementation": "Voro/Laguerre/moment_quadrupole_gravity.h; one radial evaluation and fixed-size moment operations, no per-cell spatial quadrature in candidate kernel.",
+    "model": "Psi=m phi(c)+0.5 H(c):S; force includes -0.5 grad(H):S; affine acceleration A=-H. Central torque and work follow from the same approximate Hamiltonian.",
+    "result": "Actual lifted t2 patch: force relative RMS error versus dense reference falls from .00199408 for old generator point to2.91458e-6 for quadrupole. CPUOMP1/4 and Ada CUDA bitwise equal in all3actual states. Central torque/m <=5.27e-16. Independent finite-difference force/power errors show expected second-order decrease.",
+    "cost_limit": "No solver wall-time speedup measured. Dense610624-atom calculation is reference-only, not candidate runtime.",
+    "energy_obstruction": "Approximate versus saved integrated potential changes aggregate by .3886%-.4017% of initial patch thermal energy, up to9.82% of individual-cell thermal energy. Must not silently reinterpret checkpoint or pay this difference as heat.",
+    "reduction_limit": "Zero spatial extent reduces to point gravity at mass center. Mass center need not equal generator, so approved original Voronoi reduction remains unproven.",
+    "production_changed": false
+  },
+  "coupled_gravity_material_component_2026_10_18": {
+    "evidence": "canonical_moment_gravity_step_2026-10-18.json",
+    "scope": "KDK gravity-only material moment evolution,horizon .2; pressure, mesh/face transport, time-dependent weights and MPI absent. Existing production RK4 unchanged.",
+    "result": "6actual-state comparisons OMP1/4/CUDA bitwise equal; dt halving reduces approximate-Hamiltonian energy error byabout4. At dt .00025, |dE|/U0 <=4.673e-7, maxcell angular change<=8.03e-18, thermal drift/totalU<=5.49e-13. Reverse integration recovers rawstate within2.56e-17.",
+    "initialization": "Quadrupole potential initialized explicitly in-memory only. Original checkpoint unchanged; no production conversion authorized or performed.",
+    "limits": "Component convergence is not full-fluid accuracy, physical long-time stability or equivalence to original point-force scheme."
+  },
+  "pairing_relevance_audit_2026_10_18": {
+    "history": "canonical_pair_history_2026-10-18.json",
+    "forces": "canonical_pair_forces_2026-10-18.json",
+    "finding": "In the current concentric-ring initial condition, exact circular reference minimum inner gap/h0 stays about .941. Actual minimum is .939 at t2, .330 at t4, .115 at t6. Significant pressure error precedes severe approach in saved states. Old irregular-IC gravity-only close-pair results must not be generalized to this IC.",
+    "force_finding": "Closest t6 pair 803/804 is approaching: pressure radial relative acceleration -.0910, TCF +.0890, external gravity +.0555. Pressure can drive this particular approach; TCF brakes it. HG is excluded. Closest t4 pair has separating pressure acceleration, so no universal pressure-attraction claim.",
+    "limits": "Eight snapshots at spacing ~2 do not establish continuous sticking or causal ordering at encounter times. Zero pairs below .2h0 at consecutive saved times is not proof of absence of transient sticking. Need dense trajectory and HG evidence.",
+    "subcell_status": "Existing remap/moment/gravity components retained as experimental consistency results; no demonstrated cure of original pairing or long Kepler failure.",
+    "direct_face_clarification": "For closest t6 pair 803/804, direct shared-face pressure gives separating radial relative acceleration +.450212; all other faces contribute -.541244, net -.091032. This is neighborhood compression, not direct negative-pressure attraction and not evidence that attraction grows monotonically as separation decreases. Low-density member has pressure acceleration .84950 versus gravity 3.94550 despite pressure .000113726. These are instantaneous pre-HG results, not the cause of initial onset."
+  },
+  "pair_av_hypothesis_2026_10_18": {
+    "user_hypothesis": "AV on other faces may transmit momentum or heat and drive one member into its close neighbor.",
+    "evidence": "canonical_pair_av_2026-10-18.json",
+    "observed": "At t6 cell804 receives AV acceleration along pair separation -.172336 from face804/933 and -.0853855 from face804/934; direct face804/803 contributes +.256371. The two other faces account for ~79.66% of cell804 TCF heating. Net TCF radial relative acceleration for pair803/804 is +.0890096 (separating).",
+    "activation": "Face QBP compression blend chi=.95739 around cell804. Q/Pmean=.77137 and2.60264 on faces933 and934. Normal velocity jump/max cell sound speed=.52408 and.96195, respectively; these ratios alone do not establish shocks.",
+    "small_pressure": "Cell804 has pressure1.13726e-4 and density.0197364; pressure acceleration magnitude.84950 versus gravity3.94550. Small absolute pressure does not imply dynamically negligible pressure gradients in low-density gas.",
+    "HG_estimate": "Completed dt .001/.0005/.00025 steps permit only an indirect extrapolated HG+unaccounted radial relative acceleration estimate: -.0072704 and-.0068396. Do not label this a direct HG dump.",
+    "verdict": "The proposed neighbor-face momentum/heating route is present at this instant; an incorrect AV setting, an incoming physical shock, or causality of onset has not been established.",
+    "next": "Audit QBP compression blending against smooth circular/shearing reference at the same geometry and track pair803/804 plus neighbors933/934 across dense restart output. Use controlled AV/HG branches as diagnostics, retaining the original RK4 and long-run requirements."
+  },
+  "av_activation_2026_10_18": {
+    "evidence": "canonical_av_activation_2026-10-18.json",
+    "scope": "Same-geometry saved actual/circular diagnostics; frozen-state chi=0 reconstructed with nonlinear face impedance recomputed. No evolution pass.",
+    "finding": "At t6 face804/933 and804/934 have negative raw QBP residual but positive cell compression. chi=.95739 changes the input sign, activating Q/P=.77137 and2.60264. At chi=0 both faces have Q=0. The direct pair803/804 braking Q also weakens .57513 to.12594 times mean pressure.",
+    "reference": "At same t6 geometry, exact circular velocity has chi=.001904 around804. Initial-inner total TCF heat is1.8773% of actual. At t2 that fraction is53.6683%; early smooth-curvature residual remains relevant.",
+    "interpretation": "Late strong AV largely responds to already perturbed velocities; this does not establish what initiated them or whether chi amplifies the instability. Controlled restart response is required.",
+    "affine_compression_observation": "The implemented chi=min(1,max(-div(v),0)/||sym grad(v)||_F) reaches1 in uniform isotropic compression and0 in exact divergence-free shear. It is a compression blend, not a standalone shock detector. Its activation is not sufficient evidence of a shock or a parameter bug.",
+    "instantaneous_counterfactual": "At t6 pair803/804, chi=0 removes the two neighbor-face pushes but also weakens direct braking. Net TCF separating radial relative acceleration decreases from.0890096 to.0799033; pre-HG separation second derivative decreases from.0571102 to.0480038. Do not infer improved pair stability just from lower heating.",
+    "perturbation_power": "New fixed-initial-material-bin audit: at t6 inner pressure supplies4.44146e-6 and differential rotation8.39202e-7 to kinetic departure from circular flow. TCF removes3.67683e-6 with chi enabled,2.90761e-6 with chi=0. Instantaneous net growth excluding HG rises1.60383e-6 to2.37305e-6 (~48%) when chi is disabled. This is a frozen-state tendency, not an evolved instability verdict; analytic shear work checked by directional finite differences.",
+    "neighbor_face_detail": "At t6 face804/933 normal cell jump is.05136 (actual) versus.05532 (circular), and804/934 is.09427 versus.09548. Despite similar closing speeds, scalar chi rises.001904 to.95739 and reverses the negative raw QBP input on both actual faces. This motivates testing how cell compression affects AV on other faces; it does not prove a shock misclassification."
+  },
+  "av_chi_restart_branches_2026_10_18": {
+    "root": "/gpfs/kjhan/LagForce/Codex_av_chi_branches_20261018",
+    "session_id": 11375,
+    "status": "Both simulation PIDs2792444/2792445 verified live at2026-10-17T16:38:53.515605+00:00, accepted step105, absolute time6.107110493120865. Completion and final analysis pending; retain session11375.",
+    "source_time": 6.002110493120864,
+    "target_time": 6.202110493120864,
+    "horizon": 0.2,
+    "dt_cap": 0.001,
+    "cases": [
+      "chi1",
+      "chi0"
+    ],
+    "only_physics_setting_difference": "GFS_QBP_CHI",
+    "independent_cases": true,
+    "MPI_ranks_each": 1,
+    "OpenMP_threads_each": 1,
+    "original_long_runs_preserved": true,
+    "source": "run_canonical_av_branches.py",
+    "expected_storage_bytes": 1012140976,
+    "scope": "Local response of actual t6 close pairs; not a long-time stability gate.",
+    "simulation_pids": {
+      "chi1": 2792444,
+      "chi0": 2792445
+    },
+    "runner_pids": {
+      "chi1": 2792392,
+      "chi0": 2792393
+    },
+    "live_evidence": "canonical_av_branches_running_2026-10-18.json",
+    "partial_evidence": "canonical_av_branches_partial_002_2026-10-18.json",
+    "partial_finding": "Through common t6.100110493120897, pair803/804 has positive separation rate in both chi1 andchi0: .00173420 and.000529732. Thus this observed encounter has turned around in both branches; persistent sticking is not demonstrated. Gap/h0=.107220 and.107322, cell804 P/P0=5.83182 and5.15677. The chi0 pressure reduction is not yet a substantial gap improvement. Full .2 interval remains running."
+  },
+  "direct_HG_pair_audit_2026_10_18": {
+    "evidence": "canonical_pair_hg_direct_2026-10-18.json",
+    "full_power": "Fixed initial inner region: pressure+4.44146e-6, shear+8.39202e-7, TCF-3.67683e-6, HG-1.54686e-6; net+5.69676e-8. Frozen-state chi=0 raises net to+8.26192e-7. This is not an exponential growth rate or long-time verdict.",
+    "source": "Actual t6 single-rank C HG mode assembly; probe exited0, no time evolution. Pre-HG RHS matches previous t6 dump within1e-12.",
+    "pair_result": "Direct HG radial relative acceleration for803/804=-.00705417, consistent with indirect finite-dt estimates. HG can push this selected pair together while damping the total inner velocity departure.",
+    "RK4_consistency": "Completed dt .001/.0005/.00025 mean perturbation-power values approach the direct complete RHS. Inner finest mean error1.90604e-9; linear extrapolation error7.59507e-10. No formal fourth-order claim across topology/mode changes.",
+    "conservation": "Direct HG kinetic+thermal-reservoir power residual1.59534e-21; no finite-step or global physical-accuracy conclusion.",
+    "interpretation": "AV is not a single attracting force. Both TCF/HG currently damp inner velocity errors while heating gas; local pair and inner-edge work can have the opposite sign. Retain controlled trajectory comparison before any AV change."
+  },
+  "initial_AV_and_volume_seed_2026_10_18": {
+    "evidence": [
+      "canonical_full_source_t0_2026-10-18.json",
+      "canonical_full_source_t2_2026-10-18.json"
+    ],
+    "scope": "Read-only force/mode assembly at exact saved t0 andt2; no new time evolution. t0 used a byte-identical filename alias with positive restart index1 so kh.c reads the saved time0 checkpoint instead of regenerating IC.",
+    "t0_state": "Initial-inner circular velocity discrepancy RMS1.91e-15; pressure/P0 within about2e-16. Pressure force after subtracting rounded TCF faces is at printed precision (~4.07e-11 RMS acceleration).",
+    "t0_velocity_seed": "TCF acceleration RMS5.26406e-5, HG8.83190e-5; combined hydro9.90567e-5 versus gravity7.55678. AV does seed velocity deviations even before physical perturbations, but its later large activation is not identical to this initial residual.",
+    "t0_pressure_seed": "Vdot/V RMS.1207883 despite exact circular divergence-free velocity. Compression Pdot/P RMS.2013139 versus TCF heating.00260072 andHG heating1.20664e-5. These are instantaneous RMS rates, not secular20%-per-time growth or an additive variance budget.",
+    "t2_state": "Initial-inner pressure acceleration RMS.00188102 versusTCF.000360714 andHG.000206775. Pressure/P0 spans.927354..1.080046; geometric compression Pdot/P RMS.253299 versusTCF.00492411 andHG2.23549e-5.",
+    "interpretation": "Two numerical seeds coexist: finite curved-flow AV residual and geometric cell-volume compression. The latter already creates pressure variations with an exact circular velocity field. Do not attribute the entire onset to neighboring shocks or conclude that reducing AV fixes material-volume consistency.",
+    "next": "Complete the unchanged chi1/chi0 trajectory comparison. Use this source decomposition to prioritize a physically consistent treatment of material density/volume and pressure work; preserve the approved weight-linked mass relaxation and zero-weight reduction constraints."
+  }
+}

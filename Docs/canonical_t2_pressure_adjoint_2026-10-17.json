@@ -1,0 +1,151 @@
+{
+  "scope": "Static original C RHS at t2; full precision exported real-face geometry. Split HG and finite-step RK errors excluded. Global virtual work includes frozen cells as diagnostic degrees of freedom, not physical boundary work.",
+  "t2": {
+    "rhs_sha256": "18f759f6ebd7793ebe8691370084cb1c3e43076db3cb23872a56fb8ff0f8f550",
+    "raw_geometry_sha256": "32c11e21286ecbdae0b9afdd9355fbb5570f6c65f74a3123191c7a53eb631924",
+    "regions": {
+      "inner": {
+        "n": 795,
+        "geometric_Vdot_relative_L1_error": 1.6362803148934992e-13,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 4.091810969132876e-08,
+        "adjoint_force_relative_L1_difference": 3.7968996128934385e-14,
+        "constant_pressure_closure_L1": 1.1340253280693602e-14,
+        "internal_energy_identity_relative_L1_residual": 1.6297396524917427e-13,
+        "perturbation_pressure_work_normal": 1.3343003162473463e-09,
+        "perturbation_pressure_work_tangent": 1.0863809346031357e-11
+      },
+      "disk_edge": {
+        "n": 399,
+        "geometric_Vdot_relative_L1_error": 2.78690287986715e-13,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 3.414769177002416e-08,
+        "adjoint_force_relative_L1_difference": 1.2447739752215259e-13,
+        "constant_pressure_closure_L1": 6.1626796873069656e-15,
+        "internal_energy_identity_relative_L1_residual": 2.668077472199259e-13,
+        "perturbation_pressure_work_normal": 6.359286986326178e-11,
+        "perturbation_pressure_work_tangent": -2.6938992945910383e-13
+      },
+      "disk_core": {
+        "n": 10304,
+        "geometric_Vdot_relative_L1_error": 1.5932519797885938e-12,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 6.3469257664862986e-09,
+        "adjoint_force_relative_L1_difference": 5.169777475475081e-13,
+        "constant_pressure_closure_L1": 1.584376762612757e-13,
+        "internal_energy_identity_relative_L1_residual": 1.7013127133562237e-12,
+        "perturbation_pressure_work_normal": 1.0291027584189523e-11,
+        "perturbation_pressure_work_tangent": -3.348623762768134e-15
+      },
+      "active": {
+        "n": 19855,
+        "geometric_Vdot_relative_L1_error": 1.033433569862972e-12,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 2.9607248467100608e-08,
+        "adjoint_force_relative_L1_difference": 3.1102696554361253e-13,
+        "constant_pressure_closure_L1": 3.0535289991380455e-13,
+        "internal_energy_identity_relative_L1_residual": 1.0611398524854192e-12
+      },
+      "frozen": {
+        "n": 17009,
+        "geometric_Vdot_relative_L1_error": 0.05655953556901085,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 0.0003878786851938765,
+        "adjoint_force_relative_L1_difference": 0.6677223950587569,
+        "constant_pressure_closure_L1": 0.6121372249413644,
+        "internal_energy_identity_relative_L1_residual": 0.0003664042657747128
+      },
+      "all": {
+        "n": 36864,
+        "geometric_Vdot_relative_L1_error": 0.05285813968058624,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 0.0003863328336835378,
+        "adjoint_force_relative_L1_difference": 0.28498006210309723,
+        "constant_pressure_closure_L1": 0.6121372249416697,
+        "internal_energy_identity_relative_L1_residual": 0.00036583591692608634
+      }
+    },
+    "global_virtual_work": {
+      "v_dot_pressure_force": -1.4285349991582505e-06,
+      "P_dot_geometric_Vdot": 6.192807605119467e-07,
+      "difference": -2.0478157596701972e-06
+    },
+    "perturbation_virtual_work": {
+      "force_work": 1.551571436094421e-09,
+      "volume_work": 1.551571436094808e-09,
+      "difference": -3.869137315216787e-22
+    },
+    "adjoint_mismatch_locations": {
+      "threshold_absolute_force": 1e-12,
+      "count": 16,
+      "minimum_radius": 4.062499999999999,
+      "maximum_radius": 4.09375
+    }
+  },
+  "circular": {
+    "rhs_sha256": "508d9956d972f3219bf6c9b34e260b88e9c1effa7235d3031ab7f0ddedf75dfa",
+    "raw_geometry_sha256": "abda3130031d406789868747b7b384429241da6ab6af764614d7f26ea95d04c1",
+    "regions": {
+      "inner": {
+        "n": 795,
+        "geometric_Vdot_relative_L1_error": 1.682591824450794e-13,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 1.7310379542432967e-08,
+        "adjoint_force_relative_L1_difference": 3.7968996128934385e-14,
+        "constant_pressure_closure_L1": 1.1340253280693602e-14,
+        "internal_energy_identity_relative_L1_residual": 1.700334542257525e-13
+      },
+      "disk_edge": {
+        "n": 399,
+        "geometric_Vdot_relative_L1_error": 2.9276560885736903e-13,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 6.079544982683894e-09,
+        "adjoint_force_relative_L1_difference": 1.2447739752215259e-13,
+        "constant_pressure_closure_L1": 6.1626796873069656e-15,
+        "internal_energy_identity_relative_L1_residual": 2.8908555769854733e-13
+      },
+      "disk_core": {
+        "n": 10304,
+        "geometric_Vdot_relative_L1_error": 1.5811077923138368e-12,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 2.0645209234461562e-09,
+        "adjoint_force_relative_L1_difference": 5.169777475475081e-13,
+        "constant_pressure_closure_L1": 1.584376762612757e-13,
+        "internal_energy_identity_relative_L1_residual": 1.693394755601206e-12
+      },
+      "active": {
+        "n": 19855,
+        "geometric_Vdot_relative_L1_error": 1.0527491558934105e-12,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 6.568814815832717e-09,
+        "adjoint_force_relative_L1_difference": 3.1102696554361253e-13,
+        "constant_pressure_closure_L1": 3.0535289991380455e-13,
+        "internal_energy_identity_relative_L1_residual": 1.1034191065084451e-12
+      },
+      "frozen": {
+        "n": 17009,
+        "geometric_Vdot_relative_L1_error": 0.05656110480975969,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 0.0003878806754284103,
+        "adjoint_force_relative_L1_difference": 0.6677223950587569,
+        "constant_pressure_closure_L1": 0.6121372249413644,
+        "internal_energy_identity_relative_L1_residual": 0.00036640454977180764
+      },
+      "all": {
+        "n": 36864,
+        "geometric_Vdot_relative_L1_error": 0.05293804554750122,
+        "pressure_force_plus_Q_vs_C_relative_L1_error": 0.00038631476294386733,
+        "adjoint_force_relative_L1_difference": 0.28498006210309723,
+        "constant_pressure_closure_L1": 0.6121372249416697,
+        "internal_energy_identity_relative_L1_residual": 0.00036585654567524415
+      }
+    },
+    "global_virtual_work": {
+      "v_dot_pressure_force": -1.430086570594345e-06,
+      "P_dot_geometric_Vdot": 6.177291890758609e-07,
+      "difference": -2.047815759670206e-06
+    },
+    "adjoint_mismatch_locations": {
+      "threshold_absolute_force": 1e-12,
+      "count": 16,
+      "minimum_radius": 4.062499999999999,
+      "maximum_radius": 4.09375
+    }
+  },
+  "interpretation": {
+    "active_region": "r<2.5: pressure force matches transpose of real-face geometric volume derivative at relative L1 3.11e-13; internal-energy chain rule residual 1.06e-12. This static pre-HG state does not establish finite-step or long-term stability.",
+    "force_reconstruction_precision": "TCF Q comes from rounded face export; total force comparison limited to roughly 3e-8 relative L1. Pressure-only adjoint uses full precision geometry.",
+    "outer_boundary_caveat": "Real-face export omits cap/arc contributions. Force-adjoint mismatch above absolute 1e-12 occurs in 16 frozen cells at r=4.0625..4.09375. Whole-domain virtual-work mismatch cannot be treated as an interior failure or a verified boundary balance.",
+    "inner_work": "Normal means parallel to generator-to-generator vector, not radial relative to orbital center. 99.19275 percent of positive net pressure perturbation work is this component at t2. Removing tangent force is not supported and would break the audited work relation.",
+    "next_action": "Use the volume-driven pressure-error diagnosis to evaluate conservative volume representations; retain this original operator as conservation reference. No physical correction has passed long-time validation."
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "scope": "Owner-directed runtime MPI exchange after distributed tessellation; imported packets checked against independent one-rank geometry/cache output; force reads not enabled",
+  "ranks": {
+    "1": [
+      {
+        "rank": 0,
+        "requested_and_received_cells": 0,
+        "received_faces": 0,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      }
+    ],
+    "2": [
+      {
+        "rank": 0,
+        "requested_and_received_cells": 384,
+        "received_faces": 2319,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      },
+      {
+        "rank": 1,
+        "requested_and_received_cells": 384,
+        "received_faces": 2325,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      }
+    ],
+    "4": [
+      {
+        "rank": 0,
+        "requested_and_received_cells": 383,
+        "received_faces": 2312,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      },
+      {
+        "rank": 1,
+        "requested_and_received_cells": 374,
+        "received_faces": 2280,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      },
+      {
+        "rank": 2,
+        "requested_and_received_cells": 379,
+        "received_faces": 2302,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      },
+      {
+        "rank": 3,
+        "requested_and_received_cells": 378,
+        "received_faces": 2286,
+        "max_cache_abs_difference": 0.0,
+        "max_geometry_abs_difference": 0.0
+      }
+    ]
+  },
+  "stale_generation_control": {
+    "ranks": 2,
+    "exit_code": 3,
+    "invalid_records": 1,
+    "rejected": true
+  },
+  "run_root": "/gpfs/kjhan/LagForce/Codex_mpi_owner_exchange_20261017",
+  "binary_sha256": "34f3cefd7b59a3def2013b214e98611d205c37fc0d673ca8137186945894a6de",
+  "source_sha256": "ea0ce79971226bbc40841ca59f00e29e46c78af8e9cf7f79cc3bc54abcbe22cd",
+  "configuration": {
+    "snapshot_time": 10.0020667693911,
+    "OMP_NUM_THREADS": 2,
+    "CUDA_nearest_enabled": true
+  },
+  "limitations": [
+    "Packets are validated and exported but not installed into solver caches yet",
+    "Only directly adjacent remote cells requested; HG multi-hop support not covered",
+    "Dense replicated owner metadata is bounded to IDs below 10000000 in this diagnostic",
+    "Generation check covers one geometry rebuild; full step/retry/phase/stage identity still needed",
+    "No distributed force, HG, rollback, or evolution validation"
+  ]
+}

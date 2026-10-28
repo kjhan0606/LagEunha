@@ -1,0 +1,36 @@
+{
+  "scope": "Read-only audit of existing alternative mass-flux path; not enabled in current canonical Kepler binary. No production code changed.",
+  "source": "/tmp/lageunha-push/Exam/exam.c",
+  "source_sha256": "ad18891afddf63c364eb4adb0f9433bd4e3ee9a496acbdc21ca76b4069aadc67",
+  "canonical_build_commands": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/commands.json",
+  "canonical_compile_defines": [
+    "INTEL",
+    "XYZDBL",
+    "GOTPM",
+    "USE_CUDA",
+    "GPU_VALIDATE"
+  ],
+  "LAGMFV_enabled_in_canonical_build": false,
+  "findings": [
+    {
+      "location": "Exam/exam.c:11243",
+      "fact": "LAGMFV adds directed mass flux and -mass_flux*v_up to force; it adds an enthalpy-like advective term directly to die.",
+      "limitation": "This is an optional av_mode=4 meshless branch, not the canonical av_mode=5 TCF geometric solver."
+    },
+    {
+      "location": "Exam/exam.c:11382",
+      "fact": "The force routine sets ax=fx/m, ay=fy/m, die=die without an MFV mass-derivative correction.",
+      "derived_problem": "For changing mass, d(mv)/dt=m*dv/dt+v*dm/dt. With dv/dt=F/m and nonzero dm/dt, actual momentum derivative is F+v*dm/dt, not the accumulated conservative force F. This is already a semidiscrete inconsistency, not only finite-step error."
+    },
+    {
+      "location": "Exam/exam.c:16616",
+      "fact": "The half-kick changes velocity and internal energy directly, then changes mass separately and clamps it at 1e-30.",
+      "derived_problem": "A conservative variable-mass update must update m, p and total energy consistently and recover v=p/m, U=E-p^2/(2m), or implement the equivalent coupled derivative equations. Directly adding total advective enthalpy into an internal-energy update has not been shown compatible."
+    },
+    {
+      "location": "Exam/exam.c:16540",
+      "fact": "av_mode=4 uses KDK despite the function name including rk4; canonical av_mode=5 uses HG/RK4/HG."
+    }
+  ],
+  "decision": "Do not select existing LAGMFV as a ready conservative escape from current Kepler instability. Preserve original canonical implementation and current runs. A separate audited conservative ALE design would be needed before activation. No claim this dormant branch causes canonical instability."
+}

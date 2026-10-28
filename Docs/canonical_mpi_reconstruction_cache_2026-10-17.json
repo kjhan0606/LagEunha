@@ -1,0 +1,129 @@
+{
+  "scope": "Owned centroid and QBP cache after actual MPI restart migration and geometry generation; no ghost cache exchange or evolution",
+  "ranks": {
+    "1": {
+      "owned_per_rank": [
+        36864
+      ],
+      "maximum_abs_difference": {
+        "cdx": 0.0,
+        "cdy": 0.0,
+        "qbp_ok": 0.0,
+        "qbp_arc": 0.0,
+        "g0": 0.0,
+        "g1": 0.0,
+        "g2": 0.0,
+        "g3": 0.0,
+        "h0": 0.0,
+        "h1": 0.0,
+        "h2": 0.0,
+        "h3": 0.0,
+        "h4": 0.0,
+        "h5": 0.0,
+        "t0": 0.0,
+        "t1": 0.0,
+        "t2": 0.0,
+        "t3": 0.0,
+        "t4": 0.0,
+        "t5": 0.0,
+        "t6": 0.0,
+        "t7": 0.0
+      },
+      "different_cells": 0,
+      "qbp_status_counts": {
+        "2": 36864
+      },
+      "arc_counts": {
+        "0": 36864
+      }
+    },
+    "2": {
+      "owned_per_rank": [
+        18453,
+        18411
+      ],
+      "maximum_abs_difference": {
+        "cdx": 0.0,
+        "cdy": 0.0,
+        "qbp_ok": 0.0,
+        "qbp_arc": 0.0,
+        "g0": 0.0,
+        "g1": 0.0,
+        "g2": 0.0,
+        "g3": 0.0,
+        "h0": 0.0,
+        "h1": 0.0,
+        "h2": 0.0,
+        "h3": 0.0,
+        "h4": 0.0,
+        "h5": 0.0,
+        "t0": 0.0,
+        "t1": 0.0,
+        "t2": 0.0,
+        "t3": 0.0,
+        "t4": 0.0,
+        "t5": 0.0,
+        "t6": 0.0,
+        "t7": 0.0
+      },
+      "different_cells": 0,
+      "qbp_status_counts": {
+        "2": 36864
+      },
+      "arc_counts": {
+        "0": 36864
+      }
+    },
+    "4": {
+      "owned_per_rank": [
+        9236,
+        9217,
+        9191,
+        9220
+      ],
+      "maximum_abs_difference": {
+        "cdx": 0.0,
+        "cdy": 0.0,
+        "qbp_ok": 0.0,
+        "qbp_arc": 0.0,
+        "g0": 0.0,
+        "g1": 0.0,
+        "g2": 0.0,
+        "g3": 0.0,
+        "h0": 0.0,
+        "h1": 0.0,
+        "h2": 0.0,
+        "h3": 0.0,
+        "h4": 0.0,
+        "h5": 0.0,
+        "t0": 0.0,
+        "t1": 0.0,
+        "t2": 0.0,
+        "t3": 0.0,
+        "t4": 0.0,
+        "t5": 0.0,
+        "t6": 0.0,
+        "t7": 0.0
+      },
+      "different_cells": 0,
+      "qbp_status_counts": {
+        "2": 36864
+      },
+      "arc_counts": {
+        "0": 36864
+      }
+    }
+  },
+  "run_root": "/gpfs/kjhan/LagForce/Codex_mpi_cache_probe_20261017",
+  "binary_sha256": "4e3be6c3dbcb23e292035e98088421d2959283309d62eb8cdfb830e142344f27",
+  "source_sha256": "ea2ba429665785958aa2f4045fc33824c1f453e9eb4e4c69d9f456994ee37c3a",
+  "snapshot_time": 10.0020667693911,
+  "OMP_NUM_THREADS": 2,
+  "CUDA_nearest_enabled": true,
+  "limitations": [
+    "Single snapshot and initial reconstruction only; not all RK stages or later migration",
+    "Only owned caches compared; remote cache transfer is not yet integrated",
+    "Fit status 2 means valid polynomial fit, not proof that every fit used cubic order",
+    "No force, HG, rollback or long-term stability validation in this diagnostic"
+  ]
+}

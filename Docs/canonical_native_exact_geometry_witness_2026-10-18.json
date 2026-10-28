@@ -1,0 +1,73 @@
+{
+  "status": "completed",
+  "scope": "Explicit native HOST exact-resolution of saved cells 3/5; no new evolution.",
+  "library_sha256": "c05ba86e6e3dbf383b8e5d1d56160327784180b3788589d7406e608aecd306d7",
+  "checks": {
+    "cpu1": [
+      {
+        "owner": 3,
+        "edges": 6,
+        "added_global_ids": [],
+        "filtered_checks": 221201,
+        "exact_checks": 12,
+        "endpoint_rounding_difference": 4,
+        "endpoint_collapse": 0,
+        "endpoint_reversal": 0,
+        "max_relative_vector_error": 0.007155143232941391
+      },
+      {
+        "owner": 5,
+        "edges": 7,
+        "added_global_ids": [
+          2
+        ],
+        "filtered_checks": 479253,
+        "exact_checks": 26,
+        "endpoint_rounding_difference": 5,
+        "endpoint_collapse": 0,
+        "endpoint_reversal": 0,
+        "max_relative_vector_error": 0.004714511061895008
+      }
+    ],
+    "omp4": [
+      {
+        "owner": 3,
+        "edges": 6,
+        "added_global_ids": [],
+        "filtered_checks": 221201,
+        "exact_checks": 12,
+        "endpoint_rounding_difference": 4,
+        "endpoint_collapse": 0,
+        "endpoint_reversal": 0,
+        "max_relative_vector_error": 0.007155143232941391
+      },
+      {
+        "owner": 5,
+        "edges": 7,
+        "added_global_ids": [
+          2
+        ],
+        "filtered_checks": 479253,
+        "exact_checks": 26,
+        "endpoint_rounding_difference": 5,
+        "endpoint_collapse": 0,
+        "endpoint_reversal": 0,
+        "max_relative_vector_error": 0.004714511061895008
+      }
+    ]
+  },
+  "seconds": {
+    "cpu1": 0.16680973768234253,
+    "omp4": 0.15233044140040874
+  },
+  "cpu_omp_bitwise_equal": true,
+  "negative_exact_gauge_bitwise_equal": true,
+  "registry_permutation_bitwise_equal": true,
+  "coincident": {
+    "code": 6,
+    "caller_unchanged": true,
+    "seconds": 0.06021014042198658
+  },
+  "shared_edge_3_5_length": 4.860850672431795e-16,
+  "limits": "Two cells in explicit native HOST rational resolution. GPU fast path, whole1590-cell export, production provider, massroot/MPI/evolution and long accuracy remain incomplete. Endpoint-only downstream cannot consume exports without a separate representation gate."
+}

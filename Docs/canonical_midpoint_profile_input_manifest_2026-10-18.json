@@ -1,0 +1,72 @@
+{
+  "status": "prepared_not_executed",
+  "scope": "Validate and record the saved full-provider replay input, without replay.",
+  "state_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/inputs.npz",
+  "initial_seed_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/stage0/inputs.npz",
+  "initial_seed_key": "weight_rates",
+  "time": 5e-05,
+  "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+  "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+  "factor_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+  "frozen_sha256": "3c5055f24842a38c1fd188e60ac547d3ff1875eb77ea5be81b5df38a9cc0391c",
+  "half_checkpoint_equals_provider_input": true,
+  "half_weights_equal_initial_plus_half_dt_times_seed": true,
+  "runner": {
+    "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/run_compiled_midpoint_once.py",
+    "sha256": "0445686294ee3e344e7b671e64dd05ae4fb660176ebe7dde1f262fcf27422f66"
+  },
+  "modules": {
+    "kinetic_factor_rhs": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_factor_rhs.py",
+      "sha256": "0f5e6e2cd7b12945edfa5e7f660c061a0b48993c884c0b44c87b51935c68e3a9"
+    },
+    "kinetic_face_capture": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+      "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+    },
+    "moment_compiled_backend": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_compiled_backend.py",
+      "sha256": "4fe93ca30f888a6a734b3a0bd22b1eb3903fd86e0cb000284ec8b8c6923d5a39"
+    },
+    "moment_bridge_audit": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_bridge_audit.py",
+      "sha256": "ce32b2f27ebf909a526b74e64653f96709f667d5482976bdf9873db227ec6871"
+    },
+    "moment_factor_error_bounds": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_factor_error_bounds.py",
+      "sha256": "3563b1454de556dced3913dc2b62a9b5bfbee7f1452195006ef8720baa393c63"
+    },
+    "contact_prior_density": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_prior_density.py",
+      "sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+    },
+    "geometry_uncertainty": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/geometry_uncertainty.py",
+      "sha256": "a58bfe8407a40e3aa31dff10c6f19fddb3059bdf420750b4286c433907be20e4"
+    },
+    "quadratic_velocity_reconstruction": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_velocity_reconstruction.py",
+      "sha256": "45230f6c698cd45f242d93526b923008f5752d6d70a480e6bababc9e5e40c72e"
+    },
+    "contact_upwind_face_nodes": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+      "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+    },
+    "moment_gravity_source": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+      "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+    },
+    "embedded_laguerre_geometry": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+      "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+    }
+  },
+  "seed_contract": "Original runner assigns d0,o0,g0,z0=evaluate(stage0), then evaluate(h/2,half,halfL,z0,midpoint). Thus stage0 converged weight_rates are the midpoint OUTER initial seed. The final midpoint weight_rates are not its initial seed.",
+  "outer": {
+    "maximum_iterations": 10,
+    "termination_weight_rate_change": 1e-11,
+    "required_mass_residual": 2e-13
+  },
+  "performance_replay_authorization": "One complete provider replay only after fine completion, with same original inputs, flags, seed and stopping rule. No timestep update or tuning reruns. Instrumentation code not yet executed.",
+  "limits": "Prepared inputs only, not a profiling or physics result."
+}

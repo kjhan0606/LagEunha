@@ -1,0 +1,32 @@
+{
+  "as_of": "2026-10-17T18:11:23.128314+09:00",
+  "host": "lageunha",
+  "build_exit": 0,
+  "binary_sha256": "cae1635bb08879a9c524cc9be95c95b8d68252c2be51556ad155f755e32787e2  eunha2.exe",
+  "base_archive_sha256": "415589a30d663651fab88e7434b1d35d306ebcb4cf2e4c86158b5175cb18ec36  /gpfs/kjhan/LagForce/Claude_build_tcf_9303006/source.tar",
+  "overlay": {
+    "exam.c": "4c851a8ac0d404d5e8007b3fe5d7ca5d67a2843b7db634f6a7c5518bd6d0e392",
+    "exam_gpu_extract.c": "3dec7fcbb170b80b681673c338c191ff18d911391b3befd1ad1f9610b90b13f8",
+    "gpu_validation_check.h": "b732b9b8e223ed863733622d9daee60fedfa8429aab916f48e57376954fc160b"
+  },
+  "runs": {
+    "omp8_t20": {
+      "session": 92020,
+      "root": "/gpfs/kjhan/LagForce/Codex_canonical192_accepted_20261017/omp8_t20",
+      "end_time": 20,
+      "verified_complete": false
+    },
+    "omp1_initial": {
+      "session": 52265,
+      "root": "/gpfs/kjhan/LagForce/Codex_canonical192_accepted_20261017/omp1_initial",
+      "purpose": "First accepted step parity only",
+      "verified_complete": false
+    }
+  },
+  "superseded_build": {
+    "job": 426313,
+    "last_observed_state": "PENDING QOSGrpGRES",
+    "action": "scancel returned success",
+    "reason": "Completed lageunha build includes validator overlay and accepted-state ledger; do not duplicate build."
+  }
+}

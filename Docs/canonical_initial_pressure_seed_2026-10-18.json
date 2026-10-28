@@ -1,0 +1,53 @@
+{
+  "scope": "Instantaneous t0, fixed mass and ideal gas. Pressure-only acceleration derivative from changing pressure, evaluated at fixed geometry. Not total jerk or finite-time growth.",
+  "Pdot_formula": "-gamma P Vdot/V + (gamma-1)(H_TCF+H_HG)/V",
+  "hydro_Pdot_identity_max_abs_r_lt_1p9": 9.169624914534629e-14,
+  "initial_pressure_range_r_lt_1p9": [
+    2.777779632144756e-05,
+    2.7777796321447573e-05
+  ],
+  "regions": {
+    "inner": {
+      "cells": 804,
+      "relative_Pdot_RMS": {
+        "compression": 0.20147906377963815,
+        "TCF": 0.002599121676042384,
+        "HG": 1.2060796271852689e-05
+      },
+      "pressure_acceleration_derivative_RMS": {
+        "compression": 0.01708326755451639,
+        "TCF": 8.160956148445367e-05,
+        "HG": 9.342524822536546e-07
+      },
+      "initial_pressure_acceleration_RMS": 6.916975208676388e-12
+    },
+    "edge": {
+      "cells": 390,
+      "relative_Pdot_RMS": {
+        "compression": 0.08643073000686595,
+        "TCF": 7.024177842839356e-05,
+        "HG": 1.1927065404390995e-05
+      },
+      "pressure_acceleration_derivative_RMS": {
+        "compression": 6.829589789862726e-05,
+        "TCF": 1.19396108246713e-07,
+        "HG": 5.838507760276999e-09
+      },
+      "initial_pressure_acceleration_RMS": 6.368373421931154e-19
+    },
+    "core": {
+      "cells": 10304,
+      "relative_Pdot_RMS": {
+        "compression": 0.0220130035367636,
+        "TCF": 6.927297378219787e-06,
+        "HG": 6.199681920197642e-07
+      },
+      "pressure_acceleration_derivative_RMS": {
+        "compression": 1.7386542989949783e-05,
+        "TCF": 4.6737476636183335e-09,
+        "HG": 4.036209094273452e-10
+      },
+      "initial_pressure_acceleration_RMS": 6.187309091020399e-19
+    }
+  }
+}

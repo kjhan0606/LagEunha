@@ -1,0 +1,36 @@
+{
+  "scope": "Moving periodic 2D auxiliary subsystem only; not Euler or Kepler.\n\nConstant masses and acoustic scale, x_dot=v, m*v_dot=-B(x)^T*z,\nz_dot=B(x)*v. Every RK stage rebuilds support and operator.\n",
+  "cells": 144,
+  "rows": [
+    {
+      "dt": 0.002,
+      "time": 0.02,
+      "energy_relative_error": -5.372369216161132e-13,
+      "momentum_absolute_error": 3.431509972961376e-18,
+      "auxiliary_energy_fraction": 0.0011519806539210472,
+      "owners_with_changed_support": 86
+    },
+    {
+      "dt": 0.001,
+      "time": 0.02,
+      "energy_relative_error": -1.532107773982716e-14,
+      "momentum_absolute_error": 1.914931299949973e-18,
+      "auxiliary_energy_fraction": 0.001151980660136532,
+      "owners_with_changed_support": 86
+    },
+    {
+      "dt": 0.0005,
+      "time": 0.02,
+      "energy_relative_error": -2.220446049250313e-16,
+      "momentum_absolute_error": 6.559641617532939e-18,
+      "auxiliary_energy_fraction": 0.0011519806605240614,
+      "owners_with_changed_support": 86
+    }
+  ],
+  "successive_full_state_L2_differences": [
+    4.57055302669915e-11,
+    2.9348077700637282e-12
+  ],
+  "ratio": 15.573602718790342,
+  "limitations": "Constant acoustic coefficient and auxiliary subsystem only; no pressure/gravity/heat, no production restart or parallel implementation."
+}

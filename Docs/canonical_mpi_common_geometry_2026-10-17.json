@@ -1,0 +1,134 @@
+{
+  "scope": "Production shf_common after installing received records in diagnostic cache; no force or evolution",
+  "ranks": {
+    "1": {
+      "faces": 221159,
+      "max_abs_length_centroid_difference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_length_faces": 1,
+      "missing_reciprocal": 1
+    },
+    "2": {
+      "faces": 221159,
+      "max_abs_length_centroid_difference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_length_faces": 1,
+      "missing_reciprocal": 1
+    },
+    "4": {
+      "faces": 221159,
+      "max_abs_length_centroid_difference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_length_faces": 1,
+      "missing_reciprocal": 1
+    }
+  },
+  "independent_reconstruction": {
+    "faces": 221159,
+    "maximum_length_abs_error": 2.7755575615628914e-17,
+    "missing_reciprocal": 1,
+    "note": "Missing reciprocal faces are counted, not silently treated as a physics pass; compare with original serial behavior."
+  },
+  "run_root": "/gpfs/kjhan/LagForce/Codex_mpi_common_geometry_20261017",
+  "binary_sha256": "5469091658ebc151e6cb1d30b79f9be76ca69d46c9eb4cdc37af1cef14d04887",
+  "source_sha256": "9ec20ca002f57ce557d9bc177ad9ccf1fdef7b15f46dd0498d7f756d32c39658",
+  "missing_reciprocal_detail": [
+    {
+      "i": 36852,
+      "j": 36860,
+      "xi": [
+        0.15934751128452618,
+        0.05220718149077186
+      ],
+      "xj": [
+        0.0952379824934324,
+        5.884639784124037
+      ],
+      "ri": 4.093749999999999,
+      "rj": 4.093749999999999,
+      "own_raw_length": 0.021458892434475546,
+      "common_length": 0.0
+    }
+  ],
+  "exchange_regression": {
+    "scope": "Owner-directed runtime MPI exchange after distributed tessellation; imported packets checked against independent one-rank geometry/cache output; force reads not enabled",
+    "ranks": {
+      "1": [
+        {
+          "rank": 0,
+          "requested_and_received_cells": 0,
+          "received_faces": 0,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        }
+      ],
+      "2": [
+        {
+          "rank": 0,
+          "requested_and_received_cells": 384,
+          "received_faces": 2319,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        },
+        {
+          "rank": 1,
+          "requested_and_received_cells": 384,
+          "received_faces": 2325,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        }
+      ],
+      "4": [
+        {
+          "rank": 0,
+          "requested_and_received_cells": 383,
+          "received_faces": 2312,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        },
+        {
+          "rank": 1,
+          "requested_and_received_cells": 374,
+          "received_faces": 2280,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        },
+        {
+          "rank": 2,
+          "requested_and_received_cells": 379,
+          "received_faces": 2302,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        },
+        {
+          "rank": 3,
+          "requested_and_received_cells": 378,
+          "received_faces": 2286,
+          "max_cache_abs_difference": 0.0,
+          "max_geometry_abs_difference": 0.0
+        }
+      ]
+    },
+    "stale_generation_control": {
+      "ranks": 2,
+      "exit_code": 3,
+      "invalid_records": 1,
+      "rejected": true
+    }
+  },
+  "limitations": [
+    "Probe cache installation only; ordinary MPI evolution guards remain",
+    "One single-snapshot geometry generation, not global stage/retry synchronization",
+    "Missing reciprocal record is in frozen outer region and preexists MPI exchange; periodic boundary completeness is not proved",
+    "HG multi-hop support, force parity, collective rollback and long-term physical stability remain unverified"
+  ]
+}

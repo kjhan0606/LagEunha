@@ -1,0 +1,104 @@
+{
+  "purpose": "Independent canonical t0-to-t20 timestep-cap comparison, preserving all existing runs",
+  "binary": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+  "binary_sha256": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697",
+  "initial_reference": "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat",
+  "force_backend": "CPU TCF/HG",
+  "nearest_backend": "CUDA double",
+  "mpi_ranks": 1,
+  "omp_threads": 8,
+  "max_dt": 0.0025,
+  "stop_time": 20,
+  "dump_interval": 2,
+  "conservative_total_dump_count_including_gate": 13,
+  "estimated_dump_bytes": 299041652,
+  "resource_observation": "lageunha vmstat interval idle74%; Ada1766/32760MiB, utilization6%",
+  "effective_params": "/gpfs/kjhan/LagForce/Codex_t0_maxdt0025_t20_20261017/run/params.dat",
+  "process_pid": 2466162,
+  "exec_session": 60286,
+  "observed_utc": "2026-10-17T11:40:14.242823+00:00",
+  "initial_comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_t0_maxdt0025_t20_20261017/initial_gate/khout.000000.dat",
+    "reference_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+    "candidate_sha256": "dc1bb9b1a494dfb364d8c1b7dad385f4cecacda165b3fa3ccfad6bbf2ece785f",
+    "n": 36864,
+    "t": 0.0,
+    "dt": 1e-07,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "first_confirmed_evolution": {
+    "accepted_step": 18,
+    "t": 0.045000000000000005,
+    "dt": 0.0025,
+    "finite": 1,
+    "dM0": 0,
+    "retries": 0
+  }
+}

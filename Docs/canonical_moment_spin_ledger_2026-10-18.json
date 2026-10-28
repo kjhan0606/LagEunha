@@ -1,0 +1,51 @@
+{
+  "scope": "C chain-rule check on existing positive remap states and a specified path.\n\nThe path is the chord between two saved remaps; it is not a physical RHS.\n",
+  "cells": 1590,
+  "header_sha256": "ab50828e38c920b6b8a00ba2dc3a51561f138ebffc89685e2714791c5e477f96",
+  "input_sha256": [
+    "d7e3aaf2a3823b172c8cea51fa65e702cef4f193858b778ffd7e84786127bf93",
+    "48ec05745b6da5f7baca16015e1ee35c3e71f9acd014356e9db0858688afdc6e"
+  ],
+  "compiler_command": [
+    "gcc",
+    "-O2",
+    "-shared",
+    "-fPIC",
+    "/gpfs/kjhan/LagForce/Codex_moment_spin_ledger_20261018/probe.c",
+    "-o",
+    "/gpfs/kjhan/LagForce/Codex_moment_spin_ledger_20261018/probe.so",
+    "-lm"
+  ],
+  "finite_difference_max_errors": [
+    2.938332319970352e-14,
+    7.345825600265318e-15,
+    1.836456150564746e-15
+  ],
+  "successive_error_ratios": [
+    4.0000028313553,
+    4.000000543441417
+  ],
+  "max_absolute_mass_rate": 6.879854621421732e-05,
+  "max_change_Krot_rate_if_mass_terms_omitted": 2.4952023865469016e-05,
+  "guards": [
+    {
+      "case": "zero_mass",
+      "code": 1,
+      "output_unchanged": true
+    },
+    {
+      "case": "negative_inertia",
+      "code": 2,
+      "output_unchanged": true
+    },
+    {
+      "case": "nan",
+      "code": 1,
+      "output_unchanged": true
+    }
+  ],
+  "limits": [
+    "C host diagnostic only; CUDA execution and actual ALE RHS not checked here.",
+    "No production energy, force, weight law or relaxation update was added."
+  ]
+}

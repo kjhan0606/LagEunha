@@ -1,0 +1,292 @@
+{
+  "manifest": {
+    "purpose": "Geometry timestep minimizing neighbor per force call; paired audit on/off at t10, OMP8 MPI1",
+    "new_full_dumps": 2,
+    "estimated_output_bytes": 46006408,
+    "baseline_binary": "/gpfs/kjhan/LagForce/Codex_HG_perturbation_t10_20261017/eunha2.exe",
+    "source": "/tmp/lageunha-push/Exam/exam.c",
+    "exam_sha256": "537cb2f17d6943c3b566d532f97710852cd929af69bd4aafd321879c46f47972",
+    "input_sha256": "125910697dcc4c3b3019287c891b17341e3cda4ea8c72356d129f5618626ccde",
+    "effective_parameters": [
+      "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/audit/params.dat",
+      "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/control/params.dat"
+    ]
+  },
+  "comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/control/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/audit/khout.002306.dat",
+    "reference_sha256": "eb230b572ebe325755f3b4094ecd1765dfc67b3690133de342840f6e94c9f6c0",
+    "candidate_sha256": "24827619f6ce9a93c9fb25cccc75373e6db812a8847d4fe73688868aaf87620d",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "records": [
+    {
+      "rank": 0.0,
+      "call": 1.0,
+      "phase": 1.0,
+      "rk_stage": 0.0,
+      "trial": 1.0,
+      "i": 688.0,
+      "j": 808.0,
+      "dt_geom": 0.0023311120652114623,
+      "distance": 0.006157793424393196,
+      "cfi": 0.31928020849022465,
+      "cfj": 0.31891560848262884,
+      "vdotr": -0.010915919587953129,
+      "x": 2.8474490977097773,
+      "y": 2.5708050494492696,
+      "volume": 0.0010971579597332552,
+      "force_dt": 0.0023311120652114623
+    },
+    {
+      "rank": 0.0,
+      "call": 2.0,
+      "phase": 0.0,
+      "rk_stage": 1.0,
+      "trial": 1.0,
+      "i": 688.0,
+      "j": 808.0,
+      "dt_geom": 0.0023297275565680765,
+      "distance": 0.006157793424393196,
+      "cfi": 0.3192948607314561,
+      "cfj": 0.31892784692390325,
+      "vdotr": -0.011097496039663882,
+      "x": 2.8474490977097773,
+      "y": 2.5708050494492696,
+      "volume": 0.0010971579597332552,
+      "force_dt": 0.0023297275565680765
+    },
+    {
+      "rank": 0.0,
+      "call": 3.0,
+      "phase": 0.0,
+      "rk_stage": 2.0,
+      "trial": 1.0,
+      "i": 688.0,
+      "j": 808.0,
+      "dt_geom": 0.0023274016544133497,
+      "distance": 0.006152253974446249,
+      "cfi": 0.3194949774363897,
+      "cfj": 0.31914048534078926,
+      "vdotr": -0.01093004625795202,
+      "x": 2.84813650262738,
+      "y": 2.57057198790511,
+      "volume": 0.00109643285236526,
+      "force_dt": 0.0023274016544133497
+    },
+    {
+      "rank": 0.0,
+      "call": 4.0,
+      "phase": 0.0,
+      "rk_stage": 3.0,
+      "trial": 1.0,
+      "i": 688.0,
+      "j": 808.0,
+      "dt_geom": 0.002327423615878373,
+      "distance": 0.006152319097847745,
+      "cfi": 0.319493312176324,
+      "cfj": 0.31913866919127293,
+      "vdotr": -0.01093209125446974,
+      "x": 2.848136979405041,
+      "y": 2.5705730871860677,
+      "volume": 0.0010964228644745346,
+      "force_dt": 0.002327423615878373
+    },
+    {
+      "rank": 0.0,
+      "call": 5.0,
+      "phase": 0.0,
+      "rk_stage": 4.0,
+      "trial": 1.0,
+      "i": 688.0,
+      "j": 808.0,
+      "dt_geom": 0.002325150207636728,
+      "distance": 0.006146861340754093,
+      "cfi": 0.31968981900008403,
+      "cfj": 0.3193490738815828,
+      "vdotr": -0.010765247976090719,
+      "x": 2.848824854006839,
+      "y": 2.5703411287427755,
+      "volume": 0.0010956810711144455,
+      "force_dt": 0.002325150207636728
+    },
+    {
+      "rank": 0.0,
+      "call": 6.0,
+      "phase": 2.0,
+      "rk_stage": 0.0,
+      "trial": 1.0,
+      "i": 688.0,
+      "j": 808.0,
+      "dt_geom": 0.0023251520275554744,
+      "distance": 0.006146862254616218,
+      "cfi": 0.319689769430603,
+      "cfj": 0.3193490412650905,
+      "vdotr": -0.010765088024387847,
+      "x": 2.8488248563813023,
+      "y": 2.5703411274666106,
+      "volume": 0.0010956809484552017,
+      "force_dt": 0.0023251520275554744
+    }
+  ],
+  "no_rejected_trials": true,
+  "conclusion": "At this t10 state all six force calls are geometry-limited by IDs 688/808. Does not establish the later t>10.3 limiting pair. Physical accuracy and MPI/GPU-force support remain unproven.",
+  "prior_binary_comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_HG_perturbation_t10_20261017/audit/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/audit/khout.002306.dat",
+    "reference_sha256": "353bc16919c14855f166e3731224663a6d66978c9ecc4c8cba6cb5ac944bda91",
+    "candidate_sha256": "24827619f6ce9a93c9fb25cccc75373e6db812a8847d4fe73688868aaf87620d",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "implementation_scope": {
+    "switch": "GFS_GEOM_DT_AUDIT=1",
+    "reduction": "rank-local minimum per force call, protected by OpenMP critical section",
+    "labels": {
+      "phase_0": "RK stage given by rk_stage",
+      "phase_1": "pre-HG force",
+      "phase_2": "post-HG force"
+    },
+    "trial_records": true,
+    "MPI_global_minimum": false,
+    "GPU_force_coverage": false,
+    "live_binaries_changed": false
+  }
+}

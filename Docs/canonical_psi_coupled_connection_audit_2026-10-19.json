@@ -1,0 +1,388 @@
+{
+  "status": "passed_saved_connection_audit",
+  "scope": "Audit saved coupled connection, without a provider, evolution, or refit.",
+  "accepted_time": 0.0001,
+  "provider_calls": 2,
+  "mass_bitwise_unchanged": true,
+  "frozen_raw_factor_sidecar_unchanged": true,
+  "Q_Pi_symmetric": true,
+  "minimum_thermal": 3.8674249889498755e-08,
+  "minimum_R": 7.517728371921013e-13,
+  "accepted_momentum_E_angular_ledger_residual": [
+    2.127026852706061e-17,
+    -1.6236347482227664e-18,
+    1.7890681823963812e-17,
+    -1.2782571863767067e-16
+  ],
+  "accepted_momentum_E_angular_ledger_bound": [
+    1.8365542057904278e-12,
+    1.836464971643907e-12,
+    1.86597462406442e-12,
+    1.7352307821384066e-12
+  ],
+  "reconstruction": {
+    "initial": {
+      "maximum_q48_normalized_mqQ_error": 1.4084369826287361e-14,
+      "maximum_q48_Psi_error": 2.0753365998914426e-18,
+      "q48_Psi_signed_error": -6.195300223124929e-17,
+      "q48_Psi_absolute_error": 2.4012397062752516e-16,
+      "maximum_q48_scaled_remainder_residual": 6.347048090077246e-13,
+      "maximum_dual_residual": 2.7894015410123605e-13,
+      "maximum_condition": 1555.2226470069625,
+      "minimum_sigma": 9.220721277842023e-06,
+      "maximum_rank_error": 3.0507778996370763e-14
+    },
+    "half": {
+      "maximum_q48_normalized_mqQ_error": 3.001047083365724e-13,
+      "maximum_q48_Psi_error": 1.4412794993123954e-17,
+      "q48_Psi_signed_error": -6.309678837392658e-16,
+      "q48_Psi_absolute_error": 7.59908585865795e-16,
+      "maximum_q48_scaled_remainder_residual": 6.862440748059251e-13,
+      "maximum_dual_residual": 2.9982960558783134e-13,
+      "maximum_condition": 1555.1209553911795,
+      "minimum_sigma": 9.219122062367659e-06,
+      "maximum_rank_error": 3.9414008393862173e-14
+    },
+    "final": {
+      "maximum_q48_normalized_mqQ_error": 3.004905081271242e-13,
+      "maximum_q48_Psi_error": 1.529783854388629e-17,
+      "q48_Psi_signed_error": -5.064360824017852e-16,
+      "q48_Psi_absolute_error": 6.245319007585398e-16,
+      "maximum_q48_scaled_remainder_residual": 7.381720408909594e-13,
+      "maximum_dual_residual": 2.9984348337563915e-13,
+      "maximum_condition": 1555.0091956684678,
+      "minimum_sigma": 9.217872549184722e-06,
+      "maximum_rank_error": 3.9096214694570783e-14
+    }
+  },
+  "energy": {
+    "transported_residual": -1.6353664310550252e-19,
+    "reconstructed_q48_residual": -4.446466168136414e-16,
+    "stored_sum_roundoff_bound": 5.0612083748826376e-12,
+    "measured_initial_and_final_q48_constraint_uncertainty": 8.64655871386065e-16,
+    "frozen_reconstructed_Psi_change": 2.139185447200044e-12,
+    "frozen_transported_Psi_change": 0.0,
+    "quadrature_truncation": "pending q24 minus stored independent q48; not included in roundoff bound"
+  },
+  "cost": {
+    "geometry": {
+      "calls": 3,
+      "wall_seconds": 3.5218505822122097,
+      "process_cpu_seconds": 3.4990072560000165
+    },
+    "prior": {
+      "calls": 3,
+      "wall_seconds": 13.751505751162767,
+      "process_cpu_seconds": 13.656997636999947
+    },
+    "baseline_density": {
+      "calls": 4770,
+      "wall_seconds": 17.493586767464876,
+      "process_cpu_seconds": 17.34703485399969
+    },
+    "potential_density_fit": {
+      "calls": 3582,
+      "wall_seconds": 53.4125341065228,
+      "process_cpu_seconds": 53.04245479900062
+    },
+    "volume_decode": {
+      "calls": 3,
+      "wall_seconds": 0.31581983901560307,
+      "process_cpu_seconds": 0.313664299000024
+    },
+    "velocity_prepare": {
+      "calls": 9,
+      "wall_seconds": 34.17386981099844,
+      "process_cpu_seconds": 33.93932119699996
+    },
+    "rhs_outer": {
+      "calls": 6,
+      "wall_seconds": 98.81784985400736,
+      "process_cpu_seconds": 98.09833926900001
+    },
+    "capture": {
+      "calls": 2,
+      "wall_seconds": 44.698184156790376,
+      "process_cpu_seconds": 44.39191880000003
+    },
+    "gravity_and_moment_audit": {
+      "calls": 2,
+      "wall_seconds": 8.075173698365688,
+      "process_cpu_seconds": 8.014508851999977
+    },
+    "independent_q48": {
+      "calls": 3,
+      "wall_seconds": 178.92905675061047,
+      "process_cpu_seconds": 177.824945594
+    }
+  },
+  "rhs_outer_cost": [
+    {
+      "label": "initial",
+      "face_record": {
+        "wall_seconds": 1.3212588150054216,
+        "process_cpu_seconds": 1.3097735190000037
+      },
+      "accumulation": {
+        "wall_seconds": 1.9899851903319359,
+        "process_cpu_seconds": 1.971956618
+      },
+      "native": {
+        "nodes": 244728,
+        "star_calls": 234080,
+        "frozen_skipped": 10648,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 0.24146411195397377,
+            "process_cpu_seconds": 0.23983824999999825
+          },
+          "exact_star_native": {
+            "wall_seconds": 0.1730993539094925,
+            "process_cpu_seconds": 0.17166075000000092
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 0.8211242854595184,
+            "process_cpu_seconds": 0.8154536890000017
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot": {
+        "wall_seconds": 2.0009265281260014,
+        "process_cpu_seconds": 1.9649563079999979
+      }
+    },
+    {
+      "label": "initial",
+      "face_record": {
+        "wall_seconds": 0.9747949410229921,
+        "process_cpu_seconds": 0.9681939090000071
+      },
+      "accumulation": {
+        "wall_seconds": 1.9000310525298119,
+        "process_cpu_seconds": 1.8862831179999944
+      },
+      "native": {
+        "nodes": 251896,
+        "star_calls": 241248,
+        "frozen_skipped": 10648,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 0.13756213895976543,
+            "process_cpu_seconds": 0.13660781999999472
+          },
+          "exact_star_native": {
+            "wall_seconds": 0.14828165993094444,
+            "process_cpu_seconds": 0.1471542400000061
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 0.6885243393480778,
+            "process_cpu_seconds": 0.6840374790000112
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot": {
+        "wall_seconds": 2.3395016379654408,
+        "process_cpu_seconds": 2.320761558000001
+      }
+    },
+    {
+      "label": "initial",
+      "face_record": {
+        "wall_seconds": 1.2422865740954876,
+        "process_cpu_seconds": 1.2337514790000057
+      },
+      "accumulation": {
+        "wall_seconds": 1.9354955051094294,
+        "process_cpu_seconds": 1.9195041080000124
+      },
+      "native": {
+        "nodes": 251888,
+        "star_calls": 241240,
+        "frozen_skipped": 10648,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 0.2596178948879242,
+            "process_cpu_seconds": 0.25774211899999955
+          },
+          "exact_star_native": {
+            "wall_seconds": 0.16535708494484425,
+            "process_cpu_seconds": 0.16417924999998945
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 0.8169546443969011,
+            "process_cpu_seconds": 0.8114956699999993
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot": {
+        "wall_seconds": 2.005313728004694,
+        "process_cpu_seconds": 1.9923529779999996
+      }
+    },
+    {
+      "label": "half",
+      "face_record": {
+        "wall_seconds": 0.8155730161815882,
+        "process_cpu_seconds": 0.8098263789999578
+      },
+      "accumulation": {
+        "wall_seconds": 1.4069842286407948,
+        "process_cpu_seconds": 1.3966271489999826
+      },
+      "native": {
+        "nodes": 272376,
+        "star_calls": 258840,
+        "frozen_skipped": 13536,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 0.15991228818893433,
+            "process_cpu_seconds": 0.15876266999998734
+          },
+          "exact_star_native": {
+            "wall_seconds": 0.13338101468980312,
+            "process_cpu_seconds": 0.13235192999999867
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 0.5219698138535023,
+            "process_cpu_seconds": 0.5184245689999898
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot": {
+        "wall_seconds": 1.4926533810794353,
+        "process_cpu_seconds": 1.4826564790000134
+      }
+    },
+    {
+      "label": "half",
+      "face_record": {
+        "wall_seconds": 0.8043944835662842,
+        "process_cpu_seconds": 0.799320999000031
+      },
+      "accumulation": {
+        "wall_seconds": 1.4113391246646643,
+        "process_cpu_seconds": 1.4019352379999646
+      },
+      "native": {
+        "nodes": 272336,
+        "star_calls": 258800,
+        "frozen_skipped": 13536,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 0.15001701191067696,
+            "process_cpu_seconds": 0.14904255999999805
+          },
+          "exact_star_native": {
+            "wall_seconds": 0.12454808130860329,
+            "process_cpu_seconds": 0.12378538999996636
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 0.5295284651219845,
+            "process_cpu_seconds": 0.5262197589999573
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot": {
+        "wall_seconds": 1.4961403012275696,
+        "process_cpu_seconds": 1.4865309690000004
+      }
+    },
+    {
+      "label": "half",
+      "face_record": {
+        "wall_seconds": 0.8061242327094078,
+        "process_cpu_seconds": 0.8006369690000383
+      },
+      "accumulation": {
+        "wall_seconds": 1.4027385227382183,
+        "process_cpu_seconds": 1.390480359000037
+      },
+      "native": {
+        "nodes": 272336,
+        "star_calls": 258800,
+        "frozen_skipped": 13536,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 0.15737992897629738,
+            "process_cpu_seconds": 0.15637698000000455
+          },
+          "exact_star_native": {
+            "wall_seconds": 0.12501037120819092,
+            "process_cpu_seconds": 0.12396526999998514
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 0.5234356634318829,
+            "process_cpu_seconds": 0.5200189490000184
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot": {
+        "wall_seconds": 1.4775684028863907,
+        "process_cpu_seconds": 1.4677029889999744
+      }
+    }
+  ],
+  "physical_accuracy": "pending each-current-polygon exact reference comparison",
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/summarize_psi_coupled_midpoint.py": "90f994e64ac4986121b73472699075bfedfbe5b6200f75b211869ea6d7ede74d",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/manifest.json": "64f6a49ef4da64c0143efc408c2c896c9d6a6821f637563d293271bb96f44954",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/summary.json": "39473e0fb0c9c03d57aae2ec9adff79f6839a9bf45bb5fbe16d9585dcf15e844",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/initial.npz": "dc660c274ac2cb54840ba316166adbb5f20a2de233eea8979f62019c110d17a2",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/accepted.npz": "cb4a64a1f20bfbd78b8a3c858aba9e99378cdb8a4c5a304781b976a576a591f0"
+  },
+  "limits": "Connection and numerical ledger audit only; no long-time stability, global circular domain, time order, or physical improvement verdict."
+}

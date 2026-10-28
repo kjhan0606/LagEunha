@@ -1,0 +1,78 @@
+{
+  "reference": "/gpfs/kjhan/LagForce/Codex_DPQ_backend_parity_20261017/cpu/khout.000001.dat",
+  "candidate": "/gpfs/kjhan/LagForce/Codex_DPQ_double_20261017/gpu/khout.000001.dat",
+  "reference_sha256": "7b8106671da2992da8fb0c933cc6992f42c459a5250e58abbebab8808dd91e4e",
+  "candidate_sha256": "604962f8f39f3e5393bfd0aac9051a7c637026315b7df0c950069ee07168f00f",
+  "n": 36864,
+  "t": 0.010887299956438503,
+  "dt": 0.010887299956438503,
+  "fields": {
+    "x": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "y": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "mass": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vx": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vy": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "den": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "pressure": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "ie": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "volume": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "w2": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "w2ceil": {
+      "bitwise_different_particles": 6258,
+      "max_abs_difference": 2.168404344971009e-19,
+      "worst_particle_id": 75
+    },
+    "csound": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    }
+  },
+  "all_physical_fields_bitwise_equal": false,
+  "scope": "First production step only; all listed physical fields except w2ceil remain bitwise equal. w2ceil differences are quantified below. Does not prove weighted force, MPI multi-rank, or long-time stability.",
+  "w2ceil_precision": {
+    "max_ulp_difference": 1,
+    "max_relative_difference": 2.220446045431605e-16
+  },
+  "kernel_tests": "[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)\n[GPU] Initialized: max_particles=256, max_faces=512\n[GPU] Tree buffers allocated: 256 nodes (0.0 MB total)\ncase=0 queries=64 max_relative_error=0 PASS\ncase=1 queries=64 max_relative_error=0 PASS\ncase=2 queries=64 max_relative_error=0 PASS\ncase=3 queries=64 max_relative_error=0 PASS\ncycle_detection PASS\n"
+}

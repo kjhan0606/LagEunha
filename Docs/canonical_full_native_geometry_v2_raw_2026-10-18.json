@@ -1,0 +1,1754 @@
+{
+  "status": "completed",
+  "scope": "Two stored1590-cell snapshots: HOST exact completion and GPU sign filters.\n\nNo GPU topology-builder, provider/RHS, new massroot, MPI or evolution claim.\n",
+  "seconds": 277.36302883550525,
+  "library_sha256": "3295969112683d98db48c09bb63fa122f972dddbb7fafdb772aa69e961ce12a4",
+  "source_sha256": {
+    "moment_geometry_v2_exact.cpp": "6697ebdbd0dbc3304fbfc25970ce4626af39cda5eb016c43da76381b6c2a5e8e",
+    "moment_geometry_v2_filter.cu": "118cbfe4e78fab8b5de2e8590ffbbf117df2085ed7d33efddea2dea94add08f2",
+    "moment_geometry_interval.h": "2a338033710ba319da291a7dc29a78ba693240ef70822babdf71523135167119",
+    "moment_geometry_v2.h": "d5102efa014fbb9f41a6df1c3d3cd35f189ec8e363292b14fe19f00c17b84bed",
+    "moment_geometry_native_v2.py": "35d5b773881a09dac95f644b2979d26bd219b43f53eede2c4732dd0d65d5f2fd",
+    "check_full_native_geometry_v2.py": "e75018e9b01f7aad441ed166679fc7fbac4061ed0b4374d11a8b641bf2e33989"
+  },
+  "stages": {
+    "stage0": {
+      "time": 0.0,
+      "host_seconds": {
+        "cpu1": 72.96832042559981,
+        "omp4": 32.90048624575138
+      },
+      "cpu_omp_bitwise_equal": true,
+      "export": {
+        "positive_oriented_faces": 9541,
+        "canonical_faces": 4912,
+        "external_fixed_wall_faces": 283,
+        "length_quantiles": [
+          3.4270389408926114e-16,
+          0.000661831506785846,
+          0.023525720304806975,
+          0.03053618928230545,
+          0.04338987143300511
+        ],
+        "faces_below_1e15": 6,
+        "added_candidates": [
+          {
+            "owner": 0,
+            "added_id": 2,
+            "vertex_global": [
+              "563456875097147354826669/3329829631939891136964313678655780814848",
+              "-186377291903581458626565/832457407984972784241078419663945203712"
+            ],
+            "positive_violation": "124051550203423/10141204801825835211973625643008"
+          },
+          {
+            "owner": 2,
+            "added_id": 0,
+            "vertex_global": [
+              "-14700875127520831887739391/26638637055519129095714509429246246518784",
+              "2157024181232913009808629/26638637055519129095714509429246246518784"
+            ],
+            "positive_violation": "124051550203423/5070602400912917605986812821504"
+          },
+          {
+            "owner": 2,
+            "added_id": 4,
+            "vertex_global": [
+              "-14700875127520831887739391/26638637055519129095714509429246246518784",
+              "2157024181232913009808629/26638637055519129095714509429246246518784"
+            ],
+            "positive_violation": "47028296796823/5070602400912917605986812821504"
+          },
+          {
+            "owner": 2,
+            "added_id": 5,
+            "vertex_global": [
+              "-14700875127520831887739391/26638637055519129095714509429246246518784",
+              "2157024181232913009808629/26638637055519129095714509429246246518784"
+            ],
+            "positive_violation": "85539923500123/2535301200456458802993406410752"
+          },
+          {
+            "owner": 5,
+            "added_id": 2,
+            "vertex_global": [
+              "68806278577706677217235139/665965926387978227392862735731156162969600",
+              "-4551875550392518577811503/33298296319398911369643136786557808148480"
+            ],
+            "positive_violation": "47028296796823/5070602400912917605986812821504"
+          }
+        ],
+        "endpoint_rounding_difference": 7393,
+        "endpoint_collapse": 0,
+        "endpoint_reversal": 0,
+        "maximum_relative_endpoint_vector_error": 0.007155143232941391,
+        "legacy_numeric_reference_maximum_difference": [
+          3.946495907847236e-17,
+          5.078747224195095e-16,
+          9.078383538810346e-21
+        ],
+        "legacy_reference_scope": "Area/relative centroid/second moment numeric differences only. Exact micro-topology is not forced to match Qhull.",
+        "shared_global_endpoints_exact_reversed_equal": true,
+        "native_filtered_checks": 352397127,
+        "native_exact_resolution_checks": 19119
+      },
+      "clipping_filter": {
+        "count": 42829,
+        "input_sha256": "1c130976e2b91cb3e61a83a3322019761ca944f4b746bbc432981a11bf22d7ed",
+        "oracle_sha256": "3062ac01d235bfbfe71fb78c264c8d90887a504b783774ac5f909beea6e4166b",
+        "cpu_sha256": "6f0ebd3dd0f5d080ea6e5fe30bd2c5c90e7c45dbd8661c8cb89cb589f57968a3",
+        "gpu_sha256": "eb85a58f6a46d8f3d2d3e2eb9456dbe410b810717c3b46e9865c31a6892d5375",
+        "cpu_unresolved": 1,
+        "gpu_unresolved": 42829,
+        "wrong_nonzero_signs": 0
+      },
+      "feasibility_filter": {
+        "vertices": 9541,
+        "registry_count": 36864,
+        "count": 351719424,
+        "self_exact_zero_count": 9541,
+        "coverage": [
+          [
+            0,
+            128
+          ],
+          [
+            128,
+            256
+          ],
+          [
+            256,
+            384
+          ],
+          [
+            384,
+            512
+          ],
+          [
+            512,
+            640
+          ],
+          [
+            640,
+            768
+          ],
+          [
+            768,
+            896
+          ],
+          [
+            896,
+            1024
+          ],
+          [
+            1024,
+            1152
+          ],
+          [
+            1152,
+            1280
+          ],
+          [
+            1280,
+            1408
+          ],
+          [
+            1408,
+            1536
+          ],
+          [
+            1536,
+            1664
+          ],
+          [
+            1664,
+            1792
+          ],
+          [
+            1792,
+            1920
+          ],
+          [
+            1920,
+            2048
+          ],
+          [
+            2048,
+            2176
+          ],
+          [
+            2176,
+            2304
+          ],
+          [
+            2304,
+            2432
+          ],
+          [
+            2432,
+            2560
+          ],
+          [
+            2560,
+            2688
+          ],
+          [
+            2688,
+            2816
+          ],
+          [
+            2816,
+            2944
+          ],
+          [
+            2944,
+            3072
+          ],
+          [
+            3072,
+            3200
+          ],
+          [
+            3200,
+            3328
+          ],
+          [
+            3328,
+            3456
+          ],
+          [
+            3456,
+            3584
+          ],
+          [
+            3584,
+            3712
+          ],
+          [
+            3712,
+            3840
+          ],
+          [
+            3840,
+            3968
+          ],
+          [
+            3968,
+            4096
+          ],
+          [
+            4096,
+            4224
+          ],
+          [
+            4224,
+            4352
+          ],
+          [
+            4352,
+            4480
+          ],
+          [
+            4480,
+            4608
+          ],
+          [
+            4608,
+            4736
+          ],
+          [
+            4736,
+            4864
+          ],
+          [
+            4864,
+            4992
+          ],
+          [
+            4992,
+            5120
+          ],
+          [
+            5120,
+            5248
+          ],
+          [
+            5248,
+            5376
+          ],
+          [
+            5376,
+            5504
+          ],
+          [
+            5504,
+            5632
+          ],
+          [
+            5632,
+            5760
+          ],
+          [
+            5760,
+            5888
+          ],
+          [
+            5888,
+            6016
+          ],
+          [
+            6016,
+            6144
+          ],
+          [
+            6144,
+            6272
+          ],
+          [
+            6272,
+            6400
+          ],
+          [
+            6400,
+            6528
+          ],
+          [
+            6528,
+            6656
+          ],
+          [
+            6656,
+            6784
+          ],
+          [
+            6784,
+            6912
+          ],
+          [
+            6912,
+            7040
+          ],
+          [
+            7040,
+            7168
+          ],
+          [
+            7168,
+            7296
+          ],
+          [
+            7296,
+            7424
+          ],
+          [
+            7424,
+            7552
+          ],
+          [
+            7552,
+            7680
+          ],
+          [
+            7680,
+            7808
+          ],
+          [
+            7808,
+            7936
+          ],
+          [
+            7936,
+            8064
+          ],
+          [
+            8064,
+            8192
+          ],
+          [
+            8192,
+            8320
+          ],
+          [
+            8320,
+            8448
+          ],
+          [
+            8448,
+            8576
+          ],
+          [
+            8576,
+            8704
+          ],
+          [
+            8704,
+            8832
+          ],
+          [
+            8832,
+            8960
+          ],
+          [
+            8960,
+            9088
+          ],
+          [
+            9088,
+            9216
+          ],
+          [
+            9216,
+            9344
+          ],
+          [
+            9344,
+            9472
+          ],
+          [
+            9472,
+            9541
+          ]
+        ],
+        "input_sha256": {
+          "owners": "aa51cbf653bba072d8cd5ade61ef01971fedc930700ca3b6d107499fccd1816b",
+          "supports": "bd6660c5e91650dd63504efd840dbe6b4cc4772f0e0e60a0445d0bf5ded82e72",
+          "enclosures": "24a3aeac7c3341b39e9ec1c3757508c04f40db7e7b7a11eb9fca3848315a5a85",
+          "registry_ids": "ff83a1e80d7639cdbf406dce9c0b7fdabb6bf049a05ac363a6edffbb07a427d3",
+          "xy": "72ddd41b24f7f64a2a0d8ddb85744083f87a9b542f898d346e1fa1c1c9767613",
+          "W": "b9c048de34d844a2381155656d249036a85a52b60cb9fd06bf1600e44d7aa3ae",
+          "bounds": "9a3545bf044d125cd61948faef212304242d5967a81964685abedf24a07397a1"
+        },
+        "cpu_sign_sha256": "c2cfaf19de7234fc1e0eab363eaae740f891381b52e2cec4e10ec1604110e838",
+        "gpu_sign_sha256": "510f9859efdd0d8ca295795345d93a753eed97ab5992cdbfb63ec1a62e65b3b1",
+        "cpu_unresolved": 28623,
+        "gpu_unresolved": 351719424,
+        "gpu_extra_resolved_exact_checked": 0,
+        "wrong_nonzero_signs": 0,
+        "unresolved_witness": [
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 1,
+            "cpu": 0,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 2,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 3,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 4,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 5,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 6,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 7,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 8,
+            "cpu": 0,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 9,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 10,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 11,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 12,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 13,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 14,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 15,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 16,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 17,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 18,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 19,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 20,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 21,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 22,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 23,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 24,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 25,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 26,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 27,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 28,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 29,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 30,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 31,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 32,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 33,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 34,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 35,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 36,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 37,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 38,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 39,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 40,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 41,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 42,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 43,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 44,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 45,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 46,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 47,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 48,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 49,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 50,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 51,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 52,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 53,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 54,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 55,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 56,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 57,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 58,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 59,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 60,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 61,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 62,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 63,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 64,
+            "cpu": -1,
+            "gpu": 0
+          }
+        ],
+        "certificate": "Exact rational vertices were outward enclosed; all Cartesian CPU/GPU signs compared; CPU resolved signs are outward interval certificates, GPU extra resolved signs have native exact support oracle checks. Self plane is exact zero."
+      }
+    },
+    "midpoint": {
+      "time": 5e-05,
+      "host_seconds": {
+        "cpu1": 69.726727347821,
+        "omp4": 32.22060563415289
+      },
+      "cpu_omp_bitwise_equal": true,
+      "export": {
+        "positive_oriented_faces": 9541,
+        "canonical_faces": 4912,
+        "external_fixed_wall_faces": 283,
+        "length_quantiles": [
+          4.083920556853897e-10,
+          0.0005795772078830944,
+          0.023525720304807207,
+          0.030535918072712585,
+          0.04338974563439835
+        ],
+        "faces_below_1e15": 0,
+        "added_candidates": [],
+        "endpoint_rounding_difference": 7438,
+        "endpoint_collapse": 0,
+        "endpoint_reversal": 0,
+        "maximum_relative_endpoint_vector_error": 2.420596875255146e-09,
+        "legacy_numeric_reference_maximum_difference": [
+          4.694595406862234e-17,
+          5.845931447354835e-16,
+          1.090374183472915e-20
+        ],
+        "legacy_reference_scope": "Area/relative centroid/second moment numeric differences only. Exact micro-topology is not forced to match Qhull.",
+        "shared_global_endpoints_exact_reversed_equal": true,
+        "native_filtered_checks": 351733525,
+        "native_exact_resolution_checks": 19082
+      },
+      "clipping_filter": {
+        "count": 42724,
+        "input_sha256": "fe4718badae63b0dc711572f76774eb4ab0acf92955118115e501d92fd577e23",
+        "oracle_sha256": "adda3c608a9d86b54cb7950dd51b6dee91606fe7b6f14100cc8d1646a444e4d0",
+        "cpu_sha256": "abf08e9d37b9519e47737e51fc2881a9767f096b6d6ef2b5704ce2222a0f51ad",
+        "gpu_sha256": "58369b2d71f0f6007c9de9b067666ef58f8d1595533d7d9d7e0c86ca0a2910aa",
+        "cpu_unresolved": 0,
+        "gpu_unresolved": 42724,
+        "wrong_nonzero_signs": 0
+      },
+      "feasibility_filter": {
+        "vertices": 9541,
+        "registry_count": 36864,
+        "count": 351719424,
+        "self_exact_zero_count": 9541,
+        "coverage": [
+          [
+            0,
+            128
+          ],
+          [
+            128,
+            256
+          ],
+          [
+            256,
+            384
+          ],
+          [
+            384,
+            512
+          ],
+          [
+            512,
+            640
+          ],
+          [
+            640,
+            768
+          ],
+          [
+            768,
+            896
+          ],
+          [
+            896,
+            1024
+          ],
+          [
+            1024,
+            1152
+          ],
+          [
+            1152,
+            1280
+          ],
+          [
+            1280,
+            1408
+          ],
+          [
+            1408,
+            1536
+          ],
+          [
+            1536,
+            1664
+          ],
+          [
+            1664,
+            1792
+          ],
+          [
+            1792,
+            1920
+          ],
+          [
+            1920,
+            2048
+          ],
+          [
+            2048,
+            2176
+          ],
+          [
+            2176,
+            2304
+          ],
+          [
+            2304,
+            2432
+          ],
+          [
+            2432,
+            2560
+          ],
+          [
+            2560,
+            2688
+          ],
+          [
+            2688,
+            2816
+          ],
+          [
+            2816,
+            2944
+          ],
+          [
+            2944,
+            3072
+          ],
+          [
+            3072,
+            3200
+          ],
+          [
+            3200,
+            3328
+          ],
+          [
+            3328,
+            3456
+          ],
+          [
+            3456,
+            3584
+          ],
+          [
+            3584,
+            3712
+          ],
+          [
+            3712,
+            3840
+          ],
+          [
+            3840,
+            3968
+          ],
+          [
+            3968,
+            4096
+          ],
+          [
+            4096,
+            4224
+          ],
+          [
+            4224,
+            4352
+          ],
+          [
+            4352,
+            4480
+          ],
+          [
+            4480,
+            4608
+          ],
+          [
+            4608,
+            4736
+          ],
+          [
+            4736,
+            4864
+          ],
+          [
+            4864,
+            4992
+          ],
+          [
+            4992,
+            5120
+          ],
+          [
+            5120,
+            5248
+          ],
+          [
+            5248,
+            5376
+          ],
+          [
+            5376,
+            5504
+          ],
+          [
+            5504,
+            5632
+          ],
+          [
+            5632,
+            5760
+          ],
+          [
+            5760,
+            5888
+          ],
+          [
+            5888,
+            6016
+          ],
+          [
+            6016,
+            6144
+          ],
+          [
+            6144,
+            6272
+          ],
+          [
+            6272,
+            6400
+          ],
+          [
+            6400,
+            6528
+          ],
+          [
+            6528,
+            6656
+          ],
+          [
+            6656,
+            6784
+          ],
+          [
+            6784,
+            6912
+          ],
+          [
+            6912,
+            7040
+          ],
+          [
+            7040,
+            7168
+          ],
+          [
+            7168,
+            7296
+          ],
+          [
+            7296,
+            7424
+          ],
+          [
+            7424,
+            7552
+          ],
+          [
+            7552,
+            7680
+          ],
+          [
+            7680,
+            7808
+          ],
+          [
+            7808,
+            7936
+          ],
+          [
+            7936,
+            8064
+          ],
+          [
+            8064,
+            8192
+          ],
+          [
+            8192,
+            8320
+          ],
+          [
+            8320,
+            8448
+          ],
+          [
+            8448,
+            8576
+          ],
+          [
+            8576,
+            8704
+          ],
+          [
+            8704,
+            8832
+          ],
+          [
+            8832,
+            8960
+          ],
+          [
+            8960,
+            9088
+          ],
+          [
+            9088,
+            9216
+          ],
+          [
+            9216,
+            9344
+          ],
+          [
+            9344,
+            9472
+          ],
+          [
+            9472,
+            9541
+          ]
+        ],
+        "input_sha256": {
+          "owners": "ff4378b39f15849eb20508d932e696cc69b5cbd95a34472d1a8700298ac9811a",
+          "supports": "5fa2aff72f4f99598105b428b9c9b1d1d38e95eee302784922ce7ede6458ad3d",
+          "enclosures": "2333e05ac1a8b24880d38142eb4b17157568cf4045cc717e8699b9713f61e2a2",
+          "registry_ids": "ff83a1e80d7639cdbf406dce9c0b7fdabb6bf049a05ac363a6edffbb07a427d3",
+          "xy": "e944264122d55cdacbc859495fac6e2c262d75dc699e881bf78d92520cd65b49",
+          "W": "5872c31a574101178409e536e7b15ab8899b1dfae12718c6aaad0888efd67b56",
+          "bounds": "9a3545bf044d125cd61948faef212304242d5967a81964685abedf24a07397a1"
+        },
+        "cpu_sign_sha256": "bd2b3f683a923b38580f11c9aa920cf980636934b70eab4083570734cc0ec281",
+        "gpu_sign_sha256": "510f9859efdd0d8ca295795345d93a753eed97ab5992cdbfb63ec1a62e65b3b1",
+        "cpu_unresolved": 28623,
+        "gpu_unresolved": 351719424,
+        "gpu_extra_resolved_exact_checked": 0,
+        "wrong_nonzero_signs": 0,
+        "unresolved_witness": [
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 1,
+            "cpu": 0,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 2,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 3,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 4,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 5,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 6,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 7,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 8,
+            "cpu": 0,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 9,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 10,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 11,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 12,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 13,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 14,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 15,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 16,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 17,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 18,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 19,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 20,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 21,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 22,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 23,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 24,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 25,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 26,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 27,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 28,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 29,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 30,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 31,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 32,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 33,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 34,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 35,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 36,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 37,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 38,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 39,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 40,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 41,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 42,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 43,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 44,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 45,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 46,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 47,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 48,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 49,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 50,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 51,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 52,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 53,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 54,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 55,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 56,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 57,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 58,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 59,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 60,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 61,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 62,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 63,
+            "cpu": -1,
+            "gpu": 0
+          },
+          {
+            "vertex": 0,
+            "owner": 0,
+            "tested_registry_row": 64,
+            "cpu": -1,
+            "gpu": 0
+          }
+        ],
+        "certificate": "Exact rational vertices were outward enclosed; all Cartesian CPU/GPU signs compared; CPU resolved signs are outward interval certificates, GPU extra resolved signs have native exact support oracle checks. Self plane is exact zero."
+      }
+    }
+  },
+  "filter_fixtures": {
+    "nearly_parallel": {
+      "cpu": [
+        -1,
+        0,
+        0
+      ],
+      "gpu": [
+        0,
+        0,
+        0
+      ],
+      "exact": [
+        -1,
+        2,
+        0
+      ]
+    },
+    "subnormal": {
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "gpu": [
+        0,
+        0,
+        0
+      ],
+      "exact": [
+        -1,
+        2,
+        0
+      ]
+    },
+    "overflow_intermediates": {
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "gpu": [
+        0,
+        0,
+        0
+      ],
+      "exact": [
+        -1,
+        2,
+        0
+      ]
+    }
+  },
+  "limits": "Host exact completion and GPU interval SIGN filter only. GPU topology construction, native neighbor search, density/face provider, massroot, MPI, physical evolution and long accuracy remain incomplete. Endpoint-only provider remains unapproved."
+}

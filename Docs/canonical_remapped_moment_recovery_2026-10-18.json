@@ -1,0 +1,69 @@
+{
+  "scope": "Read existing actual-t2 remap states; no new remap or physical evolution.",
+  "cases": {
+    "0.25": {
+      "sha256": "d7e3aaf2a3823b172c8cea51fa65e702cef4f193858b778ffd7e84786127bf93",
+      "minimum_thermal_energy": 3.709517697215359e-08,
+      "minimum_residual_covariance_eigenvalue": -1.2349246998411161e-17,
+      "kinetic_split_max_abs_residual": 6.617444900424222e-24,
+      "regions": {
+        "inner": {
+          "cells": 795,
+          "affine_K_over_thermal": 0.004035483529555075,
+          "residual_K_over_thermal": 0.035298743522974914,
+          "affine_share_of_internal_K": 0.10259470776343911,
+          "recovered_generator_velocity_change_mass_RMS": 0.0010831215838912097
+        },
+        "edge": {
+          "cells": 399,
+          "affine_K_over_thermal": 0.00016194264442089123,
+          "residual_K_over_thermal": 0.004354190864168078,
+          "affine_share_of_internal_K": 0.03585869286479286,
+          "recovered_generator_velocity_change_mass_RMS": 6.0926056431967036e-05
+        },
+        "outer_patch": {
+          "cells": 396,
+          "affine_K_over_thermal": 9.327285000333386e-22,
+          "residual_K_over_thermal": 2.275240461443019e-11,
+          "affine_share_of_internal_K": 4.0994721911878276e-11,
+          "recovered_generator_velocity_change_mass_RMS": 9.638193443278071e-15
+        }
+      }
+    },
+    "1.0": {
+      "sha256": "48ec05745b6da5f7baca16015e1ee35c3e71f9acd014356e9db0858688afdc6e",
+      "minimum_thermal_energy": 2.6435462134830248e-08,
+      "minimum_residual_covariance_eigenvalue": -1.2349246998411161e-17,
+      "kinetic_split_max_abs_residual": 3.308722450212111e-24,
+      "regions": {
+        "inner": {
+          "cells": 795,
+          "affine_K_over_thermal": 0.03428702989231195,
+          "residual_K_over_thermal": 0.11702234158681518,
+          "affine_share_of_internal_K": 0.22660215660893013,
+          "recovered_generator_velocity_change_mass_RMS": 0.0026920220041162326
+        },
+        "edge": {
+          "cells": 399,
+          "affine_K_over_thermal": 0.0013561219727290217,
+          "residual_K_over_thermal": 0.015847648348256662,
+          "affine_share_of_internal_K": 0.07882702148579504,
+          "recovered_generator_velocity_change_mass_RMS": 0.00017679037277392083
+        },
+        "outer_patch": {
+          "cells": 396,
+          "affine_K_over_thermal": 9.327285000333386e-22,
+          "residual_K_over_thermal": 2.275240461443019e-11,
+          "affine_share_of_internal_K": 4.0994721911878276e-11,
+          "recovered_generator_velocity_change_mass_RMS": 9.638193443278071e-15
+        }
+      }
+    }
+  },
+  "limits": [
+    "Conditional lifted/remapped patch only; not a direct unmodified point-state representation.",
+    "Recovered gradient is supported by stored moments, not an independently imposed neighbor slope.",
+    "Positive residual covariance is necessary, not a complete spatial realizability or Euler closure proof.",
+    "Generator velocity change after remap is not established as an accuracy improvement."
+  ]
+}

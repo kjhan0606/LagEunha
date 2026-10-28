@@ -1,0 +1,27 @@
+{
+  "scope": "2D canonical Kepler RK4/HG source audit; not a full CUDA/MPI validation",
+  "source": "Exam/exam.c",
+  "findings": {
+    "rk4": "Stage states and 1:2:2:1 combination match classical RK4; composed HG scheme order is not established as fourth order.",
+    "accepted_ledger": "After both HG half steps and retry acceptance; raw boundary-uncorrected quantities.",
+    "legacy_RK4E": "Trial output before final HG; cannot substitute for accepted state.",
+    "legacy_TORQ": "Trial cumulative call-average torque, not RK4-weighted accepted torque.",
+    "diagnostic_clock": "Moved gfs_tnow advancement from inner trial to both successful wrapper return paths. Restart absolute-time offset remains unimplemented.",
+    "initialization": "Moved one-time K/CD/kappa initialization before HG and retry snapshot. Forced-rejection dual-energy regression and canonical 3-step regression passed; active CD/nonzero-weight cases remain untested."
+  },
+  "validation": {
+    "git_diff_check": "passed",
+    "compiled": true,
+    "runtime_test": true,
+    "live_binaries_changed": false,
+    "runtime_scope": "3 steps from canonical t4 snapshot, OMP1 vs existing OMP8 reference; all 12 listed physical fields bitwise equal; no rejected steps, so rejection-path runtime test remains pending",
+    "comparison": "/gpfs/kjhan/LagForce/Codex_retry_clock_20261017/comparison.json",
+    "binary_sha256": "72425952d63c1490c66b2d8e3623e2165dd235de51a75ddde68375815de94333",
+    "forced_rejection_test": "Passed: Docs/canonical_retry_clock_regression_2026-10-17.json; diagnostic elapsed 0.0005 after rejection of 0.001; 12 physical fields equal to direct half-step control."
+  },
+  "next": [
+    "Continue t20 and dt-ceiling runs through t6-10 and inspect physical accuracy.",
+    "Resolve legacy torque diagnostics and validate active CD/nonzero-weight initialization cases when those models are used.",
+    "Implement and validate multi-rank shared geometry/HG and matching CUDA TCF force before claiming full backend coverage."
+  ]
+}

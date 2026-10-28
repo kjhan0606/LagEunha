@@ -1,0 +1,47 @@
+{
+  "scope": "Actual C QR coefficients exported at canonical t2 circular diagnostic state. B_ij=V_i times fitted divergence coefficients; test B transpose pressure without changing simulation. Linear-map checks do not prove a viable volume model.",
+  "records": 743431,
+  "all_C_RHS_unchanged_with_export": true,
+  "gradient_trace_reproduction_max_abs_error": 1.0658141036401503e-14,
+  "local_moment_max_abs_error": {
+    "constant_x": 0.0,
+    "constant_y": 0.0,
+    "d_x_of_x_minus_1": 1.3322676295501878e-15,
+    "d_x_of_y": 4.85722573273506e-16,
+    "d_y_of_x": 3.400058012914542e-16,
+    "d_y_of_y_minus_1": 1.5543122344752192e-15,
+    "rigid_rotation_divergence": 6.002143226879753e-16
+  },
+  "random_state_adjoint_energy_identity_relative_residual": 2.678230572036268e-18,
+  "constant_pressure_regions": {
+    "inner": {
+      "n": 795,
+      "candidate_constant_pressure_force_L1": 8.310930861823108e-05,
+      "original_constant_pressure_force_L1": 4.3077053560026383e-19,
+      "candidate_constant_pressure_acceleration_mass_weighted_RMS": 0.00614965173172656,
+      "candidate_constant_pressure_acceleration_max": 0.04012689191244708,
+      "divergence_reproduction_max_abs_error": 9.547918011776346e-15
+    },
+    "disk_inner_edge": {
+      "n": 399,
+      "candidate_constant_pressure_force_L1": 3.759326321440152e-05,
+      "original_constant_pressure_force_L1": 2.082068193190602e-19,
+      "candidate_constant_pressure_acceleration_mass_weighted_RMS": 0.0003375501716823974,
+      "candidate_constant_pressure_acceleration_max": 0.018527560773502212,
+      "divergence_reproduction_max_abs_error": 7.327471962526033e-15
+    },
+    "disk_core": {
+      "n": 10304,
+      "candidate_constant_pressure_force_L1": 0.0005346682087133026,
+      "original_constant_pressure_force_L1": 5.4941863166819645e-18,
+      "candidate_constant_pressure_acceleration_mass_weighted_RMS": 6.918739080823065e-05,
+      "candidate_constant_pressure_acceleration_max": 0.00024339986707377115,
+      "divergence_reproduction_max_abs_error": 8.43769498715119e-15
+    }
+  },
+  "global_B_transpose_one_L1": 79.69146715176987,
+  "binary_sha256": "ef4c9ae4934172bc8d89c2c43f6e666a1842ed1a4c37cfda62b44114f6a2a6e5",
+  "operator_sha256": "616f4b4b8262d0179986b85dedbf48af81ba8bc442182810087f8fd99c7a7b50",
+  "decision": "Reject raw QR divergence plus its volume-weighted transpose as a production pressure operator: constant-pressure closure fails strongly in the interior, despite accurate moment reproduction and adjoint energy identity.",
+  "next_gate": "A candidate must satisfy constant-pressure force cancellation and affine/rotation reproduction simultaneously, before testing time evolution. No strong-damping or raw divergence substitution adopted."
+}

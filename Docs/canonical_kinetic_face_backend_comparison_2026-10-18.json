@@ -1,0 +1,40 @@
+{
+  "nodes": 213064,
+  "cells": 1590,
+  "tolerance": "node:64 eps sum(abs elementary terms); cell:sum(node tolerance)+2 gamma_count sum(node absolute bounds)",
+  "backends": {
+    "cpu1": {
+      "passed": true,
+      "node_max_abs": 3.469446951953614e-18,
+      "node_max_tolerance_fraction": 0.040775152901576656,
+      "cell_max_abs": 2.862293735361732e-17,
+      "cell_max_tolerance_fraction": 0.009441225433983342,
+      "sha256": "8bf00b36785066fbb4ce71d28c33ea93eef19c37394f89230affbbf77927fa5f"
+    },
+    "omp4": {
+      "passed": true,
+      "node_max_abs": 3.469446951953614e-18,
+      "node_max_tolerance_fraction": 0.040775152901576656,
+      "cell_max_abs": 2.862293735361732e-17,
+      "cell_max_tolerance_fraction": 0.009441225433983342,
+      "sha256": "8bf00b36785066fbb4ce71d28c33ea93eef19c37394f89230affbbf77927fa5f"
+    },
+    "cuda": {
+      "passed": true,
+      "node_max_abs": 3.469446951953614e-18,
+      "node_max_tolerance_fraction": 0.04348958608630759,
+      "cell_max_abs": 2.862293735361732e-17,
+      "cell_max_tolerance_fraction": 0.009441225433983342,
+      "sha256": "cf4dff59d0cf55a1cca0d165bf1d5869f0dccf42b96dc4c630df7811fe60f947"
+    }
+  },
+  "cpu_omp_bitwise_equal": true,
+  "cpu_cuda_bitwise_equal": false,
+  "scope": "Node algebra and ordered cell face-flux assembly only; excludes geometry, reconstruction, massroot, pressure Pi/volume sources, gravity, MPI, evolution and Psi.",
+  "provenance": {
+    "moment_kinetic_face_harness.cu": "2160a0b7879d2beca31f6010fbb7a223f5e59b395d11515a1b409ff87e628bec",
+    "moment_kinetic_face_flux.h": "f0ba8cf142f64edfbe6ad333b39c5b6eb22ef8066e809ff7c88e08fc0b17645f",
+    "moment_state_layout.h": "2a5ab39850fd1f0861a5c78a3b39a388ffe2ee36f1c3661b290aaae045551139",
+    "face_harness": "01957a19d846f9d0e4bcacdd3223ea59da24909068e569a1b0da257ddd7664f3"
+  }
+}

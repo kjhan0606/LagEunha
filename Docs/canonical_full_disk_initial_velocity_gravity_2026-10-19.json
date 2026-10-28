@@ -1,0 +1,27 @@
+{
+  "status": "passed_initial_velocity_gravity_preparation",
+  "scope": "Actual initial density/velocity/positive gravity-node preparation for stage0.\n\nUses the saved initial Psi fits without refitting. One necessary 2.32 GB\ncompiled-kernel input is sized before creation, reused by actual stage0.\nNo face/root/RHS/evolution is evaluated by this preparation alone.\n",
+  "cells": 19945,
+  "gravity_nodes": 41401872,
+  "gravity_input_bytes": 2318504960,
+  "gravity_input_sha256": "d60a2ef13c2b27f33692ccf0828cbea4d9e4b3ee58f7cf4eb1385be17563e9a5",
+  "provider_calls": 0,
+  "evolution_steps": 0,
+  "maximum_velocity_moment_defect": 2.992397996059992e-17,
+  "maximum_covariance_split_error": 2.2117206976778407e-15,
+  "maximum_orthogonality_error": 1.960237527853792e-16,
+  "minimum_velocity_neighbors": 8,
+  "worker_prepare_wall_sum": 131.15727647393942,
+  "worker_gravity_and_moment_wall_sum": 32.34985847584903,
+  "peak_worker_RSS_KiB": 1007744,
+  "seconds": 51.412234287709,
+  "initial_sha256": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46",
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/prepare_full_disk_initial_velocity_gravity.py": "68941ed001754e8008f4960ca56a99109d4d56753dbfbdf7bd32687f4fd4e780",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/compact_potential_density.py": "b06c479b41136c4b0099c83144b058d67b186fc9d85379d284a9875d8c6a3c9f",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/quadratic_cell_prepare.py": "81956dd73853dd218c583f779afd5b563678fa5e23ff89ce9a8ca6ecf0bdcc74",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_initial_density_20261019/manifest.json": "39eaa8aaf527ed6b8b875826b1321218b7df82744df54824efc287ed58d66476",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_initial_density_20261019/report.json": "07fdd0016972b2538d8b5f993a5069592cd2853cce67dcc65575044ab4eaadfc"
+  },
+  "limits": "Actual initial preparation only; no full closed-root/RHS, dynamic wall flux, timestep evolution or long-time stability claim. Same-state metadata and necessary gravity input are retained for first stage0 reuse."
+}

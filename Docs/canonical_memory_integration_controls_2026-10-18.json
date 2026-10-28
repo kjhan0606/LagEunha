@@ -1,0 +1,194 @@
+{
+  "cases": {
+    "direct_two": {
+      "time": 2.003105917763403,
+      "snapshot_sha256": "e2a1e9952028ed7994f16d93a42d8d9603092d1c74cc7d591d70547a5703e0c7",
+      "accepted_steps": 2,
+      "retries": [
+        0,
+        0
+      ],
+      "memory_rows": [
+        "[RMEM_ACCEPTED] dt=0.0001 retries=0 Eaux=5.8551271913237952e-17 dEaux=5.8551271913237952e-17 dEhydro=-2.7124968937641825e-12 boundary_work=-7.3147882628399144e-17 augmented_residual=-2.7123651946096409e-12 scope=step_hydro_plus_aux_minus_aux_boundary",
+        "[RMEM_ACCEPTED] dt=0.0001 retries=0 Eaux=2.3421252281932409e-16 dEaux=1.7566125090608613e-16 dEhydro=-2.7364777110960858e-12 boundary_work=-2.1944720813439226e-16 augmented_residual=-2.7360826026370454e-12 scope=step_hydro_plus_aux_minus_aux_boundary"
+      ]
+    },
+    "resume": {
+      "time": 2.003105917763403,
+      "snapshot_sha256": "6bdbf5a931114302eb9f837f0dc412f2a51774c51ac6aa77869a50f7ca3ba8f1",
+      "accepted_steps": 1,
+      "retries": [
+        0
+      ],
+      "memory_rows": [
+        "[RMEM_ACCEPTED] dt=0.0001 retries=0 Eaux=2.3421252281932409e-16 dEaux=1.7566125090608613e-16 dEhydro=-2.7364777110960858e-12 boundary_work=-2.1944720813439226e-16 augmented_residual=-2.7360826026370454e-12 scope=step_hydro_plus_aux_minus_aux_boundary"
+      ]
+    },
+    "omp1": {
+      "time": 2.003005917763403,
+      "snapshot_sha256": "9c6da9041a6018dd09fe5bd8091bedc1dc24c1a6951cd438e14a69a27739767f",
+      "accepted_steps": 1,
+      "retries": [
+        0
+      ],
+      "memory_rows": [
+        "[RMEM_ACCEPTED] dt=0.0001 retries=0 Eaux=5.8551271913237952e-17 dEaux=5.8551271913237952e-17 dEhydro=-2.7124968937641825e-12 boundary_work=-7.3147882628399144e-17 augmented_residual=-2.7123651946096409e-12 scope=step_hydro_plus_aux_minus_aux_boundary"
+      ]
+    },
+    "retry": {
+      "time": 2.003005917763403,
+      "snapshot_sha256": "2c1a5a4d7ca89411fd7ee3114fd4c7f396992e07284ebf9c8c036ede2b881d2d",
+      "accepted_steps": 1,
+      "retries": [
+        1
+      ],
+      "memory_rows": [
+        "[RMEM_ACCEPTED] dt=0.0001 retries=1 Eaux=5.8551271913237952e-17 dEaux=5.8551271913237952e-17 dEhydro=-2.7124968937641825e-12 boundary_work=-7.3147882628399144e-17 augmented_residual=-2.7123651946096409e-12 scope=step_hydro_plus_aux_minus_aux_boundary"
+      ]
+    },
+    "off_new": {
+      "time": 2.003005917763403,
+      "snapshot_sha256": "e47790d271d68e18c98e394a5e0811e98fd8b65a5715e82e3475b679e4bc798a",
+      "accepted_steps": 1,
+      "retries": [
+        0
+      ],
+      "memory_rows": []
+    },
+    "off_old": {
+      "time": 2.003005917763403,
+      "snapshot_sha256": "6fc0983e2d3d30ae8fa60831847952de55c1bb44b53c39d3eb276fc204dea1d6",
+      "accepted_steps": 1,
+      "retries": [
+        0
+      ],
+      "memory_rows": []
+    }
+  },
+  "comparisons": {
+    "restart": {
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "field_max_absolute_difference": {
+        "id": 0.0,
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      },
+      "time": 2.003105917763403,
+      "auxiliary_fields_bitwise_equal": true,
+      "auxiliary_max_difference": 0.0
+    },
+    "threads": {
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "field_max_absolute_difference": {
+        "id": 0.0,
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      },
+      "time": 2.003005917763403,
+      "auxiliary_fields_bitwise_equal": true,
+      "auxiliary_max_difference": 0.0
+    },
+    "retry": {
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "field_max_absolute_difference": {
+        "id": 0.0,
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      },
+      "time": 2.003005917763403,
+      "auxiliary_fields_bitwise_equal": true,
+      "auxiliary_max_difference": 0.0
+    },
+    "default_off": {
+      "fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "field_max_absolute_difference": {
+        "id": 0.0,
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      },
+      "time": 2.003005917763403
+    }
+  },
+  "scope": "Actual hydro/gravity/HG/RK4 steps and real sidecar restart. Physical reader fields plus auxiliary values; not whole snapshot byte parity or long-time stability.",
+  "all_compared_fields_bitwise_equal": true
+}

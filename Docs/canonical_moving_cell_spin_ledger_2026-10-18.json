@@ -1,0 +1,157 @@
+{
+  "scope": "C spin ledger fed by actual affine ALE patch fluxes and volume sources.\n\nIndependent differences rebuild moving power cells and integrate a stationary\nEuler shear field. Small smooth patch, not Kepler or shock validation.\n",
+  "cases": [
+    {
+      "n": 4,
+      "cells": 16,
+      "baseline": {
+        "n": 4,
+        "gradient_error": 1.6071522334261774e-15,
+        "wrong_origin_gradient_error": 0.2698480924186739,
+        "face_trace_mismatch": 4.440892098500626e-16,
+        "generator_point_velocity_error": 4.440892098500626e-16,
+        "point_vs_mean_velocity_difference": 0.03768302195372181,
+        "split_pressure_error": 1.1102230246251565e-16,
+        "naive_pressure_bias": 0.0026095932573777514,
+        "total_gradient_energy": 0.0031765845981573094,
+        "mass_flux_residual": 1.5404344466674047e-15,
+        "area_rate_max": 1.5204851266936714e-15,
+        "transverse_momentum_rate_max": 2.1486176553231484e-16,
+        "pressure_rate_max": 3.513663204742327e-15,
+        "total_energy_rate": -1.7555401576885288e-15,
+        "total_momentum_rate": [
+          -7.667477763817487e-16,
+          7.841492212501411e-17
+        ],
+        "angular_momentum_rate": 7.042977312465837e-16,
+        "finite_difference": [
+          {
+            "eps": 0.0001,
+            "max_raw_moment_rhs_error": 3.2190186627367723e-09
+          },
+          {
+            "eps": 1e-05,
+            "max_raw_moment_rhs_error": 3.1894997060133434e-11
+          },
+          {
+            "eps": 1e-06,
+            "max_raw_moment_rhs_error": 1.21868130170677e-10
+          }
+        ]
+      },
+      "spin_finite_difference": [
+        {
+          "eps": 0.0001,
+          "max_abs_errors_I_L_omega_Krot": [
+            8.374213323648905e-12,
+            4.3668920259379296e-11,
+            1.822850770327733e-08,
+            3.6475584000699585e-11
+          ]
+        },
+        {
+          "eps": 1e-05,
+          "max_abs_errors_I_L_omega_Krot": [
+            2.1743448106468014e-12,
+            2.1120985006523735e-12,
+            4.450477597561786e-09,
+            1.3022885043565899e-12
+          ]
+        },
+        {
+          "eps": 1e-06,
+          "max_abs_errors_I_L_omega_Krot": [
+            3.399686051609469e-11,
+            4.929657702011647e-11,
+            7.546589336770992e-08,
+            2.447101129046149e-11
+          ]
+        }
+      ],
+      "max_Krot_rate": 0.0003791440619160443,
+      "sum_Krot_rate": -5.928200483906428e-05,
+      "max_thermal_rate": 1.330532906074211e-15,
+      "max_cell_mass_rate": 1.5404344466674047e-15,
+      "max_internal_angular_rate": 0.000663657913161882
+    },
+    {
+      "n": 8,
+      "cells": 64,
+      "baseline": {
+        "n": 8,
+        "gradient_error": 8.43769498715119e-15,
+        "wrong_origin_gradient_error": 0.21878476738943808,
+        "face_trace_mismatch": 1.2212453270876722e-15,
+        "generator_point_velocity_error": 1.1102230246251565e-15,
+        "point_vs_mean_velocity_difference": 0.017533435514911544,
+        "split_pressure_error": 5.551115123125783e-16,
+        "naive_pressure_bias": 0.0006731570679764376,
+        "total_gradient_energy": 0.0007964048049763018,
+        "mass_flux_residual": 1.1152645647272141e-15,
+        "area_rate_max": 1.2385925618474403e-15,
+        "transverse_momentum_rate_max": 2.480654570646834e-16,
+        "pressure_rate_max": 3.195297344497939e-14,
+        "total_energy_rate": -3.400058012914542e-16,
+        "total_momentum_rate": [
+          9.107298248878237e-17,
+          -5.758468788613635e-17
+        ],
+        "angular_momentum_rate": 0.0,
+        "finite_difference": [
+          {
+            "eps": 0.0001,
+            "max_raw_moment_rhs_error": 3.3796326154300615e-09
+          },
+          {
+            "eps": 1e-05,
+            "max_raw_moment_rhs_error": 3.024587546564261e-11
+          },
+          {
+            "eps": 1e-06,
+            "max_raw_moment_rhs_error": 3.893035911001208e-10
+          }
+        ]
+      },
+      "spin_finite_difference": [
+        {
+          "eps": 0.0001,
+          "max_abs_errors_I_L_omega_Krot": [
+            2.494418396947859e-12,
+            1.028578693843419e-11,
+            5.3304782143825946e-08,
+            9.084290807928e-12
+          ]
+        },
+        {
+          "eps": 1e-05,
+          "max_abs_errors_I_L_omega_Krot": [
+            1.6642168421296028e-12,
+            1.1957543177734502e-12,
+            3.108829782494382e-08,
+            6.153559141462792e-13
+          ]
+        },
+        {
+          "eps": 1e-06,
+          "max_abs_errors_I_L_omega_Krot": [
+            1.2529412391834323e-11,
+            1.4954439637028354e-11,
+            2.78269363773731e-07,
+            8.281434681078632e-12
+          ]
+        }
+      ],
+      "max_Krot_rate": 3.994576775019804e-05,
+      "sum_Krot_rate": -5.86223718302072e-06,
+      "max_thermal_rate": 1.0894063429134349e-15,
+      "max_cell_mass_rate": 1.1152645647272141e-15,
+      "max_internal_angular_rate": 7.147007704293245e-05
+    }
+  ],
+  "header_sha256": "ab50828e38c920b6b8a00ba2dc3a51561f138ebffc89685e2714791c5e477f96",
+  "limits": [
+    "Fixed net cell mass via weight-rate solve, but local face mass flux is nonzero.",
+    "Thermal and spin rates must not be conflated. No relaxation law added.",
+    "Only host C ledger tested; full GPU/MPI evolution remains incomplete."
+  ]
+}

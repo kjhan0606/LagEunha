@@ -1,0 +1,76 @@
+{
+  "scope": "Isolate density-closure effects on t0 face pressure at identical velocities.\nAnalytic density/velocity are diagnostic controls only, never evolution inputs.\n",
+  "results": [
+    {
+      "order": 4,
+      "regions": {
+        "interface": {
+          "samples": 2420,
+          "length": 9.399944291596757,
+          "pressure_relative_rms": {
+            "old": 0.06944739695224955,
+            "potential": 0.06947732809445029,
+            "analytic_density_control": 0.078184896033869
+          },
+          "density_only_pressure_difference_rms": {
+            "old": 0.01326901175610498,
+            "potential": 0.01384902660949941
+          },
+          "mean_absolute_old_new_pressure_difference": 0.0020871885889652995
+        },
+        "other": {
+          "samples": 11820,
+          "length": 59.844284627622066,
+          "pressure_relative_rms": {
+            "old": 0.0505896064355983,
+            "potential": 0.05058960643515474,
+            "analytic_density_control": 0.05058960643559612
+          },
+          "density_only_pressure_difference_rms": {
+            "old": 4.170927346826188e-13,
+            "potential": 1.572035836729436e-11
+          },
+          "mean_absolute_old_new_pressure_difference": 4.236994466319739e-12
+        }
+      },
+      "failures": [],
+      "shared_velocity_pressure_null_error": 0.0
+    },
+    {
+      "order": 8,
+      "regions": {
+        "interface": {
+          "samples": 4840,
+          "length": 9.399944291596782,
+          "pressure_relative_rms": {
+            "old": 0.06944739564715036,
+            "potential": 0.06947801300544273,
+            "analytic_density_control": 0.07818491375081182
+          },
+          "density_only_pressure_difference_rms": {
+            "old": 0.01326887156249721,
+            "potential": 0.013850880636397724
+          },
+          "mean_absolute_old_new_pressure_difference": 0.0020274131955543037
+        },
+        "other": {
+          "samples": 23640,
+          "length": 59.84428462762218,
+          "pressure_relative_rms": {
+            "old": 0.05058962114885465,
+            "potential": 0.050589621148410986,
+            "analytic_density_control": 0.05058962114885244
+          },
+          "density_only_pressure_difference_rms": {
+            "old": 4.17090396710718e-13,
+            "potential": 1.5763209374958975e-11
+          },
+          "mean_absolute_old_new_pressure_difference": 4.0813261562223144e-12
+        }
+      },
+      "failures": [],
+      "shared_velocity_pressure_null_error": 0.0
+    }
+  ],
+  "limits": "Face pressure only; no mass-root solve, gravity or time evolution. Analytic density is a diagnostic control and not a proposed solver. Smaller initial pressure error alone cannot establish stability."
+}

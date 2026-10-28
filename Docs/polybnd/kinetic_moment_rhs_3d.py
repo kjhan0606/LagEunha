@@ -9,7 +9,8 @@ from moment_state_3d import decode,unpack,face_flux,ALPHA
 from euler_star_pressure import star
 
 
-def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,face_order=4,pressure_reconstruction='constant',audit_geometry_rates=None,face_integration='point'):
+def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,face_order=4,pressure_reconstruction='constant',audit_geometry_rates=None,face_integration='point',max_face_order=None):
+    if max_face_order is None:max_face_order=max(8,face_order)
     x=np.asarray(sites);raw=np.asarray(raw);N=len(x);mass=raw[:,0]
     polys,faces,gdiag=geometry.build(x,weights,bounds,face_order)
     states=[decode(poly,r) for poly,r in zip(polys,raw)]
@@ -105,7 +106,17 @@ def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,fa
     if face_integration=='split':
         z=split_z;residual,_,values=evaluate(z);norm=max(abs(residual));iteration=split_diag['iterations']
         if audit_geometry_rates is None and norm>=2e-13:
-            raise RuntimeError('split shared-face mass quadrature disagrees with root')
+            # Exponential density is not integrated exactly by a finite Gauss
+            # rule. Refine both the constraint solve and the common flux rule;
+            # retaining the lower-order root would retain its mass imbalance.
+            if face_order+2<=max_face_order:
+                result=rhs(geometry,sites,weights,raw,factors,bounds,boundary_velocity,
+                    face_order+2,pressure_reconstruction,face_integration=face_integration,
+                    max_face_order=max_face_order)
+                result[3]['face_quadrature_retries']=[dict(order=face_order,
+                    shared_residual=float(norm),root_residual=split_diag['residual'])]+result[3].get('face_quadrature_retries',[])
+                return result
+            raise RuntimeError('split shared-face mass quadrature disagrees with root at order '+str(face_order)+': '+str(norm))
     elif audit_geometry_rates is not None:
         z=prescribed_z;residual,_,values=evaluate(z);norm=max(abs(residual));iteration=0
     else:
@@ -137,4 +148,4 @@ def rhs(geometry,sites,weights,raw,factors,bounds=None,boundary_velocity=None,fa
         dr[i,1:4]+=p;dr[i,4:13]+=(D+D.T).ravel();dr[i,16:25]+=(Pi+PV*np.eye(3)).ravel()
         H[i]+=PV*np.eye(3);A=np.linalg.solve(s['S'],H[i]).T;a0=F[i]/m-A@s['c']
         dr[i,25:34]+=(np.outer(a0,p)+np.outer(p,a0)+A@D+D.T@A.T).ravel()
-    return dr,gen,z,dict(**gdiag,**pressure_diag,mass_flux=float(norm),ledger=ledger,weight_iterations=iteration,cov_linearization_factors=factors,cov_A=[-s['B'] for s in states],cov_K=K,cov_Qfactor=[np.concatenate(v,axis=1) if v else np.zeros((3,0)) for v in incoming],mass_rates=dr[:,0].copy(),mass_root_solved=audit_geometry_rates is None,generator_velocity_defect=float(np.max(abs(gen-material_gen))),pressure_model=pressure_reconstruction+'_exact_euler_star',face_integration=face_integration)
+    return dr,gen,z,dict(**gdiag,**pressure_diag,mass_flux=float(norm),ledger=ledger,weight_iterations=iteration,cov_linearization_factors=factors,cov_A=[-s['B'] for s in states],cov_K=K,cov_Qfactor=[np.concatenate(v,axis=1) if v else np.zeros((3,0)) for v in incoming],mass_rates=dr[:,0].copy(),mass_root_solved=audit_geometry_rates is None,generator_velocity_defect=float(np.max(abs(gen-material_gen))),pressure_model=pressure_reconstruction+'_exact_euler_star',face_integration=face_integration,effective_face_order=face_order)

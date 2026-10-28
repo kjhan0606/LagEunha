@@ -1,0 +1,160 @@
+{
+  "status": "passed_in_memory_velocity_bitwise",
+  "prepared_arrays": {
+    "ids": {
+      "shape": [
+        19945
+      ],
+      "dtype": "int64",
+      "bitwise_equal": true
+    },
+    "state": {
+      "shape": [
+        398904
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "factors": {
+      "shape": [
+        19945,
+        2,
+        2
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "mass": {
+      "shape": [
+        19945
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "Psi": {
+      "shape": [
+        19945
+      ],
+      "dtype": "float128",
+      "bitwise_equal": true
+    },
+    "generator": {
+      "shape": [
+        19945,
+        2
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "gravity": {
+      "shape": [
+        19945,
+        18
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "gravity_absolute_sum": {
+      "shape": [
+        19945,
+        18
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "moment_defect": {
+      "shape": [
+        19945,
+        10
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "gravity_offsets": {
+      "shape": [
+        19946
+      ],
+      "dtype": "int64",
+      "bitwise_equal": true
+    },
+    "center": {
+      "shape": [
+        19945,
+        2
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "scale": {
+      "shape": [
+        19945
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "projection": {
+      "shape": [
+        19945,
+        3,
+        3
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "coefficient": {
+      "shape": [
+        19945,
+        2,
+        3
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "standard_coefficient": {
+      "shape": [
+        19945,
+        2,
+        3
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    },
+    "residual_map": {
+      "shape": [
+        19945,
+        2,
+        2
+      ],
+      "dtype": "float64",
+      "bitwise_equal": true
+    }
+  },
+  "gravity_nodes_bitwise_equal": true,
+  "state_sha256": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179",
+  "preparation": {
+    "status": "passed_in_memory_velocity_gravity_preparation",
+    "cells": 19945,
+    "workers": 8,
+    "gravity_nodes": 91678224,
+    "gravity_input_bytes": 5133980544,
+    "gravity_file_bytes_written": 0,
+    "maximum_velocity_moment_defect": 5.789639601072594e-17,
+    "maximum_covariance_split_error": 2.1125727219422487e-15,
+    "maximum_orthogonality_error": 2.489328188026718e-16,
+    "seconds": 40.55404523946345,
+    "peak_worker_RSS_KiB": 1064684,
+    "available_memory_bytes": 1029530185728,
+    "stage_key": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179:60f386b5a1fcb6ac8681d0fe5ea7cbeca55aba21401b6dc8eda855491fdabdb4",
+    "provider_calls": 0,
+    "evolution_steps": 0
+  },
+  "baseline_seconds": 51.78395185992122,
+  "seconds": 49.89147113636136,
+  "provider_calls": 0,
+  "evolution_steps": 0,
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/check_full_disk_velocity_memory.py": "6b31e84aeef5990a6c2abeb51469ef995cba66c72d1e4c1456abf8f3097c0959",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/full_disk_velocity_memory.py": "2529b18822ce6fde7fd324d5cf107adfca147dadcc62ac88e4593789b5effc21"
+  },
+  "limits": "Checks every prepared array and all gravity-node values. Native stage consumption reuses its existing contiguous-array ABI; no new physical RHS or evolution."
+}

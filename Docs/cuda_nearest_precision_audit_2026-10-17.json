@@ -1,0 +1,38 @@
+{
+  "scope": "Source audit of CUDA OST nearest-neighbor path; source findings, not new runtime validation. Existing running executables untouched.",
+  "findings": [
+    {
+      "issue": "XYZDBL coordinates narrowed before distances and pruning",
+      "locations": [
+        "Exam/exam_gpu_extract.c:1980",
+        "Exam/exam_gpu_extract.c:1994",
+        "Exam/exam_gpu.cu:3510"
+      ],
+      "effect": "Both neighbor selection and distance value can differ from CPU double reference; changing only output precision is insufficient."
+    },
+    {
+      "issue": "Distinct coincident particles excluded on GPU",
+      "gpu_condition": "pidx != self_ptl_idx && d2 < mindist2 && d2 > 0",
+      "cpu_condition": "point.indx != neighbor.indx && dist2 < mindist2",
+      "effect": "GPU can return positive nearest distance where CPU returns zero; zero must not be filtered merely as a self test."
+    },
+    {
+      "issue": "Existing weight round-trips through float during nearest search",
+      "locations": [
+        "Exam/exam_gpu.cu:3467",
+        "Exam/exam_gpu_extract.c:2120"
+      ],
+      "effect": "Even a negative-kappa branch that should leave weight unchanged can lose precision; update host weight using original postype state and CPU clamp rule."
+    }
+  ],
+  "implementation_contract": [
+    "Double tree centroid, leaf coordinates, bounds, query coordinates, nearest distance and dedicated result buffer.",
+    "Conservative bound rounding and explicit failure for incomplete tree traversal.",
+    "Skip self by matching tree particle index only; preserve distinct zero-distance neighbors.",
+    "Host writeback follows CPU kappa rules without float weight round-trip; dynamic-weight dispatch continues to CPU as currently implemented.",
+    "Validate kernel distances against a double brute-force oracle for random, near-coincident, coincident, periodic-padding and large-coordinate clouds; then compare production snapshots including w2ceil.",
+    "Do not claim TCF GPU force support or MPI HG support from nearest-neighbor changes."
+  ],
+  "existing_evidence": "Docs/canonical_dpq_backend_parity_2026-10-17.json",
+  "relation_to_physics": "Canonical W=0 masks the weight difference in initial physical fields. This is a backend consistency defect, not established cause of observed t6 pressure growth."
+}

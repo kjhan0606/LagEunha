@@ -1,0 +1,47 @@
+{
+  "scope": "Check artificial face slip from a rigid-spin-only fluid reconstruction.\n\nExact smooth affine fields; internal faces only. Unit damping per unit face\nlength is a diagnostic, not a proposed physical viscosity coefficient.\n",
+  "cases": [
+    {
+      "n": 4,
+      "field": "rigid",
+      "internal_faces": 33,
+      "rigid_trace_heat_rate": 1.5245961347280795e-31,
+      "full_affine_trace_heat_rate": 1.702926244031753e-31,
+      "max_rigid_trace_slip": 3.5738523287270034e-16,
+      "max_full_affine_trace_slip": 4.2631666253297237e-16
+    },
+    {
+      "n": 4,
+      "field": "shear",
+      "internal_faces": 33,
+      "rigid_trace_heat_rate": 0.10567241682057743,
+      "full_affine_trace_heat_rate": 1.2705118440102732e-31,
+      "max_rigid_trace_slip": 0.14871522433189516,
+      "max_full_affine_trace_slip": 4.983672809853546e-16
+    },
+    {
+      "n": 8,
+      "field": "rigid",
+      "internal_faces": 161,
+      "rigid_trace_heat_rate": 3.5046321844976582e-31,
+      "full_affine_trace_heat_rate": 3.5897652681490983e-31,
+      "max_rigid_trace_slip": 7.145795941040058e-16,
+      "max_full_affine_trace_slip": 7.146207079629737e-16
+    },
+    {
+      "n": 8,
+      "field": "shear",
+      "internal_faces": 161,
+      "rigid_trace_heat_rate": 0.05961678549460982,
+      "full_affine_trace_heat_rate": 1.3679624965810017e-30,
+      "max_rigid_trace_slip": 0.07611419019483921,
+      "max_full_affine_trace_slip": 1.1983969974354338e-15
+    }
+  ],
+  "source_sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4",
+  "decision": "Do not connect rigid-spin-only slip damping to the Kepler solver. A full affine trace passes this null test, but force work must then include affine deformation degrees of freedom; pair torque alone does not close it.",
+  "limits": [
+    "No time evolution or physical viscosity calibrated.",
+    "Affine null test is necessary, not sufficient for curved shear, residual transport or shocks."
+  ]
+}

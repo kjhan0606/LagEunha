@@ -1,0 +1,107 @@
+{
+  "scope": "Explicit cut/tangent/flat/quadratic/mirror scalar-versus-batch fixtures.\n\nSynthetic algebra fixtures only: no density fit, RHS or provider evaluation.\n",
+  "status": "passed",
+  "fixtures": [
+    {
+      "kind": "density",
+      "flat": true,
+      "branches_exact": true,
+      "values": {
+        "bitwise_equal": true,
+        "maximum_abs": 0.0,
+        "maximum_roundoff_bound_fraction": 0.0
+      }
+    },
+    {
+      "kind": "density",
+      "flat": false,
+      "branches_exact": true,
+      "values": {
+        "bitwise_equal": true,
+        "maximum_abs": 0.0,
+        "maximum_roundoff_bound_fraction": 0.0
+      }
+    },
+    {
+      "kind": "density",
+      "flat": false,
+      "branches_exact": true,
+      "values": {
+        "bitwise_equal": true,
+        "maximum_abs": 0.0,
+        "maximum_roundoff_bound_fraction": 0.0
+      }
+    },
+    {
+      "kind": "on_cut_tangent",
+      "both_raise_same_error": "tangent direction does not define a one-sided cut trace"
+    },
+    {
+      "kind": "flat_ignores_direction_as_scalar",
+      "values": {
+        "bitwise_equal": true,
+        "maximum_abs": 0.0,
+        "maximum_roundoff_bound_fraction": 0.0
+      }
+    },
+    {
+      "kind": "velocity",
+      "quadratic": false,
+      "checks": {
+        "samples": {
+          "bitwise_equal": true,
+          "maximum_abs": 0.0,
+          "maximum_roundoff_bound_fraction": 0.0
+        },
+        "xi": {
+          "bitwise_equal": true,
+          "maximum_abs": 0.0,
+          "maximum_roundoff_bound_fraction": 0.0
+        },
+        "shared_mean": {
+          "bitwise_equal": true,
+          "maximum_abs": 0.0,
+          "maximum_roundoff_bound_fraction": 0.0
+        },
+        "mirror_samples": {
+          "bitwise_equal": false,
+          "maximum_abs": 4.440892098500626e-16,
+          "maximum_roundoff_bound_fraction": 0.018610580196983032
+        }
+      }
+    },
+    {
+      "kind": "velocity",
+      "quadratic": true,
+      "checks": {
+        "samples": {
+          "bitwise_equal": true,
+          "maximum_abs": 0.0,
+          "maximum_roundoff_bound_fraction": 0.0
+        },
+        "xi": {
+          "bitwise_equal": true,
+          "maximum_abs": 0.0,
+          "maximum_roundoff_bound_fraction": 0.0
+        },
+        "shared_mean": {
+          "bitwise_equal": true,
+          "maximum_abs": 0.0,
+          "maximum_roundoff_bound_fraction": 0.0
+        },
+        "mirror_samples": {
+          "bitwise_equal": false,
+          "maximum_abs": 4.440892098500626e-16,
+          "maximum_roundoff_bound_fraction": 0.01719910453665019
+        }
+      }
+    }
+  ],
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_face_state_batch_api_modules_20261018/check_face_state_batch_api_fixtures.py": "413e16e81a50767a74f4f40222712038156ce778f9a040f1bb23b00c1345c229",
+    "/gpfs/kjhan/LagForce/Codex_face_state_batch_api_modules_20261018/contact_prior_density.py": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d",
+    "/gpfs/kjhan/LagForce/Codex_face_state_batch_api_modules_20261018/quadratic_velocity_reconstruction.py": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c",
+    "/gpfs/kjhan/LagForce/Codex_face_state_batch_api_modules_20261018/kinetic_factor_rhs.py": "3ea5167446e8073641950615aa523becd4b80f805925f43f7d94744fc90a6a03"
+  },
+  "limits": "Algebra fixtures, not saved-stage/provider/long-time validation. Exact cut branches; numerical bound64 eps*(1+abs(scalar)) is a local fixture gate only."
+}

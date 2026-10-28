@@ -1,0 +1,61 @@
+{
+  "scope": "Instantaneous generator of half sum(m*|v-vcirc|^2). HG is its zero-step modal generator, not an integrated split-map budget. Hydro remainder includes TCF and any other hydro RHS terms. No eigenmode or long-time stability claim.",
+  "cases": {
+    "adaptive": {
+      "time": 6.000405917763673,
+      "HG_energy_closure": -5.783262333232903e-21,
+      "reference_derivative_checks": [
+        1.0784545125474735e-09,
+        2.7039357393916163e-10
+      ],
+      "regions": {
+        "inner_background": {
+          "pressure": 5.028579115664319e-06,
+          "hydro_minus_pressure": -4.027267685921733e-06,
+          "HG": -1.581544868379416e-06,
+          "gravity": 1.6421846793889722e-05,
+          "reference_motion": -1.5428576053576722e-05,
+          "gravity_plus_reference": 9.932707403130003e-07,
+          "total": 4.130373016761701e-07
+        },
+        "inner_shear_band": {
+          "pressure": 4.4460218743604055e-06,
+          "hydro_minus_pressure": -3.6896429461913875e-06,
+          "HG": -1.4595675310437738e-06,
+          "gravity": 1.5811029585001263e-06,
+          "reference_motion": -4.849272711898715e-07,
+          "gravity_plus_reference": 1.0961756873102548e-06,
+          "total": 3.9298708443549906e-07
+        }
+      }
+    },
+    "legacy": {
+      "time": 6.000405917763673,
+      "HG_energy_closure": -2.881364110380564e-21,
+      "reference_derivative_checks": [
+        1.0780631224618383e-09,
+        2.703121817463636e-10
+      ],
+      "regions": {
+        "inner_background": {
+          "pressure": 4.42326627905549e-06,
+          "hydro_minus_pressure": -3.584360298134621e-06,
+          "HG": -1.5079464900104743e-06,
+          "gravity": 1.3771556148566863e-05,
+          "reference_motion": -1.298852020251144e-05,
+          "gravity_plus_reference": 7.830359460554236e-07,
+          "total": 1.1399543696581752e-07
+        },
+        "inner_shear_band": {
+          "pressure": 3.8187782595920995e-06,
+          "hydro_minus_pressure": -3.3095940285896484e-06,
+          "HG": -1.3752312211043626e-06,
+          "gravity": 2.6347337646721736e-06,
+          "reference_motion": -1.7405776011798914e-06,
+          "gravity_plus_reference": 8.941561634922822e-07,
+          "total": 2.810917339037072e-08
+        }
+      }
+    }
+  }
+}

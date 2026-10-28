@@ -1,0 +1,537 @@
+{
+  "status": "completed_saved_rotation_shear_timeline",
+  "scope": "Saved-state affine/spin diagnostics only; no provider or accepted time step.",
+  "weight_slot": 2,
+  "initial_weights_all_exactly_zero": true,
+  "fixed_mass_bitwise_preserved_from_initial": true,
+  "definitions": {
+    "S": "Q - q q^T/m",
+    "C": "D - q p^T/m",
+    "B": "C^T S^-1",
+    "Kaffine": "0.5 Tr(B S B^T)",
+    "ell_internal": "C_xy - C_yx",
+    "Krot": "ell_internal^2/(2 Tr(S)); a projection inside Kaffine",
+    "Kaffine_nonspin": "Kaffine - Krot; remaining affine deformation projection"
+  },
+  "summaries": {
+    "t0_voronoi": {
+      "all": {
+        "cells": 19945,
+        "gauge_removed_weight_min": 0.0,
+        "gauge_removed_weight_max": 0.0,
+        "gauge_removed_weight_RMS": 0.0,
+        "internal_angular_momentum_sum": 0.0003114774276596131,
+        "internal_angular_momentum_mass_weighted_RMS": 2.9635336971115225e-08,
+        "affine_kinetic_energy": 0.0004654729309429611,
+        "rigid_spin_projection_energy": 4.941828264324925e-05,
+        "affine_nonspin_projection_energy": 0.0004160546482997119,
+        "rigid_spin_fraction_of_affine_energy": 0.10616789797666011
+      }
+    },
+    "coarse_t0025": {
+      "all": {
+        "cells": 19945,
+        "gauge_removed_weight_min": -7.044053287928951e-06,
+        "gauge_removed_weight_max": 6.63838838670462e-05,
+        "gauge_removed_weight_RMS": 7.410710073054974e-06,
+        "internal_angular_momentum_sum": 0.0003125002800564638,
+        "internal_angular_momentum_mass_weighted_RMS": 2.977697415889331e-08,
+        "affine_kinetic_energy": 0.00046589357194631577,
+        "rigid_spin_projection_energy": 4.9997456729310767e-05,
+        "affine_nonspin_projection_energy": 0.000415896115217005,
+        "rigid_spin_fraction_of_affine_energy": 0.1073151890043074
+      },
+      "cavity": {
+        "cells": 754,
+        "gauge_removed_weight_min": -3.057237526347535e-05,
+        "gauge_removed_weight_max": 3.067107213091707e-05,
+        "gauge_removed_weight_RMS": 8.592303037146844e-06,
+        "internal_angular_momentum_sum": 3.3976914086196925e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 5.907264528793168e-09,
+        "affine_kinetic_energy": 1.131428506866389e-05,
+        "rigid_spin_projection_energy": 8.166174349190265e-06,
+        "affine_nonspin_projection_energy": 3.148110719473625e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.7217578750784129
+      },
+      "inner_contact": {
+        "cells": 101,
+        "gauge_removed_weight_min": -4.980410806305848e-06,
+        "gauge_removed_weight_max": 5.4149188217116856e-06,
+        "gauge_removed_weight_RMS": 2.5077150312834983e-06,
+        "internal_angular_momentum_sum": 9.31972310443502e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 9.246301897812606e-08,
+        "affine_kinetic_energy": 1.6287833001479398e-05,
+        "rigid_spin_projection_energy": 8.409241511697367e-06,
+        "affine_nonspin_projection_energy": 7.878591489782031e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.5162897673946908
+      },
+      "disk_core": {
+        "cells": 11812,
+        "gauge_removed_weight_min": -4.124091691725998e-06,
+        "gauge_removed_weight_max": 2.1789623407499223e-06,
+        "gauge_removed_weight_RMS": 9.316526947245017e-07,
+        "internal_angular_momentum_sum": 0.00029469261123925435,
+        "internal_angular_momentum_mass_weighted_RMS": 2.9534469391129794e-08,
+        "affine_kinetic_energy": 0.0004369745699621984,
+        "rigid_spin_projection_energy": 3.2895676315832205e-05,
+        "affine_nonspin_projection_energy": 0.0004040788936463662,
+        "rigid_spin_fraction_of_affine_energy": 0.07528052792334787
+      }
+    },
+    "fine_t0025": {
+      "all": {
+        "cells": 19945,
+        "gauge_removed_weight_min": -7.082503723319207e-06,
+        "gauge_removed_weight_max": 5.7784752313822087e-05,
+        "gauge_removed_weight_RMS": 6.428275490742712e-06,
+        "internal_angular_momentum_sum": 0.00031170037584241653,
+        "internal_angular_momentum_mass_weighted_RMS": 2.966574395445316e-08,
+        "affine_kinetic_energy": 0.00046552077560971163,
+        "rigid_spin_projection_energy": 4.9509603986395935e-05,
+        "affine_nonspin_projection_energy": 0.0004160111716233157,
+        "rigid_spin_fraction_of_affine_energy": 0.10635315668038912
+      },
+      "cavity": {
+        "cells": 754,
+        "gauge_removed_weight_min": -2.307213126478069e-05,
+        "gauge_removed_weight_max": 2.6809229364903264e-05,
+        "gauge_removed_weight_RMS": 7.356968535551446e-06,
+        "internal_angular_momentum_sum": 3.390699940701799e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 5.903517176041781e-09,
+        "affine_kinetic_energy": 1.1321681860519033e-05,
+        "rigid_spin_projection_energy": 8.159740199475832e-06,
+        "affine_nonspin_projection_energy": 3.161941661043201e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.7207180258200397
+      },
+      "inner_contact": {
+        "cells": 101,
+        "gauge_removed_weight_min": -6.094560982119936e-06,
+        "gauge_removed_weight_max": 4.8160555093200275e-06,
+        "gauge_removed_weight_RMS": 2.8205205363448245e-06,
+        "internal_angular_momentum_sum": 9.068685919649003e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 8.997543052386703e-08,
+        "affine_kinetic_energy": 1.5973007071095965e-05,
+        "rigid_spin_projection_energy": 8.103116477846015e-06,
+        "affine_nonspin_projection_energy": 7.869890593249952e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.5073006254726482
+      },
+      "disk_core": {
+        "cells": 11812,
+        "gauge_removed_weight_min": -3.276328760352009e-06,
+        "gauge_removed_weight_max": 3.052688992144675e-06,
+        "gauge_removed_weight_RMS": 7.921147435514977e-07,
+        "internal_angular_momentum_sum": 0.000294149543273258,
+        "internal_angular_momentum_mass_weighted_RMS": 2.9452649348076897e-08,
+        "affine_kinetic_energy": 0.0004369089390538549,
+        "rigid_spin_projection_energy": 3.2720202401817554e-05,
+        "affine_nonspin_projection_energy": 0.00040418873665203737,
+        "rigid_spin_fraction_of_affine_energy": 0.07489021046965658
+      }
+    },
+    "coarse_t005": {
+      "all": {
+        "cells": 19945,
+        "gauge_removed_weight_min": -1.4316326613529792e-05,
+        "gauge_removed_weight_max": 0.00012801786249809475,
+        "gauge_removed_weight_RMS": 1.631511619440656e-05,
+        "internal_angular_momentum_sum": 0.00031373693509721066,
+        "internal_angular_momentum_mass_weighted_RMS": 2.995623159455706e-08,
+        "affine_kinetic_energy": 0.00046599672521623417,
+        "rigid_spin_projection_energy": 5.0592496249172715e-05,
+        "affine_nonspin_projection_energy": 0.0004154042289670614,
+        "rigid_spin_fraction_of_affine_energy": 0.10856835147435108
+      },
+      "cavity": {
+        "cells": 754,
+        "gauge_removed_weight_min": -5.8435133824475866e-05,
+        "gauge_removed_weight_max": 4.880921152955705e-05,
+        "gauge_removed_weight_RMS": 1.6505291249284952e-05,
+        "internal_angular_momentum_sum": 3.4073551624099423e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 5.903407410596781e-09,
+        "affine_kinetic_energy": 1.1238058712337907e-05,
+        "rigid_spin_projection_energy": 8.146396057729295e-06,
+        "affine_nonspin_projection_energy": 3.0916626546086125e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.7248935306580687
+      },
+      "inner_contact": {
+        "cells": 101,
+        "gauge_removed_weight_min": -8.10989981735149e-06,
+        "gauge_removed_weight_max": 5.533944551798189e-06,
+        "gauge_removed_weight_RMS": 3.582230991875314e-06,
+        "internal_angular_momentum_sum": 9.605422320746691e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 9.525772412118229e-08,
+        "affine_kinetic_energy": 1.6591074680774945e-05,
+        "rigid_spin_projection_energy": 8.730410419004044e-06,
+        "affine_nonspin_projection_energy": 7.8606642617709e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.5262112664178701
+      },
+      "disk_core": {
+        "cells": 11812,
+        "gauge_removed_weight_min": -8.429361406734526e-06,
+        "gauge_removed_weight_max": 5.195347910841096e-06,
+        "gauge_removed_weight_RMS": 1.7347819648800618e-06,
+        "internal_angular_momentum_sum": 0.0002956352573672453,
+        "internal_angular_momentum_mass_weighted_RMS": 2.9681892618455722e-08,
+        "affine_kinetic_energy": 0.0004368510568549095,
+        "rigid_spin_projection_energy": 3.318954768758531e-05,
+        "affine_nonspin_projection_energy": 0.00040366150916732417,
+        "rigid_spin_fraction_of_affine_energy": 0.07597451618071395
+      }
+    },
+    "fine_t005": {
+      "all": {
+        "cells": 19945,
+        "gauge_removed_weight_min": -1.403361893339188e-05,
+        "gauge_removed_weight_max": 0.00010255568972902648,
+        "gauge_removed_weight_RMS": 1.2674374876897478e-05,
+        "internal_angular_momentum_sum": 0.00031197963574615195,
+        "internal_angular_momentum_mass_weighted_RMS": 2.970547519130045e-08,
+        "affine_kinetic_energy": 0.00046547957544064043,
+        "rigid_spin_projection_energy": 4.960437915076148e-05,
+        "affine_nonspin_projection_energy": 0.00041587519628987895,
+        "rigid_spin_fraction_of_affine_energy": 0.1065661776970646
+      },
+      "cavity": {
+        "cells": 754,
+        "gauge_removed_weight_min": -4.3236137484637896e-05,
+        "gauge_removed_weight_max": 4.1535360676476324e-05,
+        "gauge_removed_weight_RMS": 1.3525229260159056e-05,
+        "internal_angular_momentum_sum": 3.3976592627294084e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 5.905146039674568e-09,
+        "affine_kinetic_energy": 1.1304372989474439e-05,
+        "rigid_spin_projection_energy": 8.161110086673295e-06,
+        "affine_nonspin_projection_energy": 3.1432629028011444e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.7219427467823423
+      },
+      "inner_contact": {
+        "cells": 101,
+        "gauge_removed_weight_min": -1.1663586000177184e-05,
+        "gauge_removed_weight_max": 7.818239027876731e-06,
+        "gauge_removed_weight_RMS": 4.939016515142999e-06,
+        "internal_angular_momentum_sum": 9.092419016791664e-06,
+        "internal_angular_momentum_mass_weighted_RMS": 9.017865915537165e-08,
+        "affine_kinetic_energy": 1.597927660228655e-05,
+        "rigid_spin_projection_energy": 8.122636985002157e-06,
+        "affine_nonspin_projection_energy": 7.856639617284392e-06,
+        "rigid_spin_fraction_of_affine_energy": 0.5083231980501453
+      },
+      "disk_core": {
+        "cells": 11812,
+        "gauge_removed_weight_min": -6.621822326322749e-06,
+        "gauge_removed_weight_max": 6.050785575830074e-06,
+        "gauge_removed_weight_RMS": 1.561764707020156e-06,
+        "internal_angular_momentum_sum": 0.00029439832830957904,
+        "internal_angular_momentum_mass_weighted_RMS": 2.9491099235364934e-08,
+        "affine_kinetic_energy": 0.00043687885473465943,
+        "rigid_spin_projection_energy": 3.2794131582430124e-05,
+        "affine_nonspin_projection_energy": 0.00040408472315222926,
+        "rigid_spin_fraction_of_affine_energy": 0.07506458879166356
+      }
+    }
+  },
+  "coarse_fine_endpoint_differences": {
+    "t0025": {
+      "all": {
+        "cells_union": 19945,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 0.0003125002800564638,
+            "fine_sum": 0.00031170037584241653,
+            "fine_minus_coarse_sum": -7.999042140472856e-07,
+            "mass_weighted_RMS_difference": 2.1730694723651094e-10,
+            "difference_over_fine_RMS": 0.007325181110244523
+          },
+          "Krot": {
+            "coarse_sum": 4.9997456729310767e-05,
+            "fine_sum": 4.9509603986395935e-05,
+            "fine_minus_coarse_sum": -4.87852742914835e-07,
+            "mass_weighted_RMS_difference": 2.1609638094233078e-10,
+            "difference_over_fine_RMS": 0.02989094571475848
+          },
+          "Kaffine": {
+            "coarse_sum": 0.00046589357194631577,
+            "fine_sum": 0.00046552077560971163,
+            "fine_minus_coarse_sum": -3.7279633660411973e-07,
+            "mass_weighted_RMS_difference": 2.2643818420902813e-10,
+            "difference_over_fine_RMS": 0.0034648916500575728
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 0.000415896115217005,
+            "fine_sum": 0.0004160111716233157,
+            "fine_minus_coarse_sum": 1.1505640631071528e-07,
+            "mass_weighted_RMS_difference": 5.561134504858684e-11,
+            "difference_over_fine_RMS": 0.0009285431996858174
+          }
+        }
+      },
+      "cavity": {
+        "cells_union": 754,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 3.3976914086196925e-06,
+            "fine_sum": 3.390699940701799e-06,
+            "fine_minus_coarse_sum": -6.991467917893217e-09,
+            "mass_weighted_RMS_difference": 2.4407498968200573e-11,
+            "difference_over_fine_RMS": 0.004134399585937249
+          },
+          "Krot": {
+            "coarse_sum": 8.166174349190265e-06,
+            "fine_sum": 8.159740199475832e-06,
+            "fine_minus_coarse_sum": -6.434149714432776e-09,
+            "mass_weighted_RMS_difference": 3.4255217560415e-11,
+            "difference_over_fine_RMS": 0.00173994790245229
+          },
+          "Kaffine": {
+            "coarse_sum": 1.131428506866389e-05,
+            "fine_sum": 1.1321681860519033e-05,
+            "fine_minus_coarse_sum": 7.396791855143018e-09,
+            "mass_weighted_RMS_difference": 4.759215182250254e-11,
+            "difference_over_fine_RMS": 0.0022501296294269515
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 3.148110719473625e-06,
+            "fine_sum": 3.161941661043201e-06,
+            "fine_minus_coarse_sum": 1.3830941569575794e-08,
+            "mass_weighted_RMS_difference": 2.9003818315251214e-11,
+            "difference_over_fine_RMS": 0.006395017701809722
+          }
+        }
+      },
+      "inner_contact": {
+        "cells_union": 101,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 9.31972310443502e-06,
+            "fine_sum": 9.068685919649003e-06,
+            "fine_minus_coarse_sum": -2.510371847860171e-07,
+            "mass_weighted_RMS_difference": 2.6185088552381853e-09,
+            "difference_over_fine_RMS": 0.029102487645708962
+          },
+          "Krot": {
+            "coarse_sum": 8.409241511697367e-06,
+            "fine_sum": 8.103116477846015e-06,
+            "fine_minus_coarse_sum": -3.061250338513518e-07,
+            "mass_weighted_RMS_difference": 3.205062633510868e-09,
+            "difference_over_fine_RMS": 0.03976755610775393
+          },
+          "Kaffine": {
+            "coarse_sum": 1.6287833001479398e-05,
+            "fine_sum": 1.5973007071095965e-05,
+            "fine_minus_coarse_sum": -3.148259303834323e-07,
+            "mass_weighted_RMS_difference": 3.2946949220717395e-09,
+            "difference_over_fine_RMS": 0.02081175760513939
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 7.878591489782031e-06,
+            "fine_sum": 7.869890593249952e-06,
+            "fine_minus_coarse_sum": -8.700896532080545e-09,
+            "mass_weighted_RMS_difference": 1.1544064397291784e-10,
+            "difference_over_fine_RMS": 0.00148145862067016
+          }
+        }
+      },
+      "disk_core": {
+        "cells_union": 11812,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 0.00029469261123925435,
+            "fine_sum": 0.000294149543273258,
+            "fine_minus_coarse_sum": -5.430679659963806e-07,
+            "mass_weighted_RMS_difference": 1.3692213170664287e-10,
+            "difference_over_fine_RMS": 0.004648890158860468
+          },
+          "Krot": {
+            "coarse_sum": 3.2895676315832205e-05,
+            "fine_sum": 3.2720202401817554e-05,
+            "fine_minus_coarse_sum": -1.754739140146468e-07,
+            "mass_weighted_RMS_difference": 5.7983933783150815e-11,
+            "difference_over_fine_RMS": 0.011544333495891478
+          },
+          "Kaffine": {
+            "coarse_sum": 0.0004369745699621984,
+            "fine_sum": 0.0004369089390538549,
+            "fine_minus_coarse_sum": -6.563090834344425e-08,
+            "mass_weighted_RMS_difference": 7.43943388154397e-11,
+            "difference_over_fine_RMS": 0.001136946694417523
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 0.0004040788936463662,
+            "fine_sum": 0.00040418873665203737,
+            "fine_minus_coarse_sum": 1.0984300567120256e-07,
+            "mass_weighted_RMS_difference": 5.586609610816075e-11,
+            "difference_over_fine_RMS": 0.0009232822688925469
+          }
+        }
+      }
+    },
+    "t005": {
+      "all": {
+        "cells_union": 19945,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 0.00031373693509721066,
+            "fine_sum": 0.00031197963574615195,
+            "fine_minus_coarse_sum": -1.7572993510587438e-06,
+            "mass_weighted_RMS_difference": 4.56998718722188e-10,
+            "difference_over_fine_RMS": 0.015384326147929278
+          },
+          "Krot": {
+            "coarse_sum": 5.0592496249172715e-05,
+            "fine_sum": 4.960437915076148e-05,
+            "fine_minus_coarse_sum": -9.881170984112331e-07,
+            "mass_weighted_RMS_difference": 4.3241923821782393e-10,
+            "difference_over_fine_RMS": 0.059670445411901515
+          },
+          "Kaffine": {
+            "coarse_sum": 0.00046599672521623417,
+            "fine_sum": 0.00046547957544064043,
+            "fine_minus_coarse_sum": -5.171497755937032e-07,
+            "mass_weighted_RMS_difference": 4.4093953164831873e-10,
+            "difference_over_fine_RMS": 0.006747977783038559
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 0.0004154042289670614,
+            "fine_sum": 0.00041587519628987895,
+            "fine_minus_coarse_sum": 4.7096732281752985e-07,
+            "mass_weighted_RMS_difference": 1.52481476657215e-10,
+            "difference_over_fine_RMS": 0.0025470929152371213
+          }
+        }
+      },
+      "cavity": {
+        "cells_union": 754,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 3.4073551624099423e-06,
+            "fine_sum": 3.3976592627294084e-06,
+            "fine_minus_coarse_sum": -9.695899680533597e-09,
+            "mass_weighted_RMS_difference": 4.773935139091695e-11,
+            "difference_over_fine_RMS": 0.008084364225740277
+          },
+          "Krot": {
+            "coarse_sum": 8.146396057729295e-06,
+            "fine_sum": 8.161110086673295e-06,
+            "fine_minus_coarse_sum": 1.4714028944000393e-08,
+            "mass_weighted_RMS_difference": 9.753858866358911e-11,
+            "difference_over_fine_RMS": 0.004957021178930698
+          },
+          "Kaffine": {
+            "coarse_sum": 1.1238058712337907e-05,
+            "fine_sum": 1.1304372989474439e-05,
+            "fine_minus_coarse_sum": 6.631427713653248e-08,
+            "mass_weighted_RMS_difference": 1.5446494811967754e-10,
+            "difference_over_fine_RMS": 0.007310491116330271
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 3.0916626546086125e-06,
+            "fine_sum": 3.1432629028011444e-06,
+            "fine_minus_coarse_sum": 5.160024819253209e-08,
+            "mass_weighted_RMS_difference": 8.847584373729636e-11,
+            "difference_over_fine_RMS": 0.01961590021070037
+          }
+        }
+      },
+      "inner_contact": {
+        "cells_union": 101,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 9.605422320746691e-06,
+            "fine_sum": 9.092419016791664e-06,
+            "fine_minus_coarse_sum": -5.13003303955027e-07,
+            "mass_weighted_RMS_difference": 5.3463273300129975e-09,
+            "difference_over_fine_RMS": 0.05928594836170321
+          },
+          "Krot": {
+            "coarse_sum": 8.730410419004044e-06,
+            "fine_sum": 8.122636985002157e-06,
+            "fine_minus_coarse_sum": -6.077734340018864e-07,
+            "mass_weighted_RMS_difference": 6.374022013598628e-09,
+            "difference_over_fine_RMS": 0.07894371696656384
+          },
+          "Kaffine": {
+            "coarse_sum": 1.6591074680774945e-05,
+            "fine_sum": 1.597927660228655e-05,
+            "fine_minus_coarse_sum": -6.117980784883948e-07,
+            "mass_weighted_RMS_difference": 6.416197234679518e-09,
+            "difference_over_fine_RMS": 0.04052256805760863
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 7.8606642617709e-06,
+            "fine_sum": 7.856639617284392e-06,
+            "fine_minus_coarse_sum": -4.024644486508364e-09,
+            "mass_weighted_RMS_difference": 1.0295618630579645e-10,
+            "difference_over_fine_RMS": 0.001323344861033281
+          }
+        }
+      },
+      "disk_core": {
+        "cells_union": 11812,
+        "region_membership_changes": 0,
+        "fields": {
+          "ell": {
+            "coarse_sum": 0.0002956352573672453,
+            "fine_sum": 0.00029439832830957904,
+            "fine_minus_coarse_sum": -1.236929057666272e-06,
+            "mass_weighted_RMS_difference": 3.0080215233411535e-10,
+            "difference_over_fine_RMS": 0.010199760610259026
+          },
+          "Krot": {
+            "coarse_sum": 3.318954768758531e-05,
+            "fine_sum": 3.2794131582430124e-05,
+            "fine_minus_coarse_sum": -3.954161051551848e-07,
+            "mass_weighted_RMS_difference": 1.2511106557547636e-10,
+            "difference_over_fine_RMS": 0.02483284797302242
+          },
+          "Kaffine": {
+            "coarse_sum": 0.0004368510568549095,
+            "fine_sum": 0.00043687885473465943,
+            "fine_minus_coarse_sum": 2.779787974990804e-08,
+            "mass_weighted_RMS_difference": 1.4473900105582804e-10,
+            "difference_over_fine_RMS": 0.002212298137917782
+          },
+          "Kaffine_nonspin": {
+            "coarse_sum": 0.00040366150916732417,
+            "fine_sum": 0.00040408472315222926,
+            "fine_minus_coarse_sum": 4.2321398490509286e-07,
+            "mass_weighted_RMS_difference": 1.5444263698687552e-10,
+            "difference_over_fine_RMS": 0.0025535169869078046
+          }
+        }
+      }
+    }
+  },
+  "sources": {
+    "initial": {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_curved_kepler_IC_20261019/initial.npz",
+      "sha256": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46"
+    },
+    "coarse_t0025": {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/accepted.npz",
+      "sha256": "e0a29e270f4f46b86e06175f4388a1364de94e9ab8375bf36578828d57be6a72"
+    },
+    "fine_t0025": {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0010/accepted.npz",
+      "sha256": "465f9713ab405f19e438396abb8796510c3c51784b0c85028139248b34c28d8e"
+    },
+    "coarse_t005": {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0010/accepted.npz",
+      "sha256": "1b394c06cda4cdf912a881d1f346f27f37dc9a426156a280ea6d40909fa50822"
+    },
+    "fine_t005": {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0020/accepted.npz",
+      "sha256": "b6570af3551041958eb5d85bb038d0c88c99e39cefe9f79c0bf2c14d271a737e"
+    }
+  },
+  "limitations": [
+    "Endpoint diagnostics do not establish a relaxation law or causal reduction of Kepler error.",
+    "The nonspin affine projection includes deformation/shear and is not added as a new energy.",
+    "No long-time t=6-10 stability or 3D validation is performed."
+  ]
+}

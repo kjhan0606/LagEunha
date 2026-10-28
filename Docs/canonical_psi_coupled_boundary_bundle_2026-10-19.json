@@ -1,0 +1,1667 @@
+{
+  "status": "completed_bundle_for_Astra_evaluation",
+  "provider_calls": 2,
+  "evolution_steps": 1,
+  "accepted_time": 0.0001,
+  "evidence": {
+    "density_api": {
+      "status": "passed",
+      "results": {
+        "constant": {
+          "status": "passed",
+          "residual": 1.527250548249981e-13
+        },
+        "linear": {
+          "status": "passed",
+          "residual": 1.527250548249981e-13
+        },
+        "quadratic": {
+          "status": "passed",
+          "residual": 1.527250548249981e-13
+        },
+        "nonpolynomial_and_gauge": {
+          "status": "passed",
+          "residual": 3.00454106039183e-15,
+          "independent_q48_Psi_error": 7.94100005495807e-19,
+          "independent_q48_moment_error": 2.220446049250313e-15,
+          "sigma": 9.699938377895187e-06,
+          "rank_error": 6.39452807553792e-16,
+          "condition": 174.36755418960877,
+          "gauge_density_max_difference": 2.2026824808563106e-13
+        },
+        "infeasible_target": {
+          "status": "passed",
+          "failure": "outside_quadrature_moment_hull",
+          "witness": {
+            "feature": 5,
+            "target": 100.03411299957251,
+            "minimum": -1.730790794616302,
+            "maximum": 4.436305110135324,
+            "witness": "coordinate separating hyperplane"
+          }
+        },
+        "unresolved_rank": {
+          "status": "passed",
+          "failure": "unresolved_potential_rank"
+        },
+        "six_feature_face_api": {
+          "status": "passed",
+          "features": 6,
+          "area": 0.04000000000000001,
+          "cut_tangent_and_flat": true
+        }
+      },
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/check_psi_coupled_density_api.py": "3cd9d99aa09586e4412498d061232b8a39d79aabe92acc883a2316244e972e79",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/contact_potential_density.py": "7c782b647b129adf087eb3645e745b28b1ccf9909bd065862f5461fe04b91cde",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/positive_radial_quadrature.py": "6734a6929ea47a5b8e452ded440ff14dae4ce1022dc409918c81e07ffc9e3446"
+      },
+      "limits": "Synthetic numerical realizability fixtures; no dynamics or proof of continuous moment hull membership."
+    },
+    "coupled": {
+      "status": "completed_connection_gate",
+      "provider_calls": 2,
+      "minimum_R": 7.517728371921013e-13,
+      "minimum_thermal": 3.8674249889498755e-08,
+      "active_transported_energy_residual": -1.6353664310550252e-19,
+      "active_reconstructed_energy_residual": -4.446466168136414e-16,
+      "active_initial_fit_Psi_error": -6.195300223124929e-17,
+      "active_final_fit_Psi_error": -5.064360824017852e-16,
+      "frozen_reconstructed_Psi_change": 2.139185447200044e-12,
+      "frozen_sidecar_change": 0.0,
+      "timers": {
+        "geometry": {
+          "calls": 3,
+          "wall_seconds": 3.5218505822122097,
+          "process_cpu_seconds": 3.4990072560000165
+        },
+        "prior": {
+          "calls": 3,
+          "wall_seconds": 13.751505751162767,
+          "process_cpu_seconds": 13.656997636999947
+        },
+        "baseline_density": {
+          "calls": 4770,
+          "wall_seconds": 17.493586767464876,
+          "process_cpu_seconds": 17.34703485399969
+        },
+        "potential_density_fit": {
+          "calls": 3582,
+          "wall_seconds": 53.4125341065228,
+          "process_cpu_seconds": 53.04245479900062
+        },
+        "volume_decode": {
+          "calls": 3,
+          "wall_seconds": 0.31581983901560307,
+          "process_cpu_seconds": 0.313664299000024
+        },
+        "velocity_prepare": {
+          "calls": 9,
+          "wall_seconds": 34.17386981099844,
+          "process_cpu_seconds": 33.93932119699996
+        },
+        "rhs_outer": {
+          "calls": 6,
+          "wall_seconds": 98.81784985400736,
+          "process_cpu_seconds": 98.09833926900001
+        },
+        "capture": {
+          "calls": 2,
+          "wall_seconds": 44.698184156790376,
+          "process_cpu_seconds": 44.39191880000003
+        },
+        "gravity_and_moment_audit": {
+          "calls": 2,
+          "wall_seconds": 8.075173698365688,
+          "process_cpu_seconds": 8.014508851999977
+        },
+        "independent_q48": {
+          "calls": 3,
+          "wall_seconds": 178.92905675061047,
+          "process_cpu_seconds": 177.824945594
+        }
+      },
+      "rhs_outer": [
+        {
+          "label": "initial",
+          "face_record": {
+            "wall_seconds": 1.3212588150054216,
+            "process_cpu_seconds": 1.3097735190000037
+          },
+          "accumulation": {
+            "wall_seconds": 1.9899851903319359,
+            "process_cpu_seconds": 1.971956618
+          },
+          "native": {
+            "nodes": 244728,
+            "star_calls": 234080,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.24146411195397377,
+                "process_cpu_seconds": 0.23983824999999825
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.1730993539094925,
+                "process_cpu_seconds": 0.17166075000000092
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.8211242854595184,
+                "process_cpu_seconds": 0.8154536890000017
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 2.0009265281260014,
+            "process_cpu_seconds": 1.9649563079999979
+          }
+        },
+        {
+          "label": "initial",
+          "face_record": {
+            "wall_seconds": 0.9747949410229921,
+            "process_cpu_seconds": 0.9681939090000071
+          },
+          "accumulation": {
+            "wall_seconds": 1.9000310525298119,
+            "process_cpu_seconds": 1.8862831179999944
+          },
+          "native": {
+            "nodes": 251896,
+            "star_calls": 241248,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.13756213895976543,
+                "process_cpu_seconds": 0.13660781999999472
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.14828165993094444,
+                "process_cpu_seconds": 0.1471542400000061
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.6885243393480778,
+                "process_cpu_seconds": 0.6840374790000112
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 2.3395016379654408,
+            "process_cpu_seconds": 2.320761558000001
+          }
+        },
+        {
+          "label": "initial",
+          "face_record": {
+            "wall_seconds": 1.2422865740954876,
+            "process_cpu_seconds": 1.2337514790000057
+          },
+          "accumulation": {
+            "wall_seconds": 1.9354955051094294,
+            "process_cpu_seconds": 1.9195041080000124
+          },
+          "native": {
+            "nodes": 251888,
+            "star_calls": 241240,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.2596178948879242,
+                "process_cpu_seconds": 0.25774211899999955
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.16535708494484425,
+                "process_cpu_seconds": 0.16417924999998945
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.8169546443969011,
+                "process_cpu_seconds": 0.8114956699999993
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 2.005313728004694,
+            "process_cpu_seconds": 1.9923529779999996
+          }
+        },
+        {
+          "label": "half",
+          "face_record": {
+            "wall_seconds": 0.8155730161815882,
+            "process_cpu_seconds": 0.8098263789999578
+          },
+          "accumulation": {
+            "wall_seconds": 1.4069842286407948,
+            "process_cpu_seconds": 1.3966271489999826
+          },
+          "native": {
+            "nodes": 272376,
+            "star_calls": 258840,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.15991228818893433,
+                "process_cpu_seconds": 0.15876266999998734
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.13338101468980312,
+                "process_cpu_seconds": 0.13235192999999867
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5219698138535023,
+                "process_cpu_seconds": 0.5184245689999898
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 1.4926533810794353,
+            "process_cpu_seconds": 1.4826564790000134
+          }
+        },
+        {
+          "label": "half",
+          "face_record": {
+            "wall_seconds": 0.8043944835662842,
+            "process_cpu_seconds": 0.799320999000031
+          },
+          "accumulation": {
+            "wall_seconds": 1.4113391246646643,
+            "process_cpu_seconds": 1.4019352379999646
+          },
+          "native": {
+            "nodes": 272336,
+            "star_calls": 258800,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.15001701191067696,
+                "process_cpu_seconds": 0.14904255999999805
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.12454808130860329,
+                "process_cpu_seconds": 0.12378538999996636
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5295284651219845,
+                "process_cpu_seconds": 0.5262197589999573
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 1.4961403012275696,
+            "process_cpu_seconds": 1.4865309690000004
+          }
+        },
+        {
+          "label": "half",
+          "face_record": {
+            "wall_seconds": 0.8061242327094078,
+            "process_cpu_seconds": 0.8006369690000383
+          },
+          "accumulation": {
+            "wall_seconds": 1.4027385227382183,
+            "process_cpu_seconds": 1.390480359000037
+          },
+          "native": {
+            "nodes": 272336,
+            "star_calls": 258800,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.15737992897629738,
+                "process_cpu_seconds": 0.15637698000000455
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.12501037120819092,
+                "process_cpu_seconds": 0.12396526999998514
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5234356634318829,
+                "process_cpu_seconds": 0.5200189490000184
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 1.4775684028863907,
+            "process_cpu_seconds": 1.4677029889999744
+          }
+        }
+      ],
+      "physical_comparison": "pending separate exact-current-polygon postprocessing",
+      "limits": "Actual two-provider Psi-coupled midpoint connection gate, h=1e-4.\n\nNo fallback, energy correction, old target replay, or long-time claim.\n"
+    },
+    "connection": {
+      "status": "passed_saved_connection_audit",
+      "scope": "Audit saved coupled connection, without a provider, evolution, or refit.",
+      "accepted_time": 0.0001,
+      "provider_calls": 2,
+      "mass_bitwise_unchanged": true,
+      "frozen_raw_factor_sidecar_unchanged": true,
+      "Q_Pi_symmetric": true,
+      "minimum_thermal": 3.8674249889498755e-08,
+      "minimum_R": 7.517728371921013e-13,
+      "accepted_momentum_E_angular_ledger_residual": [
+        2.127026852706061e-17,
+        -1.6236347482227664e-18,
+        1.7890681823963812e-17,
+        -1.2782571863767067e-16
+      ],
+      "accepted_momentum_E_angular_ledger_bound": [
+        1.8365542057904278e-12,
+        1.836464971643907e-12,
+        1.86597462406442e-12,
+        1.7352307821384066e-12
+      ],
+      "reconstruction": {
+        "initial": {
+          "maximum_q48_normalized_mqQ_error": 1.4084369826287361e-14,
+          "maximum_q48_Psi_error": 2.0753365998914426e-18,
+          "q48_Psi_signed_error": -6.195300223124929e-17,
+          "q48_Psi_absolute_error": 2.4012397062752516e-16,
+          "maximum_q48_scaled_remainder_residual": 6.347048090077246e-13,
+          "maximum_dual_residual": 2.7894015410123605e-13,
+          "maximum_condition": 1555.2226470069625,
+          "minimum_sigma": 9.220721277842023e-06,
+          "maximum_rank_error": 3.0507778996370763e-14
+        },
+        "half": {
+          "maximum_q48_normalized_mqQ_error": 3.001047083365724e-13,
+          "maximum_q48_Psi_error": 1.4412794993123954e-17,
+          "q48_Psi_signed_error": -6.309678837392658e-16,
+          "q48_Psi_absolute_error": 7.59908585865795e-16,
+          "maximum_q48_scaled_remainder_residual": 6.862440748059251e-13,
+          "maximum_dual_residual": 2.9982960558783134e-13,
+          "maximum_condition": 1555.1209553911795,
+          "minimum_sigma": 9.219122062367659e-06,
+          "maximum_rank_error": 3.9414008393862173e-14
+        },
+        "final": {
+          "maximum_q48_normalized_mqQ_error": 3.004905081271242e-13,
+          "maximum_q48_Psi_error": 1.529783854388629e-17,
+          "q48_Psi_signed_error": -5.064360824017852e-16,
+          "q48_Psi_absolute_error": 6.245319007585398e-16,
+          "maximum_q48_scaled_remainder_residual": 7.381720408909594e-13,
+          "maximum_dual_residual": 2.9984348337563915e-13,
+          "maximum_condition": 1555.0091956684678,
+          "minimum_sigma": 9.217872549184722e-06,
+          "maximum_rank_error": 3.9096214694570783e-14
+        }
+      },
+      "energy": {
+        "transported_residual": -1.6353664310550252e-19,
+        "reconstructed_q48_residual": -4.446466168136414e-16,
+        "stored_sum_roundoff_bound": 5.0612083748826376e-12,
+        "measured_initial_and_final_q48_constraint_uncertainty": 8.64655871386065e-16,
+        "frozen_reconstructed_Psi_change": 2.139185447200044e-12,
+        "frozen_transported_Psi_change": 0.0,
+        "quadrature_truncation": "pending q24 minus stored independent q48; not included in roundoff bound"
+      },
+      "cost": {
+        "geometry": {
+          "calls": 3,
+          "wall_seconds": 3.5218505822122097,
+          "process_cpu_seconds": 3.4990072560000165
+        },
+        "prior": {
+          "calls": 3,
+          "wall_seconds": 13.751505751162767,
+          "process_cpu_seconds": 13.656997636999947
+        },
+        "baseline_density": {
+          "calls": 4770,
+          "wall_seconds": 17.493586767464876,
+          "process_cpu_seconds": 17.34703485399969
+        },
+        "potential_density_fit": {
+          "calls": 3582,
+          "wall_seconds": 53.4125341065228,
+          "process_cpu_seconds": 53.04245479900062
+        },
+        "volume_decode": {
+          "calls": 3,
+          "wall_seconds": 0.31581983901560307,
+          "process_cpu_seconds": 0.313664299000024
+        },
+        "velocity_prepare": {
+          "calls": 9,
+          "wall_seconds": 34.17386981099844,
+          "process_cpu_seconds": 33.93932119699996
+        },
+        "rhs_outer": {
+          "calls": 6,
+          "wall_seconds": 98.81784985400736,
+          "process_cpu_seconds": 98.09833926900001
+        },
+        "capture": {
+          "calls": 2,
+          "wall_seconds": 44.698184156790376,
+          "process_cpu_seconds": 44.39191880000003
+        },
+        "gravity_and_moment_audit": {
+          "calls": 2,
+          "wall_seconds": 8.075173698365688,
+          "process_cpu_seconds": 8.014508851999977
+        },
+        "independent_q48": {
+          "calls": 3,
+          "wall_seconds": 178.92905675061047,
+          "process_cpu_seconds": 177.824945594
+        }
+      },
+      "rhs_outer_cost": [
+        {
+          "label": "initial",
+          "face_record": {
+            "wall_seconds": 1.3212588150054216,
+            "process_cpu_seconds": 1.3097735190000037
+          },
+          "accumulation": {
+            "wall_seconds": 1.9899851903319359,
+            "process_cpu_seconds": 1.971956618
+          },
+          "native": {
+            "nodes": 244728,
+            "star_calls": 234080,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.24146411195397377,
+                "process_cpu_seconds": 0.23983824999999825
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.1730993539094925,
+                "process_cpu_seconds": 0.17166075000000092
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.8211242854595184,
+                "process_cpu_seconds": 0.8154536890000017
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 2.0009265281260014,
+            "process_cpu_seconds": 1.9649563079999979
+          }
+        },
+        {
+          "label": "initial",
+          "face_record": {
+            "wall_seconds": 0.9747949410229921,
+            "process_cpu_seconds": 0.9681939090000071
+          },
+          "accumulation": {
+            "wall_seconds": 1.9000310525298119,
+            "process_cpu_seconds": 1.8862831179999944
+          },
+          "native": {
+            "nodes": 251896,
+            "star_calls": 241248,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.13756213895976543,
+                "process_cpu_seconds": 0.13660781999999472
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.14828165993094444,
+                "process_cpu_seconds": 0.1471542400000061
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.6885243393480778,
+                "process_cpu_seconds": 0.6840374790000112
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 2.3395016379654408,
+            "process_cpu_seconds": 2.320761558000001
+          }
+        },
+        {
+          "label": "initial",
+          "face_record": {
+            "wall_seconds": 1.2422865740954876,
+            "process_cpu_seconds": 1.2337514790000057
+          },
+          "accumulation": {
+            "wall_seconds": 1.9354955051094294,
+            "process_cpu_seconds": 1.9195041080000124
+          },
+          "native": {
+            "nodes": 251888,
+            "star_calls": 241240,
+            "frozen_skipped": 10648,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.2596178948879242,
+                "process_cpu_seconds": 0.25774211899999955
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.16535708494484425,
+                "process_cpu_seconds": 0.16417924999998945
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.8169546443969011,
+                "process_cpu_seconds": 0.8114956699999993
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 2.005313728004694,
+            "process_cpu_seconds": 1.9923529779999996
+          }
+        },
+        {
+          "label": "half",
+          "face_record": {
+            "wall_seconds": 0.8155730161815882,
+            "process_cpu_seconds": 0.8098263789999578
+          },
+          "accumulation": {
+            "wall_seconds": 1.4069842286407948,
+            "process_cpu_seconds": 1.3966271489999826
+          },
+          "native": {
+            "nodes": 272376,
+            "star_calls": 258840,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.15991228818893433,
+                "process_cpu_seconds": 0.15876266999998734
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.13338101468980312,
+                "process_cpu_seconds": 0.13235192999999867
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5219698138535023,
+                "process_cpu_seconds": 0.5184245689999898
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 1.4926533810794353,
+            "process_cpu_seconds": 1.4826564790000134
+          }
+        },
+        {
+          "label": "half",
+          "face_record": {
+            "wall_seconds": 0.8043944835662842,
+            "process_cpu_seconds": 0.799320999000031
+          },
+          "accumulation": {
+            "wall_seconds": 1.4113391246646643,
+            "process_cpu_seconds": 1.4019352379999646
+          },
+          "native": {
+            "nodes": 272336,
+            "star_calls": 258800,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.15001701191067696,
+                "process_cpu_seconds": 0.14904255999999805
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.12454808130860329,
+                "process_cpu_seconds": 0.12378538999996636
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5295284651219845,
+                "process_cpu_seconds": 0.5262197589999573
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 1.4961403012275696,
+            "process_cpu_seconds": 1.4865309690000004
+          }
+        },
+        {
+          "label": "half",
+          "face_record": {
+            "wall_seconds": 0.8061242327094078,
+            "process_cpu_seconds": 0.8006369690000383
+          },
+          "accumulation": {
+            "wall_seconds": 1.4027385227382183,
+            "process_cpu_seconds": 1.390480359000037
+          },
+          "native": {
+            "nodes": 272336,
+            "star_calls": 258800,
+            "frozen_skipped": 13536,
+            "timers": {
+              "record_array_prepare": {
+                "wall_seconds": 0.15737992897629738,
+                "process_cpu_seconds": 0.15637698000000455
+              },
+              "exact_star_native": {
+                "wall_seconds": 0.12501037120819092,
+                "process_cpu_seconds": 0.12396526999998514
+              },
+              "record_tuple_pack": {
+                "wall_seconds": 0.5234356634318829,
+                "process_cpu_seconds": 0.5200189490000184
+              }
+            },
+            "provenance": {
+              "library": "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/libnative_euler_star.so",
+              "scipy_version": "1.18.0",
+              "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+              "xtol": 2.2250738585072014e-308,
+              "rtol": 1.7763568394002505e-15,
+              "maxiter": 200
+            },
+            "cache_scope": "this RHS outer only"
+          },
+          "massroot": {
+            "wall_seconds": 1.4775684028863907,
+            "process_cpu_seconds": 1.4677029889999744
+          }
+        }
+      ],
+      "physical_accuracy": "pending each-current-polygon exact reference comparison",
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/summarize_psi_coupled_midpoint.py": "90f994e64ac4986121b73472699075bfedfbe5b6200f75b211869ea6d7ede74d",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/manifest.json": "64f6a49ef4da64c0143efc408c2c896c9d6a6821f637563d293271bb96f44954",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/summary.json": "39473e0fb0c9c03d57aae2ec9adff79f6839a9bf45bb5fbe16d9585dcf15e844",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/initial.npz": "dc660c274ac2cb54840ba316166adbb5f20a2de233eea8979f62019c110d17a2",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/accepted.npz": "cb4a64a1f20bfbd78b8a3c858aba9e99378cdb8a4c5a304781b976a576a591f0"
+      },
+      "limits": "Connection and numerical ledger audit only; no long-time stability, global circular domain, time order, or physical improvement verdict."
+    },
+    "saved_density": {
+      "status": "passed",
+      "scope": "q24 versus saved independent q48, and saved six-feature trace API audit.\n\nRestore parameters only; zero Newton fits, providers, or evolution steps.\n",
+      "states": {
+        "initial": {
+          "active_q24_minus_q48_signed": 5.605032244377092e-17,
+          "active_q24_minus_q48_absolute_sum": 1.0131703038573916e-16,
+          "active_q24_minus_q48_max": 1.4578495813430577e-18,
+          "frozen_q24_minus_q48_signed": 4.500730741059406e-17,
+          "maximum_scalar_batch_trace_relative_difference": 0.0,
+          "maximum_omitting_sixth_feature_relative_effect": 5.0672721241262764e-08
+        },
+        "half": {
+          "active_q24_minus_q48_signed": 5.765886778910888e-17,
+          "active_q24_minus_q48_absolute_sum": 1.0853148793018985e-16,
+          "active_q24_minus_q48_max": 1.3945338685357987e-18,
+          "frozen_q24_minus_q48_signed": 4.6573471330067263e-17,
+          "maximum_scalar_batch_trace_relative_difference": 0.0,
+          "maximum_omitting_sixth_feature_relative_effect": 0.00022012596926956896
+        },
+        "final": {
+          "active_q24_minus_q48_signed": 5.969337309960348e-17,
+          "active_q24_minus_q48_absolute_sum": 1.0388030924844706e-16,
+          "active_q24_minus_q48_max": 1.2590085969751107e-18,
+          "frozen_q24_minus_q48_signed": 4.0292722026176626e-17,
+          "maximum_scalar_batch_trace_relative_difference": 0.0,
+          "maximum_omitting_sixth_feature_relative_effect": 0.0007511989127952923
+        }
+      },
+      "active_trace_points": 21490,
+      "newton_fits": 0,
+      "provider_calls": 0,
+      "seconds": 64.20524496026337,
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/audit_psi_coupled_saved_density.py": "b635e7608a6b41f263adf04dd03471cba9fae7e0413c3da8e30fb0c0cbd5b51e",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/contact_potential_density.py": "7c782b647b129adf087eb3645e745b28b1ccf9909bd065862f5461fe04b91cde",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/manifest.json": "64f6a49ef4da64c0143efc408c2c896c9d6a6821f637563d293271bb96f44954"
+      },
+      "limits": "q24/q48 differences are empirical quadrature estimates, not interval bounds; finite sample trace agreement does not prove continuous realization or physical accuracy."
+    },
+    "physical": {
+      "status": "completed_comparison",
+      "scope": "Compare equal-time closures against each endpoint's own current polygons.",
+      "time": 0.0001,
+      "comparison": {
+        "pressure_relative_P0": {
+          "active": {
+            "old_RMS": 4.278574445787768e-08,
+            "new_RMS": 4.278468448231233e-08,
+            "new_over_old": 0.99997522596419,
+            "old_maximum": 2.2730585467170722e-07,
+            "new_maximum": 2.2730484534792106e-07,
+            "old_maximum_id": 2,
+            "new_maximum_id": 2,
+            "quadrature_selected_RMS": [
+              1.943548984932016e-12,
+              2.2791543266548347e-12
+            ]
+          },
+          "inner": {
+            "old_RMS": 6.48863284644862e-08,
+            "new_RMS": 6.489198361674094e-08,
+            "new_over_old": 1.0000871547579986,
+            "old_maximum": 2.2730585467170722e-07,
+            "new_maximum": 2.2730484534792106e-07,
+            "old_maximum_id": 2,
+            "new_maximum_id": 2,
+            "quadrature_selected_RMS": [
+              4.516530663614749e-14,
+              4.0287729355618064e-14
+            ]
+          },
+          "inner_transition": {
+            "old_RMS": 6.71850285194039e-08,
+            "new_RMS": 6.718704763630355e-08,
+            "new_over_old": 1.0000300530779573,
+            "old_maximum": 2.1034459632552774e-07,
+            "new_maximum": 2.103455525912055e-07,
+            "old_maximum_id": 747,
+            "new_maximum_id": 747,
+            "quadrature_selected_RMS": [
+              5.3536369141311584e-14,
+              2.4035722440197358e-14
+            ]
+          },
+          "contact_band": {
+            "old_RMS": 8.89467430309228e-08,
+            "new_RMS": 8.89478141825099e-08,
+            "new_over_old": 1.0000120426173078,
+            "old_maximum": 1.9749817041397533e-07,
+            "new_maximum": 1.9750618609146834e-07,
+            "old_maximum_id": 847,
+            "new_maximum_id": 847,
+            "quadrature_selected_RMS": [
+              1.7616434700229208e-12,
+              2.31022123985159e-12
+            ]
+          },
+          "outer_interior": {
+            "old_RMS": 3.440405677856953e-08,
+            "new_RMS": 3.440419740668701e-08,
+            "new_over_old": 1.0000040875446283,
+            "old_maximum": 9.57671505395974e-08,
+            "new_maximum": 9.575380404686892e-08,
+            "old_maximum_id": 956,
+            "new_maximum_id": 956,
+            "quadrature_selected_RMS": [
+              2.6701645441692057e-12,
+              1.8881190520727334e-12
+            ]
+          },
+          "active_edge": {
+            "old_RMS": 2.653144011862204e-08,
+            "new_RMS": 2.6527284534724767e-08,
+            "new_over_old": 0.9998433713406173,
+            "old_maximum": 5.5493009147804264e-08,
+            "new_maximum": 5.5493010123585564e-08,
+            "old_maximum_id": 1111,
+            "new_maximum_id": 1111,
+            "quadrature_selected_RMS": [
+              2.8401803372938215e-12,
+              2.2463020271114563e-12
+            ]
+          },
+          "contact_cells_active": {
+            "old_RMS": 8.89467430309228e-08,
+            "new_RMS": 8.89478141825099e-08,
+            "new_over_old": 1.0000120426173078,
+            "old_maximum": 1.9749817041397533e-07,
+            "new_maximum": 1.9750618609146834e-07,
+            "old_maximum_id": 847,
+            "new_maximum_id": 847,
+            "quadrature_selected_RMS": [
+              1.7616434700229208e-12,
+              2.31022123985159e-12
+            ]
+          },
+          "active_frozen_boundary_cells_active": {
+            "old_RMS": 3.0906886638740356e-08,
+            "new_RMS": 3.0904930596562924e-08,
+            "new_over_old": 0.9999367117691181,
+            "old_maximum": 5.5493009147804264e-08,
+            "new_maximum": 5.5493010123585564e-08,
+            "old_maximum_id": 1111,
+            "new_maximum_id": 1111,
+            "quadrature_selected_RMS": [
+              3.141475031104331e-12,
+              2.0566250474303508e-12
+            ]
+          }
+        },
+        "velocity": {
+          "active": {
+            "old_RMS": 1.0664166094511819e-07,
+            "new_RMS": 1.0663745166945813e-07,
+            "new_over_old": 0.9999605287875043,
+            "old_maximum": 2.88211514406352e-06,
+            "new_maximum": 2.881654466719586e-06,
+            "old_maximum_id": 749,
+            "new_maximum_id": 749,
+            "quadrature_selected_RMS": [
+              1.8458878232148495e-16,
+              1.6628847083057948e-16
+            ]
+          },
+          "inner": {
+            "old_RMS": 1.51059587788791e-08,
+            "new_RMS": 1.5108890319309333e-08,
+            "new_over_old": 1.000194065168133,
+            "old_maximum": 7.136855199405395e-08,
+            "new_maximum": 7.137270805918453e-08,
+            "old_maximum_id": 11,
+            "new_maximum_id": 11,
+            "quadrature_selected_RMS": [
+              1.984903914253955e-16,
+              1.7873212212045445e-16
+            ]
+          },
+          "inner_transition": {
+            "old_RMS": 3.287626523041344e-07,
+            "new_RMS": 3.287443422918992e-07,
+            "new_over_old": 0.9999443062887257,
+            "old_maximum": 2.88211514406352e-06,
+            "new_maximum": 2.881654466719586e-06,
+            "old_maximum_id": 749,
+            "new_maximum_id": 749,
+            "quadrature_selected_RMS": [
+              6.408069382387026e-17,
+              2.932453933247684e-16
+            ]
+          },
+          "contact_band": {
+            "old_RMS": 2.2709431605536167e-07,
+            "new_RMS": 2.2709212663906374e-07,
+            "new_over_old": 0.999990359000014,
+            "old_maximum": 2.077000331039524e-06,
+            "new_maximum": 2.076993518392378e-06,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              1.917500149385427e-16,
+              1.6214806428729665e-16
+            ]
+          },
+          "outer_interior": {
+            "old_RMS": 1.1794044090524184e-07,
+            "new_RMS": 1.1793214987795919e-07,
+            "new_over_old": 0.9999297015746337,
+            "old_maximum": 1.1475697371363931e-06,
+            "new_maximum": 1.1475689137959457e-06,
+            "old_maximum_id": 901,
+            "new_maximum_id": 901,
+            "quadrature_selected_RMS": [
+              7.850168252712667e-17,
+              1.570151264622428e-16
+            ]
+          },
+          "active_edge": {
+            "old_RMS": 2.1507047566926133e-08,
+            "new_RMS": 2.1500432683644314e-08,
+            "new_over_old": 0.9996924318290907,
+            "old_maximum": 1.4837070750562962e-07,
+            "new_maximum": 1.4820639262796592e-07,
+            "old_maximum_id": 1067,
+            "new_maximum_id": 1067,
+            "quadrature_selected_RMS": [
+              1.483502266190278e-16,
+              1.9457993173974966e-16
+            ]
+          },
+          "contact_cells_active": {
+            "old_RMS": 2.2709431605536167e-07,
+            "new_RMS": 2.2709212663906374e-07,
+            "new_over_old": 0.999990359000014,
+            "old_maximum": 2.077000331039524e-06,
+            "new_maximum": 2.076993518392378e-06,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              1.917500149385427e-16,
+              1.6214806428729665e-16
+            ]
+          },
+          "active_frozen_boundary_cells_active": {
+            "old_RMS": 1.3784634223298543e-08,
+            "new_RMS": 1.3788539369560401e-08,
+            "new_over_old": 1.0002832970537048,
+            "old_maximum": 2.62106092308181e-08,
+            "new_maximum": 2.6255696886052783e-08,
+            "old_maximum_id": 1169,
+            "new_maximum_id": 1169,
+            "quadrature_selected_RMS": [
+              1.754478349091249e-16,
+              2.3012184422322735e-16
+            ]
+          }
+        },
+        "mass_relative_reference": {
+          "active": {
+            "old_RMS": 2.743882816224882e-06,
+            "new_RMS": 2.7437427079101175e-06,
+            "new_over_old": 0.9999489379378973,
+            "old_maximum": 5.785869310816286e-05,
+            "new_maximum": 5.785876577620242e-05,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "inner": {
+            "old_RMS": 5.336892366719863e-08,
+            "new_RMS": 5.3724455816661345e-08,
+            "new_over_old": 1.006661782270142,
+            "old_maximum": 2.1299717510238832e-07,
+            "new_maximum": 2.1299275108914217e-07,
+            "old_maximum_id": 2,
+            "new_maximum_id": 2,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "inner_transition": {
+            "old_RMS": 4.820168056109835e-06,
+            "new_RMS": 4.820446277956719e-06,
+            "new_over_old": 1.0000577203623702,
+            "old_maximum": 4.098592690062237e-05,
+            "new_maximum": 4.0987617458471545e-05,
+            "old_maximum_id": 722,
+            "new_maximum_id": 722,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "contact_band": {
+            "old_RMS": 6.05835763730821e-06,
+            "new_RMS": 6.058370247130005e-06,
+            "new_over_old": 1.0000020813927717,
+            "old_maximum": 5.785869310816286e-05,
+            "new_maximum": 5.785876577620242e-05,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "outer_interior": {
+            "old_RMS": 2.927921570930996e-06,
+            "new_RMS": 2.9278340648788713e-06,
+            "new_over_old": 0.9999701132526931,
+            "old_maximum": 2.8097022958215372e-05,
+            "new_maximum": 2.8097064293607123e-05,
+            "old_maximum_id": 901,
+            "new_maximum_id": 901,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "active_edge": {
+            "old_RMS": 7.645348910611616e-07,
+            "new_RMS": 7.637846819623762e-07,
+            "new_over_old": 0.999018737918234,
+            "old_maximum": 3.730615158538418e-06,
+            "new_maximum": 3.7310363601720825e-06,
+            "old_maximum_id": 1067,
+            "new_maximum_id": 1067,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "contact_cells_active": {
+            "old_RMS": 6.05835763730821e-06,
+            "new_RMS": 6.058370247130005e-06,
+            "new_over_old": 1.0000020813927717,
+            "old_maximum": 5.785869310816286e-05,
+            "new_maximum": 5.785876577620242e-05,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          },
+          "active_frozen_boundary_cells_active": {
+            "old_RMS": 7.992372260753829e-07,
+            "new_RMS": 7.982714862266563e-07,
+            "new_over_old": 0.9987916730887664,
+            "old_maximum": 1.6035790877984281e-06,
+            "new_maximum": 1.6115385308801932e-06,
+            "old_maximum_id": 1152,
+            "new_maximum_id": 1152,
+            "quadrature_selected_RMS": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "ell": {
+          "active": {
+            "old_RMS": 5.052848165786897e-13,
+            "new_RMS": 5.051704805920431e-13,
+            "new_over_old": 0.9997737197261918,
+            "old_maximum": 1.094755981424474e-11,
+            "new_maximum": 1.094761399724831e-11,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              7.389589025951419e-20,
+              9.205583217497289e-20
+            ]
+          },
+          "inner": {
+            "old_RMS": 1.9211650560226518e-15,
+            "new_RMS": 1.9236739233088345e-15,
+            "new_over_old": 1.0013059092857834,
+            "old_maximum": 1.0825134395898411e-14,
+            "new_maximum": 1.0824959500138415e-14,
+            "old_maximum_id": 2,
+            "new_maximum_id": 2,
+            "quadrature_selected_RMS": [
+              8.229702982536731e-22,
+              7.694788585380395e-22
+            ]
+          },
+          "inner_transition": {
+            "old_RMS": 2.1151631042740828e-14,
+            "new_RMS": 2.1151357417047346e-14,
+            "new_over_old": 0.9999870636125919,
+            "old_maximum": 1.875762364512046e-13,
+            "new_maximum": 1.8756810789952627e-13,
+            "old_maximum_id": 749,
+            "new_maximum_id": 749,
+            "quadrature_selected_RMS": [
+              1.8080781991096364e-21,
+              2.588692512259034e-21
+            ]
+          },
+          "contact_band": {
+            "old_RMS": 1.2048605716594413e-12,
+            "new_RMS": 1.2048543631632296e-12,
+            "new_over_old": 0.9999948471247564,
+            "old_maximum": 1.094755981424474e-11,
+            "new_maximum": 1.094761399724831e-11,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              7.285397935982089e-20,
+              6.255393237206859e-20
+            ]
+          },
+          "outer_interior": {
+            "old_RMS": 4.1605792970532004e-13,
+            "new_RMS": 4.158870504790336e-13,
+            "new_over_old": 0.9995892898221951,
+            "old_maximum": 2.8781679188398523e-12,
+            "new_maximum": 2.8782401809146485e-12,
+            "old_maximum_id": 901,
+            "new_maximum_id": 901,
+            "quadrature_selected_RMS": [
+              9.5834427772365e-21,
+              2.395846624751043e-19
+            ]
+          },
+          "active_edge": {
+            "old_RMS": 1.9257017470861837e-13,
+            "new_RMS": 1.922342640151105e-13,
+            "new_over_old": 0.9982556452783192,
+            "old_maximum": 7.733460681731696e-13,
+            "new_maximum": 7.731999177203186e-13,
+            "old_maximum_id": 973,
+            "new_maximum_id": 973,
+            "quadrature_selected_RMS": [
+              9.250975642011289e-20,
+              1.6919096402223775e-19
+            ]
+          },
+          "contact_cells_active": {
+            "old_RMS": 1.2048605716594413e-12,
+            "new_RMS": 1.2048543631632296e-12,
+            "new_over_old": 0.9999948471247564,
+            "old_maximum": 1.094755981424474e-11,
+            "new_maximum": 1.094761399724831e-11,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              7.285397935982089e-20,
+              6.255393237206859e-20
+            ]
+          },
+          "active_frozen_boundary_cells_active": {
+            "old_RMS": 2.199612853222725e-13,
+            "new_RMS": 2.193756144327424e-13,
+            "new_over_old": 0.997337391038282,
+            "old_maximum": 3.940915575116688e-13,
+            "new_maximum": 3.933445123833847e-13,
+            "old_maximum_id": 1193,
+            "new_maximum_id": 1193,
+            "quadrature_selected_RMS": [
+              1.0940756102490198e-19,
+              1.800627657768444e-19
+            ]
+          }
+        },
+        "factor_R": {
+          "active": {
+            "old_RMS": 9.589173662868707e-15,
+            "new_RMS": 9.589527782938622e-15,
+            "new_over_old": 1.0000369291538942,
+            "old_maximum": 7.857306210534167e-14,
+            "new_maximum": 7.857302087924296e-14,
+            "old_maximum_id": 901,
+            "new_maximum_id": 901,
+            "quadrature_selected_RMS": [
+              4.974469544014039e-19,
+              5.47781336398998e-19
+            ]
+          },
+          "inner": {
+            "old_RMS": 8.474034663336697e-16,
+            "new_RMS": 8.474335671047176e-16,
+            "new_over_old": 1.0000355211799854,
+            "old_maximum": 1.9695589841669777e-15,
+            "new_maximum": 1.9694821286612023e-15,
+            "old_maximum_id": 180,
+            "new_maximum_id": 180,
+            "quadrature_selected_RMS": [
+              6.384283990932793e-21,
+              6.178018543623553e-21
+            ]
+          },
+          "inner_transition": {
+            "old_RMS": 4.4331413617596574e-16,
+            "new_RMS": 4.43318752335047e-16,
+            "new_over_old": 1.0000104128398004,
+            "old_maximum": 2.04253257521814e-15,
+            "new_maximum": 2.0425048555590135e-15,
+            "old_maximum_id": 749,
+            "new_maximum_id": 749,
+            "quadrature_selected_RMS": [
+              1.1936718209062243e-20,
+              1.942539221251836e-20
+            ]
+          },
+          "contact_band": {
+            "old_RMS": 3.2997664004754226e-15,
+            "new_RMS": 3.2998310178179583e-15,
+            "new_over_old": 1.0000195823990832,
+            "old_maximum": 2.0189173669719152e-14,
+            "new_maximum": 2.0188976993841595e-14,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              4.8508706383811945e-19,
+              4.1128372302639463e-19
+            ]
+          },
+          "outer_interior": {
+            "old_RMS": 1.4042791961745055e-14,
+            "new_RMS": 1.4043471352552005e-14,
+            "new_over_old": 1.0000483800378728,
+            "old_maximum": 7.857306210534167e-14,
+            "new_maximum": 7.857302087924296e-14,
+            "old_maximum_id": 901,
+            "new_maximum_id": 901,
+            "quadrature_selected_RMS": [
+              5.799296890745472e-19,
+              1.1387919110024488e-18
+            ]
+          },
+          "active_edge": {
+            "old_RMS": 8.028377511767943e-15,
+            "new_RMS": 8.028549924166228e-15,
+            "new_over_old": 1.0000214753725807,
+            "old_maximum": 1.3600508452080318e-14,
+            "new_maximum": 1.3600456001792863e-14,
+            "old_maximum_id": 1157,
+            "new_maximum_id": 1157,
+            "quadrature_selected_RMS": [
+              5.7578249391348015e-19,
+              9.994780573169425e-19
+            ]
+          },
+          "contact_cells_active": {
+            "old_RMS": 3.2997664004754226e-15,
+            "new_RMS": 3.2998310178179583e-15,
+            "new_over_old": 1.0000195823990832,
+            "old_maximum": 2.0189173669719152e-14,
+            "new_maximum": 2.0188976993841595e-14,
+            "old_maximum_id": 797,
+            "new_maximum_id": 797,
+            "quadrature_selected_RMS": [
+              4.8508706383811945e-19,
+              4.1128372302639463e-19
+            ]
+          },
+          "active_frozen_boundary_cells_active": {
+            "old_RMS": 1.0864343501285478e-14,
+            "new_RMS": 1.0864634081655422e-14,
+            "new_over_old": 1.0000267462428734,
+            "old_maximum": 1.3600508452080318e-14,
+            "new_maximum": 1.3600456001792863e-14,
+            "old_maximum_id": 1157,
+            "new_maximum_id": 1157,
+            "quadrature_selected_RMS": [
+              6.0250903201737845e-19,
+              1.1246411882387e-18
+            ]
+          }
+        }
+      },
+      "angular_momentum_origin": [
+        {
+          "active_RMS": 1.3883920246859572e-09,
+          "active_maximum": 2.0781512719112057e-08
+        },
+        {
+          "active_RMS": 1.3882318410733355e-09,
+          "active_maximum": 2.0781538838897644e-08
+        }
+      ],
+      "raw_endpoint_path_difference_max": 1.4089331914698966e-12,
+      "generator_path_difference_max": 3.001904280708345e-13,
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/compare_psi_coupled_physical_endpoints.py": "048a4baa647bddd78f8598b19f7c0d68452f2e1e1e7fbd4e032dec4635552467",
+        "/gpfs/kjhan/LagForce/Codex_unconstrained_t1e4_polygon_reference_20261019/report.json": "3f835289f315cd66988e4dfbbe821fcf00016f840ad88d22894ed2318063fc05",
+        "/gpfs/kjhan/LagForce/Codex_unconstrained_t1e4_polygon_reference_20261019/reference.npz": "71b4a12523dabc234a2910706dadac30e98d2397ba10dbe7f44103e48b8d9447",
+        "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/accepted.npz": "76fe9ceac6a746a3c4a84c8fed87200c60c8685ebbab7a572eb5129931236072",
+        "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/initial.npz": "33f57ff85740782970489c3186adcb129350638f14e1df205399d833b1f7f513",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_t1e4_polygon_reference_20261019/report.json": "2ea0a8f57b8ec125f97e80513db9b575a60e39548e92f6579f00d53324e0960a",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_t1e4_polygon_reference_20261019/reference.npz": "a086a1dba1d48713f091ec71cadc79e555d03cd2e09e4d71f378d77f86d2b476",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/accepted.npz": "cb4a64a1f20bfbd78b8a3c858aba9e99378cdb8a4c5a304781b976a576a591f0",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/initial.npz": "dc660c274ac2cb54840ba316166adbb5f20a2de233eea8979f62019c110d17a2"
+      },
+      "limits": "Old/new closure on identical initial raw state and horizon; each reference integrates steady Kepler field on its own moving cell. Not time convergence, material orbit error, long-time stability, or a closure adoption verdict. q32 is independent only on saved selected masks."
+    },
+    "circular": {
+      "status": "passed",
+      "scope": "Static true-arc disk boundary fixtures; no domain evolution or IC fit.",
+      "radius": 2.5,
+      "results": {
+        "single": {
+          "status": "passed",
+          "cells": 1,
+          "arcs": 1,
+          "wall_nodes": 48,
+          "area_error": 0.0,
+          "q_error": [
+            1.3914795241968628e-13,
+            -1.2339666325781688e-15
+          ],
+          "Q_error": [
+            [
+              1.3145040611561853e-13,
+              2.483419286186672e-15
+            ],
+            [
+              2.476480392282765e-15,
+              -1.2434497875801753e-13
+            ]
+          ],
+          "divergence_errors": [
+            [
+              6.691869280928131e-14,
+              8.171241461241152e-14
+            ]
+          ],
+          "maximum_shared_pair_error": 0.0,
+          "wall_maximum_absolute_flux": [
+            6.082054802358102e-20,
+            1.786096760292496e-20,
+            2.4328219209432412e-20,
+            1.6218812806288272e-19
+          ],
+          "wall_total_flux": [
+            -1.640370865752588e-19,
+            -6.002422557260028e-21,
+            6.561483463010352e-20,
+            -4.1693028720818514e-20
+          ],
+          "wall_flux_order": [
+            "mass",
+            "hydro_E",
+            "Phi",
+            "origin_torque"
+          ],
+          "wall_flux_bounds_sum": [
+            4.828297562986222e-16,
+            1.114853907293518e-16,
+            1.9313190251944882e-16,
+            4.50465192254811e-15
+          ]
+        },
+        "pair": {
+          "status": "passed",
+          "cells": 2,
+          "arcs": 3,
+          "wall_nodes": 144,
+          "area_error": 0.0,
+          "q_error": [
+            3.197442310920451e-14,
+            -2.886579864025407e-15
+          ],
+          "Q_error": [
+            [
+              -6.394884621840902e-14,
+              3.519406988061746e-14
+            ],
+            [
+              3.5263458819656535e-14,
+              5.684341886080802e-14
+            ]
+          ],
+          "divergence_errors": [
+            [
+              1.970645868709653e-14,
+              3.907985046680551e-14
+            ],
+            [
+              4.378442053365461e-15,
+              7.344968275084518e-15
+            ]
+          ],
+          "maximum_shared_pair_error": 0.0,
+          "wall_maximum_absolute_flux": [
+            2.7012447920606142e-20,
+            8.930255547003917e-21,
+            1.0804979168242457e-20,
+            8.621330803447311e-20
+          ],
+          "wall_total_flux": [
+            5.822678185464114e-20,
+            2.0542316050546632e-20,
+            -2.3290712741856468e-20,
+            -1.2137450531450525e-19
+          ],
+          "wall_flux_order": [
+            "mass",
+            "hydro_E",
+            "Phi",
+            "origin_torque"
+          ],
+          "wall_flux_bounds_sum": [
+            4.823057977796874e-16,
+            1.1136440870732974e-16,
+            1.9292231911187492e-16,
+            4.50465192254811e-15
+          ]
+        },
+        "weighted": {
+          "status": "passed",
+          "cells": 5,
+          "arcs": 5,
+          "wall_nodes": 240,
+          "area_error": 0.0,
+          "q_error": [
+            3.557050487490443e-15,
+            1.321859288694327e-15
+          ],
+          "Q_error": [
+            [
+              -1.0658141036401503e-14,
+              -3.828101030611819e-15
+            ],
+            [
+              -3.829835754087796e-15,
+              -3.552713678800501e-15
+            ]
+          ],
+          "divergence_errors": [
+            [
+              3.964710504344993e-15,
+              1.7326851758925343e-14
+            ],
+            [
+              3.6741443221188774e-15,
+              1.2219405717307785e-14
+            ],
+            [
+              1.8305669480245257e-15,
+              1.1755895736043076e-14
+            ],
+            [
+              3.472916398905568e-15,
+              1.2243461453009807e-14
+            ],
+            [
+              2.0816681711721685e-16,
+              2.220446049250313e-16
+            ]
+          ],
+          "maximum_shared_pair_error": 4.440892098500626e-16,
+          "wall_maximum_absolute_flux": [
+            1.8101332178439213e-20,
+            5.9639896849437706e-21,
+            7.240532871375687e-21,
+            5.311431320575468e-20
+          ],
+          "wall_total_flux": [
+            -4.137974948401714e-20,
+            -1.5055158740781122e-20,
+            1.6551899793606853e-20,
+            -1.5620414968759141e-19
+          ],
+          "wall_flux_order": [
+            "mass",
+            "hydro_E",
+            "Phi",
+            "origin_torque"
+          ],
+          "wall_flux_bounds_sum": [
+            4.823323687175872e-16,
+            1.1137054393689093e-16,
+            1.9293294748703497e-16,
+            4.5046519225481075e-15
+          ]
+        },
+        "gauge_and_explicit_failures": {
+          "status": "passed",
+          "moment_gauge_error": 0.0,
+          "gauge_solution": [
+            1.3877787807814457e-17,
+            0.1,
+            -0.10000000000000002
+          ],
+          "no_projection": true
+        }
+      },
+      "boundary": "stationary true circular slip wall; mirror normal velocity only; ds=R dtheta",
+      "future_massroot": "all fluid dynamic; explicit sum(z)=0 gauge, reject incompatible total residual; no frozen anchor",
+      "future_initialization": "integrate steady field on actual disk-clipped cells, including dynamic buffer r=2..2.5; no reuse of old boundary mass",
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/check_circular_power_reference.py": "9893d1f6b431a84a733486cfd882ba8dea5d4b02d349bf2ba199005137ff4d4b",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/circular_power_reference.py": "29b2f0cc1d1cd7e770c6bf161534aad481b0101e1d9eb4ed3ddb491aae8acf8d",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/face_record_batch.py": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/kinetic_factor_rhs.py": "406b700f75dd233d0dd456d089dba8f358a260c64c0e657489d08237b243f3b1"
+      },
+      "limits": "Small all-constraint static reference. No full domain build, interior IC, constrained fit, RHS evolution, or wall-pressure positivity proof."
+    },
+    "shared_flux": {
+      "status": "passed",
+      "scope": "Actual native/kinetic/moment shared-face cancellation on true-disk cells.",
+      "nodes": 128,
+      "moment_sum": [
+        2.710505431213761e-20,
+        9.486769009248164e-20,
+        -1.3552527156068805e-20,
+        1.9651164376299768e-19,
+        2.922263668027336e-20,
+        2.922263668027336e-20,
+        -1.7618285302889447e-19,
+        -2.439454888092385e-19,
+        -1.8770250111155296e-18,
+        -4.336808689942018e-19,
+        -1.9922214919421144e-18,
+        -2.947674656444965e-19,
+        2.168404344971009e-19,
+        -1.1011428314305904e-20,
+        3.758708703440958e-21,
+        7.146840492458159e-21,
+        7.962109704190423e-20,
+        -5.234663614031576e-19
+      ],
+      "moment_sum_bound": [
+        3.432411581062239e-16,
+        4.062878852929899e-16,
+        1.8907754984429346e-16,
+        6.690492607569592e-16,
+        5.3619301750960373e-17,
+        5.3619301750960373e-17,
+        2.9061752621468706e-16,
+        2.693110189943874e-15,
+        2.744601852439335e-15,
+        7.058311396796267e-16,
+        3.4062730327306577e-15,
+        3.2749971875472866e-15,
+        7.354957995806336e-16,
+        4.0209294035695414e-17,
+        7.114041884118856e-18,
+        7.114041884118856e-18,
+        1.0724893113361229e-16,
+        1.3309973375565338e-16
+      ],
+      "area_sum": 1.734723475976807e-17,
+      "Phi_rate_sum": -5.421010862427522e-20,
+      "provider_calls": 0,
+      "evolution_steps": 0,
+      "limits": "Static non-equilibrium arbitrary internal face states; no nonlinear mass solve or long-time dynamics.",
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/check_circular_shared_flux.py": "dbfd5ea05c85534b7b448395dbcb15f57590574febfff47e0e5513b2403f7b85",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/circular_power_reference.py": "29b2f0cc1d1cd7e770c6bf161534aad481b0101e1d9eb4ed3ddb491aae8acf8d",
+        "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/vector_moment_flux.py": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+      }
+    }
+  },
+  "energy_assessment": {
+    "reconstructed_residual": -4.446466168136414e-16,
+    "transported_residual": -1.6353664310550252e-19,
+    "measured_q48_constraint_uncertainty": 8.64655871386065e-16,
+    "empirical_endpoint_q24_q48_uncertainty": 2.0519733963418621e-16,
+    "sum_constraint_and_empirical_quadrature_uncertainty": 1.0698532110202512e-15,
+    "stored_sum_roundoff_bound": 5.0612083748826376e-12,
+    "old_saved_step_reconstruction_transport_defect": 6.460163289188109e-11,
+    "limits": "Different actual coupled trajectory. Fit/quadrature diagnostics are empirical, not certified bounds. Old/new comparison changes density closure and volume quadrature together; do not attribute all changes to Psi alone."
+  },
+  "cost_interpretation": {
+    "stage0_seconds": 169.55232278816402,
+    "actual_half_seconds": 129.88716397248209,
+    "timing_scope": "Stage times include constrained reconstruction and compiled shadows/reference/capture, exclude independent q48. Aggregate timers span three reconstructions and six RHS outer iterations. velocity_prepare nests inside rhs_outer for six calls; do not sum all timers.",
+    "concurrency": "Old endpoint reference and small circular static fixtures overlapped some stage0 work; not exclusive wall-time benchmarking.",
+    "production_total_measured": false
+  },
+  "current_scope": "Existing .60 anchored patch only, fixed h=1e-4. True circular wall static reference/flux contract only. No new full-domain IC, timestep increase, long-time run, steering, viscosity, or fallback.",
+  "source_sha256": {
+    "/tmp/lageunha-push/Docs/summarize_psi_coupled_boundary_bundle.py": "53b2b1e17622fa70ae0c02ae8122ce8268e2db76c03a4dfc0944c3cf6fd565b4",
+    "/tmp/lageunha-push/Docs/canonical_psi_coupled_density_api_2026-10-19.json": "cc62f78d9ffbc98f4732a612674e33d15c121e3f4d0f3d5181cbede4d358b2ae",
+    "/tmp/lageunha-push/Docs/canonical_psi_coupled_midpoint_2026-10-19.json": "39473e0fb0c9c03d57aae2ec9adff79f6839a9bf45bb5fbe16d9585dcf15e844",
+    "/tmp/lageunha-push/Docs/canonical_psi_coupled_connection_audit_2026-10-19.json": "74be17b153394d237681ff090afa95b1a1450731678d76c4377d591f790857f4",
+    "/tmp/lageunha-push/Docs/canonical_psi_coupled_saved_density_2026-10-19.json": "1a0b6cc1dac89498354a3377fed1bd6723db3bb4e8594f08bf56db824538fa10",
+    "/tmp/lageunha-push/Docs/canonical_psi_coupled_physical_comparison_2026-10-19.json": "cd38d825964a104a437f05aa785bee99a1df7c618778ef7748e45b801eb81c91",
+    "/tmp/lageunha-push/Docs/canonical_circular_power_reference_2026-10-19.json": "e66b97d947b4698302aecb23d4fb38696cb27c0379a5593715048937f9a1afb2",
+    "/tmp/lageunha-push/Docs/canonical_circular_shared_flux_2026-10-19.json": "1b887ccebf04d340fdb26d9b43f8504b5e07cbc02324688945e058fca70cd324",
+    "/tmp/lageunha-push/Docs/canonical_numerical_Psi_endpoint_bundle_2026-10-18.json": "6a478dd4615c47b5c17f6910361f95fc879a5e8df928ba2dce7bb715b0c877bf",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/manifest.json": "8411f60e9274c7604f1f32211e911e9321c6242391af8d97ab41e881858d5fae",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/manifest.json": "64f6a49ef4da64c0143efc408c2c896c9d6a6821f637563d293271bb96f44954",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_build_20261018/liblagmoment.so": "980ec3d35e3bc3e69e6a4bfcf53c5c3f9123d3b733308dbbe02c7adf0eb4fe54"
+  }
+}

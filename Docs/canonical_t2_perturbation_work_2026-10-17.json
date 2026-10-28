@@ -1,0 +1,53 @@
+{
+  "cases": {
+    "t2": {
+      "directional_derivative_checks": [
+        {
+          "epsilon": 1e-05,
+          "relative_L1_error": 5.286038456405465e-06
+        },
+        {
+          "epsilon": 1e-06,
+          "relative_L1_error": 4.4263220731291493e-07
+        }
+      ],
+      "inner": {
+        "cells": 795,
+        "perturbation_kinetic_energy": 6.73846665940576e-10,
+        "pressure_work": 1.3451641149884062e-09,
+        "Q_work": -6.241836889196899e-10,
+        "differential_rotation_work": 8.891684337959594e-10,
+        "total_RHS": 1.6101488598646759e-09,
+        "Q_heat": 1.2687857657993768e-07,
+        "uniform_pressure_work": 4.169817233115137e-26,
+        "uniform_pressure_force_L1": 4.3077053560026383e-19,
+        "actual_pressure_force_L1": 1.2186684088345234e-05
+      },
+      "disk": {
+        "cells": 12166,
+        "perturbation_kinetic_energy": 2.9480615844703527e-11,
+        "pressure_work": 7.35969386540075e-11,
+        "Q_work": -1.3627659377778552e-11,
+        "differential_rotation_work": 4.28491127127571e-11,
+        "total_RHS": 1.0281839198898607e-10,
+        "Q_heat": 1.6974922395269043e-08,
+        "uniform_pressure_work": -4.0345290384181146e-25,
+        "uniform_pressure_force_L1": 6.472815230120603e-18,
+        "actual_pressure_force_L1": 1.4362999979682954e-05
+      },
+      "outer_active": {
+        "cells": 6894,
+        "perturbation_kinetic_energy": 6.337632313594535e-11,
+        "pressure_work": 1.5006943398471546e-10,
+        "Q_work": -8.204849385152213e-11,
+        "differential_rotation_work": 1.975992870846698e-12,
+        "total_RHS": 6.999693300404006e-11,
+        "Q_heat": 8.144663690635187e-09,
+        "uniform_pressure_work": 1.9033530591270496e-24,
+        "uniform_pressure_force_L1": 3.739604967959952e-18,
+        "actual_pressure_force_L1": 1.1304132504366309e-05
+      }
+    }
+  },
+  "scope": "Instantaneous material sum for cells currently in each region, not derivative of a fixed Eulerian-region integral. Excludes HG split kicks. Q force reconstructed from 7-digit directed-face output; pressure force is total minus Q. Canonical unweighted TCF, no other viscosity."
+}

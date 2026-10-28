@@ -1,0 +1,233 @@
+{
+  "status": "completed_saved_pressure_budget_identity",
+  "scope": "Saved-state pressure budget identity; no provider or evolution call.\n\nSeparates moving volume, raw-moment thermal transport, Pi factor rebuild,\nand stored energy-update rounding at the common endpoint t=.001.\n",
+  "paths": {
+    "coarse": {
+      "time": 0.001,
+      "regions": {
+        "all": {
+          "cells": 19945,
+          "actual_pressure_error": {
+            "RMS": 2.7441969934386897e-07,
+            "maximum_absolute": 4.275264692413152e-06,
+            "signed_mass_mean": 6.715797252443607e-08
+          },
+          "parts": {
+            "volume_and_initial_pressure": {
+              "RMS": 1.0642297922061826e-05,
+              "maximum_absolute": 0.0011804072962648354,
+              "signed_mass_mean": 4.493884694821538e-07
+            },
+            "raw_thermal_transport": {
+              "RMS": 1.0604700324168964e-05,
+              "maximum_absolute": 0.0011796158502701017,
+              "signed_mass_mean": -4.4592203909106816e-07
+            },
+            "Pi_factor_rebuild": {
+              "RMS": 2.420577305268225e-07,
+              "maximum_absolute": 2.00006140259673e-06,
+              "signed_mass_mean": 6.369153868224576e-08
+            },
+            "stored_energy_update_rounding": {
+              "RMS": 4.822254548513904e-13,
+              "maximum_absolute": 1.3360412061022902e-12,
+              "signed_mass_mean": 3.450752569902202e-15
+            }
+          },
+          "gravity_thermal_subset_of_raw_transport": {
+            "RMS": 2.531711988853419e-14,
+            "maximum_absolute": 3.2817830741089306e-13,
+            "signed_mass_mean": 3.8291274989523695e-16
+          }
+        },
+        "inner": {
+          "cells": 490,
+          "actual_pressure_error": {
+            "RMS": 6.750596910679622e-07,
+            "maximum_absolute": 2.2766429158030638e-06,
+            "signed_mass_mean": 9.818719880000066e-08
+          },
+          "parts": {
+            "volume_and_initial_pressure": {
+              "RMS": 1.3653671842840219e-06,
+              "maximum_absolute": 4.733588977540821e-06,
+              "signed_mass_mean": -3.4355508338185834e-08
+            },
+            "raw_thermal_transport": {
+              "RMS": 1.0863032774885061e-06,
+              "maximum_absolute": 3.9387579782034574e-06,
+              "signed_mass_mean": 1.5757005776832211e-09
+            },
+            "Pi_factor_rebuild": {
+              "RMS": 1.477541237834188e-07,
+              "maximum_absolute": 2.8816159080682033e-07,
+              "signed_mass_mean": 1.3096700665706906e-07
+            },
+            "stored_energy_update_rounding": {
+              "RMS": 1.1357135122955475e-14,
+              "maximum_absolute": 2.0864556175167074e-14,
+              "signed_mass_mean": -9.656625574448042e-17
+            }
+          },
+          "gravity_thermal_subset_of_raw_transport": {
+            "RMS": 3.3925892659828184e-15,
+            "maximum_absolute": 1.4832993895054488e-14,
+            "signed_mass_mean": -7.619767517539573e-17
+          }
+        },
+        "disk_initial_radius_0p5_to_2": {
+          "cells": 11969,
+          "actual_pressure_error": {
+            "RMS": 2.556989806263448e-07,
+            "maximum_absolute": 3.5794476105058173e-06,
+            "signed_mass_mean": 6.376874269795726e-08
+          },
+          "parts": {
+            "volume_and_initial_pressure": {
+              "RMS": 5.62571398124792e-06,
+              "maximum_absolute": 0.00034440351963276343,
+              "signed_mass_mean": 1.655736548122358e-07
+            },
+            "raw_thermal_transport": {
+              "RMS": 5.607766246237323e-06,
+              "maximum_absolute": 0.00034399222472755085,
+              "signed_mass_mean": -1.6272877491410951e-07
+            },
+            "Pi_factor_rebuild": {
+              "RMS": 2.3269438392889574e-07,
+              "maximum_absolute": 2.00006140259673e-06,
+              "signed_mass_mean": 6.092385944200188e-08
+            },
+            "stored_energy_update_rounding": {
+              "RMS": 4.860767425999577e-13,
+              "maximum_absolute": 1.3360412061022902e-12,
+              "signed_mass_mean": 3.357455702296524e-15
+            }
+          },
+          "gravity_thermal_subset_of_raw_transport": {
+            "RMS": 2.532084355109694e-14,
+            "maximum_absolute": 3.2817830741089306e-13,
+            "signed_mass_mean": 4.1737423939509987e-16
+          }
+        }
+      },
+      "maximum_identity_residual": 1.3078159073218046e-15,
+      "maximum_identity_bound_fraction": 0.0019240294199080856
+    },
+    "fine_final": {
+      "time": 0.001,
+      "regions": {
+        "all": {
+          "cells": 19945,
+          "actual_pressure_error": {
+            "RMS": 8.980409969485806e-08,
+            "maximum_absolute": 2.8770000995433998e-06,
+            "signed_mass_mean": 1.156849471212175e-08
+          },
+          "parts": {
+            "volume_and_initial_pressure": {
+              "RMS": 1.1561873106673205e-05,
+              "maximum_absolute": 0.0010113181330521517,
+              "signed_mass_mean": 5.241039018934879e-07
+            },
+            "raw_thermal_transport": {
+              "RMS": 1.1520406540937707e-05,
+              "maximum_absolute": 0.0010123861567929065,
+              "signed_mass_mean": -5.205258528671132e-07
+            },
+            "Pi_factor_rebuild": {
+              "RMS": 3.197605721979975e-08,
+              "maximum_absolute": 2.7491204926022524e-07,
+              "signed_mass_mean": 7.990449914896555e-09
+            },
+            "stored_energy_update_rounding": {
+              "RMS": 6.890571574279778e-13,
+              "maximum_absolute": 2.5964547633384972e-12,
+              "signed_mass_mean": -4.229891404124797e-15
+            }
+          },
+          "gravity_thermal_subset_of_raw_transport": {
+            "RMS": 1.755292367790429e-14,
+            "maximum_absolute": 2.5999140243436224e-13,
+            "signed_mass_mean": 2.3164605339298497e-16
+          }
+        },
+        "inner": {
+          "cells": 490,
+          "actual_pressure_error": {
+            "RMS": 6.492704599754449e-07,
+            "maximum_absolute": 2.2681466376879263e-06,
+            "signed_mass_mean": -1.6612508511019867e-08
+          },
+          "parts": {
+            "volume_and_initial_pressure": {
+              "RMS": 6.794248227627611e-07,
+              "maximum_absolute": 2.18694652066604e-06,
+              "signed_mass_mean": -7.767963409137876e-08
+            },
+            "raw_thermal_transport": {
+              "RMS": 3.271061689090988e-07,
+              "maximum_absolute": 1.2231882310554796e-06,
+              "signed_mass_mean": 4.461601864850549e-08
+            },
+            "Pi_factor_rebuild": {
+              "RMS": 1.943545025311162e-08,
+              "maximum_absolute": 4.842854752641578e-08,
+              "signed_mass_mean": 1.645110621032576e-08
+            },
+            "stored_energy_update_rounding": {
+              "RMS": 1.4595057496386073e-14,
+              "maximum_absolute": 3.7768984092823634e-14,
+              "signed_mass_mean": 7.21527929768596e-16
+            }
+          },
+          "gravity_thermal_subset_of_raw_transport": {
+            "RMS": 2.20246030346154e-15,
+            "maximum_absolute": 9.234891661662228e-15,
+            "signed_mass_mean": -4.199900872120085e-17
+          }
+        },
+        "disk_initial_radius_0p5_to_2": {
+          "cells": 11969,
+          "actual_pressure_error": {
+            "RMS": 6.896263299196759e-08,
+            "maximum_absolute": 2.2158324229758913e-06,
+            "signed_mass_mean": 1.0538867941773318e-08
+          },
+          "parts": {
+            "volume_and_initial_pressure": {
+              "RMS": 6.261008694864083e-06,
+              "maximum_absolute": 0.0003844001250400559,
+              "signed_mass_mean": 1.9978349539285688e-07
+            },
+            "raw_thermal_transport": {
+              "RMS": 6.237705850768802e-06,
+              "maximum_absolute": 0.0003828466403476202,
+              "signed_mass_mean": -1.9687439670701245e-07
+            },
+            "Pi_factor_rebuild": {
+              "RMS": 3.061791453167831e-08,
+              "maximum_absolute": 2.679251735136151e-07,
+              "signed_mass_mean": 7.629773559870942e-09
+            },
+            "stored_energy_update_rounding": {
+              "RMS": 6.946894333871657e-13,
+              "maximum_absolute": 2.5964547633384972e-12,
+              "signed_mass_mean": -4.3047175186746e-15
+            }
+          },
+          "gravity_thermal_subset_of_raw_transport": {
+            "RMS": 1.7525326060437762e-14,
+            "maximum_absolute": 2.5999140243436224e-13,
+            "signed_mass_mean": 2.6208416247698454e-16
+          }
+        }
+      },
+      "maximum_identity_residual": 1.3078583487150326e-15,
+      "maximum_identity_bound_fraction": 0.0019230496423834934
+    }
+  },
+  "provider_calls": 0,
+  "evolution_steps": 0,
+  "limits": "Algebraic decomposition on saved rates/states/actual volumes. Gravity thermal is a subset, not an extra summand. Component RMS values need not add because components cancel. No term is changed, removed, or reinjected; this diagnostic does not by itself identify a unique physical cause."
+}

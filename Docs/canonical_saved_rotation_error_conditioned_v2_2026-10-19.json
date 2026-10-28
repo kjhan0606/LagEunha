@@ -1,0 +1,423 @@
+{
+  "status": "completed_saved_rotation_error_spatially_conditioned",
+  "scope": "Four saved endpoints; descriptive cellwise analysis only.",
+  "conditioning": "Mass-weighted least-squares removal of constant, standardized radius, radius squared, and azimuthal Fourier modes m=1,2 on each region.",
+  "error_definitions": {
+    "spin": "actual intrinsic ell minus steady Kepler reference ell",
+    "density": "relative density error against the steady reference",
+    "specific_thermal": "actual/reference specific thermal energy minus one",
+    "pressure": "relative pressure error against the steady reference",
+    "pressure_identity": "e_P=(1+e_rho)(1+e_u)-1 for the ideal-gas state"
+  },
+  "cases": {
+    "t0025_coarse": {
+      "time": 0.025,
+      "source": {
+        "physical_comparison": {
+          "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/physics",
+          "fields_sha256": "58707d61e0523223ac9c77e86475e539ad9e94639c0b6def6bdc43fcf06bd7c6",
+          "physical_monitor_passed": true,
+          "physical_monitor_status": "passed_checkpoint_physical_monitor",
+          "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+          "physics_report_sha256": "f40899cbb71b8593743bff0f701c9b12f520784fe76d413f5935e645dd1fb54f",
+          "physical_gate_sha256": "43335db97866c5843e6e2ffd65a841b98990122a403e237b25c4d59fefb7b391",
+          "density_report_sha256": "5789050feabcc789e51d49e8e54eef26f0214554e6e94bb6fd72798297926cf9",
+          "reference_report_sha256": "27e370b3078724b9dc02a52b995047b0fb42d4e43c367979f54082015ce604e5"
+        },
+        "rotation_payload_sha256": "f3513c71eb3efc060347b209ea3f5c3ca98eb12148d1c59fc4619d04edac3b80"
+      },
+      "pressure_identity_max_absolute": 5.631853509564675e-16,
+      "regions": {
+        "inner_contact": {
+          "cells": 101,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 2.897419377229008e-09,
+            "relative_density": 0.0032907083516784522,
+            "relative_specific_thermal": 0.0034709505942896457,
+            "relative_pressure": 0.00033479798138524354
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9987050540402891,
+            "linear_sum_rms": 0.00034300862605520947
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.756267610163962,
+              "after_radial_and_azimuthal_detrending": 0.4384359497850915
+            },
+            "relative_specific_thermal": {
+              "raw": -0.7539441381934099,
+              "after_radial_and_azimuthal_detrending": -0.4405297526282404
+            },
+            "relative_pressure": {
+              "raw": -0.6214997066503581,
+              "after_radial_and_azimuthal_detrending": -0.23852747389155135
+            }
+          }
+        },
+        "cavity": {
+          "cells": 754,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 4.07228166587461e-11,
+            "relative_density": 0.005490885547048603,
+            "relative_specific_thermal": 0.0055924541458533,
+            "relative_pressure": 9.017888909370975e-05
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9997854527591108,
+            "linear_sum_rms": 0.0001502611375955628
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.12150211528351704,
+              "after_radial_and_azimuthal_detrending": 0.40082048806889986
+            },
+            "relative_specific_thermal": {
+              "raw": -0.11572302224553269,
+              "after_radial_and_azimuthal_detrending": -0.3986174997942404
+            },
+            "relative_pressure": {
+              "raw": 0.17118029167502952,
+              "after_radial_and_azimuthal_detrending": 0.029305076067397382
+            }
+          }
+        },
+        "disk_core": {
+          "cells": 11812,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 1.8023537875331778e-10,
+            "relative_density": 0.00012877680130938434,
+            "relative_specific_thermal": 0.00014470607695188926,
+            "relative_pressure": 7.875165775808005e-05
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.8595531409092204,
+            "linear_sum_rms": 7.880338107648853e-05
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.039890660597672566,
+              "after_radial_and_azimuthal_detrending": -0.14885874353907086
+            },
+            "relative_specific_thermal": {
+              "raw": 0.20383173151773598,
+              "after_radial_and_azimuthal_detrending": 0.10749754488333857
+            },
+            "relative_pressure": {
+              "raw": 0.4679005249718616,
+              "after_radial_and_azimuthal_detrending": -0.07236284204571565
+            }
+          }
+        }
+      }
+    },
+    "t0025_fine": {
+      "time": 0.025,
+      "source": {
+        "physical_comparison": {
+          "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0010/physics",
+          "fields_sha256": "125a27f379fc695ce7793b1868f62c8cc81897a31ea99f91abb89eec73b8b3c2",
+          "physical_monitor_passed": true,
+          "physical_monitor_status": "passed_checkpoint_physical_monitor",
+          "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+          "physics_report_sha256": "9067c1479e03232c97364970ac7904181f5f52733928f75f378ce746fd9f3684",
+          "physical_gate_sha256": "0fc002d687febde696531b5c441d2c7b4804748126e4e3427a64e2e1c33d0d3e",
+          "density_report_sha256": "b56916a24c0111af6fa2a78f80bcbfa283ba665a5080d5f52f7926af54327c1e",
+          "reference_report_sha256": "1bef4798a82254216ffabd1e1a0c617d9b18c816e2604a7e8146800aadb51793"
+        },
+        "rotation_payload_sha256": "1553f6d53e54b304967a7d35846cd8de99ac65260a65d5f828f419bad4a19337"
+      },
+      "pressure_identity_max_absolute": 5.844523894983324e-16,
+      "regions": {
+        "inner_contact": {
+          "cells": 101,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 6.096702540778778e-10,
+            "relative_density": 0.002383867589841252,
+            "relative_specific_thermal": 0.0025882696157607816,
+            "relative_pressure": 0.00025205823255711104
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.999798534740006,
+            "linear_sum_rms": 0.0002600976805587201
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.9026152640989462,
+              "after_radial_and_azimuthal_detrending": 0.6397358185112356
+            },
+            "relative_specific_thermal": {
+              "raw": -0.907922821414654,
+              "after_radial_and_azimuthal_detrending": -0.6582392227710969
+            },
+            "relative_pressure": {
+              "raw": -0.8762274765348255,
+              "after_radial_and_azimuthal_detrending": -0.6526773141137806
+            }
+          }
+        },
+        "cavity": {
+          "cells": 754,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 2.5048279086082937e-11,
+            "relative_density": 0.004406663358560277,
+            "relative_specific_thermal": 0.00445021115120705,
+            "relative_pressure": 3.5884113983962836e-05
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9999463083569189,
+            "linear_sum_rms": 6.954746534811176e-05
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": -0.06291304028582545,
+              "after_radial_and_azimuthal_detrending": 0.2163680215498939
+            },
+            "relative_specific_thermal": {
+              "raw": 0.06579107444847904,
+              "after_radial_and_azimuthal_detrending": -0.21555331627104138
+            },
+            "relative_pressure": {
+              "raw": 0.04893130665009009,
+              "after_radial_and_azimuthal_detrending": 0.1177065609837992
+            }
+          }
+        },
+        "disk_core": {
+          "cells": 11812,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 5.0182955664788904e-11,
+            "relative_density": 8.389242841407806e-05,
+            "relative_specific_thermal": 7.327401910565143e-05,
+            "relative_pressure": 4.880165829318765e-05
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.8292804920737021,
+            "linear_sum_rms": 4.883085592368954e-05
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": -0.04926343496838253,
+              "after_radial_and_azimuthal_detrending": -0.26914481365569215
+            },
+            "relative_specific_thermal": {
+              "raw": 0.39952769382723163,
+              "after_radial_and_azimuthal_detrending": 0.3760454885764689
+            },
+            "relative_pressure": {
+              "raw": 0.5351110428776991,
+              "after_radial_and_azimuthal_detrending": 0.19399856384695335
+            }
+          }
+        }
+      }
+    },
+    "t005_coarse": {
+      "time": 0.05,
+      "source": {
+        "physical_comparison": {
+          "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0010/physics",
+          "fields_sha256": "b90a4d64edefa1351e16a85d2e4fd4aa160f693599379d7163158c489eaea870",
+          "physical_monitor_passed": true,
+          "physical_monitor_status": "passed_checkpoint_physical_monitor",
+          "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+          "physics_report_sha256": "ea05cce31c79c2050f2feaefd07fa820fd3cf56c4a4687a8a595d63687e0fe50",
+          "physical_gate_sha256": "cef2596e6b09a990dd26a267840af6c87f47e8f1fc3c77028a8d12ad690dc987",
+          "density_report_sha256": "533f04e961e8a9f9e9343b38e737ffe01ab80a6d95933495fe3007197f97be96",
+          "reference_report_sha256": "b212fe03d97c2138f6cd952fa9acfa2faa9585b32521939c6efbd04a0fcb2a75"
+        },
+        "rotation_payload_sha256": "569c6bd84f0fa713f39cfd9469692bdbce18a631d2ccc50822181c55505d8859"
+      },
+      "pressure_identity_max_absolute": 7.003255173008754e-16,
+      "regions": {
+        "inner_contact": {
+          "cells": 101,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 5.824707618749474e-09,
+            "relative_density": 0.0070397899039416865,
+            "relative_specific_thermal": 0.007170537486988233,
+            "relative_pressure": 0.007570735886349568
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9948644379019166,
+            "linear_sum_rms": 0.0075518042708286725
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.8252662839509552,
+              "after_radial_and_azimuthal_detrending": 0.41018403978229906
+            },
+            "relative_specific_thermal": {
+              "raw": -0.7821851094157247,
+              "after_radial_and_azimuthal_detrending": -0.17213947069933574
+            },
+            "relative_pressure": {
+              "raw": -0.19742490317408445,
+              "after_radial_and_azimuthal_detrending": 0.8857113540104592
+            }
+          }
+        },
+        "cavity": {
+          "cells": 754,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 7.879181410825873e-11,
+            "relative_density": 0.01021912702144549,
+            "relative_specific_thermal": 0.010537043370662781,
+            "relative_pressure": 0.0005509418699313433
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9990254899035385,
+            "linear_sum_rms": 0.0006559602794020043
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": -0.12148918170578958,
+              "after_radial_and_azimuthal_detrending": 0.3030401436992932
+            },
+            "relative_specific_thermal": {
+              "raw": 0.13677163621117877,
+              "after_radial_and_azimuthal_detrending": -0.29522015797331336
+            },
+            "relative_pressure": {
+              "raw": 0.34860426623269763,
+              "after_radial_and_azimuthal_detrending": 0.1458954280207987
+            }
+          }
+        },
+        "disk_core": {
+          "cells": 11812,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 3.979449458397367e-10,
+            "relative_density": 0.0002633687761687261,
+            "relative_specific_thermal": 0.0012663734100454862,
+            "relative_pressure": 0.0011087563591094638
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.6692316674299436,
+            "linear_sum_rms": 0.001107283774877535
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.08911797072582421,
+              "after_radial_and_azimuthal_detrending": -0.15488563849022194
+            },
+            "relative_specific_thermal": {
+              "raw": -0.5894777069825345,
+              "after_radial_and_azimuthal_detrending": -0.2676364132997217
+            },
+            "relative_pressure": {
+              "raw": -0.653095408932077,
+              "after_radial_and_azimuthal_detrending": -0.3623566480287339
+            }
+          }
+        }
+      }
+    },
+    "t005_fine": {
+      "time": 0.05,
+      "source": {
+        "physical_comparison": {
+          "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0020/physics",
+          "fields_sha256": "01a45ae5e71b7bb209de118d3d339fdd047e5a96d44dbf35d524ae57c59ffdb2",
+          "physical_monitor_passed": true,
+          "physical_monitor_status": "passed_checkpoint_physical_monitor",
+          "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+          "physics_report_sha256": "896b69144cde5e74034c1d64c67087c075bbd203fcd1d2069893e8307a63e0a3",
+          "physical_gate_sha256": "5dbae6b2d77399707c3a2423219b899c7de5229a017db367d9ac00170d3aa82f",
+          "density_report_sha256": "f3516604eb9ab393e318d326d6ef207d669ec5a4705914f78617fce29c0050f6",
+          "reference_report_sha256": "413413b3d241d40ded12a5fc993123ed030fbff9e46978ad56a3e241cc489d93"
+        },
+        "rotation_payload_sha256": "67cb52f67601c5db3a1ab6ed05ff707de244f53104f65aab9997bf17e94dd08a"
+      },
+      "pressure_identity_max_absolute": 5.664896794232657e-16,
+      "regions": {
+        "inner_contact": {
+          "cells": 101,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 1.1238897397837485e-09,
+            "relative_density": 0.004846915369950081,
+            "relative_specific_thermal": 0.004968591861862562,
+            "relative_pressure": 0.00013758574206527437
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9996959882721242,
+            "linear_sum_rms": 0.00016791323763279954
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.9046298264169873,
+              "after_radial_and_azimuthal_detrending": 0.6002210881670388
+            },
+            "relative_specific_thermal": {
+              "raw": -0.9047519700552353,
+              "after_radial_and_azimuthal_detrending": -0.5899618812011874
+            },
+            "relative_pressure": {
+              "raw": -0.6608085355797666,
+              "after_radial_and_azimuthal_detrending": 0.28725159292606794
+            }
+          }
+        },
+        "cavity": {
+          "cells": 754,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 4.528377280510669e-11,
+            "relative_density": 0.00760656237168701,
+            "relative_specific_thermal": 0.007729703083501603,
+            "relative_pressure": 8.775988499224393e-05
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9998387144615835,
+            "linear_sum_rms": 0.000187594432171808
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": -0.17889213787058347,
+              "after_radial_and_azimuthal_detrending": 0.13460792365523522
+            },
+            "relative_specific_thermal": {
+              "raw": 0.18682971928677342,
+              "after_radial_and_azimuthal_detrending": -0.1305696123487323
+            },
+            "relative_pressure": {
+              "raw": 0.33521845149801854,
+              "after_radial_and_azimuthal_detrending": 0.32094958093861625
+            }
+          }
+        },
+        "disk_core": {
+          "cells": 11812,
+          "mass_weighted_rms": {
+            "intrinsic_spin_error": 1.1123494006693687e-10,
+            "relative_density": 0.00016528261798844568,
+            "relative_specific_thermal": 0.00015835209570054556,
+            "relative_pressure": 3.0557521795306506e-05
+          },
+          "density_thermal_cancellation": {
+            "relative_density_vs_specific_thermal_error_correlation": -0.9847058985965993,
+            "linear_sum_rms": 3.064157513756626e-05
+          },
+          "spin_error_correlations": {
+            "relative_density": {
+              "raw": 0.005567115020182644,
+              "after_radial_and_azimuthal_detrending": -0.25021001545551746
+            },
+            "relative_specific_thermal": {
+              "raw": 0.12568713499241865,
+              "after_radial_and_azimuthal_detrending": 0.30857503747082654
+            },
+            "relative_pressure": {
+              "raw": 0.7227247172101015,
+              "after_radial_and_azimuthal_detrending": 0.5116143804525918
+            }
+          }
+        }
+      }
+    }
+  },
+  "limits": [
+    "Partial correlations do not establish causal coupling.",
+    "The spatial detrend removes only broad low-order radial and azimuthal structure.",
+    "The four endpoints stop at t=0.05 and do not test long-term Kepler stability."
+  ]
+}

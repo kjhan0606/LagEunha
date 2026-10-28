@@ -1,0 +1,76 @@
+{
+  "manifest": {
+    "source": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_t10_20261017/t10",
+    "faces_sha256": "b94c77beef5a54b2a9b53f25bb2bd7d403cd6ed10dad8ade583891bcd7b033b9",
+    "active_directed_faces": 120130,
+    "partition": "x slabs in [0,6]; rank boundaries cross inner disk at x=3",
+    "stamp": "Fixture constant 1, not a production MPI generation ID",
+    "scope": "Exchange already computed shared TCF faces; does not build distributed raw geometry or solve hydro/HG",
+    "tolerance": "1e-5 relative plus 1e-18 absolute on printed face quantities"
+  },
+  "cases": [
+    {
+      "ranks": 1,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 0,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_difference": 0,
+      "max_force_residual": 0,
+      "max_heat_difference": 0,
+      "case": "normal",
+      "returncode": 0
+    },
+    {
+      "ranks": 2,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 654,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_difference": 0,
+      "max_force_residual": 0,
+      "max_heat_difference": 0,
+      "case": "normal",
+      "returncode": 0
+    },
+    {
+      "ranks": 4,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 1764,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_difference": 0,
+      "max_force_residual": 0,
+      "max_heat_difference": 0,
+      "case": "normal",
+      "returncode": 0
+    },
+    {
+      "ranks": 2,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 654,
+      "stale": 2,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_difference": 0,
+      "max_force_residual": 0,
+      "max_heat_difference": 0,
+      "case": "stale",
+      "returncode": 1
+    }
+  ],
+  "limitations": [
+    "Partition fixture is generated from one-rank CPU results; geometry and forces are not recomputed across ranks",
+    "Only common TCF face length/force/heat exchanged; raw endpoint records and distributed clipping remain unimplemented",
+    "Static fixture generation stamp, not actual MPI RK/retry synchronization",
+    "No distributed HG mode application, migration rollback, or multi-rank evolution claim",
+    "Periodic-image matching uses printed direction and persistent ID pair; this is not a production packed-record format"
+  ]
+}

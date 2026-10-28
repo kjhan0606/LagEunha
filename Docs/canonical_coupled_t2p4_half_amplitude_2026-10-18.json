@@ -1,0 +1,91 @@
+{
+  "target_time": 2.4004059177633943,
+  "intermediate_checkpoint": true,
+  "field_response_comparisons": {
+    "half_amplitude": {
+      "position": {
+        "relative_L2_difference": 0.001001770602325666,
+        "squared_norm_ratio_to_coarse": 1.000140994920284
+      },
+      "velocity": {
+        "relative_L2_difference": 0.0014193805236661294,
+        "squared_norm_ratio_to_coarse": 1.0000992038288365
+      },
+      "circular_departure_velocity": {
+        "relative_L2_difference": 0.010900288968957074,
+        "squared_norm_ratio_to_coarse": 1.000353581310305
+      },
+      "pressure": {
+        "relative_L2_difference": 0.00201888691228374,
+        "squared_norm_ratio_to_coarse": 1.00009782592849
+      }
+    }
+  },
+  "cases": {
+    "amplitude_plus": {
+      "pid": 3129961,
+      "epsilon": 0.0005,
+      "dt": 0.0025,
+      "threads": 4,
+      "expected_steps": 160,
+      "source": "/gpfs/kjhan/LagForce/Codex_coupled_halfseed_20261018/plus/khout.000184.dat",
+      "source_step": 263,
+      "start_time": 2.2004059177633986
+    },
+    "amplitude_minus": {
+      "pid": 3129968,
+      "epsilon": -0.0005,
+      "dt": 0.0025,
+      "threads": 4,
+      "expected_steps": 160,
+      "source": "/gpfs/kjhan/LagForce/Codex_coupled_halfseed_20261018/minus/khout.000184.dat",
+      "source_step": 263,
+      "start_time": 2.2004059177633986
+    },
+    "fine_reference": {
+      "pid": 3129975,
+      "epsilon": 0.0,
+      "dt": 0.00125,
+      "threads": 4,
+      "expected_steps": 320,
+      "source": "/gpfs/kjhan/LagForce/Codex_coupled_onset_seed_20261018/reference/khout.000184.dat",
+      "source_step": 342,
+      "start_time": 2.2004059177634336
+    },
+    "fine_plus": {
+      "pid": 3129982,
+      "epsilon": 0.001,
+      "dt": 0.00125,
+      "threads": 4,
+      "expected_steps": 320,
+      "source": "/gpfs/kjhan/LagForce/Codex_coupled_onset_seed_20261018/plus/khout.000184.dat",
+      "source_step": 342,
+      "start_time": 2.2004059177634336
+    },
+    "fine_minus": {
+      "pid": 3129989,
+      "epsilon": -0.001,
+      "dt": 0.00125,
+      "threads": 4,
+      "expected_steps": 320,
+      "source": "/gpfs/kjhan/LagForce/Codex_coupled_onset_seed_20261018/minus/khout.000184.dat",
+      "source_step": 342,
+      "start_time": 2.2004059177634336
+    }
+  },
+  "scope": "Central response comparison at matching target time, same binary and OMP4. Coarse/reference and refined cases can have different restart histories; discrepancy may include restart effects. Half-amplitude and half-dt comparisons are separate, not a formal asymptotic order estimate.",
+  "common_final_weight_growth_ratios": {
+    "coarse": {
+      "position": 2.9564313842776917,
+      "velocity": 2.6599658298551154,
+      "circular_departure_velocity": 1.8461028894768887,
+      "pressure": 3.7059977081077147
+    },
+    "half_amplitude": {
+      "position": 2.956848226085043,
+      "velocity": 2.6602297086500113,
+      "circular_departure_velocity": 1.8467556369555078,
+      "pressure": 3.706360250774493
+    }
+  }
+}

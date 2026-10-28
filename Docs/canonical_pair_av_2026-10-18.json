@@ -1,0 +1,310 @@
+{
+  "scope": "t6 pair 803/804, existing diagnostics and accepted steps; no AV settings changed.",
+  "source_time": 6.002110493120864,
+  "source_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386",
+  "weights_all_zero": true,
+  "script_sha256": "8fad58b594655302b2d9f90a5c9a45b004247aa2ac1843edef2da2fb75e88067",
+  "rhs_sha256": "8993962558a09133ea517dd95255248ea6e5871dca9ec0dbb68a083a2fc95906",
+  "faces_sha256": "97e03199688a5e74a5ac48a17c73cadbc256791cb31cec0a703531a4ed40cf3d",
+  "TCF_law": "Q=Z_face*minmod(QBP_input,cell_velocity_jump); default QLAW=1; positive A*Q*du heat.",
+  "face_compression_ratio_definition": "Normal pair velocity jump / max(cell sound speeds); not a shock Mach number or shock detection.",
+  "cells": [
+    {
+      "id": 803,
+      "pressure": 6.651860469199617e-05,
+      "density": 1.1707895748039494,
+      "sound_speed": 0.009730979514800639,
+      "TCF_heat_rate_over_U": 0.994955049537385,
+      "pressure_acceleration": [
+        -0.005283574328269158,
+        0.002840731755730613
+      ],
+      "TCF_acceleration": [
+        0.0001266380673957025,
+        0.002267993880673566
+      ],
+      "gravity_acceleration": [
+        1.336293406712447,
+        3.7721039303393975
+      ],
+      "HG_plus_unaccounted_acceleration_extrapolated_coarse": [
+        0.004424071473756694,
+        -0.0005934151493422937
+      ],
+      "HG_plus_unaccounted_acceleration_extrapolated_fine": [
+        0.004426884994357636,
+        -0.0006067582099533644
+      ],
+      "extrapolation_difference_norm": 1.3636464521371724e-05
+    },
+    {
+      "id": 804,
+      "pressure": 0.00011372635626282668,
+      "density": 0.01973644409155135,
+      "sound_speed": 0.09799874731148933,
+      "TCF_heat_rate_over_U": 1.703530414743922,
+      "pressure_acceleration": [
+        0.8444333434297597,
+        -0.09265079037021624
+      ],
+      "TCF_acceleration": [
+        -0.3038391226909939,
+        -0.021393185385994593
+      ],
+      "gravity_acceleration": [
+        1.3142760662148694,
+        3.720170382087699
+      ],
+      "HG_plus_unaccounted_acceleration_extrapolated_coarse": [
+        -0.4434567019897381,
+        0.10633881461996952
+      ],
+      "HG_plus_unaccounted_acceleration_extrapolated_fine": [
+        -0.44246080028241963,
+        0.10566363289963943
+      ],
+      "extrapolation_difference_norm": 0.0012032001355168262
+    }
+  ],
+  "faces": [
+    {
+      "i": 804,
+      "j": 805,
+      "distance": 0.01803025,
+      "cell_velocity_jump_over_max_sound_speed": -0.3072733349743989,
+      "QBP_input_over_max_sound_speed": -0.2977939690381328,
+      "Q_over_mean_pressure": -0.384741409068518,
+      "Q": -5.233102e-05,
+      "compression_blend_chi": 0.9573898,
+      "face_density_factors": [
+        1.437118,
+        1.024712
+      ],
+      "AV_acceleration_along_803_to_804": 0.08811863529222752,
+      "AV_acceleration_magnitude": 0.13156775920101452,
+      "heat_rate": 2.2654310440857556e-08,
+      "heat_rate_over_cell_U": 0.27072166345581566
+    },
+    {
+      "i": 804,
+      "j": 933,
+      "distance": 0.03188144,
+      "cell_velocity_jump_over_max_sound_speed": 0.5240821072615757,
+      "QBP_input_over_max_sound_speed": 0.4986024958532443,
+      "Q_over_mean_pressure": 0.7713723133745769,
+      "Q": 6.15124e-05,
+      "compression_blend_chi": 0.9573898,
+      "face_density_factors": [
+        0.507635,
+        0.9607084
+      ],
+      "AV_acceleration_along_803_to_804": -0.17233597988334284,
+      "AV_acceleration_magnitude": 0.18810201707270244,
+      "heat_rate": 4.6765746085375894e-08,
+      "heat_rate_over_cell_U": 0.5588561437805569
+    },
+    {
+      "i": 804,
+      "j": 934,
+      "distance": 0.05335709,
+      "cell_velocity_jump_over_max_sound_speed": 0.9619482145048589,
+      "QBP_input_over_max_sound_speed": 0.9149724099533217,
+      "Q_over_mean_pressure": 2.6026447766917884,
+      "Q": 0.000185343,
+      "compression_blend_chi": 0.9573898,
+      "face_density_factors": [
+        0.6175344,
+        0.8332044
+      ],
+      "AV_acceleration_along_803_to_804": -0.08538547603898135,
+      "AV_acceleration_magnitude": 0.14637309980672716,
+      "heat_rate": 6.679562930392781e-08,
+      "heat_rate_over_cell_U": 0.7982155945088589
+    },
+    {
+      "i": 804,
+      "j": 803,
+      "distance": 0.003580492,
+      "cell_velocity_jump_over_max_sound_speed": 0.05211131917602865,
+      "QBP_input_over_max_sound_speed": 0.050372847974366405,
+      "Q_over_mean_pressure": 0.5751266468191728,
+      "Q": 5.183184e-05,
+      "compression_blend_chi": 0.9573898,
+      "face_density_factors": [
+        3.501616,
+        4.925304
+      ],
+      "AV_acceleration_along_803_to_804": 0.25637094153528345,
+      "AV_acceleration_magnitude": 0.25637094153528356,
+      "heat_rate": 6.337762284512102e-09,
+      "heat_rate_over_cell_U": 0.07573700169466285
+    },
+    {
+      "i": 803,
+      "j": 804,
+      "distance": 0.003580492,
+      "cell_velocity_jump_over_max_sound_speed": 0.05211131917602865,
+      "QBP_input_over_max_sound_speed": 0.050372847974366405,
+      "Q_over_mean_pressure": 0.5751266468191728,
+      "Q": 5.183184e-05,
+      "compression_blend_chi": 0.9573898,
+      "face_density_factors": [
+        4.925304,
+        3.501616
+      ],
+      "AV_acceleration_along_803_to_804": -0.002558017633981654,
+      "AV_acceleration_magnitude": 0.002558017633981655,
+      "heat_rate": 6.337762284512102e-09,
+      "heat_rate_over_cell_U": 0.07664269644611349
+    },
+    {
+      "i": 803,
+      "j": 934,
+      "distance": 0.05552196,
+      "cell_velocity_jump_over_max_sound_speed": 10.730492222410074,
+      "QBP_input_over_max_sound_speed": 1.8429645209634806,
+      "Q_over_mean_pressure": 3.5001535844462164,
+      "Q": 0.0001666404,
+      "compression_blend_chi": 0.2503283,
+      "face_density_factors": [
+        0.734215,
+        0.8295347
+      ],
+      "AV_acceleration_along_803_to_804": -0.0006165957225249148,
+      "AV_acceleration_magnitude": 0.0009864204930988855,
+      "heat_rate": 4.997100720320125e-08,
+      "heat_rate_over_cell_U": 0.6043004714046861
+    },
+    {
+      "i": 803,
+      "j": 685,
+      "distance": 0.07563253,
+      "cell_velocity_jump_over_max_sound_speed": -0.25864145968124247,
+      "QBP_input_over_max_sound_speed": 0.09511227086194592,
+      "Q_over_mean_pressure": 0.0,
+      "Q": 0.0,
+      "compression_blend_chi": 0.2503283,
+      "face_density_factors": [
+        0.5874256,
+        0.6548478
+      ],
+      "AV_acceleration_along_803_to_804": 0.0,
+      "AV_acceleration_magnitude": 0.0,
+      "heat_rate": -0.0,
+      "heat_rate_over_cell_U": -0.0
+    },
+    {
+      "i": 803,
+      "j": 651,
+      "distance": 0.060055,
+      "cell_velocity_jump_over_max_sound_speed": -0.7566063981882842,
+      "QBP_input_over_max_sound_speed": 0.23228121434793295,
+      "Q_over_mean_pressure": 0.0,
+      "Q": 0.0,
+      "compression_blend_chi": 0.2503283,
+      "face_density_factors": [
+        0.5608555,
+        0.7200312
+      ],
+      "AV_acceleration_along_803_to_804": 0.0,
+      "AV_acceleration_magnitude": 0.0,
+      "heat_rate": -0.0,
+      "heat_rate_over_cell_U": -0.0
+    },
+    {
+      "i": 803,
+      "j": 684,
+      "distance": 0.0199069,
+      "cell_velocity_jump_over_max_sound_speed": 0.5394103713268424,
+      "QBP_input_over_max_sound_speed": 0.16278219956746784,
+      "Q_over_mean_pressure": 0.37597119964494086,
+      "Q": 2.337867e-05,
+      "compression_blend_chi": 0.2503283,
+      "face_density_factors": [
+        0.9774247,
+        1.222329
+      ],
+      "AV_acceleration_along_803_to_804": 0.0009194919831473448,
+      "AV_acceleration_magnitude": 0.0010081698363989418,
+      "heat_rate": 2.5661741628258553e-08,
+      "heat_rate_over_cell_U": 0.3103279967914768
+    },
+    {
+      "i": 803,
+      "j": 802,
+      "distance": 0.03013929,
+      "cell_velocity_jump_over_max_sound_speed": 0.37243770004813337,
+      "QBP_input_over_max_sound_speed": -0.06858920516208505,
+      "Q_over_mean_pressure": 0.0,
+      "Q": 0.0,
+      "compression_blend_chi": 0.2503283,
+      "face_density_factors": [
+        1.896647,
+        1.323826
+      ],
+      "AV_acceleration_along_803_to_804": 0.0,
+      "AV_acceleration_magnitude": 0.0,
+      "heat_rate": 0.0,
+      "heat_rate_over_cell_U": 0.0
+    },
+    {
+      "i": 803,
+      "j": 805,
+      "distance": 0.02060061,
+      "cell_velocity_jump_over_max_sound_speed": -0.3024893365276967,
+      "QBP_input_over_max_sound_speed": -0.0299729855733521,
+      "Q_over_mean_pressure": -0.07116938713941233,
+      "Q": -8.000308e-06,
+      "compression_blend_chi": 0.2503283,
+      "face_density_factors": [
+        2.470036,
+        1.006352
+      ],
+      "AV_acceleration_along_803_to_804": 1.3628640481400282e-05,
+      "AV_acceleration_magnitude": 1.793248879976882e-05,
+      "heat_rate": 3.046438312066806e-10,
+      "heat_rate_over_cell_U": 0.003684064442810212
+    }
+  ],
+  "accepted_steps": [
+    {
+      "run": "/gpfs/kjhan/LagForce/Codex_early_growth_budget_20261017/t6_full",
+      "dt": 0.001000000000000334,
+      "start_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386",
+      "end_sha256": "760995f33c03e8e0ac55772a1af50bc635182eb32227afbad890ce400e6edde4",
+      "binary_sha256": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697"
+    },
+    {
+      "run": "/gpfs/kjhan/LagForce/Codex_early_growth_budget_20261017/t6_half",
+      "dt": 0.0004999999999997229,
+      "start_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386",
+      "end_sha256": "325883886083c9b6840c1e0ad2dd9719885193d9d5b03f1648d4eeab8d778064",
+      "binary_sha256": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697"
+    },
+    {
+      "run": "/gpfs/kjhan/LagForce/Codex_early_growth_budget_20261017/t6_quarter",
+      "dt": 0.00025000000000030553,
+      "start_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386",
+      "end_sha256": "e2759a289e58de0546d0166ea16ba5dbff5961b37a1f61c6f2cecb40472dece6",
+      "binary_sha256": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697"
+    }
+  ],
+  "pair_radial_relative_acceleration": {
+    "pressure": -0.09103155071770425,
+    "TCF": 0.08900961363806463,
+    "gravity": 0.05547212287762621,
+    "HG_plus_unaccounted_extrapolated_coarse": -0.007270385043411737,
+    "HG_plus_unaccounted_extrapolated_fine": -0.006839632609103807,
+    "accepted_mean_by_dt": [
+      0.04160478581294446,
+      0.04389229328375966,
+      0.045251423236321225
+    ]
+  },
+  "limits": [
+    "HG estimate is total accepted acceleration minus saved pre-HG hydro and initial gravity; not independently instrumented HG.",
+    "No causal inference about earlier shocks from a single-time face audit.",
+    "A local TCF contribution can accelerate a selected pair while the global operator dissipates kinetic energy.",
+    "TCF faces printed at about seven significant digits; no bitwise-force assertion."
+  ]
+}

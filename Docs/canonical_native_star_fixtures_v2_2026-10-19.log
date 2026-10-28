@@ -1,0 +1,202 @@
+{
+  "status": "passed",
+  "fixtures": [
+    {
+      "name": "equal",
+      "status": "passed",
+      "native_status": 0,
+      "scalar": [
+        1.0,
+        0.0
+      ],
+      "native": [
+        1.0,
+        0.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ],
+      "error_envelope": [
+        2.901383289437981e-14,
+        5.503840889622145e-14
+      ],
+      "bracket": [
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "iterations": 1095227392
+    },
+    {
+      "name": "Sod",
+      "status": "passed",
+      "native_status": 0,
+      "scalar": [
+        0.29394517850351043,
+        0.8411947625818282
+      ],
+      "native": [
+        0.29394517850351043,
+        0.8411947625818282
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ],
+      "error_envelope": [
+        1.3111244319372143e-14,
+        8.948968092568431e-14
+      ],
+      "bracket": [
+        0.29394517850351043,
+        0.29394517850351043,
+        0.0,
+        0.0
+      ],
+      "iterations": 9
+    },
+    {
+      "name": "strong_shock",
+      "status": "passed",
+      "native_status": 0,
+      "scalar": [
+        133.35584805714393,
+        0.0
+      ],
+      "native": [
+        133.35584805714393,
+        0.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ],
+      "error_envelope": [
+        8.4660384978157e-12,
+        8.634841943199432e-13
+      ],
+      "bracket": [
+        13335.584805714392,
+        13335.584805714405,
+        -3.552713678800501e-15,
+        7.105427357601002e-15
+      ],
+      "iterations": 7
+    },
+    {
+      "name": "rarefaction",
+      "status": "passed",
+      "native_status": 0,
+      "scalar": [
+        0.22461424321571505,
+        0.0
+      ],
+      "native": [
+        0.22461424321571505,
+        0.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ],
+      "error_envelope": [
+        1.9673187788146507e-14,
+        1.4108069330467112e-13
+      ],
+      "bracket": [
+        0.22461424321571485,
+        0.22461424321571505,
+        -1.3322676295501878e-15,
+        2.220446049250313e-16
+      ],
+      "iterations": 11
+    },
+    {
+      "name": "near_vacuum",
+      "status": "passed",
+      "native_status": 0,
+      "scalar": [
+        1.0000098816671643e-15,
+        0.0
+      ],
+      "native": [
+        1.0000098816671643e-15,
+        0.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ],
+      "error_envelope": [
+        1.6565812639695778e-25,
+        3.849384745115631e-13
+      ],
+      "bracket": [
+        1.0000098816671643e-15,
+        1.0000098816671643e-15,
+        0.0,
+        0.0
+      ],
+      "iterations": 22
+    },
+    {
+      "name": "vacuum",
+      "status": "passed",
+      "native_status": 2,
+      "scalar_failure": "Euler vacuum requires a separate vacuum model",
+      "expected_status": 2
+    },
+    {
+      "name": "negative_pressure",
+      "status": "passed",
+      "native_status": 1,
+      "scalar_failure": "positive finite Euler states required",
+      "expected_status": 1
+    },
+    {
+      "name": "gamma_one",
+      "status": "passed",
+      "native_status": 1,
+      "scalar_failure": "positive finite Euler states required",
+      "expected_status": 1
+    },
+    {
+      "name": "nonfinite_velocity",
+      "status": "passed",
+      "native_status": 1,
+      "scalar_failure": "finite velocity required",
+      "expected_status": 1
+    },
+    {
+      "name": "nonfinite_pressure",
+      "status": "passed",
+      "native_status": 1,
+      "scalar_failure": "positive finite Euler states required",
+      "expected_status": 1
+    },
+    {
+      "name": "bracket_overflow",
+      "status": "passed",
+      "native_status": 3,
+      "scalar_failure": "Euler star pressure bracket overflow",
+      "expected_status": 3
+    }
+  ],
+  "provenance": {
+    "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+    "scipy_version": "1.18.0",
+    "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+    "xtol": 2.2250738585072014e-308,
+    "rtol": 1.7763568394002505e-15,
+    "maxiter": 200
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/check_native_euler_star_fixtures_v2_20261019.py": "b032b39dc84f163f3ae2bdb1aec449edef29f838c1f30c11b710361ad6156ef1",
+    "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.py": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268",
+    "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.cpp": "6fae6e14ac6b1359c8e9de7b7bc77c62b99dfc8cf9c779d3d44283a405dba65b",
+    "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so": "b65b4882edf1895746108178e1a3288923401ef4802292702b0b5235ba0e9733"
+  },
+  "limits": "Same installed SciPy Brent kernel; wave/bracket roundoff envelopes assume usual libm accuracy and are not interval proofs. Extreme overflow is explicitly rejected, no alternate solver."
+}

@@ -18,6 +18,7 @@
 #include "exam.h"
 #include "exam2d.h"
 #include "gfs_pair.h"
+#include "tcf_face_terms.h"
 
 /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
  * on (default off). The entropy K = P/rho^gamma is stress.K. It is set from
@@ -328,6 +329,8 @@ static long gfs_cellcheck_n = 0, gfs_cellcheck_fail = 0;
  * stages 2-4 count particles whose set differs (topology change inside a
  * step, where the RK4 right-hand side is discontinuous). Keyed by PINDX. */
 static int gfs_rk_stage = 0;
+/* Diagnostic context only: 0=RK, 1=pre-HG, 2=post-HG. */
+static int gfs_dt_audit_phase = 0;
 static long *gfs_topo_ids = NULL; static unsigned char *gfs_topo_cnt = NULL; static long gfs_topo_cap = 0;
 static long gfs_topo_chg = 0, gfs_topo_n = 0;
 static int gfs_topo_on(void){
@@ -391,28 +394,58 @@ static void tcf_dump_switch(int call){
 static FILE *tcf_dump_fp(void){ return tcf_dfp; }
 /* GFS_TCF_SACC=<file>: per-cell RK4 integral of d ln K/dt = T dS/U from the
  * face dissipation (G2 entropy-error test), rewritten after every step. */
+static double *tcf_entropy_rk = NULL, *tcf_entropy_hg = NULL;
 static double *tcf_rate = NULL, *tcf_sacc = NULL; static size_t tcf_cap = 0;
 static double gfs_dt_cap = 0, gfs_step_dtmin = 1e300;   /* step rejection (exam2d_vph_rk4_int_blend) */
+/* Optional convergence-study ceiling. Apply to BOTH HG and RK4 so split
+ * durations stay identical; adaptive stability limits and retries remain. */
+static double gfs_max_dt(void){
+	static double value = -1;
+	if(value < 0){
+		const char *s = getenv("GFS_MAX_DT");
+		value = 0;
+		if(s && s[0]){
+			char *end = NULL; value = strtod(s, &end);
+			if(end == s || *end || !isfinite(value) || value <= 0){
+				fprintf(stderr,"[MAX_DT] GFS_MAX_DT must be finite and positive\n"); exit(5);
+			}
+			const char *fixed = getenv("GFS_FIXED_DT");
+			if(fixed && atof(fixed) > 0){
+				fprintf(stderr,"[MAX_DT] choose GFS_MAX_DT or GFS_FIXED_DT, not both\n"); exit(5);
+			}
+			fprintf(stderr,"[MAX_DT] ceiling=%.17g adaptive_limits_and_retry=1\n",value);
+		}
+	}
+	return value;
+}
 static int gfs_attempt_failed = 0, gfs_in_retry = 0;   /* set by any stage floor / non-positive state */
 static double gfs_dtb[4] = {1e300, 1e300, 1e300, 1e300}; static long gfs_dtb_cnt[4] = {0, 0, 0, 0};   /* face CFL, face geometry, dt3, HG */
 static const char *tcf_sacc_file(void){ const char *s = getenv("GFS_TCF_SACC"); return (s && s[0]) ? s : NULL; }
+static int tcf_entropy_split_on(void){ const char *s=getenv("GFS_ENTROPY_SPLIT"); return s && atoi(s)>0; }
 static void tcf_sacc_ensure(treevorostressrk4particletype *sbp, int np){
 	size_t mx = 0, k; int i;
 	for(i = 0; i < np; i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id != (size_t)MAX_INDEX && id + 1 > mx) mx = id + 1; }
 	if(mx <= tcf_cap) return;
 	tcf_rate = (double*)realloc(tcf_rate, mx*sizeof(double)); tcf_sacc = (double*)realloc(tcf_sacc, mx*sizeof(double));
+	if(tcf_entropy_split_on()){
+		tcf_entropy_rk = (double*)realloc(tcf_entropy_rk,mx*sizeof(double));
+		tcf_entropy_hg = (double*)realloc(tcf_entropy_hg,mx*sizeof(double));
+		if(!tcf_entropy_rk || !tcf_entropy_hg) abort();
+		for(k=tcf_cap;k<mx;k++) tcf_entropy_rk[k]=tcf_entropy_hg[k]=0;
+	}
 	for(k = tcf_cap; k < mx; k++) tcf_rate[k] = tcf_sacc[k] = 0;
 	tcf_cap = mx;
 }
 static void tcf_sacc_stage(treevorostressrk4particletype *sbp, int np, double wdt){
 	int i;
-	for(i = 0; i < np; i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id < tcf_cap) tcf_sacc[id] += wdt*tcf_rate[id]; }
+	for(i = 0; i < np; i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id < tcf_cap){ tcf_sacc[id] += wdt*tcf_rate[id]; if(tcf_entropy_split_on()) tcf_entropy_rk[id] += wdt*tcf_rate[id]; } }
 }
 static void tcf_sacc_write(treevorostressrk4particletype *sbp, int np){
 	FILE *fp = fopen(tcf_sacc_file(), "w"); int i;
 	if(!fp) return;
-	fprintf(fp, "# id int_0^t TdS/U dt\n");
-	for(i = 0; i < np; i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id < tcf_cap) fprintf(fp, "%ld %.17g\n", (long)id, tcf_sacc[id]); }
+	if(tcf_entropy_split_on()) fprintf(fp,"# id total_log_entropy TCF_RK_integral HG_split_log_entropy\n");
+	else fprintf(fp, "# id int_0^t TdS/U dt\n");
+	for(i = 0; i < np; i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id < tcf_cap){ if(tcf_entropy_split_on()) fprintf(fp,"%ld %.17g %.17g %.17g\n",(long)id,tcf_sacc[id],tcf_entropy_rk[id],tcf_entropy_hg[id]); else fprintf(fp, "%ld %.17g\n", (long)id, tcf_sacc[id]); } }
 	fclose(fp);
 }
 static int gfs_tcf_notan(void){   /* GFS_TCF_NOTAN=1: diagnostic, tangential force removed (Astra 26) */
@@ -573,14 +606,38 @@ static int gfs_shared_geom_on(void){
 #define SHF_K 64
 static int *shf_n = NULL; static long *shf_j = NULL; static double *shf_g = NULL;   /* g: dx dy ax ay bx by (rel. to cell) */
 static size_t shf_cap = 0;
+/* Optional stage-freshness gate, also needed before distributed face exchange. */
+static int shf_epoch_audit = 0;
+/* Set only inside the terminal geometry diagnostic; never permits evolution. */
+static int shf_geometry_probe_active = 0;
+static int gfs_mpi_coupled_active = 0;
+static long gfs_mpi_coupled_step = 0, gfs_mpi_coupled_trial = 0;
+static unsigned long shf_epoch = 0, *shf_stamp = NULL;
+static long shf_epoch_reads = 0;
+static void shf_require_current(long id){
+	if(!shf_epoch_audit) return;
+	if(id < 0 || (size_t)id >= shf_cap || shf_stamp[id] != shf_epoch){
+		fprintf(stderr,"[SHF_EPOCH] stale_or_missing id=%ld epoch=%lu\n",id,shf_epoch);
+		abort();
+	}
+#ifdef _OPENMP
+#pragma omp atomic
+#endif
+	shf_epoch_reads++;
+}
 static long shf_nlook = 0, shf_nmiss = 0, shf_ncut = 0;
 static double shf_maxcut = 0;   /* largest cut fraction of a face with A > 1e-6 d (shared-geometry mismatch) */
 static void shf_ensure(SimParameters *simpar){
+	const char *audit = getenv("GFS_SHF_EPOCH_AUDIT");
+	shf_epoch_audit = audit && atoi(audit) > 0;
+	if(shf_epoch_audit) shf_epoch++;
 	size_t ps = TVORORK4_DDINFO(simpar)[0].n_size, mx = 0, k; char *b = (char*)VORORK4_TBP(simpar); int i;
 	for(i = 0; i < VORO_NP(simpar); i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(b + i*ps)); if(id != (size_t)MAX_INDEX && id + 1 > mx) mx = id + 1; }
 	if(mx <= shf_cap) return;
 	shf_n = (int*)realloc(shf_n, mx*sizeof(int)); shf_j = (long*)realloc(shf_j, mx*SHF_K*sizeof(long));
 	shf_g = (double*)realloc(shf_g, mx*SHF_K*6*sizeof(double));
+	shf_stamp = (unsigned long*)realloc(shf_stamp, mx*sizeof(unsigned long));
+	for(k = shf_cap; k < mx; k++) shf_stamp[k] = 0;
 	for(k = shf_cap; k < mx; k++) shf_n[k] = 0;
 	shf_cap = mx;
 }
@@ -588,9 +645,10 @@ static void shf_record(Voro2D_Corner *vc, Voro2D_point *nw, treevorork4particlet
 	size_t id = (size_t)PINDX(ibp); Voro2D_Corner *t = vc; int n = 0;
 	if(id >= shf_cap) return;
 	do {
-		if(t->upperrelated >= 0 && n < SHF_K){
+		if(t->upperrelated >= 0){
 			treevorork4particletype *nb = (treevorork4particletype*)nw[t->upperrelated].bp;
 			if(nb && PINDX(nb) != MAX_INDEX){
+				if(n >= SHF_K){ fprintf(stderr,"[SHF] face capacity exceeded id=%zu limit=%d\n",id,SHF_K); abort(); }
 				double *g = shf_g + (id*SHF_K + n)*6;
 				shf_j[id*SHF_K + n] = (long)PINDX(nb);
 				g[0] = (double)nb->x - (double)ibp->x; g[1] = (double)nb->y - (double)ibp->y;
@@ -601,11 +659,52 @@ static void shf_record(Voro2D_Corner *vc, Voro2D_point *nw, treevorork4particlet
 		t = t->upperlink;
 	} while(t != vc);
 	shf_n[id] = n;
+	if(shf_epoch_audit) shf_stamp[id] = shf_epoch;
+}
+/* Immutable single-call raw geometry export for distributed-geometry audits. */
+static void shf_dump_current(SimParameters *simpar, int call){
+	const char *path = getenv("GFS_SHF_DUMP_FILE");
+	if(!path || !path[0]) return;
+	const char *which = getenv("GFS_SHF_DUMP_CALL");
+	if(!shf_geometry_probe_active && call != (which ? atoi(which) : 1)) return;
+	if((NID(simpar)!=1 && !shf_geometry_probe_active) || !gfs_shared_geom_on() || !shf_epoch_audit){
+		fprintf(stderr,"[SHF_DUMP] requires MPI1, shared geometry and epoch audit\n"); abort();
+	}
+	char ranked_path[4096];
+	if(shf_geometry_probe_active){
+		int n=snprintf(ranked_path,sizeof(ranked_path),"%s.rank%04d",path,MYID(simpar));
+		if(n<0 || (size_t)n>=sizeof(ranked_path)) MPI_Abort(MPI_COMM(simpar),2);
+		path=ranked_path;
+	}
+	FILE *fp=fopen(path,"wx");
+	if(!fp){perror("SHF_DUMP");abort();}
+	fprintf(fp,"# call=%d epoch=%lu phase=%d rk_stage=%d\n# i j xi yi dx dy ax ay bx by epoch\n",
+		call,shf_epoch,gfs_dt_audit_phase,gfs_dt_audit_phase ? 0 : gfs_rk_stage);
+	size_t ps=TVORORK4_DDINFO(simpar)[0].n_size;
+	char *base=(char*)VORORK4_TBP(simpar); long count=0;
+	for(int i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);
+		long id=(long)PINDX(q); shf_require_current(id);
+		if(shf_geometry_probe_active)
+			fprintf(fp,"# cell %ld rank %d x %.17g y %.17g mass %.17g volume %.17g density %.17g pressure %.17g vx %.17g vy %.17g ie %.17g w2 %.17g\n",
+				id,MYID(simpar),(double)q->x,(double)q->y,(double)q->mass,(double)q->volume,
+				(double)q->den,(double)q->pressure,(double)q->vx,(double)q->vy,(double)q->ie,(double)q->w2);
+		for(int k=0;k<shf_n[id];k++){
+			double *g=shf_g+((size_t)id*SHF_K+k)*6;
+			fprintf(fp,"%ld %ld %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %lu\n",
+				id,shf_j[(size_t)id*SHF_K+k],(double)q->x,(double)q->y,
+				g[0],g[1],g[2],g[3],g[4],g[5],shf_stamp[id]);count++;
+		}
+	}
+	int failed=ferror(fp); if(fclose(fp)!=0) failed=1;
+	if(failed){fprintf(stderr,"[SHF_DUMP] write failure\n");abort();}
+	fprintf(stderr,"[SHF_DUMP] call=%d epoch=%lu records=%ld\n",call,shf_epoch,count);
 }
 /* common segment of face (i -> j): own endpoints a, b and the separation d (all relative
  * to x_i). Returns the common length and its centroid (relative to x_i). */
 static double shf_common(long idi, long idj, double dx, double dy, double ax, double ay, double bx, double by,
 		double *cx, double *cy){
+	shf_require_current(idi); shf_require_current(idj);
 	double d = sqrt(dx*dx + dy*dy), tx = -dy/d, ty = dx/d, mx = 0.5*dx, my = 0.5*dy;
 	double s1 = (ax - mx)*tx + (ay - my)*ty, s2 = (bx - mx)*tx + (by - my)*ty;
 	double lo = fmin(s1, s2), hi = fmax(s1, s2);
@@ -621,7 +720,9 @@ static double shf_common(long idi, long idj, double dx, double dy, double ax, do
 		double l2 = fmax(lo, fmin(s3, s4)), h2 = fmin(hi, fmax(s3, s4));
 		if(hi - lo > 1e-6*d){
 			double cutf = ((hi - lo) - fmax(h2 - l2, 0))/(hi - lo);
-			if(cutf > shf_maxcut){
+			/* The shared maximum must be read under the same lock as its
+			 * writes. The outer filter uses only this thread's candidate. */
+			if(cutf > 0){
 #ifdef _OPENMP
 #pragma omp critical (shf_maxcut)
 #endif
@@ -679,6 +780,14 @@ static void cen_ensure(SimParameters *simpar){
 /* GFS_TCF_QBP=1 (Astra audit 12, needs EUNHA_LSF_ORDER=2): Q input m = minmod(delta_b', du_cell),
  * delta_b' = du_cell + d/2 e^T (G_i + G_j) e with the UNLIMITED quadratic-fit velocity gradients
  * (cached before the limiter). Rotation invariant; zero for linear and quadratic velocity fields. */
+static FILE *q2_operator_fp = NULL;
+static __thread long q2r_candidate_id[4096];
+static __thread double q2r_taper[4096];
+static __thread Voro2D_point qr_periodic_samples[4096];
+/* Experimental compact support: row weight vanishes at 2.5 sqrt(V).
+ * No shell expansion or degree fallback is silently allowed in this mode. */
+static int gfs_qr_smooth(void){ static int on=-1; if(on<0){ const char *e=getenv("GFS_QR_SMOOTH"); on=e && atoi(e)>0; } return on; }
+static int gfs_qr_adaptive(void){ static int on=-1; if(on<0){ const char *e=getenv("GFS_QR_ADAPTIVE"); on=e && atoi(e)>0; } return on; }
 static __thread double q2r_cd2[4096], q2r_cph[4096][9], q2r_cdq[4096][4], q2r_Qc[4096][9]; static __thread int q2r_cord[4096];
 /* GFS_Q3=1 (Astra audit 14, item 1): cubic fit (9 rotation-covariant columns) for the unlimited velocity
  * gradient used by QBP, in every cell (stateless, so restart stays exact); quadratic fallback if rank < 9. */
@@ -706,6 +815,195 @@ static void qbp_ensure(SimParameters *simpar){
 	for(k = 0; k < 6*qbp_cap; k++) qbp_h[k] = 0;
 	for(k = 0; k < 8*qbp_cap; k++) qbp_t[k] = 0;
 }
+/* Owned reconstruction data, before any reciprocal reads or evolution. */
+static void shf_probe_dump_cache(SimParameters *simpar){
+	if(!shf_geometry_probe_active) MPI_Abort(MPI_COMM(simpar),2);
+	if(!gfs_tcf_face_z() || !gfs_tcf_qbp()){
+		fprintf(stderr,"[MPI_GEOMETRY_ONLY] cache export requires FACE_Z and QBP\n");
+		MPI_Abort(MPI_COMM(simpar),2);
+	}
+	char path[4096];
+	int n=snprintf(path,sizeof(path),"%s.cache.rank%04d",getenv("GFS_SHF_DUMP_FILE"),MYID(simpar));
+	if(n<0 || (size_t)n>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+	FILE *fp=fopen(path,"wx");
+	if(!fp){perror("geometry cache export");MPI_Abort(MPI_COMM(simpar),2);}
+	fprintf(fp,"# id rank epoch cdx cdy qbp_ok qbp_arc g[4] h[6] t[8]\n");
+	size_t ps=TVORORK4_DDINFO(simpar)[0].n_size;
+	char *base=(char*)VORORK4_TBP(simpar);
+	for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);
+		size_t id=(size_t)PINDX(q);shf_require_current((long)id);
+		if(id>=cen_cap || id>=qbp_cap) MPI_Abort(MPI_COMM(simpar),2);
+		double values[20]={cen_dx[id],cen_dy[id]};
+		/* Invalid fits carry an explicit status; never read uninitialized gradients. */
+		if(qbp_ok[id]){
+			for(int k=0;k<4;k++) values[2+k]=qbp_g[4*id+k];
+			for(int k=0;k<6;k++) values[6+k]=qbp_h[6*id+k];
+			for(int k=0;k<8;k++) values[12+k]=qbp_t[8*id+k];
+		}
+		for(int k=0;k<20;k++) if(!isfinite(values[k])) MPI_Abort(MPI_COMM(simpar),2);
+		fprintf(fp,"%zu %d %lu %.17g %.17g %d %d",id,MYID(simpar),shf_epoch,
+			values[0],values[1],(int)qbp_ok[id],(int)qbp_arc[id]);
+		for(int k=2;k<20;k++) fprintf(fp," %.17g",values[k]);
+		fprintf(fp,"\n");
+	}
+	int failed=ferror(fp);if(fclose(fp)!=0) failed=1;
+	if(failed) MPI_Abort(MPI_COMM(simpar),2);
+}
+/* Diagnostic-only owner-directed exchange of current raw geometry and QBP data.
+ * Ownership metadata is replicated; numerical records are sent only on request.
+ * This does not authorize force evaluation or evolution on multiple ranks. */
+typedef struct {
+    long id;
+    unsigned long epoch;
+    int owner, nf, ok, arc;
+    long neighbors[SHF_K];
+    double geometry[SHF_K*6], cache[20];
+} ShfProbePacket;
+static void hg_probe_exchange_state(SimParameters *,const int *,int,const char *);
+static void shf_probe_exchange(SimParameters *simpar,int include_hg,const char *export_path){
+    if(!shf_geometry_probe_active) MPI_Abort(MPI_COMM(simpar),2);
+    int nr=NID(simpar), rank=MYID(simpar);
+    long localmax=-1, globalmax;
+    size_t ps=TVORORK4_DDINFO(simpar)[0].n_size;
+    char *base=(char*)VORORK4_TBP(simpar);
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        long id=(long)PINDX((treevorork4particletype*)(base+i*ps));
+        if(id<0) MPI_Abort(MPI_COMM(simpar),2);
+        if(id>localmax) localmax=id;
+    }
+    MPI_Allreduce(&localmax,&globalmax,1,MPI_LONG,MPI_MAX,MPI_COMM(simpar));
+    /* Bounded dense-ID reference diagnostic, not a general sparse-ID allocator. */
+    if(globalmax<0 || globalmax>=10000000) MPI_Abort(MPI_COMM(simpar),2);
+    int cap=(int)globalmax+1;
+    int *owner=calloc(cap,sizeof(int)),*count=calloc(cap,sizeof(int));
+    unsigned char *need=calloc(cap,1);
+    if(!owner || !count || !need) MPI_Abort(MPI_COMM(simpar),2);
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        long id=(long)PINDX((treevorork4particletype*)(base+i*ps));
+        owner[id]=rank+1;count[id]++;
+    }
+    MPI_Allreduce(MPI_IN_PLACE,owner,cap,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+    MPI_Allreduce(MPI_IN_PLACE,count,cap,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+    for(int id=0;id<cap;id++) if(count[id]>1) MPI_Abort(MPI_COMM(simpar),2);
+    int *sc=calloc(nr,sizeof(int)),*rc=calloc(nr,sizeof(int));
+    int *sd=calloc(nr,sizeof(int)),*rd=calloc(nr,sizeof(int));
+    if(!sc || !rc || !sd || !rd) MPI_Abort(MPI_COMM(simpar),2);
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        long id=(long)PINDX((treevorork4particletype*)(base+i*ps));shf_require_current(id);
+        for(int k=0;k<shf_n[id];k++){
+            long j=shf_j[id*SHF_K+k];
+            if(j<0 || j>=cap || count[j]!=1) MPI_Abort(MPI_COMM(simpar),2);
+            if(owner[j]!=rank+1 && !need[j]){need[j]=1;sc[owner[j]-1]++;}
+        }
+    }
+    MPI_Alltoall(sc,1,MPI_INT,rc,1,MPI_INT,MPI_COMM(simpar));
+    int ns=0,nt=0;
+    for(int r=0;r<nr;r++){sd[r]=ns;rd[r]=nt;ns+=sc[r];nt+=rc[r];}
+    long *requests=calloc(ns+1,sizeof(long)),*incoming=calloc(nt+1,sizeof(long));
+    int *cursor=calloc(nr,sizeof(int));
+    if(!requests || !incoming || !cursor) MPI_Abort(MPI_COMM(simpar),2);
+    for(int id=0;id<cap;id++) if(need[id]){int r=owner[id]-1;requests[sd[r]+cursor[r]++]=id;}
+    MPI_Alltoallv(requests,sc,sd,MPI_LONG,incoming,rc,rd,MPI_LONG,MPI_COMM(simpar));
+    ShfProbePacket *reply=calloc(nt+1,sizeof(*reply)),*received=calloc(ns+1,sizeof(*received));
+    if(!reply || !received) MPI_Abort(MPI_COMM(simpar),2);
+    for(int i=0;i<nt;i++){
+        long id=incoming[i];
+        if(id<0 || id>=cap || owner[id]!=rank+1 || id>=cen_cap || id>=qbp_cap) MPI_Abort(MPI_COMM(simpar),2);
+        shf_require_current(id);
+        ShfProbePacket *p=reply+i;p->id=id;p->owner=rank;p->epoch=shf_epoch;p->nf=shf_n[id];
+        p->ok=qbp_ok[id];p->arc=qbp_arc[id];p->cache[0]=cen_dx[id];p->cache[1]=cen_dy[id];
+        if(p->nf<0 || p->nf>SHF_K) MPI_Abort(MPI_COMM(simpar),2);
+        memcpy(p->neighbors,shf_j+id*SHF_K,p->nf*sizeof(long));
+        memcpy(p->geometry,shf_g+id*SHF_K*6,p->nf*6*sizeof(double));
+        if(p->ok){memcpy(p->cache+2,qbp_g+id*4,4*sizeof(double));memcpy(p->cache+6,qbp_h+id*6,6*sizeof(double));memcpy(p->cache+12,qbp_t+id*8,8*sizeof(double));}
+    }
+    /* Negative control: stale generation from one sender must fail collectively. */
+    const char *inject=getenv("GFS_MPI_PROBE_STALE");
+    if(inject && atoi(inject)>0 && rank==0 && nt>0) reply[0].epoch++;
+    MPI_Datatype packet;
+    MPI_Type_contiguous((int)sizeof(ShfProbePacket),MPI_BYTE,&packet);MPI_Type_commit(&packet);
+    MPI_Alltoallv(reply,rc,rd,packet,received,sc,sd,packet,MPI_COMM(simpar));
+    MPI_Type_free(&packet);
+    int bad=0,totalbad=0;
+    for(int r=0;r<nr;r++) for(int i=sd[r];i<sd[r]+sc[r];i++){
+        ShfProbePacket *p=received+i;
+        if(p->id!=requests[i] || p->owner!=r || p->epoch!=shf_epoch || p->nf<0 || p->nf>SHF_K){bad++;continue;}
+        for(int k=0;k<20;k++) if(!isfinite(p->cache[k])) bad++;
+        for(int k=0;k<p->nf*6;k++) if(!isfinite(p->geometry[k])) bad++;
+    }
+    MPI_Allreduce(&bad,&totalbad,1,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+    if(totalbad){fprintf(stderr,"[MPI_GEOMETRY_EXCHANGE] invalid_records=%d rank=%d\n",totalbad,rank);MPI_Abort(MPI_COMM(simpar),3);}
+    if(export_path){
+    char path[4096];int len=snprintf(path,sizeof(path),"%s.exchange.rank%04d",export_path,rank);
+    if(len<0 || (size_t)len>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+    FILE *fp=fopen(path,"wx");if(!fp) MPI_Abort(MPI_COMM(simpar),2);
+    fprintf(fp,"# C id owner epoch nf ok arc cache[20]; F id neighbor geometry[6]\n");
+    for(int i=0;i<ns;i++){
+        ShfProbePacket *p=received+i;
+        fprintf(fp,"C %ld %d %lu %d %d %d",p->id,p->owner,p->epoch,p->nf,p->ok,p->arc);
+        for(int k=0;k<20;k++) fprintf(fp," %.17g",p->cache[k]);fprintf(fp,"\n");
+        for(int k=0;k<p->nf;k++){
+            fprintf(fp,"F %ld %ld",p->id,p->neighbors[k]);
+            for(int m=0;m<6;m++) fprintf(fp," %.17g",p->geometry[k*6+m]);fprintf(fp,"\n");
+        }
+    }
+    int failed=ferror(fp);if(fclose(fp)!=0) failed=1;if(failed) MPI_Abort(MPI_COMM(simpar),2);
+    }
+    fprintf(stderr,"[MPI_GEOMETRY_EXCHANGE] rank=%d imported=%d exported=%d invalid=0\n",rank,ns,nt);
+    /* Install only validated, directly requested records. Ordinary evolution
+     * cannot reach this path; stamps remain scoped to this single probe. */
+    size_t mx=shf_cap;
+    for(int i=0;i<ns;i++) if((size_t)received[i].id+1>mx) mx=(size_t)received[i].id+1;
+    if(mx>shf_cap){
+        shf_n=realloc(shf_n,mx*sizeof(int));shf_j=realloc(shf_j,mx*SHF_K*sizeof(long));
+        shf_g=realloc(shf_g,mx*SHF_K*6*sizeof(double));shf_stamp=realloc(shf_stamp,mx*sizeof(unsigned long));
+        if(!shf_n || !shf_j || !shf_g || !shf_stamp) MPI_Abort(MPI_COMM(simpar),2);
+        for(size_t i=shf_cap;i<mx;i++){shf_n[i]=0;shf_stamp[i]=0;}shf_cap=mx;
+    }
+    if(mx>cen_cap){
+        cen_dx=realloc(cen_dx,mx*sizeof(double));cen_dy=realloc(cen_dy,mx*sizeof(double));
+        if(!cen_dx || !cen_dy) MPI_Abort(MPI_COMM(simpar),2);
+        for(size_t i=cen_cap;i<mx;i++){cen_dx[i]=0;cen_dy[i]=0;}cen_cap=mx;
+    }
+    if(mx>qbp_cap){
+        qbp_g=realloc(qbp_g,mx*4*sizeof(double));qbp_h=realloc(qbp_h,mx*6*sizeof(double));qbp_t=realloc(qbp_t,mx*8*sizeof(double));
+        qbp_ok=realloc(qbp_ok,mx);qbp_arc=realloc(qbp_arc,mx);
+        if(!qbp_g || !qbp_h || !qbp_t || !qbp_ok || !qbp_arc) MPI_Abort(MPI_COMM(simpar),2);
+        for(size_t i=qbp_cap;i<mx;i++){qbp_ok[i]=0;qbp_arc[i]=0;}qbp_cap=mx;
+    }
+    for(int i=0;i<ns;i++){
+        ShfProbePacket *p=received+i;size_t id=(size_t)p->id;
+        if(owner[id]==rank+1) MPI_Abort(MPI_COMM(simpar),2);
+        shf_n[id]=p->nf;memcpy(shf_j+id*SHF_K,p->neighbors,p->nf*sizeof(long));
+        memcpy(shf_g+id*SHF_K*6,p->geometry,p->nf*6*sizeof(double));
+        cen_dx[id]=p->cache[0];cen_dy[id]=p->cache[1];qbp_ok[id]=p->ok;qbp_arc[id]=p->arc;
+        memcpy(qbp_g+id*4,p->cache+2,4*sizeof(double));memcpy(qbp_h+id*6,p->cache+6,6*sizeof(double));memcpy(qbp_t+id*8,p->cache+12,8*sizeof(double));
+        shf_stamp[id]=p->epoch;
+    }
+    FILE *fp=NULL;
+    if(export_path){
+        char path[4096];int len=snprintf(path,sizeof(path),"%s.common.rank%04d",export_path,rank);
+        if(len<0 || (size_t)len>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+        fp=fopen(path,"wx");if(!fp) MPI_Abort(MPI_COMM(simpar),2);
+        fprintf(fp,"# i j dx dy common_length cx cy\n");
+    }
+    long before=shf_nmiss, ncommon=0;
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        long id=(long)PINDX((treevorork4particletype*)(base+i*ps));
+        for(int k=0;k<shf_n[id];k++){
+            long j=shf_j[id*SHF_K+k];double *g=shf_g+(id*SHF_K+k)*6,cx,cy;
+            double a=shf_common(id,j,g[0],g[1],g[2],g[3],g[4],g[5],&cx,&cy);
+            if(!isfinite(a) || !isfinite(cx) || !isfinite(cy) || a<0) MPI_Abort(MPI_COMM(simpar),2);
+            if(fp) fprintf(fp,"%ld %ld %.17g %.17g %.17g %.17g %.17g\n",id,j,g[0],g[1],a,cx,cy);ncommon++;
+        }
+    }
+    if(fp){int failed=ferror(fp);if(fclose(fp)!=0) failed=1;if(failed) MPI_Abort(MPI_COMM(simpar),2);}
+    fprintf(stderr,"[MPI_COMMON_GEOMETRY] rank=%d faces=%ld missing_reciprocal=%ld checked_reads=%ld\n",rank,ncommon,shf_nmiss-before,shf_epoch_reads);
+    if(include_hg) hg_probe_exchange_state(simpar,owner,cap,export_path);
+    free(received);free(reply);free(cursor);free(incoming);free(requests);free(rd);free(sd);free(rc);free(sc);free(need);free(count);free(owner);
+}
+
 /* polygon centroid offset c - x (corners relative to the generator) and cap-edge count */
 static int cen_poly(Voro2D_Corner *vc, double *dx, double *dy){
 	Voro2D_Corner *t = vc; double V = 0, Jx = 0, Jy = 0; int ncap = 0;
@@ -770,6 +1068,101 @@ static void hg_ensure(SimParameters *simpar){
 	}
 	if(hgm_building && gfs_bprime()) bp_reset();
 }
+/* State needed by HG's two-hop support; private diagnostic ghosts are stable
+ * until process exit. No ghost writeback or mode evolution is performed here. */
+static treevorork4particletype *hg_probe_ghosts=NULL;
+static int hg_probe_state_ready=0;
+static int hg_probe_modes_active=0;
+typedef struct { long id; unsigned long epoch; int owner; double v[10]; } HgProbeState;
+static void hg_probe_exchange_state(SimParameters *simpar,const int *owner,int cap,const char *export_path){
+    if(!shf_geometry_probe_active || hg_probe_state_ready) MPI_Abort(MPI_COMM(simpar),2);
+    hg_ensure(simpar);
+    if((size_t)cap>hg_cap){
+        hg_ptr=realloc(hg_ptr,cap*sizeof(*hg_ptr));
+        hg_fx=realloc(hg_fx,cap*sizeof(double));hg_fy=realloc(hg_fy,cap*sizeof(double));
+        hg_H=realloc(hg_H,cap*sizeof(double));hg_lam=realloc(hg_lam,cap*sizeof(double));
+        if(!hg_ptr || !hg_fx || !hg_fy || !hg_H || !hg_lam) MPI_Abort(MPI_COMM(simpar),2);
+        for(size_t i=hg_cap;i<(size_t)cap;i++){hg_ptr[i]=NULL;hg_fx[i]=hg_fy[i]=hg_H[i]=hg_lam[i]=0;}hg_cap=cap;
+    }
+    int nr=NID(simpar),rank=MYID(simpar);
+    unsigned char *need=calloc(cap,1);int *sc=calloc(nr,sizeof(int)),*rc=calloc(nr,sizeof(int)),*sd=calloc(nr,sizeof(int)),*rd=calloc(nr,sizeof(int)),*cur=calloc(nr,sizeof(int));
+    if(!need || !sc || !rc || !sd || !rd || !cur) MPI_Abort(MPI_COMM(simpar),2);
+    for(int id=0;id<cap;id++) if(owner[id]==rank+1){
+        shf_require_current(id);
+        for(int k=0;k<shf_n[id];k++){
+            long j=shf_j[id*SHF_K+k];shf_require_current(j);
+            if(j<0 || j>=cap || owner[j]<=0) MPI_Abort(MPI_COMM(simpar),2);
+            need[j]=1;
+            for(int l=0;l<shf_n[j];l++){
+                long q=shf_j[j*SHF_K+l];
+                if(q<0 || q>=cap || owner[q]<=0) MPI_Abort(MPI_COMM(simpar),2);
+                need[q]=1;
+            }
+        }
+    }
+    for(int id=0;id<cap;id++) if(need[id] && owner[id]!=rank+1) sc[owner[id]-1]++;
+    MPI_Alltoall(sc,1,MPI_INT,rc,1,MPI_INT,MPI_COMM(simpar));
+    int ns=0,nt=0;for(int r=0;r<nr;r++){sd[r]=ns;rd[r]=nt;ns+=sc[r];nt+=rc[r];}
+    long *req=calloc(ns+1,sizeof(long)),*incoming=calloc(nt+1,sizeof(long));
+    HgProbeState *reply=calloc(nt+1,sizeof(*reply)),*got=calloc(ns+1,sizeof(*got));
+    if(!req || !incoming || !reply || !got) MPI_Abort(MPI_COMM(simpar),2);
+    for(int id=0;id<cap;id++) if(need[id] && owner[id]!=rank+1){int r=owner[id]-1;req[sd[r]+cur[r]++]=id;}
+    MPI_Alltoallv(req,sc,sd,MPI_LONG,incoming,rc,rd,MPI_LONG,MPI_COMM(simpar));
+    for(int i=0;i<nt;i++){
+        long id=incoming[i];if(id<0 || id>=cap || owner[id]!=rank+1 || !hg_ptr[id]) MPI_Abort(MPI_COMM(simpar),2);
+        treevorork4particletype *q=hg_ptr[id];HgProbeState *p=reply+i;p->id=id;p->epoch=shf_epoch;p->owner=rank;
+        double values[10]={q->x,q->y,q->mass,q->vx,q->vy,q->ie,q->volume,q->den,q->pressure,q->csound};memcpy(p->v,values,sizeof(values));
+    }
+    const char *inject=getenv("GFS_MPI_HG_STALE");if(inject && atoi(inject)>0 && rank==0 && nt>0) reply[0].epoch++;
+    MPI_Datatype packet;MPI_Type_contiguous((int)sizeof(HgProbeState),MPI_BYTE,&packet);MPI_Type_commit(&packet);
+    MPI_Alltoallv(reply,rc,rd,packet,got,sc,sd,packet,MPI_COMM(simpar));MPI_Type_free(&packet);
+    int bad=0,totalbad=0;
+    for(int r=0;r<nr;r++) for(int i=sd[r];i<sd[r]+sc[r];i++){
+        HgProbeState *p=got+i;
+        if(p->id!=req[i] || p->owner!=r || p->epoch!=shf_epoch){bad++;continue;}
+        for(int k=0;k<10;k++) if(!isfinite(p->v[k])) bad++;
+        if(p->v[2]<=0 || p->v[5]<=0 || p->v[6]<=0 || p->v[7]<=0 || p->v[8]<=0 || p->v[9]<=0) bad++;
+    }
+    MPI_Allreduce(&bad,&totalbad,1,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+    if(totalbad){fprintf(stderr,"[MPI_HG_STATE] invalid_records=%d rank=%d\n",totalbad,rank);MPI_Abort(MPI_COMM(simpar),4);}
+    hg_probe_ghosts=calloc(ns+1,sizeof(*hg_probe_ghosts));if(!hg_probe_ghosts) MPI_Abort(MPI_COMM(simpar),2);
+    for(int i=0;i<ns;i++){
+        HgProbeState *p=got+i;treevorork4particletype *q=hg_probe_ghosts+i;CHANGEINDX(q,p->id);
+        q->x=p->v[0];q->y=p->v[1];q->mass=p->v[2];q->vx=p->v[3];q->vy=p->v[4];q->ie=p->v[5];q->volume=p->v[6];q->den=p->v[7];q->pressure=p->v[8];q->csound=p->v[9];
+        if(hg_ptr[p->id]) MPI_Abort(MPI_COMM(simpar),2);hg_ptr[p->id]=q;
+    }
+    for(int id=0;id<cap;id++) if((need[id] || owner[id]==rank+1) && !hg_ptr[id]) MPI_Abort(MPI_COMM(simpar),2);
+    if(export_path){
+    char path[4096];int len=snprintf(path,sizeof(path),"%s.hgstate.rank%04d",export_path,rank);
+    if(len<0 || (size_t)len>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+    FILE *fp=fopen(path,"wx");if(!fp) MPI_Abort(MPI_COMM(simpar),2);
+    fprintf(fp,"# id owner epoch x y mass vx vy ie volume density pressure csound\n");
+    for(int id=0;id<cap;id++) if(hg_ptr[id]){
+        treevorork4particletype *q=hg_ptr[id];
+        fprintf(fp,"%d %d %lu %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g\n",id,owner[id]-1,shf_epoch,(double)q->x,(double)q->y,(double)q->mass,(double)q->vx,(double)q->vy,(double)q->ie,(double)q->volume,(double)q->den,(double)q->pressure,(double)q->csound);
+    }
+    int failed=ferror(fp);if(fclose(fp)!=0) failed=1;if(failed) MPI_Abort(MPI_COMM(simpar),2);
+    }
+    hg_probe_state_ready=1;fprintf(stderr,"[MPI_HG_STATE] rank=%d imported=%d complete; no mode application\n",rank,ns);
+    free(got);free(reply);free(incoming);free(req);free(cur);free(rd);free(sd);free(rc);free(sc);free(need);
+}
+
+/* Experimental coupled path: every reconstruction has one collective identity.
+ * Refresh all owned/ghost pointers after any migration or checkpoint restore. */
+static void gfs_mpi_coupled_refresh(SimParameters *simpar){
+    if(!gfs_mpi_coupled_active) return;
+    long identity[5]={gfs_mpi_coupled_step,gfs_mpi_coupled_trial,
+        gfs_dt_audit_phase,gfs_dt_audit_phase ? 0:gfs_rk_stage,(long)shf_epoch};
+    long lo[5],hi[5];
+    MPI_Allreduce(identity,lo,5,MPI_LONG,MPI_MIN,MPI_COMM(simpar));
+    MPI_Allreduce(identity,hi,5,MPI_LONG,MPI_MAX,MPI_COMM(simpar));
+    for(int k=0;k<5;k++) if(lo[k]!=hi[k]) MPI_Abort(MPI_COMM(simpar),6);
+    free(hg_probe_ghosts);hg_probe_ghosts=NULL;
+    hg_probe_state_ready=0;hg_probe_modes_active=hgm_building;
+    shf_probe_exchange(simpar,1,NULL);
+    if(MYID(simpar)==0) fprintf(stderr,"[MPI_COUPLED_STAGE] step=%ld retry=%ld phase=%ld rk=%ld epoch=%ld\n",identity[0],identity[1],identity[2],identity[3],identity[4]);
+}
+
 /* circumcentre Jacobians of the corner (i, p1, p2) (p relative to x_i, v the corner): J_i, J_1, J_2 (row-major 2x2) */
 static int hg_vjac(double p1x, double p1y, double p2x, double p2y, double vx, double vy, double *Ji, double *J1, double *J2){
 	double a00 = 2*p1x, a01 = 2*p1y, a10 = 2*p2x, a11 = 2*p2y, det = a00*a11 - a01*a10;
@@ -831,6 +1224,41 @@ static void hgm_reset(long np){
 	hgm_n = 0; hgm_on = 0; hgm_nfail = 0;
 }
 static int hgm_cmp(const void *a, const void *b){ long ka = ((const hg_mode*)a)->key, kb = ((const hg_mode*)b)->key; return (ka > kb) - (ka < kb); }
+/* Compact binary diagnostic: four int64 header values, nm x 9 doubles,
+ * then nsupport x 3 doubles. Canonical sorted keys, original support order. */
+static void hg_probe_dump_modes(SimParameters *simpar){
+    if(!shf_geometry_probe_active || !hg_probe_modes_active || !hg_probe_state_ready
+        || hgm_building || hgm_nfail || sizeof(long long)!=8 || sizeof(double)!=8) MPI_Abort(MPI_COMM(simpar),2);
+    qsort(hgm,hgm_n,sizeof(hg_mode),hgm_cmp);
+    long total=0;
+    for(long i=0;i<hgm_n;i++){
+        hg_mode *m=hgm+i;
+        if(m->kind!=0 || m->len<=0 || m->owner<0 || m->owner>=10000000
+            || (i && hgm[i-1].key>=m->key)) MPI_Abort(MPI_COMM(simpar),2);
+        total+=m->len;
+    }
+    char path[4096];int n=snprintf(path,sizeof(path),"%s.hgm.rank%04d",getenv("GFS_SHF_DUMP_FILE"),MYID(simpar));
+    if(n<0 || (size_t)n>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+    FILE *fp=fopen(path,"wbx");if(!fp) MPI_Abort(MPI_COMM(simpar),2);
+    long long header[4]={20261017,hgm_n,total,9};
+    if(fwrite(header,sizeof(long long),4,fp)!=4) MPI_Abort(MPI_COMM(simpar),2);
+    long offset=0;
+    for(long i=0;i<hgm_n;i++){
+        hg_mode *m=hgm+i;double row[9]={m->owner,m->key,offset,m->len,m->kind,m->onesided,m->A0,m->b,m->kap};
+        for(int k=0;k<9;k++) if(!isfinite(row[k])) MPI_Abort(MPI_COMM(simpar),2);
+        if(fwrite(row,sizeof(double),9,fp)!=9) MPI_Abort(MPI_COMM(simpar),2);offset+=m->len;
+    }
+    for(long i=0;i<hgm_n;i++){
+        hg_mode *m=hgm+i;
+        for(long k=0;k<m->len;k++){
+            long j=m->start+k,id=hgm_id[j];double row[3]={id,hgm_l[2*j],hgm_l[2*j+1]};
+            if(id<0 || (size_t)id>=hg_cap || !hg_ptr[id] || !isfinite(row[1]) || !isfinite(row[2])) MPI_Abort(MPI_COMM(simpar),2);
+            if(fwrite(row,sizeof(double),3,fp)!=3) MPI_Abort(MPI_COMM(simpar),2);
+        }
+    }
+    int failed=ferror(fp);if(fclose(fp)!=0) failed=1;if(failed) MPI_Abort(MPI_COMM(simpar),2);
+    fprintf(stderr,"[MPI_HG_MODES] rank=%d modes=%ld support=%ld build_failures=%ld; no application\n",MYID(simpar),hgm_n,total,hgm_nfail);
+}
 #define HG_MAXS 512
 static void hg_cell(const sub_poly *S, treevorork4particletype *ibp, double rho, double P, double gam){
 	int n = S->n, k, q;
@@ -972,6 +1400,7 @@ static void hg_cell(const sub_poly *S, treevorork4particletype *ibp, double rho,
 		HG_ADD((long)PINDX(j), j, yx, yy, w);
 		nbase[k] = 0;
 		size_t jid = (size_t)PINDX(j);
+		shf_require_current((long)jid);
 		if(jid < shf_cap){
 			int m2;
 			for(m2 = 0; m2 < shf_n[jid]; m2++){
@@ -4296,6 +4725,69 @@ static int voro_sec_short(SimParameters *simpar, Voro2D_Corner *vc, int ip, doub
 	double reach = fmin(fmin(cx - lox, hix - cx), fmin(cy - loy, hiy - cy));
 	return 2*Rv > reach;
 }
+/* Return a kernel-sum radius only if its entire disk is covered by the
+ * searched linked-cell block. Negative means expand; zero means invalid.
+ * Independent of cell volume and of distance ordering. Single-rank gate
+ * below avoids claiming that a local block certifies distributed halos. */
+static double qr_adaptive_radius(SimParameters *simpar, Voro2D_point *v, int n,
+        Voro2D_point *center, int ix, int iy, int R){
+    if(n>4096) return 0;
+    double cs=BASICCELL_CELLWIDTH(simpar), x0=Xmin_HydroExam(simpar)-cs, y0=Ymin_HydroExam(simpar)-cs;
+    int mx=BASICCELL_MX(simpar), my=BASICCELL_MY(simpar);
+    double lx=x0+(ix-R>0?ix-R:0)*cs, hx=x0+(ix+R+1<mx?ix+R+1:mx)*cs;
+    double ly=y0+(iy-R>0?iy-R:0)*cs, hy=y0+(iy+R+1<my?iy+R+1:my)*cs;
+    double hi=fmin(fmin(center->x-lx,hx-center->x),fmin(center->y-ly,hy-center->y))*(1-1e-12);
+    if(!(hi>0)) return 0;
+    double d2[4096],sum=0; int count=0;
+    for(int j=0;j<n;j++) if(v[j].indx!=center->indx){
+        double dx=v[j].x-center->x,dy=v[j].y-center->y,d=dx*dx+dy*dy;
+        if(!(d>0)) return 0;
+        d2[count++]=d; double z=fmax(0,1-d/(hi*hi));sum+=z*z;
+    }
+    if(sum<=12) return -1;
+    double lo=0;
+    for(int it=0;it<55;it++){
+        double mid=(lo+hi)*.5,inv=1/(mid*mid);sum=0;
+        for(int j=0;j<count;j++){double z=fmax(0,1-d2[j]*inv);sum+=z*z;}
+        if(sum<12) lo=mid; else hi=mid;
+    }
+    return (lo+hi)*.5;
+}
+/* Single-rank periodic fallback: enumerate real particles, not a truncated
+ * padding strip. Only supports radii < half the shortest box length, so each
+ * physical particle contributes exactly one periodic image. */
+static double qr_periodic_radius(SimParameters *simpar,Voro2D_point *center,int *count){
+    double Lx=KH_SIMBOX(simpar).x.max-KH_SIMBOX(simpar).x.min;
+    double Ly=KH_SIMBOX(simpar).y.max-KH_SIMBOX(simpar).y.min;
+    double limit=.5*fmin(Lx,Ly),reach=2*BASICCELL_CELLWIDTH(simpar);
+    treevorostressrk4particletype *all=(treevorostressrk4particletype*)VORORK4_TBP(simpar);
+    for(;;){
+        if(!(reach>0 && reach<limit)) return 0;
+        double ds[4096],sum=0;int n=0;
+        for(int j=0;j<VORO_NP(simpar);j++){
+            if(PINDX(all+j)==center->indx) continue;
+            double dx=all[j].x-center->x,dy=all[j].y-center->y;
+            dx-=Lx*nearbyint(dx/Lx);dy-=Ly*nearbyint(dy/Ly);
+            double d=dx*dx+dy*dy;
+            if(!(d>0)) return 0;
+            if(d>=reach*reach) continue;
+            if(n>=4096) return 0;
+            ds[n]=d;qr_periodic_samples[n].x=dx;qr_periodic_samples[n].y=dy;
+            qr_periodic_samples[n].indx=PINDX(all+j);qr_periodic_samples[n].bp=all+j;
+            double z=1-d/(reach*reach);sum+=z*z;n++;
+        }
+        if(sum>12){
+            double lo=0,hi=reach;
+            for(int it=0;it<55;it++){
+                double mid=.5*(lo+hi),inv=1/(mid*mid);sum=0;
+                for(int j=0;j<n;j++){double z=fmax(0,1-ds[j]*inv);sum+=z*z;}
+                if(sum<12) lo=mid;else hi=mid;
+            }
+            *count=n;return .5*(lo+hi);
+        }
+        reach*=1.5;
+    }
+}
 void updateDenW2Pressure2DBlend(
 		SimParameters *simpar,
 		postype xmin, postype ymin, postype xmax, postype ymax,
@@ -4307,6 +4799,22 @@ void updateDenW2Pressure2DBlend(
 			void (*)(SimParameters *, postype)),
 		postype Dtime
 		){
+	const char *operator_path=getenv("GFS_QR_OPERATOR_DUMP");
+	int smooth_qr=gfs_qr_smooth(); /* initialize before threaded cell loops */
+    int adaptive_qr=gfs_qr_adaptive();
+    if(adaptive_qr && (!smooth_qr || NID(simpar)!=1 || mkLinkedList2D!=mkLinkedList2D_oExam)){
+        fprintf(stderr,"[QR_ADAPTIVE] requires smooth QR, one MPI rank and periodic linked cells\n"); MPI_Abort(MPI_COMM(simpar),2);
+    }
+	if(smooth_qr && (!gfs_q2_rank() || !gfs_q3() || gfs_lsf_order()!=2)){
+		fprintf(stderr,"[QR_SMOOTH] requires rank-revealing cubic reconstruction\n"); MPI_Abort(MPI_COMM(simpar),2);
+	}
+	if(operator_path){
+		const char *probe=getenv("GFS_MPI_GEOMETRY_ONLY");
+		if(!probe || atoi(probe)<=0 || NID(simpar)!=1 || !gfs_q2_rank() || gfs_lsf_order()!=2)
+			MPI_Abort(MPI_COMM(simpar),2);
+		q2_operator_fp=fopen(operator_path,"wbx");
+		if(!q2_operator_fp) MPI_Abort(MPI_COMM(simpar),2);
+	}
 	if(gfs_subzone_on()){
 		if(NID(simpar) > 1 || voro_disc_radius(simpar) > 0 || GAS_Kappa(simpar) != 0 || gfs_dynw2_on()){
 			fprintf(stderr, "[SUBZ] GFS_SUBZONE: one MPI rank, no EUNHA_VORO_RHO, W=0 only\n"); exit(1);
@@ -4314,7 +4822,7 @@ void updateDenW2Pressure2DBlend(
 		sub_ensure(simpar);
 	}
 	if(gfs_shared_geom_on()){
-		if(NID(simpar) > 1){ fprintf(stderr, "[SHGEOM] GFS_SHARED_GEOM: one MPI rank only\n"); exit(1); }
+		if(NID(simpar) > 1 && !shf_geometry_probe_active){ fprintf(stderr, "[SHGEOM] GFS_SHARED_GEOM: one MPI rank only\n"); exit(1); }
 		shf_ensure(simpar);
 	}
 	if(gfs_tcf_face_z() || gfs_periodic_complete()){ cen_ensure(simpar); pc_ncap = 0; pc_vsum = 0; voro_sec_fail = 0; }
@@ -4668,6 +5176,14 @@ void updateDenW2Pressure2DBlend(
 						nneigh = nneigh_e;
 					}
 				}
+                double qr_radius=0;int qr_periodic_count=0;
+                if(adaptive_qr){
+                    qr_radius=qr_adaptive_radius(simpar,neighbors,nneigh,&center,ix,iy,R_searched);
+                    if(qr_radius<=0) qr_radius=qr_periodic_radius(simpar,&center,&qr_periodic_count);
+                    if(!(qr_radius>0)){
+                        fprintf(stderr,"[QR_ADAPTIVE] periodic support failure owner=%ld\n",(long)center.indx);MPI_Abort(MPI_COMM(simpar),2);
+                    }
+                }
 				if(voro_sec_short(simpar, vorocorner, ip, (double)center.x, (double)center.y, ix, iy, R_searched)){
 #ifdef _OPENMP
 #pragma omp atomic
@@ -5031,16 +5547,26 @@ void updateDenW2Pressure2DBlend(
 							 * R_kk > 64 eps sqrt(n) |col_k|. Start from the points within 2.5 hs and add
 							 * whole distance shells of the searched candidates until rank 5; else no fit. */
 							double hs = sqrt((double)ibp_rk4->volume);
+                            double qr_support2=adaptive_qr ? qr_radius*qr_radius : 6.25*hs*hs;
 							int nwork = 0, kk;
 							for(kk = 0; kk < nneigh; kk++) if(neighbors[kk].indx != center.indx) nwork++;
+                            Voro2D_point *qr_work=neighwork;
+                            if(qr_periodic_count){qr_work=qr_periodic_samples;nwork=qr_periodic_count;}
+							if(smooth_qr && (!(hs>0) || nwork>4096)){
+								fprintf(stderr,"[QR_SMOOTH] invalid scale or candidate overflow owner=%ld nwork=%d\n",(long)PINDX(ibp_rk4),nwork); MPI_Abort(MPI_COMM(simpar),2);
+							}
 							int nc = 0;
 							for(kk = 0; kk < nwork && nc < 4096; kk++){
-								if(!neighwork[kk].bp || neighwork[kk].bp == (void*)ibp) continue;
-								double ex = (double)neighwork[kk].x, ey = (double)neighwork[kk].y, d2 = ex*ex + ey*ey;
+								if(!qr_work[kk].bp || qr_work[kk].bp == (void*)ibp) continue;
+								double ex = (double)qr_work[kk].x, ey = (double)qr_work[kk].y, d2 = ex*ex + ey*ey;
 								if(!(d2 > 0)) continue;
-								treevorostressrk4particletype *jq = (treevorostressrk4particletype*)(neighwork[kk].bp);
+								treevorostressrk4particletype *jq = (treevorostressrk4particletype*)(qr_work[kk].bp);
 								double X = ex/hs, Y = ey/hs, sw = hs/sqrt(d2);
+								double taper=1;
+								if(smooth_qr){ double z=fmax(0,1-d2/qr_support2); taper=z*z; sw*=taper; }
+								q2r_taper[nc]=taper;
 								q2r_cd2[nc] = d2;
+								if(q2_operator_fp) q2r_candidate_id[nc]=(long)PINDX((treevorork4particletype*)jq);
 								q2r_cph[nc][0] = sw*X; q2r_cph[nc][1] = sw*Y; q2r_cph[nc][2] = sw*0.5*X*X; q2r_cph[nc][3] = sw*X*Y/sqrt(2.0); q2r_cph[nc][4] = sw*0.5*Y*Y;
 								q2r_cph[nc][5] = sw*X*X*X/6; q2r_cph[nc][6] = sw*X*X*Y/(2*sqrt(3.0)); q2r_cph[nc][7] = sw*X*Y*Y/(2*sqrt(3.0)); q2r_cph[nc][8] = sw*Y*Y*Y/6;
 								q2r_cdq[nc][0] = sw*(double)(jq->vx - ibp->vx); q2r_cdq[nc][1] = sw*(double)(jq->vy - ibp->vy);
@@ -5048,7 +5574,7 @@ void updateDenW2Pressure2DBlend(
 								q2r_cord[nc] = nc; nc++;
 							}
 							{ int a_, b_; for(a_ = 1; a_ < nc; a_++){ int t_ = q2r_cord[a_]; double v_ = q2r_cd2[t_]; b_ = a_ - 1; while(b_ >= 0 && q2r_cd2[q2r_cord[b_]] > v_){ q2r_cord[b_+1] = q2r_cord[b_]; b_--; } q2r_cord[b_+1] = t_; } }
-							int nuse = 0; while(nuse < nc && q2r_cd2[q2r_cord[nuse]] <= 6.25*hs*hs) nuse++;
+							int nuse = 0; while(nuse < nc && q2r_cd2[q2r_cord[nuse]] <= qr_support2) nuse++;
 							int ok = 0, rank = 0, ncol = gfs_q3() ? 9 : 5, nuse0 = nuse;
 							q3_retry:;
 							double Rm[9][9], xs[4][9];
@@ -5073,8 +5599,12 @@ void updateDenW2Pressure2DBlend(
 									if(rank == ncol){ ok = 1; break; }
 								}
 								if(nuse >= nc) break;
+								if(smooth_qr) break; /* fixed compact support; no abrupt wider shell */
 								double dnext = q2r_cd2[q2r_cord[nuse]];
 								while(nuse < nc && q2r_cd2[q2r_cord[nuse]] <= dnext*(1 + 1e-12)) nuse++;
+							}
+							if(smooth_qr && !ok){
+								fprintf(stderr,"[QR_SMOOTH] insufficient rank owner=%ld rank=%d nuse=%d nc=%d\n",(long)PINDX(ibp_rk4),rank,nuse,nc); MPI_Abort(MPI_COMM(simpar),2);
 							}
 							if(!ok && ncol == 9){
 #ifdef _OPENMP
@@ -5106,6 +5636,38 @@ void updateDenW2Pressure2DBlend(
 								}
 							} else {
 								int q_, a_, c_, z;
+                                /* Export the actual QR gradient linear map, not a
+                                 * separately fitted surrogate. Six doubles per record:
+                                 * owner, source, d/dx coefficient, d/dy coefficient,
+                                 * periodic-image dx, dy. Includes the central term. */
+                                if(q2_operator_fp){
+                                    double dual[2][9]={{0}},sumx=0,sumy=0;
+                                    for(int axis=0;axis<2;axis++) for(int c=0;c<ncol;c++){
+                                        double v=c==axis ? 1:0;
+                                        for(int k=0;k<c;k++) v-=Rm[k][c]*dual[axis][k];
+                                        dual[axis][c]=v/Rm[c][c];
+                                    }
+#ifdef _OPENMP
+#pragma omp critical(qr_operator_export)
+#endif
+                                    {
+                                        long owner=(long)PINDX(ibp_rk4);
+                                        for(int z=0;z<nuse;z++){
+                                            int j=q2r_cord[z];double dist=sqrt(q2r_cd2[j]),wx=0,wy=0;
+                                            if(smooth_qr && q2r_taper[j]==0) continue;
+                                            for(int c=0;c<ncol;c++){wx+=dual[0][c]*q2r_Qc[z][c];wy+=dual[1][c]*q2r_Qc[z][c];}
+                                            wx/=dist;wy/=dist;
+                                            if(smooth_qr){wx*=q2r_taper[j];wy*=q2r_taper[j];}
+                                            sumx+=wx;sumy+=wy;
+                                            double unscale=smooth_qr ? dist/q2r_taper[j]:dist;
+                                            double row[6]={owner,q2r_candidate_id[j],wx,wy,q2r_cph[j][0]*unscale,q2r_cph[j][1]*unscale};
+                                            if(fwrite(row,sizeof(double),6,q2_operator_fp)!=6) MPI_Abort(MPI_COMM(simpar),2);
+                                        }
+                                        double row[6]={owner,owner,-sumx,-sumy,0,0};
+                                        if(fwrite(row,sizeof(double),6,q2_operator_fp)!=6) MPI_Abort(MPI_COMM(simpar),2);
+                                    }
+                                }
+
 								if(nuse > (int)(0) && q2r_cd2[q2r_cord[nuse-1]] > 6.25*hs*hs && gfs_tcf_qbp()){
 #ifdef _OPENMP
 #pragma omp atomic
@@ -5767,6 +6329,11 @@ _gpu_tess_skip_cpu:
 #else
 	my_free(VORORK4_TBPP(simpar));
 #endif
+	if(q2_operator_fp){
+		int bad=ferror(q2_operator_fp);if(fclose(q2_operator_fp)!=0) bad=1;
+		q2_operator_fp=NULL;if(bad) MPI_Abort(MPI_COMM(simpar),2);
+	}
+	gfs_mpi_coupled_refresh(simpar);
 }
 
 /* ================================================================
@@ -6489,6 +7056,72 @@ static void kepler_accel(postype x, postype y, postype *ax, postype *ay){
 }
 
 
+/* Optional global circular-departure work diagnostic. Force arrays are
+ * indexed by persistent ID; each owner writes its own entry in the force
+ * loop. Output is trial-stage data and must be matched to accepted steps.
+ * hydro_minus_TCF is pressure only for the canonical TCF configuration. */
+static double *orbit_qx=NULL, *orbit_qy=NULL;
+static size_t orbit_cap=0;
+static void kepler_center(postype *cx, postype *cy);
+/* Defined by reversible_memory_runtime.h below. Use the same stage
+ * acceleration as the RK increments, never a saved-state reconstruction. */
+static double rmem_a(long id,int component);
+static int orbit_work_on(void){
+	const char *e=getenv("GFS_ORBIT_WORK_AUDIT"); return e && atoi(e)>0;
+}
+static void orbit_work_init(SimParameters *simpar){
+	if(!orbit_work_on()) return;
+	postype hx; double hom=hill_omega(&hx);
+	const char *ic=getenv("EUNHA_IC");
+	if(NID(simpar)!=1 || !ic || strcmp(ic,"kepler") ||
+	   !gfs_kepler_soft_spline() || gfs_kepler_force_gizmo() || hom!=0 ||
+	   GAS_XSPHEPS(simpar)!=0 || GAS_ACCX(simpar)!=0 || GAS_ACCY(simpar)!=0 ||
+	   !gfs_tcf_on() || !gfs_hg_split() || !gfs_hg_affine() || gfs_hydro_on()!=1){
+		fprintf(stderr,"[ORBIT_WORK] requires MPI1 canonical spline Kepler, TCF, split HG, no XSPH/external acceleration\n");
+		MPI_Abort(MPI_COMM(simpar),2); abort();
+	}
+	size_t ps=TVORORK4_DDINFO(simpar)[0].n_size, mx=0; int i;
+	char *b=(char*)VORORK4_TBP(simpar);
+	for(i=0;i<VORO_NP(simpar);i++){
+		size_t id=(size_t)PINDX((treevorork4particletype*)(b+i*ps));
+		if(id+1>mx) mx=id+1;
+	}
+	if(mx>orbit_cap){
+		orbit_qx=(double*)realloc(orbit_qx,mx*sizeof(double));
+		orbit_qy=(double*)realloc(orbit_qy,mx*sizeof(double));
+		if(!orbit_qx || !orbit_qy) abort(); orbit_cap=mx;
+	}
+}
+static void orbit_work_stage(treevorostressrk4particletype *sbp,int np,double wdt,int stage){
+	if(!orbit_work_on()) return;
+	postype cx,cy; kepler_center(&cx,&cy);
+	double rc=gfs_kepler_rc(), hyd=0,qwork=0,shear=0,aux=0; int i;
+	for(i=0;i<np;i++){
+		if(gfs_kepler_frozen(sbp[i].x,sbp[i].y)) continue;
+		double x=sbp[i].x-cx,y=sbp[i].y-cy,r=hypot(x,y);
+		if(r<=1e-12) continue;
+		double u=r/rc,M=kepler_spline_mass(u),dMdu=0;
+		if(u<=.5) dMdu=32*u*u-192*pow(u,4)+192*pow(u,5);
+		else if(u<1) dMdu=64*u*u-192*pow(u,3)+192*pow(u,4)-64*pow(u,5);
+		double om=sqrt(M/(r*r*r));
+		double dlogom=.5*(u*dMdu/M-3);
+		double ux=sbp[i].vx+y*om,uy=sbp[i].vy-x*om;
+		double ur=(ux*x+uy*y)/r,ut=(-ux*y+uy*x)/r,m=sbp[i].mass;
+		size_t id=(size_t)PINDX((treevorork4particletype*)(sbp+i));
+		if(id>=orbit_cap) abort();
+		hyd+=m*(ux*sbp[i].ax+uy*sbp[i].ay);
+		aux+=m*(ux*rmem_a((long)id,0)+uy*rmem_a((long)id,1));
+		qwork+=ux*orbit_qx[id]+uy*orbit_qy[id];
+		shear-=m*om*dlogom*ur*ut;
+	}
+	fprintf(stderr,"[ORBIT_WORK_STAGE] stage=%d wdt=%.17g hydro_minus_TCF=%.17g TCF=%.17g shear=%.17g total=%.17g trial=1 scope=global_active\n",
+		stage,wdt,hyd-qwork,qwork,shear,hyd+shear);
+	/* Keep the legacy record stable for existing parsers. HG split updates
+ * are finite separate maps and are intentionally not part of this rate. */
+	fprintf(stderr,"[ORBIT_WORK_MEMORY_STAGE] stage=%d wdt=%.17g auxiliary=%.17g hydro=%.17g shear=%.17g total=%.17g trial=1 scope=global_active_RK_rate_excludes_HG_split\n",
+		stage,wdt,aux,hyd,shear,hyd+shear+aux);
+}
+
 /* GFS_E_AUDIT=1: split the RK4 energy change of one step into
  *   hyd  = sum_k w_k sum_i die_i dt   (face fluxes; 0 if every face pair
  *          uses one pressure and one face velocity on both ends)
@@ -6505,6 +7138,14 @@ static int gfs_eaud_on(void){
 }
 static double gfs_eaud_hyd = 0, gfs_eaud_wg = 0, gfs_eaud_eh0 = 0, gfs_eaud_ep0 = 0;
 static double gfs_eaud_hyd_abs = 0;
+/* Actual RK increments, weighted only at the four evolution stages.
+ * Reset per attempt; commit after acceptance. Fields: Px, Py, Lz, K+U, Phi. */
+static double gfs_accepted_rk[5] = {0};
+static int gfs_accepted_rk_mask = 0;
+/* Raw hydro energy rates integrated at actual RK stages: all, frozen, active.
+ * Diagnostic only; no force or state writes. Commit only accepted attempts. */
+static double gfs_accepted_hydro_partition[3] = {0};
+
 static postype kepler_phi(postype x, postype y);
 static void gfs_eaud_stage(treevorostressrk4particletype *sbp, int np,
 		int (*targetBP)(treevorork4particletype*, postype, postype),
@@ -6591,11 +7232,33 @@ static void gfs_eaud_stage(treevorostressrk4particletype *sbp, int np,
 		if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
 		postype gx = 0, gy = 0;
 		kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
+		double hydro_increment = w*(double)dt*(double)sbp[i].die;
+		gfs_accepted_hydro_partition[0] += hydro_increment;
+		gfs_accepted_hydro_partition[gfs_kepler_frozen(sbp[i].x,sbp[i].y)?1:2] += hydro_increment;
 		h  += (double)sbp[i].die * (double)dt;
 		ha += fabs((double)sbp[i].die * (double)dt);
 		g  += (double)sbp[i].mass * ((double)sbp[i].vx*gx + (double)sbp[i].vy*gy) * (double)dt;
 	}
 	gfs_eaud_hyd += w*h; gfs_eaud_hyd_abs += w*ha; gfs_eaud_wg += w*g;
+	/* Read the increments actually used, including frozen-cell zeroing.
+	 * k already contains dt; multiplying by dt again would be incorrect. */
+	postype cx,cy; kepler_center(&cx,&cy);
+	if(gfs_rk_stage>=1 && gfs_rk_stage<=4) gfs_accepted_rk_mask |= 1 << (gfs_rk_stage-1);
+	for(i=0;i<np;i++){
+		if(!targetBP((treevorork4particletype*)(sbp+i),Lx,Ly)) continue;
+		double dx=0,dy=0,dvx=0,dvy=0,dU=0;
+		#define READ_RK(N) case N: dx=sbp[i].rk4.k##N##x; dy=sbp[i].rk4.k##N##y; dvx=sbp[i].rk4.k##N##vx; dvy=sbp[i].rk4.k##N##vy; dU=sbp[i].rk4.k##N##ie; break
+		switch(gfs_rk_stage){ READ_RK(1); READ_RK(2); READ_RK(3); READ_RK(4); default: continue; }
+		#undef READ_RK
+		double m=sbp[i].mass, vx=sbp[i].vx, vy=sbp[i].vy;
+		postype gx=0,gy=0; kepler_accel(sbp[i].x,sbp[i].y,&gx,&gy);
+		gfs_accepted_rk[0] += w*m*dvx;
+		gfs_accepted_rk[1] += w*m*dvy;
+		gfs_accepted_rk[2] += w*m*(((double)sbp[i].x-cx)*dvy-((double)sbp[i].y-cy)*dvx+dx*vy-dy*vx);
+		gfs_accepted_rk[3] += w*(dU+m*(vx*dvx+vy*dvy));
+		gfs_accepted_rk[4] -= w*m*((double)gx*dx+(double)gy*dy);
+	}
+
 }
 static void gfs_eaud_start(treevorostressrk4particletype *sbp, int np,
 		int (*targetBP)(treevorork4particletype*, postype, postype),
@@ -6610,6 +7273,8 @@ static void gfs_eaud_start(treevorostressrk4particletype *sbp, int np,
 	}
 	gfs_eaud_eh0 = eh; gfs_eaud_ep0 = ep;
 	gfs_eaud_hyd = gfs_eaud_wg = gfs_eaud_hyd_abs = 0;
+	memset(gfs_accepted_rk,0,sizeof(gfs_accepted_rk)); gfs_accepted_rk_mask=0;
+	memset(gfs_accepted_hydro_partition,0,sizeof(gfs_accepted_hydro_partition));
 }
 
 /* Orbital time step for the central mass. EUNHA_KEPLER_DTETA = eta > 0
@@ -7239,7 +7904,18 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 		treevorork4particletype *(*find2DCellBP)(SimParameters *, int , int , int *)){
 	static int s_force_call = 0;
 	s_force_call++;
+	const char *dt_audit_env = getenv("GFS_GEOM_DT_AUDIT");
+	int dt_audit_on = dt_audit_env && atoi(dt_audit_env) > 0;
+	double dt_audit_min = 1e300, dt_audit_data[7] = {0};
+	/* Per-thread diagnostic minima; merge after the parallel loop. */
+	double dtb_cfl = 1e300, dtb_geom = 1e300, dtb_relative = 1e300;
+	static double dt3c = -1;
+	if(dt3c < 0){ const char *e_ = getenv("GFS_DT3_COEF"); dt3c = (e_ && e_[0]) ? atof(e_) : 0.1; }
+	long dt_audit_i = -1, dt_audit_j = -1;
 	tcf_dump_switch(s_force_call);   /* serial entry, outside the threaded cell loop */
+	const char *shared_terms_env=getenv("GFS_TCF_SHARED_ALGEBRA");
+	int shared_terms=shared_terms_env && atoi(shared_terms_env)>0;
+	if(!shf_geometry_probe_active) shf_dump_current(simpar,s_force_call);
 	gfs_pair_face_ends = 0;
 	/* Diagnostic call thresholds.  Defaults catch NP=2 OMP=8 (call=752);
 	 * env vars EUNHA_DBG_LO/HI let solo (call=464) reuse same code without
@@ -7307,7 +7983,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 	if(gfs_faud_on()) faud_prepare(VORORK4_TBP(simpar), TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d gamma1 before OMP loop mx=%d my=%d call=%d\n",MYID(simpar),mx,my,s_force_call); fflush(stderr); }
 #ifdef _OPENMP
-#pragma omp parallel for reduction(min:Dtime)
+#pragma omp parallel for reduction(min:Dtime,dtb_cfl,dtb_geom,dtb_relative)
 #endif
 	for(iy=1;iy<my-1;iy++){
 		if(do_iy_dbg){
@@ -7431,6 +8107,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 				 * Hernquist 2002 MNRAS 333, 649. */
 				double dK_diss = 0;
 				double tcf_tds = 0, tcf_dV = 0;
+				double orbit_cell_qx=0,orbit_cell_qy=0;
 				double tg_nx = 0, tg_ny = 0, tg_ex = 0, tg_ey = 0, tg_bis = 0, tg_en = 0, tg_amin = 1e300; int tg_nf = 0;   /* GFS_TCF_DUMP geometry */
 				postype dK_pdv_factor = (postype)GAS_DKPDVFACTOR(simpar);
 				/* XSPH face-area-weighted velocity offset accumulator
@@ -8625,19 +9302,23 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							}
 							double Q = gfs_tcf_q0() ? 0
 								: (gfs_tcf_qlaw() == 2 ? (ducell != 0 ? Zq*mm*mm/ducell : 0) : Zq*mm);
+							TcfFaceTerms terms;
+							if(shared_terms)terms=tcf_face_terms(A,d,ex,ey,tx,ty,Pi_,Pj_,vix,viy,vjx,vjy,ui,uj,Q);
 							double Pb = 0.5*(Pi_ + Pj_);
 							double ftx_ = -A*(Pj_ - Pi_)*tx/d, fty_ = -A*(Pj_ - Pi_)*ty/d;
-							fx += -A*(Pb + Q)*ex;
-							fy += -A*(Pb + Q)*ey;
+							if(shared_terms){ftx_=terms.tangent_x;fty_=terms.tangent_y;}
+							fx += shared_terms?terms.normal_x:-A*(Pb + Q)*ex;
+							fy += shared_terms?terms.normal_y:-A*(Pb + Q)*ey;
+							if(orbit_work_on()){orbit_cell_qx-=A*Q*ex;orbit_cell_qy-=A*Q*ey;}
 							if(gfs_tcf_notan()){
 #ifdef _OPENMP
 #pragma omp atomic
 #endif
 								tcf_tanwork += vix*ftx_ + viy*fty_;
 							} else { fx += ftx_; fy += fty_; }
-							dte += -A*(0.5*(Pj_*ui + Pi_*uj) + (Pj_*(vix*tx + viy*ty) - Pi_*(vjx*tx + vjy*ty))/d + 0.5*Q*(ui + uj));
-							tcf_tds += 0.5*A*Q*ducell;
-							tcf_dV += A*(0.5*(ui + uj) + ((vix - vjx)*tx + (viy - vjy)*ty)/d);
+							dte += shared_terms?terms.energy:-A*(0.5*(Pj_*ui + Pi_*uj) + (Pj_*(vix*tx + viy*ty) - Pi_*(vjx*tx + vjy*ty))/d + 0.5*Q*(ui + uj));
+							tcf_tds += shared_terms?terms.heat:0.5*A*Q*ducell;
+							tcf_dV += shared_terms?terms.volume:A*(0.5*(ui + uj) + ((vix - vjx)*tx + (viy - vjy)*ty)/d);
 							if(tcf_dump_fp()){
 								/* closure and bisector residuals of this face */
 								double nx_ = (double)dS.x/A, ny_ = (double)dS.y/A;
@@ -8856,12 +9537,7 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						postype dt = 2*Courant*dramp_cfl/vsig;
 						/* faces between two frozen Kepler-background particles never move: exclude them from the dt limits */
 						if(gfs_kepler_frozen(ibp_rk4->x, ibp_rk4->y) && gfs_kepler_frozen(jbp->x, jbp->y)) dt = (postype)1e300;
-						if((double)dt < gfs_dtb[0]){
-#ifdef _OPENMP
-#pragma omp critical (gfs_dtb)
-#endif
-							{ if((double)dt < gfs_dtb[0]) gfs_dtb[0] = (double)dt; }
-						}
+						if((double)dt < dtb_cfl) dtb_cfl = (double)dt;
 						if(gfs_tcf_on() && (gfs_hg_affine() || gfs_tcf_face_z()) && !jbp_is_ghost){
 							/* design 10: dt_geom = 0.25 h_f/(c_f + |dv.e|), h_f = d/2, c_f the face subzone sound speed */
 							double cfi = (double)ibp_csound, cfj = (double)jbp_csound;
@@ -8875,12 +9551,21 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							}
 							double dtg = 0.25*0.5*(double)dramp/((cfi > cfj ? cfi : cfj) + fabs((double)VdotR));
 							if(dt >= (postype)1e300) dtg = 1e300;   /* frozen-frozen face */
-							if(dtg < gfs_dtb[1]){
+							if(dt_audit_on){
 #ifdef _OPENMP
-#pragma omp critical (gfs_dtb)
+#pragma omp critical (gfs_geom_dt_audit)
 #endif
-								{ if(dtg < gfs_dtb[1]) gfs_dtb[1] = dtg; }
+								{
+									long ai = (long)PINDX(ibp_rk4), aj = (long)PINDX((treevorork4particletype*)jbp);
+									if(dtg < dt_audit_min || (dtg == dt_audit_min && (ai < dt_audit_i || (ai == dt_audit_i && aj < dt_audit_j)))){
+										dt_audit_min = dtg; dt_audit_i = ai; dt_audit_j = aj;
+										dt_audit_data[0] = dramp; dt_audit_data[1] = cfi; dt_audit_data[2] = cfj;
+										dt_audit_data[3] = VdotR; dt_audit_data[4] = ibp_rk4->x;
+										dt_audit_data[5] = ibp_rk4->y; dt_audit_data[6] = ibp_rk4->volume;
+									}
+								}
 							}
+							if(dtg < dtb_geom) dtb_geom = dtg;
 							if(dtg < (double)dt) dt = (postype)dtg;
 						}
 
@@ -8890,15 +9575,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						postype uij2 = uij_x_half*uij_x_half + uij_y_half*uij_y_half;
 						if(uij2 > 0 && dt < (postype)1e300){   /* skip frozen-frozen faces */
 							/* GFS_DT3_COEF (default 0.1): for time-convergence tests */
-							static double dt3c = -1;
-							if(dt3c < 0){ const char *e_ = getenv("GFS_DT3_COEF"); dt3c = (e_ && e_[0]) ? atof(e_) : 0.1; }
 							postype dt3 = (postype)dt3c*dramp_cfl / (2.0*sqrt(uij2));
-							if((double)dt3 < gfs_dtb[2]){
-#ifdef _OPENMP
-#pragma omp critical (gfs_dtb)
-#endif
-								{ if((double)dt3 < gfs_dtb[2]) gfs_dtb[2] = (double)dt3; }
-							}
+							if((double)dt3 < dtb_relative) dtb_relative = (double)dt3;
 							if(dt3 < dt) dt = dt3;
 						}
 
@@ -9101,6 +9779,11 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 					}
 				}
 
+				if(orbit_work_on()){
+					size_t oid=(size_t)PINDX(ibp_rk4);
+					if(oid>=orbit_cap) abort();
+					orbit_qx[oid]=orbit_cell_qx;orbit_qy[oid]=orbit_cell_qy;
+				}
 				if(gfs_tcf_on() && tcf_sacc_file()){
 					size_t id_ = (size_t)PINDX(ibp_rk4);
 					if(id_ < tcf_cap) tcf_rate[id_] = tcf_tds/(double)ibp_rk4->ie;
@@ -9112,7 +9795,9 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 					tcf_cellneg++;
 				}
 				if(vaud_on_l && (size_t)PINDX(ibp_rk4) < vaud_cap)
-					vaud_rate[(size_t)PINDX(ibp_rk4)] = dvb;
+					/* TCF work uses its geometric face motion, not the HLLC ua
+					 * retained by the other force branch. Match the active equation. */
+					vaud_rate[(size_t)PINDX(ibp_rk4)] = gfs_tcf_on() ? tcf_dV : dvb;
 				if(sedov_phase1_on()){
 					/* die holds dE/dt. The kick rebuilds ie from E − kinetic. */
 					ibp_rk4->die = (postype)dte;
@@ -9282,7 +9967,15 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 			{ fprintf(stderr,"[FORCE_DBG] r%d iy=%d out call=%d\n", MYID(simpar), iy, s_force_call); fflush(stderr); }
 		}
 	}
+	if(dtb_cfl < gfs_dtb[0]) gfs_dtb[0] = dtb_cfl;
+	if(dtb_geom < gfs_dtb[1]) gfs_dtb[1] = dtb_geom;
+	if(dtb_relative < gfs_dtb[2]) gfs_dtb[2] = dtb_relative;
 	if(gfs_faud_on()) faud_match(s_force_call);
+	if(shf_epoch_audit) fprintf(stderr,"[SHF_EPOCH] call=%d epoch=%lu checked_reads_cumulative=%ld phase=%d rk_stage=%d\n",
+		s_force_call,shf_epoch,shf_epoch_reads,gfs_dt_audit_phase,gfs_dt_audit_phase ? 0 : gfs_rk_stage);
+	if(dt_audit_on) fprintf(stderr, "[GEOM_DT_AUDIT] rank=%d call=%d phase=%d rk_stage=%d trial=1 i=%ld j=%ld dt_geom=%.17g distance=%.17g cfi=%.17g cfj=%.17g vdotr=%.17g x=%.17g y=%.17g volume=%.17g force_dt=%.17g\n",
+		MYID(simpar), s_force_call, gfs_dt_audit_phase, gfs_dt_audit_phase ? 0 : gfs_rk_stage,
+		dt_audit_i, dt_audit_j, dt_audit_min, dt_audit_data[0], dt_audit_data[1], dt_audit_data[2], dt_audit_data[3], dt_audit_data[4], dt_audit_data[5], dt_audit_data[6], (double)Dtime);
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d delta impl exit Dtime=%g call=%d\n", MYID(simpar), (double)Dtime, s_force_call); fflush(stderr); }
 	return Dtime;
 }
@@ -10316,7 +11009,10 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 	if(gfs_hg_affine() && gfs_subzone_on()){ fprintf(stderr, "[HG] GFS_HG_AFFINE and GFS_SUBZONE are exclusive (design: Phi = 0)\n"); exit(1); }
 	if((gfs_bprime() || gfs_hg_off()) && !(gfs_hg_affine() && gfs_hg_split())){ fprintf(stderr, "[BPRIME] GFS_BPRIME/GFS_HG_OFF require GFS_HG_AFFINE=1 GFS_HG_SPLIT=1\n"); exit(1); }
 	if(gfs_bulk_affine() && !(gfs_hg_affine() && gfs_hg_split())){ fprintf(stderr, "[BULK] GFS_BULK_AFFINE requires GFS_HG_AFFINE=1 GFS_HG_SPLIT=1\n"); exit(1); }
-	if(gfs_hg_affine()){
+	if(shf_geometry_probe_active && (!gfs_hg_split() || (hgm_building && !(hg_probe_modes_active && hg_probe_state_ready)))){
+		fprintf(stderr,"[MPI_FORCE_ONLY] HG application/mode building is prohibited\n");MPI_Abort(MPI_COMM(simpar),2);
+	}
+	if(gfs_hg_affine() && !shf_geometry_probe_active){
 		if(NID(simpar) > 1 || !gfs_shared_geom_on()){ fprintf(stderr, "[HG] GFS_HG_AFFINE needs GFS_SHARED_GEOM and one MPI rank\n"); exit(1); }
 		hg_ensure(simpar);
 		hgo_reset((long)VORO_NP(simpar));
@@ -10401,6 +11097,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 		MPI_Allreduce(&Dtime, &TDtime, 1, MPI_POSTYPE, MPI_MIN, MPI_COMM(simpar));
 		Dtime = TDtime;
 	}
+	if((double)Dtime < gfs_step_dtmin) gfs_step_dtmin = (double)Dtime;
 	if(MYID(simpar)==0){ fprintf(stderr,"[FORCE_DBG] iota wrapper after allreduce\n"); fflush(stderr); }
 	return Dtime;
 }
@@ -13899,6 +14596,11 @@ static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp
 	static double c_dI = 0, c_diss = 0, c_adb = 0, c_ag = 0, c_absgcl = 0;
 	long vdec_n = 0; double vdec_dI = 0, vdec_diss = 0, vdec_adb = 0, vdec_ag = 0, vdec_absgcl = 0;
 	double ra = 0, vs = 0, pw = 0, pws = 0, wb = 0; int i, nres = 0;
+	/* Optional instantaneous radial sample of the existing volume ledger.
+	 * This remains a between-K1 diagnostic; HG and retry caveats apply. */
+	double rlo=gfs_env_d("GFS_VOL_AUDIT_RMIN",0), rhi=gfs_env_d("GFS_VOL_AUDIT_RMAX",-1);
+	postype rcx,rcy; kepler_center(&rcx,&rcy);
+	double reg[10]={0}; long reg_n=0;
 	size_t max_id = 0;
 	for(i=0;i<np;i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id > max_id) max_id = id; }
 	vaud_ensure(max_id);
@@ -13931,12 +14633,25 @@ static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp
 			vdec_n++; vdec_dI += dI; vdec_diss += vaud_diss[id]; vdec_adb += vaud_adb[id]; vdec_ag += ag;
 			vdec_absgcl += fabs(vaud_adb[id] - ag);
 		}
+		if(rhi>rlo && vaud_have[id] && targetBP((treevorork4particletype*)(sbp+i),Lx,Ly)
+			&& !gfs_kepler_frozen(sbp[i].x,sbp[i].y) && !vaud_arcp[id] && !vaud_arc[id]){
+			double radius=hypot((double)sbp[i].x-rcx,(double)sbp[i].y-rcy);
+			if(radius>=rlo && radius<rhi){
+				double dv=V-vaud_vprev[id], residual=dv-vaud_book[id];
+				double P=sbp[i].pressure, Pm=.5*(P+vaud_p0[id]);
+				reg_n++; reg[0]+=V; reg[1]+=fabs(dv); reg[2]+=fabs(vaud_book[id]); reg[3]+=fabs(residual);
+				reg[4]+=P*fabs(residual); reg[5]+=P*residual;
+				reg[6]+=(double)sbp[i].ie-vaud_ie0[id]; reg[7]+=vaud_diss[id]; reg[8]+=vaud_adb[id]; reg[9]+=-Pm*dv;
+			}
+		}
 		vaud_ie0[id] = (double)sbp[i].ie; vaud_p0[id] = (double)sbp[i].pressure;
 		vaud_diss[id] = vaud_adb[id] = 0; vaud_arcp[id] = vaud_arc[id]; vaud_arc[id] = 0;
 		vaud_vprev[id] = V; vaud_book[id] = 0; vaud_have[id] = 1;
 	}
 	if(nres > 0 && MYID(simpar) == 0){
 		st++; pw_cum += pw; pws_cum += pws;
+		if(reg_n>0) fprintf(stderr,"[VAUD_REGION] sample=%d rmin=%.17g rmax=%.17g n=%ld volume=%.17g geom_abs=%.17g booked_abs=%.17g residual_abs=%.17g residual_abs_over_V=%.17g PdV_abs=%.17g PdV_signed=%.17g dU=%.17g diss_booked=%.17g ad_booked=%.17g ad_geom=%.17g scope=between_K1_active_cells\n",
+			st,rlo,rhi,reg_n,reg[0],reg[1],reg[2],reg[3],reg[3]/reg[0],reg[4],reg[5],reg[6],reg[7],reg[8],reg[9]);
 		fprintf(stderr, "[VAUD] step=%d n=%d res_abs/V=%.3e booked_abs/V=%.3e unbooked_PdV_abs=%.3e signed=%.3e cum_abs=%.3e cum_signed=%.3e w2clip=%ld\n",
 			st, nres, ra/vs, wb/vs, pw, pws, pw_cum, pws_cum, gfs_w2lin_nclip);
 		if(gfs_gcl_diag_on()) fprintf(stderr, "[GCLDIAG] step=%d cum_dI=%.3e\n", st, gfs_gcl_diag_de);
@@ -13951,23 +14666,46 @@ static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp
  * C = A0 (b q + sqrt(b^2 q^2 + kap U)), U = U0 + q0^2 (1 - e^{-2s})/(2 alpha); then
  * v_a -= (r0 - r1) l_a/(alpha m_a), U += (r0^2 - r1^2)/(2 alpha) (exact energy transfer). */
 static double hgs_heat = 0; static long hgs_nmode = 0, hgs_bad = 0;
+/* Opt-in constrained HG: keep RK4-frozen cells fixed and account for
+ * work by their prescribed velocities and heat removed at frozen owners. */
+static double hgs_boundary_work = 0, hgs_boundary_heat = 0;
+static int hg_frozen_consistent(void){
+    static int on = -1;
+    if(on < 0){ const char *e=getenv("GFS_HG_FROZEN_CONSISTENT"); on=e && atoi(e)>0; }
+    return on;
+}
 static void bp_apply_mode(hg_mode *M, double tau);
 static void hg_apply_mode(long mi, double tau){
-	hg_mode *M = hgm + mi; long z; double r0 = 0, al = 0;
-	if(M->kind == 2){ bp_apply_mode(M, tau); return; }
+	hg_mode *M = hgm + mi; long z; double r0 = 0, al = 0, rf = 0;
+	int constrained = hg_frozen_consistent();
+	if(M->kind == 2){
+		if(constrained){ fprintf(stderr,"[HG_BOUNDARY] constrained b-prime modes not implemented; reject configuration\n"); exit(5); }
+		bp_apply_mode(M, tau); return;
+	}
 	treevorork4particletype *ow = ((size_t)M->owner < hg_cap) ? hg_ptr[M->owner] : NULL;
 	if(!ow){ hgs_bad++; return; }
 	for(z = 0; z < M->len; z++){
 		long id = hgm_id[M->start + z]; treevorork4particletype *q = ((size_t)id < hg_cap) ? hg_ptr[id] : NULL;
 		if(!q){ hgs_bad++; return; }
 		double lx_ = hgm_l[2*(M->start + z)], ly_ = hgm_l[2*(M->start + z) + 1];
-		r0 += lx_*(double)q->vx + ly_*(double)q->vy; al += (lx_*lx_ + ly_*ly_)/(double)q->mass;
+		double rv = lx_*(double)q->vx + ly_*(double)q->vy;
+		r0 += rv;
+		if(constrained && gfs_kepler_frozen(q->x,q->y)) rf += rv;
+		else al += (lx_*lx_ + ly_*ly_)/(double)q->mass;
 	}
-	if(!(al > 0) || r0 == 0) return;
+	int owner_fixed = constrained && gfs_kepler_frozen(ow->x,ow->y);
+	if(r0 == 0) return;
+	if(!(al > 0)){
+		if(constrained && !owner_fixed){
+			fprintf(stderr,"[HG_BOUNDARY] active thermal owner with zero free mobility requires a boundary-heating solve\n"); exit(5);
+		}
+		/* No dynamic degree of freedom: the prescribed reservoir stays fixed. */
+		return;
+	}
 	if(M->onesided && r0 > 0) return;   /* bulk acts on compression only */
 	double U0 = (double)ow->ie, q0 = fabs(r0);
 	if(!(U0 > 0)){ hgs_bad++; return; }
-	#define HGS_F(s_) ({ double qq_ = q0*exp(-(s_)), UU_ = U0 + q0*q0*(-expm1(-2*(s_)))/(2*al); \
+	#define HGS_F(s_) ({ double qq_ = q0*exp(-(s_)), UU_ = U0 + (owner_fixed ? 0 : q0*q0*(-expm1(-2*(s_)))/(2*al)); \
 		al*M->A0*(M->b*qq_ + (M->onesided ? sqrt(M->kap*UU_) : sqrt(M->b*M->b*qq_*qq_ + M->kap*UU_))); })
 	double f0 = HGS_F(0.0);
 	int N = (int)ceil(f0*tau/0.25); if(N < 1) N = 1; if(N > 4096) N = 4096;
@@ -13981,12 +14719,20 @@ static void hg_apply_mode(long mi, double tau){
 	double dU = q0*q0*(-expm1(-2*sv))/(2*al), D = r0 - r1;
 	for(z = 0; z < M->len; z++){
 		long id = hgm_id[M->start + z]; treevorork4particletype *q = hg_ptr[id];
+		if(constrained && gfs_kepler_frozen(q->x,q->y)) continue;
 		double lx_ = hgm_l[2*(M->start + z)], ly_ = hgm_l[2*(M->start + z) + 1], c_ = D/(al*(double)q->mass);
 		q->vx -= (postype)(c_*lx_); q->vy -= (postype)(c_*ly_);
 	}
-	ow->ie += (postype)dU;
-	if(tcf_sacc_file() && (size_t)M->owner < tcf_cap) tcf_sacc[M->owner] += log1p(dU/U0);
-	hgs_heat += dU; hgs_nmode++; if(M->onesided) bulk_heat += dU;
+	/* I=D/al, Q=(r0^2-r1^2)/(2al). For free cells dK=-Q+I*rf.
+	 * Deposit Q only in a dynamic thermal owner; otherwise it leaves
+	 * through the reservoir. Thus d(K+U)=I*rf-Q_frozen. */
+	if(!owner_fixed){
+		ow->ie += (postype)dU;
+		if(tcf_sacc_file() && (size_t)M->owner < tcf_cap) { tcf_sacc[M->owner] += log1p(dU/U0); if(tcf_entropy_split_on()) tcf_entropy_hg[M->owner] += log1p(dU/U0); }
+		hgs_heat += dU; if(M->onesided) bulk_heat += dU;
+	} else hgs_boundary_heat += dU;
+	if(constrained) hgs_boundary_work += (D/al)*rf;
+	hgs_nmode++;
 }
 /* b' mode: two owners, exact scalar flow in s = ln(q0/q) */
 static void bp_apply_mode(hg_mode *M, double tau){
@@ -14011,7 +14757,7 @@ static void bp_apply_mode(hg_mode *M, double tau){
 			q->vx -= (postype)(c_*lx_); q->vy -= (postype)(c_*ly_);
 		}
 		o1->ie += (postype)dUq; o2->ie += (postype)dUq;
-		if(tcf_sacc_file()){ if((size_t)M->owner < tcf_cap) tcf_sacc[M->owner] += log1p(dUq/U1); if((size_t)M->owner2 < tcf_cap) tcf_sacc[M->owner2] += log1p(dUq/U2); }
+		if(tcf_sacc_file()){ if((size_t)M->owner < tcf_cap) { tcf_sacc[M->owner] += log1p(dUq/U1); if(tcf_entropy_split_on()) tcf_entropy_hg[M->owner] += log1p(dUq/U1); } if((size_t)M->owner2 < tcf_cap) { tcf_sacc[M->owner2] += log1p(dUq/U2); if(tcf_entropy_split_on()) tcf_entropy_hg[M->owner2] += log1p(dUq/U2); } }
 		hgs_heat += 2*dUq; hgs_nmode++; bp_heat += 2*dUq;
 		return;
 	}
@@ -14033,7 +14779,7 @@ static void bp_apply_mode(hg_mode *M, double tau){
 		q->vx -= (postype)(c_*lx_); q->vy -= (postype)(c_*ly_);
 	}
 	o1->ie += (postype)dU; o2->ie += (postype)dU;
-	if(tcf_sacc_file()){ if((size_t)M->owner < tcf_cap) tcf_sacc[M->owner] += log1p(dU/U1); if((size_t)M->owner2 < tcf_cap) tcf_sacc[M->owner2] += log1p(dU/U2); }
+	if(tcf_sacc_file()){ if((size_t)M->owner < tcf_cap) { tcf_sacc[M->owner] += log1p(dU/U1); if(tcf_entropy_split_on()) tcf_entropy_hg[M->owner] += log1p(dU/U1); } if((size_t)M->owner2 < tcf_cap) { tcf_sacc[M->owner2] += log1p(dU/U2); if(tcf_entropy_split_on()) tcf_entropy_hg[M->owner2] += log1p(dU/U2); } }
 	hgs_heat += 2*dU; hgs_nmode++; bp_heat += 2*dU;
 }
 /* assemble b' face modes from the per-cell slope operators and face records (sequential, after the build pass) */
@@ -14083,6 +14829,20 @@ static void bp_assemble(double gam){
 	}
 }
 static void hg_apply(SimParameters *simpar, double tau){
+	/* Opt-in diagnostic: HG has no particle migration, so array order is
+	 * unchanged across this operator. Report per-cell transfers, not just
+	 * differences of large box totals. Bins: inner, disk, outer, frozen. */
+	const char *audit_env = getenv("GFS_HG_TRANSFER_AUDIT");
+	int audit = audit_env && atoi(audit_env) > 0;
+	size_t audit_ps = TVORORK4_DDINFO(simpar)[0].n_size;
+	char *audit_base = (char*)VORORK4_TBP(simpar);
+	int audit_np = VORO_NP(simpar), ai;
+	double *saved = audit ? (double*)malloc(3*(size_t)audit_np*sizeof(double)) : NULL;
+	if(audit && !saved){ fprintf(stderr,"[HG_TRANSFER] allocation failed\n"); MPI_Abort(MPI_COMM(simpar),1); abort(); }
+	if(audit) for(ai=0;ai<audit_np;ai++){
+		treevorork4particletype *q=(treevorork4particletype*)(audit_base+ai*audit_ps);
+		saved[3*ai]=q->vx; saved[3*ai+1]=q->vy; saved[3*ai+2]=q->ie;
+	}
 	long m;
 	for(m = 0; m < hgm_n; m++) hg_apply_mode(m, 0.5*tau);
 	for(m = hgm_n - 1; m >= 0; m--) hg_apply_mode(m, 0.5*tau);
@@ -14092,12 +14852,52 @@ static void hg_apply(SimParameters *simpar, double tau){
 		treevorork4particletype *q = (treevorork4particletype*)(b + i*ps);
 		if(q->volume > 0 && q->ie > 0){ q->pressure = (postype)((gam - 1)*(double)q->ie/(double)q->volume); q->csound = (postype)sqrt(gam*(double)q->pressure/(double)q->den); }
 	}
+	if(audit){
+		postype cx,cy; kepler_center(&cx,&cy);
+		const char *rin_env=getenv("EUNHA_KEPLER_RIN"), *rout_env=getenv("EUNHA_KEPLER_ROUT");
+		double rin=rin_env?atof(rin_env):0.5, rout=rout_env?atof(rout_env):2.;
+		double sums[4][6]={{0}}, maxdv[4]={0}; long counts[4]={0}, changed[4]={0};
+		const char *ic_env=getenv("EUNHA_IC");
+		int orbital_audit=ic_env && strcmp(ic_env,"kepler")==0;
+		double dpert[4]={0}, pert_check[4]={0};
+		for(ai=0;ai<audit_np;ai++){
+			treevorork4particletype *q=(treevorork4particletype*)(audit_base+ai*audit_ps);
+			double x=q->x-cx,y=q->y-cy,r=hypot(x,y), mass=q->mass;
+			int bin=gfs_kepler_frozen(q->x,q->y)?3:(r<rin?0:(r<=rout?1:2));
+			double dvx=(double)q->vx-saved[3*ai],dvy=(double)q->vy-saved[3*ai+1];
+			double dK=0.5*mass*(dvx*((double)q->vx+saved[3*ai])+dvy*((double)q->vy+saved[3*ai+1]));
+			double dU=(double)q->ie-saved[3*ai+2], dv=hypot(dvx,dvy);
+			sums[bin][0]+=mass*dvx; sums[bin][1]+=mass*dvy;
+			sums[bin][2]+=mass*(x*dvy-y*dvx); sums[bin][3]+=dK;
+			sums[bin][4]+=dU; sums[bin][5]+=dK+dU;
+			if(orbital_audit && r>0){
+				postype gx=0,gy=0; kepler_accel(q->x,q->y,&gx,&gy);
+				double om=sqrt(fmax(0,-((double)gx*x+(double)gy*y)/(r*r)));
+				double vcx=-y*om,vcy=x*om;
+				/* Positions are unchanged by HG. Measure the exact finite
+				 * change of .5*m*|v-v_circular(x)|^2, not a force-rate proxy. */
+				double dp=0.5*mass*(dvx*((double)q->vx+saved[3*ai]-2*vcx)
+					+dvy*((double)q->vy+saved[3*ai+1]-2*vcy));
+				dpert[bin]+=dp;
+				pert_check[bin]+=fabs(dp-(dK-mass*(vcx*dvx+vcy*dvy)));
+			}
+			counts[bin]++; if(dvx!=0 || dvy!=0 || dU!=0) changed[bin]++;
+			if(dv>maxdv[bin]) maxdv[bin]=dv;
+		}
+		for(ai=0;ai<4;ai++) fprintf(stderr,"[HG_TRANSFER] rank=%d tau=%.17g bin=%d n=%ld changed=%ld dPx=%.17g dPy=%.17g dLz=%.17g dK=%.17g dU=%.17g dE=%.17g maxdv=%.17g trial=1\n",
+			MYID(simpar),tau,ai,counts[ai],changed[ai],sums[ai][0],sums[ai][1],sums[ai][2],sums[ai][3],sums[ai][4],sums[ai][5],maxdv[ai]);
+		if(orbital_audit) for(ai=0;ai<4;ai++)
+			fprintf(stderr,"[HG_PERTURBATION] rank=%d tau=%.17g bin=%d dEpert=%.17g identity_abs_sum=%.17g reference=prograde_circular trial=1\n",
+				MYID(simpar),tau,ai,dpert[ai],pert_check[ai]);
+		free(saved);
+	}
 }
 /* Step rejection and halving (Astra audit 2): the step is repeated from its starting state
  * with half the time step when any force evaluation of the step returned a smaller limit
  * than the step used, or a stage floor / non-positive state occurred. Active with
  * GFS_HG_AFFINE or GFS_STEP_RETRY=1. */
 static int gfs_step_retry_on(void){ static int on = -1; if(on < 0){ const char *s_ = getenv("GFS_STEP_RETRY"); on = (s_ && s_[0] && atoi(s_) > 0) ? 1 : 0; } return on; }
+#include "reversible_memory_runtime.h"
 static double exam2d_vph_rk4_int_blend_inner(
 		SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
@@ -14109,6 +14909,249 @@ static double exam2d_vph_rk4_int_blend_inner(
 			void (*)(SimParameters *, postype)),
 		void (*postStage)(SimParameters *)
 		);
+/* Accepted-state ledger: raw conserved quantities, not boundary-corrected
+ * residuals. Capture before the first trial and commit only after all split
+ * operators and retry checks. Legacy RK4E/TORQ remain trial diagnostics. */
+#define GFS_LEDGER_N 7
+static void gfs_ledger_state(SimParameters *simpar,
+        int (*targetBP)(treevorork4particletype*, postype, postype),
+        double out[GFS_LEDGER_N]){
+    double local[GFS_LEDGER_N] = {0};
+    postype cx, cy; kepler_center(&cx, &cy);
+    postype Lx = SIMBOX(simpar).x.max, Ly = SIMBOX(simpar).y.max;
+    size_t ps = TVORORK4_DDINFO(simpar)[0].n_size;
+    char *base = (char*)VORORK4_TBP(simpar);
+    int i;
+    for(i = 0; i < VORO_NP(simpar); i++){
+        treevorork4particletype *q = (treevorork4particletype*)(base + i*ps);
+        if(!targetBP(q, Lx, Ly)) continue;
+        double m = q->mass, vx = q->vx, vy = q->vy;
+        local[0] += m;
+        local[1] += m*vx; local[2] += m*vy;
+        local[3] += m*(((double)q->x-cx)*vy-((double)q->y-cy)*vx);
+        local[4] += 0.5*m*(vx*vx+vy*vy);
+        local[5] += (double)q->ie;
+        local[6] += m*(double)kepler_phi(q->x,q->y);
+    }
+    MPI_Allreduce(local,out,GFS_LEDGER_N,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+}
+static void gfs_ledger_commit(SimParameters *simpar,
+        int (*targetBP)(treevorork4particletype*, postype, postype),
+        const double before[GFS_LEDGER_N], double dt, int retries,
+        const double hg_delta[GFS_LEDGER_N]){
+    static long accepted_step = 0;
+    static double initial[GFS_LEDGER_N], elapsed = 0;
+    double after[GFS_LEDGER_N]; int j, finite = 1;
+    gfs_ledger_state(simpar,targetBP,after);
+    double rk[5]; int mask_min, mask_max;
+    MPI_Allreduce(gfs_accepted_rk,rk,5,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+    double hydro_partition[3];
+    MPI_Allreduce(gfs_accepted_hydro_partition,hydro_partition,3,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+    MPI_Allreduce(&gfs_accepted_rk_mask,&mask_min,1,MPI_INT,MPI_MIN,MPI_COMM(simpar));
+    MPI_Allreduce(&gfs_accepted_rk_mask,&mask_max,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+    if(accepted_step == 0){
+        for(j=0;j<GFS_LEDGER_N;j++) initial[j]=before[j];
+        if(MYID(simpar)==0)
+            fprintf(stderr,"[ACCEPTED_INITIAL] M=%.17g Px=%.17g Py=%.17g Lz=%.17g K=%.17g U=%.17g Phi=%.17g E=%.17g scope=owned_target_cells_with_frozen\n",
+                initial[0],initial[1],initial[2],initial[3],initial[4],initial[5],initial[6],initial[4]+initial[5]+initial[6]);
+    }
+    accepted_step++; elapsed += dt;
+    for(j=0;j<GFS_LEDGER_N;j++) finite &= isfinite(after[j]) && isfinite(before[j]) && isfinite(hg_delta[j]);
+    double E = after[4]+after[5]+after[6], E0 = initial[4]+initial[5]+initial[6];
+    if(MYID(simpar)==0){
+        fprintf(stderr,"[ACCEPTED_STATE] step=%ld elapsed=%.17g dt=%.17g retries=%d finite=%d M=%.17g Px=%.17g Py=%.17g Lz=%.17g K=%.17g U=%.17g Phi=%.17g E=%.17g dM0=%.17g dPx0=%.17g dPy0=%.17g dLz0=%.17g dE0=%.17g dEstep=%.17g hg_dE=%.17g hg_dPx=%.17g hg_dPy=%.17g hg_dLz=%.17g hg_dU=%.17g boundary_corrected=0\n",
+            accepted_step,elapsed,dt,retries,finite,after[0],after[1],after[2],after[3],after[4],after[5],after[6],E,
+            after[0]-initial[0],after[1]-initial[1],after[2]-initial[2],after[3]-initial[3],E-E0,
+            E-(before[4]+before[5]+before[6]),hg_delta[4]+hg_delta[5]+hg_delta[6],hg_delta[1],hg_delta[2],hg_delta[3],hg_delta[5]);
+        fprintf(stderr,"[ACCEPTED_RK_BUDGET] step=%ld stage_mask_min=%d stage_mask_max=%d rk_dPx=%.17g rk_dPy=%.17g rk_dLz=%.17g rk_dEh=%.17g rk_dPhi=%.17g residual_Px=%.17g residual_Py=%.17g residual_Lz=%.17g residual_E=%.17g scope=actual_stage_increments_plus_HG\n",
+            accepted_step,mask_min,mask_max,rk[0],rk[1],rk[2],rk[3],rk[4],
+            after[1]-before[1]-rk[0]-hg_delta[1],after[2]-before[2]-rk[1]-hg_delta[2],
+            after[3]-before[3]-rk[2]-hg_delta[3],E-(before[4]+before[5]+before[6])-rk[3]-rk[4]-hg_delta[4]-hg_delta[5]-hg_delta[6]);
+        fprintf(stderr,"[ACCEPTED_HYDRO_PARTITION] step=%ld phase1=%d all=%.17g frozen=%.17g active=%.17g partition_residual=%.17g scope=raw_die_RK_integral_not_closed_boundary_balance\n",
+            accepted_step,sedov_phase1_on(),hydro_partition[0],hydro_partition[1],hydro_partition[2],
+            hydro_partition[0]-hydro_partition[1]-hydro_partition[2]);
+        fflush(stderr);
+    }
+}
+/* One-time particle initialization belongs before the first HG force and
+ * retry snapshot. Restoring particles must not undo initialization while
+ * leaving the corresponding static completion flags set. */
+/* Ordered distributed reference for one diagnostic HG operator. Only mode-key
+ * metadata is replicated. State is fetched from and returned to real owners. */
+typedef struct {long key,local;int rank;} HgProbeOrder;
+static int hg_probe_order_cmp(const void *aa,const void *bb){
+    long a=((const HgProbeOrder*)aa)->key,b=((const HgProbeOrder*)bb)->key;return (a>b)-(a<b);
+}
+static void hg_probe_ordered_apply(SimParameters *simpar,double tau){
+    if(!shf_geometry_probe_active || !hg_probe_modes_active || !hg_probe_state_ready || hgm_building || !isfinite(tau) || tau<=0) MPI_Abort(MPI_COMM(simpar),2);
+    int rank=MYID(simpar),nr=NID(simpar),cap=(int)hg_cap;
+    if(hg_cap>10000000 || hgm_n>10000000) MPI_Abort(MPI_COMM(simpar),2);
+    int *owner=calloc(cap,sizeof(int)),*nc=calloc(nr,sizeof(int)),*nd=calloc(nr,sizeof(int));
+    if(!owner || !nc || !nd) MPI_Abort(MPI_COMM(simpar),2);
+    size_t ps=TVORORK4_DDINFO(simpar)[0].n_size;char *base=(char*)VORORK4_TBP(simpar);
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);long id=(long)PINDX(q);
+        if(id<0 || id>=cap) MPI_Abort(MPI_COMM(simpar),2);owner[id]=rank+1;hg_ptr[id]=q;
+    }
+    MPI_Allreduce(MPI_IN_PLACE,owner,cap,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+    int local=(int)hgm_n;MPI_Allgather(&local,1,MPI_INT,nc,1,MPI_INT,MPI_COMM(simpar));
+    long total=0;for(int r=0;r<nr;r++){nd[r]=(int)total;total+=nc[r];if(total>10000000) MPI_Abort(MPI_COMM(simpar),2);}
+    long *keys=calloc(total+1,sizeof(long)),*lk=calloc(local+1,sizeof(long));
+    HgProbeOrder *order=calloc(total+1,sizeof(*order));
+    if(!keys || !lk || !order) MPI_Abort(MPI_COMM(simpar),2);
+    for(int i=0;i<local;i++){lk[i]=hgm[i].key;if(owner[hgm[i].owner]!=rank+1 || hgm[i].kind!=0) MPI_Abort(MPI_COMM(simpar),2);}
+    MPI_Allgatherv(lk,local,MPI_LONG,keys,nc,nd,MPI_LONG,MPI_COMM(simpar));
+    for(int r=0;r<nr;r++) for(int i=0;i<nc[r];i++){long k=nd[r]+i;order[k].key=keys[k];order[k].local=i;order[k].rank=r;}
+    qsort(order,total,sizeof(*order),hg_probe_order_cmp);
+    for(long i=1;i<total;i++) if(order[i-1].key>=order[i].key) MPI_Abort(MPI_COMM(simpar),2);
+    if(!gfs_mpi_coupled_active){hgs_heat=0;hgs_nmode=0;hgs_bad=0;hgs_boundary_work=0;hgs_boundary_heat=0;}
+    const char *serial=getenv("GFS_MPI_HG_APPLY_SERIAL");long blocks=0,remote_updates=0;
+    double start=MPI_Wtime();
+    if(serial && atoi(serial)>0){
+        if(nr!=1) MPI_Abort(MPI_COMM(simpar),2);hg_apply(simpar,tau);
+    }else{
+        MPI_Datatype state;MPI_Type_contiguous(3,MPI_DOUBLE,&state);MPI_Type_commit(&state);
+        unsigned char *need=calloc(cap,1);int *sc=calloc(nr,sizeof(int)),*rc=calloc(nr,sizeof(int)),*sd=calloc(nr,sizeof(int)),*rd=calloc(nr,sizeof(int)),*cursor=calloc(nr,sizeof(int));
+        if(!need || !sc || !rc || !sd || !rd || !cursor) MPI_Abort(MPI_COMM(simpar),2);
+        for(int pass=0;pass<2;pass++){
+            long at=pass ? total-1:0,dir=pass ? -1:1;
+            while(at>=0 && at<total){
+                long end=at;int active=order[at].rank;
+                while(end>=0 && end<total && order[end].rank==active) end+=dir;
+                memset(need,0,cap);memset(sc,0,nr*sizeof(int));memset(cursor,0,nr*sizeof(int));
+                if(rank==active) for(long j=at;j!=end;j+=dir){
+                    hg_mode *m=hgm+order[j].local;
+                    for(long k=0;k<m->len;k++){
+                        long id=hgm_id[m->start+k];
+                        if(id<0 || id>=cap || owner[id]<=0 || owner[id]>nr || !hg_ptr[id]) MPI_Abort(MPI_COMM(simpar),2);
+                        if(owner[id]!=rank+1 && !need[id]){need[id]=1;sc[owner[id]-1]++;}
+                    }
+                }
+                MPI_Alltoall(sc,1,MPI_INT,rc,1,MPI_INT,MPI_COMM(simpar));
+                int ns=0,nt=0;for(int r=0;r<nr;r++){sd[r]=ns;rd[r]=nt;ns+=sc[r];nt+=rc[r];}
+                long *req=calloc(ns+1,sizeof(long)),*incoming=calloc(nt+1,sizeof(long));
+                double *reply=calloc(3*(nt+1),sizeof(double)),*got=calloc(3*(ns+1),sizeof(double));
+                if(!req || !incoming || !reply || !got) MPI_Abort(MPI_COMM(simpar),2);
+                for(int id=0;id<cap;id++) if(need[id]){int r=owner[id]-1;req[sd[r]+cursor[r]++]=id;}
+                MPI_Alltoallv(req,sc,sd,MPI_LONG,incoming,rc,rd,MPI_LONG,MPI_COMM(simpar));
+                for(int i=0;i<nt;i++){
+                    long id=incoming[i];if(id<0 || id>=cap || owner[id]!=rank+1 || !hg_ptr[id]) MPI_Abort(MPI_COMM(simpar),2);
+                    treevorork4particletype *q=hg_ptr[id];reply[3*i]=q->vx;reply[3*i+1]=q->vy;reply[3*i+2]=q->ie;
+                }
+                MPI_Alltoallv(reply,rc,rd,state,got,sc,sd,state,MPI_COMM(simpar));
+                for(int i=0;i<ns;i++){
+                    treevorork4particletype *q=hg_ptr[req[i]];
+                    if(!isfinite(got[3*i]) || !isfinite(got[3*i+1]) || !(got[3*i+2]>0) || !isfinite(got[3*i+2])) MPI_Abort(MPI_COMM(simpar),2);
+                    q->vx=got[3*i];q->vy=got[3*i+1];q->ie=got[3*i+2];
+                }
+                if(rank==active) for(long j=at;j!=end;j+=dir) hg_apply_mode(order[j].local,0.5*tau);
+                for(int i=0;i<ns;i++){treevorork4particletype *q=hg_ptr[req[i]];got[3*i]=q->vx;got[3*i+1]=q->vy;got[3*i+2]=q->ie;}
+                MPI_Alltoallv(got,sc,sd,state,reply,rc,rd,state,MPI_COMM(simpar));
+                for(int i=0;i<nt;i++){
+                    treevorork4particletype *q=hg_ptr[incoming[i]];
+                    if(!isfinite(reply[3*i]) || !isfinite(reply[3*i+1]) || !(reply[3*i+2]>0) || !isfinite(reply[3*i+2])) MPI_Abort(MPI_COMM(simpar),2);
+                    q->vx=reply[3*i];q->vy=reply[3*i+1];q->ie=reply[3*i+2];
+                }
+                remote_updates+=ns;blocks++;at=end;free(got);free(reply);free(incoming);free(req);
+            }
+        }
+        MPI_Type_free(&state);free(cursor);free(rd);free(sd);free(rc);free(sc);free(need);
+        double gam=(double)GAS_GAMMA(simpar);
+        for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+            treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);
+            if(q->volume>0 && q->ie>0){q->pressure=(postype)((gam-1)*(double)q->ie/(double)q->volume);q->csound=(postype)sqrt(gam*(double)q->pressure/(double)q->den);}
+        }
+    }
+    long bad;MPI_Allreduce(&hgs_bad,&bad,1,MPI_LONG,MPI_SUM,MPI_COMM(simpar));if(bad) MPI_Abort(MPI_COMM(simpar),3);
+    if(!gfs_mpi_coupled_active){
+    char path[4096];int len=snprintf(path,sizeof(path),"%s.hgafter.rank%04d",getenv("GFS_SHF_DUMP_FILE"),rank);
+    if(len<0 || (size_t)len>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+    FILE *fp=fopen(path,"wx");if(!fp) MPI_Abort(MPI_COMM(simpar),2);
+    fprintf(fp,"# id owner epoch x y mass vx vy ie volume density pressure csound\n");
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);long id=(long)PINDX(q);
+        fprintf(fp,"%ld %d %lu %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g\n",id,rank,shf_epoch,(double)q->x,(double)q->y,(double)q->mass,(double)q->vx,(double)q->vy,(double)q->ie,(double)q->volume,(double)q->den,(double)q->pressure,(double)q->csound);
+    }
+    int failed=ferror(fp);if(fclose(fp)!=0) failed=1;if(failed) MPI_Abort(MPI_COMM(simpar),2);
+    }
+    fprintf(stderr,"[MPI_HG_APPLY] rank=%d tau=%.17g global_modes=%ld blocks=%ld remote_state_returns=%ld bad=%ld seconds=%.6g\n",rank,tau,total,blocks,remote_updates,bad,MPI_Wtime()-start);
+    free(order);free(lk);free(keys);free(nd);free(nc);free(owner);
+}
+
+/* Transport audit includes all 25 RK4 scalars, not transient pointers. */
+static void hg_probe_dump_motion(SimParameters *simpar,const char *phase){
+    if(sizeof(RK4)!=25*sizeof(double)) MPI_Abort(MPI_COMM(simpar),2);
+    char path[4096];int n=snprintf(path,sizeof(path),"%s.%s.rank%04d",getenv("GFS_SHF_DUMP_FILE"),phase,MYID(simpar));
+    if(n<0 || (size_t)n>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+    FILE *fp=fopen(path,"wx");if(!fp) MPI_Abort(MPI_COMM(simpar),2);
+    fprintf(fp,"# id owner x y mass vx vy ie volume density pressure csound RK4[25]\n");
+    size_t ps=TVORORK4_DDINFO(simpar)[0].n_size;char *base=(char*)VORORK4_TBP(simpar);
+    for(ptrdiff_t i=0;i<VORO_NP(simpar);i++){
+        treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);double rk[25];memcpy(rk,&q->rk4,sizeof(rk));
+        fprintf(fp,"%ld %d %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g",(long)PINDX(q),MYID(simpar),(double)q->x,(double)q->y,(double)q->mass,(double)q->vx,(double)q->vy,(double)q->ie,(double)q->volume,(double)q->den,(double)q->pressure,(double)q->csound);
+        for(int k=0;k<25;k++) fprintf(fp," %.17g",rk[k]);fprintf(fp,"\n");
+    }
+    int failed=ferror(fp);if(fclose(fp)!=0) failed=1;if(failed) MPI_Abort(MPI_COMM(simpar),2);
+}
+static void gfs_rk4_initialize_particles(SimParameters *simpar){
+	treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	postype Gamma = GAS_GAMMA(simpar);
+	int av_mode = GAS_AVMODE(simpar), i;
+	/* GFS_DUAL_ENERGY: give every particle an entropy on the first call.
+	 * The KH/Kepler IC leaves stress.K = 0. */
+	{
+		static int de_k_init = 0;
+		if(!de_k_init && (gfs_dual_energy_eta() > 0 || (GAS_ENTROPY_MODE(simpar) == 1 && getenv("GFS_K_INIT")))){   /* GFS_K_INIT: entropy_mode 1 from an ie-mode state */
+			int nk = 0;
+			for(i=0;i<VORO_NP(simpar);i++){
+				if(sbp[i].stress.K > 0) continue;
+				if(sbp[i].den > 0 && sbp[i].pressure > 0){
+					sbp[i].stress.K = sbp[i].pressure / pow((double)sbp[i].den, (double)Gamma);
+					nk++;
+				}
+			}
+			if(MYID(simpar) == 0)
+				fprintf(stderr, "[DUALE] eta=%g K set from P/rho^gamma on %d particles of rank 0\n",
+						gfs_dual_energy_eta(), nk);
+			de_k_init = 1;
+		}
+	}
+
+	/* Revision 4 defensive init: first-call guarantee that CD10 state
+	 * fields (divv_old, alpha_cd) are not garbage, regardless of
+	 * allocator behaviour.  my_malloc may or may not zero-init; this
+	 * removes the dependency. */
+	{
+		static int first_call = 1;
+		if(first_call && av_mode >= 1){
+			postype cd_amin_init = GAS_CDAMIN(simpar);
+			for(i=0;i<VORO_NP(simpar);i++){
+				sbp[i].stress.divv_old = 0;
+				sbp[i].stress.alpha_cd = cd_amin_init;
+			}
+			first_call = 0;
+		}
+	}
+
+	{
+		/* av_mode 5 / kappa guard, and clear any w2 the IC or a restart
+		 * already set from the old kappa (CPU and GPU both read w2 here). */
+		static int kg_done = 0;
+		if(!kg_done){
+			kg_done = 1;
+			gfs_kappa_guard(simpar, "RK4 start");
+			if(GAS_AVMODE(simpar) == 5 && GAS_Kappa(simpar) == 0){
+				int nz = 0;
+				for(i=0;i<VORO_NP(simpar);i++){
+					if(sbp[i].w2 != 0 || sbp[i].w2old != 0 || sbp[i].rk4.w2backup != 0) nz++;
+					sbp[i].w2 = 0; sbp[i].w2old = 0; sbp[i].rk4.w2backup = 0;
+				}
+				if(nz > 0)
+					fprintf(stderr, "[KAPPA_GUARD] r%d: cleared nonzero w2 on %d particles (av_mode=5, kappa=0)\n", MYID(simpar), nz);
+			}
+		}
+	}
+}
 double exam2d_vph_rk4_int_blend(
 		SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
@@ -14120,81 +15163,298 @@ double exam2d_vph_rk4_int_blend(
 			void (*)(SimParameters *, postype)),
 		void (*postStage)(SimParameters *)
 		){
-	if(!(gfs_hg_affine() || gfs_step_retry_on()))
-		return exam2d_vph_rk4_int_blend_inner(simpar, paddingAllTreeParticles, measureW2, find2DNeighborBP, find2DCellBP, targetBP, mkLinkedList2D, postStage);
-	if(NID(simpar) > 1){ fprintf(stderr, "[RETRY] step rejection supports one MPI rank\n"); exit(1); }
+	gfs_rk4_initialize_particles(simpar);
+	if(rmem_on() && mkLinkedList2D!=mkLinkedList2D_oExam)rmem_fail(simpar,"requires periodic KH callback");
+	rmem_start(simpar);
+	const char *coupled=getenv("GFS_MPI_COUPLED_EXPERIMENTAL");
+	if(coupled && atoi(coupled)>0){
+		const char *audit=getenv("GFS_SHF_EPOCH_AUDIT");
+		if(!audit || atoi(audit)<=0 || !gfs_shared_geom_on() || !gfs_hg_affine() || !gfs_hg_split()
+			|| !gfs_tcf_on() || !gfs_tcf_face_z() || !gfs_tcf_qbp() || !hg_frozen_consistent()
+			|| GAS_Kappa(simpar)!=0 || GAS_FCENTROID(simpar)!=0 || GAS_GPU_ENABLED(simpar)
+			|| gfs_dynw2_on() || gfs_subzone_on() || gfs_bulk_affine() || gfs_bprime() || gfs_hg_off()
+			|| tcf_sacc_file() || getenv("GFS_MPI_GEOMETRY_ONLY")){
+			fprintf(stderr,"[MPI_COUPLED] unsupported experimental configuration\n");MPI_Abort(MPI_COMM(simpar),2);
+		}
+		gfs_mpi_coupled_active=1;shf_geometry_probe_active=1;
+	}
+	const char *probe = getenv("GFS_MPI_GEOMETRY_ONLY");
+	if(probe && atoi(probe)>0){
+		const char *dump=getenv("GFS_SHF_DUMP_FILE"), *audit=getenv("GFS_SHF_EPOCH_AUDIT");
+		if(!gfs_shared_geom_on() || !dump || !dump[0] || !audit || atoi(audit)<=0
+			|| GAS_Kappa(simpar)!=0 || gfs_dynw2_on() || gfs_subzone_on()){
+			fprintf(stderr,"[MPI_GEOMETRY_ONLY] requires shared geometry, dump path, epoch audit and W=0 without dynamic weights/subzones\n");
+			MPI_Abort(MPI_COMM(simpar),2);
+		}
+		const char *re=getenv("GFS_MPI_PROBE_REBUILDS");int rebuilds=re ? atoi(re):1;
+		if(rebuilds<1 || rebuilds>4) MPI_Abort(MPI_COMM(simpar),2);
+		char dump_base[4096];int base_len=snprintf(dump_base,sizeof(dump_base),"%s",dump);
+		if(base_len<0 || (size_t)base_len>=sizeof(dump_base)) MPI_Abort(MPI_COMM(simpar),2);
+		for(int rebuild=0;rebuild<rebuilds;rebuild++){
+			char repeated_path[4096];
+			int path_len=rebuilds==1 ? snprintf(repeated_path,sizeof(repeated_path),"%s",dump_base)
+				:snprintf(repeated_path,sizeof(repeated_path),"%s.repeat%02d",dump_base,rebuild+1);
+			if(path_len<0 || (size_t)path_len>=sizeof(repeated_path) || setenv("GFS_SHF_DUMP_FILE",repeated_path,1)!=0) MPI_Abort(MPI_COMM(simpar),2);
+			dump=getenv("GFS_SHF_DUMP_FILE");
+			/* Old ghost pointers must never survive a new reconstruction. hg_ensure
+			 * repopulates owned pointers before new remote state is installed. */
+			free(hg_probe_ghosts);hg_probe_ghosts=NULL;
+			hg_probe_state_ready=0;hg_probe_modes_active=0;hgm_building=0;
+		shf_geometry_probe_active=1;
+		postype cellsize=BASICCELL_CELLWIDTH(simpar);
+		updateDenW2Pressure2DBlend(simpar,
+			Xmin_HydroExam(simpar)-cellsize,Ymin_HydroExam(simpar)-cellsize,
+			Xmax_HydroExam(simpar)+cellsize,Ymax_HydroExam(simpar)+cellsize,
+			GAS_GAMMA(simpar),paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D,1);
+		/* No force evaluation, HG, RK stage or accepted-state update is allowed. */
+		shf_dump_current(simpar,1);
+		shf_probe_dump_cache(simpar);
+		const char *state_request=getenv("GFS_MPI_HG_STATE_ONLY"), *no_exchange_dump=getenv("GFS_MPI_EXCHANGE_NO_DUMP");
+		shf_probe_exchange(simpar,state_request && atoi(state_request)>0,
+			no_exchange_dump && atoi(no_exchange_dump)>0 ? NULL:dump);
+		const char *force_probe=getenv("GFS_MPI_FORCE_ONLY"), *mode_probe=getenv("GFS_MPI_HG_MODES_ONLY");
+		int mode_requested=mode_probe && atoi(mode_probe)>0;
+		if((force_probe && atoi(force_probe)>0) || mode_requested){
+			if(!gfs_hg_split() || hgm_building || getenv("GFS_TCF_DUMP")) MPI_Abort(MPI_COMM(simpar),2);
+			char path[4096];
+			int n=snprintf(path,sizeof(path),"%s.rhs.rank%04d",dump,MYID(simpar));
+			if(n<0 || (size_t)n>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+			tcf_dfp=fopen(path,"wx");
+			n=snprintf(path,sizeof(path),"%s.rhs.faces.rank%04d",dump,MYID(simpar));
+			if(n<0 || (size_t)n>=sizeof(path)) MPI_Abort(MPI_COMM(simpar),2);
+			tcf_fdump=fopen(path,"wx");
+			if(!tcf_dfp || !tcf_fdump) MPI_Abort(MPI_COMM(simpar),2);
+			fprintf(tcf_dfp,"# Owned hydrodynamic RHS before HG application, gravity and evolution\n");
+			fprintf(tcf_fdump,"# Face contributions before HG application, gravity and evolution\n");
+			if(mode_requested){
+				if(!hg_probe_state_ready || !gfs_hg_affine() || gfs_bulk_affine() || gfs_bprime() || gfs_hg_off()) MPI_Abort(MPI_COMM(simpar),2);
+				hgm_reset((long)VORO_NP(simpar));hgm_building=1;hg_probe_modes_active=1;
+			}
+			double probe_dt=getAccVoro2DBlend(simpar,
+				Xmin_HydroExam(simpar)-cellsize,Ymin_HydroExam(simpar)-cellsize,
+				Xmax_HydroExam(simpar)+cellsize,Ymax_HydroExam(simpar)+cellsize,
+				VoroAccuracyOrder(simpar),GAS_COURANT(simpar),GAS_GAMMA(simpar),
+				paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D);
+			if(mode_requested){hgm_building=0;hg_probe_dump_modes(simpar);}
+			const char *apply_tau=getenv("GFS_MPI_HG_APPLY_TAU");
+			if(apply_tau){
+				if(!mode_requested) MPI_Abort(MPI_COMM(simpar),2);
+				hg_probe_ordered_apply(simpar,atof(apply_tau));
+			}
+			int failed=ferror(tcf_dfp) || ferror(tcf_fdump);
+			if(fclose(tcf_dfp)!=0) failed=1;if(fclose(tcf_fdump)!=0) failed=1;
+			tcf_dfp=NULL;tcf_fdump=NULL;
+			if(failed || !isfinite(probe_dt) || probe_dt<=0) MPI_Abort(MPI_COMM(simpar),2);
+			fprintf(stderr,"[MPI_FORCE_ONLY] rank=%d dt=%.17g complete; HG_apply=%d no gravity/RK evolution\n",MYID(simpar),probe_dt,apply_tau!=NULL);
+		}
+		fprintf(stderr,"[MPI_GEOMETRY_ONLY] rank=%d owned=%td complete; no RK time step\n",MYID(simpar),VORO_NP(simpar));
+		const char *drift=getenv("GFS_MPI_PROBE_DRIFT");
+		if(drift && rebuild+1<rebuilds){
+			double drift_dt=atof(drift);if(!isfinite(drift_dt) || drift_dt<=0 || drift_dt>0.01) MPI_Abort(MPI_COMM(simpar),2);
+			hg_probe_dump_motion(simpar,"motion_before");
+			size_t ps=TVORORK4_DDINFO(simpar)[0].n_size;char *base=(char*)VORORK4_TBP(simpar);ptrdiff_t np=VORO_NP(simpar);
+			const char *reject_env=getenv("GFS_MPI_PROBE_REJECT_RANK");
+			int reject_rank=reject_env ? atoi(reject_env):-1;
+			char *checkpoint=NULL;
+			if(reject_env){
+				if(reject_rank<0 || reject_rank>=NID(simpar)) MPI_Abort(MPI_COMM(simpar),2);
+				checkpoint=malloc(np>0 ? ps*(size_t)np:1);
+				if(!checkpoint) MPI_Abort(MPI_COMM(simpar),2);
+				memcpy(checkpoint,base,ps*(size_t)np);
+			}
+			for(ptrdiff_t i=0;i<np;i++){
+				treevorork4particletype *q=(treevorork4particletype*)(base+i*ps);
+				if(gfs_kepler_frozen(q->x,q->y)) continue;
+				q->x+=(postype)(drift_dt*(double)q->vx);q->y+=(postype)(drift_dt*(double)q->vy);
+			}
+			/* Existing wrapping/migration callback may reallocate owned storage. */
+			postStage(simpar);
+			hg_probe_dump_motion(simpar,"motion_after");
+			fprintf(stderr,"[MPI_PROBE_DRIFT] rank=%d dt=%.17g old_np=%td new_np=%td; transport diagnostic only\n",MYID(simpar),drift_dt,np,VORO_NP(simpar));
+			if(checkpoint){
+				/* Diagnostic rejection after real migration. No accepted ledger or
+				 * clock is touched here; this is not the production retry path. */
+				int local_reject=MYID(simpar)==reject_rank,global_reject=0;
+				MPI_Allreduce(&local_reject,&global_reject,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+				if(!global_reject) MPI_Abort(MPI_COMM(simpar),2);
+				void *restored=realloc(VORORK4_TBP(simpar),np>0 ? ps*(size_t)np:1);
+				if(!restored) MPI_Abort(MPI_COMM(simpar),2);
+				VORORK4_TBP(simpar)=restored;VORO_NP(simpar)=np;
+				memcpy(restored,checkpoint,ps*(size_t)np);
+				MPI_Allreduce(&VORO_NP(simpar),&VORO_TNP(simpar),1,MPI_PTRDIFF_T,MPI_SUM,MPI_COMM(simpar));
+				NPSUM(simpar)=VORO_TNP(simpar);
+				int bytes_ok=memcmp(restored,checkpoint,ps*(size_t)np)==0;
+				free(checkpoint);
+				hg_probe_dump_motion(simpar,"motion_restored");
+				fprintf(stderr,"[MPI_PROBE_ROLLBACK] rank=%d requester=%d local_reject=%d global_reject=%d restored_np=%td bytes_ok=%d; next pass rebuilds caches\n",MYID(simpar),reject_rank,local_reject,global_reject,np,bytes_ok);
+			}
+		}
+		fprintf(stderr,"[MPI_PROBE_REBUILD] rank=%d pass=%d epoch=%lu complete\n",MYID(simpar),rebuild+1,shf_epoch);
+		fflush(NULL);
+		MPI_Barrier(MPI_COMM(simpar));
+		}
+		MPI_Finalize(); exit(0);
+	}
+	int ledger = gfs_eaud_on();
+	double ledger_before[GFS_LEDGER_N] = {0}, hg_delta[GFS_LEDGER_N] = {0};
+	double hg_before[GFS_LEDGER_N], hg_after[GFS_LEDGER_N];
+	if(ledger) gfs_ledger_state(simpar,targetBP,ledger_before);
+	if(!(gfs_hg_affine() || gfs_step_retry_on())){
+		double accepted_dt = exam2d_vph_rk4_int_blend_inner(simpar, paddingAllTreeParticles, measureW2, find2DNeighborBP, find2DCellBP, targetBP, mkLinkedList2D, postStage);
+		if(ledger) gfs_ledger_commit(simpar,targetBP,ledger_before,accepted_dt,0,hg_delta);
+		gfs_tnow += accepted_dt;
+		return accepted_dt;
+	}
+	if(NID(simpar) > 1 && !gfs_mpi_coupled_active){ fprintf(stderr, "[RETRY] step rejection supports one MPI rank\n"); exit(1); }
 	int split = gfs_hg_affine() && gfs_hg_split();
+	orbit_work_init(simpar);
+	if(tcf_entropy_split_on() && (!split || !gfs_tcf_on() || !tcf_sacc_file() || NID(simpar)!=1)){ fprintf(stderr,"[ENTROPY_SPLIT] requires MPI1 split HG, TCF and GFS_TCF_SACC\n"); MPI_Abort(MPI_COMM(simpar),2); }
 	postype cellsize = BASICCELL_CELLWIDTH(simpar), Gamma = GAS_GAMMA(simpar), Courant = GAS_COURANT(simpar);
 	postype xmin = Xmin_HydroExam(simpar)-cellsize, ymin = Ymin_HydroExam(simpar)-cellsize;
 	postype xmax = Xmax_HydroExam(simpar)+cellsize, ymax = Ymax_HydroExam(simpar)+cellsize;
 	postype OrderOfAccuracy = VoroAccuracyOrder(simpar);
 	size_t ps = TVORORK4_DDINFO(simpar)[0].n_size; int np0 = VORO_NP(simpar);
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_ensure((treevorostressrk4particletype*)VORORK4_TBP(simpar), np0);
-	char *save = (char*)malloc(ps*(size_t)np0);
+	char *save = (char*)malloc(np0>0 ? ps*(size_t)np0:1);
+	if(!save) MPI_Abort(MPI_COMM(simpar),2);
 	memcpy(save, (char*)VORORK4_TBP(simpar), ps*(size_t)np0);
 	double *ssave = NULL; size_t scap = tcf_cap;
-	if(tcf_sacc && scap){ ssave = (double*)malloc(scap*sizeof(double)); memcpy(ssave, tcf_sacc, scap*sizeof(double)); }
+	if(tcf_sacc && scap){ ssave = (double*)malloc((tcf_entropy_split_on()?3:1)*scap*sizeof(double)); if(!ssave) abort(); memcpy(ssave, tcf_sacc, scap*sizeof(double)); if(tcf_entropy_split_on()){memcpy(ssave+scap,tcf_entropy_rk,scap*sizeof(double));memcpy(ssave+2*scap,tcf_entropy_hg,scap*sizeof(double));} }
 	static double fdt = -1;
 	if(fdt < 0){ const char *e_ = getenv("GFS_FIXED_DT"); fdt = (e_ && e_[0]) ? atof(e_) : 0; }
 	int tries;
 	double cap = 0, dt = 0;
 	gfs_in_retry = 1;
 	for(tries = 0; tries < 40; tries++){
+		gfs_mpi_coupled_trial=tries;
+		memset(hg_delta,0,sizeof(hg_delta));
 		gfs_attempt_failed = 0;
 		double dtH = 0;
 		hgs_heat = 0; hgs_nmode = 0; hgs_bad = 0;
+		hgs_boundary_work = hgs_boundary_heat = 0;
 		if(split){
 			/* modes and step at x_n, then HG(dt/2) */
-			hgm_reset((long)np0); hgm_building = 1; gfs_step_dtmin = 1e300;
+			gfs_dt_audit_phase = 1;
+			hgm_reset((long)VORO_NP(simpar)); hgm_building = 1; gfs_step_dtmin = 1e300;
 			updateDenW2Pressure2DBlend(simpar, xmin, ymin, xmax, ymax, Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP, mkLinkedList2D, 1);
 			double dpr = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax, OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 			hgm_building = 0;
 			if(gfs_bprime()) bp_assemble((double)GAS_GAMMA(simpar));
 			qsort(hgm, hgm_n, sizeof(hg_mode), hgm_cmp);
 			dtH = dpr*(1 - 1e-3);   /* margin for the change of the RK4 limit across HG(dt/2) (audit item) */
+			if(gfs_max_dt() > 0 && dtH > gfs_max_dt()) dtH = gfs_max_dt();
 			if(fdt > 0){ if(fdt > dpr){ fprintf(stderr, "[HGSPLIT] GFS_FIXED_DT=%g exceeds the limit %g: test invalid\n", fdt, dpr); exit(5); } dtH = fdt; }
 			if(cap > 0 && dtH > cap) dtH = cap;
-			hg_apply(simpar, 0.5*dtH);
+			if(ledger) gfs_ledger_state(simpar,targetBP,hg_before);
+			if(gfs_mpi_coupled_active) hg_probe_ordered_apply(simpar,0.5*dtH);
+			else hg_apply(simpar, 0.5*dtH);
+			if(ledger){
+				gfs_ledger_state(simpar,targetBP,hg_after);
+				int lj; for(lj=0;lj<GFS_LEDGER_N;lj++) hg_delta[lj] += hg_after[lj]-hg_before[lj];
+			}
 			gfs_dt_cap = dtH;
 		} else gfs_dt_cap = cap;
 		gfs_step_dtmin = 1e300;
+		gfs_dt_audit_phase = 0;
 		dt = exam2d_vph_rk4_int_blend_inner(simpar, paddingAllTreeParticles, measureW2, find2DNeighborBP, find2DCellBP, targetBP, mkLinkedList2D, postStage);
 		int bad = gfs_attempt_failed ? 1 : 0, i, over = 0;
 		if(split && dt < dtH*(1 - 1e-9)) over = 1;   /* the RK4 part could not use the HG step */
+		if(gfs_mpi_coupled_active){
+			MPI_Allreduce(MPI_IN_PLACE,&bad,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+			MPI_Allreduce(MPI_IN_PLACE,&over,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+		}
 		if(!bad && !over && split){
 			/* modes at x_{n+1}, then HG(dt/2) */
-			hgm_reset((long)np0); hgm_building = 1;
+			gfs_dt_audit_phase = 2;
+			hgm_reset((long)VORO_NP(simpar)); hgm_building = 1;
 			updateDenW2Pressure2DBlend(simpar, xmin, ymin, xmax, ymax, Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP, mkLinkedList2D, 1);
 			(void)getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax, OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 			hgm_building = 0;
 			if(gfs_bprime()) bp_assemble((double)GAS_GAMMA(simpar));
 			qsort(hgm, hgm_n, sizeof(hg_mode), hgm_cmp);
-			hg_apply(simpar, 0.5*dtH);
+			if(ledger) gfs_ledger_state(simpar,targetBP,hg_before);
+			if(gfs_mpi_coupled_active) hg_probe_ordered_apply(simpar,0.5*dtH);
+			else hg_apply(simpar, 0.5*dtH);
+			if(ledger){
+				gfs_ledger_state(simpar,targetBP,hg_after);
+				int lj; for(lj=0;lj<GFS_LEDGER_N;lj++) hg_delta[lj] += hg_after[lj]-hg_before[lj];
+			}
+			/* The final geometry/pressure refresh can set the failure flag
+			 * after the RK4 check above. A repaired positive state does not
+			 * make that trial acceptable. */
+			if(gfs_attempt_failed) bad = 1;
 			if(hgs_bad > 0) bad = 4;
 		}
 		char *b = (char*)VORORK4_TBP(simpar);
-		if(VORO_NP(simpar) != np0) bad = 2;
-		else for(i = 0; i < np0 && !bad; i++){
+		if(!gfs_mpi_coupled_active && VORO_NP(simpar) != np0) bad = 2;
+		else for(i = 0; i < VORO_NP(simpar) && !bad; i++){
 			treevorork4particletype *q = (treevorork4particletype*)(b + i*ps);
-			if(!(q->ie > 0) || !(q->volume > 0) || !isfinite((double)q->vx) || !isfinite((double)q->vy) || !isfinite((double)q->x) || !isfinite((double)q->y)) bad = 3;
+			if(!(q->ie > 0) || !isfinite((double)q->ie) || !(q->volume > 0) || !isfinite((double)q->volume) || !isfinite((double)q->vx) || !isfinite((double)q->vy) || !isfinite((double)q->x) || !isfinite((double)q->y)) bad = 3;
 		}
-		if(!split && dt > gfs_step_dtmin*(1 + 1e-9)) over = 1;
+		if((!split || rmem_on()) && dt > gfs_step_dtmin*(1 + 1e-9)) over = 1;
+		/* Opt-in fault injection after the complete physical trial, including
+		 * the final HG half. Exercise the real checkpoint/retry path once per
+		 * process; never turn this diagnostic on in a production run. */
+		static int test_final_rejection_used = 0;
+		const char *test_reject = getenv("GFS_TEST_REJECT_FINAL_ONCE");
+		if(test_reject && atoi(test_reject)>0 && !test_final_rejection_used && !bad && !over
+			&& (!gfs_mpi_coupled_active || MYID(simpar)==NID(simpar)-1)){
+			test_final_rejection_used = 1; bad = 5;
+			fprintf(stderr,"[TEST_FINAL_REJECT] dt=%.17g elapsed_before_accept=%.17g after_final_HG=%d\n",dt,gfs_tnow,split);
+		}
+		if(gfs_mpi_coupled_active){
+			MPI_Allreduce(MPI_IN_PLACE,&bad,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+			MPI_Allreduce(MPI_IN_PLACE,&over,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+		}
 		if(!bad && !over) break;
 		if(fdt > 0){ fprintf(stderr, "[RETRY] fixed dt %g rejected (bad=%d over=%d): test invalid\n", fdt, bad, over); exit(5); }
 		double ncap = bad ? 0.5*(split ? dtH : dt) : (split ? dt : gfs_step_dtmin)*(1 - 1e-9);
+		if(rmem_on() && !bad && ncap>gfs_step_dtmin*(1-1e-9))ncap=gfs_step_dtmin*(1-1e-9);
 		fprintf(stderr, "[RETRY] step rejected: dt=%.4e limit=%.4e bad=%d over=%d -> retry with dt <= %.4e\n", split ? dtH : dt, split ? dt : gfs_step_dtmin, bad, over, ncap);
+		if(gfs_mpi_coupled_active){
+			MPI_Allreduce(MPI_IN_PLACE,&ncap,1,MPI_DOUBLE,MPI_MIN,MPI_COMM(simpar));
+			void *restored=realloc(VORORK4_TBP(simpar),np0>0 ? ps*(size_t)np0:1);
+			if(!restored) MPI_Abort(MPI_COMM(simpar),2);VORORK4_TBP(simpar)=restored;
+		}
 		memcpy((char*)VORORK4_TBP(simpar), save, ps*(size_t)np0); VORO_NP(simpar) = np0;
-		if(ssave) memcpy(tcf_sacc, ssave, scap*sizeof(double));
+		rmem_reject(simpar);
+		if(gfs_mpi_coupled_active){
+			MPI_Allreduce(&VORO_NP(simpar),&VORO_TNP(simpar),1,MPI_PTRDIFF_T,MPI_SUM,MPI_COMM(simpar));
+			NPSUM(simpar)=VORO_TNP(simpar);
+		}
+		if(ssave){ memcpy(tcf_sacc, ssave, scap*sizeof(double)); if(tcf_entropy_split_on()){memcpy(tcf_entropy_rk,ssave+scap,scap*sizeof(double));memcpy(tcf_entropy_hg,ssave+2*scap,scap*sizeof(double));} }
 		cap = ncap;
 	}
 	gfs_in_retry = 0;
+	gfs_dt_audit_phase = 0;
 	if(tries >= 40){ fprintf(stderr, "[RETRY] step could not be accepted after 40 retries\n"); exit(4); }
+	rmem_accept(simpar);
 	gfs_dt_cap = 0;
 	if(split && gfs_hg_arc()){ fprintf(stderr, "[HGARC] cells=%ld modes=%ld fail=%ld dc_check=%.2e\n", hg_arc_ncell, hg_arc_nmode, hg_arc_fail, hg_arc_chk); hg_arc_ncell = hg_arc_nmode = hg_arc_fail = 0; hg_arc_chk = 0; }
 	if(split) fprintf(stderr, "[HGSPLIT] dt=%.4e modes=%ld heat=%.4e skipped=%ld bulk_modes=%ld bulk_skip=%ld bulk_heat=%.4e bulk_test=%.2e bp_modes=%ld bp_skip=%ld bp_heat=%.4e bp_test=%.2e\n", dt, hgs_nmode, hgs_heat, hgm_nfail, bulk_nmode, bulk_nskip, bulk_heat, bulk_test_err, bp_nmode, bp_nskip, bp_heat, bp_test_err);
 	bulk_nmode = bulk_nskip = 0; bulk_heat = 0; bp_nmode = bp_nskip = 0; bp_heat = 0;
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_write((treevorostressrk4particletype*)VORORK4_TBP(simpar), VORO_NP(simpar));
+	if(ledger) gfs_ledger_commit(simpar,targetBP,ledger_before,dt,tries,hg_delta);
+	if(rmem_on()){
+		double state[GFS_LEDGER_N];gfs_ledger_state(simpar,targetBP,state);
+		double hydro_delta=state[4]+state[5]+state[6]-ledger_before[4]-ledger_before[5]-ledger_before[6];
+		fprintf(stderr,"[RMEM_ACCEPTED] dt=%.17g retries=%d Eaux=%.17g dEaux=%.17g dEhydro=%.17g boundary_work=%.17g augmented_residual=%.17g scope=step_hydro_plus_aux_minus_aux_boundary\n",
+			dt,tries,rmem_energy(),rmem_energy()-rmem_aux_before,hydro_delta,rmem_trial_work,
+			hydro_delta+rmem_energy()-rmem_aux_before-rmem_trial_work);
+	}
+	if(gfs_mpi_coupled_active){
+		MPI_Allreduce(MPI_IN_PLACE,&hgs_boundary_work,1,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+		MPI_Allreduce(MPI_IN_PLACE,&hgs_boundary_heat,1,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+		gfs_mpi_coupled_step++;
+	}
+	if(ledger && split && hg_frozen_consistent() && MYID(simpar)==0)
+		fprintf(stderr,"[ACCEPTED_HG_BOUNDARY] work=%.17g heat_out=%.17g measured_dE=%.17g residual=%.17g\n",
+			hgs_boundary_work,hgs_boundary_heat,hg_delta[4]+hg_delta[5]+hg_delta[6],
+			hg_delta[4]+hg_delta[5]+hg_delta[6]-hgs_boundary_work+hgs_boundary_heat);
 	free(save); if(ssave) free(ssave);
+	/* Diagnostic elapsed time advances once, after acceptance of both HG
+	 * halves and RK4. Rejected trials must not advance its time windows. */
+	gfs_tnow += dt;
 	return dt;
 }
 static double exam2d_vph_rk4_int_blend_inner(
@@ -14242,25 +15502,6 @@ static double exam2d_vph_rk4_int_blend_inner(
 	/* before the stage-1 force call, which already stores the rates */
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_ensure(sbp, VORO_NP(simpar));
 
-	/* GFS_DUAL_ENERGY: give every particle an entropy on the first call.
-	 * The KH/Kepler IC leaves stress.K = 0. */
-	{
-		static int de_k_init = 0;
-		if(!de_k_init && (gfs_dual_energy_eta() > 0 || (GAS_ENTROPY_MODE(simpar) == 1 && getenv("GFS_K_INIT")))){   /* GFS_K_INIT: entropy_mode 1 from an ie-mode state */
-			int nk = 0;
-			for(i=0;i<VORO_NP(simpar);i++){
-				if(sbp[i].stress.K > 0) continue;
-				if(sbp[i].den > 0 && sbp[i].pressure > 0){
-					sbp[i].stress.K = sbp[i].pressure / pow((double)sbp[i].den, (double)Gamma);
-					nk++;
-				}
-			}
-			if(MYID(simpar) == 0)
-				fprintf(stderr, "[DUALE] eta=%g K set from P/rho^gamma on %d particles of rank 0\n",
-						gfs_dual_energy_eta(), nk);
-			de_k_init = 1;
-		}
-	}
 
 	/* Reset vsig_max at start */
 	if(av_mode >= 1){
@@ -14268,42 +15509,10 @@ static double exam2d_vph_rk4_int_blend_inner(
 			sbp[i].stress.vsig_max = 0;
 	}
 
-	/* Revision 4 defensive init: first-call guarantee that CD10 state
-	 * fields (divv_old, alpha_cd) are not garbage, regardless of
-	 * allocator behaviour.  my_malloc may or may not zero-init; this
-	 * removes the dependency. */
-	{
-		static int first_call = 1;
-		if(first_call && av_mode >= 1){
-			postype cd_amin_init = GAS_CDAMIN(simpar);
-			for(i=0;i<VORO_NP(simpar);i++){
-				sbp[i].stress.divv_old = 0;
-				sbp[i].stress.alpha_cd = cd_amin_init;
-			}
-			first_call = 0;
-		}
-	}
 
 	double _t0, _t_update=0, _t_force=0, _t_post=0, _t_fin=0;
 
-	{
-		/* av_mode 5 / kappa guard, and clear any w2 the IC or a restart
-		 * already set from the old kappa (CPU and GPU both read w2 here). */
-		static int kg_done = 0;
-		if(!kg_done){
-			kg_done = 1;
-			gfs_kappa_guard(simpar, "RK4 start");
-			if(GAS_AVMODE(simpar) == 5 && GAS_Kappa(simpar) == 0){
-				int nz = 0;
-				for(i=0;i<VORO_NP(simpar);i++){
-					if(sbp[i].w2 != 0 || sbp[i].w2old != 0 || sbp[i].rk4.w2backup != 0) nz++;
-					sbp[i].w2 = 0; sbp[i].w2old = 0; sbp[i].rk4.w2backup = 0;
-				}
-				if(nz > 0)
-					fprintf(stderr, "[KAPPA_GUARD] r%d: cleared nonzero w2 on %d particles (av_mode=5, kappa=0)\n", MYID(simpar), nz);
-			}
-		}
-	}
+
 	/* GFS_W2_LINEAR (default off): one Wdot per particle for this step. */
 	int w2lin = gfs_w2lin_on() && GAS_Kappa(simpar) > 0 && !sedov_lagvol_on();
 	{
@@ -14389,6 +15598,7 @@ static double exam2d_vph_rk4_int_blend_inner(
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 	_t_force += MPI_Wtime() - _t0;
+	if(rmem_on()){double limit=rmem_rhs(simpar);if(limit<Dtime)Dtime=limit;if(limit<gfs_step_dtmin)gfs_step_dtmin=limit;}
 	{
 		postype dtk = kepler_dt_limit(simpar, VORORK4_TBP(simpar),
 				TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
@@ -14405,6 +15615,7 @@ static double exam2d_vph_rk4_int_blend_inner(
 			Dtime = (postype)fdt;
 		}
 		if(gfs_dt_cap > 0 && (double)Dtime > gfs_dt_cap) Dtime = (postype)gfs_dt_cap;
+		if(gfs_max_dt() > 0 && (double)Dtime > gfs_max_dt()) Dtime = (postype)gfs_max_dt();
 	}
 
 	clamp_dK_rate_limiter(simpar, Dtime);
@@ -14418,8 +15629,8 @@ static double exam2d_vph_rk4_int_blend_inner(
 			postype gx = 0, gy = 0;
 			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
 			hill_coriolis(sbp[i].vx, sbp[i].vy, &gx, &gy);
-			sbp[i].rk4.k1vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
-			sbp[i].rk4.k1vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+			sbp[i].rk4.k1vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx + rmem_a((long)PINDX(sbp+i),0))*Dtime;
+			sbp[i].rk4.k1vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy + rmem_a((long)PINDX(sbp+i),1))*Dtime;
 		}
 		sbp[i].rk4.k1ie = gfs_hydro_on()*phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k1K  = sbp[i].stress.dK*Dtime;
@@ -14428,8 +15639,10 @@ static double exam2d_vph_rk4_int_blend_inner(
 			sbp[i].rk4.k1ie = 0; sbp[i].rk4.k1K = 0;
 		}
 	}
+	rmem_record(simpar,1,(double)Dtime);
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(1.0/6.0));
+	orbit_work_stage(sbp,VORO_NP(simpar),(double)Dtime/6.0,1);
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_stage(sbp, VORO_NP(simpar), (double)Dtime/6.0);
 
 	/* === K2 evaluation === */
@@ -14478,6 +15691,7 @@ static double exam2d_vph_rk4_int_blend_inner(
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 	_t_force += MPI_Wtime() - _t0;
+	if(rmem_on()){double limit=rmem_rhs(simpar);if(limit<dt)dt=limit;if(limit<gfs_step_dtmin)gfs_step_dtmin=limit;}
 	clamp_dK_rate_limiter(simpar, Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -14489,8 +15703,8 @@ static double exam2d_vph_rk4_int_blend_inner(
 			postype gx = 0, gy = 0;
 			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
 			hill_coriolis(sbp[i].vx, sbp[i].vy, &gx, &gy);
-			sbp[i].rk4.k2vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
-			sbp[i].rk4.k2vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+			sbp[i].rk4.k2vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx + rmem_a((long)PINDX(sbp+i),0))*Dtime;
+			sbp[i].rk4.k2vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy + rmem_a((long)PINDX(sbp+i),1))*Dtime;
 		}
 		sbp[i].rk4.k2ie = gfs_hydro_on()*phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k2K  = sbp[i].stress.dK*Dtime;
@@ -14499,8 +15713,10 @@ static double exam2d_vph_rk4_int_blend_inner(
 			sbp[i].rk4.k2ie = 0; sbp[i].rk4.k2K = 0;
 		}
 	}
+	rmem_record(simpar,2,(double)Dtime);
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 2.0/6.0);
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(2.0/6.0));
+	orbit_work_stage(sbp,VORO_NP(simpar),(double)Dtime/3.0,2);
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_stage(sbp, VORO_NP(simpar), (double)Dtime/3.0);
 
 	/* === K3 evaluation === */
@@ -14549,6 +15765,7 @@ static double exam2d_vph_rk4_int_blend_inner(
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 	_t_force += MPI_Wtime() - _t0;
+	if(rmem_on()){double limit=rmem_rhs(simpar);if(limit<dt)dt=limit;if(limit<gfs_step_dtmin)gfs_step_dtmin=limit;}
 	clamp_dK_rate_limiter(simpar, Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -14560,8 +15777,8 @@ static double exam2d_vph_rk4_int_blend_inner(
 			postype gx = 0, gy = 0;
 			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
 			hill_coriolis(sbp[i].vx, sbp[i].vy, &gx, &gy);
-			sbp[i].rk4.k3vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
-			sbp[i].rk4.k3vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+			sbp[i].rk4.k3vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx + rmem_a((long)PINDX(sbp+i),0))*Dtime;
+			sbp[i].rk4.k3vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy + rmem_a((long)PINDX(sbp+i),1))*Dtime;
 		}
 		sbp[i].rk4.k3ie = gfs_hydro_on()*phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k3K  = sbp[i].stress.dK*Dtime;
@@ -14570,8 +15787,10 @@ static double exam2d_vph_rk4_int_blend_inner(
 			sbp[i].rk4.k3ie = 0; sbp[i].rk4.k3K = 0;
 		}
 	}
+	rmem_record(simpar,3,(double)Dtime);
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 2.0/6.0);
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(2.0/6.0));
+	orbit_work_stage(sbp,VORO_NP(simpar),(double)Dtime/3.0,3);
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_stage(sbp, VORO_NP(simpar), (double)Dtime/3.0);
 
 	/* === K4 evaluation === */
@@ -14620,6 +15839,7 @@ static double exam2d_vph_rk4_int_blend_inner(
 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
 	_t_force += MPI_Wtime() - _t0;
+	if(rmem_on()){double limit=rmem_rhs(simpar);if(limit<dt)dt=limit;if(limit<gfs_step_dtmin)gfs_step_dtmin=limit;}
 	clamp_dK_rate_limiter(simpar, Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 	for(i=0;i<VORO_NP(simpar);i++){
@@ -14631,8 +15851,8 @@ static double exam2d_vph_rk4_int_blend_inner(
 			postype gx = 0, gy = 0;
 			kepler_accel(sbp[i].x, sbp[i].y, &gx, &gy);
 			hill_coriolis(sbp[i].vx, sbp[i].vy, &gx, &gy);
-			sbp[i].rk4.k4vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx)*Dtime;
-			sbp[i].rk4.k4vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy)*Dtime;
+			sbp[i].rk4.k4vx = (gfs_hydro_on()*sbp[i].ax + GAS_ACCX(simpar) + gx + rmem_a((long)PINDX(sbp+i),0))*Dtime;
+			sbp[i].rk4.k4vy = (gfs_hydro_on()*sbp[i].ay + GAS_ACCY(simpar) + gy + rmem_a((long)PINDX(sbp+i),1))*Dtime;
 		}
 		sbp[i].rk4.k4ie = gfs_hydro_on()*phase1_ie_stage(sbp+i, Dtime);
 		sbp[i].rk4.k4K  = sbp[i].stress.dK*Dtime;
@@ -14641,8 +15861,10 @@ static double exam2d_vph_rk4_int_blend_inner(
 			sbp[i].rk4.k4ie = 0; sbp[i].rk4.k4K = 0;
 		}
 	}
+	rmem_record(simpar,4,(double)Dtime);
 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(1.0/6.0));
+	orbit_work_stage(sbp,VORO_NP(simpar),(double)Dtime/6.0,4);
 	if(gfs_tcf_on() && tcf_sacc_file()) tcf_sacc_stage(sbp, VORO_NP(simpar), (double)Dtime/6.0);
 	_t0 = MPI_Wtime();
 
@@ -15091,7 +16313,6 @@ static double exam2d_vph_rk4_int_blend_inner(
 		update_alpha_cd_2d(simpar, Dtime);
 	}
 
-	gfs_tnow += (double)Dtime;
 	gfs_w2lin_active = 0;
 	gfs_dynw2_active = 0;
 	_t_fin = MPI_Wtime() - _t0;

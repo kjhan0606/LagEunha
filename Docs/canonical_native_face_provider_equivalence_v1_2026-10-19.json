@@ -1,0 +1,117 @@
+{
+  "status": "passed_native_face_provider_equivalence",
+  "physical_providers": 2,
+  "accepted_time_steps": 0,
+  "time": 0.025,
+  "cells": 19945,
+  "comparisons": {
+    "stage": {
+      "exact_value": true,
+      "shape": [
+        19945,
+        94
+      ]
+    },
+    "incoming_Q": {
+      "exact_value": true,
+      "shape": [
+        34497984,
+        2
+      ]
+    },
+    "incoming_offsets": {
+      "exact_value": true,
+      "shape": [
+        19946
+      ]
+    },
+    "generator": {
+      "exact_value": true,
+      "shape": [
+        19945,
+        2
+      ]
+    },
+    "weight_rates": {
+      "exact_value": true,
+      "shape": [
+        19945
+      ]
+    },
+    "Psi_rates": {
+      "exact_value": true,
+      "shape": [
+        19945
+      ]
+    },
+    "ledgers": {
+      "exact_value": true,
+      "shape": [
+        12
+      ]
+    },
+    "mass": {
+      "exact_value": true,
+      "shape": [
+        19945
+      ]
+    },
+    "ids": {
+      "exact_value": true,
+      "shape": [
+        19945
+      ]
+    },
+    "initial_state_sha256": {
+      "exact_value": true,
+      "shape": []
+    },
+    "node_inputs_sha256": {
+      "exact_value": true
+    },
+    "node_extra_sha256": {
+      "exact_value": true
+    }
+  },
+  "closed_root_history_exact_value": true,
+  "profile": {
+    "baseline": {
+      "total_seconds": 272.8152586873621,
+      "geometry_seconds": 120.02989098615944,
+      "massroot_seconds": 45.47522296011448,
+      "peak_RSS_KiB": 14678816
+    },
+    "candidate": {
+      "total_seconds": 175.12694599479437,
+      "geometry_seconds": 47.750564113259315,
+      "massroot_seconds": 19.55430348776281,
+      "peak_RSS_KiB": 15298860
+    }
+  },
+  "geometry_root_speed_ratio": 2.4590363200381735,
+  "geometry_root_2x_goal_met": true,
+  "whole_provider_speed_ratio": 1.5578142880163712,
+  "source_inputs_unchanged": true,
+  "native_provenance": {
+    "original_stage": "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/full_disk_stage_memory.py",
+    "original_stage_sha256": "81406a35766f6d65e7eccb8e8a2a7319c5a4f058cc497954be0b284275608142",
+    "straight_faces": {
+      "library": "/gpfs/kjhan/LagForce/Codex_native_face_provider_modules_v1_20261019/liblag_straight_faces.so",
+      "sha256": "c7187b4780baf2c7671051bb16d25dad899d7945a84a2d6c51699044fd1531a0",
+      "arc_algorithm_changed": false,
+      "quadrature_order_changed": false,
+      "ordered_panels": true,
+      "coordinate_arithmetic": "long double through final binary64 export"
+    },
+    "transport_root": {
+      "library": "/gpfs/kjhan/LagForce/Codex_native_face_provider_modules_v1_20261019/liblag_transport_root.so",
+      "sha256": "da7b0a2e267d86905739f48d18e4a06b09afe5d2ec5b7a197c5f1c2edea8905d",
+      "accumulation": "Two canonical-order owner sums, then subtraction",
+      "sparse_solver_changed": false,
+      "tolerances_changed": false
+    },
+    "sparse_solver_changed": false,
+    "physical_closure_changed": false
+  },
+  "limits": "One same-host saved-state pair. No time update, integrator convergence or long-time stability claim; speed goal failure is retained. RSS is cumulative process high-water, including retained baseline arrays, not independent per-provider peak."
+}

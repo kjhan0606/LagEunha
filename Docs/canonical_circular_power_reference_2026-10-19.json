@@ -1,0 +1,203 @@
+{
+  "status": "passed",
+  "scope": "Static true-arc disk boundary fixtures; no domain evolution or IC fit.",
+  "radius": 2.5,
+  "results": {
+    "single": {
+      "status": "passed",
+      "cells": 1,
+      "arcs": 1,
+      "wall_nodes": 48,
+      "area_error": 0.0,
+      "q_error": [
+        1.3914795241968628e-13,
+        -1.2339666325781688e-15
+      ],
+      "Q_error": [
+        [
+          1.3145040611561853e-13,
+          2.483419286186672e-15
+        ],
+        [
+          2.476480392282765e-15,
+          -1.2434497875801753e-13
+        ]
+      ],
+      "divergence_errors": [
+        [
+          6.691869280928131e-14,
+          8.171241461241152e-14
+        ]
+      ],
+      "maximum_shared_pair_error": 0.0,
+      "wall_maximum_absolute_flux": [
+        6.082054802358102e-20,
+        1.786096760292496e-20,
+        2.4328219209432412e-20,
+        1.6218812806288272e-19
+      ],
+      "wall_total_flux": [
+        -1.640370865752588e-19,
+        -6.002422557260028e-21,
+        6.561483463010352e-20,
+        -4.1693028720818514e-20
+      ],
+      "wall_flux_order": [
+        "mass",
+        "hydro_E",
+        "Phi",
+        "origin_torque"
+      ],
+      "wall_flux_bounds_sum": [
+        4.828297562986222e-16,
+        1.114853907293518e-16,
+        1.9313190251944882e-16,
+        4.50465192254811e-15
+      ]
+    },
+    "pair": {
+      "status": "passed",
+      "cells": 2,
+      "arcs": 3,
+      "wall_nodes": 144,
+      "area_error": 0.0,
+      "q_error": [
+        3.197442310920451e-14,
+        -2.886579864025407e-15
+      ],
+      "Q_error": [
+        [
+          -6.394884621840902e-14,
+          3.519406988061746e-14
+        ],
+        [
+          3.5263458819656535e-14,
+          5.684341886080802e-14
+        ]
+      ],
+      "divergence_errors": [
+        [
+          1.970645868709653e-14,
+          3.907985046680551e-14
+        ],
+        [
+          4.378442053365461e-15,
+          7.344968275084518e-15
+        ]
+      ],
+      "maximum_shared_pair_error": 0.0,
+      "wall_maximum_absolute_flux": [
+        2.7012447920606142e-20,
+        8.930255547003917e-21,
+        1.0804979168242457e-20,
+        8.621330803447311e-20
+      ],
+      "wall_total_flux": [
+        5.822678185464114e-20,
+        2.0542316050546632e-20,
+        -2.3290712741856468e-20,
+        -1.2137450531450525e-19
+      ],
+      "wall_flux_order": [
+        "mass",
+        "hydro_E",
+        "Phi",
+        "origin_torque"
+      ],
+      "wall_flux_bounds_sum": [
+        4.823057977796874e-16,
+        1.1136440870732974e-16,
+        1.9292231911187492e-16,
+        4.50465192254811e-15
+      ]
+    },
+    "weighted": {
+      "status": "passed",
+      "cells": 5,
+      "arcs": 5,
+      "wall_nodes": 240,
+      "area_error": 0.0,
+      "q_error": [
+        3.557050487490443e-15,
+        1.321859288694327e-15
+      ],
+      "Q_error": [
+        [
+          -1.0658141036401503e-14,
+          -3.828101030611819e-15
+        ],
+        [
+          -3.829835754087796e-15,
+          -3.552713678800501e-15
+        ]
+      ],
+      "divergence_errors": [
+        [
+          3.964710504344993e-15,
+          1.7326851758925343e-14
+        ],
+        [
+          3.6741443221188774e-15,
+          1.2219405717307785e-14
+        ],
+        [
+          1.8305669480245257e-15,
+          1.1755895736043076e-14
+        ],
+        [
+          3.472916398905568e-15,
+          1.2243461453009807e-14
+        ],
+        [
+          2.0816681711721685e-16,
+          2.220446049250313e-16
+        ]
+      ],
+      "maximum_shared_pair_error": 4.440892098500626e-16,
+      "wall_maximum_absolute_flux": [
+        1.8101332178439213e-20,
+        5.9639896849437706e-21,
+        7.240532871375687e-21,
+        5.311431320575468e-20
+      ],
+      "wall_total_flux": [
+        -4.137974948401714e-20,
+        -1.5055158740781122e-20,
+        1.6551899793606853e-20,
+        -1.5620414968759141e-19
+      ],
+      "wall_flux_order": [
+        "mass",
+        "hydro_E",
+        "Phi",
+        "origin_torque"
+      ],
+      "wall_flux_bounds_sum": [
+        4.823323687175872e-16,
+        1.1137054393689093e-16,
+        1.9293294748703497e-16,
+        4.5046519225481075e-15
+      ]
+    },
+    "gauge_and_explicit_failures": {
+      "status": "passed",
+      "moment_gauge_error": 0.0,
+      "gauge_solution": [
+        1.3877787807814457e-17,
+        0.1,
+        -0.10000000000000002
+      ],
+      "no_projection": true
+    }
+  },
+  "boundary": "stationary true circular slip wall; mirror normal velocity only; ds=R dtheta",
+  "future_massroot": "all fluid dynamic; explicit sum(z)=0 gauge, reject incompatible total residual; no frozen anchor",
+  "future_initialization": "integrate steady field on actual disk-clipped cells, including dynamic buffer r=2..2.5; no reuse of old boundary mass",
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/check_circular_power_reference.py": "9893d1f6b431a84a733486cfd882ba8dea5d4b02d349bf2ba199005137ff4d4b",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/circular_power_reference.py": "29b2f0cc1d1cd7e770c6bf161534aad481b0101e1d9eb4ed3ddb491aae8acf8d",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/face_record_batch.py": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c",
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/kinetic_factor_rhs.py": "406b700f75dd233d0dd456d089dba8f358a260c64c0e657489d08237b243f3b1"
+  },
+  "limits": "Small all-constraint static reference. No full domain build, interior IC, constrained fit, RHS evolution, or wall-pressure positivity proof."
+}

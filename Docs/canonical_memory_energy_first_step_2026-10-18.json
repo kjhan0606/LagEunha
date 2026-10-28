@@ -1,0 +1,72 @@
+{
+  "completed_memory_steps": 1,
+  "latest": {
+    "step": 1,
+    "elapsed": 0.0001,
+    "hydro_energy": -4.811880252211151,
+    "auxiliary_energy": 5.855127191323795e-17,
+    "augmented_energy": -4.811880252211151,
+    "augmented_energy_change": -2.7124968937641825e-12,
+    "auxiliary_boundary_work_cumulative": -7.314788262839914e-17,
+    "change_minus_auxiliary_boundary_work": -2.712423745881554e-12,
+    "retries": 0
+  },
+  "total_retries": 0,
+  "unpaired_tail": false,
+  "hg_boundary_records": 1,
+  "hg_boundary_work_cumulative": -3.116169604761074e-14,
+  "hg_heat_out_cumulative": 2.439869378319272e-16,
+  "sidecars": [
+    {
+      "snapshot": "/gpfs/kjhan/LagForce/Codex_reversible_memory_first_step_20261018/khout.000185.dat",
+      "time": 2.003005917763403,
+      "auxiliary_energy": 5.855127191323824e-17,
+      "material_regions": {
+        "inner_background": {
+          "cells": 804,
+          "auxiliary_energy": 5.578588193496334e-17,
+          "departure_kinetic_energy": 6.89037768482195e-10,
+          "thermal_energy": 3.290147576262544e-05,
+          "auxiliary_over_departure": 8.096200888646189e-08,
+          "auxiliary_over_thermal": 1.6955434563921154e-12,
+          "fraction_of_global_auxiliary": 0.9527697710414785
+        },
+        "inner_disk_edge": {
+          "cells": 390,
+          "auxiliary_energy": 1.5033226473826616e-18,
+          "departure_kinetic_energy": 2.0335606156370163e-12,
+          "thermal_energy": 1.587749534340668e-05,
+          "auxiliary_over_departure": 7.392563741758655e-07,
+          "auxiliary_over_thermal": 9.46826067253066e-14,
+          "fraction_of_global_auxiliary": 0.02567532007861926
+        },
+        "disk_core": {
+          "cells": 10304,
+          "auxiliary_energy": 6.912466963095818e-21,
+          "departure_kinetic_energy": 1.1769798499178146e-11,
+          "thermal_energy": 0.000419294870362375,
+          "auxiliary_over_departure": 5.873054635199147e-10,
+          "auxiliary_over_thermal": 1.648593257800108e-17,
+          "fraction_of_global_auxiliary": 0.00011805835701295728
+        },
+        "inner_shear_band": {
+          "cells": 521,
+          "auxiliary_energy": 1.5219482417756923e-17,
+          "departure_kinetic_energy": 4.663184390590053e-10,
+          "thermal_energy": 2.1304019245401464e-05,
+          "auxiliary_over_departure": 3.263753080077353e-08,
+          "auxiliary_over_thermal": 7.143948868259726e-13,
+          "fraction_of_global_auxiliary": 0.2599342750454555
+        }
+      },
+      "record_checksum_verified": true,
+      "time_and_ids_verified": true,
+      "stored_hydro_fingerprint": "0xb80e2da4e1131641",
+      "hydro_fingerprint_independently_verified": false
+    }
+  ],
+  "snapshots_without_sidecar": [
+    "khout.000184.dat"
+  ],
+  "scope": "Partial boundary accounting, not a closed-system conservation or physical stability pass. Regions use original IC material IDs and overlap; auxiliary energy is assigned to its owner, not a local energy-flux balance. Missing sidecar at original t0 is expected; later files may be in publication. Hydro fingerprint validation remains performed by simulator restart, not this reader."
+}

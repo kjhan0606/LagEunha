@@ -1,0 +1,71 @@
+{
+  "scope": "Actual t2 saved mass/vx/vy/ie at zero weights; weight-amplitude derivative only. No physical time integration, no pressure force, no MPI, no production changes.",
+  "source": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat",
+  "source_time": 2.0029059177634028,
+  "patch_cells": 1590,
+  "active_faces": 2496,
+  "parameter": "w(s)=s*w_target at s=0; rates per unit s, not per physical time",
+  "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+  "zero_relative_weight_rate_flux_zero": true,
+  "point_potential_gauge_shift_max_error": 1.2705494208814505e-20,
+  "C_volume_max_relative_error": 3.930189507173054e-14,
+  "patch_initial_U": 6.488644187182621e-05,
+  "uncorrected_point_total_energy_rate": -7.139732764713331e-05,
+  "corrected_point_total_energy_rate": -2.710505431213761e-20,
+  "kinetic_rate": -7.242131699024268e-20,
+  "added_thermal_rate_over_patch_U_per_s": 1.1003427771269763,
+  "added_absolute_thermal_rate_over_patch_U_per_s": 1.6214272754594352,
+  "point_angular_rate": -2.5039977314077402e-05,
+  "pair_energy_residual_max": 0.0,
+  "regions": {
+    "inner": {
+      "source_sum_over_region_U_per_s": 1.370464586179579,
+      "source_abs_sum_over_region_U_per_s": 2.0806417558573393,
+      "source_over_cell_U_quantiles_per_s": [
+        -8.651341605602665,
+        -2.4446131546138563,
+        0.058055283362778244,
+        32.61857575126098,
+        95.38125404276863
+      ]
+    },
+    "guard": {
+      "source_sum_over_region_U_per_s": 0.8286557647105,
+      "source_abs_sum_over_region_U_per_s": 1.159551906435104,
+      "source_over_cell_U_quantiles_per_s": [
+        -35.111116730363854,
+        -2.936533534309205,
+        0.0,
+        25.062522062560536,
+        81.74702367723899
+      ]
+    },
+    "patch": {
+      "source_sum_over_region_U_per_s": 1.1003427771269763,
+      "source_abs_sum_over_region_U_per_s": 1.6214272754594352,
+      "source_over_cell_U_quantiles_per_s": [
+        -35.111116730363854,
+        -2.5880607127403694,
+        0.0,
+        30.03346337949837,
+        95.38125404276863
+      ]
+    }
+  },
+  "interpretation": "Cheap face potential correction closes the chosen point total-energy budget but creates a thermal source in pure weight relabeling. Total-energy conservation alone does not justify adopting this model. Point angular defect is unchanged. Requires a compact compatible representation/closure, not dense cell gravity quadrature.",
+  "sha256": {
+    "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.000184.dat": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+    "/gpfs/kjhan/LagForce/Codex_paired_response_20261017/run.py": "59235bbac5ac13c7608c8f68cf270ec6cf24c9d1b247c25104eb10c96931bed8",
+    "/gpfs/kjhan/LagForce/Codex_paired_response_20261017/layout.json": "de7c25081c54c12de84873f6decf355924591b22c697aabf0741fbc8df776437",
+    "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+    "/gpfs/kjhan/LagForce/Codex_evolving_weight_transport_20261017/weights_0.npz": "6a485c7eebb09b108f0c34f7bab9b47c84cf862abb63c8d6f6bb8bb32e3c224a",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/audit.py": "a63e9c0f886410728ab9448c64f2a2224bc524b3cb54db5b094c86f4cc2c24be",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/weight_remap_flux.h": "9995461c28a770961e5c87f1a753db87dd861b7ef6e2b856f8b842d046c8b27e",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/weight_remap_point_energy.h": "71064c24223dabf0890ed9f2b3a15026d705c4d383f1348992f03f3d98d32fd0",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/probe.c": "643df35e00e5c3528cec5f2bef5eeb03fbee0a44e463ea0076e75b994abbbb7e",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/probe.cu": "4f816867103b8b7d0283004daae0f948a776ab2e1a5079320204f373d0951845",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/cpu.so": "b2efd78028780df178f8b92d8a70f236e98759ad6bbe345d383be7225ef804db",
+    "/gpfs/kjhan/LagForce/Codex_point_energy_budget_20261018/cuda.so": "01a71b041dc82410e078ec4036010325b9cb0e2fdf590cc15a27583965f740d6"
+  }
+}

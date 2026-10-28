@@ -1,0 +1,30 @@
+{
+  "scope": "Gravity moment-source quadrature on the new IC, plus saved hydro rates.\nNo time integration; potential energy transport is not implemented here.\n",
+  "hydro_source": "/gpfs/kjhan/LagForce/Codex_continuous_initial_rhs_split_20261018/rhs_r0.55_f8.npz",
+  "sha256": "d568b4b4100e2b06d81dabd37ea5a8a271036b2f1aee37f23340fbc67fbe2212",
+  "results": [
+    {
+      "order": 12,
+      "maximum_central_torque": 2.168404344971009e-19,
+      "maximum_thermal_source": 1.5399257504430193e-18,
+      "maximum_residual_covariance_source": 1.1755335000231994e-17,
+      "maximum_analytic_circular_work": 2.8865454515861766e-20,
+      "maximum_affine_gravity_work": 1.1896542408665257e-09,
+      "centroid_force_relative_l2": 0.0004562419987924075,
+      "centroid_force_max_abs": 1.8686947568522308e-06
+    },
+    {
+      "order": 24,
+      "maximum_central_torque": 2.168404344971009e-19,
+      "maximum_thermal_source": 2.011134149467527e-18,
+      "maximum_residual_covariance_source": 2.6755494402717602e-17,
+      "maximum_analytic_circular_work": 2.0706330358167315e-20,
+      "maximum_affine_gravity_work": 1.1896542407719624e-09,
+      "centroid_force_relative_l2": 0.00045624199879494635,
+      "centroid_force_max_abs": 1.8686947568483277e-06,
+      "successive_source_max_abs": 9.23046361567259e-15,
+      "successive_active_force_relative_l2": 2.4807832044230614e-13
+    }
+  ],
+  "limits": "Gravity integrated over fitted smooth density and affine conditional mean. Does not integrate original discontinuous density exactly. Combined rates exclude potential energy transport and moving-boundary validation. No full total-energy conservation or long-term stability claim."
+}

@@ -1,0 +1,58 @@
+{
+  "scope": "Associate equal-time step-size differences with endpoint neighbor changes.",
+  "active_radius": 0.6,
+  "comparison_region": "original active cells r<.55",
+  "time": 0.0001,
+  "endpoint_graphs_equal": true,
+  "events": [
+    {
+      "added": [
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "removed": []
+    },
+    {
+      "added": [
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "removed": []
+    }
+  ],
+  "results": [
+    {
+      "region": "changed",
+      "cells": 4,
+      "velocity_mass_RMS": 3.660098316347527e-11,
+      "fraction_of_active_squared_error": 1.0158644605760804e-06
+    },
+    {
+      "region": "unchanged",
+      "cells": 958,
+      "velocity_mass_RMS": 5.986243534318961e-10,
+      "fraction_of_active_squared_error": 0.9999989841355393
+    }
+  ],
+  "limits": "Endpoint neighbor sets only: does not detect changes that reverse within a step, nor establish causality or temporal convergence. Face-length threshold 1e-12."
+}

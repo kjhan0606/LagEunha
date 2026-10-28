@@ -4,9 +4,21 @@ Load an explicitly supplied library built from test_volume_wrapper.c and the
 validated CPU laguerre.c. Current C topology limits are propagated as errors.
 """
 import ctypes
+from functools import lru_cache
 from pathlib import Path
 import numpy as np
 from scipy.spatial import ConvexHull
+
+
+@lru_cache(maxsize=16)
+def triangle_rule(order):
+    """Immutable reference fan-triangle rule, independent of physical state."""
+    z,w=np.polynomial.legendre.leggauss(order);z=(z+1)/2;w=w/2
+    a,b=np.meshgrid(z,z,indexing='ij');wa,wb=np.meshgrid(w,w,indexing='ij')
+    a=a.ravel();b=b.ravel();weights=(wa*wb).ravel()*a
+    bary=np.column_stack([1-a,a*(1-b),a*b])
+    bary.setflags(write=False);weights.setflags(write=False)
+    return bary,weights
 
 
 def face_quadrature(vertices,normal,order=4):
@@ -14,10 +26,7 @@ def face_quadrature(vertices,normal,order=4):
     center=face.mean(axis=0);axis=np.eye(3)[np.argmin(abs(n))]
     u=np.cross(n,axis);u/=np.linalg.norm(u);v=np.cross(n,u)
     angle=np.arctan2((face-center)@v,(face-center)@u);face=face[np.argsort(angle)]
-    z,w=np.polynomial.legendre.leggauss(order);z=(z+1)/2;w=w/2
-    a,b=np.meshgrid(z,z,indexing='ij');wa,wb=np.meshgrid(w,w,indexing='ij')
-    a=a.ravel();b=b.ravel();weights=(wa*wb).ravel()*a
-    bary=np.column_stack([1-a,a*(1-b),a*b]);points=[];out=[]
+    bary,weights=triangle_rule(order);points=[];out=[]
     for left,right in zip(face,np.roll(face,-1,axis=0)):
         jac=np.linalg.norm(np.cross(left-center,right-center))
         if jac<=0:raise ValueError('degenerate face triangle')

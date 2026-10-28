@@ -1,0 +1,42 @@
+{
+  "scope": "Full-domain smooth row coverage and frozen-boundary work audit.\n\nAll rows are constructed; active auxiliary modes are owned at r<2.5.\nFrozen support velocities are retained in z_dot and reaction work recorded.\n",
+  "cells": 36864,
+  "active_owners": 19855,
+  "periodic_rows": 2797,
+  "active_rows_crossing_frozen_boundary": 1948,
+  "row_summary": {
+    "radius": {
+      "min": 0.12083847657212343,
+      "max": 0.19860232751564233
+    },
+    "support": {
+      "min": 45,
+      "max": 75
+    },
+    "condition": {
+      "min": 11.471561268364233,
+      "max": 39.19871818406247
+    },
+    "moment_max": {
+      "min": 1.890388196629385e-17,
+      "max": 1.0900260117035669e-14
+    },
+    "weight_sum_error": {
+      "min": 0.0,
+      "max": 1.0658141036401503e-14
+    },
+    "coverage_ratio": {
+      "min": 1.2588736426948528,
+      "max": 1.7131340975430613
+    }
+  },
+  "moving_kinetic_power": -2.8561583876967074,
+  "auxiliary_power": 2.7857203288626686,
+  "external_boundary_power": -0.07043805883403824,
+  "boundary_work_relative_closure": 1.7007193667860741e-18,
+  "total_force_relative": 5.154666039616527e-18,
+  "total_torque_relative": 2.2266890931876255e-18,
+  "seconds": 20.512056214734912,
+  "state_sha256": "c5e2e23f88a3f9db41106d02a5b082c21acd2680912d084b50ba451c9ba6498a",
+  "limitations": "Static full-domain Python operator. Nonzero random boundary velocities intentionally exercise external work. Production frozen-state integration, restart and parallel implementations remain unverified."
+}

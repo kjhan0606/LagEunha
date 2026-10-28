@@ -1,0 +1,202 @@
+{
+  "status": "completed_saved_cell_rotation_diagnostics",
+  "time": 0.025,
+  "source": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0005/physics",
+    "fields_sha256": "58707d61e0523223ac9c77e86475e539ad9e94639c0b6def6bdc43fcf06bd7c6",
+    "physical_monitor_passed": true,
+    "physical_monitor_status": "passed_checkpoint_physical_monitor",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "f40899cbb71b8593743bff0f701c9b12f520784fe76d413f5935e645dd1fb54f",
+    "physical_gate_sha256": "43335db97866c5843e6e2ffd65a841b98990122a403e237b25c4d59fefb7b391",
+    "density_report_sha256": "5789050feabcc789e51d49e8e54eef26f0214554e6e94bb6fd72798297926cf9",
+    "reference_report_sha256": "27e370b3078724b9dc02a52b995047b0fb42d4e43c367979f54082015ce604e5"
+  },
+  "fixtures": {
+    "rigid_rotation": true,
+    "rotated_frame_invariance": true,
+    "anisotropic_strain_not_misidentified_as_vorticity": true
+  },
+  "regions": {
+    "all": {
+      "cells": 19945,
+      "ell": {
+        "actual_RMS": 2.977697415889331e-08,
+        "reference_RMS": 2.964027353262634e-08,
+        "error_RMS": 2.5901533355048235e-10
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 0.2402282178913239,
+        "reference_RMS": 0.2391981811799673,
+        "error_RMS": 0.0017696492950230536
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 0.24169497377706153,
+        "reference_RMS": 0.24187112369129335,
+        "error_RMS": 0.0005890871787955628
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 0.0059163884294706265,
+      "maximum_energy_projection_identity_residual": 5.169878828456423e-26,
+      "maximum_angular_projection_identity_residual": 6.462348535570529e-27,
+      "projection_rate_minus_half_vorticity_RMS": 0.08332100848562972
+    },
+    "inner": {
+      "cells": 490,
+      "ell": {
+        "actual_RMS": 7.258216889205954e-09,
+        "reference_RMS": 7.252600710373808e-09,
+        "error_RMS": 2.657232795279994e-11
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 4.5455068792656705,
+        "reference_RMS": 4.545569036979833,
+        "error_RMS": 0.010495138051529525
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 4.6107214935423055,
+        "reference_RMS": 4.617720697808159,
+        "error_RMS": 0.011616512511191166
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 0.0014234363033601768,
+      "maximum_energy_projection_identity_residual": 2.7402957087501745e-26,
+      "maximum_angular_projection_identity_residual": 1.6155871338926322e-27,
+      "projection_rate_minus_half_vorticity_RMS": 0.11708674305561129
+    },
+    "cavity": {
+      "cells": 754,
+      "ell": {
+        "actual_RMS": 5.907264528793168e-09,
+        "reference_RMS": 5.899971973235537e-09,
+        "error_RMS": 4.07228166587461e-11
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 3.700980220235036,
+        "reference_RMS": 3.698703370971622,
+        "error_RMS": 0.024675129917263176
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 3.761862281160656,
+        "reference_RMS": 3.7676728282407983,
+        "error_RMS": 0.009860740502220966
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 0.0013171957618717854,
+      "maximum_energy_projection_identity_residual": 2.7402957087501745e-26,
+      "maximum_angular_projection_identity_residual": 1.6155871338926322e-27,
+      "projection_rate_minus_half_vorticity_RMS": 0.11975229912566372
+    },
+    "disk_core": {
+      "cells": 11812,
+      "ell": {
+        "actual_RMS": 2.9534469391129794e-08,
+        "reference_RMS": 2.9426518752079857e-08,
+        "error_RMS": 1.8023537875331778e-10
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 0.18858341659944652,
+        "reference_RMS": 0.18798488229314123,
+        "error_RMS": 0.0010747401559864746
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 0.22079381261963643,
+        "reference_RMS": 0.22091942147625743,
+        "error_RMS": 0.0004249280343556826
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 0.0018807583861456866,
+      "maximum_energy_projection_identity_residual": 5.169878828456423e-26,
+      "maximum_angular_projection_identity_residual": 6.462348535570529e-27,
+      "projection_rate_minus_half_vorticity_RMS": 0.0382946092479439
+    },
+    "inner_contact": {
+      "cells": 101,
+      "ell": {
+        "actual_RMS": 9.246301897812606e-08,
+        "reference_RMS": 8.995632547211409e-08,
+        "error_RMS": 2.8974193772290076e-09
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 1.802369070112141,
+        "reference_RMS": 1.784939159662098,
+        "error_RMS": 0.019634874112616375
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 0.6952073306438898,
+        "reference_RMS": 0.6958930668155652,
+        "error_RMS": 0.005123558955233882
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 0.0864052970459173,
+      "maximum_energy_projection_identity_residual": 3.877409121342317e-26,
+      "maximum_angular_projection_identity_residual": 0.0,
+      "projection_rate_minus_half_vorticity_RMS": 1.1078296915249817
+    },
+    "outer_contact": {
+      "cells": 402,
+      "ell": {
+        "actual_RMS": 1.1082736420217387e-08,
+        "reference_RMS": 1.1087557232737798e-08,
+        "error_RMS": 5.8247573227788686e-12
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 0.22589079539424722,
+        "reference_RMS": 0.22592024998009014,
+        "error_RMS": 5.060961834202831e-05
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 0.08876365008567041,
+        "reference_RMS": 0.08876318659403425,
+        "error_RMS": 2.2845038520848846e-05
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 2.338555179230016e-05,
+      "maximum_energy_projection_identity_residual": 7.068193710780266e-28,
+      "maximum_angular_projection_identity_residual": 0.0,
+      "projection_rate_minus_half_vorticity_RMS": 0.13722006039930987
+    },
+    "dynamic_buffer": {
+      "cells": 6407,
+      "ell": {
+        "actual_RMS": 9.967455272233297e-11,
+        "reference_RMS": 9.963729699964522e-11,
+        "error_RMS": 8.994843280042634e-14
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 0.06362201060204745,
+        "reference_RMS": 0.06359275700598213,
+        "error_RMS": 6.160594778775913e-05
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 0.07501120607289445,
+        "reference_RMS": 0.07501193911174925,
+        "error_RMS": 6.614587018280983e-06
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 1.622940026370611e-07,
+      "maximum_energy_projection_identity_residual": 9.466330862652142e-30,
+      "maximum_angular_projection_identity_residual": 6.310887241768095e-30,
+      "projection_rate_minus_half_vorticity_RMS": 0.013747939684871173
+    },
+    "wall": {
+      "cells": 469,
+      "ell": {
+        "actual_RMS": 1.0886615948943057e-10,
+        "reference_RMS": 1.0888935285020742e-10,
+        "error_RMS": 8.451268069209511e-14
+      },
+      "angular_momentum_rotation_rate": {
+        "actual_RMS": 0.0681794692876402,
+        "reference_RMS": 0.06818091754703391,
+        "error_RMS": 2.4359839419272896e-05
+      },
+      "half_affine_vorticity": {
+        "actual_RMS": 0.06399067769335551,
+        "reference_RMS": 0.06399050973703095,
+        "error_RMS": 6.401831356415701e-06
+      },
+      "rigid_projection_energy_error_over_reference_thermal_RMS": 4.756103765776219e-08,
+      "maximum_energy_projection_identity_residual": 3.3132158019282496e-29,
+      "maximum_angular_projection_identity_residual": 1.262177448353619e-29,
+      "projection_rate_minus_half_vorticity_RMS": 0.08544930166356021
+    }
+  },
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "bookkeeping": "Rigid projection energy is PART of affine kinetic energy; never add it to stored E. ell/trace(S) and half-vorticity are separately reported.",
+  "limits": "Saved-state diagnostics only. No independent spin DOF, imposed viscosity or steering added. Torque evolution, objective transport and Kepler shear-error suppression still require actual operator/evolution validation."
+}

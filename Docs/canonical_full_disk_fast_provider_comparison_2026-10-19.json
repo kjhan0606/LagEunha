@@ -1,0 +1,713 @@
+{
+  "status": "passed_provider_replay_bitwise",
+  "time": 0.00075,
+  "arrays": {
+    "stage": {
+      "bitwise_equal": true,
+      "shape": [
+        19945,
+        94
+      ],
+      "dtype": "float64"
+    },
+    "incoming_Q": {
+      "bitwise_equal": true,
+      "shape": [
+        34605568,
+        2
+      ],
+      "dtype": "float64"
+    },
+    "incoming_offsets": {
+      "bitwise_equal": true,
+      "shape": [
+        19946
+      ],
+      "dtype": "int64"
+    },
+    "generator": {
+      "bitwise_equal": true,
+      "shape": [
+        19945,
+        2
+      ],
+      "dtype": "float64"
+    },
+    "weight_rates": {
+      "bitwise_equal": true,
+      "shape": [
+        19945
+      ],
+      "dtype": "float64"
+    },
+    "Psi_rates": {
+      "bitwise_equal": true,
+      "shape": [
+        19945
+      ],
+      "dtype": "float64"
+    },
+    "ledgers": {
+      "bitwise_equal": true,
+      "shape": [
+        12
+      ],
+      "dtype": "float64"
+    },
+    "mass": {
+      "bitwise_equal": true,
+      "shape": [
+        19945
+      ],
+      "dtype": "float64"
+    },
+    "ids": {
+      "bitwise_equal": true,
+      "shape": [
+        19945
+      ],
+      "dtype": "int64"
+    },
+    "initial_state_sha256": {
+      "bitwise_equal": true,
+      "shape": [],
+      "dtype": "<U64"
+    }
+  },
+  "compiled_input_hash_checks": {
+    "node_inputs_sha256": true,
+    "node_extra_sha256": true
+  },
+  "baseline_wall_seconds": 391.7713956050575,
+  "candidate_wall_seconds": 227.85463681817055,
+  "observed_wall_ratio": 0.5816010034787469,
+  "baseline_outer": [
+    {
+      "iteration": 0,
+      "nodes": 4339264,
+      "geometry_seconds": 58.072772758081555,
+      "face_state_seconds": 11.7503522913903,
+      "record": {
+        "nodes": 4339264,
+        "star_calls": 4339264,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.3074110690504313,
+            "process_cpu_seconds": 1.2999060390000068
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.1125778518617153,
+            "process_cpu_seconds": 2.1021399379999934
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 8.460927622392774,
+            "process_cpu_seconds": 8.416995031999988
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 28.825856994837523,
+      "mass_residual": 1.18443396341427e-17,
+      "weight_rate_change": 0.0007139021321779612,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00014743149746861744,
+            "compatibility_residual": 7.930345968668387e-20,
+            "compatibility_bound": 1.6802646205322872e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.349718504743977,
+            "nullspace_residual_max": 4.315992008230296e-15,
+            "nullspace_bound_max": 1.2601744000220612e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 8.663308730089651e-07,
+            "compatibility_residual": -3.724129245113791e-18,
+            "compatibility_bound": 1.6811762726539737e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078508581208,
+            "nullspace_residual_max": 3.941291737419306e-15,
+            "nullspace_bound_max": 1.260167366110744e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 2.4992965268502214e-10,
+            "compatibility_residual": -4.223137665318942e-18,
+            "compatibility_bound": 1.6811762997882758e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078578824073,
+            "nullspace_residual_max": 4.198030811863873e-15,
+            "nullspace_bound_max": 1.2601677138824584e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.18443396341427e-17,
+            "compatibility_residual": 1.813100485852106e-18,
+            "compatibility_bound": 1.6811762998133446e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078578888968,
+            "nullspace_residual_max": 4.198030811863873e-15,
+            "nullspace_bound_max": 1.2601677138824584e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": -2.7755575615628914e-17,
+        "fallback": false
+      }
+    },
+    {
+      "iteration": 1,
+      "nodes": 4339408,
+      "geometry_seconds": 57.791566118597984,
+      "face_state_seconds": 11.671801852062345,
+      "record": {
+        "nodes": 4339408,
+        "star_calls": 4339408,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.2351682037115097,
+            "process_cpu_seconds": 1.2281973990000097
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.1138984635472298,
+            "process_cpu_seconds": 2.1031750880000004
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 8.636815899983048,
+            "process_cpu_seconds": 8.592807421999993
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 28.626727521419525,
+      "mass_residual": 1.1357017756785659e-17,
+      "weight_rate_change": 6.480905940229632e-08,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.0001474314782958316,
+            "compatibility_residual": -5.137943039366976e-18,
+            "compatibility_bound": 1.6803199379544296e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.349717690688024,
+            "nullspace_residual_max": 5.051514762044462e-15,
+            "nullspace_bound_max": 1.2611361325888944e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 9.53101478286917e-07,
+            "compatibility_residual": 5.497607787149933e-19,
+            "compatibility_bound": 1.6812319936368666e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078661057986,
+            "nullspace_residual_max": 4.218847493575595e-15,
+            "nullspace_bound_max": 1.2601713381778704e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.4709033680458932e-10,
+            "compatibility_residual": -3.92692661764035e-18,
+            "compatibility_bound": 1.681232050304469e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807749172,
+            "nullspace_residual_max": 4.0245584642661925e-15,
+            "nullspace_bound_max": 1.2601724388967268e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.1357017756785659e-17,
+            "compatibility_residual": -2.6607958290617083e-19,
+            "compatibility_bound": 1.6812320503088653e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807760552,
+            "nullspace_residual_max": 4.0245584642661925e-15,
+            "nullspace_bound_max": 1.2601724388967268e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": 0.0,
+        "fallback": false
+      }
+    },
+    {
+      "iteration": 2,
+      "nodes": 4339408,
+      "geometry_seconds": 57.61517499573529,
+      "face_state_seconds": 11.318556832149625,
+      "record": {
+        "nodes": 4339408,
+        "star_calls": 4339408,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.1622797306627035,
+            "process_cpu_seconds": 1.1554270479999786
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.0923832803964615,
+            "process_cpu_seconds": 2.081307358999993
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 8.596518000587821,
+            "process_cpu_seconds": 8.550191292999955
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 28.40438539162278,
+      "mass_residual": 1.0807293374017618e-17,
+      "weight_rate_change": 7.760052366315162e-14,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00014743147828847253,
+            "compatibility_residual": -6.524800671818282e-18,
+            "compatibility_bound": 1.6803199380426024e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.34971769091627,
+            "nullspace_residual_max": 4.385380947269368e-15,
+            "nullspace_bound_max": 1.2611361326059696e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 9.530988584615535e-07,
+            "compatibility_residual": -6.137842272543526e-18,
+            "compatibility_bound": 1.6812319936292853e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078661038361,
+            "nullspace_residual_max": 4.163336342344337e-15,
+            "nullspace_bound_max": 1.2601713381778638e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.4710646650063818e-10,
+            "compatibility_residual": -4.4069083591978846e-18,
+            "compatibility_bound": 1.6812320503044068e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807749011,
+            "nullspace_residual_max": 4.468647674116255e-15,
+            "nullspace_bound_max": 1.260172438896719e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.0807293374017618e-17,
+            "compatibility_residual": 1.5054037655651638e-18,
+            "compatibility_bound": 1.6812320503089036e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807760652,
+            "nullspace_residual_max": 4.468647674116255e-15,
+            "nullspace_bound_max": 1.260172438896719e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": 0.0,
+        "fallback": false
+      }
+    }
+  ],
+  "candidate_outer": [
+    {
+      "iteration": 0,
+      "nodes": 4339264,
+      "geometry_seconds": 58.5028524864465,
+      "face_state_seconds": 11.54862435720861,
+      "record": {
+        "nodes": 4339264,
+        "star_calls": 4339264,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.327608447521925,
+            "process_cpu_seconds": 1.319948169
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.112152172252536,
+            "process_cpu_seconds": 2.1017626180000093
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 2.0526349544525146e-06,
+            "process_cpu_seconds": 1.990000001228509e-06
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 8.86993251927197,
+      "mass_residual": 1.18443396341427e-17,
+      "weight_rate_change": 0.0007139021321779612,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00014743149746861744,
+            "compatibility_residual": 7.930345968668387e-20,
+            "compatibility_bound": 1.6802646205322872e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.349718504743977,
+            "nullspace_residual_max": 4.315992008230296e-15,
+            "nullspace_bound_max": 1.2601744000220612e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 8.663308730089651e-07,
+            "compatibility_residual": -3.724129245113791e-18,
+            "compatibility_bound": 1.6811762726539737e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078508581208,
+            "nullspace_residual_max": 3.941291737419306e-15,
+            "nullspace_bound_max": 1.260167366110744e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 2.4992965268502214e-10,
+            "compatibility_residual": -4.223137665318942e-18,
+            "compatibility_bound": 1.6811762997882758e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078578824073,
+            "nullspace_residual_max": 4.198030811863873e-15,
+            "nullspace_bound_max": 1.2601677138824584e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.18443396341427e-17,
+            "compatibility_residual": 1.813100485852106e-18,
+            "compatibility_bound": 1.6811762998133446e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078578888968,
+            "nullspace_residual_max": 4.198030811863873e-15,
+            "nullspace_bound_max": 1.2601677138824584e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": -2.7755575615628914e-17,
+        "fallback": false
+      },
+      "same_stage_face_cache": {
+        "stage_key": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179:60f386b5a1fcb6ac8681d0fe5ea7cbeca55aba21401b6dc8eda855491fdabdb4",
+        "immutable_fingerprint": "4b6ed5aed78b106146f16c33247fa4fea1a2499dec99d9a75bdff05cc6a50325",
+        "line_entries": 59363,
+        "arc_entries": 470,
+        "line_hits": 0,
+        "arc_hits": 0,
+        "scope": "Fixed geometry/velocity/prior only; each outer recomputes wn(z), roots and node physics"
+      }
+    },
+    {
+      "iteration": 1,
+      "nodes": 4339408,
+      "geometry_seconds": 19.823991492390633,
+      "face_state_seconds": 11.73688429966569,
+      "record": {
+        "nodes": 4339408,
+        "star_calls": 4339408,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.342418460175395,
+            "process_cpu_seconds": 1.3347924689999786
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.1755854822695255,
+            "process_cpu_seconds": 2.165026678000004
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 2.8274953365325928e-06,
+            "process_cpu_seconds": 2.649999998993735e-06
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 9.133367193862796,
+      "mass_residual": 1.1357017756785659e-17,
+      "weight_rate_change": 6.480905940229632e-08,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.0001474314782958316,
+            "compatibility_residual": -5.137943039366976e-18,
+            "compatibility_bound": 1.6803199379544296e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.349717690688024,
+            "nullspace_residual_max": 5.051514762044462e-15,
+            "nullspace_bound_max": 1.2611361325888944e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 9.53101478286917e-07,
+            "compatibility_residual": 5.497607787149933e-19,
+            "compatibility_bound": 1.6812319936368666e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078661057986,
+            "nullspace_residual_max": 4.218847493575595e-15,
+            "nullspace_bound_max": 1.2601713381778704e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.4709033680458932e-10,
+            "compatibility_residual": -3.92692661764035e-18,
+            "compatibility_bound": 1.681232050304469e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807749172,
+            "nullspace_residual_max": 4.0245584642661925e-15,
+            "nullspace_bound_max": 1.2601724388967268e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.1357017756785659e-17,
+            "compatibility_residual": -2.6607958290617083e-19,
+            "compatibility_bound": 1.6812320503088653e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807760552,
+            "nullspace_residual_max": 4.0245584642661925e-15,
+            "nullspace_bound_max": 1.2601724388967268e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": 0.0,
+        "fallback": false
+      },
+      "same_stage_face_cache": {
+        "stage_key": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179:60f386b5a1fcb6ac8681d0fe5ea7cbeca55aba21401b6dc8eda855491fdabdb4",
+        "immutable_fingerprint": "4b6ed5aed78b106146f16c33247fa4fea1a2499dec99d9a75bdff05cc6a50325",
+        "line_entries": 59363,
+        "arc_entries": 470,
+        "line_hits": 59363,
+        "arc_hits": 470,
+        "scope": "Fixed geometry/velocity/prior only; each outer recomputes wn(z), roots and node physics"
+      }
+    },
+    {
+      "iteration": 2,
+      "nodes": 4339408,
+      "geometry_seconds": 19.863167718052864,
+      "face_state_seconds": 11.957054240629077,
+      "record": {
+        "nodes": 4339408,
+        "star_calls": 4339408,
+        "frozen_skipped": 0,
+        "timers": {
+          "record_array_prepare": {
+            "wall_seconds": 1.3369735088199377,
+            "process_cpu_seconds": 1.3276430390000087
+          },
+          "exact_star_native": {
+            "wall_seconds": 2.129803139716387,
+            "process_cpu_seconds": 2.116883128000012
+          },
+          "record_tuple_pack": {
+            "wall_seconds": 1.8496066331863403e-06,
+            "process_cpu_seconds": 1.6399999935856613e-06
+          }
+        },
+        "provenance": {
+          "library": "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/libnative_euler_star.so",
+          "scipy_version": "1.18.0",
+          "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+          "xtol": 2.2250738585072014e-308,
+          "rtol": 1.7763568394002505e-15,
+          "maxiter": 200
+        },
+        "cache_scope": "this RHS outer only"
+      },
+      "massroot_seconds": 8.918224800378084,
+      "mass_residual": 1.0807293374017618e-17,
+      "weight_rate_change": 7.760052366315162e-14,
+      "closed_root": {
+        "iterations": 3,
+        "history": [
+          {
+            "iteration": 0,
+            "norm": 0.00014743147828847253,
+            "compatibility_residual": -6.524800671818282e-18,
+            "compatibility_bound": 1.6803199380426024e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.34971769091627,
+            "nullspace_residual_max": 4.385380947269368e-15,
+            "nullspace_bound_max": 1.2611361326059696e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 1,
+            "norm": 9.530988584615535e-07,
+            "compatibility_residual": -6.137842272543526e-18,
+            "compatibility_bound": 1.6812319936292853e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078661038361,
+            "nullspace_residual_max": 4.163336342344337e-15,
+            "nullspace_bound_max": 1.2601713381778638e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 2,
+            "norm": 1.4710646650063818e-10,
+            "compatibility_residual": -4.4069083591978846e-18,
+            "compatibility_bound": 1.6812320503044068e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807749011,
+            "nullspace_residual_max": 4.468647674116255e-15,
+            "nullspace_bound_max": 1.260172438896719e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          },
+          {
+            "iteration": 3,
+            "norm": 1.0807293374017618e-17,
+            "compatibility_residual": 1.5054037655651638e-18,
+            "compatibility_bound": 1.6812320503089036e-08,
+            "wall_mass_flux_max": 1.4769080186604996e-21,
+            "wall_mass_flux_bound_max": 2.03334607283496e-18,
+            "primitive_mass_flux_absolute_sum": 4.352078807760652,
+            "nullspace_residual_max": 4.468647674116255e-15,
+            "nullspace_bound_max": 1.260172438896719e-13,
+            "components": 1,
+            "jacobian_nnz": 138671
+          }
+        ],
+        "gauge": "mean weight-rate zero; all fluid active",
+        "gauge_sum": 0.0,
+        "fallback": false
+      },
+      "same_stage_face_cache": {
+        "stage_key": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179:60f386b5a1fcb6ac8681d0fe5ea7cbeca55aba21401b6dc8eda855491fdabdb4",
+        "immutable_fingerprint": "4b6ed5aed78b106146f16c33247fa4fea1a2499dec99d9a75bdff05cc6a50325",
+        "line_entries": 59363,
+        "arc_entries": 470,
+        "line_hits": 118726,
+        "arc_hits": 940,
+        "scope": "Fixed geometry/velocity/prior only; each outer recomputes wn(z), roots and node physics"
+      }
+    }
+  ],
+  "cache": {
+    "stage_key": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179:60f386b5a1fcb6ac8681d0fe5ea7cbeca55aba21401b6dc8eda855491fdabdb4",
+    "immutable_fingerprint": "4b6ed5aed78b106146f16c33247fa4fea1a2499dec99d9a75bdff05cc6a50325",
+    "line_entries": 59363,
+    "arc_entries": 470,
+    "line_hits": 118726,
+    "arc_hits": 1880,
+    "scope": "Fixed geometry/velocity/prior only; each outer recomputes wn(z), roots and node physics"
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fine_second_midpoint_stage_20261019/report.json": "8905feb4aab78982bc299623c5b0587e179a7edb5b1b8d86f4c9e190522b6980",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_provider_replay_20261019/report.json": "6d24ac0a3f6f11889eb4234269f91e452b67ff1106cf8cbd0b080ca70a2c3ac8"
+  },
+  "new_unique_physical_provider_calls": 0,
+  "same_state_provider_replays": 1,
+  "limits": "Same physical stage, source seed, existing prepared velocity/gravity and q24 density. Resource/timing differences do not alter physical state. No evolution or production exclusive-timing claim."
+}

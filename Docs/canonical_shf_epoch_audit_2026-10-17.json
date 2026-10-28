@@ -1,0 +1,135 @@
+{
+  "manifest": {
+    "purpose": "Current-stage shared geometry read gate, t10 canonical state, CUDA double nearest CPU force MPI1 OMP8",
+    "outputs": 2,
+    "estimated_bytes": 46006408,
+    "negative_injection_test": false
+  },
+  "source_sha256": "d23b449fa7cd25720606824cfbbfb943962aeeaa03430a6a56f11813dbf4cb6a",
+  "comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_shf_epoch_20261017/control/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_shf_epoch_20261017/audit/khout.002306.dat",
+    "reference_sha256": "87502acfa94ea6de7d068dd53cbf4d02f3ee76711fb0ac2e9d1f1dfd3c569908",
+    "candidate_sha256": "6be42fab0b3ab8fcdb8b27feec4b7438616db04c0a582af8b314c5c1ea582dfc",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "epoch_records": [
+    {
+      "call": 1,
+      "epoch": 1,
+      "checked_reads_cumulative": 663399,
+      "phase": 1,
+      "rk_stage": 0
+    },
+    {
+      "call": 2,
+      "epoch": 2,
+      "checked_reads_cumulative": 1105717,
+      "phase": 0,
+      "rk_stage": 1
+    },
+    {
+      "call": 3,
+      "epoch": 3,
+      "checked_reads_cumulative": 1548035,
+      "phase": 0,
+      "rk_stage": 2
+    },
+    {
+      "call": 4,
+      "epoch": 4,
+      "checked_reads_cumulative": 1990353,
+      "phase": 0,
+      "rk_stage": 3
+    },
+    {
+      "call": 5,
+      "epoch": 5,
+      "checked_reads_cumulative": 2432671,
+      "phase": 0,
+      "rk_stage": 4
+    },
+    {
+      "call": 6,
+      "epoch": 6,
+      "checked_reads_cumulative": 3096070,
+      "phase": 2,
+      "rk_stage": 0
+    }
+  ],
+  "limitations": [
+    "No injected stale-record failure test yet",
+    "Covers current single-rank t10 state only",
+    "MPI exchange/ownership/rollback not implemented",
+    "Missing reciprocal faces within a current cell record are a distinct geometry issue; not detected by epoch gate"
+  ]
+}

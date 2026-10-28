@@ -1,0 +1,62 @@
+{
+  "status": "captured_live_full_moment_runtime_identity",
+  "host": "syn104",
+  "slurm_job_id": "427901",
+  "CUDA_VISIBLE_DEVICES": "0,1",
+  "allocation_node_gpu_inventory": [
+    "NVIDIA H200 NVL, GPU-c5feb54b-7231-3bc2-4cff-b61c4cf3bac3",
+    "NVIDIA H200 NVL, GPU-112eb8d4-a80b-e878-d39a-ebdd92129650"
+  ],
+  "own_live_gpu_contexts": [
+    {
+      "pid": 695089,
+      "GPU_UUID": "GPU-c5feb54b-7231-3bc2-4cff-b61c4cf3bac3"
+    }
+  ],
+  "processes": {
+    "695089": {
+      "executable": "/home/kjhan/miniconda3/bin/python3.13",
+      "executable_sha256": "500cec2f9f5188a2efc702997a17f8ddadab58ed71b7d6653cf726ea0f120349",
+      "cmdline": "/home/kjhan/miniconda3/bin/python3 /gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/check_full_disk_samehost_original_midpoint.py --output /gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/original --native-checkpoint /gpfs/kjhan/LagForce/Codex_full_disk_native_midpoint_and_coarse_v8_20261019/ranks2/accepted_0001 ",
+      "actual_mapped_operator_libraries": {
+        "/gpfs/kjhan/LagForce/Codex_full_disk_owned_ledger_build_v4_20261019/liblagmoment_owned.so": "51014e2fb7de34bb8eb1ed99c8ed0e22ecbbe5690a67327f8fec9892d5968471"
+      }
+    },
+    "713702": {
+      "executable": "/home/kjhan/miniconda3/bin/python3.13",
+      "executable_sha256": "500cec2f9f5188a2efc702997a17f8ddadab58ed71b7d6653cf726ea0f120349",
+      "cmdline": "/home/kjhan/miniconda3/bin/python3 /gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/check_full_disk_samehost_original_midpoint.py --mode stage --state /gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/original/midpoint.npz --output /dev/shm/eunha_original_oracle_695089_1792357962941178532/midpoint_rhs --report /gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/original/midpoint_rhs.json ",
+      "actual_mapped_operator_libraries": {
+        "/gpfs/kjhan/LagForce/Codex_full_disk_owned_ledger_build_v4_20261019/liblagmoment_owned.so": "51014e2fb7de34bb8eb1ed99c8ed0e22ecbbe5690a67327f8fec9892d5968471"
+      }
+    }
+  },
+  "initial_sha256": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46",
+  "initial_seed_source": "Immutable initial.npz field weight_rate_seed; same IC",
+  "original_provider_module_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/full_disk_density_memory.py": "9bef65fb742c3eab0e493b49ff8582f2b398abe034ec3c30c68ee5c18cf8f4d6",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/full_disk_velocity_memory.py": "2529b18822ce6fde7fd324d5cf107adfca147dadcc62ac88e4593789b5effc21",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/full_disk_stage_memory.py": "81406a35766f6d65e7eccb8e8a2a7319c5a4f058cc497954be0b284275608142",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fast_modules_v1_20261019/full_disk_factor_memory.py": "a81e5d8d8b7c4a538ca397b1d7ea8276cd3199470657806e68205c2358034901",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_native_samehost_original_and_coarse_20261019/check_full_disk_samehost_original_midpoint.py": "f537bee80c941e38be3894d7988006d33ae322f1460d0966357e5670eba2e80e"
+  },
+  "native_snapshots": {
+    "v7": {
+      "binary_sha256": "5af45da04e8d3c3709aae2f73cf7e027b68e0fc07130bd64b6934dfd9e3bd5be",
+      "provider_sha256": "52114656c853a182743b7a91ffa54363c54f76647078e9be21b1d9d794ee4417",
+      "snapshot_manifest_sha256": "bc16bf186b520852cc020e48dfda50860bfc3e38c4b63425b2292a770e2b5b6c"
+    },
+    "v8": {
+      "binary_sha256": "6da88043af19d6e300c9399ccd2d8719193545e278af637fe55e15a02171f307",
+      "provider_sha256": "07dcd39d9922026434af710b56a5cfe10d52d87d0ac1d7d9c73712951990dcb1",
+      "snapshot_manifest_sha256": "0bc0e66c83f1aba4581afae137bfb7f4119bdd36ba665c49709443786949f98c"
+    },
+    "v10": {
+      "binary_sha256": "d9c79ec0f868ebb3f39f0e95ec3777465d0055b4fab079e076ae59e4cf619760",
+      "provider_sha256": "6c239b95a687e32bb76512af785901f7bf517cf4eed1e482b4c15926510882a4",
+      "snapshot_manifest_sha256": "7cbbb0d56c42bab36c30bdd59ff4a58f8f787fe2c8e2bd229a66810175e55b9a"
+    }
+  },
+  "physical_providers": 0,
+  "accepted_time_steps": 0
+}

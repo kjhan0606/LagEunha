@@ -74,6 +74,7 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 		fwrite(&GAS_BetaVis(simpar), sizeof(float), 1, wp);
 		fclose(wp);
 	}
+	gfs_rmem_snapshot_write(simpar,outfile,(double)t);
 	/*
 	MPI_Barrier(MPI_COMM_WORLD);
 	DEBUGPRINT("P%d is now exiting the dump\n", myid);
@@ -174,6 +175,7 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 	MPI_Bcast(&GAS_dtold(simpar), 1, MPI_FLOAT,0, MPI_COMM(simpar));
 	MPI_Barrier(MPI_COMM(simpar));
 	BASICCELL_CELLWIDTH(simpar) = HydroGridSize(simpar);
+	gfs_rmem_snapshot_read(simpar,infile,(double)*t);
 }
 
 int kh_evolBP(treevorork4particletype *bp,postype Lx, postype Ly){
@@ -265,6 +267,16 @@ int RunKH(SimParameters *simpar, int icont){
 		postype Gamma = GAS_GAMMA(simpar);
 		GAS_invw2Scale(simpar) = 1.L / KH_Pressure(simpar);
 		GAS_w2Power(simpar) = (Gamma-1)/Gamma;
+	}
+
+	/* Optional exact initial-state reference for ID-based field audits.
+	 * Initial-only mode requires the dump, avoiding an unrecorded no-op run. */
+	if(icont == 0){
+		const char *dump = getenv("EUNHA_DUMP_INITIAL"), *only = getenv("EUNHA_INITIAL_ONLY");
+		if(dump && atoi(dump)>0){
+			kh_outdata(simpar,0,t,dt);
+			if(only && atoi(only)>0) return 1;
+		}
 	}
 
 	do {
@@ -364,5 +376,11 @@ int RunKH(SimParameters *simpar, int icont){
 		}
 
 	} while(t<kh_tmax());
+	/* Explicit final dump for per-particle reproducibility comparisons.
+	 * Do not rewrite a snapshot already emitted by the cadence. */
+	{
+		const char *last = getenv("EUNHA_DUMP_FINAL");
+		if(last && atoi(last)>0 && iflag==jflag) kh_outdata(simpar,icount,t,dt);
+	}
 	return 1;
 }

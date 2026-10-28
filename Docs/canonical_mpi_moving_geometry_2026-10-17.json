@@ -1,0 +1,78 @@
+{
+  "scope": "HG, diagnostic velocity drift, actual periodic_postStage migration, rebuild, HG; not a full RK step",
+  "ranks": {
+    "1": {
+      "ownership_changed_particles": 0,
+      "all_25_RK4_scalars_preserved": true,
+      "non_position_state_preserved_in_transport": true,
+      "position_update_max_abs_error": 0.0,
+      "post_rebuild_HG_bitwise_different_particles": 0,
+      "post_rebuild_HG_max_abs_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "reconstruction_max_abs_difference": 0.0
+    },
+    "2": {
+      "ownership_changed_particles": 25,
+      "all_25_RK4_scalars_preserved": true,
+      "non_position_state_preserved_in_transport": true,
+      "position_update_max_abs_error": 0.0,
+      "post_rebuild_HG_bitwise_different_particles": 0,
+      "post_rebuild_HG_max_abs_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "reconstruction_max_abs_difference": 0.0
+    },
+    "4": {
+      "ownership_changed_particles": 55,
+      "all_25_RK4_scalars_preserved": true,
+      "non_position_state_preserved_in_transport": true,
+      "position_update_max_abs_error": 0.0,
+      "post_rebuild_HG_bitwise_different_particles": 0,
+      "post_rebuild_HG_max_abs_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "reconstruction_max_abs_difference": 0.0
+    }
+  },
+  "run_root": "/gpfs/kjhan/LagForce/Codex_mpi_moving_geometry_20261017",
+  "binary_sha256": "cbacb451a299f630293587050c3e028ae0da387739c3b957ecb5e821458ca4dd",
+  "source_sha256": "eef99a34349b84f1f0411823498880bab15007fa6252799b95568b6155e41599",
+  "snapshot_time": 12.000731187642545,
+  "drift_dt": 0.005,
+  "HG_tau": 0.0005,
+  "OMP_NUM_THREADS": 2,
+  "limitations": [
+    "Velocity-only diagnostic position drift; no coupled RK stage or central gravity update",
+    "Transport preserves existing RK4 coefficients, but does not validate computing new stage coefficients",
+    "No rejected-stage rollback or long-time distributed evolution",
+    "All original simulations continue separately with immutable executables"
+  ]
+}

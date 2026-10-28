@@ -1,0 +1,71 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Codex_t2_onset_rhs_20261017/t2",
+  "rhs_sha256": "18f759f6ebd7793ebe8691370084cb1c3e43076db3cb23872a56fb8ff0f8f550",
+  "initial_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+  "gamma": 1.6666669845581055,
+  "pressure0": 2.7777796321447566e-05,
+  "equation": "Pdot/P0 = -gamma*(P/P0)*Vdot/V + (gamma-1)*TCF_heat/(P0*V)",
+  "scope": "Instantaneous pre-HG RHS, fixed initial material membership; split HG excluded; geometric Vdot chain rule, not a finite-step pressure budget.",
+  "regions": {
+    "inner_background": {
+      "n": 804,
+      "mean_pressure_rate_over_p0": 0.0026597174947742466,
+      "compression_mean_rate": -0.0012264796643678701,
+      "TCF_mean_rate": 0.0038861971591420633,
+      "variance_growth_rate": 0.0008964056922575543,
+      "compression_variance_growth": 0.0008964169713617816,
+      "TCF_variance_growth": -1.1279104198098442e-08,
+      "chain_rule_relative_L1_residual": 6.851004802479855e-14
+    },
+    "disk_inner_edge": {
+      "n": 390,
+      "mean_pressure_rate_over_p0": 0.004699283837869185,
+      "compression_mean_rate": 0.003914302746112213,
+      "TCF_mean_rate": 0.0007849810917573614,
+      "variance_growth_rate": -7.433423395145596e-05,
+      "compression_variance_growth": -7.255275877110711e-05,
+      "TCF_variance_growth": -1.7814751803656597e-06,
+      "chain_rule_relative_L1_residual": 1.0835161710849846e-13
+    },
+    "inner_r0_0_0.125": {
+      "n": 50,
+      "mean_pressure_rate_over_p0": 0.001243957817956914,
+      "compression_mean_rate": 0.0007890523520434216,
+      "TCF_mean_rate": 0.0004549054659141032,
+      "variance_growth_rate": 0.0018128192492763338,
+      "compression_variance_growth": 0.0018119810173440494,
+      "TCF_variance_growth": 8.382319321132422e-07,
+      "chain_rule_relative_L1_residual": 7.741437594049983e-14
+    },
+    "inner_r0_0.125_0.25": {
+      "n": 150,
+      "mean_pressure_rate_over_p0": 0.004072433081823254,
+      "compression_mean_rate": 0.0010272800495818176,
+      "TCF_mean_rate": 0.003045153032240997,
+      "variance_growth_rate": 0.00038535253270888096,
+      "compression_variance_growth": 0.0003771913808097939,
+      "TCF_variance_growth": 8.161151899202452e-06,
+      "chain_rule_relative_L1_residual": 6.118108146686517e-14
+    },
+    "inner_r0_0.25_0.375": {
+      "n": 246,
+      "mean_pressure_rate_over_p0": 0.005337452676998008,
+      "compression_mean_rate": 0.00029640054587882174,
+      "TCF_mean_rate": 0.005041052131119899,
+      "variance_growth_rate": -0.0004025218590537681,
+      "compression_variance_growth": -0.0004119542864435053,
+      "TCF_variance_growth": 9.432427389740163e-06,
+      "chain_rule_relative_L1_residual": 6.028193405950969e-14
+    },
+    "inner_r0_0.375_0.5": {
+      "n": 357,
+      "mean_pressure_rate_over_p0": 0.0005365468192371401,
+      "compression_mean_rate": -0.003397360780925826,
+      "TCF_mean_rate": 0.00393390760016241,
+      "variance_growth_rate": 0.001861311955141784,
+      "compression_variance_growth": 0.0018750325766832047,
+      "TCF_variance_growth": -1.3720621541382538e-05,
+      "chain_rule_relative_L1_residual": 8.040683855396664e-14
+    }
+  }
+}

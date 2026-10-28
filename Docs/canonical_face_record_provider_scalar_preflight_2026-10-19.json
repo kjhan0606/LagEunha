@@ -1,0 +1,289 @@
+{
+  "status": "preflight_only_no_provider",
+  "manifest": {
+    "scope": "One scalar/native face-record comparison; approved state and accumulation batches remain enabled.\n\nOriginal saved midpoint, original initial seed and stopping rule. Large-region\ntimers only; no evolution/update/backend-shadow or automatic repeated replay.\n",
+    "mode": "scalar",
+    "flags": {
+      "LAGFORCE_QUADRATIC_VELOCITY": "1",
+      "LAGFORCE_QUADRATIC_BUDGET": "projected",
+      "LAGFORCE_VELOCITY_FIT": "radial_fixed_mean",
+      "LAGFORCE_VELOCITY_STENCIL": "area",
+      "LAGFORCE_QUADRATIC_PRESSURE": "0",
+      "LAGFORCE_KINETIC_SMOOTHING": "0",
+      "LAGFORCE_PRESSURE_RIEMANN": "exact_euler_star",
+      "LAGFORCE_VECTOR_KINETIC_ROOT": "0",
+      "LAGFORCE_SHARED_FACE_VELOCITY": "1",
+      "LAGFORCE_CAPTURE_PRESSURE_RATES": "1",
+      "LAGFORCE_BATCH_FACE_STATE": "1",
+      "LAGFORCE_VECTOR_MOMENT_FLUX": "1",
+      "LAGFORCE_BATCH_FACE_RECORDS": "0"
+    },
+    "time": 5e-05,
+    "seed": "stage0/inputs.npz:weight_rates",
+    "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+    "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+    "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+    "runtime_sources": {
+      "__main__": {
+        "path": "/gpfs/kjhan/LagForce/run_face_record_provider_comparison_once_20261019.py",
+        "sha256": "8decfde7d128c994a0c772b8928e40dd98dc3f2804ea9df63c9045857662fcda"
+      },
+      "subcell_exact_geometry": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/subcell_exact_geometry.py",
+        "sha256": "d8bea6ef22cf128d02c6971f433e8b1945b1ec2a65229f87f80006e95fe0f8c5"
+      },
+      "weighted_mass_patch": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/weighted_mass_patch.py",
+        "sha256": "376b63ec29960702a41536a7bc3c8c3f3daceb0c1f83b47da363de1085c3eaca"
+      },
+      "fixedmass_ale_evolve": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_ale_evolve.py",
+        "sha256": "67bf6dad2f980904d1ef285ca9b351a7556b9219fa72b0ecc92d1c680ceac425"
+      },
+      "fixedmass_hllc": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_hllc.py",
+        "sha256": "3d8ded18572ef0a3c56b2ddf9af3785494da16874677aa5ff8a43f1a54b4865c"
+      },
+      "periodic2d_hllc": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/periodic2d_hllc.py",
+        "sha256": "f1c556a55b40b9b9d7eb74ad83dd22653c61c640a4d3a0ecbd4237c76bc4ef65"
+      },
+      "affine_moment_patch": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/affine_moment_patch.py",
+        "sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4"
+      },
+      "moment_ale_evolve": {
+        "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+        "sha256": "893d1f715adfe41a3e7af4a0486746b0ecd39788767095a297bc4ecca97987cf"
+      },
+      "quadratic_velocity_reconstruction": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/quadratic_velocity_reconstruction.py",
+        "sha256": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c"
+      },
+      "kinetic_factor_rhs": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/kinetic_factor_rhs.py",
+        "sha256": "774aec5188f789e9e22d702ed44aa8e05f269498ace020738290b010d3ee257c"
+      },
+      "density_quadrature": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+        "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+      },
+      "contact_prior_density": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/contact_prior_density.py",
+        "sha256": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d"
+      },
+      "quadratic_upwind_face_nodes": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_upwind_face_nodes.py",
+        "sha256": "8719430a44250e24f4914702eb68a4950b07c72db63a106cb5f562d550096f2a"
+      },
+      "contact_upwind_face_nodes": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+        "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+      },
+      "moment_gravity_source": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+        "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+      },
+      "embedded_laguerre_geometry": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+        "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+      },
+      "kinetic_face_capture": {
+        "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+        "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+      },
+      "vector_moment_flux": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/vector_moment_flux.py",
+        "sha256": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+      },
+      "native_euler_star": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/native_euler_star.py",
+        "sha256": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268"
+      },
+      "face_record_batch": {
+        "path": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/face_record_batch.py",
+        "sha256": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c"
+      },
+      "audit_canonical_pair_history": {
+        "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+        "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+      },
+      "run_canonical_av_branches_20261018": {
+        "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+        "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+      }
+    },
+    "runner_sha256": "8decfde7d128c994a0c772b8928e40dd98dc3f2804ea9df63c9045857662fcda",
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127
+    ],
+    "load_average_start": [
+      22.22,
+      22.36,
+      22.39
+    ],
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": null
+    },
+    "native_star_provenance": {
+      "library": "/gpfs/kjhan/LagForce/Codex_face_record_native_modules_v2_20261019/libnative_euler_star.so",
+      "scipy_version": "1.18.0",
+      "brent_ABI": "double (__pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_callback_type, double, double, void *, double, double, int, __pyx_t_5scipy_8optimize_15cython_optimize_6_zeros_zeros_full_output *)",
+      "xtol": 2.2250738585072014e-308,
+      "rtol": 1.7763568394002505e-15,
+      "maxiter": 200
+    },
+    "candidate_manifest": {
+      "python_modules": {
+        "contact_prior_density": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d",
+        "quadratic_velocity_reconstruction": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c",
+        "kinetic_factor_rhs": "774aec5188f789e9e22d702ed44aa8e05f269498ace020738290b010d3ee257c",
+        "vector_moment_flux": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3",
+        "native_euler_star": "92ae95f5dca6d0018016731de6d5bdd5401286e77e487e8538038364ceb22268",
+        "face_record_batch": "121efa05548ae52cddca24cb9b42913586498509125db798f6da4e6de0f2c59c"
+      },
+      "native_files": {
+        "native_euler_star.cpp": "6fae6e14ac6b1359c8e9de7b7bc77c62b99dfc8cf9c779d3d44283a405dba65b",
+        "libnative_euler_star.so": "b65b4882edf1895746108178e1a3288923401ef4802292702b0b5235ba0e9733"
+      },
+      "compile_flags": [
+        "g++",
+        "-O3",
+        "-std=c++17",
+        "-fPIC",
+        "-shared",
+        "-fno-fast-math",
+        "-ffp-contract=off"
+      ]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "scope": "Positive density fit on old cells at a single canonical checkpoint; no dynamics or automatic restart conversion.",
+  "constraints": {
+    "mass_max_relative_error": 1.2212453270876722e-15,
+    "momentum_max_absolute_error": 1.3010426069826053e-18,
+    "global_first_mass_moment_error": [
+      1.1926223897340549e-18,
+      -5.637851296924623e-18
+    ],
+    "global_angular_error": -5.551115123125783e-16,
+    "global_point_potential_error": -3.1086244689504383e-15,
+    "pressure_max_relative_error": 2.611066918234428e-11
+  },
+  "cpu_openmp4_cuda_bitwise_equal": true,
+  "density_factor_min": 0.3604473873582219,
+  "density_factor_max": 2.21568182817475,
+  "density_fractional_change_volume_weighted_rms": 0.1875747798857052,
+  "theta": [
+    6.986827732627114e-05,
+    -7.018220453631521e-05,
+    -0.1737525621765475,
+    0.17617812039639252
+  ],
+  "feature_scale": [
+    0.008945524206608548,
+    0.008943450736621922,
+    0.011848771012795639,
+    0.026962619254635507
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "max_scaled_constraint": 0.006120120668436249,
+      "hessian_condition": 87.01120750634111
+    },
+    {
+      "iteration": 1,
+      "max_scaled_constraint": 0.0002300982670639907,
+      "hessian_condition": 90.82973689668079
+    },
+    {
+      "iteration": 2,
+      "max_scaled_constraint": 1.981119057703273e-07,
+      "hessian_condition": 90.96238640120154
+    },
+    {
+      "iteration": 3,
+      "max_scaled_constraint": 1.4225478145503038e-13,
+      "hessian_condition": 90.96249912370467
+    }
+  ],
+  "minimum_thermal_energy": 3.8772865467224524e-08,
+  "seconds": 0.6477373819798231,
+  "limitations": [
+    "Preserves global, not per-cell, angular/potential/position moments.",
+    "Density changes inside cells. Bounded smoothness, fluid accuracy and reconstruction at faces require separate verification.",
+    "The fit is to the selected positive quadrature. Continuous-integral accuracy is not proven by quadrature conservation.",
+    "The 17th potential moment still needs consistent gravity work in physical evolution.",
+    "Does not implement the approved Voronoi reduction or make a long-time stability claim."
+  ],
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator/rhs.dat": "709bf217329e3583132bfb68da0975331404248f3ef666b2e89a9c992b033c04",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/weight_remap_moments.h": "03579cb4f1cd459c1a885675be6c527b7d35ee49934e1ab27f342ea8bb711ea5",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_initialization_20261018/audit.py": "1f7ff0e896cf47844e175bf9abcfa1045918aa1c48ab38b46088db5545c941d6"
+  },
+  "aggregate_scope": "Central r<0.7 patch, 1590 of 36864 canonical cells. Global constraints in this component audit mean sums over this patch; not a full-domain restart conversion.",
+  "state_provenance_clarification": "Earlier operator dump uses canonical t2 positions/masses with sampled circular velocities and manufactured common pressure. It is not the unmodified restart fluid state. See canonical_checkpoint_weight_remap_2026-10-18.json for actual saved vx/vy/ie."
+}

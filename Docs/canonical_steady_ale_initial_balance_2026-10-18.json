@@ -1,0 +1,384 @@
+{
+  "scope": "Full initial moment-rate comparison against moving-cell steady Kepler.\n\nReuses completed converged hydro and gravity evaluations; no evolution.\nExact boundary quadrature splits both circular density interfaces.\n",
+  "hydro_source": "/gpfs/kjhan/LagForce/Codex_continuous_initial_rhs_quadratic_split_20261018/rhs_r0.55_f8.npz",
+  "hydro_sha256": "18c35fee73f47071d9158c3879799699b8ede4331e55aa16143dde2f776b760a",
+  "results": [
+    {
+      "order": 8,
+      "regions": {
+        "active": {
+          "cells": 962,
+          "momentum_per_mass": {
+            "max_abs": 2.8883973823035975,
+            "mass_weighted_RMS": 0.27751555886159324
+          },
+          "D_per_mass": {
+            "max_abs": 1.397136448568832,
+            "mass_weighted_RMS": 0.1405633216300892
+          },
+          "Pi_per_mass": {
+            "max_abs": 4.151463485033429,
+            "mass_weighted_RMS": 0.39011428673227116
+          },
+          "energy_per_mass": {
+            "max_abs": 2.1983558938964562,
+            "mass_weighted_RMS": 0.19509334539048442
+          },
+          "exact_mass_rate": {
+            "max_abs": 0.00020536006894031843,
+            "mass_weighted_RMS": 0.00011534801976978582
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 4.40133353277845e-08,
+            "mass_weighted_RMS": 1.497170894628327e-08
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 2.299397263668814e-06,
+            "mass_weighted_RMS": 1.317598090630369e-06
+          },
+          "gravity_internal_torque": {
+            "max_abs": 1.5201205987169643e-07,
+            "mass_weighted_RMS": 8.875061643460246e-08
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 2.466842980397827e-06,
+            "mass_weighted_RMS": 1.415710542564301e-06
+          }
+        },
+        "inner_r_lt_040": {
+          "cells": 490,
+          "momentum_per_mass": {
+            "max_abs": 0.0025020055476097074,
+            "mass_weighted_RMS": 0.0007253438638248821
+          },
+          "D_per_mass": {
+            "max_abs": 0.0006247458338212935,
+            "mass_weighted_RMS": 0.00019516735783652224
+          },
+          "Pi_per_mass": {
+            "max_abs": 0.004041758741486192,
+            "mass_weighted_RMS": 0.00113000225818553
+          },
+          "energy_per_mass": {
+            "max_abs": 0.0020980980322537917,
+            "mass_weighted_RMS": 0.0005695379781578753
+          },
+          "exact_mass_rate": {
+            "max_abs": 2.296060995426327e-08,
+            "mass_weighted_RMS": 5.272097511017533e-09
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 1.0655835679102811e-10,
+            "mass_weighted_RMS": 1.9250009197035996e-11
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 4.620038928825211e-09,
+            "mass_weighted_RMS": 2.246580652228611e-09
+          },
+          "gravity_internal_torque": {
+            "max_abs": 4.392484439700134e-09,
+            "mass_weighted_RMS": 2.2423315756158857e-09
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 8.508709048576956e-09,
+            "mass_weighted_RMS": 4.291164534225578e-09
+          }
+        },
+        "contact_r048_055": {
+          "cells": 208,
+          "momentum_per_mass": {
+            "max_abs": 0.5646591058152225,
+            "mass_weighted_RMS": 0.24304097018824702
+          },
+          "D_per_mass": {
+            "max_abs": 0.2901324529294299,
+            "mass_weighted_RMS": 0.1250320118931582
+          },
+          "Pi_per_mass": {
+            "max_abs": 0.7873378280625672,
+            "mass_weighted_RMS": 0.33883818784860775
+          },
+          "energy_per_mass": {
+            "max_abs": 0.4021317761395823,
+            "mass_weighted_RMS": 0.16944225246301955
+          },
+          "exact_mass_rate": {
+            "max_abs": 0.00020536006894031843,
+            "mass_weighted_RMS": 0.00011806310996248858
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 4.40133353277845e-08,
+            "mass_weighted_RMS": 1.532415832687552e-08
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 2.299397263668814e-06,
+            "mass_weighted_RMS": 1.3486604351665327e-06
+          },
+          "gravity_internal_torque": {
+            "max_abs": 1.5201205987169643e-07,
+            "mass_weighted_RMS": 9.084183333088008e-08
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 2.466842980397827e-06,
+            "mass_weighted_RMS": 1.4490856990542426e-06
+          }
+        }
+      }
+    },
+    {
+      "order": 16,
+      "regions": {
+        "active": {
+          "cells": 962,
+          "momentum_per_mass": {
+            "max_abs": 2.8883973823036198,
+            "mass_weighted_RMS": 0.2775155588615933
+          },
+          "D_per_mass": {
+            "max_abs": 1.3971364485688487,
+            "mass_weighted_RMS": 0.1405633216300891
+          },
+          "Pi_per_mass": {
+            "max_abs": 4.151463485033507,
+            "mass_weighted_RMS": 0.3901142867322706
+          },
+          "energy_per_mass": {
+            "max_abs": 2.1983558938963172,
+            "mass_weighted_RMS": 0.19509334539048434
+          },
+          "exact_mass_rate": {
+            "max_abs": 0.00020536006894031851,
+            "mass_weighted_RMS": 0.00011534801976978585
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 4.401333532577873e-08,
+            "mass_weighted_RMS": 1.4971708946536e-08
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 2.299397263668814e-06,
+            "mass_weighted_RMS": 1.317598090630369e-06
+          },
+          "gravity_internal_torque": {
+            "max_abs": 1.5201205987169643e-07,
+            "mass_weighted_RMS": 8.875061643460246e-08
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 2.466842980400714e-06,
+            "mass_weighted_RMS": 1.4157105425645241e-06
+          }
+        },
+        "inner_r_lt_040": {
+          "cells": 490,
+          "momentum_per_mass": {
+            "max_abs": 0.0025020055476209536,
+            "mass_weighted_RMS": 0.0007253438638250371
+          },
+          "D_per_mass": {
+            "max_abs": 0.0006247458338156704,
+            "mass_weighted_RMS": 0.00019516735783676393
+          },
+          "Pi_per_mass": {
+            "max_abs": 0.0040417587414637,
+            "mass_weighted_RMS": 0.0011300022581858203
+          },
+          "energy_per_mass": {
+            "max_abs": 0.0020980980322537917,
+            "mass_weighted_RMS": 0.0005695379781576648
+          },
+          "exact_mass_rate": {
+            "max_abs": 2.2960609954266657e-08,
+            "mass_weighted_RMS": 5.272097511019272e-09
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 1.0655835679121353e-10,
+            "mass_weighted_RMS": 1.9250009199518843e-11
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 4.620038928825211e-09,
+            "mass_weighted_RMS": 2.246580652228611e-09
+          },
+          "gravity_internal_torque": {
+            "max_abs": 4.392484439700134e-09,
+            "mass_weighted_RMS": 2.2423315756158857e-09
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 8.50870904852207e-09,
+            "mass_weighted_RMS": 4.291164534224264e-09
+          }
+        },
+        "contact_r048_055": {
+          "cells": 208,
+          "momentum_per_mass": {
+            "max_abs": 0.5646591058152088,
+            "mass_weighted_RMS": 0.2430409701882472
+          },
+          "D_per_mass": {
+            "max_abs": 0.2901324529294126,
+            "mass_weighted_RMS": 0.1250320118931581
+          },
+          "Pi_per_mass": {
+            "max_abs": 0.7873378280625402,
+            "mass_weighted_RMS": 0.3388381878486072
+          },
+          "energy_per_mass": {
+            "max_abs": 0.4021317761395744,
+            "mass_weighted_RMS": 0.1694422524630195
+          },
+          "exact_mass_rate": {
+            "max_abs": 0.00020536006894031851,
+            "mass_weighted_RMS": 0.00011806310996248862
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 4.401333532577873e-08,
+            "mass_weighted_RMS": 1.532415832713422e-08
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 2.299397263668814e-06,
+            "mass_weighted_RMS": 1.3486604351665327e-06
+          },
+          "gravity_internal_torque": {
+            "max_abs": 1.5201205987169643e-07,
+            "mass_weighted_RMS": 9.084183333088008e-08
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 2.466842980400714e-06,
+            "mass_weighted_RMS": 1.4490856990544711e-06
+          }
+        }
+      },
+      "reference_successive_max_abs": 5.551115123125783e-17
+    },
+    {
+      "order": 32,
+      "regions": {
+        "active": {
+          "cells": 962,
+          "momentum_per_mass": {
+            "max_abs": 2.8883973823036198,
+            "mass_weighted_RMS": 0.2775155588615927
+          },
+          "D_per_mass": {
+            "max_abs": 1.3971364485688431,
+            "mass_weighted_RMS": 0.14056332163008908
+          },
+          "Pi_per_mass": {
+            "max_abs": 4.151463485033451,
+            "mass_weighted_RMS": 0.3901142867322708
+          },
+          "energy_per_mass": {
+            "max_abs": 2.198355893896273,
+            "mass_weighted_RMS": 0.19509334539048423
+          },
+          "exact_mass_rate": {
+            "max_abs": 0.00020536006894032196,
+            "mass_weighted_RMS": 0.00011534801976978566
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 4.4013335326402144e-08,
+            "mass_weighted_RMS": 1.4971708946258972e-08
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 2.299397263668814e-06,
+            "mass_weighted_RMS": 1.317598090630369e-06
+          },
+          "gravity_internal_torque": {
+            "max_abs": 1.5201205987169643e-07,
+            "mass_weighted_RMS": 8.875061643460246e-08
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 2.4668429803912e-06,
+            "mass_weighted_RMS": 1.4157105425642643e-06
+          }
+        },
+        "inner_r_lt_040": {
+          "cells": 490,
+          "momentum_per_mass": {
+            "max_abs": 0.0025020055475984612,
+            "mass_weighted_RMS": 0.0007253438638254294
+          },
+          "D_per_mass": {
+            "max_abs": 0.0006247458338128588,
+            "mass_weighted_RMS": 0.00019516735783654723
+          },
+          "Pi_per_mass": {
+            "max_abs": 0.004041758741373729,
+            "mass_weighted_RMS": 0.0011300022581861324
+          },
+          "energy_per_mass": {
+            "max_abs": 0.002098098032186314,
+            "mass_weighted_RMS": 0.0005695379781582151
+          },
+          "exact_mass_rate": {
+            "max_abs": 2.2960609954273434e-08,
+            "mass_weighted_RMS": 5.272097511020354e-09
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 1.0655835679092529e-10,
+            "mass_weighted_RMS": 1.9250009196403765e-11
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 4.620038928825211e-09,
+            "mass_weighted_RMS": 2.246580652228611e-09
+          },
+          "gravity_internal_torque": {
+            "max_abs": 4.392484439700134e-09,
+            "mass_weighted_RMS": 2.2423315756158857e-09
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 8.508709048501805e-09,
+            "mass_weighted_RMS": 4.291164534225177e-09
+          }
+        },
+        "contact_r048_055": {
+          "cells": 208,
+          "momentum_per_mass": {
+            "max_abs": 0.5646591058152094,
+            "mass_weighted_RMS": 0.24304097018824639
+          },
+          "D_per_mass": {
+            "max_abs": 0.2901324529294163,
+            "mass_weighted_RMS": 0.12503201189315807
+          },
+          "Pi_per_mass": {
+            "max_abs": 0.7873378280625695,
+            "mass_weighted_RMS": 0.3388381878486074
+          },
+          "energy_per_mass": {
+            "max_abs": 0.40213177613956047,
+            "mass_weighted_RMS": 0.1694422524630194
+          },
+          "exact_mass_rate": {
+            "max_abs": 0.00020536006894032196,
+            "mass_weighted_RMS": 0.00011806310996248843
+          },
+          "internal_angular_rate_defect": {
+            "max_abs": 4.4013335326402144e-08,
+            "mass_weighted_RMS": 1.5324158326850648e-08
+          },
+          "hydro_internal_angular_rate": {
+            "max_abs": 2.299397263668814e-06,
+            "mass_weighted_RMS": 1.3486604351665327e-06
+          },
+          "gravity_internal_torque": {
+            "max_abs": 1.5201205987169643e-07,
+            "mass_weighted_RMS": 9.084183333088008e-08
+          },
+          "exact_internal_angular_rate": {
+            "max_abs": 2.4668429803912e-06,
+            "mass_weighted_RMS": 1.4490856990542052e-06
+          }
+        }
+      },
+      "reference_successive_max_abs": 5.724587470723463e-17
+    }
+  ],
+  "initial_raw_projection_max_difference": 0.0,
+  "circular_split_radii": [
+    0.25,
+    0.5,
+    2.0
+  ],
+  "maximum_geometry_defect": 2.229470042092111e-11,
+  "potential_transport_status": "unavailable",
+  "limits": "Initial continuous projection only. Frozen-exterior j<0 normal speed is 0 by this experiment contract. Fixed actual computed face speed; exact-field mass rate need not vanish. Numerical dm is represented as 0 under the solved net-mass constraint; true solver residual was reported separately. Gravity uses fitted density and reconstructed velocity; independent exact-discontinuous-volume gravity and exact-flux closure check are pending. Potential boundary derivative is saved but no numerical potential transport exists to compare. This is not an evolved-state exact solution or a long-time/backend pass."
+}

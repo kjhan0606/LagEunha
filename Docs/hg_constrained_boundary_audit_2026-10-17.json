@@ -1,0 +1,77 @@
+{
+  "as_of": "2026-10-17T18:19:02.281702+09:00",
+  "implementation": "Opt-in GFS_HG_FROZEN_CONSISTENT=1, canonical single-thermal-owner HG modes",
+  "derivation": {
+    "r": "sum_all l.v; r_f=sum_frozen l.v",
+    "alpha_free": "sum_free |l|^2/m",
+    "evolution": "dr/dt=-alpha_free*C(r,U)*r; U evolves only if thermal owner is free",
+    "impulse": "I=(r0-r1)/alpha_free",
+    "dissipated_heat": "Q=(r0^2-r1^2)/(2*alpha_free)",
+    "kinetic_change": "dK_free=-Q+I*r_f",
+    "energy_change": "d(K+U)_free=I*r_f-Q_if_owner_frozen",
+    "all_frozen": "No dynamic degrees of freedom: no state update"
+  },
+  "unsupported_fail_closed": [
+    "b-prime (two-owner) modes",
+    "Active thermal owner with zero free mobility and nonzero r"
+  ],
+  "binary_sha256": "db5c1dbd188ff0370c5cfc66eead1a0b7728968e585ff7b3f6cfa4b79796a81b",
+  "source_sha256": "834628f141b6e861a2334a167730642535915bb7d5d97156c97c071150d58a7c",
+  "runtime_exit": 0,
+  "algebra_tests": "2 tests passed, including 1000 randomized owner/free-boundary cases; algebra only, not production scalar-ODE convergence",
+  "first_step": {
+    "step": 1.0,
+    "elapsed": 0.010887299956438503,
+    "dt": 0.010887299956438503,
+    "retries": 0.0,
+    "finite": 1.0,
+    "M": 12.19100448537078,
+    "Px": 0.009100547673166691,
+    "Py": -0.012893082559719413,
+    "Lz": 14.405898184166709,
+    "K": 4.80642256502476,
+    "U": 0.001499330696282508,
+    "Phi": -9.619802098090902,
+    "E": -4.81188020236986,
+    "dM0": 0.0,
+    "dPx0": 0.00011093440617269273,
+    "dPy0": 7.693822719766902e-06,
+    "dLz0": 2.8617908043315765e-08,
+    "dE0": 7.216596209502768e-09,
+    "dEstep": 7.216596209502768e-09,
+    "hg_dE": 1.5132101301162937e-13,
+    "hg_dPx": -1.8237841792334564e-13,
+    "hg_dPy": 5.484501741648273e-14,
+    "hg_dLz": 3.659295089164516e-13,
+    "hg_dU": 3.524622651032705e-12,
+    "boundary_corrected": 0.0
+  },
+  "boundary_budget": {
+    "work": 9.638803806296957e-14,
+    "heat_out": 5.363800631184232e-16,
+    "measured_dE": 1.5132101301162937e-13,
+    "residual": 5.546935501177822e-14
+  },
+  "frozen_unchanged_both_halves": true,
+  "runs": {
+    "baseline_t20": {
+      "session": 92020,
+      "root": "/gpfs/kjhan/LagForce/Codex_canonical192_accepted_20261017/omp8_t20"
+    },
+    "corrected_t20": {
+      "session": 59843,
+      "root": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20"
+    },
+    "corrected_omp1_first_step": {
+      "session": 36963,
+      "root": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp1_initial"
+    }
+  },
+  "remaining": [
+    "Long-term canonical failure interval comparison",
+    "Production per-particle OMP/MPI parity",
+    "Forced-rejection ledger validation",
+    "Full RK4 external impulse/boundary work and torque-stage weighting",
+    "Spatial/time convergence; no long-term stability claim"
+  ]
+}

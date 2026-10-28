@@ -1,0 +1,2026 @@
+{
+  "status": "completed_saved_finite_pressure_energy_budget",
+  "start": 0.025,
+  "end": 0.05,
+  "source_A": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0010/physics",
+    "fields_sha256": "125a27f379fc695ce7793b1868f62c8cc81897a31ea99f91abb89eec73b8b3c2",
+    "physical_monitor_passed": true,
+    "physical_monitor_status": "passed_checkpoint_physical_monitor",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "9067c1479e03232c97364970ac7904181f5f52733928f75f378ce746fd9f3684",
+    "physical_gate_sha256": "0fc002d687febde696531b5c441d2c7b4804748126e4e3427a64e2e1c33d0d3e",
+    "density_report_sha256": "b56916a24c0111af6fa2a78f80bcbfa283ba665a5080d5f52f7926af54327c1e",
+    "reference_report_sha256": "1bef4798a82254216ffabd1e1a0c617d9b18c816e2604a7e8146800aadb51793"
+  },
+  "source_B": {
+    "folder": "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0020/physics",
+    "fields_sha256": "01a45ae5e71b7bb209de118d3d339fdd047e5a96d44dbf35d524ae57c59ffdb2",
+    "physical_monitor_passed": true,
+    "physical_monitor_status": "passed_checkpoint_physical_monitor",
+    "physics_sha256": "5128e9d2475f60389ba6b59aaeab34a64d5f75d96bbaf91fa9d13ee9f8d55efc",
+    "physics_report_sha256": "896b69144cde5e74034c1d64c67087c075bbd203fcd1d2069893e8307a63e0a3",
+    "physical_gate_sha256": "5dbae6b2d77399707c3a2423219b899c7de5229a017db367d9ac00170d3aa82f",
+    "density_report_sha256": "f3516604eb9ab393e318d326d6ef207d669ec5a4705914f78617fce29c0050f6",
+    "reference_report_sha256": "413413b3d241d40ded12a5fc993123ed030fbff9e46978ad56a3e241cc489d93"
+  },
+  "regions": {
+    "all": {
+      "cells": 19945,
+      "actual_relative_pressure_change": {
+        "RMS": 3.104689236176463e-05,
+        "signed_mean": -4.512199621924686e-06,
+        "maximum": 0.0003599531927768084,
+        "maximum_signed": -0.0003599531927768084,
+        "maximum_id": 835,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 3.104689236176463e-05,
+        "signed_mean": -4.512199621924686e-06,
+        "maximum": 0.0003599531927768084,
+        "maximum_signed": -0.0003599531927768084,
+        "maximum_id": 835,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.0006562226567889989,
+          "signed_mean": 4.888105898352029e-05,
+          "maximum": 0.020411060028143805,
+          "maximum_signed": 0.020411060028143805,
+          "maximum_id": 758,
+          "alignment_with_actual_pressure_change": -0.4393183498784667
+        },
+        "stored_total_energy": {
+          "RMS": 0.1982542792634764,
+          "signed_mean": -0.00025645400079555024,
+          "maximum": 1.9009187842319437,
+          "maximum_signed": 1.9009187842319437,
+          "maximum_id": 1146,
+          "alignment_with_actual_pressure_change": 0.1514141240778929
+        },
+        "center_kinetic": {
+          "RMS": 0.20866916008814357,
+          "signed_mean": 0.00015444597519392842,
+          "maximum": 1.9035289559989144,
+          "maximum_signed": -1.9035289559989144,
+          "maximum_id": 1146,
+          "alignment_with_actual_pressure_change": -0.15357665151658176
+        },
+        "affine_kinetic": {
+          "RMS": 0.022366989809682197,
+          "signed_mean": 5.4226906095311e-05,
+          "maximum": 0.20732686459437488,
+          "maximum_signed": 0.20732686459437488,
+          "maximum_id": 920,
+          "alignment_with_actual_pressure_change": 0.10362337263174598
+        },
+        "unresolved_kinetic": {
+          "RMS": 4.0194528464533305e-05,
+          "signed_mean": -5.6121391069468086e-06,
+          "maximum": 0.00049053497031017,
+          "maximum_signed": -0.00049053497031017,
+          "maximum_id": 878,
+          "alignment_with_actual_pressure_change": 0.7415802677427114
+        },
+        "decomposition_residual": {
+          "RMS": 1.610298356243535e-12,
+          "signed_mean": 7.811974954777457e-15,
+          "maximum": 8.622303837868631e-12,
+          "maximum_signed": -8.622303837868631e-12,
+          "maximum_id": 2204,
+          "alignment_with_actual_pressure_change": -0.026779821096133288
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.022346317236021516,
+          "signed_mean": -0.00010200802560162183,
+          "maximum": 0.20753822325969773,
+          "maximum_signed": -0.20753822325969773,
+          "maximum_id": 920,
+          "alignment_with_actual_pressure_change": -0.09076273375695114
+        },
+        "all_kinetic": {
+          "RMS": 0.1982472746487026,
+          "signed_mean": 0.00020306074218229262,
+          "maximum": 1.9009329238500636,
+          "maximum_signed": -1.9009329238500636,
+          "maximum_id": 1146,
+          "alignment_with_actual_pressure_change": -0.14980866972755286
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.0006561286849446408,
+          "signed_mean": 4.88752805670519e-05,
+          "maximum": 0.020405662106017474,
+          "maximum_signed": 0.020405662106017474,
+          "maximum_id": 758,
+          "alignment_with_actual_pressure_change": -0.43933321005670845
+        },
+        "stored_total_energy": {
+          "RMS": 3.3763416514154136,
+          "signed_mean": -0.10530826168602797,
+          "maximum": 112.69709276395562,
+          "maximum_signed": 112.69709276395562,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.20790307364492505
+        },
+        "center_kinetic": {
+          "RMS": 3.379251509360233,
+          "signed_mean": 0.10520392907880574,
+          "maximum": 112.54871770465091,
+          "maximum_signed": -112.54871770465091,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.20825788300082043
+        },
+        "affine_kinetic": {
+          "RMS": 0.022623400057332637,
+          "signed_mean": 5.536095238637463e-05,
+          "maximum": 0.2062353878296214,
+          "maximum_signed": 0.2062353878296214,
+          "maximum_id": 956,
+          "alignment_with_actual_pressure_change": 0.09234290291712433
+        },
+        "unresolved_kinetic": {
+          "RMS": 2.7273680076775678e-05,
+          "signed_mean": 9.637424505738819e-08,
+          "maximum": 0.00030437760836584125,
+          "maximum_signed": 0.00030437760836584125,
+          "maximum_id": 902,
+          "alignment_with_actual_pressure_change": 0.11392479254419441
+        },
+        "decomposition_residual": {
+          "RMS": 3.1475431677399096e-12,
+          "signed_mean": 2.3748497255293658e-14,
+          "maximum": 2.1908290552633865e-11,
+          "maximum_signed": 2.1908290552633865e-11,
+          "maximum_id": 1589,
+          "alignment_with_actual_pressure_change": -0.026832008557504863
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.022605690376607302,
+          "signed_mean": -0.00010433260722223178,
+          "maximum": 0.20656173216061716,
+          "maximum_signed": -0.20656173216061716,
+          "maximum_id": 956,
+          "alignment_with_actual_pressure_change": -0.07980107804668017
+        },
+        "all_kinetic": {
+          "RMS": 3.376458639766054,
+          "signed_mean": 0.10525938640543718,
+          "maximum": 112.70229415316571,
+          "maximum_signed": -112.70229415316571,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.2078104969566017
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 1.1752700412438294e-07,
+          "signed_mean": 5.778416468397314e-09,
+          "maximum": 5.910076836049104e-06,
+          "maximum_signed": 5.910076836049104e-06,
+          "maximum_id": 844,
+          "alignment_with_actual_pressure_change": -0.2683074126287525
+        },
+        "stored_total_energy": {
+          "RMS": 3.3331485802374354,
+          "signed_mean": 0.10505180768523242,
+          "maximum": 112.19090287146078,
+          "maximum_signed": -112.19090287146078,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.20159116606719296
+        },
+        "center_kinetic": {
+          "RMS": 3.3311998435735504,
+          "signed_mean": -0.10504948310361181,
+          "maximum": 112.10936279788181,
+          "maximum_signed": 112.10936279788181,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.20164177657531276
+        },
+        "affine_kinetic": {
+          "RMS": 0.0023987375150475963,
+          "signed_mean": -1.1340462910636373e-06,
+          "maximum": 0.08164745141097325,
+          "maximum_signed": 0.08164745141097325,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.09531367359512609
+        },
+        "unresolved_kinetic": {
+          "RMS": 2.9067042076437943e-05,
+          "signed_mean": -5.708513352004196e-06,
+          "maximum": 0.0003377454135938174,
+          "maximum_signed": -0.0003377454135938174,
+          "maximum_id": 829,
+          "alignment_with_actual_pressure_change": 0.9185771557230727
+        },
+        "decomposition_residual": {
+          "RMS": 3.52122776076328e-12,
+          "signed_mean": -1.5936522300516203e-14,
+          "maximum": 2.073981065451894e-11,
+          "maximum_signed": -2.073981065451894e-11,
+          "maximum_id": 1589,
+          "alignment_with_actual_pressure_change": 0.011737781855768008
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.0023989362904578244,
+          "signed_mean": 2.3245816206099497e-06,
+          "maximum": 0.08154007357895522,
+          "maximum_signed": -0.08154007357895522,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.09348075669648777
+        },
+        "all_kinetic": {
+          "RMS": 3.3331548112881295,
+          "signed_mean": -0.10505632566325489,
+          "maximum": 112.19075622012801,
+          "maximum_signed": 112.19075622012801,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.20160011323664653
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.511873279842312e-17,
+        "signed_mean": -5.825029580970625e-19,
+        "maximum": 2.33397703983117e-16,
+        "maximum_signed": 2.33397703983117e-16,
+        "maximum_id": 15465,
+        "alignment_with_actual_pressure_change": -0.003425076485427628
+      },
+      "error_product_identity_residual": {
+        "RMS": 1.0265462164922984e-16,
+        "signed_mean": -1.0560995677867903e-19,
+        "maximum": 4.1026685340050226e-16,
+        "maximum_signed": 4.1026685340050226e-16,
+        "maximum_id": 19815,
+        "alignment_with_actual_pressure_change": 0.004921001887518562
+      },
+      "product_identity_residual": {
+        "RMS": 7.032650668515307e-17,
+        "signed_mean": -6.881129201259857e-19,
+        "maximum": 2.5730910141486187e-16,
+        "maximum_signed": 2.5730910141486187e-16,
+        "maximum_id": 19838,
+        "alignment_with_actual_pressure_change": 0.003524648662186559
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 2.663550103426995e-21,
+        "signed_mean": 1.1855188592252505e-23,
+        "maximum": 3.9122334251307997e-20,
+        "maximum_signed": -3.9122334251307997e-20,
+        "maximum_id": 830,
+        "alignment_with_actual_pressure_change": 0.03229292442285932
+      }
+    },
+    "inner": {
+      "cells": 490,
+      "actual_relative_pressure_change": {
+        "RMS": 4.804037115434373e-05,
+        "signed_mean": -3.1237353997467824e-06,
+        "maximum": 0.00022319463658896656,
+        "maximum_signed": 0.00022319463658896656,
+        "maximum_id": 268,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 4.804037115434373e-05,
+        "signed_mean": -3.1237353997467824e-06,
+        "maximum": 0.00022319463658896656,
+        "maximum_signed": 0.00022319463658896656,
+        "maximum_id": 268,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.0001864731468604773,
+          "signed_mean": 6.582504623489587e-06,
+          "maximum": 0.0006789069700520342,
+          "maximum_signed": 0.0006789069700520342,
+          "maximum_id": 268,
+          "alignment_with_actual_pressure_change": 0.5333134101210248
+        },
+        "stored_total_energy": {
+          "RMS": 0.0475809975241845,
+          "signed_mean": 0.0005702776173153359,
+          "maximum": 0.1780085887389226,
+          "maximum_signed": -0.1780085887389226,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": -0.04039499402941385
+        },
+        "center_kinetic": {
+          "RMS": 0.04482986465984053,
+          "signed_mean": -0.0013447464159991299,
+          "maximum": 0.1667612128369079,
+          "maximum_signed": 0.1667612128369079,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": 0.03341742719232133
+        },
+        "affine_kinetic": {
+          "RMS": 0.0067801644612423065,
+          "signed_mean": 0.0007798330049066402,
+          "maximum": 0.014918561129995643,
+          "maximum_signed": 0.014918561129995643,
+          "maximum_id": 144,
+          "alignment_with_actual_pressure_change": 0.05470632484653923
+        },
+        "unresolved_kinetic": {
+          "RMS": 2.335355530485646e-05,
+          "signed_mean": -1.507044624463581e-05,
+          "maximum": 5.8479802478470685e-05,
+          "maximum_signed": -5.8479802478470685e-05,
+          "maximum_id": 276,
+          "alignment_with_actual_pressure_change": 0.06890746816533812
+        },
+        "decomposition_residual": {
+          "RMS": 4.117055450188346e-14,
+          "signed_mean": -1.4551356386836312e-15,
+          "maximum": 1.3468767371574437e-13,
+          "maximum_signed": 1.3468767371574437e-13,
+          "maximum_id": 372,
+          "alignment_with_actual_pressure_change": -0.025874615671240463
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.006846703566242082,
+          "signed_mean": -0.0007744687986837941,
+          "maximum": 0.01497985636757459,
+          "maximum_signed": -0.01497985636757459,
+          "maximum_id": 222,
+          "alignment_with_actual_pressure_change": -0.06191817251755669
+        },
+        "all_kinetic": {
+          "RMS": 0.047561896390592905,
+          "signed_mean": -0.0005799838573371255,
+          "maximum": 0.17782615617912367,
+          "maximum_signed": 0.17782615617912367,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": 0.039330346226064766
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.00018646313738740976,
+          "signed_mean": 6.5795396550824695e-06,
+          "maximum": 0.0006787916925527065,
+          "maximum_signed": 0.0006787916925527065,
+          "maximum_id": 268,
+          "alignment_with_actual_pressure_change": 0.5332962259624896
+        },
+        "stored_total_energy": {
+          "RMS": 0.07887818710876131,
+          "signed_mean": -0.0019812709384046568,
+          "maximum": 0.24759764331802625,
+          "maximum_signed": -0.24759764331802625,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": -0.4235091573790763
+        },
+        "center_kinetic": {
+          "RMS": 0.07525527346880755,
+          "signed_mean": 0.002021714364960654,
+          "maximum": 0.23685948673685958,
+          "maximum_signed": 0.23685948673685958,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": 0.43503602740186276
+        },
+        "affine_kinetic": {
+          "RMS": 0.00726731269782021,
+          "signed_mean": -4.6924097009428695e-05,
+          "maximum": 0.015990164803910096,
+          "maximum_signed": -0.015990164803910096,
+          "maximum_id": 141,
+          "alignment_with_actual_pressure_change": 0.07793384601956554
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.4664827756773031e-05,
+          "signed_mean": -9.886919883251945e-08,
+          "maximum": 3.2425626252936934e-05,
+          "maximum_signed": -3.2425626252936934e-05,
+          "maximum_id": 306,
+          "alignment_with_actual_pressure_change": 0.07293852418113968
+        },
+        "decomposition_residual": {
+          "RMS": 5.905323639082418e-14,
+          "signed_mean": -2.8276466644805555e-15,
+          "maximum": 2.426894111562089e-13,
+          "maximum_signed": -2.426894111562089e-13,
+          "maximum_id": 432,
+          "alignment_with_actual_pressure_change": -0.033070606720945514
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.007340951777445219,
+          "signed_mean": 4.044342655599745e-05,
+          "maximum": 0.01620582828870824,
+          "maximum_signed": 0.01620582828870824,
+          "maximum_id": 141,
+          "alignment_with_actual_pressure_change": -0.09084371718102595
+        },
+        "all_kinetic": {
+          "RMS": 0.07872885556372744,
+          "signed_mean": 0.001974691398752393,
+          "maximum": 0.24736690331143918,
+          "maximum_signed": 0.24736690331143918,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": 0.42304939189180624
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 1.35970156891055e-08,
+          "signed_mean": 2.9649684071178307e-09,
+          "maximum": 1.152774993277119e-07,
+          "maximum_signed": 1.152774993277119e-07,
+          "maximum_id": 268,
+          "alignment_with_actual_pressure_change": 0.628255385177457
+        },
+        "stored_total_energy": {
+          "RMS": 0.05809015599084353,
+          "signed_mean": 0.002551548555719993,
+          "maximum": 0.22302221624568544,
+          "maximum_signed": 0.22302221624568544,
+          "maximum_id": 268,
+          "alignment_with_actual_pressure_change": 0.5419782389993967
+        },
+        "center_kinetic": {
+          "RMS": 0.05783168468378321,
+          "signed_mean": -0.003366460780959784,
+          "maximum": 0.22292334214643184,
+          "maximum_signed": -0.22292334214643184,
+          "maximum_id": 268,
+          "alignment_with_actual_pressure_change": -0.5401996611964393
+        },
+        "affine_kinetic": {
+          "RMS": 0.0011145427497674467,
+          "signed_mean": 0.0008267571019160689,
+          "maximum": 0.0028009569363569315,
+          "maximum_signed": 0.0028009569363569315,
+          "maximum_id": 141,
+          "alignment_with_actual_pressure_change": -0.1753649640438226
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.7861288525543257e-05,
+          "signed_mean": -1.4971577045803291e-05,
+          "maximum": 3.64993427722304e-05,
+          "maximum_signed": -3.64993427722304e-05,
+          "maximum_id": 257,
+          "alignment_with_actual_pressure_change": 0.030210780929692718
+        },
+        "decomposition_residual": {
+          "RMS": 7.186283094802236e-14,
+          "signed_mean": 1.3725110257969243e-15,
+          "maximum": 2.779833093428341e-13,
+          "maximum_signed": 2.779833093428341e-13,
+          "maximum_id": 432,
+          "alignment_with_actual_pressure_change": 0.012352061140117231
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.001113642113366367,
+          "signed_mean": -0.0008149122252397914,
+          "maximum": 0.002756721716063002,
+          "maximum_signed": -0.002756721716063002,
+          "maximum_id": 141,
+          "alignment_with_actual_pressure_change": 0.21815264671004003
+        },
+        "all_kinetic": {
+          "RMS": 0.05806414346977941,
+          "signed_mean": -0.0025546752560895187,
+          "maximum": 0.22279913688660996,
+          "maximum_signed": -0.22279913688660996,
+          "maximum_id": 268,
+          "alignment_with_actual_pressure_change": -0.5413938231039909
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.143668995459566e-17,
+        "signed_mean": -7.029320099445309e-18,
+        "maximum": 2.026106223382967e-16,
+        "maximum_signed": 2.026106223382967e-16,
+        "maximum_id": 106,
+        "alignment_with_actual_pressure_change": -0.010827768939707877
+      },
+      "error_product_identity_residual": {
+        "RMS": 9.656767992436688e-17,
+        "signed_mean": -1.4009865200358388e-18,
+        "maximum": 3.1182335214142416e-16,
+        "maximum_signed": -3.1182335214142416e-16,
+        "maximum_id": 267,
+        "alignment_with_actual_pressure_change": 0.029614353681425946
+      },
+      "product_identity_residual": {
+        "RMS": 6.783537103745083e-17,
+        "signed_mean": -8.430306590145097e-18,
+        "maximum": 1.8241733481240257e-16,
+        "maximum_signed": -1.8241733481240257e-16,
+        "maximum_id": 301,
+        "alignment_with_actual_pressure_change": 0.03075518711623813
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 3.2787024567389494e-21,
+        "signed_mean": -3.962877933911426e-23,
+        "maximum": 1.749652431672164e-20,
+        "maximum_signed": 1.749652431672164e-20,
+        "maximum_id": 215,
+        "alignment_with_actual_pressure_change": 0.06787549176207242
+      }
+    },
+    "cavity": {
+      "cells": 754,
+      "actual_relative_pressure_change": {
+        "RMS": 6.536850428931071e-05,
+        "signed_mean": 7.271853646049978e-06,
+        "maximum": 0.0002408442825501684,
+        "maximum_signed": 0.0002408442825501684,
+        "maximum_id": 681,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 6.536850428931071e-05,
+        "signed_mean": 7.271853646049978e-06,
+        "maximum": 0.00024084428255016842,
+        "maximum_signed": 0.00024084428255016842,
+        "maximum_id": 681,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.004359536566691784,
+          "signed_mean": -0.0011310213321827534,
+          "maximum": 0.01830925477712116,
+          "maximum_signed": -0.01830925477712116,
+          "maximum_id": 744,
+          "alignment_with_actual_pressure_change": 0.10082812943573242
+        },
+        "stored_total_energy": {
+          "RMS": 0.04524007071400533,
+          "signed_mean": 0.0026485369237708393,
+          "maximum": 0.1780085887389226,
+          "maximum_signed": -0.1780085887389226,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": -0.07114353126822975
+        },
+        "center_kinetic": {
+          "RMS": 0.04155210542683291,
+          "signed_mean": -0.0020625716047841507,
+          "maximum": 0.1667612128369079,
+          "maximum_signed": 0.1667612128369079,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": 0.06956001129110453
+        },
+        "affine_kinetic": {
+          "RMS": 0.005711724112762083,
+          "signed_mean": 0.0005645910535704311,
+          "maximum": 0.014918561129995643,
+          "maximum_signed": 0.014918561129995643,
+          "maximum_id": 144,
+          "alignment_with_actual_pressure_change": -0.00791278031541104
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.994715758597496e-05,
+          "signed_mean": -1.2263186728179584e-05,
+          "maximum": 5.8479802478470685e-05,
+          "maximum_signed": -5.8479802478470685e-05,
+          "maximum_id": 276,
+          "alignment_with_actual_pressure_change": -0.04142605523167047
+        },
+        "decomposition_residual": {
+          "RMS": 4.051023763965305e-14,
+          "signed_mean": -1.39840447089572e-16,
+          "maximum": 1.3468767371574437e-13,
+          "maximum_signed": 1.3468767371574437e-13,
+          "maximum_id": 372,
+          "alignment_with_actual_pressure_change": 0.01475679728729304
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.007412636126206555,
+          "signed_mean": 0.0005859653189866884,
+          "maximum": 0.019479014101743346,
+          "maximum_signed": 0.019479014101743346,
+          "maximum_id": 633,
+          "alignment_with_actual_pressure_change": -0.0442721667665406
+        },
+        "all_kinetic": {
+          "RMS": 0.04354311348252179,
+          "signed_mean": -0.0015102437379418993,
+          "maximum": 0.17782615617912367,
+          "maximum_signed": 0.17782615617912367,
+          "maximum_id": 97,
+          "alignment_with_actual_pressure_change": 0.06532245273694057
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.004359482195229859,
+          "signed_mean": -0.0011310112038779828,
+          "maximum": 0.01830985623191545,
+          "maximum_signed": -0.01830985623191545,
+          "maximum_id": 744,
+          "alignment_with_actual_pressure_change": 0.10083724676445453
+        },
+        "stored_total_energy": {
+          "RMS": 1.1274529995524643,
+          "signed_mean": 0.28090405351947156,
+          "maximum": 4.603553946226548,
+          "maximum_signed": 4.603553946226548,
+          "maximum_id": 715,
+          "alignment_with_actual_pressure_change": -0.11292006298483506
+        },
+        "center_kinetic": {
+          "RMS": 1.1215311092735996,
+          "signed_mean": -0.2795522108748837,
+          "maximum": 4.581983067749588,
+          "maximum_signed": -4.581983067749588,
+          "maximum_id": 715,
+          "alignment_with_actual_pressure_change": 0.1127842551702083
+        },
+        "affine_kinetic": {
+          "RMS": 0.0062530704679674524,
+          "signed_mean": -0.00022046068466814034,
+          "maximum": 0.015990164803910096,
+          "maximum_signed": -0.015990164803910096,
+          "maximum_id": 141,
+          "alignment_with_actual_pressure_change": 0.06088821246583648
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.2908785660255506e-05,
+          "signed_mean": -3.7075604056224946e-07,
+          "maximum": 3.2425626252936934e-05,
+          "maximum_signed": -3.2425626252936934e-05,
+          "maximum_id": 306,
+          "alignment_with_actual_pressure_change": 0.05240207564922829
+        },
+        "decomposition_residual": {
+          "RMS": 6.280512292200848e-14,
+          "signed_mean": -1.176982437545474e-15,
+          "maximum": 2.426894111562089e-13,
+          "maximum_signed": -2.426894111562089e-13,
+          "maximum_id": 432,
+          "alignment_with_actual_pressure_change": -0.012103701020779012
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.008436317855664156,
+          "signed_mean": 0.0013518426445878547,
+          "maximum": 0.024280539968876955,
+          "maximum_signed": 0.024280539968876955,
+          "maximum_id": 633,
+          "alignment_with_actual_pressure_change": -0.09731886900323579
+        },
+        "all_kinetic": {
+          "RMS": 1.1231023268626923,
+          "signed_mean": -0.2797730423155924,
+          "maximum": 4.58534453050238,
+          "maximum_signed": -4.58534453050238,
+          "maximum_id": 715,
+          "alignment_with_actual_pressure_change": 0.11296607842887293
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 2.7021875490907856e-07,
+          "signed_mean": -1.0128304770720552e-08,
+          "maximum": 1.7468487929122857e-06,
+          "maximum_signed": 1.7468487929122857e-06,
+          "maximum_id": 695,
+          "alignment_with_actual_pressure_change": -0.12680340949361307
+        },
+        "stored_total_energy": {
+          "RMS": 1.1073223934772942,
+          "signed_mean": -0.2782555165957007,
+          "maximum": 4.530798861368355,
+          "maximum_signed": -4.530798861368355,
+          "maximum_id": 715,
+          "alignment_with_actual_pressure_change": 0.11206630161862727
+        },
+        "center_kinetic": {
+          "RMS": 1.1061952106046844,
+          "signed_mean": 0.27748963927009956,
+          "maximum": 4.52701834103924,
+          "maximum_signed": 4.52701834103924,
+          "maximum_id": 715,
+          "alignment_with_actual_pressure_change": -0.1117349674831953
+        },
+        "affine_kinetic": {
+          "RMS": 0.0015309407428551964,
+          "signed_mean": 0.0007850517382385714,
+          "maximum": 0.007931084873616105,
+          "maximum_signed": 0.007931084873616105,
+          "maximum_id": 636,
+          "alignment_with_actual_pressure_change": -0.2782171049609717
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.5122186193574585e-05,
+          "signed_mean": -1.1892430687617335e-05,
+          "maximum": 3.64993427722304e-05,
+          "maximum_signed": -3.64993427722304e-05,
+          "maximum_id": 257,
+          "alignment_with_actual_pressure_change": -0.09937579099630095
+        },
+        "decomposition_residual": {
+          "RMS": 7.403834246428048e-14,
+          "signed_mean": 1.037141990455902e-15,
+          "maximum": 2.8199678405818556e-13,
+          "maximum_signed": -2.8199678405818556e-13,
+          "maximum_id": 563,
+          "alignment_with_actual_pressure_change": 0.018341520759798804
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.0015460645453151038,
+          "signed_mean": -0.0007658773256011662,
+          "maximum": 0.008110457260998785,
+          "maximum_signed": -0.008110457260998785,
+          "maximum_id": 636,
+          "alignment_with_actual_pressure_change": 0.3187702939048338
+        },
+        "all_kinetic": {
+          "RMS": 1.107315125809259,
+          "signed_mean": 0.2782627985776505,
+          "maximum": 4.530839161816649,
+          "maximum_signed": 4.530839161816649,
+          "maximum_id": 715,
+          "alignment_with_actual_pressure_change": -0.11200797286761152
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.373923294923989e-17,
+        "signed_mean": -8.090954340147834e-18,
+        "maximum": 2.026106223382967e-16,
+        "maximum_signed": 2.026106223382967e-16,
+        "maximum_id": 106,
+        "alignment_with_actual_pressure_change": -0.0026437220290515067
+      },
+      "error_product_identity_residual": {
+        "RMS": 9.935827488532349e-17,
+        "signed_mean": 4.693995698300565e-18,
+        "maximum": 3.1182335214142416e-16,
+        "maximum_signed": -3.1182335214142416e-16,
+        "maximum_id": 267,
+        "alignment_with_actual_pressure_change": 0.010013215521960618
+      },
+      "product_identity_residual": {
+        "RMS": 6.94796925036119e-17,
+        "signed_mean": -3.3969586014956325e-18,
+        "maximum": 2.0363578972816983e-16,
+        "maximum_signed": -2.0363578972816983e-16,
+        "maximum_id": 670,
+        "alignment_with_actual_pressure_change": 0.011513434107244066
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 4.331279118411196e-21,
+        "signed_mean": 1.687269538590305e-22,
+        "maximum": 2.5265404629819677e-20,
+        "maximum_signed": -2.5265404629819677e-20,
+        "maximum_id": 551,
+        "alignment_with_actual_pressure_change": 0.09433234083061277
+      }
+    },
+    "disk_core": {
+      "cells": 11812,
+      "actual_relative_pressure_change": {
+        "RMS": 2.6651771427357285e-05,
+        "signed_mean": -3.5937918829638343e-06,
+        "maximum": 0.0003032930637970469,
+        "maximum_signed": -0.0003032930637970469,
+        "maximum_id": 874,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 2.6651771427357285e-05,
+        "signed_mean": -3.5937918829638343e-06,
+        "maximum": 0.00030329306379704696,
+        "maximum_signed": -0.00030329306379704696,
+        "maximum_id": 874,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.00010132504495748006,
+          "signed_mean": 9.213634692035675e-06,
+          "maximum": 0.002450059726107827,
+          "maximum_signed": 0.002450059726107827,
+          "maximum_id": 1045,
+          "alignment_with_actual_pressure_change": -0.612907159724955
+        },
+        "stored_total_energy": {
+          "RMS": 0.19566470315998316,
+          "signed_mean": -0.00034543553868458403,
+          "maximum": 1.9009187842319437,
+          "maximum_signed": 1.9009187842319437,
+          "maximum_id": 1146,
+          "alignment_with_actual_pressure_change": 0.16900396483770777
+        },
+        "center_kinetic": {
+          "RMS": 0.20768221003416326,
+          "signed_mean": 0.0002753054974100581,
+          "maximum": 1.9035289559989144,
+          "maximum_signed": -1.9035289559989144,
+          "maximum_id": 1146,
+          "alignment_with_actual_pressure_change": -0.17424795580662855
+        },
+        "affine_kinetic": {
+          "RMS": 0.021922751163616385,
+          "signed_mean": 6.184819240564472e-05,
+          "maximum": 0.20732686459437488,
+          "maximum_signed": 0.20732686459437488,
+          "maximum_id": 920,
+          "alignment_with_actual_pressure_change": 0.14523608186493936
+        },
+        "unresolved_kinetic": {
+          "RMS": 3.603677196827283e-05,
+          "signed_mean": -4.525577712762193e-06,
+          "maximum": 0.00049053497031017,
+          "maximum_signed": -0.00049053497031017,
+          "maximum_id": 878,
+          "alignment_with_actual_pressure_change": 0.690130551144385
+        },
+        "decomposition_residual": {
+          "RMS": 1.624737537869305e-12,
+          "signed_mean": 6.643168490052126e-15,
+          "maximum": 8.622303837868631e-12,
+          "maximum_signed": -8.622303837868631e-12,
+          "maximum_id": 2204,
+          "alignment_with_actual_pressure_change": -0.02268552453153412
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.021903414010980414,
+          "signed_mean": -7.013004127452588e-05,
+          "maximum": 0.20753822325969773,
+          "maximum_signed": -0.20753822325969773,
+          "maximum_id": 920,
+          "alignment_with_actual_pressure_change": -0.14244765411736138
+        },
+        "all_kinetic": {
+          "RMS": 0.19564612004353296,
+          "signed_mean": 0.00033262811210294066,
+          "maximum": 1.9009329238500636,
+          "maximum_signed": -1.9009329238500636,
+          "maximum_id": 1146,
+          "alignment_with_actual_pressure_change": -0.16856636864822067
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.00010130757420629307,
+          "signed_mean": 9.212176206780211e-06,
+          "maximum": 0.0024496334521015638,
+          "maximum_signed": 0.0024496334521015638,
+          "maximum_id": 1045,
+          "alignment_with_actual_pressure_change": -0.6129095324329552
+        },
+        "stored_total_energy": {
+          "RMS": 2.394944867371111,
+          "signed_mean": -0.20293791324089755,
+          "maximum": 59.11010190710163,
+          "maximum_signed": -59.11010190710163,
+          "maximum_id": 932,
+          "alignment_with_actual_pressure_change": 0.6278653851724052
+        },
+        "center_kinetic": {
+          "RMS": 2.404117260103367,
+          "signed_mean": 0.2028404176707097,
+          "maximum": 59.24774046573225,
+          "maximum_signed": 59.24774046573225,
+          "maximum_id": 932,
+          "alignment_with_actual_pressure_change": -0.6266130770344219
+        },
+        "affine_kinetic": {
+          "RMS": 0.02171854065248928,
+          "signed_mean": 8.818206436085866e-05,
+          "maximum": 0.2062353878296214,
+          "maximum_signed": 0.2062353878296214,
+          "maximum_id": 956,
+          "alignment_with_actual_pressure_change": 0.12921849555950365
+        },
+        "unresolved_kinetic": {
+          "RMS": 2.741776607037348e-05,
+          "signed_mean": 1.0132959679015454e-07,
+          "maximum": 0.00030437760836584125,
+          "maximum_signed": 0.00030437760836584125,
+          "maximum_id": 902,
+          "alignment_with_actual_pressure_change": 0.14543546132252927
+        },
+        "decomposition_residual": {
+          "RMS": 3.1764935723858596e-12,
+          "signed_mean": 2.3396383999056438e-14,
+          "maximum": 2.1908290552633865e-11,
+          "maximum_signed": 2.1908290552633865e-11,
+          "maximum_id": 1589,
+          "alignment_with_actual_pressure_change": -0.02638455187135114
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.021707066065527574,
+          "signed_mean": -9.749557018782484e-05,
+          "maximum": 0.20656173216061716,
+          "maximum_signed": -0.20656173216061716,
+          "maximum_id": 956,
+          "alignment_with_actual_pressure_change": -0.12661003002434826
+        },
+        "all_kinetic": {
+          "RMS": 2.394844147954806,
+          "signed_mean": 0.20292870106466737,
+          "maximum": 59.10769548682004,
+          "maximum_signed": 59.10769548682004,
+          "maximum_id": 932,
+          "alignment_with_actual_pressure_change": -0.6278658636407394
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 1.7811376275605288e-08,
+          "signed_mean": 1.4584852554619405e-09,
+          "maximum": 4.7588033533741737e-07,
+          "maximum_signed": 4.7588033533741737e-07,
+          "maximum_id": 916,
+          "alignment_with_actual_pressure_change": -0.5876904195676914
+        },
+        "stored_total_energy": {
+          "RMS": 2.360810776355539,
+          "signed_mean": 0.20259247770221295,
+          "maximum": 59.08353610200571,
+          "maximum_signed": 59.08353610200571,
+          "maximum_id": 932,
+          "alignment_with_actual_pressure_change": -0.6229363597179418
+        },
+        "center_kinetic": {
+          "RMS": 2.3596370661952024,
+          "signed_mean": -0.20256511217329964,
+          "maximum": 59.04827431821323,
+          "maximum_signed": -59.04827431821323,
+          "maximum_id": 932,
+          "alignment_with_actual_pressure_change": 0.6230886666481321
+        },
+        "affine_kinetic": {
+          "RMS": 0.0015508713911530298,
+          "signed_mean": -2.6333871955213955e-05,
+          "maximum": 0.060109257913160984,
+          "maximum_signed": -0.060109257913160984,
+          "maximum_id": 916,
+          "alignment_with_actual_pressure_change": 0.24343561690206317
+        },
+        "unresolved_kinetic": {
+          "RMS": 2.2724771489580504e-05,
+          "signed_mean": -4.6269073095523475e-06,
+          "maximum": 0.0003004283822811331,
+          "maximum_signed": -0.0003004283822811331,
+          "maximum_id": 934,
+          "alignment_with_actual_pressure_change": 0.9189338538618762
+        },
+        "decomposition_residual": {
+          "RMS": 3.5531547675299197e-12,
+          "signed_mean": -1.675321550900431e-14,
+          "maximum": 2.073981065451894e-11,
+          "maximum_signed": -2.073981065451894e-11,
+          "maximum_id": 1589,
+          "alignment_with_actual_pressure_change": 0.013214267103155214
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.0015529249471596552,
+          "signed_mean": 2.7365528913298965e-05,
+          "maximum": 0.06022896445713442,
+          "maximum_signed": 0.06022896445713442,
+          "maximum_id": 916,
+          "alignment_with_actual_pressure_change": -0.23939190197729968
+        },
+        "all_kinetic": {
+          "RMS": 2.360827396332341,
+          "signed_mean": -0.20259607295256443,
+          "maximum": 59.083804309655214,
+          "maximum_signed": -59.083804309655214,
+          "maximum_id": 932,
+          "alignment_with_actual_pressure_change": 0.6229432679108632
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.515383520374406e-17,
+        "signed_mean": -6.108165085397742e-19,
+        "maximum": 2.2838656200034307e-16,
+        "maximum_signed": -2.2838656200034307e-16,
+        "maximum_id": 2970,
+        "alignment_with_actual_pressure_change": -0.001075287285161006
+      },
+      "error_product_identity_residual": {
+        "RMS": 1.0267636101214362e-16,
+        "signed_mean": -6.992422244762683e-20,
+        "maximum": 3.55868011105215e-16,
+        "maximum_signed": -3.55868011105215e-16,
+        "maximum_id": 3175,
+        "alignment_with_actual_pressure_change": 0.0003207285060289325
+      },
+      "product_identity_residual": {
+        "RMS": 7.03994046043059e-17,
+        "signed_mean": -6.807407358239108e-19,
+        "maximum": 2.3147401852307475e-16,
+        "maximum_signed": 2.3147401852307475e-16,
+        "maximum_id": 8963,
+        "alignment_with_actual_pressure_change": -0.0006801290510775035
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 2.5613020987133903e-21,
+        "signed_mean": 1.1300970430477989e-23,
+        "maximum": 3.3696029432960135e-20,
+        "maximum_signed": 3.3696029432960135e-20,
+        "maximum_id": 935,
+        "alignment_with_actual_pressure_change": 0.044452261585234965
+      }
+    },
+    "inner_contact": {
+      "cells": 101,
+      "actual_relative_pressure_change": {
+        "RMS": 0.00025287813784822605,
+        "signed_mean": -0.00024109578450046796,
+        "maximum": 0.0003599531927768084,
+        "maximum_signed": -0.0003599531927768084,
+        "maximum_id": 835,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 0.00025287813784822605,
+        "signed_mean": -0.00024109578450046796,
+        "maximum": 0.0003599531927768084,
+        "maximum_signed": -0.0003599531927768084,
+        "maximum_id": 835,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.009748815393087095,
+          "signed_mean": 0.007746654146609923,
+          "maximum": 0.020411060028143805,
+          "maximum_signed": 0.020411060028143805,
+          "maximum_id": 758,
+          "alignment_with_actual_pressure_change": -0.7056379035806362
+        },
+        "stored_total_energy": {
+          "RMS": 0.6986905472609657,
+          "signed_mean": 0.020197607334761742,
+          "maximum": 1.1334550842571143,
+          "maximum_signed": 1.1334550842571143,
+          "maximum_id": 757,
+          "alignment_with_actual_pressure_change": 0.10015653473738544
+        },
+        "center_kinetic": {
+          "RMS": 0.6127405817614927,
+          "signed_mean": -0.02639493859560906,
+          "maximum": 1.0216033127262203,
+          "maximum_signed": -1.0216033127262203,
+          "maximum_id": 757,
+          "alignment_with_actual_pressure_change": -0.08684117569077461
+        },
+        "affine_kinetic": {
+          "RMS": 0.08806149504644098,
+          "signed_mean": -0.0015059438908922454,
+          "maximum": 0.13518205525321483,
+          "maximum_signed": -0.13518205525321483,
+          "maximum_id": 758,
+          "alignment_with_actual_pressure_change": -0.11239767820795109
+        },
+        "unresolved_kinetic": {
+          "RMS": 0.00028862983118069875,
+          "signed_mean": -0.00028447477977264234,
+          "maximum": 0.00037323250575521893,
+          "maximum_signed": -0.00037323250575521893,
+          "maximum_id": 758,
+          "alignment_with_actual_pressure_change": 0.9098429723561379
+        },
+        "decomposition_residual": {
+          "RMS": 2.156498285297867e-12,
+          "signed_mean": 4.0180619003894203e-13,
+          "maximum": 5.399320988139084e-12,
+          "maximum_signed": 5.399320988139084e-12,
+          "maximum_id": 759,
+          "alignment_with_actual_pressure_change": -0.16638427777987816
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.08790196474235913,
+          "signed_mean": -0.006197331260847317,
+          "maximum": 0.13786625628119795,
+          "maximum_signed": -0.13786625628119795,
+          "maximum_id": 831,
+          "alignment_with_actual_pressure_change": 0.19075013400387056
+        },
+        "all_kinetic": {
+          "RMS": 0.6994480135999205,
+          "signed_mean": -0.028185357266273945,
+          "maximum": 1.1540197989135974,
+          "maximum_signed": -1.1540197989135974,
+          "maximum_id": 757,
+          "alignment_with_actual_pressure_change": -0.08985144149511276
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.00974736430949674,
+          "signed_mean": 0.007745620183761201,
+          "maximum": 0.020405662106017474,
+          "maximum_signed": 0.020405662106017474,
+          "maximum_id": 758,
+          "alignment_with_actual_pressure_change": -0.7056751735118945
+        },
+        "stored_total_energy": {
+          "RMS": 37.101261422790444,
+          "signed_mean": 21.392164429159596,
+          "maximum": 112.69709276395562,
+          "maximum_signed": 112.69709276395562,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.43323147447319965
+        },
+        "center_kinetic": {
+          "RMS": 37.02738429079044,
+          "signed_mean": -21.392753733327655,
+          "maximum": 112.54871770465091,
+          "maximum_signed": -112.54871770465091,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.43448162412550634
+        },
+        "affine_kinetic": {
+          "RMS": 0.11195174150709629,
+          "signed_mean": -0.007155852553377137,
+          "maximum": 0.1793941153086524,
+          "maximum_signed": -0.1793941153086524,
+          "maximum_id": 826,
+          "alignment_with_actual_pressure_change": -0.06609022741686472
+        },
+        "unresolved_kinetic": {
+          "RMS": 5.4490078342651175e-05,
+          "signed_mean": -4.6346265354553796e-07,
+          "maximum": 9.02414767984894e-05,
+          "maximum_signed": -9.02414767984894e-05,
+          "maximum_id": 826,
+          "alignment_with_actual_pressure_change": -0.1189888914930358
+        },
+        "decomposition_residual": {
+          "RMS": 4.200444249871057e-12,
+          "signed_mean": 3.2898828950498005e-13,
+          "maximum": 1.3202153833147227e-11,
+          "maximum_signed": -1.3202153833147227e-11,
+          "maximum_id": 766,
+          "alignment_with_actual_pressure_change": -0.0999728105982039
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.1115910132803242,
+          "signed_mean": -0.0005893041680594973,
+          "maximum": 0.17000438748357088,
+          "maximum_signed": 0.17000438748357088,
+          "maximum_id": 826,
+          "alignment_with_actual_pressure_change": 0.12800199900383585
+        },
+        "all_kinetic": {
+          "RMS": 37.1052912652867,
+          "signed_mean": -21.399910049343685,
+          "maximum": 112.70229415316571,
+          "maximum_signed": -112.70229415316571,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.43336980025421995
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 1.7842643206898454e-06,
+          "signed_mean": 1.0339628487226312e-06,
+          "maximum": 5.910076836049104e-06,
+          "maximum_signed": 5.910076836049104e-06,
+          "maximum_id": 844,
+          "alignment_with_actual_pressure_change": -0.37026800188334186
+        },
+        "stored_total_energy": {
+          "RMS": 36.67845400887779,
+          "signed_mean": -21.371966821824834,
+          "maximum": 112.19090287146078,
+          "maximum_signed": -112.19090287146078,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.4401333985115936
+        },
+        "center_kinetic": {
+          "RMS": 36.65395064274456,
+          "signed_mean": 21.366358794732047,
+          "maximum": 112.10936279788181,
+          "maximum_signed": 112.10936279788181,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.44035987644596525
+        },
+        "affine_kinetic": {
+          "RMS": 0.02841356775011385,
+          "signed_mean": 0.005649908662484892,
+          "maximum": 0.08164745141097325,
+          "maximum_signed": 0.08164745141097325,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.08795064205947492
+        },
+        "unresolved_kinetic": {
+          "RMS": 0.00028461167411687917,
+          "signed_mean": -0.0002840113171190968,
+          "maximum": 0.0003377454135938174,
+          "maximum_signed": -0.0003377454135938174,
+          "maximum_id": 829,
+          "alignment_with_actual_pressure_change": 0.9454690794621177
+        },
+        "decomposition_residual": {
+          "RMS": 4.788968013785073e-12,
+          "signed_mean": 7.281790053396197e-14,
+          "maximum": 1.2866250944971854e-11,
+          "maximum_signed": 1.2866250944971854e-11,
+          "maximum_id": 766,
+          "alignment_with_actual_pressure_change": 0.012763252440170885
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.028391601790259163,
+          "signed_mean": -0.00560802709278782,
+          "maximum": 0.08154007357895522,
+          "maximum_signed": -0.08154007357895522,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": 0.08747089373152096
+        },
+        "all_kinetic": {
+          "RMS": 36.67834185060327,
+          "signed_mean": 21.37172469207741,
+          "maximum": 112.19075622012801,
+          "maximum_signed": 112.19075622012801,
+          "maximum_id": 810,
+          "alignment_with_actual_pressure_change": -0.4401278318970486
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.457167733486637e-17,
+        "signed_mean": 2.6799267978253244e-18,
+        "maximum": 2.0222198346625114e-16,
+        "maximum_signed": -2.0222198346625114e-16,
+        "maximum_id": 756,
+        "alignment_with_actual_pressure_change": -0.07363594650401153
+      },
+      "error_product_identity_residual": {
+        "RMS": 9.807251955823313e-17,
+        "signed_mean": -1.0361934556030747e-17,
+        "maximum": 2.797399874132525e-16,
+        "maximum_signed": -2.797399874132525e-16,
+        "maximum_id": 782,
+        "alignment_with_actual_pressure_change": 0.14109374282908865
+      },
+      "product_identity_residual": {
+        "RMS": 6.237821359628548e-17,
+        "signed_mean": -7.682007889918205e-18,
+        "maximum": 1.6447362176728373e-16,
+        "maximum_signed": 1.6447362176728373e-16,
+        "maximum_id": 759,
+        "alignment_with_actual_pressure_change": 0.13380093014383965
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 1.2883957994593297e-20,
+        "signed_mean": 1.9481755320016894e-22,
+        "maximum": 3.9122334251307997e-20,
+        "maximum_signed": -3.9122334251307997e-20,
+        "maximum_id": 830,
+        "alignment_with_actual_pressure_change": -0.02161361164781521
+      }
+    },
+    "outer_contact": {
+      "cells": 402,
+      "actual_relative_pressure_change": {
+        "RMS": 5.600774919351472e-07,
+        "signed_mean": -1.1420912488724199e-07,
+        "maximum": 1.6032704915999282e-06,
+        "maximum_signed": -1.6032704915999282e-06,
+        "maximum_id": 13038,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 5.600774919351472e-07,
+        "signed_mean": -1.1420912488724199e-07,
+        "maximum": 1.6032704915999282e-06,
+        "maximum_signed": -1.6032704915999282e-06,
+        "maximum_id": 13038,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.0006441860252260234,
+          "signed_mean": 0.00048207397841124397,
+          "maximum": 0.0019924116400970044,
+          "maximum_signed": 0.0019924116400970044,
+          "maximum_id": 12698,
+          "alignment_with_actual_pressure_change": -0.7139022784940325
+        },
+        "stored_total_energy": {
+          "RMS": 0.007533998538759842,
+          "signed_mean": -0.00045817819186767307,
+          "maximum": 0.011513659351898286,
+          "maximum_signed": -0.011513659351898286,
+          "maximum_id": 12758,
+          "alignment_with_actual_pressure_change": 0.7715913374940961
+        },
+        "center_kinetic": {
+          "RMS": 0.007385593882522248,
+          "signed_mean": -2.9053198150907555e-05,
+          "maximum": 0.01065000378903471,
+          "maximum_signed": 0.01065000378903471,
+          "maximum_id": 12758,
+          "alignment_with_actual_pressure_change": -0.7455202510943703
+        },
+        "affine_kinetic": {
+          "RMS": 0.0002094413330705905,
+          "signed_mean": 5.0406483823268616e-06,
+          "maximum": 0.0003012544846574879,
+          "maximum_signed": 0.0003012544846574879,
+          "maximum_id": 13055,
+          "alignment_with_actual_pressure_change": 0.732344121710699
+        },
+        "unresolved_kinetic": {
+          "RMS": 7.254473420655783e-09,
+          "signed_mean": 2.5541210157003345e-09,
+          "maximum": 1.2216777718925588e-08,
+          "maximum_signed": 1.2216777718925588e-08,
+          "maximum_id": 12919,
+          "alignment_with_actual_pressure_change": 0.6363128360441009
+        },
+        "decomposition_residual": {
+          "RMS": 5.867530863895439e-13,
+          "signed_mean": -2.0892314442073312e-14,
+          "maximum": 1.8104633805437086e-12,
+          "maximum_signed": -1.8104633805437086e-12,
+          "maximum_id": 12968,
+          "alignment_with_actual_pressure_change": 0.03665706918945974
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.0005680524625769666,
+          "signed_mean": -0.0004872313900185806,
+          "maximum": 0.0017529443705306615,
+          "maximum_signed": -0.0017529443705306615,
+          "maximum_id": 12699,
+          "alignment_with_actual_pressure_change": 0.5405455017803696
+        },
+        "all_kinetic": {
+          "RMS": 0.007176623207732067,
+          "signed_mean": -2.4009995647564994e-05,
+          "maximum": 0.010358183276439207,
+          "maximum_signed": 0.010358183276439207,
+          "maximum_id": 12758,
+          "alignment_with_actual_pressure_change": -0.745855244954197
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.0006441865944947494,
+          "signed_mean": 0.00048207427413526617,
+          "maximum": 0.0019924150988408287,
+          "maximum_signed": 0.0019924150988408287,
+          "maximum_id": 12698,
+          "alignment_with_actual_pressure_change": -0.7139024756705041
+        },
+        "stored_total_energy": {
+          "RMS": 0.19910875341587592,
+          "signed_mean": 0.08791385756607813,
+          "maximum": 1.253476769240772,
+          "maximum_signed": 1.253476769240772,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": 0.11124468153900345
+        },
+        "center_kinetic": {
+          "RMS": 0.19929461020270933,
+          "signed_mean": -0.08839452247107013,
+          "maximum": 1.254030168558301,
+          "maximum_signed": -1.254030168558301,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": -0.10961018505150155
+        },
+        "affine_kinetic": {
+          "RMS": 0.00021120519718080782,
+          "signed_mean": -1.4095148785274781e-06,
+          "maximum": 0.00029932753329735696,
+          "maximum_signed": -0.00029932753329735696,
+          "maximum_id": 12894,
+          "alignment_with_actual_pressure_change": 0.7329869402765156
+        },
+        "unresolved_kinetic": {
+          "RMS": 6.725511682695841e-09,
+          "signed_mean": 1.4575910520597768e-10,
+          "maximum": 9.757972837833585e-09,
+          "maximum_signed": 9.757972837833585e-09,
+          "maximum_id": 12986,
+          "alignment_with_actual_pressure_change": 0.7422642339695953
+        },
+        "decomposition_residual": {
+          "RMS": 1.0261716839837156e-12,
+          "signed_mean": -2.3837069300354318e-14,
+          "maximum": 2.9686568933885237e-12,
+          "maximum_signed": 2.9686568933885237e-12,
+          "maximum_id": 13012,
+          "alignment_with_actual_pressure_change": -0.045337588579059326
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.0005619247835133471,
+          "signed_mean": -0.00048066490499200425,
+          "maximum": 0.001736765881317236,
+          "maximum_signed": -0.001736765881317236,
+          "maximum_id": 12699,
+          "alignment_with_actual_pressure_change": 0.5429031967300557
+        },
+        "all_kinetic": {
+          "RMS": 0.19928204347336803,
+          "signed_mean": -0.08839593184018955,
+          "maximum": 1.2540822140729284,
+          "maximum_signed": -1.2540822140729284,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": -0.10884023007133423
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 6.819663255679913e-10,
+          "signed_mean": -2.957240221774369e-10,
+          "maximum": 3.5342467988073144e-09,
+          "maximum_signed": -3.5342467988073144e-09,
+          "maximum_id": 12699,
+          "alignment_with_actual_pressure_change": 0.7821803810174409
+        },
+        "stored_total_energy": {
+          "RMS": 0.19884651168058765,
+          "signed_mean": -0.0883720357579458,
+          "maximum": 1.2573137879991485,
+          "maximum_signed": -1.2573137879991485,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": -0.08215694466100945
+        },
+        "center_kinetic": {
+          "RMS": 0.19883421272049068,
+          "signed_mean": 0.08836546927291923,
+          "maximum": 1.2572404996019464,
+          "maximum_signed": 1.2572404996019464,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": 0.08217202198132097
+        },
+        "affine_kinetic": {
+          "RMS": 1.275185836524843e-05,
+          "signed_mean": 6.450163260854339e-06,
+          "maximum": 7.28716554160652e-05,
+          "maximum_signed": 7.28716554160652e-05,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": -0.11194620373523155
+        },
+        "unresolved_kinetic": {
+          "RMS": 2.447393089624072e-09,
+          "signed_mean": 2.408361910494357e-09,
+          "maximum": 4.8326622553094706e-09,
+          "maximum_signed": 4.8326622553094706e-09,
+          "maximum_id": 12773,
+          "alignment_with_actual_pressure_change": -0.15362968151696235
+        },
+        "decomposition_residual": {
+          "RMS": 1.1396740071527287e-12,
+          "signed_mean": 2.944754858281006e-15,
+          "maximum": 4.021337552500011e-12,
+          "maximum_signed": -4.021337552500011e-12,
+          "maximum_id": 13012,
+          "alignment_with_actual_pressure_change": 0.05969496336484193
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 1.2827981180029497e-05,
+          "signed_mean": -6.566485026576382e-06,
+          "maximum": 7.328839720213114e-05,
+          "maximum_signed": -7.328839720213114e-05,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": 0.15493023431422354
+        },
+        "all_kinetic": {
+          "RMS": 0.19884655777292143,
+          "signed_mean": 0.08837192184454198,
+          "maximum": 1.2573133756169272,
+          "maximum_signed": 1.2573133756169272,
+          "maximum_id": 12840,
+          "alignment_with_actual_pressure_change": 0.08215973956580504
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.252147254128391e-17,
+        "signed_mean": -1.6857343518245885e-19,
+        "maximum": 2.102421040744491e-16,
+        "maximum_signed": 2.102421040744491e-16,
+        "maximum_id": 12805,
+        "alignment_with_actual_pressure_change": -0.02253486309023624
+      },
+      "error_product_identity_residual": {
+        "RMS": 1.015069005638299e-16,
+        "signed_mean": 1.0067633857479302e-18,
+        "maximum": 2.8564219035691385e-16,
+        "maximum_signed": -2.8564219035691385e-16,
+        "maximum_id": 13066,
+        "alignment_with_actual_pressure_change": -0.002421935173859
+      },
+      "product_identity_residual": {
+        "RMS": 6.74708428541093e-17,
+        "signed_mean": 8.381899497495091e-19,
+        "maximum": 2.0074125814320834e-16,
+        "maximum_signed": -2.0074125814320834e-16,
+        "maximum_id": 13066,
+        "alignment_with_actual_pressure_change": -0.027865437981042917
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 4.906139410507266e-23,
+        "signed_mean": -3.753206395140085e-24,
+        "maximum": 2.2426934357843963e-22,
+        "maximum_signed": -2.2426934357843963e-22,
+        "maximum_id": 12700,
+        "alignment_with_actual_pressure_change": 0.009130577812794537
+      }
+    },
+    "dynamic_buffer": {
+      "cells": 6407,
+      "actual_relative_pressure_change": {
+        "RMS": 1.4749722832375253e-07,
+        "signed_mean": 1.3108955045152358e-08,
+        "maximum": 1.5072635928137058e-06,
+        "maximum_signed": 1.5072635928137058e-06,
+        "maximum_id": 13102,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 1.4749722832375253e-07,
+        "signed_mean": 1.3108955045152358e-08,
+        "maximum": 1.5072635928137056e-06,
+        "maximum_signed": 1.5072635928137056e-06,
+        "maximum_id": 13102,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 0.00016051495100170507,
+          "signed_mean": -3.144246481761691e-05,
+          "maximum": 0.0014428936429792113,
+          "maximum_signed": -0.0014428936429792113,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": -0.5989533239182714
+        },
+        "stored_total_energy": {
+          "RMS": 0.00020614906686008692,
+          "signed_mean": 2.9111361037951688e-05,
+          "maximum": 0.0019936280737202676,
+          "maximum_signed": 0.0019936280737202676,
+          "maximum_id": 19572,
+          "alignment_with_actual_pressure_change": 0.3518194866859672
+        },
+        "center_kinetic": {
+          "RMS": 0.00018221412003430545,
+          "signed_mean": 2.3695072412781926e-06,
+          "maximum": 0.001976551930734637,
+          "maximum_signed": -0.001976551930734637,
+          "maximum_id": 19572,
+          "alignment_with_actual_pressure_change": 0.13304406431417937
+        },
+        "affine_kinetic": {
+          "RMS": 2.092754804314021e-06,
+          "signed_mean": -2.529105983231275e-08,
+          "maximum": 6.39888307201784e-06,
+          "maximum_signed": -6.39888307201784e-06,
+          "maximum_id": 13092,
+          "alignment_with_actual_pressure_change": -0.22996421000082837
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.8198550079092903e-10,
+          "signed_mean": -3.446752499782508e-12,
+          "maximum": 6.378674971661947e-10,
+          "maximum_signed": -6.378674971661947e-10,
+          "maximum_id": 13094,
+          "alignment_with_actual_pressure_change": -0.2561398049746342
+        },
+        "decomposition_residual": {
+          "RMS": 9.167952706416727e-15,
+          "signed_mean": 1.6176828812530196e-17,
+          "maximum": 4.023245042118129e-14,
+          "maximum_signed": -4.023245042118129e-14,
+          "maximum_id": 17921,
+          "alignment_with_actual_pressure_change": 0.010931800915424623
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.00016093969371097096,
+          "signed_mean": 3.1480868279229884e-05,
+          "maximum": 0.0014424762428755465,
+          "maximum_signed": 0.0014424762428755465,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": 0.6012796703968502
+        },
+        "all_kinetic": {
+          "RMS": 0.00018187394987617222,
+          "signed_mean": 2.34421273469338e-06,
+          "maximum": 0.0019784574680943635,
+          "maximum_signed": -0.0019784574680943635,
+          "maximum_id": 19572,
+          "alignment_with_actual_pressure_change": 0.13064653735151852
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 0.00016051491297270942,
+          "signed_mean": -3.144245085006179e-05,
+          "maximum": 0.0014428940079497647,
+          "maximum_signed": -0.0014428940079497647,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": -0.5989532462153773
+        },
+        "stored_total_energy": {
+          "RMS": 0.009638142119969703,
+          "signed_mean": 0.0019025538871061533,
+          "maximum": 0.08560566310617705,
+          "maximum_signed": 0.08560566310617705,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": 0.6044672863679681
+        },
+        "center_kinetic": {
+          "RMS": 0.009476905869128265,
+          "signed_mean": -0.001871046060205039,
+          "maximum": 0.08415735808734774,
+          "maximum_signed": -0.08415735808734774,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": -0.6045330363056776
+        },
+        "affine_kinetic": {
+          "RMS": 2.1686428443646975e-06,
+          "signed_mean": -6.537081694320773e-08,
+          "maximum": 6.503386896929239e-06,
+          "maximum_signed": -6.503386896929239e-06,
+          "maximum_id": 13439,
+          "alignment_with_actual_pressure_change": -0.32183313917639234
+        },
+        "unresolved_kinetic": {
+          "RMS": 1.8695555480777754e-10,
+          "signed_mean": -5.233802167681885e-12,
+          "maximum": 6.35751040167102e-10,
+          "maximum_signed": -6.35751040167102e-10,
+          "maximum_id": 13097,
+          "alignment_with_actual_pressure_change": -0.3407991250468041
+        },
+        "decomposition_residual": {
+          "RMS": 1.6119120519752224e-14,
+          "signed_mean": -3.06549928762524e-16,
+          "maximum": 5.6506122768163456e-14,
+          "maximum_signed": -5.6506122768163456e-14,
+          "maximum_id": 15037,
+          "alignment_with_actual_pressure_change": -0.004324323646963584
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 0.00016129161033981223,
+          "signed_mean": 3.150782690111415e-05,
+          "maximum": 0.0014483050188293066,
+          "maximum_signed": 0.0014483050188293066,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": 0.6003965912155835
+        },
+        "all_kinetic": {
+          "RMS": 0.009477666500659608,
+          "signed_mean": -0.0018711114362557845,
+          "maximum": 0.08416276909821861,
+          "maximum_signed": -0.08416276909821861,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": -0.6045581667488593
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 9.265595277202626e-11,
+          "signed_mean": -1.3967555115214202e-11,
+          "maximum": 2.102767130630193e-09,
+          "maximum_signed": -2.102767130630193e-09,
+          "maximum_id": 13102,
+          "alignment_with_actual_pressure_change": -0.3804403881876213
+        },
+        "stored_total_energy": {
+          "RMS": 0.009527230340482255,
+          "signed_mean": -0.0018734425260682015,
+          "maximum": 0.08461839562705112,
+          "maximum_signed": -0.08461839562705112,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": -0.6038915979134567
+        },
+        "center_kinetic": {
+          "RMS": 0.009526880359462695,
+          "signed_mean": 0.0018734155674463174,
+          "maximum": 0.08461256685109736,
+          "maximum_signed": 0.08461256685109736,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": 0.6039065223735509
+        },
+        "affine_kinetic": {
+          "RMS": 5.187718191092724e-07,
+          "signed_mean": 4.007975711089498e-08,
+          "maximum": 6.340551198033783e-06,
+          "maximum_signed": 6.340551198033783e-06,
+          "maximum_id": 13511,
+          "alignment_with_actual_pressure_change": 0.417683499899515
+        },
+        "unresolved_kinetic": {
+          "RMS": 4.825517623702284e-11,
+          "signed_mean": 1.7870496678993764e-12,
+          "maximum": 6.483295176040042e-10,
+          "maximum_signed": 6.483295176040042e-10,
+          "maximum_id": 13511,
+          "alignment_with_actual_pressure_change": 0.3543777093743292
+        },
+        "decomposition_residual": {
+          "RMS": 1.8531064131423162e-14,
+          "signed_mean": 3.227267575750542e-16,
+          "maximum": 7.10785699707101e-14,
+          "maximum_signed": -7.10785699707101e-14,
+          "maximum_id": 16284,
+          "alignment_with_actual_pressure_change": 0.00916982028745191
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 4.764349134779864e-07,
+          "signed_mean": -2.695862188426902e-08,
+          "maximum": 6.584267252979668e-06,
+          "maximum_signed": -6.584267252979668e-06,
+          "maximum_id": 13511,
+          "alignment_with_actual_pressure_change": -0.14517628627982584
+        },
+        "all_kinetic": {
+          "RMS": 0.009527319452409805,
+          "signed_mean": 0.001873455648990478,
+          "maximum": 0.08461821163950722,
+          "maximum_signed": 0.08461821163950722,
+          "maximum_id": 13510,
+          "alignment_with_actual_pressure_change": 0.6039014347342294
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 7.601996512168104e-17,
+        "signed_mean": 1.599935763693321e-18,
+        "maximum": 2.33397703983117e-16,
+        "maximum_signed": 2.33397703983117e-16,
+        "maximum_id": 15465,
+        "alignment_with_actual_pressure_change": 0.005382747386648024
+      },
+      "error_product_identity_residual": {
+        "RMS": 1.0420878322412595e-16,
+        "signed_mean": -2.4098324295414396e-18,
+        "maximum": 3.6818030589519417e-16,
+        "maximum_signed": -3.6818030589519417e-16,
+        "maximum_id": 17130,
+        "alignment_with_actual_pressure_change": -0.01161267455696133
+      },
+      "product_identity_residual": {
+        "RMS": 7.050745153962031e-17,
+        "signed_mean": -8.098966659578593e-19,
+        "maximum": 2.2988215454016914e-16,
+        "maximum_signed": 2.2988215454016914e-16,
+        "maximum_id": 15522,
+        "alignment_with_actual_pressure_change": -0.011359741408271328
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 1.2791032306981703e-23,
+        "signed_mean": -5.425309353666874e-25,
+        "maximum": 2.6211285660274064e-22,
+        "maximum_signed": -2.6211285660274064e-22,
+        "maximum_id": 13113,
+        "alignment_with_actual_pressure_change": -0.05063312195492772
+      }
+    },
+    "wall": {
+      "cells": 468,
+      "actual_relative_pressure_change": {
+        "RMS": 1.950803675776728e-07,
+        "signed_mean": -6.923085929291441e-08,
+        "maximum": 9.3127443159603e-07,
+        "maximum_signed": -9.3127443159603e-07,
+        "maximum_id": 20145,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "reference_error_change": {
+        "RMS": 1.950803675776728e-07,
+        "signed_mean": -6.923085929291441e-08,
+        "maximum": 9.3127443159603e-07,
+        "maximum_signed": -9.3127443159603e-07,
+        "maximum_id": 20145,
+        "alignment_with_actual_pressure_change": 1.0
+      },
+      "terms": {
+        "volume": {
+          "RMS": 5.739827576982373e-06,
+          "signed_mean": 6.147395793344738e-07,
+          "maximum": 2.428736458301955e-05,
+          "maximum_signed": -2.428736458301955e-05,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": -0.2617088794668818
+        },
+        "stored_total_energy": {
+          "RMS": 0.0004859621762859401,
+          "signed_mean": -2.5041615718933548e-06,
+          "maximum": 0.0018404358185952038,
+          "maximum_signed": -0.0018404358185952038,
+          "maximum_id": 19446,
+          "alignment_with_actual_pressure_change": 0.15278221729042524
+        },
+        "center_kinetic": {
+          "RMS": 0.0004860052836564515,
+          "signed_mean": 1.859680655185703e-06,
+          "maximum": 0.0018303999654641198,
+          "maximum_signed": 0.0018303999654641198,
+          "maximum_id": 19446,
+          "alignment_with_actual_pressure_change": -0.14915352967356718
+        },
+        "affine_kinetic": {
+          "RMS": 1.1447427972202224e-06,
+          "signed_mean": -3.948520048437998e-08,
+          "maximum": 5.230747261454029e-06,
+          "maximum_signed": -5.230747261454029e-06,
+          "maximum_id": 20142,
+          "alignment_with_actual_pressure_change": -0.05218253186066732
+        },
+        "unresolved_kinetic": {
+          "RMS": 9.263609970824807e-11,
+          "signed_mean": -4.321470271404294e-12,
+          "maximum": 3.101992790331634e-10,
+          "maximum_signed": -3.101992790331634e-10,
+          "maximum_id": 20142,
+          "alignment_with_actual_pressure_change": 0.04829445884316179
+        },
+        "decomposition_residual": {
+          "RMS": 7.466302103599935e-15,
+          "signed_mean": 3.284794434399497e-17,
+          "maximum": 2.3505004523077967e-14,
+          "maximum_signed": 2.3505004523077967e-14,
+          "maximum_id": 19599,
+          "alignment_with_actual_pressure_change": -0.016107787269970482
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 5.823353836669488e-06,
+          "signed_mean": -6.444809167076515e-07,
+          "maximum": 2.6319379302991722e-05,
+          "maximum_signed": 2.6319379302991722e-05,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": 0.30171192823967596
+        },
+        "all_kinetic": {
+          "RMS": 0.00048663854623003767,
+          "signed_mean": 1.8201911332310518e-06,
+          "maximum": 0.0018329035060499481,
+          "maximum_signed": 0.0018329035060499481,
+          "maximum_id": 19446,
+          "alignment_with_actual_pressure_change": -0.1490821784732736
+        }
+      },
+      "actual_cell_reference_terms": {
+        "volume": {
+          "RMS": 5.739828715414547e-06,
+          "signed_mean": 6.147399527796701e-07,
+          "maximum": 2.4287381843731113e-05,
+          "maximum_signed": -2.4287381843731113e-05,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": -0.261708938426979
+        },
+        "stored_total_energy": {
+          "RMS": 0.0005364119807769692,
+          "signed_mean": -3.1623835356334566e-05,
+          "maximum": 0.0025632749505268516,
+          "maximum_signed": 0.0025632749505268516,
+          "maximum_id": 19781,
+          "alignment_with_actual_pressure_change": 0.27407152857749645
+        },
+        "center_kinetic": {
+          "RMS": 0.0005335439916484159,
+          "signed_mean": 3.101846866273094e-05,
+          "maximum": 0.0025460750229004555,
+          "maximum_signed": -0.0025460750229004555,
+          "maximum_id": 19781,
+          "alignment_with_actual_pressure_change": -0.27260081674037673
+        },
+        "affine_kinetic": {
+          "RMS": 1.1425912429596749e-06,
+          "signed_mean": -9.374844395366743e-09,
+          "maximum": 5.193369809231878e-06,
+          "maximum_signed": -5.193369809231878e-06,
+          "maximum_id": 20142,
+          "alignment_with_actual_pressure_change": -0.06000551866676776
+        },
+        "unresolved_kinetic": {
+          "RMS": 9.17174582105757e-11,
+          "signed_mean": 1.5847823948714368e-12,
+          "maximum": 3.035750173565324e-10,
+          "maximum_signed": -3.035750173565324e-10,
+          "maximum_id": 20142,
+          "alignment_with_actual_pressure_change": 0.028708436887171635
+        },
+        "decomposition_residual": {
+          "RMS": 8.927068158640853e-13,
+          "signed_mean": 4.310731880998363e-16,
+          "maximum": 4.7961215563849975e-12,
+          "maximum_signed": -4.7961215563849975e-12,
+          "maximum_id": 20095,
+          "alignment_with_actual_pressure_change": -0.0017782487122896002
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 5.78413413093621e-06,
+          "signed_mean": -6.053666936036303e-07,
+          "maximum": 2.688572003922906e-05,
+          "maximum_signed": 2.688572003922906e-05,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": 0.2715572621573049
+        },
+        "all_kinetic": {
+          "RMS": 0.0005340885315012204,
+          "signed_mean": 3.100909540311796e-05,
+          "maximum": 0.002548628467787515,
+          "maximum_signed": -0.002548628467787515,
+          "maximum_id": 19781,
+          "alignment_with_actual_pressure_change": -0.27245124816360056
+        }
+      },
+      "error_terms_after_actual_cell_reference_subtraction": {
+        "volume": {
+          "RMS": 2.10529274139318e-12,
+          "signed_mean": -3.7344519629144e-13,
+          "maximum": 1.726071156462501e-11,
+          "maximum_signed": 1.726071156462501e-11,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": 0.3022661194419858
+        },
+        "stored_total_energy": {
+          "RMS": 0.0002765304426900192,
+          "signed_mean": 2.911967378444121e-05,
+          "maximum": 0.0011699889916346573,
+          "maximum_signed": -0.0011699889916346573,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": -0.26314959032612356
+        },
+        "center_kinetic": {
+          "RMS": 0.0002765648467533721,
+          "signed_mean": -2.915878800754523e-05,
+          "maximum": 0.00116942265089842,
+          "maximum_signed": 0.00116942265089842,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": 0.26379030180207247
+        },
+        "affine_kinetic": {
+          "RMS": 3.527757377385318e-08,
+          "signed_mean": -3.011035608901324e-08,
+          "maximum": 9.266165353285968e-08,
+          "maximum_signed": 9.266165353285968e-08,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": 0.2501930185524898
+        },
+        "unresolved_kinetic": {
+          "RMS": 6.879637930735255e-12,
+          "signed_mean": -5.906252666275731e-12,
+          "maximum": 1.3623475216432043e-11,
+          "maximum_signed": -1.3623475216432043e-11,
+          "maximum_id": 19801,
+          "alignment_with_actual_pressure_change": 0.2675642908527565
+        },
+        "decomposition_residual": {
+          "RMS": 8.919532107994226e-13,
+          "signed_mean": -3.9822524375584135e-16,
+          "maximum": 4.795427441447285e-12,
+          "maximum_signed": 4.795427441447285e-12,
+          "maximum_id": 20095,
+          "alignment_with_actual_pressure_change": 0.0016449171571111382
+        },
+        "total_plus_center_kinetic": {
+          "RMS": 1.8935874579013798e-07,
+          "signed_mean": -3.91142231040212e-08,
+          "maximum": 8.950129092802855e-07,
+          "maximum_signed": -8.950129092802855e-07,
+          "maximum_id": 20225,
+          "alignment_with_actual_pressure_change": 0.9835916770500047
+        },
+        "all_kinetic": {
+          "RMS": 0.0002765818409563544,
+          "signed_mean": -2.918890426988691e-05,
+          "maximum": 0.0011695153180049762,
+          "maximum_signed": 0.0011695153180049762,
+          "maximum_id": 20259,
+          "alignment_with_actual_pressure_change": 0.26380601193498115
+        }
+      },
+      "reference_product_identity_residual": {
+        "RMS": 8.725779883231025e-17,
+        "signed_mean": -3.7251757374188823e-19,
+        "maximum": 2.2474853678760695e-16,
+        "maximum_signed": 2.2474853678760695e-16,
+        "maximum_id": 19453,
+        "alignment_with_actual_pressure_change": 0.019547224879220764
+      },
+      "error_product_identity_residual": {
+        "RMS": 1.2158590619007595e-16,
+        "signed_mean": -1.6942062247944822e-18,
+        "maximum": 4.1026685340050226e-16,
+        "maximum_signed": 4.1026685340050226e-16,
+        "maximum_id": 19815,
+        "alignment_with_actual_pressure_change": 0.006161255330808844
+      },
+      "product_identity_residual": {
+        "RMS": 8.29114350868322e-17,
+        "signed_mean": -2.066723798429492e-18,
+        "maximum": 2.5730910141486187e-16,
+        "maximum_signed": 2.5730910141486187e-16,
+        "maximum_id": 19838,
+        "alignment_with_actual_pressure_change": 0.029607129904325298
+      },
+      "relative_error_vs_actual_pressure_change_residual": {
+        "RMS": 1.746966410830105e-23,
+        "signed_mean": -1.5031602509907868e-25,
+        "maximum": 1.4966799208381344e-22,
+        "maximum_signed": -1.4966799208381344e-22,
+        "maximum_id": 20018,
+        "alignment_with_actual_pressure_change": 0.04937857603850491
+      }
+    }
+  },
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "thresholds_added": false,
+  "identity": "Delta(T/V)=mean(1/V)*Delta(T)+mean(T)*Delta(1/V); T=E-Kcm-Kaffine-Kunresolved-residual",
+  "limits": "Endpoint algebra only. Energy terms can strongly cancel. This is not a finite-step geometry-volume defect, integrated flux budget, causal attribution, or time-integrator comparison. Minimum-rotation lower bound is never added as a separate energy."
+}

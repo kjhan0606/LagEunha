@@ -1,0 +1,913 @@
+{
+  "status": "completed",
+  "scope": "Saved-predicate replay only: diagnose CUDA nextafter overload and filter fix.\nNo geometry resolution, RHS, massroot or evolution is re-executed.\n",
+  "seconds": 66.21948258206248,
+  "library_sha256": "9c7042941014d85796949d5dcef5f6706715cbcb15fdb11a6ca4984bb8df6d9b",
+  "original_library_sha256": "3295969112683d98db48c09bb63fa122f972dddbb7fafdb772aa69e961ce12a4",
+  "probe": {
+    "original_cpu": {
+      "first_nextafter_bits": [
+        4607182418800017409,
+        4607182418800017407,
+        4607182418800017409,
+        4607182418800017407
+      ],
+      "first_simple_interval_hex": [
+        "0x1.fffffffffffffp+0",
+        "0x1.0000000000001p+1",
+        "0x1.fffffffffffffp-1",
+        "0x1.0000000000001p+0"
+      ],
+      "first_planes_hex": [
+        "-0x1.0000000000000p+0",
+        "-0x1.0000000000000p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x1.7ccf1499a5b1bp+1",
+        "0x1.7ccf1499a5b1dp+1",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "-0x1.0000000000000p+0",
+        "-0x1.0000000000000p+0",
+        "0x1.7d969231ccf7ep+1",
+        "0x1.7d969231ccf80p+1",
+        "0x1.d7959e914f07fp-6",
+        "0x1.d7959e914f081p-6",
+        "-0x1.8ec233c5beb01p-7",
+        "-0x1.8ec233c5beaffp-7",
+        "0x1.fffffffffff94p-12",
+        "0x1.fffffffffffa1p-12"
+      ],
+      "first_D_N_hex": [
+        "0x1.ffffffffffffep-1",
+        "0x1.0000000000002p+0",
+        "-0x1.984ec705a7891p-5",
+        "-0x1.984ec705a7872p-5"
+      ],
+      "resolved_count": 8
+    },
+    "original_gpu": {
+      "first_nextafter_bits": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_simple_interval_hex": [
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0"
+      ],
+      "first_planes_hex": [
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0"
+      ],
+      "first_D_N_hex": [
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0"
+      ],
+      "resolved_count": 0
+    },
+    "fixed_cpu": {
+      "first_nextafter_bits": [
+        4607182418800017409,
+        4607182418800017407,
+        4607182418800017409,
+        4607182418800017407
+      ],
+      "first_simple_interval_hex": [
+        "0x1.fffffffffffffp+0",
+        "0x1.0000000000001p+1",
+        "0x1.fffffffffffffp-1",
+        "0x1.0000000000001p+0"
+      ],
+      "first_planes_hex": [
+        "-0x1.0000000000000p+0",
+        "-0x1.0000000000000p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x1.7ccf1499a5b1bp+1",
+        "0x1.7ccf1499a5b1dp+1",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "-0x1.0000000000000p+0",
+        "-0x1.0000000000000p+0",
+        "0x1.7d969231ccf7ep+1",
+        "0x1.7d969231ccf80p+1",
+        "0x1.d7959e914f07fp-6",
+        "0x1.d7959e914f081p-6",
+        "-0x1.8ec233c5beb01p-7",
+        "-0x1.8ec233c5beaffp-7",
+        "0x1.fffffffffff94p-12",
+        "0x1.fffffffffffa1p-12"
+      ],
+      "first_D_N_hex": [
+        "0x1.ffffffffffffep-1",
+        "0x1.0000000000002p+0",
+        "-0x1.984ec705a7891p-5",
+        "-0x1.984ec705a7872p-5"
+      ],
+      "resolved_count": 8
+    },
+    "fixed_gpu": {
+      "first_nextafter_bits": [
+        4607182418800017409,
+        4607182418800017407,
+        4607182418800017409,
+        4607182418800017407
+      ],
+      "first_simple_interval_hex": [
+        "0x1.fffffffffffffp+0",
+        "0x1.0000000000001p+1",
+        "0x1.fffffffffffffp-1",
+        "0x1.0000000000001p+0"
+      ],
+      "first_planes_hex": [
+        "-0x1.0000000000000p+0",
+        "-0x1.0000000000000p+0",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x1.7ccf1499a5b1bp+1",
+        "0x1.7ccf1499a5b1dp+1",
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "-0x1.0000000000000p+0",
+        "-0x1.0000000000000p+0",
+        "0x1.7d969231ccf7ep+1",
+        "0x1.7d969231ccf80p+1",
+        "0x1.d7959e914f07fp-6",
+        "0x1.d7959e914f081p-6",
+        "-0x1.8ec233c5beb01p-7",
+        "-0x1.8ec233c5beaffp-7",
+        "0x1.fffffffffff94p-12",
+        "0x1.fffffffffffa1p-12"
+      ],
+      "first_D_N_hex": [
+        "0x1.ffffffffffffep-1",
+        "0x1.0000000000002p+0",
+        "-0x1.984ec705a7891p-5",
+        "-0x1.984ec705a7872p-5"
+      ],
+      "resolved_count": 8
+    }
+  },
+  "stages": {
+    "stage0": {
+      "clipping_filter": {
+        "count": 42829,
+        "input_sha256": "1c130976e2b91cb3e61a83a3322019761ca944f4b746bbc432981a11bf22d7ed",
+        "exact_sha256": "3062ac01d235bfbfe71fb78c264c8d90887a504b783774ac5f909beea6e4166b",
+        "cpu_sha256": "6f0ebd3dd0f5d080ea6e5fe30bd2c5c90e7c45dbd8661c8cb89cb589f57968a3",
+        "gpu_sha256": "6f0ebd3dd0f5d080ea6e5fe30bd2c5c90e7c45dbd8661c8cb89cb589f57968a3",
+        "cpu_resolved": 42828,
+        "gpu_resolved": 42828,
+        "old_gpu_resolved": 0,
+        "cpu_resolved_gpu_unresolved": 0,
+        "gpu_resolved_cpu_unresolved": 0,
+        "wrong_nonzero_signs": 0
+      },
+      "feasibility_filter": {
+        "count": 351719424,
+        "vertices": 9541,
+        "registry_count": 36864,
+        "coverage": [
+          [
+            0,
+            128
+          ],
+          [
+            128,
+            256
+          ],
+          [
+            256,
+            384
+          ],
+          [
+            384,
+            512
+          ],
+          [
+            512,
+            640
+          ],
+          [
+            640,
+            768
+          ],
+          [
+            768,
+            896
+          ],
+          [
+            896,
+            1024
+          ],
+          [
+            1024,
+            1152
+          ],
+          [
+            1152,
+            1280
+          ],
+          [
+            1280,
+            1408
+          ],
+          [
+            1408,
+            1536
+          ],
+          [
+            1536,
+            1664
+          ],
+          [
+            1664,
+            1792
+          ],
+          [
+            1792,
+            1920
+          ],
+          [
+            1920,
+            2048
+          ],
+          [
+            2048,
+            2176
+          ],
+          [
+            2176,
+            2304
+          ],
+          [
+            2304,
+            2432
+          ],
+          [
+            2432,
+            2560
+          ],
+          [
+            2560,
+            2688
+          ],
+          [
+            2688,
+            2816
+          ],
+          [
+            2816,
+            2944
+          ],
+          [
+            2944,
+            3072
+          ],
+          [
+            3072,
+            3200
+          ],
+          [
+            3200,
+            3328
+          ],
+          [
+            3328,
+            3456
+          ],
+          [
+            3456,
+            3584
+          ],
+          [
+            3584,
+            3712
+          ],
+          [
+            3712,
+            3840
+          ],
+          [
+            3840,
+            3968
+          ],
+          [
+            3968,
+            4096
+          ],
+          [
+            4096,
+            4224
+          ],
+          [
+            4224,
+            4352
+          ],
+          [
+            4352,
+            4480
+          ],
+          [
+            4480,
+            4608
+          ],
+          [
+            4608,
+            4736
+          ],
+          [
+            4736,
+            4864
+          ],
+          [
+            4864,
+            4992
+          ],
+          [
+            4992,
+            5120
+          ],
+          [
+            5120,
+            5248
+          ],
+          [
+            5248,
+            5376
+          ],
+          [
+            5376,
+            5504
+          ],
+          [
+            5504,
+            5632
+          ],
+          [
+            5632,
+            5760
+          ],
+          [
+            5760,
+            5888
+          ],
+          [
+            5888,
+            6016
+          ],
+          [
+            6016,
+            6144
+          ],
+          [
+            6144,
+            6272
+          ],
+          [
+            6272,
+            6400
+          ],
+          [
+            6400,
+            6528
+          ],
+          [
+            6528,
+            6656
+          ],
+          [
+            6656,
+            6784
+          ],
+          [
+            6784,
+            6912
+          ],
+          [
+            6912,
+            7040
+          ],
+          [
+            7040,
+            7168
+          ],
+          [
+            7168,
+            7296
+          ],
+          [
+            7296,
+            7424
+          ],
+          [
+            7424,
+            7552
+          ],
+          [
+            7552,
+            7680
+          ],
+          [
+            7680,
+            7808
+          ],
+          [
+            7808,
+            7936
+          ],
+          [
+            7936,
+            8064
+          ],
+          [
+            8064,
+            8192
+          ],
+          [
+            8192,
+            8320
+          ],
+          [
+            8320,
+            8448
+          ],
+          [
+            8448,
+            8576
+          ],
+          [
+            8576,
+            8704
+          ],
+          [
+            8704,
+            8832
+          ],
+          [
+            8832,
+            8960
+          ],
+          [
+            8960,
+            9088
+          ],
+          [
+            9088,
+            9216
+          ],
+          [
+            9216,
+            9344
+          ],
+          [
+            9344,
+            9472
+          ],
+          [
+            9472,
+            9541
+          ]
+        ],
+        "input_sha256": {
+          "owners": "aa51cbf653bba072d8cd5ade61ef01971fedc930700ca3b6d107499fccd1816b",
+          "supports": "bd6660c5e91650dd63504efd840dbe6b4cc4772f0e0e60a0445d0bf5ded82e72",
+          "enclosures": "24a3aeac7c3341b39e9ec1c3757508c04f40db7e7b7a11eb9fca3848315a5a85",
+          "registry_ids": "ff83a1e80d7639cdbf406dce9c0b7fdabb6bf049a05ac363a6edffbb07a427d3",
+          "xy": "72ddd41b24f7f64a2a0d8ddb85744083f87a9b542f898d346e1fa1c1c9767613",
+          "W": "b9c048de34d844a2381155656d249036a85a52b60cb9fd06bf1600e44d7aa3ae",
+          "bounds": "9a3545bf044d125cd61948faef212304242d5967a81964685abedf24a07397a1"
+        },
+        "input_hash_verified_from_loaded_arrays": true,
+        "cpu_sign_sha256": "c2cfaf19de7234fc1e0eab363eaae740f891381b52e2cec4e10ec1604110e838",
+        "gpu_sign_sha256": "c2cfaf19de7234fc1e0eab363eaae740f891381b52e2cec4e10ec1604110e838",
+        "cpu_unresolved": 28623,
+        "gpu_unresolved": 28623,
+        "gpu_resolved": 351690801,
+        "old_gpu_resolved": 0,
+        "gpu_extra_resolved_exact_checked": 0,
+        "self_exact_zero_count": 9541,
+        "wrong_nonzero_signs": 0,
+        "unresolved_difference_witness": []
+      }
+    },
+    "midpoint": {
+      "clipping_filter": {
+        "count": 42724,
+        "input_sha256": "fe4718badae63b0dc711572f76774eb4ab0acf92955118115e501d92fd577e23",
+        "exact_sha256": "adda3c608a9d86b54cb7950dd51b6dee91606fe7b6f14100cc8d1646a444e4d0",
+        "cpu_sha256": "abf08e9d37b9519e47737e51fc2881a9767f096b6d6ef2b5704ce2222a0f51ad",
+        "gpu_sha256": "abf08e9d37b9519e47737e51fc2881a9767f096b6d6ef2b5704ce2222a0f51ad",
+        "cpu_resolved": 42724,
+        "gpu_resolved": 42724,
+        "old_gpu_resolved": 0,
+        "cpu_resolved_gpu_unresolved": 0,
+        "gpu_resolved_cpu_unresolved": 0,
+        "wrong_nonzero_signs": 0
+      },
+      "feasibility_filter": {
+        "count": 351719424,
+        "vertices": 9541,
+        "registry_count": 36864,
+        "coverage": [
+          [
+            0,
+            128
+          ],
+          [
+            128,
+            256
+          ],
+          [
+            256,
+            384
+          ],
+          [
+            384,
+            512
+          ],
+          [
+            512,
+            640
+          ],
+          [
+            640,
+            768
+          ],
+          [
+            768,
+            896
+          ],
+          [
+            896,
+            1024
+          ],
+          [
+            1024,
+            1152
+          ],
+          [
+            1152,
+            1280
+          ],
+          [
+            1280,
+            1408
+          ],
+          [
+            1408,
+            1536
+          ],
+          [
+            1536,
+            1664
+          ],
+          [
+            1664,
+            1792
+          ],
+          [
+            1792,
+            1920
+          ],
+          [
+            1920,
+            2048
+          ],
+          [
+            2048,
+            2176
+          ],
+          [
+            2176,
+            2304
+          ],
+          [
+            2304,
+            2432
+          ],
+          [
+            2432,
+            2560
+          ],
+          [
+            2560,
+            2688
+          ],
+          [
+            2688,
+            2816
+          ],
+          [
+            2816,
+            2944
+          ],
+          [
+            2944,
+            3072
+          ],
+          [
+            3072,
+            3200
+          ],
+          [
+            3200,
+            3328
+          ],
+          [
+            3328,
+            3456
+          ],
+          [
+            3456,
+            3584
+          ],
+          [
+            3584,
+            3712
+          ],
+          [
+            3712,
+            3840
+          ],
+          [
+            3840,
+            3968
+          ],
+          [
+            3968,
+            4096
+          ],
+          [
+            4096,
+            4224
+          ],
+          [
+            4224,
+            4352
+          ],
+          [
+            4352,
+            4480
+          ],
+          [
+            4480,
+            4608
+          ],
+          [
+            4608,
+            4736
+          ],
+          [
+            4736,
+            4864
+          ],
+          [
+            4864,
+            4992
+          ],
+          [
+            4992,
+            5120
+          ],
+          [
+            5120,
+            5248
+          ],
+          [
+            5248,
+            5376
+          ],
+          [
+            5376,
+            5504
+          ],
+          [
+            5504,
+            5632
+          ],
+          [
+            5632,
+            5760
+          ],
+          [
+            5760,
+            5888
+          ],
+          [
+            5888,
+            6016
+          ],
+          [
+            6016,
+            6144
+          ],
+          [
+            6144,
+            6272
+          ],
+          [
+            6272,
+            6400
+          ],
+          [
+            6400,
+            6528
+          ],
+          [
+            6528,
+            6656
+          ],
+          [
+            6656,
+            6784
+          ],
+          [
+            6784,
+            6912
+          ],
+          [
+            6912,
+            7040
+          ],
+          [
+            7040,
+            7168
+          ],
+          [
+            7168,
+            7296
+          ],
+          [
+            7296,
+            7424
+          ],
+          [
+            7424,
+            7552
+          ],
+          [
+            7552,
+            7680
+          ],
+          [
+            7680,
+            7808
+          ],
+          [
+            7808,
+            7936
+          ],
+          [
+            7936,
+            8064
+          ],
+          [
+            8064,
+            8192
+          ],
+          [
+            8192,
+            8320
+          ],
+          [
+            8320,
+            8448
+          ],
+          [
+            8448,
+            8576
+          ],
+          [
+            8576,
+            8704
+          ],
+          [
+            8704,
+            8832
+          ],
+          [
+            8832,
+            8960
+          ],
+          [
+            8960,
+            9088
+          ],
+          [
+            9088,
+            9216
+          ],
+          [
+            9216,
+            9344
+          ],
+          [
+            9344,
+            9472
+          ],
+          [
+            9472,
+            9541
+          ]
+        ],
+        "input_sha256": {
+          "owners": "ff4378b39f15849eb20508d932e696cc69b5cbd95a34472d1a8700298ac9811a",
+          "supports": "5fa2aff72f4f99598105b428b9c9b1d1d38e95eee302784922ce7ede6458ad3d",
+          "enclosures": "2333e05ac1a8b24880d38142eb4b17157568cf4045cc717e8699b9713f61e2a2",
+          "registry_ids": "ff83a1e80d7639cdbf406dce9c0b7fdabb6bf049a05ac363a6edffbb07a427d3",
+          "xy": "e944264122d55cdacbc859495fac6e2c262d75dc699e881bf78d92520cd65b49",
+          "W": "5872c31a574101178409e536e7b15ab8899b1dfae12718c6aaad0888efd67b56",
+          "bounds": "9a3545bf044d125cd61948faef212304242d5967a81964685abedf24a07397a1"
+        },
+        "input_hash_verified_from_loaded_arrays": true,
+        "cpu_sign_sha256": "bd2b3f683a923b38580f11c9aa920cf980636934b70eab4083570734cc0ec281",
+        "gpu_sign_sha256": "bd2b3f683a923b38580f11c9aa920cf980636934b70eab4083570734cc0ec281",
+        "cpu_unresolved": 28623,
+        "gpu_unresolved": 28623,
+        "gpu_resolved": 351690801,
+        "old_gpu_resolved": 0,
+        "gpu_extra_resolved_exact_checked": 0,
+        "self_exact_zero_count": 9541,
+        "wrong_nonzero_signs": 0,
+        "unresolved_difference_witness": []
+      }
+    }
+  },
+  "fixtures": {
+    "nearly_parallel": {
+      "cpu": [
+        -1,
+        0,
+        0
+      ],
+      "gpu": [
+        -1,
+        0,
+        0
+      ],
+      "exact": [
+        -1,
+        2,
+        0
+      ]
+    },
+    "subnormal": {
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "gpu": [
+        0,
+        0,
+        0
+      ],
+      "exact": [
+        -1,
+        2,
+        0
+      ]
+    },
+    "overflow_intermediates": {
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "gpu": [
+        0,
+        0,
+        0
+      ],
+      "exact": [
+        -1,
+        2,
+        0
+      ]
+    }
+  },
+  "limits": "Saved sign-filter replay; no repeat of exact geometry, no GPU topology-builder or provider/MPI/evolution claim."
+}

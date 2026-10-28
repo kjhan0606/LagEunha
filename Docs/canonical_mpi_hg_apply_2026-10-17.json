@@ -1,0 +1,190 @@
+{
+  "scope": "One HG operator tau=0.0005 at frozen t10 geometry; original hg_apply vs ordered distributed owner updates; not RK evolution",
+  "cases": {
+    "np1": {
+      "ranks": 1,
+      "different_particles": 0,
+      "bitwise_different_particles": 0,
+      "max_abs_difference_by_field": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "mass_position_volume_density_unchanged": true,
+      "frozen_velocity_ie_unchanged": true,
+      "delta_K": -5.146399660084911e-09,
+      "delta_U": 5.146339892047604e-09,
+      "delta_E_raw": -5.976803730760428e-14,
+      "delta_Lz_raw": -2.324294613939844e-13,
+      "schedule": [
+        {
+          "rank": 0,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 0,
+          "remote_returns": 0,
+          "bad": 0,
+          "seconds": 0.350186
+        }
+      ]
+    },
+    "ordered1": {
+      "ranks": 1,
+      "different_particles": 0,
+      "bitwise_different_particles": 0,
+      "max_abs_difference_by_field": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "mass_position_volume_density_unchanged": true,
+      "frozen_velocity_ie_unchanged": true,
+      "delta_K": -5.146399660084911e-09,
+      "delta_U": 5.146339892047604e-09,
+      "delta_E_raw": -5.976803730760428e-14,
+      "delta_Lz_raw": -2.324294613939844e-13,
+      "schedule": [
+        {
+          "rank": 0,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 2,
+          "remote_returns": 0,
+          "bad": 0,
+          "seconds": 0.384651
+        }
+      ]
+    },
+    "np2": {
+      "ranks": 2,
+      "different_particles": 0,
+      "bitwise_different_particles": 0,
+      "max_abs_difference_by_field": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "mass_position_volume_density_unchanged": true,
+      "frozen_velocity_ie_unchanged": true,
+      "delta_K": -5.146399660084911e-09,
+      "delta_U": 5.146339892047604e-09,
+      "delta_E_raw": -5.976803730760428e-14,
+      "delta_Lz_raw": -2.324294613939844e-13,
+      "schedule": [
+        {
+          "rank": 1,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 1002,
+          "remote_returns": 4528,
+          "bad": 0,
+          "seconds": 0.30536
+        },
+        {
+          "rank": 0,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 1002,
+          "remote_returns": 4498,
+          "bad": 0,
+          "seconds": 0.306044
+        }
+      ]
+    },
+    "np4": {
+      "ranks": 4,
+      "different_particles": 0,
+      "bitwise_different_particles": 0,
+      "max_abs_difference_by_field": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "csound": 0.0
+      },
+      "mass_position_volume_density_unchanged": true,
+      "frozen_velocity_ie_unchanged": true,
+      "delta_K": -5.146399660084911e-09,
+      "delta_U": 5.146339892047604e-09,
+      "delta_E_raw": -5.976803730760428e-14,
+      "delta_Lz_raw": -2.324294613939844e-13,
+      "schedule": [
+        {
+          "rank": 2,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 1790,
+          "remote_returns": 4532,
+          "bad": 0,
+          "seconds": 0.295032
+        },
+        {
+          "rank": 3,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 1790,
+          "remote_returns": 4518,
+          "bad": 0,
+          "seconds": 0.296319
+        },
+        {
+          "rank": 1,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 1790,
+          "remote_returns": 4556,
+          "bad": 0,
+          "seconds": 0.29679
+        },
+        {
+          "rank": 0,
+          "tau": 0.0005,
+          "global_modes": 221081,
+          "blocks": 1790,
+          "remote_returns": 4516,
+          "bad": 0,
+          "seconds": 0.301274
+        }
+      ]
+    }
+  },
+  "run_root": "/gpfs/kjhan/LagForce/Codex_mpi_hg_apply_20261017",
+  "binary_sha256": "cd7973d7cc28c593d696bec80ca46e1b99602d801aeea1e56b481abc53bba201",
+  "source_sha256": "ca0a97fe4a088339ddbb3d53c779ece01b382b109719ef7f7e639c429ce3cede",
+  "snapshot_time": 10.0020667693911,
+  "OMP_NUM_THREADS": 2,
+  "limitations": [
+    "One HG operator on fixed geometry; no RK stages, migration or retry",
+    "Original hg_apply supplies the serial application reference; distributed modes use the already verified diagnostic assembly",
+    "Raw energy/angular momentum changes are not boundary-corrected conservation residuals",
+    "Single-node timing is not a multi-node scalability measurement",
+    "Ordinary MPI evolution guards remain active"
+  ],
+  "source_followup": "Worktree log labels corrected after test: optional HG application now reported explicitly; final terminal label says no RK time step. Tested binary used older no-evolution labels despite optional HG update; numerical path verified by hgafter output."
+}

@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "scope": "Explicit arc nodes and Cartesian roundoff envelope for cold tangent flow.",
+  "results": {
+    "8": {
+      "status": "passed",
+      "nodes": 8,
+      "norm": 9.554126825440661e-19,
+      "old_normal_speed_only_bound_violation_max": 4.592355022070246e-19,
+      "maximum_wall_flux": 4.592359932887383e-19,
+      "new_cartesian_bound": 1.4796239389455145e-15,
+      "compatibility": -9.554126825440661e-19,
+      "compatibility_bound": 5.5307517481161196e-15
+    },
+    "16": {
+      "status": "passed",
+      "nodes": 16,
+      "norm": 1.7354964358919439e-19,
+      "old_normal_speed_only_bound_violation_max": 4.556881757034272e-19,
+      "maximum_wall_flux": 4.556885813099246e-19,
+      "new_cartesian_bound": 7.992081268378639e-16,
+      "compatibility": -1.7354964358919439e-19,
+      "compatibility_bound": 5.797553173403802e-15
+    },
+    "32": {
+      "status": "passed",
+      "nodes": 32,
+      "norm": 1.5656455590879497e-19,
+      "old_normal_speed_only_bound_violation_max": 1.511513192498854e-19,
+      "maximum_wall_flux": 1.511515160769403e-19,
+      "new_cartesian_bound": 4.1801694401051465e-16,
+      "compatibility": 1.5656455590879497e-19,
+      "compatibility_bound": 5.671157856732638e-15
+    }
+  },
+  "arc_cut_angles": [
+    0.0,
+    1.5707963267948966,
+    4.71238898038469,
+    6.283185307179586
+  ],
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_face_modules_v2_20261019/check_explicit_stage_capture.py": "ed672f526f140c0d38abe320ff6dedcea7758b6fa1691678efc835cdfcdfb9bc",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_face_modules_v2_20261019/curved_face_nodes.py": "ff0b904696849dd212ad666f1f7f9625e9654823c6a876779bfddf62d112837b",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_face_modules_v2_20261019/closed_weight_root.py": "a7a0a5c737d21009137583a190f6423a6ccd18df4e7234d83e1c8e826b64ff89"
+  },
+  "limits": "Prescribed synthetic sample width1e-9, no production covariance floor/noise. Static arc/cold mirror tests only; full dynamic domain root is unverified."
+}

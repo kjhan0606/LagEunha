@@ -1,0 +1,103 @@
+{
+  "scope": "Actual shared-face assembly of affine pair relaxation, frozen 2D geometry.\n\nThis isolates the relaxation substep; it does not evolve Euler/Kepler geometry.\n",
+  "cases": [
+    {
+      "n": 4,
+      "field": "affine",
+      "contacts": 99,
+      "initial_heat_rate": 1.2112385970652528e-31,
+      "null_max_state_change": 1.8340636821733683e-16
+    },
+    {
+      "n": 4,
+      "field": "curved",
+      "contacts": 99,
+      "initial_heat_rate": 0.014448388730092323,
+      "checks": [
+        {
+          "dt": 0.01,
+          "energy_error": 0.0,
+          "angular_error": -1.3877787807814457e-17,
+          "momentum_error": 6.938893903907228e-18,
+          "generated_heat": 0.00017505194114719735
+        },
+        {
+          "dt": 0.005,
+          "energy_error": -2.220446049250313e-16,
+          "angular_error": -1.3877787807814457e-17,
+          "momentum_error": 3.469446951953614e-17,
+          "generated_heat": 0.0001750782974442311
+        },
+        {
+          "dt": 0.0025,
+          "energy_error": 0.0,
+          "angular_error": 0.0,
+          "momentum_error": 1.734723475976807e-17,
+          "generated_heat": 0.00017508482750794307
+        }
+      ],
+      "successive_state_differences": [
+        0.0004991612948306573,
+        0.0001248988418472808
+      ],
+      "convergence_ratio": 3.9965246070176006,
+      "reverse_order_differences": [
+        0.0008872682240224814,
+        0.00022186743492340802,
+        5.546999170340711e-05
+      ]
+    },
+    {
+      "n": 8,
+      "field": "affine",
+      "contacts": 483,
+      "initial_heat_rate": 1.3339467723526608e-30,
+      "null_max_state_change": 5.995204332975845e-15
+    },
+    {
+      "n": 8,
+      "field": "curved",
+      "contacts": 483,
+      "initial_heat_rate": 0.0010129945388166587,
+      "checks": [
+        {
+          "dt": 0.01,
+          "energy_error": -2.220446049250313e-16,
+          "angular_error": -5.551115123125783e-17,
+          "momentum_error": 3.859759734048396e-17,
+          "generated_heat": 8.826231004621654e-06
+        },
+        {
+          "dt": 0.005,
+          "energy_error": -6.661338147750939e-16,
+          "angular_error": 1.3877787807814457e-17,
+          "momentum_error": 2.168404344971009e-17,
+          "generated_heat": 8.841815844484735e-06
+        },
+        {
+          "dt": 0.0025,
+          "energy_error": -4.440892098500626e-16,
+          "angular_error": -2.7755575615628914e-17,
+          "momentum_error": 8.673617379884035e-18,
+          "generated_heat": 8.845719578154387e-06
+        }
+      ],
+      "successive_state_differences": [
+        0.0022490237855960415,
+        0.0005635927461072259
+      ],
+      "convergence_ratio": 3.99051230011423,
+      "reverse_order_differences": [
+        0.00476971612613805,
+        0.0011950967271172584,
+        0.00029894003922748366
+      ]
+    }
+  ],
+  "limits": [
+    "Fixed geometry and internal faces only; no boundary traction, advection or gravity.",
+    "Unit face damping is uncalibrated. Two spatial resolutions are not full convergence proof.",
+    "Curved smooth fields can still be artificially heated. No Kepler stability claim.",
+    "Heat is retained, residual covariance is not converted to heat."
+  ]
+}

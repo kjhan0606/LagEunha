@@ -1,0 +1,26 @@
+{
+  "scope": "Execute the real quadratic-row header on CUDA, compare host QR and Python SVD.\n\nSelected actual t6 interior/boundary rows and invalid-input guards. This checks\ndevice arithmetic only, not production GPU force scatter or MPI evolution.\n",
+  "actual_rows": 254,
+  "periodic_candidate_rows": 73,
+  "max_CPU_GPU_coefficient_difference": 3.3306690738754696e-16,
+  "max_GPU_SVD_coefficient_difference": 1.9290125052862095e-15,
+  "max_CPU_GPU_radius_difference": 5.551115123125783e-17,
+  "max_GPU_moment": 9.412885380657559e-16,
+  "host_device_guard_codes": {
+    "collinear": [
+      3,
+      3
+    ],
+    "uncovered": [
+      2,
+      2
+    ],
+    "nonfinite": [
+      1,
+      1
+    ]
+  },
+  "previous_host_rows_and_meta_bitwise_equal": true,
+  "header_sha256": "9d984c7af6ad3ab9fbac74e9cadd7101a2d3eec13c9fbc88a00bcc321c3b9cfa",
+  "limitations": "Single CUDA thread per tested row, no performance claim. No production force assembly, moving stage, MPI or long-time CUDA trajectory validation."
+}

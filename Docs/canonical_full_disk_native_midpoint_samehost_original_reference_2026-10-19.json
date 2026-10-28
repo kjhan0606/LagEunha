@@ -1,0 +1,55 @@
+{
+  "status": "passed_native_midpoint_samehost_original_reference",
+  "time": 0.001,
+  "h": 0.001,
+  "exact_native_rank1_vs_rank2": {
+    "ids": true,
+    "mass": true,
+    "state": true,
+    "factors": true,
+    "Psi": true,
+    "weight_rate_seed": true,
+    "time": true,
+    "frozen": true,
+    "psi_constrained_mask": true
+  },
+  "exact_native_vs_original_samehost": {
+    "ids": true,
+    "mass": true,
+    "state": true,
+    "factors": true,
+    "Psi": true,
+    "weight_rate_seed": true,
+    "time": true,
+    "frozen": true,
+    "psi_constrained_mask": true
+  },
+  "old_Ada_crosshost_diagnostics": {
+    "state": {
+      "maximum_difference": 3.954081782721613e-15,
+      "original_component_scale_fraction": 0.3951750064523077,
+      "within_original_scale": true
+    },
+    "factors": {
+      "maximum_difference": 7.303242585069824e-15,
+      "original_component_scale_fraction": 0.7275685034754706,
+      "within_original_scale": true
+    },
+    "Psi": {
+      "maximum_difference": 3.559761839954604e-18,
+      "original_component_scale_fraction": 3.452205969843706e-05,
+      "within_original_scale": true
+    },
+    "weight_rate_seed": {
+      "maximum_difference": 3.954081785845047e-12,
+      "original_component_scale_fraction": 248.67704105717286,
+      "within_original_scale": false
+    }
+  },
+  "component_tolerances_unchanged": true,
+  "earlier_failed_checker_preserved": "/gpfs/kjhan/LagForce/Codex_full_disk_native_midpoint_and_coarse_v8_20261019/validation.log",
+  "reference_change": "Original global-stage API and Python integrator on same host and GPU library; exact all-field gate replaces cross-host derivative-seed scalar scale",
+  "native_actual_providers": 4,
+  "independent_original_reference_providers": 2,
+  "long_time_stability_verified": false
+}

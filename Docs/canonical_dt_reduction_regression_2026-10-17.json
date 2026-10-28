@@ -1,0 +1,188 @@
+{
+  "manifest": {
+    "purpose": "OpenMP timestep diagnostic reduction and serial coefficient initialization regression",
+    "source": "/tmp/lageunha-push/Exam/exam.c",
+    "reference": "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/audit/khout.002306.dat",
+    "new_snapshots": 2,
+    "approximate_output_bytes": 46006408,
+    "target": "one accepted step from existing t10 snapshot, not a long-term pass",
+    "source_sha256": "4356ff0636f0111519f5362b86ca319b415f2fc712ce0f5f81d96735123be55e",
+    "effective_parameters": [
+      "/gpfs/kjhan/LagForce/Codex_dt_reduction_20261017/omp1/params.dat",
+      "/gpfs/kjhan/LagForce/Codex_dt_reduction_20261017/omp8/params.dat"
+    ]
+  },
+  "thread_comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_dt_reduction_20261017/omp1/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_dt_reduction_20261017/omp8/khout.002306.dat",
+    "reference_sha256": "f888c2ddc4c3672ce8f25e9d4d7cb93947e5d4051e5ad3798864ad41b731fa76",
+    "candidate_sha256": "dedaae593b2e93804a4f70530400b7a5faa2b00cc3ce44dec8739a7cf0d33146",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "prior_binary_comparison": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_geometry_dt_audit_20261017/audit/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_dt_reduction_20261017/omp8/khout.002306.dat",
+    "reference_sha256": "24827619f6ce9a93c9fb25cccc75373e6db812a8847d4fe73688868aaf87620d",
+    "candidate_sha256": "dedaae593b2e93804a4f70530400b7a5faa2b00cc3ce44dec8739a7cf0d33146",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  },
+  "diagnostics_equal_across_threads_and_prior_binary": true,
+  "diagnostics": {
+    "geometry": [
+      "[GEOM_DT_AUDIT] rank=0 call=1 phase=1 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023311120652114623 distance=0.0061577934243931959 cfi=0.31928020849022465 cfj=0.31891560848262884 vdotr=-0.010915919587953129 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023311120652114623",
+      "[GEOM_DT_AUDIT] rank=0 call=2 phase=0 rk_stage=1 trial=1 i=688 j=808 dt_geom=0.0023297275565680765 distance=0.0061577934243931959 cfi=0.31929486073145608 cfj=0.31892784692390325 vdotr=-0.011097496039663882 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023297275565680765",
+      "[GEOM_DT_AUDIT] rank=0 call=3 phase=0 rk_stage=2 trial=1 i=688 j=808 dt_geom=0.0023274016544133497 distance=0.0061522539744462493 cfi=0.31949497743638972 cfj=0.31914048534078926 vdotr=-0.01093004625795202 x=2.8481365026273799 y=2.5705719879051099 volume=0.00109643285236526 force_dt=0.0023274016544133497",
+      "[GEOM_DT_AUDIT] rank=0 call=4 phase=0 rk_stage=3 trial=1 i=688 j=808 dt_geom=0.0023274236158783729 distance=0.0061523190978477454 cfi=0.31949331217632398 cfj=0.31913866919127293 vdotr=-0.01093209125446974 x=2.8481369794050408 y=2.5705730871860677 volume=0.0010964228644745346 force_dt=0.0023274236158783729",
+      "[GEOM_DT_AUDIT] rank=0 call=5 phase=0 rk_stage=4 trial=1 i=688 j=808 dt_geom=0.0023251502076367279 distance=0.0061468613407540933 cfi=0.31968981900008403 cfj=0.31934907388158279 vdotr=-0.010765247976090719 x=2.848824854006839 y=2.5703411287427755 volume=0.0010956810711144455 force_dt=0.0023251502076367279",
+      "[GEOM_DT_AUDIT] rank=0 call=6 phase=2 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023251520275554744 distance=0.0061468622546162182 cfi=0.31968976943060301 cfj=0.31934904126509051 vdotr=-0.010765088024387847 x=2.8488248563813023 y=2.5703411274666106 volume=0.0010956809484552017 force_dt=0.0023251520275554744"
+    ],
+    "legacy_minima": [
+      "dtlims: cfl=1.212e-02 geom=2.325e-03 dt3=1.073e-02 hg=1.000e+300"
+    ]
+  },
+  "fixed": "gfs_dtb unsynchronized outer reads replaced by OpenMP min reductions; dt3c initialization moved before parallel region",
+  "limitations": [
+    "No whole-program race-detector run",
+    "Single canonical t10 step, not long-time stability proof",
+    "HG/shared geometry remain single-MPI-rank; CUDA force path not covered",
+    "Legacy minima still span trial diagnostic intervals; per-call geometry records identify context"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "scope": "Checks the saved positive lift without refitting. Four constraints are global x/y first mass moment, angular momentum and external potential.",
+  "quadrature_checks": [
+    {
+      "quadrature_order": 4,
+      "same_order4_density_normalization": true,
+      "cell_mass_max_relative_error": 4.440892098500626e-16,
+      "global_centered_constraint_residual": [
+        5.84713799303512e-19,
+        -1.8005962165781734e-18,
+        -5.014540662878947e-16,
+        -2.9738252633239965e-15
+      ],
+      "density_rms_change": 0.18757477988570526,
+      "sampled_density_min_factor": 0.36044738735822185,
+      "sampled_density_max_factor": 2.215681828174749
+    },
+    {
+      "quadrature_order": 8,
+      "same_order4_density_normalization": true,
+      "cell_mass_max_relative_error": 1.7883653447015035e-08,
+      "global_centered_constraint_residual": [
+        -2.194055086207793e-14,
+        -2.311123646504619e-15,
+        -2.2171403933013407e-14,
+        -4.719299128152898e-13
+      ],
+      "density_rms_change": 0.18757476659763125,
+      "sampled_density_min_factor": 0.35365055338302875,
+      "sampled_density_max_factor": 2.2639681186057983
+    },
+    {
+      "quadrature_order": 12,
+      "same_order4_density_normalization": true,
+      "cell_mass_max_relative_error": 1.7883653447015035e-08,
+      "global_centered_constraint_residual": [
+        -2.194317158739403e-14,
+        -2.3105310345262917e-15,
+        -2.217015822752787e-14,
+        -4.719125395020641e-13
+      ],
+      "density_rms_change": 0.18757476659763228,
+      "sampled_density_min_factor": 0.3523430245505252,
+      "sampled_density_max_factor": 2.2743515694392387
+    }
+  ],
+  "unconstrained_L2_density_change_lower_bound": 0.037527460323287874,
+  "L2_optimal_min_factor": 0.7359409190739458,
+  "L2_optimal_max_factor": 1.196617208023089,
+  "L2_continuous_density_lower_bound": -0.9119641703830792,
+  "L2_continuous_density_upper_bound": 2.8421587394577963,
+  "L2_independent_quadrature_checks": [
+    {
+      "quadrature_order": 4,
+      "cell_mass_max_relative_error": 4.440892098500626e-16,
+      "global_centered_constraint_residual": [
+        1.3214556111151319e-19,
+        -9.070023350200038e-20,
+        -2.425091104427836e-18,
+        1.4801911587933605e-17
+      ],
+      "density_rms_change": 0.03752746032329024
+    },
+    {
+      "quadrature_order": 8,
+      "cell_mass_max_relative_error": 2.5088153776664512e-11,
+      "global_centered_constraint_residual": [
+        9.238800512658387e-16,
+        8.80510836868599e-16,
+        3.777868167991339e-15,
+        1.7784586755516025e-14
+      ],
+      "density_rms_change": 0.03752746032411841
+    },
+    {
+      "quadrature_order": 12,
+      "cell_mass_max_relative_error": 2.517452912798035e-11,
+      "global_centered_constraint_residual": [
+        9.175577954251006e-16,
+        8.814324521452732e-16,
+        3.780494306245995e-15,
+        1.7804644382573176e-14
+      ],
+      "density_rms_change": 0.03752746032411851
+    }
+  ],
+  "bound_scope": "Same order4 support and piecewise constant cell velocities, fixed per-cell mass. Bound minimizes volume-weighted squared density-factor change, allowing negative factors; hence it is a necessary lower bound for positive fits, not a theorem for all velocity/density reconstructions.",
+  "interpretation": "Meeting global invariants by adjusting hidden density is not automatically a faithful restart. Compare density distortion and independent quadrature errors before adopting.",
+  "aggregate_scope": "Central r<0.7 patch, 1590 of 36864 canonical cells. Global constraints in this component audit mean sums over this patch; not a full-domain restart conversion.",
+  "state_provenance_clarification": "Earlier operator dump uses canonical t2 positions/masses with sampled circular velocities and manufactured common pressure. It is not the unmodified restart fluid state. See canonical_checkpoint_weight_remap_2026-10-18.json for actual saved vx/vy/ie."
+}

@@ -47,8 +47,10 @@ def run(source,configuration,dt,end,gravity_scheme='finite',validation_end=None)
         sub=folder/f'step_{count+1:05d}';sub.mkdir(exist_ok=True);trial_path=sub/'trial.json'
         start_hash=hashlib.sha256(json.dumps(cp,sort_keys=True).encode()).hexdigest()
         if not trial_path.exists():
+            from coupled_stage_cache import StageCache
+            cache=StageCache(sub/'stages',dict(run=identity,start_hash=start_hash,t=t,dt=h))
             out,F,newU,d=step(t,y,mass,L,U,h,phi,lambda x:acceleration(x,center=CENTER,rc=.5),
-                lambda p:polar_rule(p,16,radii=(.25,.5)),frozen,return_record=True,gravity_scheme=gravity_scheme)
+                lambda p:polar_rule(p,16,radii=(.25,.5)),frozen,return_record=True,gravity_scheme=gravity_scheme,stage_cache=cache)
             record=d.pop('hydro_record')
             atomic(trial_path,dict(t=t+h,state=out,mass=mass,factors=F,potential_moments=newU,
                 diagnostics=d,hydro_record=record,start_hash=start_hash))

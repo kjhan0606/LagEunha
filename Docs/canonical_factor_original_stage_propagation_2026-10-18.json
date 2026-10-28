@@ -1,0 +1,38 @@
+{
+  "scope": "Propagate the ORIGINAL Python-stage discrepancy through the same factor map.\n\nThis is independent of CPU-vs-CUDA differences, and evaluates no new RHS.\n",
+  "rows": [
+    {
+      "h": 5e-05,
+      "maximum_original_Python_stage_Ag_difference": 2.001559198383518e-07,
+      "h_times_maximum_Ag_difference": 1.000779599191759e-11,
+      "maximum_factor_difference": 8.577585019489079e-17,
+      "maximum_R_difference": 1.3065253151789716e-21,
+      "maximum_relative_R_Frobenius_difference": 1.0001403663162481e-11,
+      "maximum_Pi_difference": 2.710505431213761e-20,
+      "maximum_thermal_difference": 1.6940658945086007e-21,
+      "maximum_specific_thermal_difference": 1.734383542245914e-16,
+      "mass_weighted_specific_thermal_RMS": 1.8988724757231715e-18,
+      "maximum_relative_thermal_difference": 4.162519864192522e-14,
+      "unapplied_h_times_dm_maximum": 5.44811591673966e-22
+    },
+    {
+      "h": 0.0001,
+      "maximum_original_Python_stage_Ag_difference": 2.001559198383518e-07,
+      "h_times_maximum_Ag_difference": 2.001559198383518e-11,
+      "maximum_factor_difference": 1.7145132698553195e-16,
+      "maximum_R_difference": 2.612511024255223e-21,
+      "maximum_relative_R_Frobenius_difference": 1.9997333957665253e-11,
+      "maximum_Pi_difference": 2.168404344971009e-19,
+      "maximum_thermal_difference": 1.0842021724855044e-19,
+      "maximum_specific_thermal_difference": 3.440196219848974e-16,
+      "mass_weighted_specific_thermal_RMS": 1.9580679992660164e-17,
+      "maximum_relative_thermal_difference": 2.6783485336181086e-12,
+      "unapplied_h_times_dm_maximum": 1.089623183347932e-21
+    }
+  ],
+  "mass_contract": "Fixed initial mass in both original-Python-stage and compiled-stage maps.",
+  "stage_reference_K": "Original Python K retained, including normal last-bit asymmetry; its existing SVD loss formula is used without projection.",
+  "limits": "Frozen-coefficient local discrepancy propagation, not actual midpoint evolution, cumulative-error bound, temporal order or long Kepler stability.",
+  "stage_reference_sha256": "4b51b172e832dca175d66ecc13f94d2cce62ee428202a7607f1245ee0fb2b0a8",
+  "cpu_map_reference_sha256": "c198c9b0917c23baeb71cb0bd90ac926a0e5623dc650f125e252f98df483251c"
+}

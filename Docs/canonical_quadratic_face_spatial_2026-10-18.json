@@ -1,0 +1,137 @@
+{
+  "scope": "Existing covariance-budget reconstruction: smooth-field face convergence.\nNo evolution, gravity, or production-backend claim.\n",
+  "results": [
+    {
+      "n": 4,
+      "mode": "affine",
+      "velocity_RMS": 0.015503101923717294,
+      "mass_flux_RMS": 0.006396937550651216,
+      "momentum_flux_RMS": 0.0030893539056376,
+      "energy_flux_RMS": 0.0004740578986717218,
+      "contacts": 264,
+      "covariance_factor_discrepancy": 1.481968844516124e-17,
+      "diagnostic": {}
+    },
+    {
+      "n": 4,
+      "mode": "quadratic",
+      "velocity_RMS": 0.013735113135909627,
+      "mass_flux_RMS": 0.005759568578973323,
+      "momentum_flux_RMS": 0.002736800329207729,
+      "energy_flux_RMS": 0.0004346724622707049,
+      "contacts": 264,
+      "covariance_factor_discrepancy": 1.481968844516124e-17,
+      "diagnostic": {
+        "velocity_fit": "radial_fixed_mean",
+        "velocity_stencil": "area",
+        "velocity_quadratic_cells": 16,
+        "velocity_quadratic_rank_deficient": 0,
+        "velocity_quadratic_covariance_split_error": 8.316626199815638e-16,
+        "velocity_quadratic_orthogonality_error": 1.0371389043536874e-16,
+        "velocity_quadratic_max_resolved_fraction": 0.1147891777602632,
+        "velocity_quadratic_budget_backend": "scalar"
+      }
+    },
+    {
+      "n": 8,
+      "mode": "affine",
+      "velocity_RMS": 0.004045532733971286,
+      "mass_flux_RMS": 0.0017044101244170402,
+      "momentum_flux_RMS": 0.0008364584235708159,
+      "energy_flux_RMS": 0.00013929102289877477,
+      "contacts": 1288,
+      "covariance_factor_discrepancy": 9.906404351441215e-18,
+      "diagnostic": {}
+    },
+    {
+      "n": 8,
+      "mode": "quadratic",
+      "velocity_RMS": 0.0029366985722009296,
+      "mass_flux_RMS": 0.0012219844298134678,
+      "momentum_flux_RMS": 0.0006160021159401725,
+      "energy_flux_RMS": 9.785243202794708e-05,
+      "contacts": 1288,
+      "covariance_factor_discrepancy": 9.906404351441215e-18,
+      "diagnostic": {
+        "velocity_fit": "radial_fixed_mean",
+        "velocity_stencil": "area",
+        "velocity_quadratic_cells": 64,
+        "velocity_quadratic_rank_deficient": 0,
+        "velocity_quadratic_covariance_split_error": 8.748547694050937e-16,
+        "velocity_quadratic_orthogonality_error": 1.400433453013425e-16,
+        "velocity_quadratic_max_resolved_fraction": 0.6998249461671339,
+        "velocity_quadratic_budget_backend": "scalar"
+      }
+    },
+    {
+      "n": 16,
+      "mode": "affine",
+      "velocity_RMS": 0.0010211489496653608,
+      "mass_flux_RMS": 0.00043645710008026706,
+      "momentum_flux_RMS": 0.00021221677575596133,
+      "energy_flux_RMS": 3.496619741535632e-05,
+      "contacts": 5640,
+      "covariance_factor_discrepancy": 1.853497538802078e-18,
+      "diagnostic": {}
+    },
+    {
+      "n": 16,
+      "mode": "quadratic",
+      "velocity_RMS": 0.0007126970777335597,
+      "mass_flux_RMS": 0.0003022311608963237,
+      "momentum_flux_RMS": 0.00015102480187161496,
+      "energy_flux_RMS": 2.449897671176835e-05,
+      "contacts": 5640,
+      "covariance_factor_discrepancy": 1.853497538802078e-18,
+      "diagnostic": {
+        "velocity_fit": "radial_fixed_mean",
+        "velocity_stencil": "area",
+        "velocity_quadratic_cells": 256,
+        "velocity_quadratic_rank_deficient": 0,
+        "velocity_quadratic_covariance_split_error": 1.2073707762446651e-15,
+        "velocity_quadratic_orthogonality_error": 1.6676681127074204e-16,
+        "velocity_quadratic_max_resolved_fraction": 0.8947646449734213,
+        "velocity_quadratic_budget_backend": "scalar"
+      }
+    }
+  ],
+  "refinement_ratios": {
+    "affine": {
+      "velocity_RMS": [
+        3.832153375879057,
+        3.9617459679090317
+      ],
+      "mass_flux_RMS": [
+        3.753168007517652,
+        3.90510344339361
+      ],
+      "momentum_flux_RMS": [
+        3.6933741338263304,
+        3.9415282820652275
+      ],
+      "energy_flux_RMS": [
+        3.4033628930719244,
+        3.9835908161292224
+      ]
+    },
+    "quadratic": {
+      "velocity_RMS": [
+        4.67705922082965,
+        4.1205424632017476
+      ],
+      "mass_flux_RMS": [
+        4.713291297707045,
+        4.043211249923541
+      ],
+      "momentum_flux_RMS": [
+        4.442842416264578,
+        4.078814262996559
+      ],
+      "energy_flux_RMS": [
+        4.442122216712616,
+        3.9941436403318265
+      ]
+    }
+  },
+  "limits": "Manufactured smooth sinusoidal velocity, rho1, low uniform pressure. Evaluates resolved mean-field Euler traces, not residual-sample flux or complete Riemann evolution. Different seeded irregular meshes are not nested."
+}

@@ -1,0 +1,101 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator",
+  "scope": "Instantaneous W=0 linear response at t2 circular geometry; fixed generator velocity and mass. Unknown W is power-diagram squared-length weight, not its square root. Frozen r>=2.5 weights held fixed. Shared paired faces only; cap contributions outside active region omitted.",
+  "equation": "L_ii=sum A/(2d), L_ij=-A/(2d); L Wdot=B_shared v-B_geom v on active cells.",
+  "active_linear_solve_relative_L2_residual": 5.600466414219147e-16,
+  "regions": {
+    "inner": {
+      "cells": 795,
+      "internal_edges": 2272,
+      "weight_rate_over_volume_RMS": 0.1388309801257951,
+      "weight_rate_over_volume_max": 0.3547173916122866,
+      "required_face_normal_correction_RMS": 0.003577685039574831,
+      "unrealized_face_normal_correction_RMS": 0.002968058188594422,
+      "unrealized_to_required_RMS_ratio": 0.829602985104341,
+      "volume_rate_fit_relative_L1": 3.9879485090054885e-16
+    },
+    "disk_edge": {
+      "cells": 399,
+      "internal_edges": 964,
+      "weight_rate_over_volume_RMS": 0.07202216461878204,
+      "weight_rate_over_volume_max": 0.2326022785536111,
+      "required_face_normal_correction_RMS": 0.0026911802787919037,
+      "unrealized_face_normal_correction_RMS": 0.002473753527736095,
+      "unrealized_to_required_RMS_ratio": 0.9192076603825985,
+      "volume_rate_fit_relative_L1": 4.260135633592905e-16
+    },
+    "disk_core": {
+      "cells": 10304,
+      "internal_edges": 30409,
+      "weight_rate_over_volume_RMS": 0.030351541471742113,
+      "weight_rate_over_volume_max": 0.15569028003037663,
+      "required_face_normal_correction_RMS": 0.0006481011883328461,
+      "unrealized_face_normal_correction_RMS": 0.0006058969161315467,
+      "unrealized_to_required_RMS_ratio": 0.9348801190908719,
+      "volume_rate_fit_relative_L1": 1.0079844552734541e-15
+    },
+    "active": {
+      "cells": 19855,
+      "internal_edges": 59066,
+      "weight_rate_over_volume_RMS": 0.03159249513523415,
+      "weight_rate_over_volume_max": 0.3547173916122866,
+      "required_face_normal_correction_RMS": 0.0009410504097389927,
+      "unrealized_face_normal_correction_RMS": 0.0008261045018073029,
+      "unrealized_to_required_RMS_ratio": 0.8778536125779162,
+      "volume_rate_fit_relative_L1": 6.818096817533561e-16
+    }
+  },
+  "weight_difference_rate_over_d_squared_max_touching_active": 0.39405275525231576,
+  "inferred_max_edge_weight_difference_over_d_squared_at_dt0025": 0.0009851318881307894,
+  "frozen_induced_total_volume_rate": -6.445100951484622e-07,
+  "active_target_total_volume_correction": 6.445100951474526e-07,
+  "energy_work_required_if_old_pressure_force_retained": -7.92536903366623e-09,
+  "seconds": 0.1291117314249277,
+  "limitations": [
+    "Only instantaneous linearized volume feasibility; does not establish nonlinear Laguerre-cell positivity or bounded weights over time.",
+    "Residual face-speed mismatch can circulate even when volume constraints are exactly satisfied. Matching cell volumes does not prove material face motion.",
+    "Old pressure force plus new volume rate breaks energy work unless the matched transpose force or another explicitly consistent energy model is used.",
+    "No production source or evolving run changed."
+  ],
+  "cycle_certificate": {
+    "scope": "Interior 3-edge cycle certificate, independent of frozen-weight boundary choice. A scalar weight potential has identically zero sum of differences around every cycle. Nonzero required sum rules out exact instantaneous matching of all reconstructed face normal velocities at this geometry. Does not rule out matching volumes or another reconstruction.",
+    "regions": {
+      "inner": {
+        "triangle_count": 1478,
+        "cycle_sum_RMS": 0.0004438929059601764,
+        "max_abs_cycle_sum": 0.0012260666576832313,
+        "example_ids": [
+          478,
+          479,
+          571
+        ],
+        "example_signed_required_weight_differences": [
+          0.0008079341629405337,
+          0.0001867540136019103,
+          0.00023137848114078733
+        ],
+        "example_signed_cycle_sum": 0.0012260666576832313,
+        "example_cycle_sum_over_mean_edge_d_squared": 1.0500518359225783
+      },
+      "disk_core": {
+        "triangle_count": 20105,
+        "cycle_sum_RMS": 8.824739274336738e-05,
+        "max_abs_cycle_sum": 0.000604326887152011,
+        "example_ids": [
+          1238,
+          1239,
+          1372
+        ],
+        "example_signed_required_weight_differences": [
+          0.00041139082838163377,
+          9.807926954926669e-05,
+          9.485678922111045e-05
+        ],
+        "example_signed_cycle_sum": 0.000604326887152011,
+        "example_cycle_sum_over_mean_edge_d_squared": 0.5277867322902069
+      }
+    }
+  },
+  "decision": "Do not implement this shared-flux candidate as an exactly material Laguerre mesh using scalar weights alone: interior cycles obstruct the required face-speed field. Volume-only realization is feasible at this instant but does not remove face transport mismatch or prove bounded weights.",
+  "next_gate": "Determine an explicit physical interpretation of volume-only matching and remaining face transport, or select a volume/geometry model with sufficient degrees of freedom. No production evolution until compatible energy, fixed mass, and density interpretation are specified. No claim that all weighted methods are impossible."
+}

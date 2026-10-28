@@ -1,0 +1,162 @@
+{
+  "scope": "Source audit of canonical shared geometry and split HG, not a multi-rank validation",
+  "source": "Exam/exam.c",
+  "findings": [
+    {
+      "symbol": "shf_ensure / shf_record / shf_common",
+      "evidence": "Arrays keyed by persistent PINDX; populated from local stage geometry; reciprocal neighbor face geometry is read by ID and periodic separation. Out-of-cap neighbor returns own length; missing reciprocal in-cap face returns zero.",
+      "required": "Exchange current-stage reciprocal face records with persistent ID plus periodic-image separation; invalidate old records after migration; missing data must not silently become vacuum."
+    },
+    {
+      "symbol": "hg_ensure / hg_apply_mode",
+      "evidence": "hg_ptr maps persistent IDs only to local owned VORO_NP particles. Every mode needs direct pointers to all support cells and its thermal owner.",
+      "required": "Explicit ownership and current state for full support, including multi-hop neighbors; apply each mode exactly once and return velocity/internal-energy updates to owners."
+    },
+    {
+      "symbol": "hgm_cmp / hg_apply",
+      "evidence": "Modes sorted by key and applied forward then reverse, modifying velocities in place. Modes sharing support generally do not commute.",
+      "required": "Preserve canonical global order for reference MPI implementation; any reordered/color-based parallel schedule is an integrator change requiring separate convergence and long-time validation."
+    },
+    {
+      "symbol": "exam2d_vph_rk4_int_blend / periodic_postStage_blend",
+      "evidence": "Stage callback migrates particles; wrapper snapshots local bytes and rejects changed local particle count. It is protected by MPI1 guard.",
+      "required": "Global accept/reject and timestep minimum; rollback ownership, stage arrays and auxiliary state consistently across migration, using persistent IDs."
+    },
+    {
+      "symbol": "accepted-state ledger",
+      "evidence": "MPI reductions exist, but canonical multi-rank execution is prohibited upstream.",
+      "required": "Owned cells counted once; frozen boundary work accounted for; reduction existence is not evidence of MPI correctness."
+    }
+  ],
+  "implementation_order": [
+    "Define and test stage-stamped face/particle records and ownership map on a static canonical snapshot with a partition cutting the inner edge.",
+    "Compare reciprocal geometry and force contributions at 1/2/4 ranks before evolution.",
+    "Provide ordered distributed HG reference preserving one-rank mode order and owner heat, then compare one split step.",
+    "Implement collective rollback across migration and validate forced rejection.",
+    "Run same canonical IC through t6-10 and long t20 target on 1/2/4 ranks.",
+    "Only after matching equations implement/validate CUDA TCF and accelerated HG scheduling."
+  ],
+  "constraints": [
+    "Keep MPI guards until the needed communications and rollback exist.",
+    "No steering, preserve canonical IC and fixed masses.",
+    "Do not replace the production algorithm with a gather-to-root full solver and call it distributed coverage."
+  ],
+  "unresolved": [
+    "Scalable ordered HG scheduling and its communication cost.",
+    "Completeness of multi-hop geometry under existing padding.",
+    "Long-time physical instability in current single-rank model."
+  ],
+  "single_rank_prerequisite_progress": {
+    "stage_freshness_gate": "GFS_SHF_EPOCH_AUDIT records geometry generation and checks reads in shared-face intersection and HG extended support",
+    "canonical_test": "Docs/canonical_shf_epoch_audit_2026-10-17.json",
+    "result": "3,096,070 checked reads across pre-HG, RK1-4 and post-HG at t10, with audit on/off physical fields identical",
+    "not_yet_implemented": [
+      "Distributed face record exchange",
+      "Global owner map",
+      "Rank-consistent stamp tuple (accepted step, retry attempt, split phase, RK stage, geometry rebuild)",
+      "Cross-rank rollback and ordered HG"
+    ],
+    "caution": "Local geometry generation counter is not itself a globally synchronized MPI stage identifier."
+  },
+  "static_exchange_progress": {
+    "evidence": "Docs/canonical_mpi_face_exchange_2026-10-17.json",
+    "result": "1/2/4-rank exchange of precomputed canonical active TCF face records passed, including 2-rank stale-stamp rejection",
+    "next_required": "Exchange raw geometry endpoints with actual stage/ownership metadata before computing common face and force; current fixture does not prove this."
+  },
+  "raw_geometry_exchange_progress": {
+    "evidence": "Docs/canonical_mpi_raw_geometry_2026-10-17.json",
+    "result": "1/2/4-rank exchange of actual raw endpoints and rank-local common segment reconstruction passed; stale and corrupted endpoint injections rejected",
+    "next_required": "Integrate owner/stage records and exchange with actual distributed geometry construction; then recompute forces and HG with correct support."
+  },
+  "production_geometry_progress": {
+    "evidence": "Docs/canonical_mpi_production_geometry_2026-10-17.json",
+    "result": "Actual restart migration and distributed raw tessellation at t10 agree at 1/2/4 ranks: 36864 unique owned cells, 221159 raw faces, zero numerical difference in exported geometry and 10 cell fields",
+    "next_required": "Export and compare centroid/QBP caches; integrate actual owner-directed reciprocal geometry exchange before force evaluation."
+  },
+  "production_reconstruction_progress": {
+    "evidence": "Docs/canonical_mpi_reconstruction_cache_2026-10-17.json",
+    "result": "At t10, owned centroid offsets, QBP statuses, gradients, Hessians and cubic coefficients match exactly at 1/2/4 ranks for all 36864 cells",
+    "next_required": "Exchange current owner raw geometry and reconstruction caches into the solver before reciprocal reads, then compare force terms with single rank."
+  },
+  "runtime_owner_exchange_progress": {
+    "evidence": "Docs/canonical_mpi_owner_exchange_2026-10-17.json",
+    "result": "Actual distributed tessellation followed by owner-directed Alltoallv requests/replies; received geometry/cache exactly matches independent one-rank reference at 2/4 ranks; stale-generation negative control exits 3",
+    "next_required": "Install validated records into diagnostic solver caches, compare common segments, then force terms; keep evolution guards."
+  },
+  "installed_common_geometry_progress": {
+    "evidence": "Docs/canonical_mpi_common_geometry_2026-10-17.json",
+    "result": "Imported remote geometry/cache installed in diagnostic solver arrays; actual shf_common matches 1/2/4 ranks exactly on 221159 faces; independent length reconstruction max error 2.7755575615628914e-17",
+    "caveat": "One preexisting missing reciprocal at frozen r=4.09375, IDs 36852/36860; periodic-boundary completeness still unresolved",
+    "next_required": "Evaluate and compare TCF/pressure RHS without HG application; then address full distributed HG support and stage/rollback."
+  },
+  "production_force_rhs_progress": {
+    "evidence": "Docs/canonical_mpi_force_rhs_2026-10-17.json",
+    "result": "Actual distributed pressure/TCF RHS at t10 matches 1/2/4 ranks and original single-rank output on 36864 cells and 221159 faces at output precision; global dt identical",
+    "next_required": "Build full distributed HG support and ordered mode application; collective ownership-aware rollback; then multi-stage and long-time comparisons. CUDA force remains separate.",
+    "t12_evidence": "Docs/canonical_mpi_t12_force_rhs_2026-10-17.json",
+    "t12_result": "More disturbed t12 state also has identical exported cell/face RHS at 1/4 ranks and identical dt=0.0009482640214668706"
+  },
+  "hg_two_hop_state_progress": {
+    "evidence": "Docs/canonical_mpi_hg_state_2026-10-17.json",
+    "result": "Actual owner-directed 2-hop state exchange populates hg_ptr with no missing support; 10 state fields equal serial at 1/2/4 ranks; stale record rejected",
+    "next_required": "Build and compare HG mode keys, support IDs and coefficients before ordered distributed application."
+  },
+  "hg_mode_assembly_progress": {
+    "evidence": "Docs/canonical_mpi_hg_modes_2026-10-17.json",
+    "result": "221081 modes and 4220942 support entries: IDs/order/coefficients identical at 1/2/4 ranks",
+    "next_required": "Preserve canonical global forward/reverse mode order, fetch current remote state before coupled updates, and return velocity changes to owners; compare HG half-step before full RK evolution."
+  },
+  "ordered_hg_application_progress": {
+    "evidence": "Docs/canonical_mpi_hg_apply_2026-10-17.json",
+    "result": "Original serial hg_apply vs ordered 1/2/4-rank operator at t10 tau0.0005: all 10 state fields bitwise equal for all 36864 owned cells; frozen state unchanged",
+    "next_required": "Validate another state/tau and repeated rebuilds; integrate globally stamped exchange and ordered HG into full RK stages with ownership-aware collective rollback."
+  },
+  "repeated_hg_progress": {
+    "evidence": "Docs/canonical_mpi_hg_rebuild_2026-10-17.json",
+    "result": "At t12, tau0.0005 once and tau0.002 twice with full state/cache rebuild match serial and four ranks bitwise; 20867 reconstructed cells change on second pass",
+    "next_required": "Moving RK stages with fresh caches and owner maps; collective rollback across actual migration."
+  },
+  "migration_source_followup": {
+    "source": "RkS/mpirks.c:653-825",
+    "sha256": "fa96806689248ff2b2ad6c6c2b14ea0f8e69268d61a5fa5ee9473eb34e8f656b",
+    "immutable_build_source_matches": true,
+    "findings": [
+      "pmigrate reallocates and reorders native particle storage; all cached pointers must be rebound after callbacks.",
+      "Transfers ddinfo->n_size bytes per particle, including RK backup/stage fields in the registered particle layout.",
+      "This migration routine reads existing pivot metadata; inspected routine does not assign ddinfo/gridinfo fields.",
+      "This is source evidence, not a migrated-stage or rollback runtime pass."
+    ]
+  },
+  "moving_geometry_progress": {
+    "evidence": "Docs/canonical_mpi_moving_geometry_2026-10-17.json",
+    "result": "Actual postStage migration changes ownership of 25/55 particles at 2/4 ranks; all 25 existing RK4 scalars and non-position fields preserved; rebuilt cache and subsequent HG result match serial bitwise",
+    "next_required": "Collective state/ownership restoration after forced rejection; actual coupled RK stage integration with fresh exchange on every rebuild."
+  },
+  "rollback_diagnostic_progress": {
+    "evidence": "canonical_mpi_rollback_2026-10-17.json",
+    "ranks": [
+      1,
+      2,
+      4
+    ],
+    "actual_ownership_crossings": [
+      0,
+      25,
+      55
+    ],
+    "result": "single-rank rejection causes collective restore; physical state, ownership, 25 RK fields and rebuilt/HG control match bitwise",
+    "production_retry_verified": false,
+    "remaining_contract": "canonical_mpi_retry_contract_2026-10-17.json"
+  },
+  "exchange_io_progress": {
+    "evidence": "canonical_mpi_exchange_io_2026-10-17.json",
+    "change": "geometry and two-hop HG state exchange now accept explicit include-HG and optional output prefix; NULL performs exchange/install/validation without exchange dumps",
+    "ranks_verified": [
+      1,
+      2,
+      4
+    ],
+    "stale_geometry_and_state_rejected": true,
+    "coupled_MPI_RK_evolution_verified": false
+  }
+}

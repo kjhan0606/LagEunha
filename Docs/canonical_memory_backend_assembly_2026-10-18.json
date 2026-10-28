@@ -1,0 +1,103 @@
+{
+  "scope": "Static full active-domain Bv/-B^Tz backend and frozen-work comparison.\n\nIndependent SVD rows are shared across backends to isolate assembly errors.\nThis does not validate production neighbor search, row build, MPI or RK steps.\n",
+  "particles": 36864,
+  "active_rows": 19855,
+  "nonzero_coefficients": 1215650,
+  "cases": {
+    "random_with_moving_boundary": [
+      {
+        "backend": "serial",
+        "dz_relative_max_error": 0.0,
+        "force_relative_max_error": 0.0,
+        "work_relative_closure": 2.9315719766153105e-18,
+        "net_force_relative": 6.40628160873927e-18,
+        "net_torque_relative": 6.846773671886094e-19,
+        "external_boundary_power": -0.0850492020481255
+      },
+      {
+        "backend": "openmp4",
+        "dz_relative_max_error": 0.0,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 1.4657859883076553e-18,
+        "net_force_relative": 5.880629786574997e-18,
+        "net_torque_relative": 1.0581377492914872e-18,
+        "external_boundary_power": -0.0850492020481255
+      },
+      {
+        "backend": "cuda_atomic",
+        "dz_relative_max_error": 1.8294865176206499e-16,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 4.305746340653737e-18,
+        "net_force_relative": 2.619172147478196e-18,
+        "net_torque_relative": 1.805058513497243e-18,
+        "external_boundary_power": -0.08504920204812552
+      },
+      {
+        "backend": "cuda_atomic",
+        "dz_relative_max_error": 1.8294865176206499e-16,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 2.839960352346082e-18,
+        "net_force_relative": 3.2951955870281873e-18,
+        "net_torque_relative": 1.3071113373600726e-18,
+        "external_boundary_power": -0.08504920204812552
+      },
+      {
+        "backend": "cuda_atomic",
+        "dz_relative_max_error": 1.8294865176206499e-16,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 2.839960352346082e-18,
+        "net_force_relative": 3.495848589228039e-18,
+        "net_torque_relative": 2.0540321015658282e-18,
+        "external_boundary_power": -0.08504920204812552
+      }
+    ],
+    "actual_saved_velocity": [
+      {
+        "backend": "serial",
+        "dz_relative_max_error": 0.0,
+        "force_relative_max_error": 0.0,
+        "work_relative_closure": 1.6848981356968494e-18,
+        "net_force_relative": 6.40628160873927e-18,
+        "net_torque_relative": 6.846773671886094e-19,
+        "external_boundary_power": 0.025388608234683734
+      },
+      {
+        "backend": "openmp4",
+        "dz_relative_max_error": 0.0,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 3.472953300109833e-18,
+        "net_force_relative": 5.880629786574997e-18,
+        "net_torque_relative": 1.0581377492914872e-18,
+        "external_boundary_power": 0.025388608234683734
+      },
+      {
+        "backend": "cuda_atomic",
+        "dz_relative_max_error": 8.94052249246796e-15,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 1.4098127257871598e-18,
+        "net_force_relative": 2.8558129185963046e-18,
+        "net_torque_relative": 1.6805717194629504e-18,
+        "external_boundary_power": 0.025388608234683734
+      },
+      {
+        "backend": "cuda_atomic",
+        "dz_relative_max_error": 8.94052249246796e-15,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 1.2722700208323148e-18,
+        "net_force_relative": 2.4426081959130496e-18,
+        "net_torque_relative": 1.431598131394365e-18,
+        "external_boundary_power": 0.025388608234683727
+      },
+      {
+        "backend": "cuda_atomic",
+        "dz_relative_max_error": 8.94052249246796e-15,
+        "force_relative_max_error": 5.045269878449575e-16,
+        "work_relative_closure": 1.13472731587747e-18,
+        "net_force_relative": 3.617019801815948e-18,
+        "net_torque_relative": 1.9295453075315356e-18,
+        "external_boundary_power": 0.025388608234683727
+      }
+    ]
+  },
+  "limitations": "A standalone assembler; live simulator remains host assembly. CPU/GPU share precomputed SVD coefficients. Separate row parity evidence is required. No production CUDA integration, MPI exchange or long-time stability claim."
+}

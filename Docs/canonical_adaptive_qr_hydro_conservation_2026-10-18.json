@@ -1,0 +1,30 @@
+{
+  "cases": {
+    "off_plus": {
+      "force_sum_over_sum_magnitudes": 8.793137794298832e-16,
+      "total_energy_rate_sum": 3.3881317890172014e-21,
+      "total_energy_rate_relative_residual": 3.4588084534196973e-18,
+      "interior_thermodynamic_identity_relative_L1_residual": 2.2741178239215846e-13,
+      "face_count": 221159,
+      "negative_Q_du_faces": 0
+    },
+    "on_plus": {
+      "force_sum_over_sum_magnitudes": 9.354428426843633e-16,
+      "total_energy_rate_sum": 1.7364175418713157e-20,
+      "total_energy_rate_relative_residual": 1.6789887833020475e-17,
+      "interior_thermodynamic_identity_relative_L1_residual": 2.2715743351014069e-13,
+      "face_count": 221159,
+      "negative_Q_du_faces": 0
+    },
+    "on_minus": {
+      "force_sum_over_sum_magnitudes": 1.2360425109898266e-15,
+      "total_energy_rate_sum": 2.922263668027336e-20,
+      "total_energy_rate_relative_residual": 2.826036390873518e-17,
+      "interior_thermodynamic_identity_relative_L1_residual": 2.2595122502424495e-13,
+      "face_count": 221159,
+      "negative_Q_du_faces": 0
+    }
+  },
+  "supersedes": "hydro_conservation.json: exploratory check mislabeled total-energy dte as internal energy and double-counted kinetic work. Preserve that file as invalid, do not use its energy residual.",
+  "scope": "Raw TCF RHS before gravity/HG/frozen-cell evolution constraints. Checks sum(dE)=0 and dE-v.F=-P*dV+TdS; face heating sign from rounded records. Not an accepted-step or long-time conservation claim."
+}

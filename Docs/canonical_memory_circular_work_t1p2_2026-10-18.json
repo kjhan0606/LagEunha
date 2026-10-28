@@ -1,0 +1,74 @@
+{
+  "scope": "Instantaneous auxiliary work split on an unchanged saved physical state.\n\nv = v_circular(x) + u is diagnostic only. B and z use the actual evolved\nstate; no force is altered and no reference velocity enters the simulation.\n",
+  "snapshot": "/gpfs/kjhan/LagForce/Codex_reversible_memory_physical_to_t10_20261018/memory_from_t0/khout.000482.dat",
+  "snapshot_sha256": "e4ef274573d83047fbd4cbafe3d24f68e3482c8b309a717ed4d8248802c7f599",
+  "sidecar_sha256": "ca780d17adefeba3699742d3eefc95b98dd167e451b2b13bd67a710f4f6d6c81",
+  "time": 1.2024999999999855,
+  "regions": {
+    "all_active": {
+      "cells": 19855,
+      "owner_auxiliary_power": 3.930555525689063e-10,
+      "owner_power_from_circular_velocity": 3.421891066134536e-10,
+      "owner_power_from_departure_velocity": 5.086644595544162e-11,
+      "Bv_L2": 9.865734238336858e-05,
+      "Bvcircular_L2": 9.530811591580228e-05,
+      "Bdeparture_L2": 2.5112927717070597e-05,
+      "force_work_on_actual_velocity_free": -1.225627433142718e-09,
+      "force_work_on_circular_velocity_free": -1.174760971648431e-09,
+      "force_work_on_departure_velocity_free": -5.0866461494298054e-11
+    },
+    "inner_background": {
+      "cells": 804,
+      "owner_auxiliary_power": 3.578845825392811e-10,
+      "owner_power_from_circular_velocity": 3.742260870097258e-10,
+      "owner_power_from_departure_velocity": -1.634150447045462e-11,
+      "Bv_L2": 9.671775999227293e-05,
+      "Bvcircular_L2": 9.391728246821358e-05,
+      "Bdeparture_L2": 2.2547117954941783e-05,
+      "force_work_on_actual_velocity_free": 3.5632146019845212e-09,
+      "force_work_on_circular_velocity_free": 3.5654907726105148e-09,
+      "force_work_on_departure_velocity_free": -2.276170625976521e-12
+    },
+    "inner_shear_band": {
+      "cells": 521,
+      "owner_auxiliary_power": -2.0920165978397306e-10,
+      "owner_power_from_circular_velocity": -1.982340275294268e-10,
+      "owner_power_from_departure_velocity": -1.0967632254545332e-11,
+      "Bv_L2": 4.0992497795215045e-05,
+      "Bvcircular_L2": 3.8860340955742817e-05,
+      "Bdeparture_L2": 1.2007792585781805e-05,
+      "force_work_on_actual_velocity_free": 1.861641140315205e-08,
+      "force_work_on_circular_velocity_free": 1.8625672535318244e-08,
+      "force_work_on_departure_velocity_free": -9.261132166198229e-12
+    },
+    "inner_disk_edge": {
+      "cells": 390,
+      "owner_auxiliary_power": -1.4397497418993185e-11,
+      "owner_power_from_circular_velocity": -3.2422154378502234e-11,
+      "owner_power_from_departure_velocity": 1.8024656959510316e-11,
+      "Bv_L2": 1.625424413734592e-05,
+      "Bvcircular_L2": 1.619742944600753e-05,
+      "Bdeparture_L2": 2.888708851754081e-06,
+      "force_work_on_actual_velocity_free": -2.8311667721166606e-09,
+      "force_work_on_circular_velocity_free": -2.8317573606965965e-09,
+      "force_work_on_departure_velocity_free": 5.905885799402739e-13
+    },
+    "disk_core": {
+      "cells": 10304,
+      "owner_auxiliary_power": 6.072770121728249e-13,
+      "owner_power_from_circular_velocity": 3.863492420820373e-13,
+      "owner_power_from_departure_velocity": 2.2092777009111395e-13,
+      "Bv_L2": 1.0897234767987541e-06,
+      "Bvcircular_L2": 9.077072447697142e-07,
+      "Bdeparture_L2": 6.151724162066082e-07,
+      "force_work_on_actual_velocity_free": -1.0376086309257204e-09,
+      "force_work_on_circular_velocity_free": -1.0373906384219704e-09,
+      "force_work_on_departure_velocity_free": -2.1799250374984286e-13
+    }
+  },
+  "max_moment": 1.0856920293243419e-14,
+  "velocity_split_relative_error": 7.399859887328366e-13,
+  "global_power_closure_relative": 1.529823580633564e-17,
+  "frozen_boundary_external_power": -8.325718805738546e-10,
+  "limitations": "Instantaneous auxiliary contribution only, not full departure-energy derivative or accumulated energy attribution. Owner regions and recipient-force regions differ because coupling crosses region boundaries. Circular-reference work is not automatically erroneous dissipation. SVD reconstruction is independently parity-checked elsewhere; no live state changed."
+}

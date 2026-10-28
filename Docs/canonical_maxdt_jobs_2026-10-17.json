@@ -1,0 +1,82 @@
+{
+  "jobs": [
+    {
+      "job_id": 426404,
+      "case": "cap0025_t10"
+    },
+    {
+      "job_id": 426405,
+      "case": "cap00125_t10",
+      "slurm_state": "CANCELLED before start",
+      "replacement": {
+        "host": "lageunha",
+        "session_id": 56672,
+        "pid": 2352123,
+        "start_snapshot": "khout.000368.dat",
+        "start_t": 4.005538150548695,
+        "target_t": 10,
+        "max_dt": 0.00125,
+        "mpi_ranks": 1,
+        "omp_threads": 8,
+        "gpu": "RTX 5000 Ada",
+        "directory": "/gpfs/kjhan/LagForce/Codex_maxdt_validation_20261017/cap00125_t10"
+      }
+    }
+  ],
+  "dependency": null,
+  "root": "/gpfs/kjhan/LagForce/Codex_maxdt_validation_20261017",
+  "goal": "Distinguish timestep error from spatial instability through t6-10; no long-term success claim until field results inspected.",
+  "resource_policy": "Only one extra OMP8 run on 32-core lageunha; second comparison remains queued on H200.",
+  "cap0025_manual_migration": {
+    "purpose": "Time-step ceiling comparison over original failure interval, restart t4.005538150548695 to t10",
+    "case": "cap0025_t10",
+    "max_dt": 0.0025,
+    "target_t": 10,
+    "mpi_ranks": 1,
+    "omp_threads": 8,
+    "GPU": "RTX 5000 Ada nearest-distance; CPU TCF force",
+    "expected_new_snapshots_max": 5,
+    "estimated_snapshot_bytes_max": 115016020,
+    "preserve_existing_t20_runs": true,
+    "acceptance": "Compare field growth at matched physical times; successful exit or global energy alone is not a pass.",
+    "execution_host": "lageunha",
+    "superseded_slurm_job": 426404,
+    "superseded_state": "CANCELLED before start",
+    "resource_reason": "nproc --all=128; Cpus_allowed_list=0-127; vmstat interval idle=77%; load average ~27.5. Earlier nproc=32 was not total/affinity CPU availability. Add OMP8; retain other three runs.",
+    "manual_timeout_seconds": 86400,
+    "sacct": [
+      "426404",
+      "CANCELLED by 10396",
+      "None",
+      "2026-10-17T20:10:52"
+    ],
+    "session_id": 49217,
+    "observed_accepted_state": {
+      "step": "21",
+      "elapsed": "0.052500000000000012",
+      "dt": "0.0025000000000000001",
+      "retries": "0",
+      "finite": "1",
+      "M": "12.19100448537078",
+      "Px": "0.0096587339499621585",
+      "Py": "0.0079559951881192185",
+      "Lz": "14.405897743715236",
+      "K": "4.8064186711312304",
+      "U": "0.0015022421147431924",
+      "Phi": "-9.6198012282122587",
+      "E": "-4.8118803149662854",
+      "dM0": "0",
+      "dPx0": "-0.00015165226877420293",
+      "dPy0": "-0.00014654956616379222",
+      "dLz0": "-6.0903317944394075e-09",
+      "dE0": "-1.5346621751177736e-09",
+      "dEstep": "-8.5224272083905817e-11",
+      "hg_dE": "-2.8135328268563686e-13",
+      "hg_dPx": "1.828676099435711e-13",
+      "hg_dPy": "1.0459584587341197e-12",
+      "hg_dLz": "-1.0622613899613498e-12",
+      "hg_dU": "5.7934921248413429e-10",
+      "boundary_corrected": "0"
+    }
+  }
+}

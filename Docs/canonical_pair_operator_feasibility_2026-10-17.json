@@ -1,0 +1,90 @@
+{
+  "scope": "Static constrained pair-operator feasibility, no change to canonical simulation.",
+  "initial_solve": {
+    "scope": "Static feasibility on actual full canonical t2 graph, union of C QR supports and Voronoi faces. B_i(v)=0.5 sum_j s_ij r_ij dot(v_j-v_i), symmetric scalar s. Constraints sum_j s r=0 and sum_j s r r^T=2 V_i I. Not a time-evolution solver.",
+    "n": 36864,
+    "edges": 354763,
+    "lsmr_stop_code": 7,
+    "iterations": 1000,
+    "norm_residual": 0.3905754296755539,
+    "max_constraint_residual": 0.05902548966422701,
+    "coefficient_min": -1.8765734270180086,
+    "coefficient_max": 3.7355095700490906,
+    "negative_fraction": 0.343682965810978,
+    "regions": {
+      "inner": {
+        "max_closure_scaled_residual": 0.0005713108016857553,
+        "max_affine_moment_residual": 0.00010981770871376639,
+        "constant_pressure_acceleration_RMS": 1.2374144341728223e-05,
+        "circular_divergence_RMS": 0.01178330648650482,
+        "original_geometric_divergence_RMS": 0.1333226296092813
+      },
+      "disk_inner_edge": {
+        "max_closure_scaled_residual": 0.0002717847789559958,
+        "max_affine_moment_residual": 8.989768402564973e-05,
+        "constant_pressure_acceleration_RMS": 4.3613648606336336e-07,
+        "circular_divergence_RMS": 0.005935993980340154,
+        "original_geometric_divergence_RMS": 0.07554014289867637
+      },
+      "disk_core": {
+        "max_closure_scaled_residual": 0.0003932541313405534,
+        "max_affine_moment_residual": 0.00010733325941961452,
+        "constant_pressure_acceleration_RMS": 1.1295737222840202e-07,
+        "circular_divergence_RMS": 0.001074357737430094,
+        "original_geometric_divergence_RMS": 0.015007763075655043
+      }
+    },
+    "seconds": 7.0727649461477995,
+    "converged_to_requested_constraint_tolerance": false
+  },
+  "scaled_refinement": {
+    "scope": "Static feasibility on actual full canonical t2 graph, union of C QR supports and Voronoi faces. B_i(v)=0.5 sum_j s_ij r_ij dot(v_j-v_i), symmetric scalar s. Constraints sum_j s r=0 and sum_j s r r^T=2 V_i I. Not a time-evolution solver.",
+    "n": 36864,
+    "edges": 354763,
+    "lsmr_stop_code": 7,
+    "iterations": 10000,
+    "norm_residual": 0.038352108425197755,
+    "max_constraint_residual": 0.0008594499607458145,
+    "coefficient_min": -9.475906475811,
+    "coefficient_max": 3.7032720800789876,
+    "negative_fraction": 0.3482775824987386,
+    "regions": {
+      "inner": {
+        "max_closure_scaled_residual": 1.9798330847406182e-05,
+        "max_affine_moment_residual": 1.7429333583124026e-06,
+        "constant_pressure_acceleration_RMS": 5.503776273906078e-07,
+        "circular_divergence_RMS": 0.011384346122226772,
+        "original_geometric_divergence_RMS": 0.1333226296092813
+      },
+      "disk_inner_edge": {
+        "max_closure_scaled_residual": 2.014831202100907e-05,
+        "max_affine_moment_residual": 2.193607964747743e-06,
+        "constant_pressure_acceleration_RMS": 3.328771218802215e-08,
+        "circular_divergence_RMS": 0.006281674219091364,
+        "original_geometric_divergence_RMS": 0.07554014289867637
+      },
+      "disk_core": {
+        "max_closure_scaled_residual": 5.476987027054278e-05,
+        "max_affine_moment_residual": 6.25177299231304e-06,
+        "constant_pressure_acceleration_RMS": 2.2398351268895717e-08,
+        "circular_divergence_RMS": 0.0010354616373015426,
+        "original_geometric_divergence_RMS": 0.015007763075655043
+      }
+    },
+    "seconds": 61.20072670839727,
+    "converged_to_requested_constraint_tolerance": false
+  },
+  "verdict": "Not ready for evolution. Both solves hit iteration limits; the requested 1e-8 constraint tolerance is not met. This is not a proof that the constraints are infeasible.",
+  "findings": [
+    "Symmetric central-pair construction permits matched force/volume work algebraically, but constant-pressure closure and affine moments must still be solved accurately.",
+    "Circular divergence is reduced on this geometry; this is not evidence of a stable physical solution.",
+    "About 35 percent of fitted coefficients are negative; positivity and shock behavior remain unverified.",
+    "The global solve cost and incomplete convergence are additional obstacles to updating this operator at every RK stage."
+  ],
+  "preserved_constraints": [
+    "No particle steering",
+    "No mass changes",
+    "No production pressure/volume substitution",
+    "Original C/CUDA/OpenMP long runs retained"
+  ]
+}

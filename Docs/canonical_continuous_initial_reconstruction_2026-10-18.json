@@ -1,0 +1,29 @@
+{
+  "scope": "Decode continuous-IC moments and inspect face traces; no evolution.",
+  "source": "/gpfs/kjhan/LagForce/Codex_continuous_kepler_interface_split_20261018/moments_split_q16.npz",
+  "sha256": "cc7a74956b9bb6a363cceb7b9cce365d4379397ceea9668ecfb3cc50c523037d",
+  "cells": 1590,
+  "decoded": 1590,
+  "failures": [],
+  "minimum_raw_residual_eigenvalue": 7.51760711854781e-13,
+  "maximum_density_fit_residual": 2.999961390415251e-13,
+  "crossing_density_independent_moment_relative_error_max": 1.6397184879345644e-05,
+  "face_midpoint_velocity_error": {
+    "False": {
+      "count": 6558,
+      "maximum": 0.00667436642213396,
+      "rms": 0.001996452405784124
+    },
+    "True": {
+      "count": 605,
+      "maximum": 0.0032023794431953363,
+      "rms": 0.0014226392351551836
+    }
+  },
+  "shared_faces": 3459,
+  "maximum_absolute_normal_jump": 0.001491798225341871,
+  "vacuum_faces": [],
+  "pressure_gamma": 1.6666666666666667,
+  "initial_gamma": 1.6666669845581055,
+  "limits": "Affine traces only, midpoint samples only, no Riemann flux/RHS/time evolution. Smooth positive density fit does not resolve the actual discontinuous contact inside a cell. R checked without clipping; no stable covariance factors built here."
+}

@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "results": {
+    "constant": {
+      "status": "passed",
+      "residual": 1.527250548249981e-13
+    },
+    "linear": {
+      "status": "passed",
+      "residual": 1.527250548249981e-13
+    },
+    "quadratic": {
+      "status": "passed",
+      "residual": 1.527250548249981e-13
+    },
+    "nonpolynomial_and_gauge": {
+      "status": "passed",
+      "residual": 3.00454106039183e-15,
+      "independent_q48_Psi_error": 7.94100005495807e-19,
+      "independent_q48_moment_error": 2.220446049250313e-15,
+      "sigma": 9.699938377895187e-06,
+      "rank_error": 6.39452807553792e-16,
+      "condition": 174.36755418960877,
+      "gauge_density_max_difference": 2.2026824808563106e-13
+    },
+    "infeasible_target": {
+      "status": "passed",
+      "failure": "outside_quadrature_moment_hull",
+      "witness": {
+        "feature": 5,
+        "target": 100.03411299957251,
+        "minimum": -1.730790794616302,
+        "maximum": 4.436305110135324,
+        "witness": "coordinate separating hyperplane"
+      }
+    },
+    "unresolved_rank": {
+      "status": "passed",
+      "failure": "unresolved_potential_rank"
+    }
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/check_contact_potential_density_fixtures_20261019.py": "83790ec4f894977f4c0cb5bcd457863338b1bbbbffadc1ac11488b82a2fdaf60",
+    "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/contact_potential_density.py": "cffec5e3e603b61850b45fdf562b982c4d74c154aecfe32ef41cb3f65c48436e",
+    "/gpfs/kjhan/LagForce/Codex_contact_potential_modules_20261019/positive_radial_quadrature.py": "6734a6929ea47a5b8e452ded440ff14dae4ce1022dc409918c81e07ffc9e3446"
+  },
+  "limits": "Synthetic numerical realizability fixtures; no dynamics or proof of continuous moment hull membership."
+}

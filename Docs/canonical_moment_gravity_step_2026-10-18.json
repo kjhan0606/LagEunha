@@ -1,0 +1,109 @@
+{
+  "scope": "Gravity-only material moment evolution for actual remapped t2 state, horizon .2. KDK of the truncated quadrupole Hamiltonian, no pressure, mesh evolution, weight evolution, remap or MPI.",
+  "checkpoint_conversion": "Only in-memory diagnostic potential replaced by explicitly defined quadrupole Psi. Original checkpoints and their integrated potential unchanged. Not an approved production conversion.",
+  "rows": [
+    {
+      "fraction": 0.25,
+      "dt": 0.001,
+      "horizon": 0.2,
+      "steps": 200,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "approximate_Hamiltonian_energy_change": -4.841188561144349e-10,
+      "energy_change_over_initial_U": -7.461017157773108e-06,
+      "max_cell_angular_change": 2.927345865710862e-18,
+      "thermal_change_max_absolute": 2.2768245622195593e-18,
+      "thermal_change_over_total_U": -4.490849048214272e-14,
+      "reverse_max_absolute_error": 1.1492543028346347e-17,
+      "mass_unchanged": true
+    },
+    {
+      "fraction": 0.25,
+      "dt": 0.0005,
+      "horizon": 0.2,
+      "steps": 400,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "approximate_Hamiltonian_energy_change": -1.2117218339824376e-10,
+      "energy_change_over_initial_U": -1.8674499618445452e-06,
+      "max_cell_angular_change": 5.637851296924623e-18,
+      "thermal_change_max_absolute": 3.2526065174565133e-18,
+      "thermal_change_over_total_U": 1.3831860757787733e-13,
+      "reverse_max_absolute_error": 1.5395670849294163e-17,
+      "mass_unchanged": true
+    },
+    {
+      "fraction": 0.25,
+      "dt": 0.00025,
+      "horizon": 0.2,
+      "steps": 800,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "approximate_Hamiltonian_energy_change": -3.030231621181656e-11,
+      "energy_change_over_initial_U": -4.6700536102065776e-07,
+      "max_cell_angular_change": 8.023096076392733e-18,
+      "thermal_change_max_absolute": 5.204170427930421e-18,
+      "thermal_change_over_total_U": 5.487830101471978e-13,
+      "reverse_max_absolute_error": 2.5587171270657905e-17,
+      "mass_unchanged": true
+    },
+    {
+      "fraction": 1.0,
+      "dt": 0.001,
+      "horizon": 0.2,
+      "steps": 200,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "approximate_Hamiltonian_energy_change": -4.843861978187647e-10,
+      "energy_change_over_initial_U": -7.465137305164349e-06,
+      "max_cell_angular_change": 2.927345865710862e-18,
+      "thermal_change_max_absolute": 2.2768245622195593e-18,
+      "thermal_change_over_total_U": -4.025960545102497e-14,
+      "reverse_max_absolute_error": 1.1058862159352145e-17,
+      "mass_unchanged": true
+    },
+    {
+      "fraction": 1.0,
+      "dt": 0.0005,
+      "horizon": 0.2,
+      "steps": 400,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "approximate_Hamiltonian_energy_change": -1.212390188243262e-10,
+      "energy_change_over_initial_U": -1.868479998692355e-06,
+      "max_cell_angular_change": 5.637851296924623e-18,
+      "thermal_change_max_absolute": 3.144186300207963e-18,
+      "thermal_change_over_total_U": -2.4149236229504264e-14,
+      "reverse_max_absolute_error": 1.5395670849294163e-17,
+      "mass_unchanged": true
+    },
+    {
+      "fraction": 1.0,
+      "dt": 0.00025,
+      "horizon": 0.2,
+      "steps": 800,
+      "CPU_OMP1_OMP4_CUDA_bitwise_equal": true,
+      "approximate_Hamiltonian_energy_change": -3.031896955718594e-11,
+      "energy_change_over_initial_U": -4.672620147202777e-07,
+      "max_cell_angular_change": 5.637851296924623e-18,
+      "thermal_change_max_absolute": 4.553649124439119e-18,
+      "thermal_change_over_total_U": 4.201627697795985e-13,
+      "reverse_max_absolute_error": 2.5587171270657905e-17,
+      "mass_unchanged": true
+    }
+  ],
+  "limits": [
+    "Second-order component energy convergence does not prove full-fluid accuracy or long-time Kepler stability.",
+    "No zero-weight reduction or general positivity guarantee."
+  ],
+  "sha256": {
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/audit.py": "e61f853b097ba3d22f24a6c7f335643e13bdc778e5168d28a12db415ead2133f",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/moment_gravity_step.h": "e059b4a7f3e897dac646fd4a57e7def4685c425d65b39bb2a0681091f3ba9e37",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/moment_affine_kick.h": "a8e8fd16ce49519facb4ff9e609680e86d9a0d10347a8b19766e45535f603040",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/moment_material_drift.h": "1cdd460b4bbf2e16d69c13c92f3330bd9668a97aea208f7afb712c910821a614",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/moment_quadrupole_gravity.h": "059057a6395e57746e2ba5b9de74b1994af804cf47428e3ee15a7da8869d35ac",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/moment_affine_recovery.h": "50b4a777c5868da5a0e1d9517f3874006c7d7b85bfdf88d3b77f22cce5a70119",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/probe.c": "71bd07396afb9d6a03f9b40d95c979c91c62943404ba9a92b328c59491fbe364",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/probe.cu": "78a2cf0f54a1d179dc46429fce7d94c1c25a894577f8c7cbcdae515270587a5e",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/cpu.so": "753f422035228b670b96bff8d54fd2d3459f83c48172ba62c49b7375a63ece1b",
+    "/gpfs/kjhan/LagForce/Codex_moment_gravity_step_20261018/cuda.so": "9637f8c0d1ba65094fbd5c59277dd5b01d1f0d4862b4fd58c2f4195fd73f29d3",
+    "/gpfs/kjhan/LagForce/Codex_quadrupole_gravity_20261018/cpu.so": "e9f9cd4a993c8d69d93fedd45b690944d2fdb186a9d6dd477ba7eb83ac04241d",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/state_w0.25_q8.npz": "d7e3aaf2a3823b172c8cea51fa65e702cef4f193858b778ffd7e84786127bf93",
+    "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/state_w1_q8.npz": "48ec05745b6da5f7baca16015e1ee35c3e71f9acd014356e9db0858688afdc6e"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "manifest": {
+    "cases": 68986,
+    "cells": 11498,
+    "generator_vs_polygon_normal_max_difference": 0.541044749201436,
+    "reference": "Independent3pointface quadrature plus volume terms; compared with volume pressure-gradient integral",
+    "assembled_reference_max_volume_scaled_error": 1.0345885397554314e-15,
+    "scope": "Smooth affine manufactured fields, closed polygon normals, no Riemann solver or time evolution."
+  },
+  "backends": {
+    "cpu1": {
+      "assembled_volume_scaled_error": 9.423179576763205e-16,
+      "pressure_work_identity_volume_scaled_error": 4.705708158776103e-16,
+      "bitwise_equal_to_cpu1": true,
+      "max_abs_error_vs_gauss_per_component": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.6263032587282567e-19,
+        1.6263032587282567e-19,
+        2.168404344971009e-19,
+        2.168404344971009e-19,
+        3.2526065174565133e-19,
+        3.2526065174565133e-19,
+        6.505213034913027e-19,
+        3.2526065174565133e-19,
+        6.505213034913027e-19,
+        3.2526065174565133e-19,
+        0.0
+      ],
+      "max_scaled_error_vs_gauss": 6.498709826537165e-19
+    },
+    "cpu4": {
+      "assembled_volume_scaled_error": 9.423179576763205e-16,
+      "pressure_work_identity_volume_scaled_error": 4.705708158776103e-16,
+      "bitwise_equal_to_cpu1": true,
+      "max_abs_error_vs_gauss_per_component": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.6263032587282567e-19,
+        1.6263032587282567e-19,
+        2.168404344971009e-19,
+        2.168404344971009e-19,
+        3.2526065174565133e-19,
+        3.2526065174565133e-19,
+        6.505213034913027e-19,
+        3.2526065174565133e-19,
+        6.505213034913027e-19,
+        3.2526065174565133e-19,
+        0.0
+      ],
+      "max_scaled_error_vs_gauss": 6.498709826537165e-19
+    },
+    "cuda": {
+      "assembled_volume_scaled_error": 9.423179576763205e-16,
+      "pressure_work_identity_volume_scaled_error": 4.705708158776103e-16,
+      "bitwise_equal_to_cpu1": true,
+      "max_abs_error_vs_gauss_per_component": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.6263032587282567e-19,
+        1.6263032587282567e-19,
+        2.168404344971009e-19,
+        2.168404344971009e-19,
+        3.2526065174565133e-19,
+        3.2526065174565133e-19,
+        6.505213034913027e-19,
+        3.2526065174565133e-19,
+        6.505213034913027e-19,
+        3.2526065174565133e-19,
+        0.0
+      ],
+      "max_scaled_error_vs_gauss": 6.498709826537165e-19
+    }
+  },
+  "compiler_flags": "nvcc -O2 --fmad=false -Xcompiler=-fopenmp,-ffp-contract=off",
+  "FMA_scope": "Default optimized/FMA-enabled build not checked.",
+  "inputs_sha256": "79ffeb4d1004c9576973ec11dde0a0d54da4bfad8de26df5eb54059cd00ced6d",
+  "binary_sha256": "2ad55adb1650c4a2a0347a151921211ff584f704304ae43bfe63cad7bbe6007c",
+  "header_sha256": "32a3e6b116c56bf10bc21d7f7ee630dbb288d77321a83f33e018233fce0e49af"
+}

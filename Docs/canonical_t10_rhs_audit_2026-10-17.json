@@ -1,0 +1,109 @@
+{
+  "manifest": {
+    "snapshot_source": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.002305.dat",
+    "snapshot_sha256": "125910697dcc4c3b3019287c891b17341e3cda4ea8c72356d129f5618626ccde",
+    "snapshot_time": 10.0020667693911,
+    "purpose": "First pre-HG force dump; no accepted evolution; original long run unchanged"
+  },
+  "identity": {
+    "cases": {
+      "t10": {
+        "rhs_sha256": "d2cc3c5142b292107ac3202e255c13299e9e44c882e502a8ee2579b8a1cd9e65",
+        "regions": {
+          "inner": {
+            "n": 794,
+            "dU_rate": 5.7676013497877574e-05,
+            "compression_rate": 1.308975082143896e-06,
+            "TCF_heat_rate": 5.636703841573362e-05,
+            "heat_min": 0.0,
+            "residual_abs_sum": 3.810354764414078e-18,
+            "residual_max": 4.2272238023909926e-20
+          },
+          "disk": {
+            "n": 12035,
+            "dU_rate": 1.517598942760075e-05,
+            "compression_rate": -4.435987124502832e-07,
+            "TCF_heat_rate": 1.5619588140051012e-05,
+            "heat_min": 0.0,
+            "residual_abs_sum": 5.1420093407610955e-18,
+            "residual_max": 3.572096757248995e-20
+          },
+          "outer_active": {
+            "n": 7026,
+            "dU_rate": 8.347432039644185e-09,
+            "compression_rate": 1.2286779475490867e-10,
+            "TCF_heat_rate": 8.224564244895932e-09,
+            "heat_min": 0.0,
+            "residual_abs_sum": 1.8541423112909245e-18,
+            "residual_max": 1.4309889867708075e-21
+          },
+          "all": {
+            "n": 36864,
+            "dU_rate": 0.0038330917997707646,
+            "compression_rate": 2.2873970720253257e-06,
+            "TCF_heat_rate": 0.0038314123076359473,
+            "heat_min": 0.0,
+            "residual_abs_sum": 1.407813958101422e-06,
+            "residual_max": 3.6167321465651564e-07
+          }
+        }
+      }
+    },
+    "scope": "One pre-HG force evaluation per saved state; instantaneous radial regions. Raw force RHS includes frozen cells; all-region values are not actual applied increments. No time-integrated or long-term stability claim."
+  },
+  "perturbation": {
+    "cases": {
+      "t10": {
+        "directional_derivative_checks": [
+          {
+            "epsilon": 1e-05,
+            "relative_L1_error": 6.589779354185152e-08
+          },
+          {
+            "epsilon": 1e-06,
+            "relative_L1_error": 5.351031273499041e-09
+          }
+        ],
+        "inner": {
+          "cells": 794,
+          "perturbation_kinetic_energy": 6.066609773599919e-06,
+          "pressure_work": 2.57516255461635e-05,
+          "Q_work": -2.14998407688643e-05,
+          "differential_rotation_work": 6.593417713043008e-06,
+          "total_RHS": 1.0845202490342204e-05,
+          "Q_heat": 5.636703841573362e-05,
+          "uniform_pressure_work": 6.70513400214967e-23,
+          "uniform_pressure_force_L1": 5.435950038304752e-19,
+          "actual_pressure_force_L1": 0.0018583959358558087
+        },
+        "disk": {
+          "cells": 12035,
+          "perturbation_kinetic_energy": 1.0602680890982613e-06,
+          "pressure_work": 3.6034968855074535e-06,
+          "Q_work": -1.2803573795163868e-06,
+          "differential_rotation_work": -1.7961068510374886e-07,
+          "total_RHS": 2.143528820887318e-06,
+          "Q_heat": 1.5619588140051012e-05,
+          "uniform_pressure_work": -1.4655352842765242e-22,
+          "uniform_pressure_force_L1": 6.588234807223205e-18,
+          "actual_pressure_force_L1": 0.0010767442609104438
+        },
+        "outer_active": {
+          "cells": 7026,
+          "perturbation_kinetic_energy": 6.412142606233583e-11,
+          "pressure_work": 1.0781475796390875e-10,
+          "Q_work": -7.351379252678465e-11,
+          "differential_rotation_work": 9.566558346622625e-13,
+          "total_RHS": 3.525762127178635e-11,
+          "Q_heat": 8.224564244895932e-09,
+          "uniform_pressure_work": -3.823397572480432e-24,
+          "uniform_pressure_force_L1": 3.794478226595114e-18,
+          "actual_pressure_force_L1": 1.128723075005792e-05
+        }
+      }
+    },
+    "scope": "Instantaneous material sum for cells currently in each region, not derivative of a fixed Eulerian-region integral. Excludes HG split kicks. Q force reconstructed from 7-digit directed-face output; pressure force is total minus Q. Canonical unweighted TCF, no other viscosity."
+  },
+  "inner_TCF_fraction_of_instantaneous_dU": 0.977304688678039,
+  "interpretation": "At t10, Q removes perturbation kinetic energy while pressure and differential rotation supply it; net instantaneous perturbation RHS remains positive. Large TCF heating does not imply anti-damping. Requires timestep refinement and time-integrated HG-inclusive budgets for causality/stability conclusions."
+}

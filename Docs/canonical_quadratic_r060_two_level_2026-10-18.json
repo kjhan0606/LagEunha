@@ -1,0 +1,179 @@
+{
+  "scope": "Compare completed equal-time moving moment runs without inferring time order.",
+  "ready": true,
+  "runs": [
+    {
+      "dt": 0.0001,
+      "steps": 1,
+      "final": {
+        "time": 0.0001,
+        "min_pressure": 2.777621721813544e-05,
+        "min_factor_eigenvalue": 7.51773179212808e-13,
+        "ledger_error": 4.9538002402281805e-17,
+        "active_hydro_energy": 0.35216789274471766,
+        "active_reconstructed_potential": -0.7111950135136953,
+        "active_pressure_relative_RMS": 1.1215372130779453e-07,
+        "max_generator_displacement": 0.0001643180983510667,
+        "maximum_relative_weight": 3.536962586223019e-07
+      },
+      "maximum_Pi_factor_mismatch": 1.6940658945086007e-21,
+      "minimum_thermal": 3.8674249887983836e-08,
+      "reconstructed_energy_change": 1.603886468082294e-10,
+      "energy_note": "Open active patch: this energy change includes reservoir exchange; it is not a closed-system conservation error."
+    },
+    {
+      "dt": 5e-05,
+      "steps": 2,
+      "final": {
+        "time": 0.0001,
+        "min_pressure": 2.7776217849362098e-05,
+        "min_factor_eigenvalue": 7.517731794257481e-13,
+        "ledger_error": 2.886706714860679e-17,
+        "active_hydro_energy": 0.35216789274102905,
+        "active_reconstructed_potential": -0.7111950135062759,
+        "active_pressure_relative_RMS": 1.1209504735206213e-07,
+        "max_generator_displacement": 0.00016431809692801064,
+        "maximum_relative_weight": 3.537184941342156e-07
+      },
+      "maximum_Pi_factor_mismatch": 1.6940658945086007e-21,
+      "minimum_thermal": 3.867424988542156e-08,
+      "reconstructed_energy_change": 1.6411944026017977e-10,
+      "energy_note": "Open active patch: this energy change includes reservoir exchange; it is not a closed-system conservation error."
+    }
+  ],
+  "same_time_differences": {
+    "active": {
+      "cells": 1194,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 7.91470632522523e-12,
+          "mass_weighted_RMS": 4.938986425624045e-13
+        },
+        "weight": {
+          "maximum_absolute_difference": 5.903989596741366e-11,
+          "mass_weighted_RMS": 2.4739201503340512e-11
+        },
+        "centroid": {
+          "maximum_absolute_difference": 5.059678648278165e-10,
+          "mass_weighted_RMS": 2.0975464485306562e-10
+        },
+        "velocity": {
+          "maximum_absolute_difference": 1.3874705828698097e-09,
+          "mass_weighted_RMS": 4.743055998439261e-10
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 2.267055900645465e-14,
+          "mass_weighted_RMS": 6.93875275731723e-15
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 4.820767309648977e-11,
+          "mass_weighted_RMS": 1.1593411955180653e-12
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 4.0362355563556806e-17,
+          "mass_weighted_RMS": 8.820390388566395e-18
+        }
+      }
+    },
+    "common_inner": {
+      "cells": 490,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 7.91470632522523e-12,
+          "mass_weighted_RMS": 4.302586401853408e-12
+        },
+        "weight": {
+          "maximum_absolute_difference": 2.8524646575586058e-11,
+          "mass_weighted_RMS": 2.4351766105546036e-11
+        },
+        "centroid": {
+          "maximum_absolute_difference": 1.708104074849004e-10,
+          "mass_weighted_RMS": 6.321381971271556e-11
+        },
+        "velocity": {
+          "maximum_absolute_difference": 8.139138252261091e-10,
+          "mass_weighted_RMS": 2.621252555440213e-10
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 5.99735590254099e-17,
+          "mass_weighted_RMS": 2.599759475731535e-17
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 1.65510808183833e-11,
+          "mass_weighted_RMS": 4.425899696998784e-12
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 2.155157784168705e-18,
+          "mass_weighted_RMS": 8.68575347447396e-19
+        }
+      }
+    },
+    "frozen_reservoir": {
+      "cells": 396,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "weight": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "centroid": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "velocity": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 0.0,
+          "mass_weighted_RMS": 0.0
+        }
+      }
+    },
+    "original_active": {
+      "cells": 962,
+      "fields": {
+        "generator": {
+          "maximum_absolute_difference": 7.91470632522523e-12,
+          "mass_weighted_RMS": 7.517460573740609e-13
+        },
+        "weight": {
+          "maximum_absolute_difference": 4.0463708696397545e-11,
+          "mass_weighted_RMS": 2.1495231889991487e-11
+        },
+        "centroid": {
+          "maximum_absolute_difference": 5.059678648278165e-10,
+          "mass_weighted_RMS": 2.2245697996477303e-10
+        },
+        "velocity": {
+          "maximum_absolute_difference": 1.3874705828698097e-09,
+          "mass_weighted_RMS": 5.985433420710532e-10
+        },
+        "angular_momentum": {
+          "maximum_absolute_difference": 3.68254688895564e-15,
+          "mass_weighted_RMS": 1.3498740485824864e-15
+        },
+        "specific_thermal": {
+          "maximum_absolute_difference": 4.820767309648977e-11,
+          "mass_weighted_RMS": 1.6567160128635543e-12
+        },
+        "residual_covariance": {
+          "maximum_absolute_difference": 7.354685130998593e-18,
+          "mass_weighted_RMS": 4.174470858836293e-18
+        }
+      }
+    }
+  },
+  "limits": "Three-level ratios, when available, are empirical and do not prove asymptotic convergence. Two levels do not establish order. Very short stage test, not historical Kepler validation. Potential transport closure, frozen-boundary effects and production CUDA/MPI remain unresolved."
+}

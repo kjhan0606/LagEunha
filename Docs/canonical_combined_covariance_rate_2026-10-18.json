@@ -1,0 +1,70 @@
+{
+  "scope": "Differentiate covariance of stored moments including gravity and hydro.\nEuler tangent positivity bound is diagnostic, not a production step prescription.\n",
+  "results": [
+    {
+      "mode": "affine",
+      "active_cells": 962,
+      "maximum_covariance_rate": 3.3494433434582394e-08,
+      "finite_difference_max_errors": [
+        8.656627296483759e-14,
+        1.3625373323588888e-13
+      ],
+      "negative_normalized_rate_cells": 648,
+      "smallest_euler_tangent_bounds": [
+        [
+          0.06460082853640838,
+          1
+        ],
+        [
+          0.06469864466459666,
+          4
+        ],
+        [
+          0.06478395237081977,
+          0
+        ],
+        [
+          0.06484280189376342,
+          3
+        ],
+        [
+          0.06488903860956334,
+          5
+        ]
+      ]
+    },
+    {
+      "mode": "quadratic",
+      "active_cells": 962,
+      "maximum_covariance_rate": 7.786742876886338e-09,
+      "finite_difference_max_errors": [
+        9.529524776030014e-14,
+        1.254878604084735e-13
+      ],
+      "negative_normalized_rate_cells": 881,
+      "smallest_euler_tangent_bounds": [
+        [
+          0.03506331651253041,
+          940
+        ],
+        [
+          0.03509538774896129,
+          958
+        ],
+        [
+          0.03511692304056064,
+          922
+        ],
+        [
+          0.035157243539338,
+          869
+        ],
+        [
+          0.03524857761078467,
+          887
+        ]
+      ]
+    }
+  ],
+  "limits": "Fixed-mass derivative, actual rates; no covariance clipping. A finite tangent bound does not prove loss of positivity under the exact nonlinear evolution, nor stability below the bound. Finite differences suffer raw-moment cancellation."
+}

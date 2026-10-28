@@ -1,0 +1,317 @@
+{
+  "manifest": {
+    "purpose": "Integrate latest CPU RK4/HG/OpenMP fixes and double CUDA nearest-distance implementation",
+    "source_sha256": {
+      "exam.c": "4356ff0636f0111519f5362b86ca319b415f2fc712ce0f5f81d96735123be55e",
+      "exam_gpu.cu": "188a7be733014774d97ae546682f791dc2b64c192cb7e1383473ebe3eef4f5bd",
+      "exam_gpu.h": "8b493acbdc3a61c878430f87a824eb85c4b02cbef4e2657d06f729bc3be92a55",
+      "exam_gpu_extract.c": "a9cdfa23fabebb2ecd4bca62598c4e8ccd7ef72fbec63cc8d3d2ffa1e14c7008",
+      "gfs_pair.h": "debffcce81a82ee5bba01362241453c7cba01dfa303a48fd33e22b9fa28aac05",
+      "gpu_validation_check.h": "b732b9b8e223ed863733622d9daee60fedfa8429aab916f48e57376954fc160b"
+    },
+    "new_final_snapshots": 4,
+    "estimated_output_bytes": 92012816,
+    "force_backend": "CPU canonical TCF/HG",
+    "mpi_ranks": 1,
+    "nearest_backends": [
+      "CPU",
+      "CUDA double"
+    ],
+    "threads": [
+      1,
+      8
+    ],
+    "scope": "one-step integration regression at existing t10 state; long runs preserved"
+  },
+  "comparisons": {
+    "cpu8": {
+      "reference": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/cpu1/khout.002306.dat",
+      "candidate": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/cpu8/khout.002306.dat",
+      "reference_sha256": "48fac96ff9b80c9ac78cd6ad35a1050a05848a77e73587159f6da356825f2f42",
+      "candidate_sha256": "9d781732fe47a8358fc4dfc67d732a87ffee5ce5969ebe3ef472a0d2294e7bc9",
+      "n": 36864,
+      "t": 10.003066769391099,
+      "dt": 0.001,
+      "fields": {
+        "x": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "y": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "mass": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "vx": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "vy": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "den": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "pressure": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "ie": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "volume": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "w2": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "w2ceil": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0,
+          "max_ulp_difference": 0,
+          "max_relative_difference_nonzero_reference": 0.0,
+          "zero_reference_nonzero_candidate": 0
+        },
+        "csound": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        }
+      },
+      "all_physical_fields_bitwise_equal": true,
+      "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+    },
+    "gpu1": {
+      "reference": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/cpu1/khout.002306.dat",
+      "candidate": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/gpu1/khout.002306.dat",
+      "reference_sha256": "48fac96ff9b80c9ac78cd6ad35a1050a05848a77e73587159f6da356825f2f42",
+      "candidate_sha256": "a7a6954e73c90018ad05341ec1c44667adebb3adde20140cedd5d4672a27484c",
+      "n": 36864,
+      "t": 10.003066769391099,
+      "dt": 0.001,
+      "fields": {
+        "x": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "y": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "mass": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "vx": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "vy": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "den": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "pressure": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "ie": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "volume": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "w2": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "w2ceil": {
+          "bitwise_different_particles": 6369,
+          "max_abs_difference": 2.168404344971009e-19,
+          "worst_particle_id": 119,
+          "max_ulp_difference": 1,
+          "max_relative_difference_nonzero_reference": 2.2204383453252956e-16,
+          "zero_reference_nonzero_candidate": 0
+        },
+        "csound": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        }
+      },
+      "all_physical_fields_bitwise_equal": false,
+      "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+    },
+    "gpu8": {
+      "reference": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/cpu1/khout.002306.dat",
+      "candidate": "/gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/gpu8/khout.002306.dat",
+      "reference_sha256": "48fac96ff9b80c9ac78cd6ad35a1050a05848a77e73587159f6da356825f2f42",
+      "candidate_sha256": "fb04257ab72b6a3c68468c6ca0862676ba95c0a50a58e73ddd59af85e13700e5",
+      "n": 36864,
+      "t": 10.003066769391099,
+      "dt": 0.001,
+      "fields": {
+        "x": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "y": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "mass": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "vx": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "vy": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "den": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "pressure": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "ie": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "volume": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "w2": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        },
+        "w2ceil": {
+          "bitwise_different_particles": 6369,
+          "max_abs_difference": 2.168404344971009e-19,
+          "worst_particle_id": 119,
+          "max_ulp_difference": 1,
+          "max_relative_difference_nonzero_reference": 2.2204383453252956e-16,
+          "zero_reference_nonzero_candidate": 0
+        },
+        "csound": {
+          "bitwise_different_particles": 0,
+          "max_abs_difference": 0.0,
+          "worst_particle_id": 0
+        }
+      },
+      "all_physical_fields_bitwise_equal": false,
+      "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+    }
+  },
+  "runtime": {
+    "cpu1": {
+      "backend_log": [
+        "[DPQ_BACKEND] rank=0 CPU nearest-distance reference; force backend unchanged"
+      ],
+      "gpu_nearest_calls": 0,
+      "geometry_records": [
+        "[GEOM_DT_AUDIT] rank=0 call=1 phase=1 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023311120652114623 distance=0.0061577934243931959 cfi=0.31928020849022465 cfj=0.31891560848262884 vdotr=-0.010915919587953129 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023311120652114623",
+        "[GEOM_DT_AUDIT] rank=0 call=2 phase=0 rk_stage=1 trial=1 i=688 j=808 dt_geom=0.0023297275565680765 distance=0.0061577934243931959 cfi=0.31929486073145608 cfj=0.31892784692390325 vdotr=-0.011097496039663882 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023297275565680765",
+        "[GEOM_DT_AUDIT] rank=0 call=3 phase=0 rk_stage=2 trial=1 i=688 j=808 dt_geom=0.0023274016544133497 distance=0.0061522539744462493 cfi=0.31949497743638972 cfj=0.31914048534078926 vdotr=-0.01093004625795202 x=2.8481365026273799 y=2.5705719879051099 volume=0.00109643285236526 force_dt=0.0023274016544133497",
+        "[GEOM_DT_AUDIT] rank=0 call=4 phase=0 rk_stage=3 trial=1 i=688 j=808 dt_geom=0.0023274236158783729 distance=0.0061523190978477454 cfi=0.31949331217632398 cfj=0.31913866919127293 vdotr=-0.01093209125446974 x=2.8481369794050408 y=2.5705730871860677 volume=0.0010964228644745346 force_dt=0.0023274236158783729",
+        "[GEOM_DT_AUDIT] rank=0 call=5 phase=0 rk_stage=4 trial=1 i=688 j=808 dt_geom=0.0023251502076367279 distance=0.0061468613407540933 cfi=0.31968981900008403 cfj=0.31934907388158279 vdotr=-0.010765247976090719 x=2.848824854006839 y=2.5703411287427755 volume=0.0010956810711144455 force_dt=0.0023251502076367279",
+        "[GEOM_DT_AUDIT] rank=0 call=6 phase=2 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023251520275554744 distance=0.0061468622546162182 cfi=0.31968976943060301 cfj=0.31934904126509051 vdotr=-0.010765088024387847 x=2.8488248563813023 y=2.5703411274666106 volume=0.0010956809484552017 force_dt=0.0023251520275554744"
+      ]
+    },
+    "cpu8": {
+      "backend_log": [
+        "[DPQ_BACKEND] rank=0 CPU nearest-distance reference; force backend unchanged"
+      ],
+      "gpu_nearest_calls": 0,
+      "geometry_records": [
+        "[GEOM_DT_AUDIT] rank=0 call=1 phase=1 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023311120652114623 distance=0.0061577934243931959 cfi=0.31928020849022465 cfj=0.31891560848262884 vdotr=-0.010915919587953129 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023311120652114623",
+        "[GEOM_DT_AUDIT] rank=0 call=2 phase=0 rk_stage=1 trial=1 i=688 j=808 dt_geom=0.0023297275565680765 distance=0.0061577934243931959 cfi=0.31929486073145608 cfj=0.31892784692390325 vdotr=-0.011097496039663882 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023297275565680765",
+        "[GEOM_DT_AUDIT] rank=0 call=3 phase=0 rk_stage=2 trial=1 i=688 j=808 dt_geom=0.0023274016544133497 distance=0.0061522539744462493 cfi=0.31949497743638972 cfj=0.31914048534078926 vdotr=-0.01093004625795202 x=2.8481365026273799 y=2.5705719879051099 volume=0.00109643285236526 force_dt=0.0023274016544133497",
+        "[GEOM_DT_AUDIT] rank=0 call=4 phase=0 rk_stage=3 trial=1 i=688 j=808 dt_geom=0.0023274236158783729 distance=0.0061523190978477454 cfi=0.31949331217632398 cfj=0.31913866919127293 vdotr=-0.01093209125446974 x=2.8481369794050408 y=2.5705730871860677 volume=0.0010964228644745346 force_dt=0.0023274236158783729",
+        "[GEOM_DT_AUDIT] rank=0 call=5 phase=0 rk_stage=4 trial=1 i=688 j=808 dt_geom=0.0023251502076367279 distance=0.0061468613407540933 cfi=0.31968981900008403 cfj=0.31934907388158279 vdotr=-0.010765247976090719 x=2.848824854006839 y=2.5703411287427755 volume=0.0010956810711144455 force_dt=0.0023251502076367279",
+        "[GEOM_DT_AUDIT] rank=0 call=6 phase=2 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023251520275554744 distance=0.0061468622546162182 cfi=0.31968976943060301 cfj=0.31934904126509051 vdotr=-0.010765088024387847 x=2.8488248563813023 y=2.5703411274666106 volume=0.0010956809484552017 force_dt=0.0023251520275554744"
+      ]
+    },
+    "gpu1": {
+      "backend_log": [
+        "[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)"
+      ],
+      "gpu_nearest_calls": 6,
+      "geometry_records": [
+        "[GEOM_DT_AUDIT] rank=0 call=1 phase=1 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023311120652114623 distance=0.0061577934243931959 cfi=0.31928020849022465 cfj=0.31891560848262884 vdotr=-0.010915919587953129 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023311120652114623",
+        "[GEOM_DT_AUDIT] rank=0 call=2 phase=0 rk_stage=1 trial=1 i=688 j=808 dt_geom=0.0023297275565680765 distance=0.0061577934243931959 cfi=0.31929486073145608 cfj=0.31892784692390325 vdotr=-0.011097496039663882 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023297275565680765",
+        "[GEOM_DT_AUDIT] rank=0 call=3 phase=0 rk_stage=2 trial=1 i=688 j=808 dt_geom=0.0023274016544133497 distance=0.0061522539744462493 cfi=0.31949497743638972 cfj=0.31914048534078926 vdotr=-0.01093004625795202 x=2.8481365026273799 y=2.5705719879051099 volume=0.00109643285236526 force_dt=0.0023274016544133497",
+        "[GEOM_DT_AUDIT] rank=0 call=4 phase=0 rk_stage=3 trial=1 i=688 j=808 dt_geom=0.0023274236158783729 distance=0.0061523190978477454 cfi=0.31949331217632398 cfj=0.31913866919127293 vdotr=-0.01093209125446974 x=2.8481369794050408 y=2.5705730871860677 volume=0.0010964228644745346 force_dt=0.0023274236158783729",
+        "[GEOM_DT_AUDIT] rank=0 call=5 phase=0 rk_stage=4 trial=1 i=688 j=808 dt_geom=0.0023251502076367279 distance=0.0061468613407540933 cfi=0.31968981900008403 cfj=0.31934907388158279 vdotr=-0.010765247976090719 x=2.848824854006839 y=2.5703411287427755 volume=0.0010956810711144455 force_dt=0.0023251502076367279",
+        "[GEOM_DT_AUDIT] rank=0 call=6 phase=2 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023251520275554744 distance=0.0061468622546162182 cfi=0.31968976943060301 cfj=0.31934904126509051 vdotr=-0.010765088024387847 x=2.8488248563813023 y=2.5703411274666106 volume=0.0010956809484552017 force_dt=0.0023251520275554744"
+      ]
+    },
+    "gpu8": {
+      "backend_log": [
+        "[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)"
+      ],
+      "gpu_nearest_calls": 6,
+      "geometry_records": [
+        "[GEOM_DT_AUDIT] rank=0 call=1 phase=1 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023311120652114623 distance=0.0061577934243931959 cfi=0.31928020849022465 cfj=0.31891560848262884 vdotr=-0.010915919587953129 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023311120652114623",
+        "[GEOM_DT_AUDIT] rank=0 call=2 phase=0 rk_stage=1 trial=1 i=688 j=808 dt_geom=0.0023297275565680765 distance=0.0061577934243931959 cfi=0.31929486073145608 cfj=0.31892784692390325 vdotr=-0.011097496039663882 x=2.8474490977097773 y=2.5708050494492696 volume=0.0010971579597332552 force_dt=0.0023297275565680765",
+        "[GEOM_DT_AUDIT] rank=0 call=3 phase=0 rk_stage=2 trial=1 i=688 j=808 dt_geom=0.0023274016544133497 distance=0.0061522539744462493 cfi=0.31949497743638972 cfj=0.31914048534078926 vdotr=-0.01093004625795202 x=2.8481365026273799 y=2.5705719879051099 volume=0.00109643285236526 force_dt=0.0023274016544133497",
+        "[GEOM_DT_AUDIT] rank=0 call=4 phase=0 rk_stage=3 trial=1 i=688 j=808 dt_geom=0.0023274236158783729 distance=0.0061523190978477454 cfi=0.31949331217632398 cfj=0.31913866919127293 vdotr=-0.01093209125446974 x=2.8481369794050408 y=2.5705730871860677 volume=0.0010964228644745346 force_dt=0.0023274236158783729",
+        "[GEOM_DT_AUDIT] rank=0 call=5 phase=0 rk_stage=4 trial=1 i=688 j=808 dt_geom=0.0023251502076367279 distance=0.0061468613407540933 cfi=0.31968981900008403 cfj=0.31934907388158279 vdotr=-0.010765247976090719 x=2.848824854006839 y=2.5703411287427755 volume=0.0010956810711144455 force_dt=0.0023251502076367279",
+        "[GEOM_DT_AUDIT] rank=0 call=6 phase=2 rk_stage=0 trial=1 i=688 j=808 dt_geom=0.0023251520275554744 distance=0.0061468622546162182 cfi=0.31968976943060301 cfj=0.31934904126509051 vdotr=-0.010765088024387847 x=2.8488248563813023 y=2.5703411274666106 volume=0.0010956809484552017 force_dt=0.0023251520275554744"
+      ]
+    }
+  },
+  "scope": "Same t10 one-step endpoint; full CUDA force and MPI>1 not tested.",
+  "binary_sha256": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697",
+  "geometry_diagnostics_equal": true
+}

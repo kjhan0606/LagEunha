@@ -1,0 +1,43 @@
+{
+  "gauss_vs_analytic_kinetic_flux_max_error": 9.994988777600744e-20,
+  "scope": "Exact line-integrated affine transport on saved W=0 faces.\nUniform rho=1, simple shear v=(y,0); diagnostic only, no state conversion.\n",
+  "W": 0,
+  "relative_weight_rates_nonzero": true,
+  "reduction_limit": "Equal weights at this instant do not invoke persistently-equal-weight reduction.",
+  "regions": {
+    "inner": {
+      "fractional_net_mass_rate_RMS": 3.901100703226238e-15,
+      "omitted_internal_kinetic_rate_per_volume_RMS": 1.4187478100490572e-05,
+      "omitted_internal_kinetic_rate_per_volume_min_max": [
+        -2.692165227523862e-05,
+        3.791701703927684e-05
+      ],
+      "momentum_transport_per_mass_RMS": 0.0008751296513861318,
+      "midpoint_momentum_transport_error_RMS": 0.0005445269207323115,
+      "absolute_face_mass_exchange": 0.02415166471537402
+    },
+    "edge": {
+      "fractional_net_mass_rate_RMS": 6.168117398830923e-15,
+      "omitted_internal_kinetic_rate_per_volume_RMS": 1.4928437265470889e-05,
+      "omitted_internal_kinetic_rate_per_volume_min_max": [
+        -2.6493137957657815e-05,
+        3.805067026804828e-05
+      ],
+      "momentum_transport_per_mass_RMS": 0.0005770220051501952,
+      "midpoint_momentum_transport_error_RMS": 0.0003778542755979424,
+      "absolute_face_mass_exchange": 0.006759578400074498
+    },
+    "core": {
+      "fractional_net_mass_rate_RMS": 1.5831724619515616e-14,
+      "omitted_internal_kinetic_rate_per_volume_RMS": 1.4758152044644034e-05,
+      "omitted_internal_kinetic_rate_per_volume_min_max": [
+        -2.803778997764732e-05,
+        3.9726985538297054e-05
+      ],
+      "momentum_transport_per_mass_RMS": 0.0006208534033615489,
+      "midpoint_momentum_transport_error_RMS": 0.0003985314246061342,
+      "absolute_face_mass_exchange": 0.16541788499576005
+    }
+  },
+  "interpretation": "Kdot-|p|^2/(2m)dot is unresolved kinetic transport, not thermal production. Sign can be positive or negative. Manufactured simple shear, no AV, gravity or time evolution. This is not a measurement of original Kepler heating."
+}

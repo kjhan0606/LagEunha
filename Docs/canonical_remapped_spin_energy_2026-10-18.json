@@ -1,0 +1,70 @@
+{
+  "scope": "Rigid-rotation projection of existing remapped moments; no evolution.\n\nUses mass-center inertia, not generator-centered inertia. These are conditional\nlift/remap states, not newly measured physical spin in the production solver.\n",
+  "cases": {
+    "0.25": {
+      "source": "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/state_w0.25_q8.npz",
+      "sha256": "d7e3aaf2a3823b172c8cea51fa65e702cef4f193858b778ffd7e84786127bf93",
+      "split_max_absolute_error": 3.970466940254533e-23,
+      "remaining_affine_spin_max_absolute": 1.2407709188295415e-24,
+      "minimum_residual_covariance_eigenvalue": -1.2349246998411161e-17,
+      "regions": {
+        "inner": {
+          "cells": 795,
+          "internal_kinetic_energy": 1.279846769988585e-06,
+          "rotation": 5.985294232725756e-08,
+          "affine_nonrigid": 7.145256302170286e-08,
+          "residual": 1.1485412646396247e-06,
+          "rotation_share": 0.04676570956052137,
+          "rotation_over_thermal": 0.0018394930381262198,
+          "mass_RMS_difference_spin_vs_half_curl": 0.013234994334385854
+        },
+        "edge": {
+          "cells": 399,
+          "internal_kinetic_energy": 7.334751219032249e-08,
+          "rotation": 1.18257823938746e-09,
+          "affine_nonrigid": 1.447567672641963e-09,
+          "residual": 7.071736627829306e-08,
+          "rotation_share": 0.016122949559882825,
+          "rotation_over_thermal": 7.28133927646766e-05,
+          "mass_RMS_difference_spin_vs_half_curl": 0.000345368853268539
+        }
+      }
+    },
+    "1.0": {
+      "source": "/gpfs/kjhan/LagForce/Codex_checkpoint_weight_remap_20261018/state_w1_q8.npz",
+      "sha256": "48ec05745b6da5f7baca16015e1ee35c3e71f9acd014356e9db0858688afdc6e",
+      "split_max_absolute_error": 3.705769144237564e-22,
+      "remaining_affine_spin_max_absolute": 6.617444900424222e-24,
+      "minimum_residual_covariance_eigenvalue": -1.2349246998411161e-17,
+      "regions": {
+        "inner": {
+          "cells": 795,
+          "internal_kinetic_energy": 4.9236810599878505e-06,
+          "rotation": 6.429632604639635e-07,
+          "affine_nonrigid": 4.7275348618382715e-07,
+          "residual": 3.8079643133400607e-06,
+          "rotation_share": 0.1305858873940852,
+          "rotation_over_thermal": 0.019758868545643102,
+          "mass_RMS_difference_spin_vs_half_curl": 0.04707810675560734
+        },
+        "edge": {
+          "cells": 399,
+          "internal_kinetic_energy": 2.793628537163834e-07,
+          "rotation": 9.263724405599104e-09,
+          "affine_nonrigid": 1.2757617266635223e-08,
+          "residual": 2.5734151204414903e-07,
+          "rotation_share": 0.033160186769153936,
+          "rotation_over_thermal": 0.0005704802369775126,
+          "mass_RMS_difference_spin_vs_half_curl": 0.00212198190265799
+        }
+      }
+    }
+  },
+  "limits": [
+    "No torque evolution or relaxation inferred from a static projection.",
+    "Spin omega=L/I differs from half-curl in anisotropic cells.",
+    "Affine nonrigid component need not equal the symmetric-gradient component.",
+    "Residual kinetic energy remains distinct from thermal energy.",
+    "No production state, binary, force or running calculation changed."
+  ]
+}

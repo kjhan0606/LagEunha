@@ -1,0 +1,65 @@
+{
+  "accepted_steps": 741,
+  "last_t": 6.225937758217563,
+  "rejected_trials_discarded": 38,
+  "uncommitted_HG_records_ignored": 4,
+  "max_HG_ledger_mismatch": 2.0031938773315078e-17,
+  "windows": [
+    {
+      "endpoint_selection": [
+        0,
+        2
+      ],
+      "last_t": 1.992020219331204,
+      "steps": 183,
+      "delta_U": 2.0575807445312108e-07,
+      "HG_heat_by_bin": [
+        7.007229592139824e-10,
+        2.6794041703271456e-10,
+        4.614257541565123e-11,
+        0.0
+      ],
+      "non_HG_delta_U": 2.0474326850145874e-07,
+      "HG_fraction_of_net_internal_energy_increase": 0.004932034644859376
+    },
+    {
+      "endpoint_selection": [
+        2,
+        4
+      ],
+      "last_t": 3.994653380301172,
+      "steps": 184,
+      "delta_U": 2.396079607999658e-06,
+      "HG_heat_by_bin": [
+        5.817626985760134e-08,
+        6.008123663637059e-09,
+        6.626781316150703e-11,
+        0.0
+      ],
+      "non_HG_delta_U": 2.3318289466652584e-06,
+      "HG_fraction_of_net_internal_energy_increase": 0.026814910957002336
+    },
+    {
+      "endpoint_selection": [
+        4,
+        6
+      ],
+      "last_t": 5.999179437386756,
+      "steps": 288,
+      "delta_U": 2.5567899944584343e-05,
+      "HG_heat_by_bin": [
+        1.4825514051013562e-06,
+        1.9263720963907598e-07,
+        6.274620459228223e-11,
+        0.0
+      ],
+      "non_HG_delta_U": 2.3892648583639318e-05,
+      "HG_fraction_of_net_internal_energy_increase": 0.06552166445331649
+    }
+  ],
+  "scope": "MPI1; instantaneous radial bins; windows select step endpoints, not interpolated exact times. Non-HG delta U includes compression and cannot be interpreted as dissipative heating.",
+  "log": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/log",
+  "prefix_bytes": 7210413,
+  "prefix_sha256": "35013988f70b67f30f87f6a2ecdc01dd560db9795caa2496f16999ccdc387318",
+  "interpretation": "Direct HG heat is a small fraction of global net internal-energy increase through t6. This does not exclude indirect HG effects on dynamics, and does not identify non-HG change as dissipation. Regional source-resolved compression/dissipation accounting remains necessary."
+}

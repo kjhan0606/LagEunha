@@ -1,0 +1,45 @@
+{
+  "status": "completed_saved_comparison_postprocessing",
+  "input_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/result.json": "eac63aca05094ca0d8a1d082c4ff894b1ef2236fb4359482bdce113ff93c7881",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/latest_coarse.json": "57b70c82fd6cda4d763d24847bb83b556464d851910619806b12216431d77f78",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0010/physical_gate.json": "cef2596e6b09a990dd26a267840af6c87f47e8f1fc3c77028a8d12ad690dc987",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/coarse/checkpoints/coarse_0010/accepted.npz": "1b394c06cda4cdf912a881d1f346f27f37dc9a426156a280ea6d40909fa50822",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/result.json": "59e44f8ce529b65b85037421c494a07ebdf25686d1501e5b00f89bd49b960d6d",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/latest_fine.json": "02a237f35740b74e66840250245aa6bad28e23867272ba2493bab3b7720322f0",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0020/physical_gate.json": "5dbae6b2d77399707c3a2423219b899c7de5229a017db367d9ac00170d3aa82f",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_continuous_two_dt_to_t1_20261019/fine/checkpoints/fine_0020/accepted.npz": "b6570af3551041958eb5d85bb038d0c88c99e39cefe9f79c0bf2c14d271a737e",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_native_ada_t0p05_comparison_20261019/report.json": "2c430a5891a4a21153835a9e749f77fc0ac72a351b37cff4a175412ae6ef1202",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_native_ada_t0p05_platform_budget_20261019/report.json": "f5388500398e7976d5a6204f3e0aa1eae017c07afc3488c09bb317d0435f5901"
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/postprocess_completed_full_moment_comparison_v3.py": "1971c64047b470f35adda7992749e648c1826e66245566dbe856a7a8d8faf900",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/compare_full_moment_checkpoint_errors.py": "ae77f0145ab81b2852ea244c3786ba26aeb419436500953aa053676b7d824cb3",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/evaluate_full_moment_saved_checkpoint_bundle.py": "48a0b9b4531f21478cbdc8bdf508f2323af9ebd5572b820fd9db8653c7f0b9c5",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/diagnose_full_moment_finite_pressure_budget.py": "20567e278b3e6cffcc5a252e7d9fa97b68c40985f31db95d3e56000945d40d71",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/diagnose_full_moment_subcell_energy.py": "7c01a2bd18080d7a6bcaa5224b7abdb86198ddae6b151b78570d1a01499174ea",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/plot_full_moment_two_dt_density.py": "db94a6ca6142442485b793b24e68e98c4228f0242fcb8f25b1cfdd4309ba1edc",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_completed_comparison_postprocessing_modules_20261019/evaluate_full_moment_checkpoint_difference_budget.py": "ce15ee952e9c8c4a73e87b16ca19210b6a07e375bd789e2111e2b7e90f07ed23"
+  },
+  "subprocesses_maximum": 3,
+  "BLAS_threads": 1,
+  "OMP_threads": 1,
+  "physical_providers": 0,
+  "accepted_time_steps": 0,
+  "automatic_extension_authorized": false,
+  "completed": [
+    "density_temporal_budget",
+    "fine_finite_pressure_budget",
+    "coarse_subcell_energy",
+    "fine_subcell_energy",
+    "density_image",
+    "reused_same_h_native_ada_t0p05",
+    "reused_same_h_native_ada_t0p05_platform_budget"
+  ],
+  "pending": [
+    "Actual native restart equivalence: inspect Slurm427904 terminal comparison report separately"
+  ],
+  "available_density_passed": false,
+  "available_temporal_passed": false,
+  "limits": "Postprocessing completion is not a physics pass or extension approval. Existing accepted states untouched; contact-growth and missing evidence require the completed-bundle evaluation."
+}

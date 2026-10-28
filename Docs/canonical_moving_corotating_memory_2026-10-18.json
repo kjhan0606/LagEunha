@@ -1,0 +1,36 @@
+{
+  "scope": "Moving periodic auxiliary subsystem with reconstructed spin; not Kepler.\n\nxdot=v, m*vdot=-B^T z, zdot=Bv+W(v,x)z. Nonzero initial z exercises\ntransport immediately. Rebuild support and velocity gradient every RK stage.\n",
+  "rows": [
+    {
+      "dt": 0.002,
+      "time": 0.02,
+      "energy_relative_error": -7.811529201262601e-13,
+      "momentum_absolute_error": 4.338481518814236e-19,
+      "owners_with_changed_support": 85
+    },
+    {
+      "dt": 0.001,
+      "time": 0.02,
+      "energy_relative_error": -2.3647750424515834e-14,
+      "momentum_absolute_error": 1.060382543956328e-18,
+      "owners_with_changed_support": 85
+    },
+    {
+      "dt": 0.0005,
+      "time": 0.02,
+      "energy_relative_error": -5.551115123125783e-16,
+      "momentum_absolute_error": 4.103680070252045e-18,
+      "owners_with_changed_support": 85
+    }
+  ],
+  "successive_full_state_L2_differences": [
+    1.0279512949319753e-10,
+    6.434323197005738e-12
+  ],
+  "ratio": 15.976059384308522,
+  "max_stage_power_residual": 1.4365678785432934e-18,
+  "maximum_reconstructed_spin": 0.5116457084037793,
+  "maximum_frozen_block_frequency_bound": 24.27881292121651,
+  "largest_dt_times_frequency_bound": 0.04855762584243302,
+  "limitations": "No pressure, gravity, heat, variable acoustic coefficient or full Euler. Frozen-block bound omits derivatives of B and W; not a nonlinear stability proof. No production implementation or long-time accuracy claim."
+}

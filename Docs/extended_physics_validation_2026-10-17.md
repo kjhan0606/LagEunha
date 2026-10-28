@@ -5,14 +5,14 @@
 무조향, 원래 셀 질량 고정, 가변 Laguerre 가중치 유지. 기존 승인 경로 보존.
 현재 네 가지 전체 유체 검증이 모두 통과한 상태는 아니다.
 
-## 현재 판정 — 2026-10-17 15:16 갱신
+## 현재 판정 — 2026-10-17 17:25 갱신
 
 | 범위 | 완료에 필요한 범위 | 현재 판정 |
 |---|---|---|
-| 충격파 | T=.15, 공간 비교, 물리 L1<.05 및 수치 경로 검사 | 미완료. 새 피팅16² T=.02 통과; 전체 구간 계산 중 |
-| 장시간 와류 | 10중심주기(T=10.4685979156) | 미완료. 기존 중간 궤적의 밀도 기준 초과 확인; 전체기간 예산 대조 진행 |
-| 3차원 | 비선형 물리장, 독립 전체 경로, 시간·공간 수렴 | 미완료. 6³ coarse 압력 기준 미달; 8³/10³ 및 시간 정밀화 진행 |
-| 케플러 | 공식192² 유체 원반100궤도 | 미완료. 초기 적분 완료; 셀별·전체 이웃 재구성 감사 중; 공식 유체 진화 미시작 |
+| 충격파 | T=.15, 공간 비교, 물리 L1<.05 및 수치 경로 검사 | 미완료. MV16² 전체 구간 통과; 해상도 수렴·횡방향 오차 비교 남음 |
+| 장시간 와류 | 10중심주기(T=10.4685979156) | 미완료. JU T=.2 수치·물리 실패; 전체기간 예산 대조 및 새 기하 적분 진행 |
+| 3차원 | 비선형 물리장, 독립 전체 경로, 시간·공간 수렴 | 미완료. 6³ 압력 기준 미달; TE8³ T=.02 물리 L1 통과, 최종 독립 경로와 8³/10³ 수렴 대조 진행 |
+| 케플러 | 공식192² 유체 원반100궤도 | 미완료. 36,864개 초기 셀 재구성 검사 통과; TA 첫 공식 유체 결합 단계 실행 중 |
 
 아래 내용은 순차 연구 기록이다. 초기 시점의 구현/실행 상태를 현재 완료 상태로
 해석하지 않는다. 최신 체크포인트 캡처와 제한은 JSON의
@@ -2552,3 +2552,693 @@ matching input hashes, same full-duration budget. Only execution end
 and config identities change; all initial/state/counters/accumulations
 remain equal, old accepted paths remain in their original directory.
 Not applied before a completed passing source exists.
+
+
+### 15:50 Authoritative OR termination and failure diagnostic
+
+OR8³ execution receipt shows exit1 at15:34:23, not a live final step.
+Accepted checkpoint is t=.018, nine steps; next initial RHS failed
+`split shared-face mass quadrature disagrees with root`. Previous
+expectation of imminent .02 completion is superseded by this receipt.
+No full-interval completion claim is justified. NT audit covers only.018.
+SU (`Codex_SU_3d_split_root_failure_20261017`, session46896) captures
+the exact checkpoint and verified original source manifest. It evaluates
+only that RHS with an expanded failure message recording independent
+root residual/history and shared quadrature residual. Original sources,
+states, and tolerance2e-13 are unchanged; no evolution replay.
+MV shock checkpoint reached .14302004583,4021steps at15:49; target.15
+remains pending. SQ quarter-step control has two accepted steps at.010125.
+
+
+### 15:53 Historical vortex diagnostic completed with failures
+
+JU terminal receipt exit2 at15:50:58; reachedT=.2,1527acceptedsteps.
+Density field error .00178017327 exceeds .001. Integrated absolute
+mass defect1.08711113322e-5 exceeds1e-5; both final numerical and
+physical verdicts are false. Pressure/velocity field errors .000371537
+and .000769951; positive density/pressure. This is definitive failure
+of the historical short-budget trajectory, not a10period result.
+No blind extension of this failed branch. PZ/RF full-horizon controls
+and ST material geometry evolution remain separate investigations.
+
+
+### 15:54 Three-level temporal-state comparator tested
+
+SV (`Codex_SV_temporal_state_comparison_20261017`) validates same-time
+states, identical positive cell masses, finite arrays and geometric
+timestep ratios. It reports each variable separately, covariance LL^T
+rather than factor gauge differences, difference alignment and observed
+order only above a conservative roundoff screen. Two tests pass including
+synthetic second-order states, zero differences and invalid-input cases.
+Captured previously validated SN coarse/fine states with hashes. SQ fourth
+substep must finish and pass before actual three-level comparison. No
+physical-field, spatial or long-duration certification follows from this
+unit-test result. ST initial material-path quadrature is refining beyond
+65nodes; no accepted geometry-evolution step is yet established.
+
+
+### 15:57 First accepted geometry step and matched physical comparison
+
+ST firststep dt=.001 accepted with ratio.3065166672, whole-duration
+rate1.5236288484e-5 and generator defect6.3865270727e-8. Nested
+quadrature required refinement beyond129nodes. SW(session89858,1hbound)
+captures that saved accepted trajectory and PZ accepted step45, both
+atT=.001 and with the original10period budget. It evaluates both saved
+paths, including the saved DOP853 geometry polynomial, then scores the
+stationary exact physical fields. No evolution is replayed. Forty-five
+baseline steps versus one geometry step is a step-count observation,
+not a walltime speedup claim; geometry integration/audits are costlier.
+
+
+### 15:59 Matched vortex fields retain short-time accuracy
+
+SW exited0 at15:57:21. AtT=.001, baseline/material-geometry field errors:
+density7.9349110e-6/8.0160541e-6, velocity.00016233158/.00016232653,
+pressure.00017149803/.00017150651. Both satisfy the configured physical
+limits at this time and retain positive density/pressure. Original initial
+arrays are identical; both retain full10period error budget. This supports
+continuing ST to its intermediate.01 target but does not establish
+long-time density stability, time convergence, or an overall speedup.
+
+
+### 16:00 Kepler three-level solution convergence confirmed locally
+
+SQ exited0 at15:57:47,4steps toT=.01025; cumulative absolute mass
+defect5.79355125e-10, fullauxiliary-duration rate4.60040090e-8,
+generator2.72073324e-8, energy/thermal9.94787276e-11.
+SV checks matching initial/configuration/gravity identities, equal time,
+all accepted gates and common.02 validation horizon. Fine/quarter use
+the same source manifest; coarse source compatibility was previously
+reviewed for SN. For dt=.00025,.000125,.0000625 observed solution
+orders: sites1.99944,weights2.00168,momentum2.00045,gasenergy2.00129,
+potentialmoment2.00138,covariance2.00150. Boundaryledger2.00855.
+All compared differences exceed the roundoff screen; successive
+difference directions align closely. This establishes local temporal
+self-convergence on the auxiliary32² trajectory over.00025 duration,
+not fullcanonical192²/100orbits or spatial physical accuracy.
+
+
+### 16:01 Geometry temporal refinement launched
+
+SX(session41857,2hbound) uses the same verified SO source and exact
+original physical IC as ST, with fixed dt=.0005 for two steps to.001.
+Its validation_end remains10.468597915605091; all mass/path/physical
+limits remain unchanged. Failure rejects this control, without changing
+dt or relaxing tolerance. Compare against accepted ST dt=.001 after
+completion; current equal-time agreement with PZ alone does not prove
+temporal convergence of the new geometry update.
+
+
+### 16:03 3D mismatch reproduced; quadrature diagnosis launched
+
+SU exited0 at16:00:10 and reproduced OR failure at savedT=.018.
+Split individual-sample root residual2.76477344e-18 after6iterations,
+shared-rule residual2.36225881e-13, worstcell230. Thus a root solve
+near its2e-13 tolerance is not the explanation. Density is exponential
+quadratic, so finite-order face integration need not agree exactly
+between different triangulations even after speed-sign splitting.
+SY(session63923,2hbound) holds the saved physical state and solved
+weight rates fixed, compares individual/common integration orders4/6/8,
+and caches the solved root for follow-up. Hypothesis pending measured
+convergence; no tolerance relaxation or evolution restart.
+
+
+### 16:04 Sod16 full interval completed
+
+MV exited0 at16:02:34,4183acceptedsteps toT=.15. SZ final audit checks
+terminal receipt, initial/checkpoint configuration hashes and exact original
+mass arrays. All final numerical gates passed: integrated absolute mass
+5.89321831e-6, full-duration rate5.67814075e-5, generator9.75854443e-6,
+ledger2.42861287e-16. Fieldrho/v/P=.03203056/.04399580/.03206651;
+cellrho/v/P=.01846499/.02958399/.02686594, all below.05.
+Maxcellmeanvy=0.004234585502979578, transverse secondmoment fraction=2.3807980403309428e-06.
+Positive density/pressure; spatial convergence and transverse artifacts
+remain unresolved. Whole shock requirement is not marked complete.
+
+
+### 16:06 Auxiliary Kepler continuation resumed after verified timeout
+
+OT exit124 at16:04:41, originalPID1850161 absent. Existing checkpoint
+t=.018750000000000006,35steps and partial next-step caches retained.
+Verified original source manifest and resumed same arguments/session50724
+with2hbound, execution_resume_1605.txt. No accepted dynamics replay or
+state/budget reset; remaining auxiliary target.02 is not100orbits.
+
+
+### 16:08 Full-horizon vortex baseline resumed
+
+PZ exit124 at16:06:54, originalPID1927703 absent. Resumed from
+t=.009173732244548646,470steps with same verified immutable source,
+configuration, full10period budget and pending audit caches. Session52222,
+2hbound, execution_resume_1607.txt. Intermediate target remains.01;
+no resetting accepted histories or accumulated defects.
+
+
+### 16:14 Quadrature convergence and continuation preparation
+
+SY completed exit0 at16:11:03. Common/individual mass integrals differ
+2.36224416e-13 atorder4,2.78325762e-18 atorder6,2.38688591e-18
+atorder8. Holding order4root fixed leaves about2.35734e-13 imbalance
+atboth higherorders. Thus resolving the constraint again at higher
+order is necessary. New RHS retries orders4→6→8 only on failed shared
+mass check, preserving2e-13 tolerance and failing after exhaustion.
+TD regression session15291 includes actual stage-order serialization.
+TE prepares exact nine accepted OR paths/checkpoint at.018 for a
+separate continuation, no dynamics replay; launch awaits regression.
+
+SX twohalfgeometry steps completed at.001, both numerical/physical
+passed. Densityfield7.94291614e-6; absolute mass5.67552736e-11.
+TB(session14821) starts fourquartersteps, same IC and full10period
+budget, to measure three-level temporal behavior.
+
+RR10fine reached.002; NT audit resumed with retained first-path cache
+(session34661). QK8fine reached.007; its audit resumed fromcompleted
+.006(session48284). Both2hbounded.
+
+TA prepares canonical192 firstcoupled step dt1e-6 and conservative
+validationhorizon1777.1531752633466 (=100orbits atouterdiskr2).
+The short execution endpoint does not reduce path budgets. RV all-cell
+enriched audit must pass before launch; no full100orbit claim.
+
+
+### 16:17 Canonical coupled stage and 3D corrected continuation launched
+
+RV exited0 at16:15:08,36864/36864cells. Maxindependentmassrelative
+2.86603976e-11,quadraturedifference1.60597874e-11,activepotential
+relative2.86998571e-11,minP2.77777771e-5. TA session18570,4hbound,
+uses originalSM seedSHA50c323fdf8b4f578b46d520e2dc9cf18c17645622f40ee3f7a74afdca609b8b0
+and verifiedSO source. Firstactualcanonicalcoupled trial dt1e-6, full
+conservative1777.1531753durationbudget. No completedstep yet.
+
+TD regression exited0 at16:14:38,518tests passed; one existing Sod
+entropylog warning. Includes bounded refinement, fresh constraint solve,
+unchanged mass/sites, failed-exhaustion behavior and stageorder storage.
+TE session54060,3hbound, resumes exact9acceptedOR paths and checkpoint
+at.018. Source TD adds adaptive quadrature and storedstageorders;
+configuration/initialstates unchanged. Original OR failure retained.
+No claim of real-state recovery until the new finalstep passes and its
+independent path audit completes.
+
+
+### 16:21 Geometry temporal convergence has a qualified result
+
+TB exited0 at16:17:25 with foursteps to.001, numerical/physicalpassed.
+TF comparator supports optional potential moments consistently across
+all three states;3tests pass. Same IC, same full10period budget, equal
+physicaltime and exact accepted meshes checked before comparison.
+Measured orders: first/secondpositionmoments2.00246/2.00244,
+momentum2.01063,gasenergy2.03019,covariance2.00594. But sites1.52804
+andweights1.52412; their differences exceed the roundoff screen.
+Do not claim uniform2ndorder for the complete geometry method.
+TG(session15045,2hbound) adds8fixedsteps dt=.000125 to.001 with
+identical tolerances and physical IC to distinguish asymptotic behavior.
+
+TE firstlaunch failed before evolution because TD snapshot lacked the
+referenced libgate.so. Original verified OR library is now supplied
+explicitly; session29713,execution_resume_1618.txt. Failure receipt and
+log retained; no prior accepted trajectory was recomputed.
+
+
+### 16:23 Full-horizon vortex baseline passed and extended without reset
+
+PZ exited0 at16:20:37,T=.01,506steps. Numerical and physical gates
+passed with original10.4685979156durationbudget. Absolute mass
+7.22693520e-9,rate4.87658185e-5,generator1.43055707e-7.
+Densityfield7.86914517e-5,velocity.00017992875,pressure.00020409591.
+SS validated extension helper checks final receipt, gates, identities,
+no pending transaction and original horizon. TH(session94651,4hbound)
+continues exact accepted state/counters/accumulations to intermediate.05;
+only execution endpoint and config hashes change. Original initialarrays
+and10period horizon retained, earlier506paths remain in PZ with explicit
+provenance. Same immutablePZ code; no source-model change or replay.
+
+
+### 16:27 Fixed-state 3D reconstruction reuse validated in regression
+
+TI snapshot519tests passed at16:26:11, one pre-existing Sod entropylog
+warning. Within each splitweight-rate solve, geometry/density/factors
+are fixed; only ratesz vary. Prepare once locally per solve, with no
+cache reuse across evolving states. Optional reuse_geometry=False
+retains repeated-reconstruction comparison. Unit test checks bitwise
+root and identical residual history, exactlyone build in cached mode,
+and a new build on the next solve. TJ(session94847,2hbound) compares
+cached/uncached root on actual ORt=.018 against independently savedSY
+root/history. No physical model change or timing claim yet; current
+evolution snapshots remain unchanged.
+
+RR10fine independent audit exited0 at16:25:26 throughT=.002: absolute
+mass1.61430359e-7,quadrature2.91919626e-10,rate6.34118453e-6,
+generator2.94693129e-6. TK(session56634,1hbound) compares physical
+fields and independent equal-time coarse/fine paths at.002, sameIC.
+Target.02 and full3D validation remain incomplete.
+
+
+### 16:31 Completed10³ temporal control and finer geometry comparison
+
+TK exited0 at16:27:52.10³ atT=.002, coarse/fine absolute mass
+6.51135394e-7/1.61430359e-7 (about4.03×). PressureL1
+.0130788722/.0130785377 andvelocityL1.0138893741/.0138894467
+remain nearly unchanged: temporal improvement of path defects does
+not remove spatial field errors. No fullT=.02 certification.
+
+TG exited0 at16:28:36,8steps to.001, numerical andphysical passed.
+TL compares dt=.0005,.00025,.000125: sitesorder1.80959,weights1.80915
+(upfrom1.528/1.524 in coarsertriple),momentum2.00337,energy2.01489,
+covariance2.00280. Geometry orders move toward2 but uniform2ndorder
+is not yet proven. Finestpair maxsite difference3.64037e-12 andweight
+5.10796e-13; same physicalinitialarrays and full10period budgets.
+Continue real physical-time evolution; these short controls do not
+substitute for longduration accuracy.
+
+
+### 16:37 Profile-driven reference rule reuse; shock continuation
+
+TM completed16:33:00, one prepared residual/Jacobian evaluation under
+profiling took33.755s.39516sample integrals,26220face quadratures;
+leggauss4.587s andmeshgrid1.685s are repeated identical order4 rules.
+TN caches read-only reference barycentric/weight arrays perorder only;
+physical face vertices/density/flux are never cached across states.
+Reference arithmetic and output arrays match exactly in tests, caller
+mutation of returned face arrays cannot affect later calls.521tests
+passed16:35:44, one existing Sod warning. TO(session21615) measures
+actualroot equivalence/timing against savedSY root; no speedup claim yet.
+
+PH32 exit124 at16:35:43, originalPID1888720 absent. Resume session51963
+fromt=.01843155449884386,664steps,4hbound,execution_resume_1636.txt.
+Same verifiedsource/configuration/.15budgets and pending caches retained.
+No accepted interval replay or numerical-model change.
+
+
+### 16:40 Auxiliary Kepler interval completed; measured root reuse gain
+
+OT exited0 at16:37:38,T=.02,40acceptedsteps fromsourceT=.01.
+TP(session48848,1hbound) validates all40acceptance records and exact
+originalmass/source/configuration identities, then independently scores
+finalfields atorders16/24 and fluid angularmomentum ledger. This is
+auxiliary32² with a.01durationpathbudget, notcanonical100orbits.
+
+TJ exited0 at16:36:17. ActualORt=.018 splitmassroot: cachedpreparation
+276.969s, repeatedreconstruction368.337s, speedup1.329885. Bothroot
+arrays and fulliterationresidualhistory are bitwise identical to savedSY
+reference. This timing concerns one constraint solve, not a complete
+evolution step. No running source snapshot was changed.
+
+
+### 16:40 Reference-rule reuse preserves actual root
+
+TO exited0 at16:38:19. Root198.192832s, identical bitwise savedSY
+root and iteration history. Compared with TJ368.337477s original
+reconstruction this is 1.8585×; versus prepared-only276.969385s, 1.3975×.
+Single measured root solve, not fullsimulation speedup. TN521-test
+source is ready for subsequent verified continuations; currently live
+evolution snapshots remain immutable. Original OR libgate.so must be
+passed explicitly because regression snapshots contain no3Dlibrary.
+
+
+### 16:42 Auxiliary Kepler final field and angular audit completed
+
+TP exited0 at16:40:00. AtT=.02,order24 relativeL1 density.0325481914,
+massweightedvelocity.00042397214,pressure.00020808735. Densityfield
+error remains dominated by the coarse auxiliary representation; sampled
+maximum relative densityerror47.5261,positive minimumdensity9.27351e-5.
+Fluid angular ledger relative residual2.28376e-17; gas+potentialenergy
+overinitialthermal6.45743e-8, accumulatedmass3.86542e-7 forsource.01
+to.02. Strong ledger conservation does not prove density accuracy.
+No extension of this auxiliaryrun is used to claim canonical192/100orbits.
+CanonicalTA firstcoupled trial and its independent gates remain pending.
+
+
+### 16:49 Existing trajectories preserved; parallel unit validation completed
+
+User concern about repeated work is acknowledged: retain accepted trajectories
+and restrict further auxiliary comparisons to concrete blockers. No existing
+simulation was restarted in this check. TH continued the accepted PZ prefix
+from506steps/T=.01 to572steps/T=.011279687543581196. TE remains live
+(PID2154693,99.3%CPU) continuing OR savedT=.018; TA canonical192 first
+coupled trial remains live(PID2152031,99.3%CPU), with no accepted step yet.
+These are verified live processes, not an inference from quiet log files.
+
+TQ already submitted regression run exited0 at16:46:37:526passed,
+3subtests,one existing Sod entropy-log warning. Collection includes the
+3 imported SplitWeightRootTests again, so this is523distinct test methods,
+not526independent checks. The two new parallel tests verify a synthetic
+root and ordered reduction; no actual-state parallel benchmark or evolution
+claim is made. Running evolution sources remain unchanged.
+
+
+### 16:50 Incremental independent audits of newly accepted 3D intervals
+
+NT prior audit receipts are exit0 and no audit_3d_history process remains.
+Resume qd_n10_order6(session35333) and qk_n8fine_order6(session57013),
+1h bounds on lageunha, original NT manifest verified. The unchanged
+auditor verifies initial/configuration/library/source and per-record hashes
+before reusing every cached quadrature node. QD has a new fourth step
+(T=.008 versus audited.006); QK now has9steps(T=.009 versus audited.007).
+Only missing nodes are calculated. Simulation trajectories are not replayed.
+FullT=.02 coverage and physical accuracy remain pending.
+
+
+## 16:56 Direction audit after user raised missing long-time Kepler evidence
+
+This audit changes the next research decision: no further short auxiliary
+Kepler comparisons should be presented as progress through the known
+instability interval. Existing simulations and their records remain intact.
+
+Three distinct implementations must not be conflated:
+
+| Implementation | Existing evidence | Current limitation |
+|---|---|---|
+| C/CUDA particle/face solver, Exam/exam.c and exam_gpu.cu | HANDOVER_2026-10-09 section2.3 records inner-background disorder atT4–6 and timestep collapse at13.5 on canonical192 | Known instability; not repaired merely by GPU execution |
+| Python staggered Delaunay model, stagP2.py | Handover section5 records64² toT110.7,about23orbits, then hot-background robustness failure | Different state and boundary model; not canonical192/100-orbit success |
+| Current weighted-cell moment model | physical_accuracy_status_2026-10-16 documents wave/vortexT.05 gates; auxiliaryKepler32 reachesT.02 | No evidence atT6–10; canonical192 firststep only underway |
+
+Transition has documented mathematical motivation: fixedmass_weights report
+shows zero net mass flux does not remove momentum/energy advection;
+affine_moment_closure distinguishes cell-average and pointwise generator
+velocity and retains internal kinetic moments. These are grounds for research,
+not proof of superiority to the previous long-time trajectories. The missing
+deliverable is a physical long-time comparison and practical time-to-solution.
+
+CUDA files exam_gpu.cu/.h,exam_gpu_extract.c,laguerre_cuda.cu/.cuh and
+example_cuda.cu exist and are tracked, with no working-tree diff versusHEAD.
+This check does not assert no historical modifications. GPU ParticleSoA
+contains particle velocity, thermodynamics, gradients and force outputs; the
+current q,Q,D,Pi and potential-moment time evolution is not wired into this
+API. Geometry/face infrastructure is reusable subject to equivalence checks;
+selecting H200 alone does not run the new moment equations on CUDA.
+
+CurrentTA fixed dt1e-6 would require10millionsteps toT10 if unchanged.
+At16:51:59 its firststep had consumed35m22s elapsed without an accepted
+checkpoint. This is insufficient to predict steady-state step throughput,
+but no practical long-duration execution case has been established.
+TR sampled the existing process(no restart) for30s at10Hz:299samples,
+zeroerrors, all within midpoint source/quadratic velocity reconstruction.
+This local window is not a whole-step profile; summary and raw stacks are
+in Codex_TR_canonical_live_profile_20261017.
+
+Immediate priority: reconcile existing solution branches and attainable
+physical-time stepping before expanding diagnostics or attempting wholesale
+GPU porting. Preserve no-steering/original-cell-mass contracts, physical
+errors and historical failures. T>10 is an intermediate instability test;
+the full requested192²/100orbit criterion remains unchanged.
+
+
+### 16:59 Exact-neighbor acceleration and expired auxiliary control
+
+TR live samples identify quadratic-velocity preparation; source confirms
+a fullN distance scan percell in radial fitting. Added cKDTree candidate
+boxes for radialN>=128, followed by the original norm/strict-support
+predicate and sorted original indices. Tensor variants remain unchanged.
+TS immutable snapshot validates boundary points, large coordinate shifts,
+coincident centers and fullreconstruction array equality to dense search:
+29 targeted tests passed in2.37s. No active simulation source was modified;
+whole-step speed and long-time physics remain unproven.
+
+PQ auxiliary32 freeaffine shock timed out(exit124)at16:57:50 andPID2060967
+is absent at16:58:28. Its checkpoint and pending work remain intact.
+It is not blindly renewed while addressing the user's direction concern;
+mainPH/RP shock continuations and other live full-scope work are preserved.
+
+
+### 17:01 Correction: PH resume had failed before evolution
+
+Inspecting session51963 found config checksum failure, exit1 at16:37:01.
+The16:37and16:59 statements treatingPH aslive were incorrect. No
+run_resume_1636.log existed because the launch chain stopped at verification.
+All source/library entries match originalSHA256SUMS; the sole difference is
+simple_wave_config.json. Current hashaddfaaffb3ef5c66a19cfd06b5c5d35bb139f5ec36b4d8fcba8450b7461d0c52
+is already bound by BOTH originalinitialstate and acceptedcheckpoint. Original
+mass is exactlyunchanged. OriginalPID andfailedresume are terminal/absent.
+
+Preserved original manifest and failure receipt. resume_1701_audit.json
+records the discrepancy; SHA256SUMS.resume1701 binds unchangedcode and
+actualeffectiveconfiguration. Exacthistoricalreason forpre-run manifest
+divergence is not established; it is not silently described asnormalization.
+Session44602 resumes originalPH launch atT=.01843155449884386,664steps,
+4hbound. No accepted evolution/configuration was rewritten.
+
+TS full existing regression completed:529passes(includes3duplicate imported
+testmethods),3subtests,oneexistingSodwarning,81.09s. Neighbor search is
+validated but is not applied tolive snapshots.
+
+
+### 17:04 Recovered original executable and physical-time baseline
+
+Read-only inspection ofKepFloor01Rot_192_9303006 confirms executable,
+params,jobscript,log andsix khout snapshots remain. The executable matches
+Claude_build_tcf_9303006 and historicalPREFLIGHT SHA256 exactly:
+26bc669859447b6a71d04b061989b17ad71d7de583b291d436e641dc6ac41ef2.
+Lastreported physicaltime13.535,dt.000475469; final log records Slurm
+cancellation2026-10-08T16:46:49. Do not call this a program crash: the
+physicaldisorder is separately described inhandover, and execution wascancelled.
+
+Job requestedH200NVL,oneGPU,eightCPUthreads. params explicitlysets
+gpu_enabled=0 forforce; logshowsGPU dpq-tree kernels andCPU force/update
+timings(lastreported total1.8s/step). This is hybrid baseline execution,
+not evidence allTCF physics ran onCUDA. SourceCUDA remains available.
+khout files arebinary snapshots, not demonstrated restart checkpoints;
+restart capability must be checked before promising continuation fromthem.
+No baseline rerun or change toold executable/settings was made.
+
+
+### 17:06 Incremental 8³ path audit finished
+
+NT/qk_n8fine_order6 exited0; all9accepted paths throughT=.009
+are covered using retained earlier node caches. Accumulated absolute mass
+3.3645905428e-7, nestedquadraturedifference3.0862759359e-10,
+full.02duration-scaledrate5.6004956092e-6, generator3.7128991235e-6.
+This is prefix evidence, notT=.02 completion or physicalfield acceptance.
+QD independentpath remains live atnode15/16 ofstep4; TE andTA actual
+processes remain live. PH restart is verified advancing beyond664steps.
+
+
+### 17:10 Comparison conclusions and 10³ incremental audit
+
+User explicitly requested comparison ofcurrentandpreviouscodes. Current
+model is a separate fixed-cell-mass moment method; its storedp generally
+differs fromm*generatorvelocity. OriginalTCF is aparticle formulation.
+CurrentTCF implementation inExam/exam.c explicitly rejects nonuniformW
+andGFS_DYN_W2. Newmomentadvantage is not established by additional state
+variables or local conservation checks. Full-time physicalcomparison and
+practical runtime remain the missing decision evidence. TheTA dt1e-6 is
+a chosen first-trial value, not a demonstrated upper stable timestep.
+ExistingC/CUDA facilities and previousbaseline remain preserved.
+
+NT/qd_n10_order6 completed17:06:59,exit0,4paths throughT=.008.
+Absolute mass1.9978550235e-6,nestedquadraturedifference1.1892376832e-9,
+full.02duration-scaledrate2.5368812176e-5,generator1.1810198488e-5.
+Do not import the2Dgenerator threshold into3Dwithout its own contract.
+Both incremental audits finished,neither covers fullT=.02.
+
+
+### 17:12 Captured checkpoint integrity and newly accepted 3D paths
+
+Nine current checkpoints(PH,RP16/32,TH,ST,QD,QK,RR,TE) retain exact
+original mass arrays and initial configuration identity; 3Drawmasscolumns
+also match. SHA-bound captures are in JSON checkpoint_integrity_1711.
+This is stored-state integrity only, not physical/path validation.
+QD reachedT=.01/5steps andQK T=.010000000000000002/10steps.
+Both previousNT audits hadexit0 receipts andcompleted sessions. Their
+unchanged source/identity-aware caches are reused to audit onlynewpaths:
+QD session49538,QK59043,execution_resume_1712.txt,1hbound each.
+No simulation interval was rerun. FullT=.02 remains outstanding.
+
+
+### 17:14 Existing 10³ simulation continued after verified timeout
+
+QD original execution endedexit124 at17:13:39;PID1936379 absent.
+403manifestentries verified with0mismatches. CheckpointT=.01/5steps
+retains originalmass andconfiguration. resume_1714_provenance.json
+records checkpointSHA andoldreceipt. Continue sameoriginalsource/library
+withdt.002,end.02,splitorder4; no numerical-model orbackendchange.
+Newreceipt execution_resume_1714.txt; runtimebound4h. Independent audit
+of theaccepted fifthstep is separate and remains resumable.
+
+
+### 17:18 Live canonical process advances internally but has no accepted step
+
+TR/stack_locals_1717.json sampled existingPID2152031 without restarting.
+ActualSOsource stack is potential_moment_coupled_2d.step line68: first
+hydro stage after initial halfgravity kick, density provider cell17550.
+Earlier samples atline67 were the FIRSTkick, not finalkick; source-snapshot
+line numbers matter. No checkpoint/first-step acceptance exists yet.
+This confirms internal execution progress, not physical-time advancement.
+
+Current enriched driver savestrial only after theentire step returns. A
+walltime expiry inside this step cannot reuse unstored stages. Do not
+blindly rerun anotheridentical fourhourjob and claim preserved in-flight
+work. This is a checkpoint-granularity/runtime limitation to resolve before
+any subsequent canonical retry. Existingprocess remains unchanged.
+
+
+### 17:19 8³ fine independent paths throughT=.01 completed
+
+NT/qk_n8fine_order6 exited0 at17:19:12,10acceptedpaths covered.
+Absolute mass3.69683085497e-7, quadraturedifference3.08629492129e-10,
+full.02duration-scaledrate5.60049560920e-6, generator3.71289912354e-6.
+This extends existingcached evidence; original trajectories were notreplayed.
+FullT=.02 and physicalfield acceptance remain outstanding.
+
+
+### 17:21 8³ reaches fullT=.02 and passes configured field-L1 gates
+
+TE exited0 at17:17:08,10acceptedsteps. Independentorder12field
+errors: density.00326369134545, velocity/amplitude.0241344713214,
+pressure/amplitude².0286905303553; allbelowconfigured.05.
+Velocity relative tointegral referencevelocity is.1469342482, so the
+.0241normalization must not be advertised as2.41%reference-relativeerror.
+Minimumdensity.9347205795,minpressure.9147201574,maxsampled|vz|
+.003194417674; nonzero out-of-plane error remains. Stage masspeak
+1.97127316788e-13,storedmass exact,energyledger residual0 atoutputprecision.
+
+OriginalORfailure remains recorded. First9records/initial/configuration
+are byte-identical toOR; onlyfailedfinalstep wascontinued withadaptive
+facequadrature. NT/or_n8_order6 finalsession81707 usesunchangedauditor
+and samecached9paths, newtargetTE, tofinish actual10thpath.
+No rerooting ofaudit rates. Full3Dvalidation stillneeds finalpath audit,
+8³ time refinement and10³ spatial/time refinement outcomes.
+
+
+### 17:23 8³ time-refinement continues after verified timeout
+
+QK exited124 at17:22:41;PID1947710 absent.403manifestentries match,
+originalmass/configuration retained. Same source/library/config resumes
+fromT=.010000000000000002,10steps,dt.001,end.02,splitorder4.
+Session17322,execution_resume_1723.txt,4hbound; originalprefix not rerun.
+resume_1723_provenance.json binds capturedcheckpointSHA.
+The matched coarse8³ run is complete at.02; fine full-time result pending.
+
+
+### 17:25 Same-final-time spatial comparison from existing results
+
+No newevolution. Compare NS6, NX6fine, TE8 atT=.02 withorder12field
+quadrature andsame amplitude.3. DensityL1 .00454950→.00326369,
+velocity/amplitude .04264257→.02413447, pressure/amplitude²
+.05555725→.02869053 from6³to8³. Two-grid observed orders1.155,
+1.979,2.297 respectively, not a three-grid convergence proof.
+
+At6³ halvingdtchanges these errors relatively8.46e-6,8.36e-6,
+4.76e-5. This supports spatial error dominance atthisresolution/time.
+The8³ finalstep usesrefinedfacequadrature afterthepreservedORfailure;
+combined with onlytwoirregulargrids this limits a pure spatial-order claim.
+Thirdresolution and8³temporal outcomes arestillrequired. Inputreport
+hashes andexactvalues stored in JSON full_time_n6_n8_comparison_1725.
+
+
+### 17:30 Completed independent 8³ full-path audit
+
+NT/or_n8_order6 exited0 at17:29:24. All10paths throughT=.02
+are covered, capturedcheckpoint hash matches TE final checkpoint.
+Absolute relative mass defect2.85566059797e-6, nested quadrature
+difference8.87193614211e-10, duration-scaled peak rate2.55852357832e-5,
+generator path defect1.48474609986e-5. These are numerical estimates,
+not continuum enclosures; no unapproved 2D threshold is imported into3D.
+TE now has both final physical-field evidence and full independent path
+coverage. Overall3D remains incomplete pending temporal/spatial refinements.
+
+NT/qd_n10_order6 exited0 at17:28:34,5paths throughT=.01;
+absolute relative mass2.14631230931e-6, nested quadrature1.18925565211e-9.
+This is a prefix only. Both auditor PIDs absent; ten main simulation PIDs
+verified live on lageunha at17:30. Current completion matrix refreshed
+from captured checkpoint bytes; earlier matrix retained in history.
+No simulations restarted or numerical sources modified in this audit.
+
+
+### 17:32 Incremental 10³ fine-step path audit
+
+RR checkpoint now reachesT=.004,4steps. Prior independent audit ended
+exit0 throughT=.002. Confirmed no history auditor running before launch;
+verified NT source manifest unchanged. Session14399/PID2240208 runs
+order6,16interval audit using existing first2step node caches,1hour bound,
+on lageunha with one numerical thread. Actual process verified live17:32:10.
+This extends validation of the existing trajectory without a new simulation.
+The report, once finished, must be checked for its captured checkpoint and
+coverage; launch itself does not constitute a passed gate.
+
+
+### 17:33 Canonical live stage and restart limitation
+
+Read-only py-spy stack at17:32:53 confirms TA PID2152031 live after
+76m16s,99.3percentCPU,RSS22770784KiB. SO stage line45 is rebuilding
+geometry after its first RHS and smooth-path mass check returned. Caller
+step line68 is the FIRST hydro stage, not final gravity kick. No trial or
+accepted checkpoint exists. This is internal computational progress only.
+The immutable driver writes trial.json after the entire coupled step;
+there is no durable internal-stage restart. If the4hour bound expires
+without a trial, blindly relaunching the same command repeats unsaved work.
+No active source or process timeout was modified.
+
+
+### Completed-stage restart support (TU2)
+
+Future enriched continuations now save four expensive stage results with
+atomic replacement and file/directory fsync. Cache identity binds run source,
+configuration, source manifest, starting checkpoint, timestep and stage name;
+payload checksums reject corruption. Local trusted pickle preserves numerical
+dtypes. A partially written temporary file is not treated as a completed stage.
+Current running snapshots are unchanged and cannot gain this retroactively.
+Interrupted work inside one stage still must be recomputed.
+
+TU initial tests incorrectly required equality of entire pickle streams,
+including reference metadata. TU2 checks each value's type and exact numerical
+bytes instead:11targeted tests and3interruption subtests passed. Actual9cell
+smooth coupled midpoint-gravity calculation interrupted at three stage
+boundaries also matches uninterrupted results bitwise. This is restart
+equivalence, not new evidence of canonical physical accuracy.
+
+Full TU2 regression:533passed,6subtests,81.12s; includes3previous duplicate
+imported test methods. Existing Sod reference log warning retained. Original
+TU failure log, TU2 numerical fixture, manifest, and execution receipt preserved.
+No existing simulation was restarted, and no live-source update was performed.
+
+
+### 17:39 Whole-scope progress check
+
+All10main simulations andRR independent audit verified live by ps.
+RP16 checkpointT=.0969384; PH32T=.0191821 andRP32T=.0185948.
+PH/RP logs include quadrature refinement and adaptive step rejections;
+accepted progress continues. They have not reached the shock final time.
+ST reachesT=.00630389, TH=.0138640, RF64=.00123694; none meets
+10period target. QK8fineT=.01,QD10coarseT=.01,RR10fineT=.004.
+RR path audit is processing newstep3 using retained first2steps.
+CanonicalTA remains before its first accepted checkpoint.
+Matrix refreshed from hashed checkpoint bytes; all4completion flags false.
+
+
+### Historical CUDA source identity confirmed
+
+Read-only Git tree/blob comparison resolves the earlier broad limitation:
+exam_gpu.cu,exam_gpu.h,exam_gpu_extract.c,laguerre_cuda.cu,
+laguerre_cuda.cuh,example_cuda.cu all have identical blob IDs in
+tcf-w0-baseline-2026-10-08(commit9f7cfacf),HEAD,and current working files.
+Thus these six files are byte-identical to that historical baseline.
+The missing c4bd01ef object is specifically the older CPU Exam/exam.c;
+its full historical text diff remains unavailable locally. This does not
+prove binary equivalence or imply new moment evolution uses CUDA.
+No Git checkout, fetch, source replacement, or simulation restart occurred.
+
+
+### 17:45 Prepared cache-only 3D continuation source
+
+QD andQK base403file manifests are identical;RR usesQD source. TV is
+a verified copy of this original base with only3files replaced fromTN:
+split_face_mass_3d,power_cells_3d,split_face_rules_3d. Changes cache
+fixed-state preparation within one root solve and immutable reference
+triangle quadrature; no adaptive face-order change, parallel worker change,
+timestep change, tolerance change, or fluid-model change is included.
+Original-base regression467passed,oneexistingSodwarning,63.82s,exit0.
+TN/TO previously established real-root bitwise equivalence and1.8585x
+isolated-root speedup; whole-step speed remains unmeasured.
+This snapshot is available for a future verified checkpoint continuation.
+No active simulation was modified or duplicated. At17:45 all3remaining
+3D evolutions andRR audit remain live;RR newstep3 reachednode12/16.
+
+
+### 17:49 Independent 10³ fine prefix extends toT=.003
+
+RR audit completed thirdpath, all17nodes: accumulated absolute relative
+mass2.39248581411e-7, nested quadrature difference2.91993060882e-10,
+duration-scaled peak rate6.34118452680e-6, generator defect2.94693129269e-6.
+PID2240208 remains live and proceeds tofourthpath. This prefix does not
+coverT=.02 or establish physical accuracy. Captured prefix hash recorded.
+RP16 shock reachesT=.10031375, still short oftarget.15.

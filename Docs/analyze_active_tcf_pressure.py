@@ -1,0 +1,6 @@
+from pathlib import Path
+import numpy as np,ctypes,json
+p=Path('/gpfs/kjhan/LagForce/Codex_active_tcf_pressure_20261018');src=p.parent/'Codex_existing_interface_backend_20261018';a=np.fromfile(src/'inputs.bin').reshape(-1,11);generic=np.fromfile(src/'cpu_outputs.bin').reshape(-1,6)[:,0];n=json.loads((src/'inputs.json').read_text())['actual_rows'];f=ctypes.CDLL(str(p/'probe.so')).batch;ptr=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS');f.argtypes=[ctypes.c_int,ptr,ptr];t=np.empty(len(a));f(len(a),a,t);assert np.isfinite(t).all();du=a[:n,6]-a[:n,2];guard=du>np.maximum(a[:n,3],a[:n,7]);nonvac=du<2*(a[:n,3]+a[:n,7])/(a[:n,9]-1);diff=t[:n]-generic[:n]
+r={'actual_samples':n,'TCF_positive_count':int((t[:n]>0).sum()),'TCF_zero_count':int((t[:n]==0).sum()),'generic_guard_samples':int(guard.sum()),'guard_nonvacuum_samples':int((guard&nonvac).sum()),'guard_nonvacuum_TCF_positive':int((guard&nonvac&(t[:n]>0)).sum()),'actual_pressure_difference_max_abs':float(abs(diff).max()),'actual_difference_above_1e_minus12':int((abs(diff)>1e-12).sum()),'scope':'Existing CPU TCF pressure helper versus generic HLLC helper; raw cell-constant inputs, not reconstructed active face RHS.'}
+with (p/'result.json').open('x') as fp:json.dump(r,fp,indent=2);fp.write('\n')
+np.save(p/'pressure.npy',t);print(json.dumps(r,indent=2))

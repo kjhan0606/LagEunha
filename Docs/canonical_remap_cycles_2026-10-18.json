@@ -1,0 +1,95 @@
+{
+  "scope": "Fixed-geometry weight cycles with piecewise constant projection, no physical evolution.",
+  "source_time": 2.0029059177634028,
+  "rows": [
+    {
+      "cycles": 1,
+      "weight_fraction": 0.25,
+      "total_absolute_fraction_path": 0.5,
+      "coverage_max_relative_error": 5.1958437552457326e-14,
+      "aggregate_change_m_px_py_Pixx_Pixy_Piyy_U": [
+        1.0547118733938987e-14,
+        -5.837344496661956e-16,
+        -3.7947076036992655e-16,
+        1.354472090042691e-14,
+        -1.3704315460216776e-16,
+        1.3433698597964394e-14,
+        6.369687763352339e-19
+      ],
+      "internal_K_over_original_U": 0.042555889370965376,
+      "velocity_change_mass_RMS": 0.00043682804788524704,
+      "mass_change_L1_relative": 0.0007118406911919581,
+      "minimum_U": 3.7602776682330776e-08,
+      "seconds": 2.922167843207717
+    },
+    {
+      "cycles": 4,
+      "weight_fraction": 0.0625,
+      "total_absolute_fraction_path": 0.5,
+      "coverage_max_relative_error": 5.684341886080802e-14,
+      "aggregate_change_m_px_py_Pixx_Pixy_Piyy_U": [
+        6.583622536027178e-14,
+        -2.1094237467877974e-15,
+        -1.3340023530261647e-15,
+        5.384581669432009e-14,
+        -5.741934705483231e-16,
+        5.440092820663267e-14,
+        2.72405795836983e-18
+      ],
+      "internal_K_over_original_U": 0.0425858854301024,
+      "velocity_change_mass_RMS": 0.0004367530250819543,
+      "mass_change_L1_relative": 0.0007118916936396439,
+      "minimum_U": 3.7602776642809026e-08,
+      "seconds": 2.8993655517697334
+    },
+    {
+      "cycles": 16,
+      "weight_fraction": 0.015625,
+      "total_absolute_fraction_path": 0.5,
+      "coverage_max_relative_error": 5.1958437552457326e-14,
+      "aggregate_change_m_px_py_Pixx_Pixy_Piyy_U": [
+        2.653433028854124e-13,
+        -1.0876282513505586e-14,
+        -5.502542865798432e-15,
+        2.1715962361668062e-13,
+        -2.168404344971009e-15,
+        2.1782575743145571e-13,
+        1.089623183347932e-17
+      ],
+      "internal_K_over_original_U": 0.04259355687622231,
+      "velocity_change_mass_RMS": 0.0004367482963042458,
+      "mass_change_L1_relative": 0.0007119312082369434,
+      "minimum_U": 3.760277686500579e-08,
+      "seconds": 2.89774408377707
+    },
+    {
+      "cycles": 64,
+      "weight_fraction": 0.00390625,
+      "total_absolute_fraction_path": 0.5,
+      "coverage_max_relative_error": 5.1958437552457326e-14,
+      "aggregate_change_m_px_py_Pixx_Pixy_Piyy_U": [
+        1.0538236949741986e-12,
+        -3.9327915923870194e-14,
+        -2.5895952049381776e-14,
+        8.690825836765725e-13,
+        -1.086110368309079e-14,
+        8.681944052568724e-13,
+        4.343584953520052e-17
+      ],
+      "internal_K_over_original_U": 0.04259549362169881,
+      "velocity_change_mass_RMS": 0.00043674778072115664,
+      "mass_change_L1_relative": 0.0007119422581344376,
+      "minimum_U": 3.7602776935203066e-08,
+      "seconds": 2.904251117259264
+    }
+  ],
+  "initial_thermal_sum": 6.488644187182621e-05,
+  "reference": "Retaining original donor subcells without projection restores exactly the original field when geometry returns.",
+  "limitations": [
+    "Uniform spatial lift, unlike previous fitted-density lift; preserves m,p,Pi,U but not original point angular momentum or potential energy.",
+    "Projection is piecewise constant, not affine or production solver.",
+    "Total variation fixed but number of reversals changes; not time convergence along one fixed smooth weight path.",
+    "Internal kinetic energy is retained as covariance, not thermalized.",
+    "No pressure, gravity, physical evolution, backend parity or MPI claim."
+  ]
+}

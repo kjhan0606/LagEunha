@@ -10,6 +10,9 @@
 #include "cosmology.h"
 #include "params.h"
 #include "Exam/exam3d_gfs.h"
+#ifdef USE_FULL_MOMENT_KEPLER
+#include "Exam/full_moment_kepler.h"
+#endif
 
 #ifdef PGCC
 #define FUNC(MAIN) (MAIN_)
@@ -109,6 +112,13 @@ int FUNC(MAIN)(int argc, char **argv)
 	mpi_fftw_initialize(argc, argv);
 #endif
 	checkarg(argc);
+#ifdef USE_FULL_MOMENT_KEPLER
+	if(full_moment_kepler_is_config(argv[1])){
+		int result=full_moment_kepler_run(argv[1],MPI_COMM_WORLD);
+		MPI_Finalize();
+		return result;
+	}
+#endif
 
 	/* 3D GFS path (Exam/exam3d_gfs.c). Only a params file with
 	 * "define Simulation Model = Hydro3D" takes this branch; every other

@@ -1,0 +1,46 @@
+{
+  "cells": 1590,
+  "heights": [
+    5e-05,
+    0.0001
+  ],
+  "common_input": "verified CPU1 stage raw/cov_A/K/Qfactor, captured Lbase=Llinear",
+  "scope": "Frozen-coefficient factor maps, not new midpoint stages or evolution.",
+  "inputs": {
+    "cpu1": {
+      "_input.bin": "f337762932a3fd2343bebe783506d61e3a76a02bd57f9ba7acf1a8e6a12e7009",
+      "_Q.bin": "e9fdd6f9d477134fb8fbdae64c81bce894a2ef6e8e29feb852bdd2ec9e4e818d",
+      "_reference.npz": "c198c9b0917c23baeb71cb0bd90ac926a0e5623dc650f125e252f98df483251c"
+    },
+    "omp4": {
+      "_input.bin": "f337762932a3fd2343bebe783506d61e3a76a02bd57f9ba7acf1a8e6a12e7009",
+      "_Q.bin": "e9fdd6f9d477134fb8fbdae64c81bce894a2ef6e8e29feb852bdd2ec9e4e818d",
+      "_reference.npz": "c198c9b0917c23baeb71cb0bd90ac926a0e5623dc650f125e252f98df483251c"
+    },
+    "cuda": {
+      "_input.bin": "42c72643a6d0b38f2cbf346aa9c4d4b70d62a49ea566ba74aebdf0ccba5586d3",
+      "_Q.bin": "e9fdd6f9d477134fb8fbdae64c81bce894a2ef6e8e29feb852bdd2ec9e4e818d",
+      "_reference.npz": "37515c975bb889efffce8f0fcf4a530d9f0c9612232e0390672ff4e0978ba8eb"
+    }
+  },
+  "common_files": [
+    "cpu1_input.bin",
+    "cpu1_Q.bin"
+  ],
+  "provisional_raw": "m exact raw_initial m; other raw moments initial+h*same_backend_stage_rate; frozen exact raw_initial. Fixed coefficients only, not an actual evaluated midpoint timestep.",
+  "unapplied_h_times_dm_maximum": {
+    "cpu1": {
+      "5e-05": 5.44811591673966e-22,
+      "0.0001": 1.089623183347932e-21
+    },
+    "omp4": {
+      "5e-05": 5.44811591673966e-22,
+      "0.0001": 1.089623183347932e-21
+    },
+    "cuda": {
+      "5e-05": 5.44811591673966e-22,
+      "0.0001": 1.089623183347932e-21
+    }
+  },
+  "Q_layout": "column-major physical vectors stored as rows [column][2], original CSR node/sample order, frozen columns zero"
+}

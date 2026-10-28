@@ -1,0 +1,143 @@
+{
+  "scope": "Compare converged split-face orders and the saved unsplit order32 RHS.",
+  "report": {
+    "scope": "Instantaneous hydro moment RHS on new continuous t0 projection.\nFrozen outer patch, exact Euler pressure, no gravity or time evolution.\n",
+    "source": "/gpfs/kjhan/LagForce/Codex_continuous_kepler_interface_split_20261018/moments_split_q16.npz",
+    "sha256": "cc7a74956b9bb6a363cceb7b9cce365d4379397ceea9668ecfb3cc50c523037d",
+    "gamma": 1.6666669845581055,
+    "maximum_relative_pressure_decode_error": 6.276312802810935e-12,
+    "maximum_factor_recomposition_error": 5.169878828456423e-26,
+    "results": [
+      {
+        "cutoff": 0.55,
+        "face_order": 4,
+        "active_cells": 962,
+        "split_history": [
+          {
+            "iteration": 0,
+            "weight_rate_change": 5.851486608444804e-07,
+            "split_faces": 2636,
+            "nodes": 100856,
+            "mass_flux": 1.4143417340073405e-16
+          },
+          {
+            "iteration": 1,
+            "weight_rate_change": 2.1335031939913318e-11,
+            "split_faces": 2636,
+            "nodes": 100856,
+            "mass_flux": 3.0666658448752493e-16
+          },
+          {
+            "iteration": 2,
+            "weight_rate_change": 3.734968063995314e-15,
+            "split_faces": 2636,
+            "nodes": 100856,
+            "mass_flux": 3.0813025742038036e-16
+          }
+        ],
+        "status": "completed",
+        "mass_flux": 3.0813025742038036e-16,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.0587234214320951e-16,
+          1.6338926739356552e-16,
+          1.474514954580286e-16,
+          -2.2280354644577116e-17
+        ],
+        "maximum_active_pressure_rate": 1.2650487123509976e-06,
+        "weight_rate_range": 0.004805128923114755,
+        "seconds": 65.03765356726944
+      },
+      {
+        "cutoff": 0.55,
+        "face_order": 8,
+        "active_cells": 962,
+        "split_history": [
+          {
+            "iteration": 0,
+            "weight_rate_change": 5.879123037458127e-07,
+            "split_faces": 2636,
+            "nodes": 201712,
+            "mass_flux": 2.953978656803258e-14
+          },
+          {
+            "iteration": 1,
+            "weight_rate_change": 1.2810533016327508e-11,
+            "split_faces": 2636,
+            "nodes": 201712,
+            "mass_flux": 4.9174260583623175e-14
+          },
+          {
+            "iteration": 2,
+            "weight_rate_change": 2.7798943702528334e-16,
+            "split_faces": 2636,
+            "nodes": 201712,
+            "mass_flux": 4.917800108111825e-14
+          }
+        ],
+        "status": "completed",
+        "mass_flux": 4.917800108111825e-14,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.3414291379076904e-16,
+          -2.722702705654223e-16,
+          4.3503612170980865e-17,
+          4.1925420383656653e-16
+        ],
+        "maximum_active_pressure_rate": 1.2650487465529911e-06,
+        "weight_rate_range": 0.004805117055271387,
+        "seconds": 120.67122464068234
+      }
+    ],
+    "limits": "Instantaneous fixed geometry only. Frozen reservoir affects adjacent active cells. No gravity, time evolution, production restart, GPU or MPI test. Cholesky uses positive raw covariance without clipping."
+  },
+  "comparisons": [
+    {
+      "cases": [
+        "split4",
+        "split8"
+      ],
+      "pressure_rate": {
+        "relative_l2": 4.578069920847454e-06,
+        "max_abs": 2.0120018295204968e-11
+      },
+      "momentum_rate": {
+        "relative_l2": 1.813372481171197e-05,
+        "max_abs": 4.306821412849125e-09
+      },
+      "energy_rate": {
+        "relative_l2": 6.415077347368118e-05,
+        "max_abs": 4.033111546614739e-09
+      },
+      "weight_rate": {
+        "relative_l2": 3.0973510946616314e-06,
+        "max_abs": 6.879661149572155e-08
+      }
+    },
+    {
+      "cases": [
+        "unsplit32",
+        "split8"
+      ],
+      "pressure_rate": {
+        "relative_l2": 0.007525118804312243,
+        "max_abs": 1.689000160600405e-08
+      },
+      "momentum_rate": {
+        "relative_l2": 5.6814265734441886e-05,
+        "max_abs": 1.482050219547349e-08
+      },
+      "energy_rate": {
+        "relative_l2": 0.0002773762787279352,
+        "max_abs": 8.564925230771523e-09
+      },
+      "weight_rate": {
+        "relative_l2": 4.7356093994732135e-05,
+        "max_abs": 5.879172773038364e-07
+      }
+    }
+  ],
+  "limits": "Instantaneous affine hydro at t0 only. No boundary independence, gravity, or time evolution established."
+}

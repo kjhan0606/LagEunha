@@ -1,0 +1,317 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator/rhs.dat",
+  "source_sha256": "709bf217329e3583132bfb68da0975331404248f3ef666b2e89a9c992b033c04",
+  "geometry_source_sha256": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef",
+  "scope": "Prescribed circular orbit samples of an independently recomputed regularized weight target. This is not continuous fluid evolution, a smooth weight ODE, or long-term stability evidence.",
+  "candidate": "At each sample solve damped least squares of the W=0 generator-compression Jacobian, damping=1; bound max |w|/source_volume by .25. Locations and velocities are not optimized.",
+  "mass_coupling": "Only weight-driven face displacement produces remap mass transfer. Equal fixed weights give zero such exchange. Baseline hydrodynamic motion is not simulated.",
+  "records": [
+    {
+      "elapsed": 0.0,
+      "lsmr_iterations": 125,
+      "max_weight_over_source_volume": 0.2103800656825091,
+      "voronoi_generator_compression_rms": 0.1516015326663816,
+      "weighted_generator_compression_rms": 0.06741342475085128,
+      "weighted_to_voronoi_compression_ratio": 0.44467508715233817,
+      "min_volume_over_voronoi": 0.6365614245678544,
+      "max_volume_over_voronoi": 1.425038175438686,
+      "sample_all_site_plane_violation": 4.2500725161431774e-17
+    },
+    {
+      "elapsed": 0.001,
+      "lsmr_iterations": 125,
+      "max_weight_over_source_volume": 0.2114689223260923,
+      "voronoi_generator_compression_rms": 0.15215347577479985,
+      "weighted_generator_compression_rms": 0.06755539176059976,
+      "weighted_to_voronoi_compression_ratio": 0.443995061017124,
+      "min_volume_over_voronoi": 0.6408199533634015,
+      "max_volume_over_voronoi": 1.4289540593713979,
+      "sample_all_site_plane_violation": 4.0766001685454967e-17,
+      "weight_exchange": {
+        "interval": 0.001,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": 3.0450834453792097e-19,
+        "exact_mass_change_fraction_rms": 0.02226470607970268,
+        "exact_mass_change_fraction_max": 0.172051637309602,
+        "endpoint_secant_fractional_mass_rate_rms": 22.193498393955227,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.052552830713249406,
+        "global_mass_rate": -1.3010426069826053e-18,
+        "global_momentum_rate": [
+          -5.753471294224835e-19,
+          -6.635709048349392e-19
+        ],
+        "global_hydrodynamic_energy_rate": -1.1926223897340549e-18,
+        "first_order_donor_mixing_power": 0.00038314744188653444,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 11.735648983570412,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.002,
+      "lsmr_iterations": 125,
+      "max_weight_over_source_volume": 0.21494732319055077,
+      "voronoi_generator_compression_rms": 0.15239798078106934,
+      "weighted_generator_compression_rms": 0.06721782892814801,
+      "weighted_to_voronoi_compression_ratio": 0.44106771351984814,
+      "min_volume_over_voronoi": 0.6241429844321822,
+      "max_volume_over_voronoi": 1.429201357122533,
+      "sample_all_site_plane_violation": 3.946495907847236e-17,
+      "weight_exchange": {
+        "interval": 0.001,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": -4.9607808044928184e-18,
+        "exact_mass_change_fraction_rms": 0.024719942358491207,
+        "exact_mass_change_fraction_max": 0.18905695920644025,
+        "endpoint_secant_fractional_mass_rate_rms": 24.572610118307004,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.05673576020356007,
+        "global_mass_rate": -4.336808689942018e-19,
+        "global_momentum_rate": [
+          2.1271114887923617e-18,
+          -2.692505981084607e-19
+        ],
+        "global_hydrodynamic_energy_rate": 5.692061405548898e-19,
+        "first_order_donor_mixing_power": 0.00038596623466866244,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 11.857298943647777,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.005,
+      "lsmr_iterations": 125,
+      "max_weight_over_source_volume": 0.18482334855566385,
+      "voronoi_generator_compression_rms": 0.15376899571915714,
+      "weighted_generator_compression_rms": 0.06952231856321077,
+      "weighted_to_voronoi_compression_ratio": 0.4521218223352772,
+      "min_volume_over_voronoi": 0.5951364343503958,
+      "max_volume_over_voronoi": 1.421652094651499,
+      "sample_all_site_plane_violation": 8.673617379884035e-17,
+      "weight_exchange": {
+        "interval": 0.003,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": 3.579137718623046e-18,
+        "exact_mass_change_fraction_rms": 0.04090457152329166,
+        "exact_mass_change_fraction_max": 0.2823116834045988,
+        "endpoint_secant_fractional_mass_rate_rms": 13.571469646711453,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.03714378248015044,
+        "global_mass_rate": -6.2341624917916505e-19,
+        "global_momentum_rate": [
+          8.425860242812153e-19,
+          -1.3793402150444247e-19
+        ],
+        "global_hydrodynamic_energy_rate": 2.710505431213761e-20,
+        "first_order_donor_mixing_power": 0.0002668643468801031,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 8.19039726870256,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.01,
+      "lsmr_iterations": 126,
+      "max_weight_over_source_volume": 0.1613924911053106,
+      "voronoi_generator_compression_rms": 0.1535229857764811,
+      "weighted_generator_compression_rms": 0.07056942690064555,
+      "weighted_to_voronoi_compression_ratio": 0.459666847565027,
+      "min_volume_over_voronoi": 0.6713463960583748,
+      "max_volume_over_voronoi": 1.4005242395899502,
+      "sample_all_site_plane_violation": 4.705437428587089e-17,
+      "weight_exchange": {
+        "interval": 0.005,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": -3.8725287557282544e-19,
+        "exact_mass_change_fraction_rms": 0.06341141442303037,
+        "exact_mass_change_fraction_max": 0.4707647714222964,
+        "endpoint_secant_fractional_mass_rate_rms": 12.271289599826083,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.03792229446323243,
+        "global_mass_rate": 1.8973538018496328e-19,
+        "global_momentum_rate": [
+          2.821678505540888e-20,
+          2.272298229907669e-19
+        ],
+        "global_hydrodynamic_energy_rate": -5.963111948670274e-19,
+        "first_order_donor_mixing_power": 0.0003078122504765722,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 9.458815665465524,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.02,
+      "lsmr_iterations": 126,
+      "max_weight_over_source_volume": 0.20582747826321476,
+      "voronoi_generator_compression_rms": 0.15405279137510647,
+      "weighted_generator_compression_rms": 0.06917773540385455,
+      "weighted_to_voronoi_compression_ratio": 0.44905213846734,
+      "min_volume_over_voronoi": 0.6101261008986848,
+      "max_volume_over_voronoi": 1.513374759098992,
+      "sample_all_site_plane_violation": 4.8138576458356397e-17,
+      "weight_exchange": {
+        "interval": 0.01,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": 1.9965625357967927e-18,
+        "exact_mass_change_fraction_rms": 0.07757616090248985,
+        "exact_mass_change_fraction_max": 0.4176073953849521,
+        "endpoint_secant_fractional_mass_rate_rms": 7.775629430118717,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.026469297654629558,
+        "global_mass_rate": -3.6591823321385775e-19,
+        "global_momentum_rate": [
+          6.11981304391232e-20,
+          -2.448984008748996e-19
+        ],
+        "global_hydrodynamic_energy_rate": -4.0657581468206416e-19,
+        "first_order_donor_mixing_power": 0.00025870702679394944,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 7.9589751554264625,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.05,
+      "lsmr_iterations": 124,
+      "max_weight_over_source_volume": 0.1685227146783638,
+      "voronoi_generator_compression_rms": 0.15946422317715428,
+      "weighted_generator_compression_rms": 0.0708787106782698,
+      "weighted_to_voronoi_compression_ratio": 0.44448033086097444,
+      "min_volume_over_voronoi": 0.6568268060971275,
+      "max_volume_over_voronoi": 1.3663072444653197,
+      "sample_all_site_plane_violation": 4.206704429243757e-17,
+      "weight_exchange": {
+        "interval": 0.030000000000000002,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": -2.4686775247726583e-18,
+        "exact_mass_change_fraction_rms": 0.1185419666812439,
+        "exact_mass_change_fraction_max": 0.7106042217123038,
+        "endpoint_secant_fractional_mass_rate_rms": 3.9442294205744006,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.014482723813302005,
+        "global_mass_rate": -3.3881317890172014e-20,
+        "global_momentum_rate": [
+          1.4558378780933287e-20,
+          1.1252303308681346e-19
+        ],
+        "global_hydrodynamic_energy_rate": -1.2197274440461925e-19,
+        "first_order_donor_mixing_power": 0.00014252456378175004,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 4.38947464027169,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.1,
+      "lsmr_iterations": 124,
+      "max_weight_over_source_volume": 0.17779397910737135,
+      "voronoi_generator_compression_rms": 0.15852887292144255,
+      "weighted_generator_compression_rms": 0.06215355188701345,
+      "weighted_to_voronoi_compression_ratio": 0.39206455418258757,
+      "min_volume_over_voronoi": 0.7279782829809139,
+      "max_volume_over_voronoi": 1.3894230003995598,
+      "sample_all_site_plane_violation": 4.228388472693467e-17,
+      "weight_exchange": {
+        "interval": 0.05,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": 1.4746843611697369e-18,
+        "exact_mass_change_fraction_rms": 0.13531574693623327,
+        "exact_mass_change_fraction_max": 0.6906424222925284,
+        "endpoint_secant_fractional_mass_rate_rms": 2.644337227656709,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.01009397501186911,
+        "global_mass_rate": 8.131516293641283e-20,
+        "global_momentum_rate": [
+          4.658681209898652e-20,
+          4.139873529705393e-20
+        ],
+        "global_hydrodynamic_energy_rate": -7.453889935837843e-20,
+        "first_order_donor_mixing_power": 9.981087127668332e-05,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 3.0724994140178707,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.25,
+      "lsmr_iterations": 121,
+      "max_weight_over_source_volume": 0.17920554061948873,
+      "voronoi_generator_compression_rms": 0.16279976393070114,
+      "weighted_generator_compression_rms": 0.06447045284816812,
+      "weighted_to_voronoi_compression_ratio": 0.3960107268681987,
+      "min_volume_over_voronoi": 0.6339252270690928,
+      "max_volume_over_voronoi": 1.385871029675122,
+      "sample_all_site_plane_violation": 4.2717565595928875e-17,
+      "weight_exchange": {
+        "interval": 0.15,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": -2.7172816947917955e-18,
+        "exact_mass_change_fraction_rms": 0.13298056618521809,
+        "exact_mass_change_fraction_max": 0.5666068974823613,
+        "endpoint_secant_fractional_mass_rate_rms": 0.874318903659798,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.0034459003113719603,
+        "global_mass_rate": 2.371692252312041e-20,
+        "global_momentum_rate": [
+          3.0810823456375175e-20,
+          1.9508227566450605e-20
+        ],
+        "global_hydrodynamic_energy_rate": -5.082197683525802e-20,
+        "first_order_donor_mixing_power": 3.5294339828569023e-05,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 1.0858127738486791,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 0.5,
+      "lsmr_iterations": 124,
+      "max_weight_over_source_volume": 0.1756530314373805,
+      "voronoi_generator_compression_rms": 0.1579068657902083,
+      "weighted_generator_compression_rms": 0.0706031351078344,
+      "weighted_to_voronoi_compression_ratio": 0.4471188428350939,
+      "min_volume_over_voronoi": 0.7218846323497332,
+      "max_volume_over_voronoi": 1.3600259785701074,
+      "sample_all_site_plane_violation": 3.707971429900425e-17,
+      "weight_exchange": {
+        "interval": 0.25,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": -1.9597166025912306e-18,
+        "exact_mass_change_fraction_rms": 0.13380321378378074,
+        "exact_mass_change_fraction_max": 0.6172741813261245,
+        "endpoint_secant_fractional_mass_rate_rms": 0.5354495828491865,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.002109027395445163,
+        "global_mass_rate": -3.218725199566341e-20,
+        "global_momentum_rate": [
+          -2.5659556191701195e-20,
+          -1.98622608686233e-20
+        ],
+        "global_hydrodynamic_energy_rate": 7.623296525288703e-21,
+        "first_order_donor_mixing_power": 2.132360509686533e-05,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 0.6568007187913453,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    },
+    {
+      "elapsed": 1.0,
+      "lsmr_iterations": 123,
+      "max_weight_over_source_volume": 0.15748558513237126,
+      "voronoi_generator_compression_rms": 0.1717476558736617,
+      "weighted_generator_compression_rms": 0.05779284337529213,
+      "weighted_to_voronoi_compression_ratio": 0.3364985861455063,
+      "min_volume_over_voronoi": 0.6881632618829044,
+      "max_volume_over_voronoi": 1.3359862364192818,
+      "sample_all_site_plane_violation": 5.0090140368830305e-17,
+      "weight_exchange": {
+        "interval": 0.5,
+        "uniform_density": 0.01,
+        "exact_frozen_position_mass_change_sum": -5.913560521255898e-18,
+        "exact_mass_change_fraction_rms": 0.12563663447565537,
+        "exact_mass_change_fraction_max": 0.4650354077597814,
+        "endpoint_secant_fractional_mass_rate_rms": 0.25028469179846696,
+        "endpoint_secant_absolute_face_mass_flux_sum": 0.0010536801604816323,
+        "global_mass_rate": 2.117582368135751e-21,
+        "global_momentum_rate": [
+          1.1911400820763599e-21,
+          4.12266817296429e-21
+        ],
+        "global_hydrodynamic_energy_rate": 8.470329472543003e-22,
+        "first_order_donor_mixing_power": 1.0287081365728362e-05,
+        "first_order_inner_mixing_over_thermal_energy_per_time": 0.31652823643188516,
+        "warning": "Secant weight rate sampled at endpoint geometry; not a time-integrated remap. Uniform density and point-sampled donor velocities, not evolved fluid. Global energy excludes external gravitational potential."
+      }
+    }
+  ],
+  "seconds": 48.417938094586134,
+  "limitations": [
+    "Target can be nonsmooth across topology events; small-interval rates must be examined before choosing a weight law.",
+    "First-order donor mixing is not a lower bound on high-order conservative reconstruction.",
+    "Pressure, gravity, density contrast, angular momentum moments and coupled energy evolution remain unverified."
+  ]
+}

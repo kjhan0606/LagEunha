@@ -1,3 +1,5 @@
+void gfs_rmem_snapshot_read(SimParameters *, const char *, double);
+void gfs_rmem_snapshot_write(SimParameters *, const char *, double);
 double exam2d_vph(SimParameters *, double (*)(SimParameters *, double, double, double),
 		void (*)(SimParameters *, postype, postype, postype, postype, postype,
 			void (*)(SimParameters *, postype)));

@@ -1,0 +1,43 @@
+{
+  "scope": "Read completed face-local CPU/OpenMP/CUDA relaxation outputs.",
+  "valid_faces": 966,
+  "guard_cases": 4,
+  "backends": {
+    "cpu1": {
+      "max_absolute_reference_error": 1.2694044841142332e-14,
+      "max_absolute_cpu_difference": 0.0,
+      "bitwise_equal_cpu": true,
+      "max_pair_energy_rate_residual": 5.421010862427522e-20,
+      "max_pair_angular_rate_residual": 5.421010862427522e-20,
+      "minimum_thermal_rate": 0.0
+    },
+    "cpu4": {
+      "max_absolute_reference_error": 1.2694044841142332e-14,
+      "max_absolute_cpu_difference": 0.0,
+      "bitwise_equal_cpu": true,
+      "max_pair_energy_rate_residual": 5.421010862427522e-20,
+      "max_pair_angular_rate_residual": 5.421010862427522e-20,
+      "minimum_thermal_rate": 0.0
+    },
+    "cuda": {
+      "max_absolute_reference_error": 1.1935019479507007e-14,
+      "max_absolute_cpu_difference": 1.068772849403383e-15,
+      "bitwise_equal_cpu": false,
+      "max_pair_energy_rate_residual": 5.421010862427522e-20,
+      "max_pair_angular_rate_residual": 2.710505431213761e-20,
+      "minimum_thermal_rate": 0.0
+    }
+  },
+  "hashes": {
+    "inputs.bin": "129572b4811d199e51a542ed08b88f2d2e7cd8433cbf58c2184f96d3468312f4",
+    "expected.bin": "cef302e09c225c7dd03328835e8b6193002bbfa989111915b5b60eb3f10c7c2f",
+    "check.exe": "629f4f5eddd68eb5ff683fd746cb338c5d4abcfd3fde0ff8db00a6d9ee88e8ff",
+    "affine_relaxation_rate.h": "e7204ade7f0c7917379e549527880de1717a83fd54153e95c47f37ae502be4b6"
+  },
+  "compiler_flags": "nvcc -O2 -std=c++14 -arch=sm_89 -Xcompiler=-fopenmp; default FMA",
+  "limits": [
+    "Face-local kernels only, no GPU scatter/assembly or whole RK4 evolution.",
+    "Manufactured affine/curved traces on real patch faces; not long-time Kepler.",
+    "MPI ownership and transport are untested for this operator."
+  ]
+}

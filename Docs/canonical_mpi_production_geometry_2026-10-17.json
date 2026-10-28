@@ -1,0 +1,199 @@
+{
+  "scope": "Actual restart migration and per-rank cell construction; no force, HG or time evolution",
+  "ranks": {
+    "1": {
+      "owned_cells": 36864,
+      "missing_ids": 0,
+      "extra_ids": 0,
+      "raw_faces": 221159,
+      "missing_face_keys": 0,
+      "extra_face_keys": 0,
+      "max_face_component_abs_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cell_max_abs_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      }
+    },
+    "2": {
+      "owned_cells": 36864,
+      "missing_ids": 0,
+      "extra_ids": 0,
+      "raw_faces": 221159,
+      "missing_face_keys": 0,
+      "extra_face_keys": 0,
+      "max_face_component_abs_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cell_max_abs_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      }
+    },
+    "4": {
+      "owned_cells": 36864,
+      "missing_ids": 0,
+      "extra_ids": 0,
+      "raw_faces": 221159,
+      "missing_face_keys": 0,
+      "extra_face_keys": 0,
+      "max_face_component_abs_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cell_max_abs_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "density": 0.0,
+        "pressure": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      }
+    }
+  },
+  "single_rank_vs_original": {
+    "missing": 0,
+    "extra": 0,
+    "max_abs": 0.0
+  },
+  "binary_sha256": "cda8a842e1b9421783071e3e828f697c461c02ebfc5d433882069379472f8524",
+  "source_sha256": "09f4ad3a27709cf6ff4b957aa6e892caa24d90ff39c21307af593bac5eda43f4",
+  "run_root": "/gpfs/kjhan/LagForce/Codex_mpi_geometry_probe_20261017",
+  "configuration": {
+    "snapshot_time": 10.0020667693911,
+    "snapshot_step": 2305,
+    "OMP_NUM_THREADS": 2,
+    "CUDA_nearest_enabled": true,
+    "ranks": [
+      1,
+      2,
+      4
+    ],
+    "geometry_only": true
+  },
+  "remaining": [
+    "QBP and centroid cache equivalence not exported or asserted",
+    "Reciprocal geometry exchange not integrated in solver",
+    "Distributed force and ordered HG not implemented",
+    "Cross-rank retry/migration rollback not validated",
+    "Long-term physical instability remains unresolved"
+  ],
+  "source_followup": "After build, owned particle count log format changed from %d to %td in worktree; numerical code unchanged.",
+  "disabled_mode_regression": {
+    "reference": "/gpfs/kjhan/LagForce/Codex_shf_raw_geometry_20261017/control/khout.002306.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Codex_mpi_geometry_probe_20261017/control/khout.002306.dat",
+    "reference_sha256": "6fe1b39b0271276edbda76cd6b9c062b999b17c521f8cd5c8371445934142d6a",
+    "candidate_sha256": "0adabe722374e805a86005ee2a01d1d6552b83f699027e10077fbdc63e89a3a1",
+    "n": 36864,
+    "t": 10.003066769391099,
+    "dt": 0.001,
+    "fields": {
+      "x": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "y": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "mass": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vx": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "vy": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "den": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "pressure": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "ie": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "volume": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      },
+      "w2ceil": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0,
+        "max_ulp_difference": 0,
+        "max_relative_difference_nonzero_reference": 0.0,
+        "zero_reference_nonzero_candidate": 0
+      },
+      "csound": {
+        "bitwise_different_particles": 0,
+        "max_abs_difference": 0.0,
+        "worst_particle_id": 0
+      }
+    },
+    "all_physical_fields_bitwise_equal": true,
+    "scope": "Listed physical fields at this snapshot only; pointer bytes and unlisted diagnostics excluded."
+  }
+}

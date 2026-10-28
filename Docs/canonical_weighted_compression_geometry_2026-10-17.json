@@ -1,0 +1,198 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator",
+  "source_sha256": "709bf217329e3583132bfb68da0975331404248f3ef666b2e89a9c992b033c04",
+  "scope": "Static geometry feasibility at original C positions and velocity. Only weights of current r<.5 cells varied; response measured through r<.7 including guard. Full site graph used. No mass assignment, hydrodynamics, time evolution or long-term claim.",
+  "method": "Linearize generator-induced volume rate with respect to weights using mixed derivative of the geometric volume Jacobian. Regularized least squares then rebuild exact weighted geometry; bound trial |w|/V0 by .25.",
+  "baseline_C_volume_max_relative_error": 3.924743862372367e-14,
+  "baseline_C_volume_rate_max_fractional_error": 1.0985652556671799e-12,
+  "generator_volume_rate_fd_max_fractional_error": 3.0809941722702645e-09,
+  "baseline_all_site_sample_max_violation": 4.5644911461639737e-17,
+  "baseline": {
+    "inner": {
+      "fractional_generator_volume_rate_rms": 0.15160153266638146,
+      "min_volume_over_baseline": 1.0,
+      "max_volume_over_baseline": 1.0
+    },
+    "guard": {
+      "fractional_generator_volume_rate_rms": 0.06521001723335776,
+      "min_volume_over_baseline": 1.0,
+      "max_volume_over_baseline": 1.0
+    },
+    "all": {
+      "fractional_generator_volume_rate_rms": 0.116711612710553,
+      "min_volume_over_baseline": 1.0,
+      "max_volume_over_baseline": 1.0
+    }
+  },
+  "trials": [
+    {
+      "name": "damp0.01_fraction0.25",
+      "damping": 0.01,
+      "lsmr_stop": 7,
+      "iterations": 2000,
+      "linear_residual_norm": 2.0088582337965315,
+      "mixed_derivative_directional_relative_error": 1.2517921385304979e-08,
+      "max_weight_over_initial_volume": 0.06250000000000001,
+      "all_site_sample_max_violation": 4.705437428587089e-17,
+      "regions": {
+        "inner": {
+          "fractional_generator_volume_rate_rms": 0.149811686592099,
+          "min_volume_over_baseline": 0.9176020325201402,
+          "max_volume_over_baseline": 1.0713149589774815
+        },
+        "guard": {
+          "fractional_generator_volume_rate_rms": 0.06491593894580402,
+          "min_volume_over_baseline": 0.9986266548505558,
+          "max_volume_over_baseline": 1.012229466753939
+        },
+        "all": {
+          "fractional_generator_volume_rate_rms": 0.11546696729565246,
+          "min_volume_over_baseline": 0.9176020325201402,
+          "max_volume_over_baseline": 1.0713149589774815
+        }
+      }
+    },
+    {
+      "name": "damp0.01_fraction1",
+      "damping": 0.01,
+      "lsmr_stop": 7,
+      "iterations": 2000,
+      "linear_residual_norm": 2.0088582337965315,
+      "mixed_derivative_directional_relative_error": 1.2517921385304979e-08,
+      "max_weight_over_initial_volume": 0.25000000000000006,
+      "all_site_sample_max_violation": 4.401860820291148e-17,
+      "regions": {
+        "inner": {
+          "fractional_generator_volume_rate_rms": 0.1468595186941841,
+          "min_volume_over_baseline": 0.6736298435602567,
+          "max_volume_over_baseline": 1.2990349279715805
+        },
+        "guard": {
+          "fractional_generator_volume_rate_rms": 0.06409938144038173,
+          "min_volume_over_baseline": 0.9945059143171665,
+          "max_volume_over_baseline": 1.0488631125703074
+        },
+        "all": {
+          "fractional_generator_volume_rate_rms": 0.11332199114228769,
+          "min_volume_over_baseline": 0.6736298435602567,
+          "max_volume_over_baseline": 1.2990349279715805
+        }
+      }
+    },
+    {
+      "name": "damp0.1_fraction0.25",
+      "damping": 0.1,
+      "lsmr_stop": 2,
+      "iterations": 914,
+      "linear_residual_norm": 2.1391895288621927,
+      "mixed_derivative_directional_relative_error": 0.04014768655963125,
+      "max_weight_over_initial_volume": 0.06250000000000001,
+      "all_site_sample_max_violation": 4.0766001685454967e-17,
+      "regions": {
+        "inner": {
+          "fractional_generator_volume_rate_rms": 0.13839403576031556,
+          "min_volume_over_baseline": 0.8849651336873648,
+          "max_volume_over_baseline": 1.1262675275212388
+        },
+        "guard": {
+          "fractional_generator_volume_rate_rms": 0.0641702152774513,
+          "min_volume_over_baseline": 0.9909748416915876,
+          "max_volume_over_baseline": 1.0126180538773328
+        },
+        "all": {
+          "fractional_generator_volume_rate_rms": 0.10788190491732377,
+          "min_volume_over_baseline": 0.8849651336873648,
+          "max_volume_over_baseline": 1.1262675275212388
+        }
+      }
+    },
+    {
+      "name": "damp0.1_fraction1",
+      "damping": 0.1,
+      "lsmr_stop": 2,
+      "iterations": 914,
+      "linear_residual_norm": 2.1391895288621927,
+      "mixed_derivative_directional_relative_error": 0.04014768655963125,
+      "max_weight_over_initial_volume": 0.25000000000000006,
+      "all_site_sample_max_violation": 4.152494320619482e-17,
+      "regions": {
+        "inner": {
+          "fractional_generator_volume_rate_rms": 0.10102210238948577,
+          "min_volume_over_baseline": 0.5808365569258906,
+          "max_volume_over_baseline": 1.5366503771375575
+        },
+        "guard": {
+          "fractional_generator_volume_rate_rms": 0.06182731276150494,
+          "min_volume_over_baseline": 0.9638689309602396,
+          "max_volume_over_baseline": 1.050410953785156
+        },
+        "all": {
+          "fractional_generator_volume_rate_rms": 0.08375783548836516,
+          "min_volume_over_baseline": 0.5808365569258906,
+          "max_volume_over_baseline": 1.5366503771375575
+        }
+      }
+    },
+    {
+      "name": "damp1_fraction0.25",
+      "damping": 1.0,
+      "lsmr_stop": 2,
+      "iterations": 125,
+      "linear_residual_norm": 2.84858656565354,
+      "mixed_derivative_directional_relative_error": 0.0576701984734479,
+      "max_weight_over_initial_volume": 0.05259501642082075,
+      "all_site_sample_max_violation": 6.201636426617085e-17,
+      "regions": {
+        "inner": {
+          "fractional_generator_volume_rate_rms": 0.12482903273292388,
+          "min_volume_over_baseline": 0.9019585636152418,
+          "max_volume_over_baseline": 1.100630489785285
+        },
+        "guard": {
+          "fractional_generator_volume_rate_rms": 0.06372295976317241,
+          "min_volume_over_baseline": 0.9855395795504702,
+          "max_volume_over_baseline": 1.0083958959012393
+        },
+        "all": {
+          "fractional_generator_volume_rate_rms": 0.09911538590205618,
+          "min_volume_over_baseline": 0.9019585636152418,
+          "max_volume_over_baseline": 1.100630489785285
+        }
+      }
+    },
+    {
+      "name": "damp1_fraction1",
+      "damping": 1.0,
+      "lsmr_stop": 2,
+      "iterations": 125,
+      "linear_residual_norm": 2.84858656565354,
+      "mixed_derivative_directional_relative_error": 0.0576701984734479,
+      "max_weight_over_initial_volume": 0.210380065683283,
+      "all_site_sample_max_violation": 3.2959746043559335e-17,
+      "regions": {
+        "inner": {
+          "fractional_generator_volume_rate_rms": 0.06741342475060799,
+          "min_volume_over_baseline": 0.636561424562801,
+          "max_volume_over_baseline": 1.4250381754385923
+        },
+        "guard": {
+          "fractional_generator_volume_rate_rms": 0.06181918788074902,
+          "min_volume_over_baseline": 0.9420802111821691,
+          "max_volume_over_baseline": 1.0334462850992514
+        },
+        "all": {
+          "fractional_generator_volume_rate_rms": 0.06467798716168922,
+          "min_volume_over_baseline": 0.636561424562801,
+          "max_volume_over_baseline": 1.4250381754385923
+        }
+      }
+    }
+  ],
+  "seconds": 14.26917284913361,
+  "limits": [
+    "Static optimization can exploit instantaneous topology and need not persist as rings slip.",
+    "No conservative weight/mass/energy coupling chosen; prior weight-only-remap obstruction still applies.",
+    "Mixed derivative loses smoothness at topology transitions; directional check reported rather than assumed.",
+    "All-site plane certificate is sampled; regular triangulation supplies constraints to every measured cell."
+  ]
+}

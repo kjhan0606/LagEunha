@@ -57,24 +57,25 @@ def stage(t,y,mass,L,U,potential,acceleration,quadrature,mask):
     return dy,du,diag
 
 
-def step(t,y,mass,L,U,dt,potential,acceleration,quadrature,frozen=None,return_record=False,gravity_scheme='finite'):
+def step(t,y,mass,L,U,dt,potential,acceleration,quadrature,frozen=None,return_record=False,gravity_scheme='finite',stage_cache=None):
     if dt<=0:raise ValueError('positive timestep required')
     if gravity_scheme=='finite':kick=apply
     elif gravity_scheme=='midpoint':
         from midpoint_gravity_source import apply as kick
     else:raise ValueError('unknown gravity integration scheme')
+    cached=(lambda name,compute:compute()) if stage_cache is None else stage_cache
     mask=mask_at(frozen,t,y,mass);oldU=np.asarray(U).copy()
-    kicked,halfL,g0=kick(t,y,mass,L,acceleration,dt/2,mask,provider(U,potential,quadrature,mask))
-    dy,du,d0=stage(t,kicked,mass,halfL,U,potential,acceleration,quadrature,mask)
+    kicked,halfL,g0=cached('gravity_first',lambda:kick(t,y,mass,L,acceleration,dt/2,mask,provider(U,potential,quadrature,mask)))
+    dy,du,d0=cached('hydro_first',lambda:stage(t,kicked,mass,halfL,U,potential,acceleration,quadrature,mask))
     middleL=advance_factors_sylvester(halfL,d0,dt/2)
     middle=rebuild(kicked+dt*dy/2,mass,middleL);middleU=U+dt*du/2
     restore_frozen(middle,middleL,kicked,halfL,mask,mass);middleU[mask]=oldU[mask]
     if not np.array_equal(mask_at(frozen,t+dt/2,middle,mass),mask):raise ValueError('frozen mask transition')
-    dh,duh,dm=stage(t+dt/2,middle,mass,middleL,middleU,potential,acceleration,quadrature,mask)
+    dh,duh,dm=cached('hydro_middle',lambda:stage(t+dt/2,middle,mass,middleL,middleU,potential,acceleration,quadrature,mask))
     driftL=advance_factors_sylvester(halfL,dm,dt);drift=rebuild(kicked+dt*dh,mass,driftL);newU=U+dt*duh
     restore_frozen(drift,driftL,kicked,halfL,mask,mass);newU[mask]=oldU[mask]
     if not np.array_equal(mask_at(frozen,t+dt,drift,mass),mask):raise ValueError('frozen mask transition')
-    out,newL,g1=kick(t+dt,drift,mass,driftL,acceleration,dt/2,mask,provider(newU,potential,quadrature,mask))
+    out,newL,g1=cached('gravity_last',lambda:kick(t+dt,drift,mass,driftL,acceleration,dt/2,mask,provider(newU,potential,quadrature,mask)))
     diag=dict(stage_mass_flux=max(d0['mass_flux'],dm['mass_flux']),
         generator_velocity_defect=max(d0['generator_velocity_defect'],dm['generator_velocity_defect']),
         potential_boundary_exchange=dt*dm['potential_boundary_rate'],

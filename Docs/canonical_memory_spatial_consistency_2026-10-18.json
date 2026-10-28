@@ -1,0 +1,146 @@
+{
+  "scope": "Static spatial consistency of the actual smooth owner operator in 2D.\n\nRepeated irregular motif preserves relative disorder under refinement. Tests\nsmooth fixed physical wavelengths and a grid-scale alternating mode separately.\nThis is not Euler/Kepler evolution or a bound for arbitrary mesh distortion.\n",
+  "rows": [
+    {
+      "nside": 16,
+      "cells": 256,
+      "h": 0.0625,
+      "max_moment": 1.7156586958008431e-15,
+      "max_condition": 14.361017072599678,
+      "cases": {
+        "smooth_shear": {
+          "auxiliary_stiffness_rayleigh": 0.005826020458141572,
+          "stiffness_times_h_squared": 2.2757892414615515e-05,
+          "acceleration_derivative_mass_RMS": 0.2013204741653505,
+          "Bv_L2": 0.05397230983634836,
+          "quadratic_form_identity_error": -1.734723475976807e-18
+        },
+        "smooth_compression": {
+          "auxiliary_stiffness_rayleigh": 0.005671256304207411,
+          "stiffness_times_h_squared": 2.21533449383102e-05,
+          "acceleration_derivative_mass_RMS": 0.26780187826144525,
+          "Bv_L2": 0.07530774398564474,
+          "quadratic_form_identity_error": -5.204170427930421e-18
+        },
+        "grid_alternating": {
+          "auxiliary_stiffness_rayleigh": 264.50053687338266,
+          "stiffness_times_h_squared": 1.033205222161651,
+          "acceleration_derivative_mass_RMS": 278.3183993376461,
+          "Bv_L2": 16.263472472795677,
+          "quadratic_form_identity_error": -5.684341886080802e-14
+        }
+      }
+    },
+    {
+      "nside": 32,
+      "cells": 1024,
+      "h": 0.03125,
+      "max_moment": 1.7308995498723306e-15,
+      "max_condition": 14.36101707259968,
+      "cases": {
+        "smooth_shear": {
+          "auxiliary_stiffness_rayleigh": 0.00012832304156134238,
+          "stiffness_times_h_squared": 1.2531547027474842e-07,
+          "acceleration_derivative_mass_RMS": 0.10936955184529859,
+          "Bv_L2": 0.008010088687441057,
+          "quadratic_form_identity_error": -1.951563910473908e-18
+        },
+        "smooth_compression": {
+          "auxiliary_stiffness_rayleigh": 0.00011943257555983528,
+          "stiffness_times_h_squared": 1.1663337457015164e-07,
+          "acceleration_derivative_mass_RMS": 0.1437178182326548,
+          "Bv_L2": 0.010928521197299996,
+          "quadratic_form_identity_error": -8.267041565201971e-19
+        },
+        "grid_alternating": {
+          "auxiliary_stiffness_rayleigh": 1058.0021474935306,
+          "stiffness_times_h_squared": 1.033205222161651,
+          "acceleration_derivative_mass_RMS": 1113.394630946781,
+          "Bv_L2": 32.526944945591346,
+          "quadratic_form_identity_error": 0.0
+        }
+      }
+    },
+    {
+      "nside": 64,
+      "cells": 4096,
+      "h": 0.015625,
+      "max_moment": 1.7520803457363502e-15,
+      "max_condition": 14.36101707259969,
+      "cases": {
+        "smooth_shear": {
+          "auxiliary_stiffness_rayleigh": 3.938843291461298e-06,
+          "stiffness_times_h_squared": 9.616316629544185e-10,
+          "acceleration_derivative_mass_RMS": 0.055929811709908836,
+          "Bv_L2": 0.0014033608394602756,
+          "quadratic_form_identity_error": 8.216219588366713e-20
+        },
+        "smooth_compression": {
+          "auxiliary_stiffness_rayleigh": 3.3943713430474842e-06,
+          "stiffness_times_h_squared": 8.287039411737022e-10,
+          "acceleration_derivative_mass_RMS": 0.07328390877941539,
+          "Bv_L2": 0.0018423819753372224,
+          "quadratic_form_identity_error": -1.6135977645194421e-19
+        },
+        "grid_alternating": {
+          "auxiliary_stiffness_rayleigh": 4232.0085899741225,
+          "stiffness_times_h_squared": 1.033205222161651,
+          "acceleration_derivative_mass_RMS": 4453.4796589948655,
+          "Bv_L2": 65.05388989118268,
+          "quadratic_form_identity_error": 0.0
+        }
+      }
+    }
+  ],
+  "observed_orders": {
+    "smooth_shear": {
+      "auxiliary_stiffness_rayleigh": [
+        5.504658619800558,
+        5.025864412525717
+      ],
+      "acceleration_derivative_mass_RMS": [
+        0.8802827488346127,
+        0.9675217735122847
+      ],
+      "Bv_L2": [
+        2.752329309900279,
+        2.512932206262859
+      ]
+    },
+    "smooth_compression": {
+      "auxiliary_stiffness_rayleigh": [
+        5.569400063901069,
+        5.136908175196106
+      ],
+      "acceleration_derivative_mass_RMS": [
+        0.8979271400224363,
+        0.9716705788691505
+      ],
+      "Bv_L2": [
+        2.7847000319505346,
+        2.5684540875980533
+      ]
+    },
+    "grid_alternating": {
+      "auxiliary_stiffness_rayleigh": [
+        -2.0,
+        -2.0
+      ],
+      "acceleration_derivative_mass_RMS": [
+        -2.000156839323404,
+        -1.9999679733212494
+      ],
+      "Bv_L2": [
+        -0.9999999999999997,
+        -0.9999999999999997
+      ]
+    }
+  },
+  "checks": {
+    "quadratic_moments": true,
+    "smooth_stiffness_decreases": true,
+    "smooth_pointwise_force_norm_decreases": true,
+    "grid_restoring_scale_retained": true
+  },
+  "limitations": "Static B^T B response with z initially zero; no guarantee for accumulated memory, moving geometry, shocks, arbitrary disorder or full hydro. This irregular motif is a specific refinement family, not a universal convergence proof."
+}

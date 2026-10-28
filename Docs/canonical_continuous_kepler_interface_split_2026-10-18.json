@@ -1,0 +1,38 @@
+{
+  "scope": "Split the circular density interface explicitly; preserve prior quadratures.",
+  "source": {
+    "source": "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat",
+    "source_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+    "binary": "/gpfs/kjhan/LagForce/Codex_mpi_hg_modes_20261017/eunha2.exe",
+    "binary_sha256": "cd730d83c1e404ce3418c9751dbd71a37d58ffdf853ca86b3bba87844a2a1f8a",
+    "purpose": "Read-only HG mode/RHS assembly at saved state.",
+    "epoch": "t0",
+    "source_time": 0.0,
+    "source_copy": "khout.000001.dat",
+    "restart_index": 1,
+    "time_evolution": false,
+    "ranks": 1,
+    "threads": 1
+  },
+  "results": [
+    {
+      "degree": 8,
+      "crossing_cells": 101,
+      "maximum_outer_error_estimate": 1.0478350189040577e-14,
+      "minimum_thermal": 3.86742499906023e-08,
+      "mass_difference_from_point": 1.9558105530614444e-05,
+      "max_relative_mass_change_from_unsplit_q32": 0.003364754933288139
+    },
+    {
+      "degree": 16,
+      "crossing_cells": 101,
+      "maximum_outer_error_estimate": 1.0478350188749329e-14,
+      "minimum_thermal": 3.86742499906023e-08,
+      "mass_difference_from_point": 1.9558105530614444e-05,
+      "max_relative_mass_change_from_unsplit_q32": 0.003364754933288583,
+      "successive_max_absolute_moment_difference": 4.336808689942018e-19,
+      "successive_max_relative_mass_difference": 4.440892098500626e-16
+    }
+  ],
+  "limits": "Only the 101 crossing cells are reintegrated. Other cells retain q32. This is a new continuous-field projection, not the original checkpoint state. Density reconstruction across internal interface, force evolution, and long-time stability remain unverified."
+}

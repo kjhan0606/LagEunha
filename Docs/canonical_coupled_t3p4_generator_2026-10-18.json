@@ -1,0 +1,75 @@
+{
+  "time": 3.400405917763373,
+  "regions": {
+    "inner": {
+      "gravity": 1.0684735631997792e-06,
+      "circular_reference_derivative": -9.66742974255961e-07,
+      "gravity_plus_reference": 1.0173058894381812e-07,
+      "reversible_pressure": 3.369417841666558e-07,
+      "subtotal_without_TCF_HG": 4.3867237311047393e-07,
+      "hydro_RHS": 2.5761725586681534e-07,
+      "hydro_minus_reversible_pressure": -7.932452829984046e-08,
+      "HG_generator": -4.371102985038548e-08,
+      "total_generator": 3.15636814960248e-07
+    },
+    "shear_band": {
+      "gravity": 9.638087268164575e-07,
+      "circular_reference_derivative": -8.665149160339529e-07,
+      "gravity_plus_reference": 9.72938107825046e-08,
+      "reversible_pressure": 3.258333761860424e-07,
+      "subtotal_without_TCF_HG": 4.23127186968547e-07,
+      "hydro_RHS": 2.488378300625197e-07,
+      "hydro_minus_reversible_pressure": -7.699554612352271e-08,
+      "HG_generator": -4.285564540739782e-08,
+      "total_generator": 3.0327599543762643e-07
+    },
+    "central": {
+      "gravity": -1.1425805956658128e-09,
+      "circular_reference_derivative": 1.1321651554830208e-09,
+      "gravity_plus_reference": -1.0415440182792032e-11,
+      "reversible_pressure": 5.328699388396459e-10,
+      "subtotal_without_TCF_HG": 5.224544986568539e-10,
+      "hydro_RHS": 3.987901823003048e-10,
+      "hydro_minus_reversible_pressure": -1.340797565393411e-10,
+      "HG_generator": -5.4787004857643227e-11,
+      "total_generator": 3.3358773725986956e-10
+    },
+    "edge": {
+      "gravity": 3.861402450310136e-10,
+      "circular_reference_derivative": -4.0386690888518936e-10,
+      "gravity_plus_reference": -1.7726663854175748e-11,
+      "reversible_pressure": 2.278904918999171e-10,
+      "subtotal_without_TCF_HG": 2.1016382804574134e-10,
+      "hydro_RHS": 2.676567940841276e-10,
+      "hydro_minus_reversible_pressure": 3.976630218421052e-11,
+      "HG_generator": 1.2729904797701596e-11,
+      "total_generator": 2.626600350276535e-10
+    },
+    "core": {
+      "gravity": -9.264098800555214e-16,
+      "circular_reference_derivative": 5.97770557829181e-16,
+      "gravity_plus_reference": -3.286393222263405e-16,
+      "reversible_pressure": 1.900888401901902e-15,
+      "subtotal_without_TCF_HG": 1.5722490796755617e-15,
+      "hydro_RHS": 1.9813371764767177e-15,
+      "hydro_minus_reversible_pressure": 8.044877457481559e-17,
+      "HG_generator": -4.602354508974231e-16,
+      "total_generator": 1.192462403352954e-15
+    }
+  },
+  "checks": {
+    "plus": {
+      "mode_count": 221081,
+      "HG_energy_closure": -2.635672889200275e-22,
+      "initialization_relative_error": 0.0,
+      "snapshot_sha256": "a24df1ab3c9f702bdf97b8c9c8051e21dfad9e1a924e1ef0edabb6b789d52bc7"
+    },
+    "minus": {
+      "mode_count": 221081,
+      "HG_energy_closure": -2.4937395205199724e-22,
+      "initialization_relative_error": 0.0,
+      "snapshot_sha256": "4f79c3b95b52dd9954b7e2055e5bb9924212efe6bac2b40cb2c0b1811d79ff65"
+    }
+  },
+  "scope": "Instantaneous finite central-response generator budget using actual production hydro RHS, reconstructed HG modal generator, analytic gravity and circular-reference Jacobian. Hydro-minus-pressure includes TCF and any other hydro RHS terms; no unverified purity claim. HG generator differs from finite split-map derivative. Not an integrated accepted-step budget or convergence/eigenmode proof."
+}

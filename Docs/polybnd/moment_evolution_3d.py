@@ -33,6 +33,7 @@ def step(geometry,t,sites,weights,raw,factors,dt,bounds,boundary_velocity,face_o
     if return_record:
         diagnostics['dense_record']=dict(t=t,dt=dt,sites=sites.copy(),weights=weights.copy(),raw=raw.copy(),factors=np.asarray(factors).copy(),dx0=dx,dw0=dw,dr0=dr,dxmid=vh,dwmid=zh,drmid=dh,diag_mid=dm)
         diagnostics['dense_record'].update(face_integration=face_integration,face_order=face_order,pressure_reconstruction=pressure_reconstruction)
+        diagnostics['dense_record']['stage_face_orders']=[d0.get('effective_face_order',face_order),dm.get('effective_face_order',face_order)]
     return sites+dt*vh,weights+dt*zh,nextraw,np.array(nextL),diagnostics
 
 

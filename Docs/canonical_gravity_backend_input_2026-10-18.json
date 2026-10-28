@@ -1,0 +1,20 @@
+{
+  "scope": "Gravity moment-source quadrature on the new IC, plus saved hydro rates.\nNo time integration; potential energy transport is not implemented here.\n",
+  "quadratic_velocity": true,
+  "hydro_source": "/gpfs/kjhan/LagForce/Codex_continuous_initial_rhs_quadratic_split_20261018/rhs_r0.55_f8.npz",
+  "sha256": "18c35fee73f47071d9158c3879799699b8ede4331e55aa16143dde2f776b760a",
+  "results": [
+    {
+      "order": 12,
+      "maximum_central_torque": 2.168404344971009e-19,
+      "maximum_thermal_source": 1.9544995744678587e-18,
+      "maximum_residual_covariance_source": 1.123345447621374e-09,
+      "maximum_analytic_circular_work": 2.8865454515861766e-20,
+      "maximum_reconstructed_gravity_work": 1.1649238128305752e-09,
+      "maximum_residual_source_identity_error": 1.1754276209047926e-17,
+      "centroid_force_relative_l2": 0.0004562419987924075,
+      "centroid_force_max_abs": 1.8686947568522308e-06
+    }
+  ],
+  "limits": "Gravity integrated over fitted smooth density and the selected conditional mean. Does not integrate original discontinuous density exactly. Combined rates exclude potential energy transport and moving-boundary validation. No full total-energy conservation or long-term stability claim."
+}

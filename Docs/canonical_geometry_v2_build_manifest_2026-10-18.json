@@ -1,0 +1,72 @@
+{
+  "host": "LagEunha",
+  "purpose": "Stored geometry audit: explicit native host exact resolution plus CPU/OpenMP/CUDA sign filters.",
+  "gmp": {
+    "version": "6.2.1",
+    "source_url": "https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.xz",
+    "archive": {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1.tar.xz",
+      "sha256": "fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2"
+    },
+    "configure": "CFLAGS=\"-O2 -fPIC\" CXXFLAGS=\"-O2 -fPIC\" ./configure --disable-shared --enable-cxx --with-pic --prefix=/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/dependency",
+    "compile": "make -j4",
+    "header": {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1/gmp.h",
+      "sha256": "434c6eacbba609b837fbae5b2216689488a666146bfbcfde13719a5cf1f5666d"
+    },
+    "cxx_header": {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1/gmpxx.h",
+      "sha256": "0011ae411a0bc1030e07d968b32fdc1343f5ac2a17b7d28f493e7976dde2ac82"
+    },
+    "linked_static_libraries": [
+      {
+        "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1/.libs/libgmpxx.a",
+        "sha256": "6060fa1e24c5b1b3e9311f74e1eb009ce57be390927abedd1c65682b0548da85"
+      },
+      {
+        "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1/.libs/libgmp.a",
+        "sha256": "b0960c5b57c3fc25b35e89503cdcd1c665180c89116fc8c3b4becaa7804afffe"
+      }
+    ]
+  },
+  "exact_compile": "c++ -O2 -std=c++17 -fno-fast-math -ffp-contract=off -fopenmp -fPIC -I/gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1 -c moment_geometry_v2_exact.cpp -o exact.o",
+  "cuda_module": "cuda/12.8.1",
+  "filter_compile": "nvcc -O2 -std=c++17 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -Xcompiler -fopenmp,-fPIC,-ffp-contract=off -c moment_geometry_v2_filter.cu -o filter.o",
+  "link": "nvcc -shared -Xcompiler -fopenmp,-fPIC exact.o filter.o /gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1/.libs/libgmpxx.a /gpfs/kjhan/LagForce/Codex_production_geometry_v2_build_20261018/gmp-6.2.1/.libs/libgmp.a -o libgeometry_v2.so",
+  "library": {
+    "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/libgeometry_v2.so",
+    "sha256": "3295969112683d98db48c09bb63fa122f972dddbb7fafdb772aa69e961ce12a4"
+  },
+  "source": [
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/moment_geometry_v2.h",
+      "sha256": "d5102efa014fbb9f41a6df1c3d3cd35f189ec8e363292b14fe19f00c17b84bed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/moment_geometry_interval.h",
+      "sha256": "2a338033710ba319da291a7dc29a78ba693240ef70822babdf71523135167119"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/moment_geometry_v2_exact.cpp",
+      "sha256": "6697ebdbd0dbc3304fbfc25970ce4626af39cda5eb016c43da76381b6c2a5e8e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/moment_geometry_v2_filter.cu",
+      "sha256": "118cbfe4e78fab8b5de2e8590ffbbf117df2085ed7d33efddea2dea94add08f2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/moment_geometry_native_v2.py",
+      "sha256": "35d5b773881a09dac95f644b2979d26bd219b43f53eede2c4732dd0d65d5f2fd"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/check_full_native_geometry_v2.py",
+      "sha256": "e75018e9b01f7aad441ed166679fc7fbac4061ed0b4374d11a8b641bf2e33989"
+    }
+  ],
+  "ldd": "\tlinux-vdso.so.1 (0x00007ffed2d5d000)\n\tlibstdc++.so.6 => /opt/ohpc/pub/compiler/gcc/13.2.0/lib64/libstdc++.so.6 (0x00001487cca9e000)\n\tlibm.so.6 => /lib64/libm.so.6 (0x00001487cc9b8000)\n\tlibgomp.so.1 => /opt/ohpc/pub/compiler/gcc/13.2.0/lib64/libgomp.so.1 (0x00001487cc968000)\n\tlibgcc_s.so.1 => /opt/ohpc/pub/compiler/gcc/13.2.0/lib64/libgcc_s.so.1 (0x00001487cc942000)\n\tlibc.so.6 => /lib64/libc.so.6 (0x00001487cc738000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00001487cce02000)\n",
+  "build_log": {
+    "path": "/gpfs/kjhan/LagForce/Codex_production_geometry_v2_full_build_20261018/build.log",
+    "sha256": "67f587f483c848f6acc67c17c53827f80d717722fa474ad8a93bb9905c368eea"
+  },
+  "notes": "Existing nextafter(double,float) CUDA overload warnings preserved; future double-direction correction requires saved-input sign replay. System GMP was not linked."
+}

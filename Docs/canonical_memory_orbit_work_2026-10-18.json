@@ -1,0 +1,231 @@
+{
+  "control": {
+    "source": "/gpfs/kjhan/LagForce/Codex_hydro_partition_control_20261018/khout.000161.dat",
+    "source_sha256": "8426d855b5eb6632a192bbcba24ee3f7e2f74fa8f27335cb3fb1ba796113cad1",
+    "start_time": 0.4000000000000003,
+    "stages": [
+      {
+        "stage": "1",
+        "wdt": "0.00041666666666666664",
+        "auxiliary": "-4.9075862998194391e-11",
+        "hydro": "5.3762539759475429e-11",
+        "shear": "4.1331578928914316e-11",
+        "total": "4.6018255690195361e-11",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      },
+      {
+        "stage": "2",
+        "wdt": "0.00083333333333333328",
+        "auxiliary": "-4.9267800436444768e-11",
+        "hydro": "4.977859954475076e-11",
+        "shear": "4.3096947264101503e-11",
+        "total": "4.3607746372407494e-11",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      },
+      {
+        "stage": "3",
+        "wdt": "0.00083333333333333328",
+        "auxiliary": "-4.9043025995050657e-11",
+        "hydro": "5.3106114907320672e-11",
+        "shear": "3.7673718923820258e-11",
+        "total": "4.1736807836090273e-11",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      },
+      {
+        "stage": "4",
+        "wdt": "0.00041666666666666664",
+        "auxiliary": "-4.9221542270027699e-11",
+        "hydro": "4.9211456308230687e-11",
+        "shear": "4.0802011688879428e-11",
+        "total": "4.0791925727082409e-11",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      }
+    ],
+    "accepted": "[ACCEPTED_STATE] step=1 elapsed=0.0025000000000000001 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.013032650240790944 Py=-0.011009361664250407 Lz=14.405898147672477 K=4.8064225419999671 U=0.0014993627617374313 Phi=-9.6198021167274863 E=-4.8118802119657822 dM0=0 dPx0=2.122606515996342e-05 dPy0=2.1343193494220702e-05 dLz0=-7.3363537467230344e-11 dE0=-2.0464518968310585e-11 dEstep=-2.0464518968310585e-11 hg_dE=-1.4767917791425056e-14 hg_dPx=1.9878543255913428e-13 hg_dPy=4.4775294583132563e-13 hg_dLz=1.2789769243681803e-13 hg_dU=1.1522985256945395e-12 boundary_corrected=0",
+    "RK_integrals": {
+      "hydro": 1.286430937382704e-13,
+      "shear": 1.0153121791401552e-13,
+      "auxiliary": -1.2288294088800538e-13,
+      "total": 1.0729137076428054e-13,
+      "hydro_minus_TCF": 3.7848679123911355e-13,
+      "TCF": -2.4984369750084315e-13
+    },
+    "fields_bitwise_equal": {
+      "id": true,
+      "x": true,
+      "y": true,
+      "vx": true,
+      "vy": true,
+      "mass": true,
+      "volume": true,
+      "den": true,
+      "pressure": true,
+      "ie": true,
+      "w2": true
+    },
+    "sidecar_bytes_equal": true,
+    "legacy_stages": [
+      {
+        "stage": "1",
+        "wdt": "0.00041666666666666664",
+        "hydro_minus_TCF": "1.5340457683822424e-10",
+        "TCF": "-9.9642037078748807e-11",
+        "shear": "4.1331578928914316e-11",
+        "total": "9.5094118688389752e-11",
+        "trial": "1",
+        "scope": "global_active"
+      },
+      {
+        "stage": "2",
+        "wdt": "0.00083333333333333328",
+        "hydro_minus_TCF": "1.5138565010140018e-10",
+        "TCF": "-1.0160705055664944e-10",
+        "shear": "4.3096947264101503e-11",
+        "total": "9.2875546808852262e-11",
+        "trial": "1",
+        "scope": "global_active"
+      },
+      {
+        "stage": "3",
+        "wdt": "0.00083333333333333328",
+        "hydro_minus_TCF": "1.5136963621636596e-10",
+        "TCF": "-9.826352130904529e-11",
+        "shear": "3.7673718923820258e-11",
+        "total": "9.077983383114093e-11",
+        "trial": "1",
+        "scope": "global_active"
+      },
+      {
+        "stage": "4",
+        "wdt": "0.00041666666666666664",
+        "hydro_minus_TCF": "1.4945314950011605e-10",
+        "TCF": "-1.0024169319188536e-10",
+        "shear": "4.0802011688879428e-11",
+        "total": "9.0013467997110109e-11",
+        "trial": "1",
+        "scope": "global_active"
+      }
+    ],
+    "departure_energy": {
+      "start_time": 0.4000000000000003,
+      "end_time": 0.4025000000000003,
+      "start": 7.81366835180642e-11,
+      "end": 7.816216818486832e-11,
+      "change": 2.5484666804111002e-14,
+      "change_minus_RK_integral": -8.180670396016954e-14,
+      "remaining_scope": "Combined finite HG split and RK quadrature/update remainder; not isolated HG work."
+    }
+  },
+  "physical_t2": {
+    "source": "/gpfs/kjhan/LagForce/Codex_reversible_memory_physical_to_t10_20261018/memory_from_t0/khout.000802.dat",
+    "source_sha256": "7ac88658fd1172e7f9addaa92e1e9068396c8e7dccd3d6e73605a379395ac99d",
+    "start_time": 2.0024999999999684,
+    "stages": [
+      {
+        "stage": "1",
+        "wdt": "0.00041666666666666664",
+        "auxiliary": "-2.0465319130949666e-10",
+        "hydro": "9.6883936443923782e-10",
+        "shear": "9.8534468985938078e-10",
+        "total": "1.7495308629891219e-09",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      },
+      {
+        "stage": "2",
+        "wdt": "0.00083333333333333328",
+        "auxiliary": "-2.061521695905563e-10",
+        "hydro": "9.5796538489236826e-10",
+        "shear": "9.802335738855397e-10",
+        "total": "1.7320467891873515e-09",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      },
+      {
+        "stage": "3",
+        "wdt": "0.00083333333333333328",
+        "auxiliary": "-2.0609912515634453e-10",
+        "hydro": "9.6544121969152159e-10",
+        "shear": "9.8374175734943284e-10",
+        "total": "1.7430838518846102e-09",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      },
+      {
+        "stage": "4",
+        "wdt": "0.00041666666666666664",
+        "auxiliary": "-2.0760605127942877e-10",
+        "hydro": "9.565845489984212e-10",
+        "shear": "9.8011570445984167e-10",
+        "total": "1.729094202178834e-09",
+        "trial": "1",
+        "scope": "global_active_RK_rate_excludes_HG_split"
+      }
+    ],
+    "accepted": "[ACCEPTED_STATE] step=1 elapsed=0.0025000000000000001 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.012442038528561713 Py=-0.0030597486210411024 Lz=14.40589808489457 K=4.8064221596568943 U=0.0014995247494372867 Phi=-9.6198019121255154 E=-4.8118802277191834 dM0=0 dPx0=1.0562176609382051e-05 dPy0=-2.4098181590301998e-06 dLz0=-1.3147172239769134e-10 dE0=-3.4811264981726708e-11 dEstep=-3.4811264981726708e-11 hg_dE=-4.6183521416887086e-13 hg_dPx=-6.2326879768370702e-13 hg_dPy=-1.0540301270678398e-12 hg_dLz=-1.737276988933445e-12 hg_dU=1.8598631749272565e-12 boundary_corrected=0",
+    "RK_integrals": {
+      "hydro": 2.4050988010855995e-12,
+      "shear": 2.4555879403288196e-12,
+      "auxiliary": -5.153174300344696e-13,
+      "total": 4.345369311379949e-12,
+      "hydro_minus_TCF": 4.015187007347797e-12,
+      "TCF": -1.6100882062621977e-12
+    },
+    "legacy_stages": [
+      {
+        "stage": "1",
+        "wdt": "0.00041666666666666664",
+        "hydro_minus_TCF": "1.6110406817614796e-09",
+        "TCF": "-6.4220131732224182e-10",
+        "shear": "9.8534468985938078e-10",
+        "total": "1.9541840542986186e-09",
+        "trial": "1",
+        "scope": "global_active"
+      },
+      {
+        "stage": "2",
+        "wdt": "0.00083333333333333328",
+        "hydro_minus_TCF": "1.6058210785231265e-09",
+        "TCF": "-6.4785569363075824e-10",
+        "shear": "9.802335738855397e-10",
+        "total": "1.9381989587779078e-09",
+        "trial": "1",
+        "scope": "global_active"
+      },
+      {
+        "stage": "3",
+        "wdt": "0.00083333333333333328",
+        "hydro_minus_TCF": "1.606353292268101e-09",
+        "TCF": "-6.4091207257657934e-10",
+        "shear": "9.8374175734943284e-10",
+        "total": "1.9491829770409546e-09",
+        "trial": "1",
+        "scope": "global_active"
+      },
+      {
+        "stage": "4",
+        "wdt": "0.00041666666666666664",
+        "hydro_minus_TCF": "1.6010593942907788e-09",
+        "TCF": "-6.444748452923576e-10",
+        "shear": "9.8011570445984167e-10",
+        "total": "1.9367002534582629e-09",
+        "trial": "1",
+        "scope": "global_active"
+      }
+    ],
+    "departure_energy": {
+      "start_time": 2.0024999999999684,
+      "end_time": 2.0049999999999684,
+      "start": 7.633133357556209e-10,
+      "end": 7.670545646393934e-10,
+      "change": 3.741228883772526e-12,
+      "change_minus_RK_integral": -6.041404276074233e-13,
+      "remaining_scope": "Combined finite HG split and RK quadrature/update remainder; not isolated HG work."
+    }
+  },
+  "scope": "Same-stage actual RK hydro/shear/aux work, globally active. Diagnostic control bitwise unchanged. One step only; not cumulative causal attribution or long-term stability."
+}

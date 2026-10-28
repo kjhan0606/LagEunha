@@ -9,6 +9,22 @@ import numpy as np
 import os
 
 
+def radial_neighbors(centers,center,scale,index,tree=None):
+    """Conservative candidate search followed by the original exact predicate."""
+    if tree is None:
+        ids=np.arange(len(centers))
+    else:
+        # An expanded infinity-norm box contains the Euclidean stencil.
+        # Recompute the original distances and sort indices so reductions
+        # retain their original order, including near the support boundary.
+        radius=3*scale
+        padding=128*np.finfo(float).eps*max(1.,float(np.max(abs(center))),radius)
+        ids=np.sort(np.asarray(tree.query_ball_point(center,radius+padding,p=np.inf),dtype=int))
+    distance=np.linalg.norm(centers[ids]-center,axis=1)/(3*scale)
+    keep=(distance<1)&(ids!=index)
+    return ids[keep],distance[keep]
+
+
 def fit_mode():
     name=os.environ.get('LAGFORCE_VELOCITY_FIT','radial_fixed_mean')
     if name not in ('radial_fixed_mean','tensor_free_mean','tensor_free_affine'):
@@ -134,6 +150,50 @@ def velocity_samples(state,L,mass,points,alpha):
     velocities=affine[:,None,:]+coordinates@L.T/np.sqrt(mass)
     return velocities,coordinates
 
+def velocity_samples_and_mean(state,L,mass,point,alpha):
+    """Reuse the quadratic basis for one point without averaging discrete samples."""
+    points=np.atleast_2d(point)
+    if points.shape!=(1,2):raise ValueError('combined evaluation requires one 2D point')
+    affine=state['v']+(points-state['c'])@state['B'].T
+    mean=state['v']+state['B']@(points[0]-state['c'])
+    metadata=state.get('velocity_quadratic')
+    if metadata is None:
+        coordinates=np.broadcast_to(alpha,(1,len(alpha),2))
+    else:
+        psi=basis(metadata,points)
+        resolved=psi@metadata['standard_coefficient'].T
+        coordinates=resolved[:,None,:]+(alpha@metadata['residual_map'].T)[None,:,:]
+        mean=mean+(psi@metadata['coefficient'].T)[0]
+    velocities=affine[:,None,:]+coordinates@L.T/np.sqrt(mass)
+    return velocities,coordinates,mean
+
+
+def velocity_samples_and_mean_batch(state,L,mass,points,alpha):
+    """Cell batch; preserve separate shared mean and scalar matrix cores.
+
+    No sample averaging defines the shared mean. This evaluator does not
+    rebuild reconstruction metadata or introduce a cross-evaluation cache.
+    """
+    points=np.asarray(points,dtype=float)
+    if points.ndim!=2 or points.shape[1]!=2:
+        raise ValueError('combined batch requires (nodes,2) points')
+    delta=points-state['c']
+    affine=state['v']+(delta[:,None,:]@state['B'].T)[:,0,:]
+    mean=state['v']+(state['B']@delta[:,:,None])[:,:,0]
+    metadata=state.get('velocity_quadratic')
+    if metadata is None:
+        coordinates=np.broadcast_to(alpha,(len(points),len(alpha),2))
+    else:
+        z=(points-metadata['center'])/metadata['scale']
+        phi=np.column_stack([z[:,0]**2,z[:,0]*z[:,1],z[:,1]**2])
+        linear=np.column_stack([np.ones(len(z)),z])
+        psi=phi-(linear[:,None,:]@metadata['projection'])[:,0,:]
+        resolved=(psi[:,None,:]@metadata['standard_coefficient'].T)[:,0,:]
+        coordinates=resolved[:,None,:]+(alpha@metadata['residual_map'].T)[None,:,:]
+        mean=mean+(psi[:,None,:]@metadata['coefficient'].T)[:,0,:]
+    velocities=affine[:,None,:]+coordinates@L.T/np.sqrt(mass)
+    return velocities,coordinates,mean
+
 
 def covariance_budget(L,mass,candidate,gram_factor):
     name=closure_name()
@@ -168,14 +228,17 @@ def prepare(states,cells,edges,mass,factors):
     if stencil!='area' and not fit_name.startswith('tensor_free_'):
         raise ValueError('cell-width velocity stencil requires tensor fit')
     centers=np.asarray([s['c'] for s in states]);means=np.asarray([s['v'] for s in states])
+    tree=None
+    if N>=128 and fit_name=='radial_fixed_mean':
+        from scipy.spatial import cKDTree
+        tree=cKDTree(centers)
     second=np.asarray([s['raw'][3:7].reshape(2,2)/m for s,m in zip(states,mass)])
     active=rank_deficient=0;split_error=orthogonal_error=0.;fractions=[];prepared=[]
     for i,(s,L,m) in enumerate(zip(states,factors,mass)):
         R=L@L.T;norm=float(np.linalg.norm(R))
         if norm==0:continue
         center=s['c'];scale=np.sqrt(s['density'].area)
-        radius=np.linalg.norm(centers-center,axis=1)/(3*scale)
-        ids=np.flatnonzero((radius<1)&(np.arange(N)!=i))
+        ids,r=radial_neighbors(centers,center,scale,i,tree)
         if fit_name.startswith('tensor_free_'):
             ids,tensor_weight=velocity_tensor_stencil(centers,center,scale,cells[i],3.)
         if len(ids)<3:rank_deficient+=1
@@ -193,8 +256,8 @@ def prepare(states,cells,edges,mass,factors):
         target=means[ids]-s['v']-(cj-center)@s['B'].T
         # Wendland C2 weights vanish continuously at the patch boundary.
         # A fixed positive ridge also makes deficient boundary fits unique.
-        r=radius[ids];weight=(1-r)**4*(1+4*r)
         if fit_name.startswith('tensor_free_'):weight=tensor_weight
+        else:weight=(1-r)**4*(1+4*r)
         fit=curvature_fit(design,target,weight,fit_name,zmean=zmean)
         orthogonal_error=max(orthogonal_error,float(np.max(abs(X.T@(prob[:,None]*psi)))))
         prepared.append((i,L,m,R,norm,center,scale,projection,fit.T,gram_factor))

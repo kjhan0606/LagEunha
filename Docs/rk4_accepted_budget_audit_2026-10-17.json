@@ -1,0 +1,116 @@
+{
+  "scope": "Production RK4 accepted-stage budget from actual k increments, weighted 1/6,1/3,1/3,1/6",
+  "source_sha256": "7f4eee4783878225b2c996035551b3b572813acf314ec40979f19714be02b316",
+  "binary_sha256": "b147c7b43f716b8de811a3c79db8b708deb55e25894f9f4f099737f34e1c97bc",
+  "runtime_exit": 0,
+  "first_step": {
+    "[ACCEPTED_STATE]": {
+      "step": 1.0,
+      "elapsed": 0.010887299956438503,
+      "dt": 0.010887299956438503,
+      "retries": 0.0,
+      "finite": 1.0,
+      "M": 12.19100448537078,
+      "Px": 0.009100547673166691,
+      "Py": -0.012893082559719413,
+      "Lz": 14.405898184166709,
+      "K": 4.80642256502476,
+      "U": 0.001499330696282508,
+      "Phi": -9.619802098090902,
+      "E": -4.81188020236986,
+      "dM0": 0.0,
+      "dPx0": 0.00011093440617269273,
+      "dPy0": 7.693822719766902e-06,
+      "dLz0": 2.8617908043315765e-08,
+      "dE0": 7.216596209502768e-09,
+      "dEstep": 7.216596209502768e-09,
+      "hg_dE": 1.5132101301162937e-13,
+      "hg_dPx": -1.8237841792334564e-13,
+      "hg_dPy": 5.484501741648273e-14,
+      "hg_dLz": 3.659295089164516e-13,
+      "hg_dU": 3.524622651032705e-12,
+      "boundary_corrected": 0.0
+    },
+    "[ACCEPTED_RK_BUDGET]": {
+      "step": 1.0,
+      "stage_mask_min": 15.0,
+      "stage_mask_max": 15.0,
+      "rk_dPx": 0.00011093440635547926,
+      "rk_dPy": 7.693822665359185e-06,
+      "rk_dLz": 2.2713494593134e-08,
+      "rk_dEh": 5.741413484031726e-09,
+      "rk_dPhi": 1.918074553503735e-12,
+      "residual_Px": -4.0766001685454967e-16,
+      "residual_Py": -4.371503159461554e-16,
+      "residual_Lz": 5.904047029048343e-09,
+      "residual_E": 1.4731131869893943e-09,
+      "scope": "actual_stage_increments_plus_HG"
+    }
+  },
+  "diagnostic_does_not_change_printed_state": true,
+  "limitations": [
+    "Not a complete boundary flux ledger",
+    "Residuals include time integration, floors/projections and periodic coordinate changes",
+    "Old TORQ call-average output remains a legacy diagnostic, not the accepted angular-momentum budget",
+    "Forced retry and MPI multi-rank coverage still pending"
+  ],
+  "time_check": {
+    "session": 85111,
+    "same_end_time": 0.01,
+    "timesteps": [
+      0.01,
+      0.005,
+      0.0025
+    ],
+    "purpose": "Separate temporal residual from stage torque; not long-term stability evidence",
+    "results": [
+      {
+        "name": "dt010",
+        "dt": 0.01,
+        "exit": 0,
+        "steps": 1,
+        "t": 0.01,
+        "dE": 5.866651164865289e-09,
+        "dL": 2.322967418422195e-08,
+        "residual_E": 1.2447802788528861e-09,
+        "residual_Lz": 4.968816469386184e-09,
+        "rk_dLz": 1.826074060492812e-08
+      },
+      {
+        "name": "dt005",
+        "dt": 0.005,
+        "exit": 0,
+        "steps": 2,
+        "t": 0.01,
+        "dE": 1.51085988164823e-09,
+        "dL": 5.971447336605706e-09,
+        "residual_E": 3.1246738529944196e-10,
+        "residual_Lz": 1.236715618802009e-09,
+        "rk_dLz": 4.735036988420507e-09
+      },
+      {
+        "name": "dt0025",
+        "dt": 0.0025,
+        "exit": 0,
+        "steps": 4,
+        "t": 0.01,
+        "dE": 3.419762251155589e-10,
+        "dL": 1.3546639365813462e-09,
+        "residual_E": 7.761080667023634e-11,
+        "residual_Lz": 3.0614444312959677e-10,
+        "rk_dLz": 1.0488412798138192e-09
+      }
+    ],
+    "observed_residual_reduction": {
+      "energy": [
+        3.9837126606349504,
+        4.026080886223707
+      ],
+      "angular_momentum": [
+        4.017751853250964,
+        4.039647449287472
+      ]
+    },
+    "interpretation": "Approximate factor4 residual reduction at fixed t=.01 in this canonical initial interval. Does not establish fourth-order convergence or long-time stability. Full method includes HG half-step composition, whose global order is not certified by the RK4 core alone."
+  }
+}

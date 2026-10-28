@@ -1,0 +1,37 @@
+{
+  "valid_cells": 1590,
+  "invalid_cases": 2,
+  "quadrature_samples": 1373616,
+  "cpu_openmp_bitwise": true,
+  "maximum_cpu_cuda_difference": 1.734723475976807e-18,
+  "results": [
+    {
+      "backend": "cpu1",
+      "maximum_absolute_error": 1.1275702593849246e-17,
+      "maximum_tolerance_fraction": 2.5565400541951715e-05,
+      "maximum_thermal_source_error": 7.592891847513091e-18,
+      "maximum_central_torque": 3.2526065174565133e-19
+    },
+    {
+      "backend": "omp4",
+      "maximum_absolute_error": 1.1275702593849246e-17,
+      "maximum_tolerance_fraction": 2.5565400541951715e-05,
+      "maximum_thermal_source_error": 7.592891847513091e-18,
+      "maximum_central_torque": 3.2526065174565133e-19
+    },
+    {
+      "backend": "cuda",
+      "maximum_absolute_error": 1.1275702593849246e-17,
+      "maximum_tolerance_fraction": 2.5565400541951715e-05,
+      "maximum_thermal_source_error": 7.598780985733557e-18,
+      "maximum_central_torque": 2.168404344971009e-19
+    }
+  ],
+  "sha256": {
+    "samples.bin": "e47fb4e48697bab791aa313123726434ab4c1bc5bad03d8d07e9c157b823b762",
+    "offsets.bin": "c0a7b567f7a3617d4d9530ba7b0c709ee4853553b3a4029f2f1f9dba6fd86a50",
+    "moment_gravity_quadrature.h": "0377647838cdf83a066c1957759db5397ff6112b3bfd863667eb24880541f8e0",
+    "probe": "e8295eac5b96407ac500448117f6395856a8ba2ab891737805446464d296c0dd"
+  },
+  "limits": "Shared force/moment quadrature accumulation only. Acceleration, density, velocity reconstruction and nodes prepared on CPU. No full GPU hydro, MPI, RK4, or long-term stability claim."
+}

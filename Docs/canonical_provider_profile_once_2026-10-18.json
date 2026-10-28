@@ -1,0 +1,714 @@
+{
+  "status": "completed",
+  "scope": "One original-seed midpoint provider replay, with recorded concurrency.\n\nUses original decode/evaluate AST prefixes without rewriting arithmetic. No\nupdate, new trajectory, backend shadow, warmup, or tuning replay is executed.\n",
+  "flags": {
+    "LAGFORCE_QUADRATIC_VELOCITY": "1",
+    "LAGFORCE_QUADRATIC_BUDGET": "projected",
+    "LAGFORCE_VELOCITY_FIT": "radial_fixed_mean",
+    "LAGFORCE_VELOCITY_STENCIL": "area",
+    "LAGFORCE_QUADRATIC_PRESSURE": "0",
+    "LAGFORCE_KINETIC_SMOOTHING": "0",
+    "LAGFORCE_PRESSURE_RIEMANN": "exact_euler_star",
+    "LAGFORCE_VECTOR_KINETIC_ROOT": "0",
+    "LAGFORCE_SHARED_FACE_VELOCITY": "1",
+    "LAGFORCE_CAPTURE_PRESSURE_RATES": "1"
+  },
+  "cells": 1590,
+  "nodes": 272336,
+  "time": 5e-05,
+  "initial_seed": "stage0/inputs.npz:weight_rates",
+  "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+  "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+  "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+  "iterations": 3,
+  "original_iterations": 3,
+  "mass_residual": 6.949735925632083e-17,
+  "comparisons": {
+    "weight_rates": {
+      "bitwise_equal": true,
+      "maximum_absolute_difference": 0.0,
+      "maximum_tolerance_fraction": 0.0
+    },
+    "hydro": {
+      "bitwise_equal": true,
+      "maximum_absolute_difference": 0.0,
+      "maximum_tolerance_fraction": 0.0
+    },
+    "gravity": {
+      "bitwise_equal": true,
+      "maximum_absolute_difference": 0.0,
+      "maximum_tolerance_fraction": 0.0
+    },
+    "raw_source": {
+      "bitwise_equal": true,
+      "maximum_absolute_difference": 0.0,
+      "maximum_tolerance_fraction": 0.0
+    }
+  },
+  "timers": {
+    "density.face_trace": {
+      "calls": 1626440,
+      "wall_seconds": 94.185386158,
+      "cpu_seconds": 91.493938589,
+      "exclusive_wall_seconds": 94.185386158,
+      "exclusive_cpu_seconds": 91.493938589
+    },
+    "density.fit": {
+      "calls": 1590,
+      "wall_seconds": 3.345757418,
+      "cpu_seconds": 3.325151497,
+      "exclusive_wall_seconds": 3.345757418,
+      "exclusive_cpu_seconds": 3.325151497
+    },
+    "density.local_contact_priors": {
+      "calls": 1,
+      "wall_seconds": 5.823844453,
+      "cpu_seconds": 5.791396664,
+      "exclusive_wall_seconds": 5.823844453,
+      "exclusive_cpu_seconds": 5.791396664
+    },
+    "diagnostic.face_capture": {
+      "calls": 1,
+      "wall_seconds": 17.409046335,
+      "cpu_seconds": 17.315283273,
+      "exclusive_wall_seconds": 17.409046335,
+      "exclusive_cpu_seconds": 17.315283273
+    },
+    "face.quadrature_split": {
+      "calls": 14736,
+      "wall_seconds": 9.343545383,
+      "cpu_seconds": 9.26455322,
+      "exclusive_wall_seconds": 9.343545383,
+      "exclusive_cpu_seconds": 9.26455322
+    },
+    "geometry.build": {
+      "calls": 4,
+      "wall_seconds": 3.856067112,
+      "cpu_seconds": 3.836180627,
+      "exclusive_wall_seconds": 3.856067112,
+      "exclusive_cpu_seconds": 3.836180627
+    },
+    "gravity.quadrature_and_moment_diagnostics": {
+      "calls": 1,
+      "wall_seconds": 1.452212761,
+      "cpu_seconds": 1.444368479,
+      "exclusive_wall_seconds": 1.206546281,
+      "exclusive_cpu_seconds": 1.20543594
+    },
+    "gravity.raw_source": {
+      "calls": 1590,
+      "wall_seconds": 0.14973278,
+      "cpu_seconds": 0.14628725,
+      "exclusive_wall_seconds": 0.14973278,
+      "exclusive_cpu_seconds": 0.14628725
+    },
+    "massroot.jacobian_build": {
+      "calls": 21,
+      "wall_seconds": 0.435188091,
+      "cpu_seconds": 0.43255687,
+      "exclusive_wall_seconds": 0.435188091,
+      "exclusive_cpu_seconds": 0.43255687
+    },
+    "massroot.record_arrays": {
+      "calls": 3,
+      "wall_seconds": 3.507817636,
+      "cpu_seconds": 3.489804337,
+      "exclusive_wall_seconds": 3.507817636,
+      "exclusive_cpu_seconds": 3.489804337
+    },
+    "massroot.residual_and_optional_jacobian": {
+      "calls": 21,
+      "wall_seconds": 0.90249197,
+      "cpu_seconds": 0.897415789,
+      "exclusive_wall_seconds": 0.467303879,
+      "exclusive_cpu_seconds": 0.464858919
+    },
+    "massroot.solve": {
+      "calls": 3,
+      "wall_seconds": 4.713375237,
+      "cpu_seconds": 4.688679866,
+      "exclusive_wall_seconds": 0.280576985,
+      "exclusive_cpu_seconds": 0.27910307
+    },
+    "massroot.spsolve": {
+      "calls": 9,
+      "wall_seconds": 0.022488646,
+      "cpu_seconds": 0.02235667,
+      "exclusive_wall_seconds": 0.022488646,
+      "exclusive_cpu_seconds": 0.02235667
+    },
+    "moment.decode": {
+      "calls": 6360,
+      "wall_seconds": 0.326728118,
+      "cpu_seconds": 0.316749399,
+      "exclusive_wall_seconds": 0.326728118,
+      "exclusive_cpu_seconds": 0.316749399
+    },
+    "pressure.exact_star": {
+      "calls": 776440,
+      "wall_seconds": 40.142413678,
+      "cpu_seconds": 39.054867224,
+      "exclusive_wall_seconds": 40.142413678,
+      "exclusive_cpu_seconds": 39.054867224
+    },
+    "provider.initial_decode": {
+      "calls": 1,
+      "wall_seconds": 12.988638587,
+      "cpu_seconds": 12.918950877,
+      "exclusive_wall_seconds": 0.023504085,
+      "exclusive_cpu_seconds": 0.02868616
+    },
+    "provider.total": {
+      "calls": 1,
+      "wall_seconds": 363.042429047,
+      "cpu_seconds": 361.062217101,
+      "exclusive_wall_seconds": 1.65957435,
+      "exclusive_cpu_seconds": 1.649288368
+    },
+    "rhs.compatible_volume_force": {
+      "calls": 3,
+      "wall_seconds": 0.187116268,
+      "cpu_seconds": 0.18614786,
+      "exclusive_wall_seconds": 0.187116268,
+      "exclusive_cpu_seconds": 0.18614786
+    },
+    "rhs.face_record_construction": {
+      "calls": 3,
+      "wall_seconds": 246.662167977,
+      "cpu_seconds": 245.3259608,
+      "exclusive_wall_seconds": 34.145538093,
+      "exclusive_cpu_seconds": 38.990411357
+    },
+    "rhs.moment_flux_accumulation": {
+      "calls": 3,
+      "wall_seconds": 65.267785402,
+      "cpu_seconds": 64.903296068,
+      "exclusive_wall_seconds": 65.267785402,
+      "exclusive_cpu_seconds": 64.903296068
+    },
+    "rhs.total": {
+      "calls": 3,
+      "wall_seconds": 329.532957014,
+      "cpu_seconds": 327.734326104,
+      "exclusive_wall_seconds": 1.249727362,
+      "exclusive_cpu_seconds": 1.24968225
+    },
+    "velocity.correction": {
+      "calls": 6360,
+      "wall_seconds": 0.179029951,
+      "cpu_seconds": 0.170569519,
+      "exclusive_wall_seconds": 0.179029951,
+      "exclusive_cpu_seconds": 0.170569519
+    },
+    "velocity.face_samples": {
+      "calls": 1626440,
+      "wall_seconds": 68.845284665,
+      "cpu_seconds": 66.52219041,
+      "exclusive_wall_seconds": 68.845284665,
+      "exclusive_cpu_seconds": 66.52219041
+    },
+    "velocity.prepare": {
+      "calls": 4,
+      "wall_seconds": 10.982425918,
+      "cpu_seconds": 10.92342156,
+      "exclusive_wall_seconds": 10.982425918,
+      "exclusive_cpu_seconds": 10.92342156
+    }
+  },
+  "profile_manifest": {
+    "status": "prepared_not_executed",
+    "scope": "Prepare instrumented immutable module copies; never evaluates a provider.",
+    "original_manifest": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/manifest.json",
+    "modules": {
+      "kinetic_factor_rhs": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_factor_rhs.py",
+        "original_sha256": "0f5e6e2cd7b12945edfa5e7f660c061a0b48993c884c0b44c87b51935c68e3a9",
+        "instrumented_sha256": "c2c7eb2ee91971785de184d868f6e11acd7c78d97a518ea5dfd6445a7b35bbe6"
+      },
+      "kinetic_face_capture": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+        "original_sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1",
+        "instrumented_sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+      },
+      "moment_compiled_backend": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_compiled_backend.py",
+        "original_sha256": "4fe93ca30f888a6a734b3a0bd22b1eb3903fd86e0cb000284ec8b8c6923d5a39",
+        "instrumented_sha256": "4fe93ca30f888a6a734b3a0bd22b1eb3903fd86e0cb000284ec8b8c6923d5a39"
+      },
+      "moment_bridge_audit": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_bridge_audit.py",
+        "original_sha256": "ce32b2f27ebf909a526b74e64653f96709f667d5482976bdf9873db227ec6871",
+        "instrumented_sha256": "ce32b2f27ebf909a526b74e64653f96709f667d5482976bdf9873db227ec6871"
+      },
+      "moment_factor_error_bounds": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_factor_error_bounds.py",
+        "original_sha256": "3563b1454de556dced3913dc2b62a9b5bfbee7f1452195006ef8720baa393c63",
+        "instrumented_sha256": "3563b1454de556dced3913dc2b62a9b5bfbee7f1452195006ef8720baa393c63"
+      },
+      "contact_prior_density": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_prior_density.py",
+        "original_sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8",
+        "instrumented_sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+      },
+      "geometry_uncertainty": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/geometry_uncertainty.py",
+        "original_sha256": "a58bfe8407a40e3aa31dff10c6f19fddb3059bdf420750b4286c433907be20e4",
+        "instrumented_sha256": "a58bfe8407a40e3aa31dff10c6f19fddb3059bdf420750b4286c433907be20e4"
+      },
+      "quadratic_velocity_reconstruction": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_velocity_reconstruction.py",
+        "original_sha256": "45230f6c698cd45f242d93526b923008f5752d6d70a480e6bababc9e5e40c72e",
+        "instrumented_sha256": "45230f6c698cd45f242d93526b923008f5752d6d70a480e6bababc9e5e40c72e"
+      },
+      "contact_upwind_face_nodes": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+        "original_sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94",
+        "instrumented_sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+      },
+      "moment_gravity_source": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+        "original_sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e",
+        "instrumented_sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+      },
+      "embedded_laguerre_geometry": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+        "original_sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329",
+        "instrumented_sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+      },
+      "frozen_weight_root": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/frozen_weight_root.py",
+        "original_sha256": "881cf19a51a93aa1a69d960c77c1d54ce3860d7c0654bf3962552ae2ec8bed25",
+        "note": "dependency source SHA captured now; not in original runner manifest",
+        "instrumented_sha256": "881cf19a51a93aa1a69d960c77c1d54ce3860d7c0654bf3962552ae2ec8bed25"
+      },
+      "vector_kinetic_root": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/vector_kinetic_root.py",
+        "original_sha256": "9e65176998d37645dd6ee2d720532ca508285ac8b93b5b5d72eeff82fbcf81dd",
+        "note": "dependency source SHA captured now; not in original runner manifest",
+        "instrumented_sha256": "ba844a9c7ea44aaa5bf395ddea2640a017ff2c35da909d75908bd6f0f8776c6b"
+      },
+      "euler_star_pressure": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/euler_star_pressure.py",
+        "original_sha256": "196888e295e2758b2923ab71d23785dbcc18fd8b8d8da7e400ec53457cc13575",
+        "note": "dependency source SHA captured now; not in original runner manifest",
+        "instrumented_sha256": "196888e295e2758b2923ab71d23785dbcc18fd8b8d8da7e400ec53457cc13575"
+      },
+      "vector_moment_flux": {
+        "original_path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/vector_moment_flux.py",
+        "original_sha256": "8b78ffdf9c9eda6027bcd1206f0c7f8244e6609edb19ddf60b59c2bedff600e8",
+        "note": "dependency source SHA captured now; not in original runner manifest",
+        "instrumented_sha256": "8b78ffdf9c9eda6027bcd1206f0c7f8244e6609edb19ddf60b59c2bedff600e8"
+      }
+    },
+    "instrumented_blocks": {
+      "kinetic_factor_rhs": [
+        "rhs.face_record_construction",
+        "rhs.moment_flux_accumulation",
+        "rhs.compatible_volume_force"
+      ],
+      "vector_kinetic_root": [
+        "massroot.jacobian_build"
+      ]
+    },
+    "timer_sha256": "1c39668f1dd3cd287e58cc1244fd3d91fe89ed2d6e9f3a903e919247dad192a6",
+    "prepare_sha256": "bb8ecc7dd8de8c20c1657a9235bb41d72a59f57b9a1a34e49eb1e770778d6ce7",
+    "limits": "Source snapshot preparation only. No physics/model/order/cache/stopping changes. Timer overhead included in execution measurements."
+  },
+  "concurrency": {
+    "authorization": "Astra completed-bundle decision: one 1thread replay concurrent with fine after B exit0",
+    "concurrent_fine_requested": true,
+    "fine_root": "/gpfs/kjhan/LagForce/Codex_contact_prior_evolution_dt5e5_20261018",
+    "fine_processes": [
+      {
+        "pid": 4139861,
+        "command": [
+          "python3",
+          "/gpfs/kjhan/LagForce/Codex_contact_prior_evolution_modules_20261018/run_continuous_quadratic_evolution.py",
+          "--density-closure",
+          "contact",
+          "--active-radius",
+          ".60",
+          "--dt",
+          ".00005",
+          "--end",
+          ".001",
+          "--output",
+          "/gpfs/kjhan/LagForce/Codex_contact_prior_evolution_dt5e5_20261018"
+        ],
+        "affinity": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127
+        ]
+      }
+    ],
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127
+    ],
+    "available_logical_cpus": 128,
+    "load_average": [
+      23.98,
+      24.43,
+      26.07
+    ],
+    "guarded_original_path": "/gpfs/kjhan/LagForce/replay_saved_provider_profile_guarded_original_20261018.py",
+    "guarded_original_sha256": "8dbf9bdf6d209f9cea93cf8a007b6688a6f717cb69f7f5e70eb2f5ac40bc8470",
+    "warning": "Concurrent run and timer overhead: not unloaded wall time or exclusive hardware allocation."
+  },
+  "runtime_source_sha256": {
+    "__main__": {
+      "path": "/gpfs/kjhan/LagForce/replay_saved_provider_profile_once_20261018.py",
+      "sha256": "b82752d9f51552c0f7e8095192083fb943c941646aa4bf46998dcd471d2e9a23"
+    },
+    "provider_profile_clock": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/provider_profile_clock.py",
+      "sha256": "1c39668f1dd3cd287e58cc1244fd3d91fe89ed2d6e9f3a903e919247dad192a6"
+    },
+    "subcell_exact_geometry": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/subcell_exact_geometry.py",
+      "sha256": "d8bea6ef22cf128d02c6971f433e8b1945b1ec2a65229f87f80006e95fe0f8c5"
+    },
+    "weighted_mass_patch": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/weighted_mass_patch.py",
+      "sha256": "376b63ec29960702a41536a7bc3c8c3f3daceb0c1f83b47da363de1085c3eaca"
+    },
+    "fixedmass_ale_evolve": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_ale_evolve.py",
+      "sha256": "67bf6dad2f980904d1ef285ca9b351a7556b9219fa72b0ecc92d1c680ceac425"
+    },
+    "fixedmass_hllc": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_hllc.py",
+      "sha256": "3d8ded18572ef0a3c56b2ddf9af3785494da16874677aa5ff8a43f1a54b4865c"
+    },
+    "periodic2d_hllc": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/periodic2d_hllc.py",
+      "sha256": "f1c556a55b40b9b9d7eb74ad83dd22653c61c640a4d3a0ecbd4237c76bc4ef65"
+    },
+    "affine_moment_patch": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/affine_moment_patch.py",
+      "sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4"
+    },
+    "moment_ale_evolve": {
+      "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+      "sha256": "893d1f715adfe41a3e7af4a0486746b0ecd39788767095a297bc4ecca97987cf"
+    },
+    "quadratic_velocity_reconstruction": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/quadratic_velocity_reconstruction.py",
+      "sha256": "45230f6c698cd45f242d93526b923008f5752d6d70a480e6bababc9e5e40c72e"
+    },
+    "vector_kinetic_root": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/vector_kinetic_root.py",
+      "sha256": "ba844a9c7ea44aaa5bf395ddea2640a017ff2c35da909d75908bd6f0f8776c6b"
+    },
+    "frozen_weight_root": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/frozen_weight_root.py",
+      "sha256": "881cf19a51a93aa1a69d960c77c1d54ce3860d7c0654bf3962552ae2ec8bed25"
+    },
+    "euler_star_pressure": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/euler_star_pressure.py",
+      "sha256": "196888e295e2758b2923ab71d23785dbcc18fd8b8d8da7e400ec53457cc13575"
+    },
+    "kinetic_factor_rhs": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/kinetic_factor_rhs.py",
+      "sha256": "c2c7eb2ee91971785de184d868f6e11acd7c78d97a518ea5dfd6445a7b35bbe6"
+    },
+    "density_quadrature": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+      "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+    },
+    "contact_prior_density": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/contact_prior_density.py",
+      "sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+    },
+    "quadratic_upwind_face_nodes": {
+      "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_upwind_face_nodes.py",
+      "sha256": "8719430a44250e24f4914702eb68a4950b07c72db63a106cb5f562d550096f2a"
+    },
+    "contact_upwind_face_nodes": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/contact_upwind_face_nodes.py",
+      "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+    },
+    "embedded_laguerre_geometry": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/embedded_laguerre_geometry.py",
+      "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+    },
+    "kinetic_face_capture": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/kinetic_face_capture.py",
+      "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+    },
+    "moment_gravity_source": {
+      "path": "/gpfs/kjhan/LagForce/Codex_provider_profile_modules_20261018/moment_gravity_source.py",
+      "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+    },
+    "audit_canonical_pair_history": {
+      "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+      "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+    },
+    "run_canonical_av_branches_20261018": {
+      "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+      "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+    }
+  },
+  "environment": {
+    "host": "LagEunha",
+    "python": "3.13.11 | packaged by Anaconda, Inc. | (main, Dec 10 2025, 21:28:48) [GCC 14.3.0]",
+    "numpy": "2.3.3",
+    "scipy": "1.18.0",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "runner_sha256": "b82752d9f51552c0f7e8095192083fb943c941646aa4bf46998dcd471d2e9a23",
+  "limits": "One instrumented provider replay. Timers include their overhead; exclusive time removes nested measured spans, not uninstrumented callees. Face capture/moment-defect diagnostics included and labeled where measured. Not independent trajectory, speedup measurement, optimization, long-time or physical accuracy proof."
+}

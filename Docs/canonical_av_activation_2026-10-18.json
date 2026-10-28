@@ -1,0 +1,1371 @@
+{
+  "scope": "Saved single-RHS diagnostics at t2/t4/t6. Frozen-state AV activation audit; no evolved counterfactual.",
+  "script_sha256": "1a25752e45fc4e95857f4caf1dee6a9cd0e3c0c40faaea77122207b6cabfebb2",
+  "initial_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+  "limits": [
+    "Actual/circular heat difference is nonlinear and not an additive causal budget.",
+    "chi=0 is reconstructed offline with nonlinear impedance recomputed; no production adoption.",
+    "Face inputs have ~7 significant digits; reconstruction tolerances are reported.",
+    "Circular velocity at current perturbed geometry is a diagnostic, not the original evolved solution.",
+    "TCF only; HG and long-time response excluded."
+  ],
+  "cases": {
+    "t2": {
+      "actual": {
+        "sources": {
+          "rhs": "/gpfs/kjhan/LagForce/Codex_t2_onset_rhs_20261017/t2/rhs.dat",
+          "rhs_sha256": "18f759f6ebd7793ebe8691370084cb1c3e43076db3cb23872a56fb8ff0f8f550",
+          "faces_sha256": "b81728826193bbe7b2a6307804d17837f9fc1c47fd40a69f06bf722a4f826879",
+          "binary": "166f823751e096dded245abc76c0c8e0925020b664bbc226e359281d284ad83d  /gpfs/kjhan/LagForce/Codex_mpi_force_probe_20261017/eunha2.exe"
+        },
+        "Q_reconstruction_relative_L1_error": 1.8284732219663735e-07,
+        "blend_reconstruction_relative_L1_error": 9.711775570857773e-08,
+        "heat_reconstruction_relative_L1_error": 1.667367604928457e-07,
+        "models": {
+          "saved_chi": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 1.2719126270570226e-07,
+                "heat_over_U_mass_mean": 0.003868896505779309,
+                "AV_acceleration_mass_RMS": 0.00036071412149440014,
+                "chi_quantiles": [
+                  0.001229574,
+                  0.00539474,
+                  0.01516069,
+                  0.0377002
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 1.2471024189560326e-08,
+                "heat_over_U_mass_mean": 0.0007854071780998412,
+                "AV_acceleration_mass_RMS": 2.511079731789335e-06,
+                "chi_quantiles": [
+                  6.107136e-05,
+                  0.0013516727000000076,
+                  0.004360101,
+                  0.006490604
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 2.260797587407379e-09,
+                "heat_over_U_mass_mean": 5.392683895130279e-06,
+                "AV_acceleration_mass_RMS": 8.306625032778288e-08,
+                "chi_quantiles": [
+                  2.157646e-05,
+                  0.0001366301,
+                  0.0002585482,
+                  0.000329257
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.0028308178227182497,
+                "acceleration": [
+                  3.296852197340298e-06,
+                  -4.4312387889686495e-07
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.0018501637900388656,
+                "acceleration": [
+                  -0.0004131034113744473,
+                  0.00023105403343920511
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.005036630114747248,
+                "acceleration": [
+                  -0.00015362994034397566,
+                  -4.596490638555464e-05
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.011090406421599508,
+                "acceleration": [
+                  -6.606126175821232e-06,
+                  4.575886954086983e-06
+                ]
+              },
+              "934": {
+                "heat_over_U": 9.318794094035967e-05,
+                "acceleration": [
+                  2.8810026445177233e-08,
+                  -2.4059463326561443e-07
+                ]
+              }
+            }
+          },
+          "chi_zero": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 8.415503873764484e-08,
+                "heat_over_U_mass_mean": 0.002556697952074408,
+                "AV_acceleration_mass_RMS": 0.0003114363048635034,
+                "chi_quantiles": [
+                  0.001229574,
+                  0.00539474,
+                  0.01516069,
+                  0.0377002
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 3.2732023236643735e-09,
+                "heat_over_U_mass_mean": 0.00020602881875748995,
+                "AV_acceleration_mass_RMS": 1.2353425193424876e-06,
+                "chi_quantiles": [
+                  6.107136e-05,
+                  0.0013516727000000076,
+                  0.004360101,
+                  0.006490604
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 9.89746659667692e-10,
+                "heat_over_U_mass_mean": 2.3604337372223383e-06,
+                "AV_acceleration_mass_RMS": 6.610893428125283e-08,
+                "chi_quantiles": [
+                  2.157646e-05,
+                  0.0001366301,
+                  0.0002585482,
+                  0.000329257
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.001175012833902043,
+                "acceleration": [
+                  1.3684538836318339e-06,
+                  -1.8393138567013102e-07
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.0013598847408384065,
+                "acceleration": [
+                  -0.00031726173445149105,
+                  0.00017573032031522733
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.00029829687949630676,
+                "acceleration": [
+                  -0.00012793796626482887,
+                  1.658983295373729e-05
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.0010833154044772343,
+                "acceleration": [
+                  1.8006393638580358e-06,
+                  1.4111631884603684e-06
+                ]
+              },
+              "934": {
+                "heat_over_U": 1.163063199147711e-08,
+                "acceleration": [
+                  1.2544429313875347e-07,
+                  -2.624105909224323e-07
+                ]
+              }
+            }
+          }
+        },
+        "tracked_faces": [
+          {
+            "i": 804,
+            "j": 803,
+            "chi": 0.0006514068,
+            "raw_QBP_delta": -0.0002457639,
+            "blended_QBP_input": -0.0002451505,
+            "cell_velocity_jump": 0.0006958453,
+            "Q_saved_over_Pmean": 0.0,
+            "Q_chi_zero_over_Pmean": 0.0
+          },
+          {
+            "i": 804,
+            "j": 805,
+            "chi": 0.005493599,
+            "raw_QBP_delta": -3.546206e-05,
+            "blended_QBP_input": -3.680046e-05,
+            "cell_velocity_jump": -0.0002790902,
+            "Q_saved_over_Pmean": -0.0004552524956244888,
+            "Q_chi_zero_over_Pmean": -0.0004386928331355056
+          }
+        ],
+        "actual_velocity_perturbation_power": {
+          "initial_inner": {
+            "kinetic_energy_relative_to_circular": 6.879752534748229e-10,
+            "pressure_work": 1.4014737280326506e-09,
+            "differential_rotation_work": 9.321288645036337e-10,
+            "TCF_work": {
+              "saved_chi": -6.363263839315839e-10,
+              "chi_zero": -5.165838713122134e-10
+            },
+            "total_without_HG": {
+              "saved_chi": 1.6972762086047004e-09,
+              "chi_zero": 1.8170187212240708e-09
+            }
+          },
+          "initial_inner_edge": {
+            "kinetic_energy_relative_to_circular": 2.033130838881382e-12,
+            "pressure_work": 2.919011384234125e-12,
+            "differential_rotation_work": -7.235657277890695e-13,
+            "TCF_work": {
+              "saved_chi": 8.303678177892804e-13,
+              "chi_zero": 3.9339427235854563e-13
+            },
+            "total_without_HG": {
+              "saved_chi": 3.025813474234336e-12,
+              "chi_zero": 2.588839928803601e-12
+            }
+          },
+          "initial_disk_core": {
+            "kinetic_energy_relative_to_circular": 1.1769183184785039e-11,
+            "pressure_work": 1.0287678964375553e-11,
+            "differential_rotation_work": -2.9613318004513903e-12,
+            "TCF_work": {
+              "saved_chi": -6.072783717332792e-13,
+              "chi_zero": -4.378998310158494e-13
+            },
+            "total_without_HG": {
+              "saved_chi": 6.7190687921908836e-12,
+              "chi_zero": 6.888447332908313e-12
+            }
+          },
+          "derivative_check": [
+            {
+              "epsilon": 1e-05,
+              "relative_L1_error": 6.181303418067442e-08
+            },
+            {
+              "epsilon": 1e-06,
+              "relative_L1_error": 6.089351995194069e-07
+            }
+          ]
+        }
+      },
+      "circular": {
+        "sources": {
+          "rhs": "/gpfs/kjhan/LagForce/Codex_t2_onset_rhs_20261017/circular/rhs.dat",
+          "rhs_sha256": "508d9956d972f3219bf6c9b34e260b88e9c1effa7235d3031ab7f0ddedf75dfa",
+          "faces_sha256": "78579caeff06ebf83d95baf781056f3c78dd807f1120b429a30d1b10676b60c8",
+          "binary": "166f823751e096dded245abc76c0c8e0925020b664bbc226e359281d284ad83d  /gpfs/kjhan/LagForce/Codex_mpi_force_probe_20261017/eunha2.exe"
+        },
+        "Q_reconstruction_relative_L1_error": 1.828284045709631e-07,
+        "blend_reconstruction_relative_L1_error": 9.706411796071846e-08,
+        "heat_reconstruction_relative_L1_error": 1.6673756559838103e-07,
+        "models": {
+          "saved_chi": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 6.826133961109592e-08,
+                "heat_over_U_mass_mean": 0.0020746270725191113,
+                "AV_acceleration_mass_RMS": 5.8427472016972154e-05,
+                "chi_quantiles": [
+                  5.550834e-05,
+                  0.0002880992,
+                  0.001235728,
+                  0.002563845
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 7.131309730253328e-10,
+                "heat_over_U_mass_mean": 4.494076414463424e-05,
+                "AV_acceleration_mass_RMS": 2.5619430023813643e-07,
+                "chi_quantiles": [
+                  5.695266e-05,
+                  0.0001608718,
+                  0.0002435699,
+                  0.0003388394
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 6.639038958828745e-10,
+                "heat_over_U_mass_mean": 1.5834234563748014e-06,
+                "AV_acceleration_mass_RMS": 2.9227325924339985e-08,
+                "chi_quantiles": [
+                  1.946795e-06,
+                  1.801173800000008e-05,
+                  7.892165e-05,
+                  0.0001771511
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.0,
+                "acceleration": [
+                  0.0,
+                  0.0
+                ]
+              },
+              "804": {
+                "heat_over_U": 4.487617863159208e-07,
+                "acceleration": [
+                  7.972611001771231e-06,
+                  1.2661731038425654e-05
+                ]
+              },
+              "805": {
+                "heat_over_U": 1.534071610263414e-05,
+                "acceleration": [
+                  -4.5413762462880716e-07,
+                  3.958980387224219e-06
+                ]
+              },
+              "933": {
+                "heat_over_U": 8.704429326168583e-09,
+                "acceleration": [
+                  9.40938882354484e-08,
+                  -2.3073775121842344e-07
+                ]
+              },
+              "934": {
+                "heat_over_U": 1.4753128803463221e-08,
+                "acceleration": [
+                  -3.7591194083082144e-09,
+                  4.1774399269663896e-08
+                ]
+              }
+            }
+          },
+          "chi_zero": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 6.604440366038782e-08,
+                "heat_over_U_mass_mean": 0.0020071732035861173,
+                "AV_acceleration_mass_RMS": 5.742722694735465e-05,
+                "chi_quantiles": [
+                  5.550834e-05,
+                  0.0002880992,
+                  0.001235728,
+                  0.002563845
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 4.525637968565615e-10,
+                "heat_over_U_mass_mean": 2.8516921929506115e-05,
+                "AV_acceleration_mass_RMS": 2.4802542521068976e-07,
+                "chi_quantiles": [
+                  5.695266e-05,
+                  0.0001608718,
+                  0.0002435699,
+                  0.0003388394
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 4.867866652118015e-10,
+                "heat_over_U_mass_mean": 1.1610099661013406e-06,
+                "AV_acceleration_mass_RMS": 2.8255918855790767e-08,
+                "chi_quantiles": [
+                  1.946795e-06,
+                  1.801173800000008e-05,
+                  7.892165e-05,
+                  0.0001771511
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.0,
+                "acceleration": [
+                  0.0,
+                  0.0
+                ]
+              },
+              "804": {
+                "heat_over_U": 4.4847347194113014e-07,
+                "acceleration": [
+                  7.96748886698499e-06,
+                  1.2653596301513047e-05
+                ]
+              },
+              "805": {
+                "heat_over_U": 2.387867489757325e-06,
+                "acceleration": [
+                  2.5093983249567306e-07,
+                  2.6033429900196266e-06
+                ]
+              },
+              "933": {
+                "heat_over_U": 8.704429305429217e-09,
+                "acceleration": [
+                  9.409388801125823e-08,
+                  -2.307377506686626e-07
+                ]
+              },
+              "934": {
+                "heat_over_U": 1.4753129743592575e-08,
+                "acceleration": [
+                  -3.759104795462831e-09,
+                  4.177436862099271e-08
+                ]
+              }
+            }
+          }
+        },
+        "tracked_faces": [
+          {
+            "i": 804,
+            "j": 803,
+            "chi": 0.0001175966,
+            "raw_QBP_delta": -2.528436e-05,
+            "blended_QBP_input": -2.515113e-05,
+            "cell_velocity_jump": 0.001107601,
+            "Q_saved_over_Pmean": 0.0,
+            "Q_chi_zero_over_Pmean": 0.0
+          },
+          {
+            "i": 804,
+            "j": 805,
+            "chi": 4.7298e-05,
+            "raw_QBP_delta": -1.716037e-05,
+            "blended_QBP_input": -1.717141e-05,
+            "cell_velocity_jump": -0.0002506336,
+            "Q_saved_over_Pmean": -0.00021240441801103347,
+            "Q_chi_zero_over_Pmean": -0.00021226795530665668
+          }
+        ],
+        "actual_velocity_perturbation_power": {}
+      },
+      "same_geometry_and_thermodynamic_state": true,
+      "circular_velocity_max_abs_error": 4.218847493575595e-15,
+      "ratios": {
+        "initial_inner": {
+          "circular_over_actual_heat": 0.5366826160774927,
+          "actual_chi_zero_over_saved_heat": 0.6616416642734689,
+          "circular_chi_zero_over_saved_heat": 0.9675228179912875
+        },
+        "initial_inner_edge": {
+          "circular_over_actual_heat": 0.057183031817250825,
+          "actual_chi_zero_over_saved_heat": 0.26246459584325227,
+          "circular_chi_zero_over_saved_heat": 0.6346152585921757
+        },
+        "initial_disk_core": {
+          "circular_over_actual_heat": 0.2936591491342758,
+          "actual_chi_zero_over_saved_heat": 0.43778649852625967,
+          "circular_chi_zero_over_saved_heat": 0.7332185700830413
+        }
+      }
+    },
+    "t4": {
+      "actual": {
+        "sources": {
+          "rhs": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_identity_20261017/t4/rhs.dat",
+          "rhs_sha256": "b2e3490034636bdc5674501cf5847f1ae5c6d143afe446e32ee1a635d69e946d",
+          "faces_sha256": "9ba04bdb427ab45ea6a13803c66ff294dfce888ca50dbde1bbbe64cf64644e64",
+          "binary": "b5192c01c6b124e4ca9ef4420260998c7caec62c43656267e1c2a48b5c0cc5d5  /gpfs/kjhan/LagForce/Codex_inner_volume_TCF_20261017/eunha2.exe"
+        },
+        "Q_reconstruction_relative_L1_error": 1.832942718954371e-07,
+        "blend_reconstruction_relative_L1_error": 9.830196846682684e-08,
+        "heat_reconstruction_relative_L1_error": 1.6670019539642216e-07,
+        "models": {
+          "saved_chi": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 3.3605149627896318e-06,
+                "heat_over_U_mass_mean": 0.09427338202776382,
+                "AV_acceleration_mass_RMS": 0.013927906283051667,
+                "chi_quantiles": [
+                  0.01205322,
+                  0.09080342,
+                  0.1443561,
+                  0.1992776
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 5.181316023566121e-07,
+                "heat_over_U_mass_mean": 0.03131042116973264,
+                "AV_acceleration_mass_RMS": 8.294840983696817e-05,
+                "chi_quantiles": [
+                  0.000307128,
+                  0.02029789,
+                  0.05484073,
+                  0.1055107
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 2.1222595656378023e-09,
+                "heat_over_U_mass_mean": 5.061381795796313e-06,
+                "AV_acceleration_mass_RMS": 8.39189988667319e-08,
+                "chi_quantiles": [
+                  1.856767e-05,
+                  0.0001147856,
+                  0.0002444506,
+                  0.0003415287
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.006245604520031262,
+                "acceleration": [
+                  9.90980428998512e-06,
+                  -9.509686193869705e-06
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.014727061195564915,
+                "acceleration": [
+                  -0.0023579397947149114,
+                  0.007097075765628883
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.05035767371950518,
+                "acceleration": [
+                  -0.005736033309065336,
+                  0.0055084595374132244
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.010970144214079628,
+                "acceleration": [
+                  -1.3781979143974293e-05,
+                  -2.219750204667693e-06
+                ]
+              },
+              "934": {
+                "heat_over_U": 0.024817062463284762,
+                "acceleration": [
+                  3.661588639393915e-05,
+                  -1.4116142010732966e-05
+                ]
+              }
+            }
+          },
+          "chi_zero": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 2.19477646473582e-06,
+                "heat_over_U_mass_mean": 0.0602946433442519,
+                "AV_acceleration_mass_RMS": 0.01172254031439567,
+                "chi_quantiles": [
+                  0.01205322,
+                  0.09080342,
+                  0.1443561,
+                  0.1992776
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 2.3032490733809873e-07,
+                "heat_over_U_mass_mean": 0.01395248726854831,
+                "AV_acceleration_mass_RMS": 6.020887459920068e-05,
+                "chi_quantiles": [
+                  0.000307128,
+                  0.02029789,
+                  0.05484073,
+                  0.1055107
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 1.1010175413075198e-09,
+                "heat_over_U_mass_mean": 2.6256130196265585e-06,
+                "AV_acceleration_mass_RMS": 7.044050086858452e-08,
+                "chi_quantiles": [
+                  1.856767e-05,
+                  0.0001147856,
+                  0.0002444506,
+                  0.0003415287
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.005094514672059034,
+                "acceleration": [
+                  9.079113676013397e-06,
+                  -8.898204540560906e-06
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.014498228925703982,
+                "acceleration": [
+                  -0.0022752899251007354,
+                  0.006903935831165645
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.028458680762335386,
+                "acceleration": [
+                  -0.004014935127077968,
+                  0.004834315196016542
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.01008705279133157,
+                "acceleration": [
+                  -1.282365041068374e-05,
+                  -2.2119602684212575e-06
+                ]
+              },
+              "934": {
+                "heat_over_U": 0.023645972801285484,
+                "acceleration": [
+                  3.794723973463433e-05,
+                  -1.4069310009007497e-05
+                ]
+              }
+            }
+          }
+        },
+        "tracked_faces": [
+          {
+            "i": 804,
+            "j": 803,
+            "chi": 0.0,
+            "raw_QBP_delta": -0.001974314,
+            "blended_QBP_input": -0.001974314,
+            "cell_velocity_jump": 0.005991278,
+            "Q_saved_over_Pmean": 0.0,
+            "Q_chi_zero_over_Pmean": 0.0
+          },
+          {
+            "i": 804,
+            "j": 805,
+            "chi": 0.0324682,
+            "raw_QBP_delta": -0.0006805037,
+            "blended_QBP_input": -0.000639842,
+            "cell_velocity_jump": 0.0005718517,
+            "Q_saved_over_Pmean": 0.0,
+            "Q_chi_zero_over_Pmean": 0.0
+          }
+        ],
+        "actual_velocity_perturbation_power": {
+          "initial_inner": {
+            "kinetic_energy_relative_to_circular": 2.816040508594708e-07,
+            "pressure_work": 9.231677354685723e-07,
+            "differential_rotation_work": 3.1197870452038684e-07,
+            "TCF_work": {
+              "saved_chi": -5.296569505609028e-07,
+              "chi_zero": -4.24094547226221e-07
+            },
+            "total_without_HG": {
+              "saved_chi": 7.054894894280563e-07,
+              "chi_zero": 8.110518927627381e-07
+            }
+          },
+          "initial_inner_edge": {
+            "kinetic_energy_relative_to_circular": 4.242775297098189e-10,
+            "pressure_work": 5.940461821969331e-10,
+            "differential_rotation_work": 1.880301497964864e-11,
+            "TCF_work": {
+              "saved_chi": 1.7982276907867552e-10,
+              "chi_zero": 1.2837292659599404e-10
+            },
+            "total_without_HG": {
+              "saved_chi": 7.926719662552572e-10,
+              "chi_zero": 7.412221237725757e-10
+            }
+          },
+          "initial_disk_core": {
+            "kinetic_energy_relative_to_circular": 1.657908140063755e-11,
+            "pressure_work": 3.9113761248115995e-12,
+            "differential_rotation_work": -1.1225719462658887e-13,
+            "TCF_work": {
+              "saved_chi": -5.239447353790878e-13,
+              "chi_zero": -4.224892471820946e-13
+            },
+            "total_without_HG": {
+              "saved_chi": 3.275174194805923e-12,
+              "chi_zero": 3.376629683002916e-12
+            }
+          },
+          "derivative_check": [
+            {
+              "epsilon": 1e-05,
+              "relative_L1_error": 2.0081699772211815e-09
+            },
+            {
+              "epsilon": 1e-06,
+              "relative_L1_error": 2.1012904251213796e-08
+            }
+          ]
+        }
+      },
+      "circular": {
+        "sources": {
+          "rhs": "/gpfs/kjhan/LagForce/Codex_TCF_circular_rhs_20261017/t4/rhs.dat",
+          "rhs_sha256": "f9e17980076a3aad2ccdca05d3ae4424bfdc6cb655fc51c4be9ccc01e4f0d163",
+          "faces_sha256": "41ebe8e6e893b6f963b8accbfe5db1188433120ba293e88c034ec5f3d1006c05",
+          "binary": "b5192c01c6b124e4ca9ef4420260998c7caec62c43656267e1c2a48b5c0cc5d5  /gpfs/kjhan/LagForce/Codex_inner_volume_TCF_20261017/eunha2.exe"
+        },
+        "Q_reconstruction_relative_L1_error": 1.8282804797773496e-07,
+        "blend_reconstruction_relative_L1_error": 9.707059016977566e-08,
+        "heat_reconstruction_relative_L1_error": 1.6673706808253137e-07,
+        "models": {
+          "saved_chi": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 1.0747208168362859e-07,
+                "heat_over_U_mass_mean": 0.003132254155098607,
+                "AV_acceleration_mass_RMS": 0.0001513279726660283,
+                "chi_quantiles": [
+                  0.0001848199,
+                  0.0005652654,
+                  0.001903999,
+                  0.003287852
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 1.1542401475572616e-09,
+                "heat_over_U_mass_mean": 7.084976587401139e-05,
+                "AV_acceleration_mass_RMS": 6.345824917340156e-07,
+                "chi_quantiles": [
+                  6.446893e-05,
+                  0.0002554816,
+                  0.0004326627,
+                  0.0008323353
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 7.768817805417965e-10,
+                "heat_over_U_mass_mean": 1.8530118061200105e-06,
+                "AV_acceleration_mass_RMS": 3.9774755871384584e-08,
+                "chi_quantiles": [
+                  1.953145e-06,
+                  2.001434e-05,
+                  8.095789e-05,
+                  0.000164708
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.0001756628461390268,
+                "acceleration": [
+                  -3.9771424385236287e-07,
+                  -1.7674720365532547e-07
+                ]
+              },
+              "804": {
+                "heat_over_U": 5.897764342321135e-05,
+                "acceleration": [
+                  3.180425683451935e-05,
+                  4.667620789380056e-06
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.0004077750426489409,
+                "acceleration": [
+                  3.052588346588447e-05,
+                  3.972330148291158e-05
+                ]
+              },
+              "933": {
+                "heat_over_U": 3.4845877366891873e-07,
+                "acceleration": [
+                  -7.22701873188005e-07,
+                  -8.168493396478966e-07
+                ]
+              },
+              "934": {
+                "heat_over_U": 5.293581275491951e-07,
+                "acceleration": [
+                  2.4657642801156077e-07,
+                  2.103582928778389e-07
+                ]
+              }
+            }
+          },
+          "chi_zero": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 9.996671659631928e-08,
+                "heat_over_U_mass_mean": 0.0029206631053400613,
+                "AV_acceleration_mass_RMS": 0.00014058198105558305,
+                "chi_quantiles": [
+                  0.0001848199,
+                  0.0005652654,
+                  0.001903999,
+                  0.003287852
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 7.982903119993454e-10,
+                "heat_over_U_mass_mean": 4.900744871955042e-05,
+                "AV_acceleration_mass_RMS": 6.258900409535754e-07,
+                "chi_quantiles": [
+                  6.446893e-05,
+                  0.0002554816,
+                  0.0004326627,
+                  0.0008323353
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 5.568234740118313e-10,
+                "heat_over_U_mass_mean": 1.3280572951052612e-06,
+                "AV_acceleration_mass_RMS": 3.847713806297325e-08,
+                "chi_quantiles": [
+                  1.953145e-06,
+                  2.001434e-05,
+                  8.095789e-05,
+                  0.000164708
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.00017353570978673614,
+                "acceleration": [
+                  -3.9948431256801e-07,
+                  -1.7565427165882288e-07
+                ]
+              },
+              "804": {
+                "heat_over_U": 5.897761032316706e-05,
+                "acceleration": [
+                  3.180421914879605e-05,
+                  4.667611253059669e-06
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.00037602670097026275,
+                "acceleration": [
+                  3.245289745349182e-05,
+                  3.8342897706693066e-05
+                ]
+              },
+              "933": {
+                "heat_over_U": 3.4841795244666824e-07,
+                "acceleration": [
+                  -7.226172101632358e-07,
+                  -8.167536474427964e-07
+                ]
+              },
+              "934": {
+                "heat_over_U": 5.292278347170524e-07,
+                "acceleration": [
+                  2.4672315348771694e-07,
+                  2.1055734070731384e-07
+                ]
+              }
+            }
+          }
+        },
+        "tracked_faces": [
+          {
+            "i": 804,
+            "j": 803,
+            "chi": 0.0,
+            "raw_QBP_delta": 1.814189e-05,
+            "blended_QBP_input": 1.814189e-05,
+            "cell_velocity_jump": 0.009806243,
+            "Q_saved_over_Pmean": 0.0004538326374024693,
+            "Q_chi_zero_over_Pmean": 0.0004538323502964793
+          },
+          {
+            "i": 804,
+            "j": 805,
+            "chi": 0.0,
+            "raw_QBP_delta": 1.896866e-05,
+            "blended_QBP_input": 1.896866e-05,
+            "cell_velocity_jump": 0.00206593,
+            "Q_saved_over_Pmean": 0.00022980669860201677,
+            "Q_chi_zero_over_Pmean": 0.0002298067754707582
+          }
+        ],
+        "actual_velocity_perturbation_power": {}
+      },
+      "same_geometry_and_thermodynamic_state": true,
+      "circular_velocity_max_abs_error": 0.0,
+      "ratios": {
+        "initial_inner": {
+          "circular_over_actual_heat": 0.03198083712575225,
+          "actual_chi_zero_over_saved_heat": 0.6531071841780736,
+          "circular_chi_zero_over_saved_heat": 0.9301645137068875
+        },
+        "initial_inner_edge": {
+          "circular_over_actual_heat": 0.002227696867566935,
+          "actual_chi_zero_over_saved_heat": 0.4445297416534999,
+          "circular_chi_zero_over_saved_heat": 0.6916154438820907
+        },
+        "initial_disk_core": {
+          "circular_over_actual_heat": 0.3660635075560705,
+          "actual_chi_zero_over_saved_heat": 0.5187949481460489,
+          "circular_chi_zero_over_saved_heat": 0.716741578909861
+        }
+      }
+    },
+    "t6": {
+      "actual": {
+        "sources": {
+          "rhs": "/gpfs/kjhan/LagForce/Codex_TCF_rhs_identity_20261017/t6/rhs.dat",
+          "rhs_sha256": "8993962558a09133ea517dd95255248ea6e5871dca9ec0dbb68a083a2fc95906",
+          "faces_sha256": "97e03199688a5e74a5ac48a17c73cadbc256791cb31cec0a703531a4ed40cf3d",
+          "binary": "b5192c01c6b124e4ca9ef4420260998c7caec62c43656267e1c2a48b5c0cc5d5  /gpfs/kjhan/LagForce/Codex_inner_volume_TCF_20261017/eunha2.exe"
+        },
+        "Q_reconstruction_relative_L1_error": 1.8371647642089245e-07,
+        "blend_reconstruction_relative_L1_error": 9.862686892612253e-08,
+        "heat_reconstruction_relative_L1_error": 1.6663362224371095e-07,
+        "models": {
+          "saved_chi": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 1.417837135961663e-05,
+                "heat_over_U_mass_mean": 0.24356813529366217,
+                "AV_acceleration_mass_RMS": 0.04364382627883866,
+                "chi_quantiles": [
+                  0.03287796,
+                  0.1950982,
+                  0.3467097,
+                  1.0
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 3.818601508832433e-06,
+                "heat_over_U_mass_mean": 0.15191430029003308,
+                "AV_acceleration_mass_RMS": 0.0005935334753179722,
+                "chi_quantiles": [
+                  0.003592101,
+                  0.07019184,
+                  0.20902266600000155,
+                  0.9573898
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 4.229088680227127e-09,
+                "heat_over_U_mass_mean": 1.0077313164168112e-05,
+                "AV_acceleration_mass_RMS": 2.617072227280264e-07,
+                "chi_quantiles": [
+                  1.691044e-05,
+                  8.296561e-05,
+                  0.0001628156,
+                  0.004615313
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.9949552290850867,
+                "acceleration": [
+                  0.0001266380673957025,
+                  0.002267993880673566
+                ]
+              },
+              "804": {
+                "heat_over_U": 1.7035304034398944,
+                "acceleration": [
+                  -0.30383912269099395,
+                  -0.02139318538599457
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.21363885508660074,
+                "acceleration": [
+                  0.1047597496336232,
+                  0.04938489644377662
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.706627394869501,
+                "acceleration": [
+                  0.0003389710546066936,
+                  -0.00162628550764075
+                ]
+              },
+              "934": {
+                "heat_over_U": 2.1104421436030796,
+                "acceleration": [
+                  0.0013601478372890301,
+                  -0.0019219262377446335
+                ]
+              }
+            }
+          },
+          "chi_zero": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 8.940241615515727e-06,
+                "heat_over_U_mass_mean": 0.1527468548403735,
+                "AV_acceleration_mass_RMS": 0.0338829722877692,
+                "chi_quantiles": [
+                  0.03287796,
+                  0.1950982,
+                  0.3467097,
+                  1.0
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 1.7547794727167184e-06,
+                "heat_over_U_mass_mean": 0.06804627620113676,
+                "AV_acceleration_mass_RMS": 0.00043599509268733025,
+                "chi_quantiles": [
+                  0.003592101,
+                  0.07019184,
+                  0.20902266600000155,
+                  0.9573898
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 1.2326856896076875e-09,
+                "heat_over_U_mass_mean": 2.938132014718114e-06,
+                "AV_acceleration_mass_RMS": 1.394611842642821e-07,
+                "chi_quantiles": [
+                  1.691044e-05,
+                  8.296561e-05,
+                  0.0001628156,
+                  0.004615313
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.08015274381515583,
+                "acceleration": [
+                  0.0001631655971072645,
+                  0.0003452154286551095
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.08844965729374059,
+                "acceleration": [
+                  -0.04256331122454238,
+                  -0.07201495199588413
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.06817248853896059,
+                "acceleration": [
+                  0.019028684119640482,
+                  0.0005639169976756228
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.04102833393429473,
+                "acceleration": [
+                  -2.1179557510445468e-05,
+                  0.0001843594007726484
+                ]
+              },
+              "934": {
+                "heat_over_U": 0.06460834442164069,
+                "acceleration": [
+                  -0.00012164228722855311,
+                  -6.51607749798584e-05
+                ]
+              }
+            }
+          }
+        },
+        "tracked_faces": [
+          {
+            "i": 804,
+            "j": 803,
+            "chi": 0.9573898,
+            "raw_QBP_delta": 0.001108571,
+            "blended_QBP_input": 0.004936476,
+            "cell_velocity_jump": 0.005106844,
+            "Q_saved_over_Pmean": 0.5751266468191728,
+            "Q_chi_zero_over_Pmean": 0.12593909261875946
+          },
+          {
+            "i": 804,
+            "j": 805,
+            "chi": 0.9573898,
+            "raw_QBP_delta": -0.009817223,
+            "blended_QBP_input": -0.0344729,
+            "cell_velocity_jump": -0.03557024,
+            "Q_saved_over_Pmean": -0.384741409068518,
+            "Q_chi_zero_over_Pmean": -0.10213242802437918
+          },
+          {
+            "i": 804,
+            "j": 933,
+            "chi": 0.9573898,
+            "raw_QBP_delta": -0.007240907,
+            "blended_QBP_input": 0.04886242,
+            "cell_velocity_jump": 0.05135939,
+            "Q_saved_over_Pmean": 0.7713723133745769,
+            "Q_chi_zero_over_Pmean": 0.0
+          },
+          {
+            "i": 804,
+            "j": 934,
+            "chi": 0.9573898,
+            "raw_QBP_delta": -0.01376931,
+            "blended_QBP_input": 0.08966615,
+            "cell_velocity_jump": 0.09426972,
+            "Q_saved_over_Pmean": 2.6026447766917884,
+            "Q_chi_zero_over_Pmean": 0.0
+          }
+        ],
+        "actual_velocity_perturbation_power": {
+          "initial_inner": {
+            "kinetic_energy_relative_to_circular": 1.6689628159613887e-06,
+            "pressure_work": 4.441457323419548e-06,
+            "differential_rotation_work": 8.3920157265551e-07,
+            "TCF_work": {
+              "saved_chi": -3.676832558706604e-06,
+              "chi_zero": -2.9076079989956334e-06
+            },
+            "total_without_HG": {
+              "saved_chi": 1.6038263373684542e-06,
+              "chi_zero": 2.373050897079425e-06
+            }
+          },
+          "initial_inner_edge": {
+            "kinetic_energy_relative_to_circular": 4.4117385040033375e-08,
+            "pressure_work": 4.211777905044008e-08,
+            "differential_rotation_work": 1.1621998677726962e-08,
+            "TCF_work": {
+              "saved_chi": 2.456666593290546e-09,
+              "chi_zero": -6.738440245326987e-10
+            },
+            "total_without_HG": {
+              "saved_chi": 5.6196444321457585e-08,
+              "chi_zero": 5.306593370363434e-08
+            }
+          },
+          "initial_disk_core": {
+            "kinetic_energy_relative_to_circular": 1.731497270306246e-11,
+            "pressure_work": -1.5760064756046618e-12,
+            "differential_rotation_work": 3.1709515786823597e-12,
+            "TCF_work": {
+              "saved_chi": -3.4701675572806374e-13,
+              "chi_zero": -2.694853456958986e-13
+            },
+            "total_without_HG": {
+              "saved_chi": 1.2479283473496341e-12,
+              "chi_zero": 1.3254597573817993e-12
+            }
+          },
+          "derivative_check": [
+            {
+              "epsilon": 1e-05,
+              "relative_L1_error": 1.029806201869801e-09
+            },
+            {
+              "epsilon": 1e-06,
+              "relative_L1_error": 1.1758597437339512e-08
+            }
+          ]
+        }
+      },
+      "circular": {
+        "sources": {
+          "rhs": "/gpfs/kjhan/LagForce/Codex_TCF_circular_rhs_20261017/t6/rhs.dat",
+          "rhs_sha256": "fb1ca2f74a6c8eeb4f45a4b002fb25a0c79719a8373cb8d740a3c7bf63e271a4",
+          "faces_sha256": "ef6df56617cbaef603bbfb99c28ebbf9739b84b195018426f5d290bb721140c9",
+          "binary": "b5192c01c6b124e4ca9ef4420260998c7caec62c43656267e1c2a48b5c0cc5d5  /gpfs/kjhan/LagForce/Codex_inner_volume_TCF_20261017/eunha2.exe"
+        },
+        "Q_reconstruction_relative_L1_error": 1.8282574997234897e-07,
+        "blend_reconstruction_relative_L1_error": 9.711422836726859e-08,
+        "heat_reconstruction_relative_L1_error": 1.6673462414689034e-07,
+        "models": {
+          "saved_chi": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 2.661685299269224e-07,
+                "heat_over_U_mass_mean": 0.004933457331043156,
+                "AV_acceleration_mass_RMS": 0.0003981158907930303,
+                "chi_quantiles": [
+                  0.0003721111,
+                  0.001353585,
+                  0.004944021,
+                  0.01636514
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 1.4851904909468888e-08,
+                "heat_over_U_mass_mean": 0.000552424320553498,
+                "AV_acceleration_mass_RMS": 2.217807057213265e-06,
+                "chi_quantiles": [
+                  9.415135e-05,
+                  0.0004231502,
+                  0.001689154,
+                  0.004063982
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 7.298274046458922e-10,
+                "heat_over_U_mass_mean": 1.7408329334711778e-06,
+                "AV_acceleration_mass_RMS": 4.660187826399164e-08,
+                "chi_quantiles": [
+                  1.984607e-06,
+                  2.065995e-05,
+                  7.475122e-05,
+                  0.0002297088
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.00773365404310587,
+                "acceleration": [
+                  -1.2173803324181548e-07,
+                  7.560585366741785e-06
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.003329642965127965,
+                "acceleration": [
+                  -0.0006436610492725397,
+                  -5.501025592468895e-06
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.001607111782291574,
+                "acceleration": [
+                  1.7594836909294536e-05,
+                  0.0003196103042577377
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.0012350986344355028,
+                "acceleration": [
+                  1.7490726083700615e-07,
+                  -1.997042714474348e-06
+                ]
+              },
+              "934": {
+                "heat_over_U": 0.011892694144996963,
+                "acceleration": [
+                  1.0087149646465873e-05,
+                  -1.127854603418737e-05
+                ]
+              }
+            }
+          },
+          "chi_zero": {
+            "regions": {
+              "initial_inner": {
+                "heat_sum": 2.3403711113787685e-07,
+                "heat_over_U_mass_mean": 0.004336121530163237,
+                "AV_acceleration_mass_RMS": 0.0003503672121901822,
+                "chi_quantiles": [
+                  0.0003721111,
+                  0.001353585,
+                  0.004944021,
+                  0.01636514
+                ]
+              },
+              "initial_inner_edge": {
+                "heat_sum": 1.1385840688096951e-08,
+                "heat_over_U_mass_mean": 0.0004199944561678674,
+                "AV_acceleration_mass_RMS": 1.941907874852782e-06,
+                "chi_quantiles": [
+                  9.415135e-05,
+                  0.0004231502,
+                  0.001689154,
+                  0.004063982
+                ]
+              },
+              "initial_disk_core": {
+                "heat_sum": 5.487506056806039e-10,
+                "heat_over_U_mass_mean": 1.3090489653920277e-06,
+                "AV_acceleration_mass_RMS": 4.590498993506239e-08,
+                "chi_quantiles": [
+                  1.984607e-06,
+                  2.065995e-05,
+                  7.475122e-05,
+                  0.0002297088
+                ]
+              }
+            },
+            "tracked_cells": {
+              "803": {
+                "heat_over_U": 0.006101732456369048,
+                "acceleration": [
+                  3.0127154161034566e-07,
+                  5.861900000513786e-06
+                ]
+              },
+              "804": {
+                "heat_over_U": 0.0018912485505731198,
+                "acceleration": [
+                  -0.0002933290933729516,
+                  0.000140786194357639
+                ]
+              },
+              "805": {
+                "heat_over_U": 0.0010717169461656275,
+                "acceleration": [
+                  -0.00019829668378673477,
+                  0.0002068041610393555
+                ]
+              },
+              "933": {
+                "heat_over_U": 0.0010000991199084891,
+                "acceleration": [
+                  -2.1469592928436462e-08,
+                  -1.4665333984546772e-06
+                ]
+              },
+              "934": {
+                "heat_over_U": 0.009108580161496611,
+                "acceleration": [
+                  7.930157848739969e-06,
+                  -8.698993452370851e-06
+                ]
+              }
+            }
+          }
+        },
+        "tracked_faces": [
+          {
+            "i": 804,
+            "j": 803,
+            "chi": 0.001904002,
+            "raw_QBP_delta": 8.689524e-07,
+            "blended_QBP_input": 4.328451e-06,
+            "cell_velocity_jump": 0.001817831,
+            "Q_saved_over_Pmean": 0.00048811128773831007,
+            "Q_chi_zero_over_Pmean": 9.79878742319041e-05
+          },
+          {
+            "i": 804,
+            "j": 805,
+            "chi": 0.001904002,
+            "raw_QBP_delta": -2.644628e-05,
+            "blended_QBP_input": -9.610627e-05,
+            "cell_velocity_jump": -0.03661254,
+            "Q_saved_over_Pmean": -0.000972456312815423,
+            "Q_chi_zero_over_Pmean": -0.00026754482462402595
+          },
+          {
+            "i": 804,
+            "j": 933,
+            "chi": 0.001904002,
+            "raw_QBP_delta": -9.052419e-05,
+            "blended_QBP_input": 1.497701e-05,
+            "cell_velocity_jump": 0.05531973,
+            "Q_saved_over_Pmean": 0.00014552409873935693,
+            "Q_chi_zero_over_Pmean": 0.0
+          },
+          {
+            "i": 804,
+            "j": 934,
+            "chi": 0.001904002,
+            "raw_QBP_delta": 0.0003876798,
+            "blended_QBP_input": 0.000568741,
+            "cell_velocity_jump": 0.09548274,
+            "Q_saved_over_Pmean": 0.00801211099343776,
+            "Q_chi_zero_over_Pmean": 0.00544965179256027
+          }
+        ],
+        "actual_velocity_perturbation_power": {}
+      },
+      "same_geometry_and_thermodynamic_state": true,
+      "circular_velocity_max_abs_error": 0.0,
+      "ratios": {
+        "initial_inner": {
+          "circular_over_actual_heat": 0.01877285642870334,
+          "actual_chi_zero_over_saved_heat": 0.6305549056910484,
+          "circular_chi_zero_over_saved_heat": 0.8792816761701041
+        },
+        "initial_inner_edge": {
+          "circular_over_actual_heat": 0.003889357104981078,
+          "actual_chi_zero_over_saved_heat": 0.45953458842403694,
+          "circular_chi_zero_over_saved_heat": 0.7666249385180123
+        },
+        "initial_disk_core": {
+          "circular_over_actual_heat": 0.17257320898900994,
+          "actual_chi_zero_over_saved_heat": 0.2914778532242755,
+          "circular_chi_zero_over_saved_heat": 0.751890929536764
+        }
+      }
+    }
+  }
+}

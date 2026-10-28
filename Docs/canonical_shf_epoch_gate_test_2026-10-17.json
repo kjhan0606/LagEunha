@@ -1,0 +1,45 @@
+{
+  "provenance": {
+    "source": "/tmp/lageunha-push/Exam/exam.c",
+    "source_function_sha256": "1db44e0802214f2c05b09fc118cd73ee1f9dfbcc43ec826364ffb9aedddfe800",
+    "scope": "Exact extracted guard function with synthetic arrays; not MPI exchange or whole-program stale-state test"
+  },
+  "cases": [
+    {
+      "case": "valid",
+      "returncode": 0,
+      "stdout": "reads=10000\n",
+      "stderr": ""
+    },
+    {
+      "case": "stale",
+      "returncode": -6,
+      "stdout": "",
+      "stderr": "[SHF_EPOCH] stale_or_missing id=1 epoch=7\n"
+    },
+    {
+      "case": "missing",
+      "returncode": -6,
+      "stdout": "",
+      "stderr": "[SHF_EPOCH] stale_or_missing id=1 epoch=7\n"
+    },
+    {
+      "case": "negative",
+      "returncode": -6,
+      "stdout": "",
+      "stderr": "[SHF_EPOCH] stale_or_missing id=-1 epoch=7\n"
+    },
+    {
+      "case": "out_of_range",
+      "returncode": -6,
+      "stdout": "",
+      "stderr": "[SHF_EPOCH] stale_or_missing id=2 epoch=7\n"
+    },
+    {
+      "case": "disabled",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

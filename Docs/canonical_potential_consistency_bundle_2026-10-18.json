@@ -1,0 +1,1487 @@
+{
+  "status": "completed_bundle_for_Astra_evaluation",
+  "reports": {
+    "performance": {
+      "status": "passed",
+      "reports": {
+        "scalar": {
+          "status": "passed",
+          "manifest": {
+            "scope": "One scalar or batch accumulation evaluation; face-state batch stays enabled.\n\nOriginal saved midpoint, original initial seed and stopping rule. Large-region\ntimers only; no evolution/update/backend-shadow or automatic repeated replay.\n",
+            "mode": "scalar",
+            "flags": {
+              "LAGFORCE_QUADRATIC_VELOCITY": "1",
+              "LAGFORCE_QUADRATIC_BUDGET": "projected",
+              "LAGFORCE_VELOCITY_FIT": "radial_fixed_mean",
+              "LAGFORCE_VELOCITY_STENCIL": "area",
+              "LAGFORCE_QUADRATIC_PRESSURE": "0",
+              "LAGFORCE_KINETIC_SMOOTHING": "0",
+              "LAGFORCE_PRESSURE_RIEMANN": "exact_euler_star",
+              "LAGFORCE_VECTOR_KINETIC_ROOT": "0",
+              "LAGFORCE_SHARED_FACE_VELOCITY": "1",
+              "LAGFORCE_CAPTURE_PRESSURE_RATES": "1",
+              "LAGFORCE_BATCH_FACE_STATE": "1",
+              "LAGFORCE_VECTOR_MOMENT_FLUX": "0"
+            },
+            "time": 5e-05,
+            "seed": "stage0/inputs.npz:weight_rates",
+            "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+            "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+            "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+            "runtime_sources": {
+              "__main__": {
+                "path": "/gpfs/kjhan/LagForce/run_moment_flux_provider_comparison_once_20261018.py",
+                "sha256": "92e89cb5a44fba2a7238a0fed016e13e3f7567ad7741d3f6c6b0dce835d94407"
+              },
+              "subcell_exact_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/subcell_exact_geometry.py",
+                "sha256": "d8bea6ef22cf128d02c6971f433e8b1945b1ec2a65229f87f80006e95fe0f8c5"
+              },
+              "weighted_mass_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/weighted_mass_patch.py",
+                "sha256": "376b63ec29960702a41536a7bc3c8c3f3daceb0c1f83b47da363de1085c3eaca"
+              },
+              "fixedmass_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_ale_evolve.py",
+                "sha256": "67bf6dad2f980904d1ef285ca9b351a7556b9219fa72b0ecc92d1c680ceac425"
+              },
+              "fixedmass_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_hllc.py",
+                "sha256": "3d8ded18572ef0a3c56b2ddf9af3785494da16874677aa5ff8a43f1a54b4865c"
+              },
+              "periodic2d_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/periodic2d_hllc.py",
+                "sha256": "f1c556a55b40b9b9d7eb74ad83dd22653c61c640a4d3a0ecbd4237c76bc4ef65"
+              },
+              "affine_moment_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/affine_moment_patch.py",
+                "sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4"
+              },
+              "moment_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+                "sha256": "893d1f715adfe41a3e7af4a0486746b0ecd39788767095a297bc4ecca97987cf"
+              },
+              "quadratic_velocity_reconstruction": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/quadratic_velocity_reconstruction.py",
+                "sha256": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c"
+              },
+              "kinetic_factor_rhs": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/kinetic_factor_rhs.py",
+                "sha256": "3ea5167446e8073641950615aa523becd4b80f805925f43f7d94744fc90a6a03"
+              },
+              "density_quadrature": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+                "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+              },
+              "contact_prior_density": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/contact_prior_density.py",
+                "sha256": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d"
+              },
+              "quadratic_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_upwind_face_nodes.py",
+                "sha256": "8719430a44250e24f4914702eb68a4950b07c72db63a106cb5f562d550096f2a"
+              },
+              "contact_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+                "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+              },
+              "moment_gravity_source": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+                "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+              },
+              "embedded_laguerre_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+                "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+              },
+              "kinetic_face_capture": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+                "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+              },
+              "vector_moment_flux": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/vector_moment_flux.py",
+                "sha256": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+              },
+              "audit_canonical_pair_history": {
+                "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+                "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+              },
+              "run_canonical_av_branches_20261018": {
+                "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+                "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+              }
+            },
+            "runner_sha256": "92e89cb5a44fba2a7238a0fed016e13e3f7567ad7741d3f6c6b0dce835d94407",
+            "affinity": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "load_average_start": [
+              22.25,
+              22.59,
+              22.68
+            ],
+            "environment": {
+              "OMP_NUM_THREADS": "1",
+              "OPENBLAS_NUM_THREADS": "1",
+              "MKL_NUM_THREADS": null
+            }
+          },
+          "iterations": 3,
+          "original_iterations": 3,
+          "mass_residual": 6.949735925632083e-17,
+          "comparisons": {
+            "weight_rates": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "hydro": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "gravity": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "raw_source": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            }
+          },
+          "timers": {
+            "decode_total": {
+              "calls": 1,
+              "wall_seconds": 12.749534767121077,
+              "process_cpu_seconds": 12.665140558000001
+            },
+            "rhs_total": {
+              "calls": 3,
+              "wall_seconds": 135.23642369918525,
+              "process_cpu_seconds": 134.361945195
+            },
+            "diagnostic_capture": {
+              "calls": 1,
+              "wall_seconds": 17.392393708229065,
+              "process_cpu_seconds": 17.275575004000018
+            },
+            "provider_total": {
+              "calls": 1,
+              "wall_seconds": 167.77451868914068,
+              "process_cpu_seconds": 166.681346135
+            }
+          },
+          "rhs_calls": [
+            {
+              "nodes": 272376,
+              "batch": {
+                "nodes": 272376,
+                "cell_batches": 1590,
+                "point_sides": 542200,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254728,
+                  27656,
+                  259816
+                ],
+                "array_bytes": 95915656,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              }
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              }
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              }
+            }
+          ],
+          "peak_RSS_MiB": 1530.77734375,
+          "load_average_end": [
+            23.73,
+            23.16,
+            22.89
+          ],
+          "profile_based_ideal_Amdahl_limit": 1.7782278913919325,
+          "limits": "One provider call per mode, no update. Large inclusive regions overlap and must not be summed. Peak RSS includes imports/input/density/diagnostic data. Shared-host wall times are not private CPU allocation."
+        },
+        "batch": {
+          "status": "passed",
+          "manifest": {
+            "scope": "One scalar or batch accumulation evaluation; face-state batch stays enabled.\n\nOriginal saved midpoint, original initial seed and stopping rule. Large-region\ntimers only; no evolution/update/backend-shadow or automatic repeated replay.\n",
+            "mode": "batch",
+            "flags": {
+              "LAGFORCE_QUADRATIC_VELOCITY": "1",
+              "LAGFORCE_QUADRATIC_BUDGET": "projected",
+              "LAGFORCE_VELOCITY_FIT": "radial_fixed_mean",
+              "LAGFORCE_VELOCITY_STENCIL": "area",
+              "LAGFORCE_QUADRATIC_PRESSURE": "0",
+              "LAGFORCE_KINETIC_SMOOTHING": "0",
+              "LAGFORCE_PRESSURE_RIEMANN": "exact_euler_star",
+              "LAGFORCE_VECTOR_KINETIC_ROOT": "0",
+              "LAGFORCE_SHARED_FACE_VELOCITY": "1",
+              "LAGFORCE_CAPTURE_PRESSURE_RATES": "1",
+              "LAGFORCE_BATCH_FACE_STATE": "1",
+              "LAGFORCE_VECTOR_MOMENT_FLUX": "1"
+            },
+            "time": 5e-05,
+            "seed": "stage0/inputs.npz:weight_rates",
+            "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+            "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+            "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799",
+            "runtime_sources": {
+              "__main__": {
+                "path": "/gpfs/kjhan/LagForce/run_moment_flux_provider_comparison_once_20261018.py",
+                "sha256": "92e89cb5a44fba2a7238a0fed016e13e3f7567ad7741d3f6c6b0dce835d94407"
+              },
+              "subcell_exact_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/subcell_exact_geometry.py",
+                "sha256": "d8bea6ef22cf128d02c6971f433e8b1945b1ec2a65229f87f80006e95fe0f8c5"
+              },
+              "weighted_mass_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/weighted_mass_patch.py",
+                "sha256": "376b63ec29960702a41536a7bc3c8c3f3daceb0c1f83b47da363de1085c3eaca"
+              },
+              "fixedmass_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_ale_evolve.py",
+                "sha256": "67bf6dad2f980904d1ef285ca9b351a7556b9219fa72b0ecc92d1c680ceac425"
+              },
+              "fixedmass_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/fixedmass_hllc.py",
+                "sha256": "3d8ded18572ef0a3c56b2ddf9af3785494da16874677aa5ff8a43f1a54b4865c"
+              },
+              "periodic2d_hllc": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/periodic2d_hllc.py",
+                "sha256": "f1c556a55b40b9b9d7eb74ad83dd22653c61c640a4d3a0ecbd4237c76bc4ef65"
+              },
+              "affine_moment_patch": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/affine_moment_patch.py",
+                "sha256": "26c5ce7d59b2747c1794bdb0a39aa29e8e1868d086441c099f9822857e09e0b4"
+              },
+              "moment_ale_evolve": {
+                "path": "/gpfs/kjhan/LagForce/Codex_coupled_relaxation_evolution_20261018/moment_ale_evolve.py",
+                "sha256": "893d1f715adfe41a3e7af4a0486746b0ecd39788767095a297bc4ecca97987cf"
+              },
+              "quadratic_velocity_reconstruction": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/quadratic_velocity_reconstruction.py",
+                "sha256": "40b56a8b7722a55d804a3520fbc05678a6f2e5e3409667130db61d685d99ab7c"
+              },
+              "kinetic_factor_rhs": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/kinetic_factor_rhs.py",
+                "sha256": "3ea5167446e8073641950615aa523becd4b80f805925f43f7d94744fc90a6a03"
+              },
+              "density_quadrature": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+                "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+              },
+              "contact_prior_density": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/contact_prior_density.py",
+                "sha256": "67a132b7fc17b8b2ed25a42810785fc52d3cbca7aaf506ddc4b102729639db5d"
+              },
+              "quadratic_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/quadratic_upwind_face_nodes.py",
+                "sha256": "8719430a44250e24f4914702eb68a4950b07c72db63a106cb5f562d550096f2a"
+              },
+              "contact_upwind_face_nodes": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_upwind_face_nodes.py",
+                "sha256": "8062764dd710ff8bca5bddaefdfb2512aa1dc2e3ea1c31f234069a9135771b94"
+              },
+              "moment_gravity_source": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/moment_gravity_source.py",
+                "sha256": "6c07d382e997c14cf75a6a3a1c5f13bfeaf70844807b39ec6f0231b8a86e275e"
+              },
+              "embedded_laguerre_geometry": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+                "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+              },
+              "kinetic_face_capture": {
+                "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/kinetic_face_capture.py",
+                "sha256": "639b26ea0fb148add7453dd70dfd34da3896b90a12489a5a8ca89cad650a11d1"
+              },
+              "vector_moment_flux": {
+                "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/vector_moment_flux.py",
+                "sha256": "b7b01f0e4da832338a7bfc9ddc4739f5dd7191c6fece3feab915f64dd8fe40a3"
+              },
+              "audit_canonical_pair_history": {
+                "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+                "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+              },
+              "run_canonical_av_branches_20261018": {
+                "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+                "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+              }
+            },
+            "runner_sha256": "92e89cb5a44fba2a7238a0fed016e13e3f7567ad7741d3f6c6b0dce835d94407",
+            "affinity": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "load_average_start": [
+              23.38,
+              23.26,
+              22.96
+            ],
+            "environment": {
+              "OMP_NUM_THREADS": "1",
+              "OPENBLAS_NUM_THREADS": "1",
+              "MKL_NUM_THREADS": null
+            }
+          },
+          "iterations": 3,
+          "original_iterations": 3,
+          "mass_residual": 6.949735925632083e-17,
+          "comparisons": {
+            "weight_rates": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "hydro": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "gravity": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            },
+            "raw_source": {
+              "bitwise_equal": true,
+              "maximum_absolute_difference": 0.0,
+              "maximum_tolerance_fraction": 0.0
+            }
+          },
+          "timers": {
+            "decode_total": {
+              "calls": 1,
+              "wall_seconds": 12.927607368677855,
+              "process_cpu_seconds": 12.854826678
+            },
+            "rhs_total": {
+              "calls": 3,
+              "wall_seconds": 76.20407759770751,
+              "process_cpu_seconds": 75.76826004
+            },
+            "diagnostic_capture": {
+              "calls": 1,
+              "wall_seconds": 17.62020086310804,
+              "process_cpu_seconds": 17.521100903000004
+            },
+            "provider_total": {
+              "calls": 1,
+              "wall_seconds": 109.03531125560403,
+              "process_cpu_seconds": 108.413030308
+            }
+          },
+          "rhs_calls": [
+            {
+              "nodes": 272376,
+              "batch": {
+                "nodes": 272376,
+                "cell_batches": 1590,
+                "point_sides": 542200,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254728,
+                  27656,
+                  259816
+                ],
+                "array_bytes": 95915656,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              }
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              }
+            },
+            {
+              "nodes": 272336,
+              "batch": {
+                "nodes": 272336,
+                "cell_batches": 1590,
+                "point_sides": 542120,
+                "maximum_cell_batch": 520,
+                "minimum_cell_batch": 48,
+                "branch_counts_low_flat_high": [
+                  254704,
+                  27544,
+                  259872
+                ],
+                "array_bytes": 95901576,
+                "scalar_face_density_calls": 0,
+                "scalar_face_sample_calls": 0,
+                "cache_scope": "this outer RHS evaluation only"
+              }
+            }
+          ],
+          "peak_RSS_MiB": 1721.34765625,
+          "load_average_end": [
+            22.95,
+            23.27,
+            23.0
+          ],
+          "profile_based_ideal_Amdahl_limit": 1.7782278913919325,
+          "limits": "One provider call per mode, no update. Large inclusive regions overlap and must not be summed. Peak RSS includes imports/input/density/diagnostic data. Shared-host wall times are not private CPU allocation."
+        }
+      },
+      "speedup": {
+        "wall_seconds": 1.5387172903632873,
+        "process_cpu_seconds": 1.5374659822851597
+      },
+      "paired_input_hashes": {
+        "seed_sha256": "3e7edd9e76c807a39eddd408e98445ac2ec302d541543dd6fdd0b43a87645e2b",
+        "state_sha256": "f2b9ce2141022784b345069d8aa4392bf25ece9351ffb79a21e456a21ffe6638",
+        "factors_sha256": "4adcd1f358b6624ab7125b6c975d6c5abb3f407c88241370d9e4013ebdef6799"
+      },
+      "source_sha256": {
+        "/gpfs/kjhan/LagForce/Codex_moment_flux_provider_comparison_20261018/scalar/report.json": "dd45761891819e6d61f9f064818cd05307fbb17519b2e82964af3b1a51688540",
+        "/gpfs/kjhan/LagForce/Codex_moment_flux_provider_comparison_20261018/batch/report.json": "df4ab229d61267e32ceca7af21e001b720696c9e866dec8aca952dca8e113589"
+      },
+      "limits": "One provider evaluation each, face-state batch on for both. Shared-host observation, no repeated tuning, no evolution. The copied per-report profile_based_ideal_Amdahl_limit belongs to the earlier density/velocity operator and is NOT applicable to accumulation; ignore that inherited field."
+    },
+    "polynomial": {
+      "status": "passed_identities",
+      "manifest": {
+        "scope": "Saved degree-two potential identities and direct remainder decomposition.\n\nNo fitted state is recomputed; archived theta is restored. No RHS or evolution.\nLocal Taylor coefficients are frozen at each actual midpoint cell centroid.\n",
+        "provider_calls": 0,
+        "newton_fits": 0,
+        "source_sha256": {
+          "/gpfs/kjhan/LagForce/audit_saved_potential_polynomial_20261018.py": "485378e011ab954cfca853a7e84719ec76ce124f9803243f931f218c53d0fc59",
+          "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+          "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/saved_potential_taylor.py": "6c9db0c324e3153c6f1a872058ae8b708068c801c6fb118599a498c4b96ba69f"
+        },
+        "runtime_modules": {
+          "__main__": {
+            "path": "/gpfs/kjhan/LagForce/audit_saved_potential_polynomial_20261018.py",
+            "sha256": "485378e011ab954cfca853a7e84719ec76ce124f9803243f931f218c53d0fc59"
+          },
+          "density_quadrature": {
+            "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+            "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+          },
+          "contact_prior_density": {
+            "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_prior_density.py",
+            "sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+          },
+          "saved_potential_taylor": {
+            "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/saved_potential_taylor.py",
+            "sha256": "6c9db0c324e3153c6f1a872058ae8b708068c801c6fb118599a498c4b96ba69f"
+          },
+          "saved_contact_density_restore": {
+            "path": "/gpfs/kjhan/LagForce/Codex_face_state_batch_api_modules_20261018/saved_contact_density_restore.py",
+            "sha256": "fc7956d7a42ff160cc5cc2ef50e27f2bf50e5a777d688cce8a51ef4f2c31d745"
+          },
+          "audit_canonical_pair_history": {
+            "path": "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py",
+            "sha256": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd"
+          }
+        },
+        "fit_archives": {
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/initial_reconstruction.npz": "324429353c0e7a613b7643831ff8e045b9a9d3ee765bcf270c4c9dbbb997b735",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/initial_priors.json": "72b9f0b8dcdcc916ce6626dfbf3f87d7a7a455b869f00bf6e1266afca35703ad",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/initial_fits.json": "af5fd00dd4aecc9c0712bef3d3284ce551bfd9215d8b2bc454d2d0df0c6eaa9e",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_reconstruction.npz": "23c2190f182ca6aa01343a117ea9d7a5bf9bba495813f1b2a8ce5f911200870a",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_priors.json": "28740a568f41b692679b036b23d803d8c8fe3991ddac75bceb0ab41c0061a542",
+          "/gpfs/kjhan/LagForce/Codex_numerical_Psi_endpoints_v2_20261018/accepted_fits.json": "890219469932dfcc13836f55a47fd256b70cc2bc04952d9f62cd8885238ed2bc",
+          "/gpfs/kjhan/LagForce/Codex_adjacency_prior_impact_20261018/midpoint/common_inputs.npz": "2354dd28a6d690e3e0d410d60d21f248f2c972b4a0294b92221d40b7d30d4228",
+          "/gpfs/kjhan/LagForce/Codex_adjacency_prior_impact_20261018/midpoint/priors.json": "5f855e8cf6c36a32e25364da30c2482fa5f0df69dd1a07d6ca45d141438fd4b3",
+          "/gpfs/kjhan/LagForce/Codex_adjacency_prior_impact_20261018/midpoint/fit_residuals.json": "409285a764cfdc7e698b6fcc4a6e26bc81c4e71004c497a67be2dc7e070d0962"
+        }
+      },
+      "results": {
+        "stage0": {
+          "constant": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": -3.1509310103607926e-17,
+              "absolute_sum": 2.630267203890422e-16,
+              "maximum": 5.780576348536973e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            }
+          },
+          "x": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 3.448609819959006e-18,
+              "absolute_sum": 9.455010341499849e-17,
+              "maximum": 4.030606279509588e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            }
+          },
+          "y": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": -2.054736626394567e-17,
+              "absolute_sum": 1.0457147481450623e-16,
+              "maximum": 3.927321199503767e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            }
+          },
+          "xx_half": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 1.4308977890985316e-18,
+              "absolute_sum": 1.86441035997781e-17,
+              "maximum": 8.59070079528172e-19
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            }
+          },
+          "xy": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": -1.9104368668495736e-19,
+              "absolute_sum": 3.4727696754858254e-17,
+              "maximum": 9.335494218824466e-19
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            }
+          },
+          "yy_half": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 7.172114818360132e-20,
+              "absolute_sum": 2.59076303756312e-17,
+              "maximum": 1.1028898368843024e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            }
+          },
+          "local_Taylor": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": -4.594895414852728e-17,
+              "absolute_sum": 1.80053334284304e-15,
+              "maximum": 3.870646831946756e-17
+            },
+            "mass_rate_residual": {
+              "signed_sum": -6.824635420006757e-17,
+              "absolute_sum": 2.4397359959008993e-15,
+              "maximum": 5.843637951460055e-16
+            },
+            "volume_quad_minus_raw": {
+              "signed_sum": 3.366325668123145e-17,
+              "absolute_sum": 2.8083793842945724e-16,
+              "maximum": 7.10363351449267e-18
+            },
+            "remainder_transport_rate": {
+              "signed_sum": -9.92278596210979e-09,
+              "absolute_sum": 7.402471177725313e-05,
+              "maximum": 3.9316687214475544e-07
+            }
+          }
+        },
+        "midpoint": {
+          "constant": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 4.347946222819183e-17,
+              "absolute_sum": 3.0036377852962966e-16,
+              "maximum": 9.056939493186009e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            }
+          },
+          "x": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 8.624643880299195e-18,
+              "absolute_sum": 9.908755605870049e-17,
+              "maximum": 4.0035012251974506e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            }
+          },
+          "y": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": -6.253426468432851e-18,
+              "absolute_sum": 1.067575645976287e-16,
+              "maximum": 3.576173103307656e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            }
+          },
+          "xx_half": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 2.6644660511215713e-18,
+              "absolute_sum": 2.2469240910938597e-17,
+              "maximum": 1.0812904967293178e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            }
+          },
+          "xy": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 1.9930630876308696e-18,
+              "absolute_sum": 3.5814825416418376e-17,
+              "maximum": 1.0325861022621955e-18
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            }
+          },
+          "yy_half": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": 5.757841095934393e-19,
+              "absolute_sum": 2.3440212459725302e-17,
+              "maximum": 8.388802551369777e-19
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            }
+          },
+          "local_Taylor": {
+            "passed": true,
+            "identity_defect": {
+              "signed_sum": -3.4333283178041753e-16,
+              "absolute_sum": 1.9059874127870484e-15,
+              "maximum": 6.548347732802615e-17
+            },
+            "mass_rate_residual": {
+              "signed_sum": 7.342693231034625e-17,
+              "absolute_sum": 1.423506715986132e-15,
+              "maximum": 6.934669327082798e-17
+            },
+            "volume_quad_minus_raw": {
+              "signed_sum": -6.924888954747891e-19,
+              "absolute_sum": 1.0006773646119333e-16,
+              "maximum": 1.0818069676242806e-18
+            },
+            "remainder_transport_rate": {
+              "signed_sum": 3.2051561376479884e-08,
+              "absolute_sum": 7.405141642743562e-05,
+              "maximum": 3.934538801099412e-07
+            }
+          }
+        },
+        "initial_reconstruction": {
+          "remainder_q48": {
+            "signed_sum": -8.73118574996051e-08,
+            "absolute_sum": 1.8976235777098127e-07,
+            "maximum": 1.50695177710906e-09
+          },
+          "remainder_q48_minus_q24": {
+            "signed_sum": 3.117913249576697e-20,
+            "absolute_sum": 5.553228714244801e-19,
+            "maximum": 5.693429175752839e-21
+          },
+          "P2_q48_minus_raw": {
+            "signed_sum": -2.549443257802601e-16,
+            "absolute_sum": 4.953402998629723e-16,
+            "maximum": 1.800844985421846e-17
+          },
+          "fit_residual_max": 2.9924673849990313e-13
+        },
+        "midpoint_reconstruction": {
+          "remainder_q48": {
+            "signed_sum": -8.726905172417921e-08,
+            "absolute_sum": 1.8968564436884508e-07,
+            "maximum": 1.5062830682066986e-09
+          },
+          "remainder_q48_minus_q24": {
+            "signed_sum": 4.8882253113256785e-20,
+            "absolute_sum": 5.444181308143695e-19,
+            "maximum": 4.286910250365204e-21
+          },
+          "P2_q48_minus_raw": {
+            "signed_sum": -2.8159628198570446e-16,
+            "absolute_sum": 3.945096218989123e-16,
+            "maximum": 1.8035872545885817e-17
+          },
+          "fit_residual_max": 2.9419522373785867e-13
+        },
+        "accepted_reconstruction": {
+          "remainder_q48": {
+            "signed_sum": -8.7244050740784e-08,
+            "absolute_sum": 1.8965902920014885e-07,
+            "maximum": 1.505682086334253e-09
+          },
+          "remainder_q48_minus_q24": {
+            "signed_sum": 1.7435020842512327e-20,
+            "absolute_sum": 5.759491286228959e-19,
+            "maximum": 6.78581043581826e-21
+          },
+          "P2_q48_minus_raw": {
+            "signed_sum": -2.261924640563703e-16,
+            "absolute_sum": 7.391191349398385e-16,
+            "maximum": 2.6469038447868038e-17
+          },
+          "fit_residual_max": 2.982088785623063e-13
+        }
+      },
+      "full_step": {
+        "P2_increment_minus_transport": {
+          "signed_sum": 1.4102607511318821e-18,
+          "absolute_sum": 8.141450127895612e-17,
+          "maximum": 6.710342391624713e-19
+        },
+        "remainder_increment_minus_transport": {
+          "signed_sum": 6.460160268345759e-11,
+          "absolute_sum": 8.740741910726965e-11,
+          "maximum": 3.900669916533142e-12
+        },
+        "volume_quadrature_minus_raw_increment": {
+          "signed_sum": -6.924888954747891e-23,
+          "absolute_sum": 1.0006773646119333e-20,
+          "maximum": 1.0818069676242807e-22
+        },
+        "combined_defect": {
+          "signed_sum": 6.460160409371835e-11,
+          "absolute_sum": 8.740741836162489e-11,
+          "maximum": 3.9006702203375625e-12
+        },
+        "note": "Each cell has its own fixed Taylor coefficients. Only actual Phi, not P2 alone, admits global shared-face cancellation. Fixed mass endpoints vs stored nonzero dm recorded separately."
+      },
+      "limits": "Longdouble remainder arithmetic reduces cancellation; density and its quadrature weights remain original binary64. No evolved Psi claim or epsilon sweep."
+    },
+    "directional": {
+      "status": "completed_derivative_requires_evaluation",
+      "manifest": {
+        "scope": "Fixed four-state saved midpoint density derivative, not time evolution.\n\nOnly x/W/q/Q follow the saved actual stage direction. Mass and frozen rows\nremain exact, factors/velocities/Pi remain untouched. No RHS or weight solve.\n",
+        "epsilon": 1.25e-05,
+        "scales": [
+          1.0,
+          -1.0,
+          0.5,
+          -0.5
+        ],
+        "provider_calls": 0,
+        "expected_newton_fits": 6360,
+        "sources": {
+          "/gpfs/kjhan/LagForce/audit_saved_potential_directional_20261018.py": "63a74c274ff08549cf6dbaca25a5e637c87628e38d2285f13bfbe02dcc74e2a1",
+          "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef",
+          "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+          "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/coefficients.npz": "6b2e37445c6d120575237904b94a8b532beb11d7a27bcce7d7dc92bdd8280727",
+          "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/midpoint_integrals.npz": "4427072652ef67e64563a367d21c94ca62bb618429c4253ed1875ddf25f22be4",
+          "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/inputs.npz": "8eb57f0abbe8ef0c0f7b6e50e776d2181da25f6d7d4ccfb2a3e4ceead2a20fa9",
+          "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/reference.npz": "71d715ea09d22eac39ce6fdba81208e4f75b05a8abe8a15b10611a4456ab5d37",
+          "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/cuda.npz": "7ba3370a920c2fa60333324002526b75ac2d04613134e6a2a4978e3f6607ed20"
+        },
+        "runtime_modules": {
+          "__main__": {
+            "path": "/gpfs/kjhan/LagForce/audit_saved_potential_directional_20261018.py",
+            "sha256": "63a74c274ff08549cf6dbaca25a5e637c87628e38d2285f13bfbe02dcc74e2a1"
+          },
+          "density_quadrature": {
+            "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/density_quadrature.py",
+            "sha256": "b18b8c23a8642aae287bc5586d61a0dcb82c2eee22a488b8b03c945061360c89"
+          },
+          "contact_prior_density": {
+            "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/contact_prior_density.py",
+            "sha256": "df8faee9e8cd3ba022fd0c9f6e62f5aa50ef14c5828ef9a851ac98d274264bb8"
+          },
+          "saved_potential_taylor": {
+            "path": "/gpfs/kjhan/LagForce/Codex_moment_flux_batch_modules_20261018/saved_potential_taylor.py",
+            "sha256": "6c9db0c324e3153c6f1a872058ae8b708068c801c6fb118599a498c4b96ba69f"
+          },
+          "embedded_laguerre_geometry": {
+            "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/embedded_laguerre_geometry.py",
+            "sha256": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329"
+          },
+          "run_canonical_av_branches_20261018": {
+            "path": "/gpfs/kjhan/LagForce/run_canonical_av_branches_20261018.py",
+            "sha256": "2cc463ddbf904ad376c4f3197caa5418aaf83d03f7979152826f092e5f78e53e"
+          },
+          "geometry_uncertainty": {
+            "path": "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_modules_20261018/geometry_uncertainty.py",
+            "sha256": "a58bfe8407a40e3aa31dff10c6f19fddb3059bdf420750b4286c433907be20e4"
+          }
+        }
+      },
+      "states": {
+        "plus": {
+          "seconds": 66.26414933800697,
+          "newton_fits": 1590,
+          "fit_residual_max": 2.9419522373785867e-13,
+          "graph_added": 0,
+          "graph_removed": 0,
+          "prior_branch_changed": 41,
+          "prior_branch_changed_ids": [
+            45,
+            190,
+            238,
+            239,
+            422,
+            444,
+            454,
+            473,
+            510,
+            513,
+            527,
+            540,
+            609,
+            624,
+            639,
+            667,
+            668,
+            680,
+            681,
+            700,
+            707,
+            708,
+            713,
+            716,
+            722,
+            731,
+            901,
+            902,
+            1099,
+            1116,
+            1133,
+            1151,
+            1166,
+            1333,
+            1334,
+            1352,
+            1371,
+            1390,
+            1409,
+            1428,
+            1447
+          ],
+          "active_prior_branch_changed": 33,
+          "same_graph_and_prior_branch": false,
+          "quadrature_remainder_difference_absolute_sum": 5.616631333424479e-19,
+          "P2_fit_constraint_error_absolute_sum": 3.906590398991963e-16,
+          "remainder_summation_roundoff_bound": 9.807901277008992e-21,
+          "perturbation_roundoff_max": 5.501987212185033e-17
+        },
+        "minus": {
+          "seconds": 66.18281451240182,
+          "newton_fits": 1590,
+          "fit_residual_max": 2.9419522373785867e-13,
+          "graph_added": 0,
+          "graph_removed": 0,
+          "prior_branch_changed": 53,
+          "prior_branch_changed_ids": [
+            49,
+            198,
+            206,
+            241,
+            251,
+            424,
+            435,
+            436,
+            447,
+            448,
+            472,
+            475,
+            476,
+            507,
+            513,
+            522,
+            527,
+            668,
+            669,
+            681,
+            713,
+            727,
+            731,
+            732,
+            860,
+            878,
+            893,
+            1008,
+            1099,
+            1116,
+            1133,
+            1146,
+            1151,
+            1166,
+            1337,
+            1338,
+            1356,
+            1357,
+            1358,
+            1374,
+            1375,
+            1376,
+            1377,
+            1393,
+            1412,
+            1431,
+            1432,
+            1450,
+            1451,
+            1473,
+            1475,
+            1550,
+            1552
+          ],
+          "active_prior_branch_changed": 34,
+          "same_graph_and_prior_branch": false,
+          "quadrature_remainder_difference_absolute_sum": 5.672542967410938e-19,
+          "P2_fit_constraint_error_absolute_sum": 3.944221276968001e-16,
+          "remainder_summation_roundoff_bound": 9.776162405988397e-21,
+          "perturbation_roundoff_max": 5.501987212185033e-17
+        },
+        "plus_half": {
+          "seconds": 66.54956357739866,
+          "newton_fits": 1590,
+          "fit_residual_max": 2.9419522373785867e-13,
+          "graph_added": 0,
+          "graph_removed": 0,
+          "prior_branch_changed": 24,
+          "prior_branch_changed_ids": [
+            422,
+            444,
+            454,
+            473,
+            510,
+            513,
+            527,
+            540,
+            624,
+            667,
+            668,
+            707,
+            708,
+            712,
+            713,
+            716,
+            722,
+            901,
+            902,
+            1099,
+            1116,
+            1133,
+            1151,
+            1166
+          ],
+          "active_prior_branch_changed": 24,
+          "same_graph_and_prior_branch": false,
+          "quadrature_remainder_difference_absolute_sum": 5.648314244823212e-19,
+          "P2_fit_constraint_error_absolute_sum": 3.8211793685344325e-16,
+          "remainder_summation_roundoff_bound": 9.810371196526363e-21,
+          "perturbation_roundoff_max": 5.51831377224336e-17
+        },
+        "minus_half": {
+          "seconds": 66.73029389418662,
+          "newton_fits": 1590,
+          "fit_residual_max": 2.9500117166964375e-13,
+          "graph_added": 0,
+          "graph_removed": 0,
+          "prior_branch_changed": 22,
+          "prior_branch_changed_ids": [
+            49,
+            198,
+            206,
+            251,
+            436,
+            448,
+            507,
+            513,
+            522,
+            713,
+            727,
+            878,
+            893,
+            1008,
+            1026,
+            1043,
+            1099,
+            1116,
+            1133,
+            1146,
+            1151,
+            1166
+          ],
+          "active_prior_branch_changed": 22,
+          "same_graph_and_prior_branch": false,
+          "quadrature_remainder_difference_absolute_sum": 5.32368559070468e-19,
+          "P2_fit_constraint_error_absolute_sum": 4.134198260066279e-16,
+          "remainder_summation_roundoff_bound": 9.770699524933948e-21,
+          "perturbation_roundoff_max": 5.51831377224336e-17
+        }
+      },
+      "all_same_graph_and_prior_branch": false,
+      "derivatives": {
+        "centered": {
+          "signed_sum": -2.0086865028351278e-06,
+          "absolute_sum": 0.003336340719184299,
+          "maximum": 3.0564369631721404e-05
+        },
+        "centered_half": {
+          "signed_sum": -2.004425178107658e-06,
+          "absolute_sum": 0.0033363393167073927,
+          "maximum": 3.056436922461196e-05
+        },
+        "forward": {
+          "signed_sum": -1.949497437129103e-06,
+          "absolute_sum": 0.003336343879057449,
+          "maximum": 3.056431513296089e-05
+        },
+        "backward": {
+          "signed_sum": -2.0678755685411524e-06,
+          "absolute_sum": 0.003336337559311149,
+          "maximum": 3.0564424130481916e-05
+        },
+        "forward_half": {
+          "signed_sum": -1.9744256574744065e-06,
+          "absolute_sum": 0.003336343212293706,
+          "maximum": 3.0564341958341866e-05
+        },
+        "backward_half": {
+          "signed_sum": -2.0344246987409103e-06,
+          "absolute_sum": 0.00333633542112108,
+          "maximum": 3.056439649088205e-05
+        },
+        "scale_difference": {
+          "signed_sum": 4.261324727469375e-09,
+          "absolute_sum": 8.0480408089071e-09,
+          "maximum": 6.589287365323473e-10
+        },
+        "candidate_closure_defect": {
+          "signed_sum": 6.454062604439017e-07,
+          "absolute_sum": 8.360818702761912e-07,
+          "maximum": 3.892666346458052e-08
+        },
+        "quadrature_derivative_difference": {
+          "signed_sum": 8.777599868422313e-14,
+          "absolute_sum": 8.777599868422313e-14,
+          "maximum": 9.311076251038684e-16
+        },
+        "P2_constraint_derivative_effect": {
+          "signed_sum": 6.364302102880569e-11,
+          "absolute_sum": 6.364302102880569e-11,
+          "maximum": 2.8484108653562337e-12
+        },
+        "remainder_summation_derivative_bound": {
+          "signed_sum": 1.5664856577168249e-15,
+          "absolute_sum": 1.5664856577168249e-15,
+          "maximum": 5.116221423806041e-18
+        }
+      },
+      "interpretation": "Candidate closure derivative is unconfirmed if graph/prior branches change or two scales are unstable. No automatic epsilon sweep. P2 raw evaluation uses longdouble; remainder directly integrated with original binary64 density. Fit residual and P2 quadrature constraint defects are separately retained, not hidden by thermal correction."
+    }
+  },
+  "prior_branch_transitions": {
+    "plus": {
+      "counts": {
+        "((False, None, 'neighbor_gradient', 19), (True, 'unresolved_phase_fraction', None, 19))": 5,
+        "((False, None, 'neighbor_gradient', 18), (True, 'unresolved_phase_fraction', None, 18))": 1,
+        "((True, 'unresolved_phase_fraction', None, 19), (False, None, 'neighbor_gradient', 19))": 9,
+        "((False, None, 'neighbor_gradient', 17), (True, 'unresolved_phase_fraction', None, 17))": 1,
+        "((True, 'unresolved_phase_fraction', None, 18), (False, None, 'neighbor_gradient', 18))": 2,
+        "((True, 'unresolved_phase_fraction', None, 20), (False, None, 'neighbor_gradient', 20))": 6,
+        "((False, None, 'neighbor_gradient', 20), (True, 'unresolved_phase_fraction', None, 20))": 4,
+        "((True, 'unresolved_phase_fraction', None, 21), (False, None, 'neighbor_gradient', 21))": 1,
+        "((False, None, 'neighbor_gradient', 21), (True, 'unresolved_phase_fraction', None, 21))": 2,
+        "((True, 'unresolved_phase_fraction', None, 17), (False, None, 'neighbor_gradient', 17))": 3,
+        "((True, 'unresolved_phase_fraction', None, 15), (False, None, 'neighbor_gradient', 15))": 1,
+        "((True, 'unresolved_phase_fraction', None, 16), (False, None, 'neighbor_gradient', 16))": 6
+      },
+      "initial_contrast_minus_one": {
+        "minimum": 5.079453968548364e-08,
+        "median": 2.7113992268734677e-05,
+        "maximum": 99.00037428305778
+      }
+    },
+    "minus": {
+      "counts": {
+        "((True, 'unresolved_phase_fraction', None, 19), (False, None, 'neighbor_gradient', 19))": 13,
+        "((True, 'unresolved_phase_fraction', None, 18), (False, None, 'neighbor_gradient', 18))": 3,
+        "((False, None, 'neighbor_gradient', 21), (True, 'unresolved_phase_fraction', None, 21))": 2,
+        "((False, None, 'neighbor_gradient', 17), (True, 'unresolved_phase_fraction', None, 17))": 4,
+        "((True, 'unresolved_phase_fraction', None, 20), (False, None, 'neighbor_gradient', 20))": 3,
+        "((False, None, 'neighbor_gradient', 18), (True, 'unresolved_phase_fraction', None, 18))": 2,
+        "((True, 'unresolved_phase_fraction', None, 21), (False, None, 'neighbor_gradient', 21))": 1,
+        "((False, None, 'neighbor_gradient', 19), (True, 'unresolved_phase_fraction', None, 19))": 4,
+        "((True, 'unresolved_phase_fraction', None, 17), (False, None, 'neighbor_gradient', 17))": 4,
+        "((True, 'unresolved_phase_fraction', None, 16), (False, None, 'neighbor_gradient', 16))": 12,
+        "((True, 'unresolved_phase_fraction', None, 15), (False, None, 'neighbor_gradient', 15))": 1,
+        "((False, None, 'neighbor_gradient', 12), (True, 'unresolved_phase_fraction', None, 12))": 2,
+        "((True, 'unresolved_phase_fraction', None, 12), (False, None, 'neighbor_gradient', 12))": 2
+      },
+      "initial_contrast_minus_one": {
+        "minimum": 4.8721651824124024e-08,
+        "median": 5.1182371265667825e-06,
+        "maximum": 99.00052328875272
+      }
+    },
+    "plus_half": {
+      "counts": {
+        "((True, 'unresolved_phase_fraction', None, 18), (False, None, 'neighbor_gradient', 18))": 1,
+        "((True, 'unresolved_phase_fraction', None, 20), (False, None, 'neighbor_gradient', 20))": 6,
+        "((False, None, 'neighbor_gradient', 19), (True, 'unresolved_phase_fraction', None, 19))": 4,
+        "((True, 'unresolved_phase_fraction', None, 19), (False, None, 'neighbor_gradient', 19))": 7,
+        "((False, None, 'neighbor_gradient', 20), (True, 'unresolved_phase_fraction', None, 20))": 2,
+        "((False, None, 'neighbor_gradient', 21), (True, 'unresolved_phase_fraction', None, 21))": 2,
+        "((True, 'unresolved_phase_fraction', None, 17), (False, None, 'neighbor_gradient', 17))": 2
+      },
+      "initial_contrast_minus_one": {
+        "minimum": 5.079453968548364e-08,
+        "median": 2.8120788905461325e-05,
+        "maximum": 99.00037428305778
+      }
+    },
+    "minus_half": {
+      "counts": {
+        "((True, 'unresolved_phase_fraction', None, 19), (False, None, 'neighbor_gradient', 19))": 12,
+        "((True, 'unresolved_phase_fraction', None, 18), (False, None, 'neighbor_gradient', 18))": 2,
+        "((False, None, 'neighbor_gradient', 19), (True, 'unresolved_phase_fraction', None, 19))": 5,
+        "((False, None, 'neighbor_gradient', 18), (True, 'unresolved_phase_fraction', None, 18))": 1,
+        "((True, 'unresolved_phase_fraction', None, 17), (False, None, 'neighbor_gradient', 17))": 2
+      },
+      "initial_contrast_minus_one": {
+        "minimum": 5.364914223981998e-08,
+        "median": 1.6452480439688166e-05,
+        "maximum": 99.000223685639
+      }
+    }
+  },
+  "derivative_caution": "Branch changes preclude claiming a confirmed global smooth derivative from this experiment; no additional epsilon runs were authorized or performed.",
+  "source_sha256": {
+    "Docs/canonical_moment_flux_provider_comparison_2026-10-18.json": "9588b4b7c449318e777813dbb05e488112e877a532d83de2401d8813ea568022",
+    "/gpfs/kjhan/LagForce/Codex_potential_polynomial_20261018/report.json": "3ef546158274ad8a7debb2332b18351b0aeb7a9923452ef3501b9371a4d683b4",
+    "/gpfs/kjhan/LagForce/Codex_potential_directional_20261018/report.json": "b39a9e73ec614722e221a4fffd5eeb43e3da6923227c6dc1e7cc8acd2ac121d6"
+  }
+}

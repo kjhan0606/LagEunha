@@ -1,0 +1,41 @@
+{
+  "status": "passed_native_executable_MPI_component",
+  "cases": [
+    {
+      "ranks": 1,
+      "exit": 0,
+      "wall_seconds": 3.948443257017061,
+      "status": "passed_native_owned_MPI_component",
+      "cells": 1590,
+      "canonical_nodes": 213064,
+      "production_node_passes": 1,
+      "extra_oracle_node_passes": 1,
+      "owned_stage_calls": 1,
+      "MPI_stage_wall_seconds": 0.11484569613821805,
+      "evolution_steps": 0,
+      "MPI_evolution_verified": false
+    },
+    {
+      "ranks": 2,
+      "exit": 0,
+      "wall_seconds": 4.5097447170410305,
+      "status": "passed_native_owned_MPI_component",
+      "cells": 1590,
+      "canonical_nodes": 213064,
+      "production_node_passes": 1,
+      "extra_oracle_node_passes": 1,
+      "owned_stage_calls": 2,
+      "MPI_stage_wall_seconds": 0.16860301094129682,
+      "evolution_steps": 0,
+      "MPI_evolution_verified": false
+    }
+  ],
+  "rank1_rank2_outputs_bitwise_equal": true,
+  "same_H200_node_speedup": 0.6811604104638697,
+  "stage_parallel_efficiency": 0.34058020523193483,
+  "allocated_GPU_hours": 0.004698993318921162,
+  "physical_providers": 0,
+  "evolution_steps": 0,
+  "MPI_evolution_verified": false,
+  "limits": "Captured stage only, includes canonical flux distribution/owned CUDA/gather. Global flux oracle outside timed stage is additional. No density/velocity service or actual time integration in this gate; not a full solver speedup."
+}

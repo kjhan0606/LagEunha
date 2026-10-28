@@ -1,0 +1,81 @@
+{
+  "status": "completed_read_only_native_checkpoint_spin_weight_audit",
+  "model": "FullMomentKepler",
+  "integrator": "explicit midpoint + Sylvester/exponential/positive QR",
+  "scope": "Accepted-state affine-spin, evolving-weight, and angular-momentum diagnostics. No provider or timestep was run by this audit.",
+  "initial_checkpoint": {
+    "path": "/gpfs/kjhan/LagForce/Codex_full_curved_kepler_IC_20261019/initial.npz",
+    "sha256": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46",
+    "time": 0.0,
+    "weights_exactly_zero": true
+  },
+  "definitions": {
+    "S": "Q - q q^T/m",
+    "C": "D - q p^T/m",
+    "ell_internal": "C_xy - C_yx",
+    "L_orbital_centroids": "(q_x p_y - q_y p_x)/m",
+    "L_origin": "D_xy - D_yx = ell_internal + L_orbital_centroids",
+    "K_affine": "0.5 Tr(C^T S^-1 C)",
+    "K_rot": "ell_internal^2/(2 Tr(S)); a diagnostic projection contained in K_affine"
+  },
+  "checks": {
+    "ids_equal_to_initial": true,
+    "mass_bitwise_equal_to_initial": true,
+    "initial_ids_cells": 19945,
+    "initial_masses": "fixed"
+  },
+  "checkpoints": [
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_explicit_fine_timestep_refinement_fork_v2_20261019/run_h0025/runtime/accepted_0016",
+      "state_bin_sha256": "8175699ebea10c23e1035961457bab8d22de38a9098cbd4c20e749544b84cac3",
+      "step": 16,
+      "time": 0.04,
+      "h": 0.0025,
+      "cells": 19945,
+      "weight_nonzero_cells": 19945,
+      "weight_gauge_removed_rms": 1.0217563279831272e-05,
+      "weight_gauge_removed_max_abs": 8.396404855674701e-05,
+      "intrinsic_spin_sum": 0.00031186154533626435,
+      "intrinsic_spin_change_from_t0": 3.8411767665120816e-07,
+      "intrinsic_spin_mass_weighted_rms": 2.9688559107651568e-08,
+      "centroid_orbital_L_sum": 13.882794989363585,
+      "centroid_orbital_L_change_from_t0": -3.841176766167556e-07,
+      "origin_total_L_sum": 13.883106850908922,
+      "origin_total_L_change_from_t0": 3.444936060119535e-17,
+      "spin_orbit_closure_residual": 3.1907291924697403e-21,
+      "affine_kinetic_energy": 0.0004655046693197423,
+      "rigid_spin_projection_energy": 4.956553681322045e-05,
+      "rigid_spin_fraction_of_affine_energy": 0.10647699170376153,
+      "affine_nonspin_projection_energy": 0.00041593913250652186
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_explicit_fine_timestep_refinement_fork_v2_20261019/run_h00125/runtime/accepted_0026",
+      "state_bin_sha256": "63e92b0fa61b80c6647f17461882b9d7cf53930a1a3f2d9122cc93ec8bdd51c4",
+      "step": 26,
+      "time": 0.0325,
+      "h": 0.00125,
+      "cells": 19945,
+      "weight_nonzero_cells": 19945,
+      "weight_gauge_removed_rms": 8.183478644622217e-06,
+      "weight_gauge_removed_max_abs": 6.958983386169061e-05,
+      "intrinsic_spin_sum": 0.0003117269107560368,
+      "intrinsic_spin_change_from_t0": 2.4948309642370244e-07,
+      "intrinsic_spin_mass_weighted_rms": 2.9669622566763912e-08,
+      "centroid_orbital_L_sum": 13.882795123998166,
+      "centroid_orbital_L_change_from_t0": -2.494830964272131e-07,
+      "origin_total_L_sum": 13.883106850908922,
+      "origin_total_L_change_from_t0": -3.5155233936146555e-18,
+      "spin_orbit_closure_residual": 4.826555657291085e-21,
+      "affine_kinetic_energy": 0.0004654880115152825,
+      "rigid_spin_projection_energy": 4.950874556859721e-05,
+      "rigid_spin_fraction_of_affine_energy": 0.10635879838759668,
+      "affine_nonspin_projection_energy": 0.00041597926594668527
+    }
+  ],
+  "limitations": [
+    "The two checkpoints are at different times, so these numbers are not a timestep-convergence comparison.",
+    "The orbital/intrinsic-spin exchange and global angular-momentum closure verify bookkeeping at these accepted states; they do not establish reduced Kepler shear error.",
+    "The rigid-spin projection is only about 10.6 percent of affine kinetic energy here; the remaining affine deformation includes shear and remains the dominant component.",
+    "No t=6-10 stability claim is made."
+  ]
+}

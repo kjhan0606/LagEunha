@@ -1,0 +1,29 @@
+{
+  "scope": "Persistent owner-vector residual: static actual-state and support-swap audit.\n\nThis tests a new operator, not the production HG operator. Support is copied\nfrom saved HG neighborhoods; smooth changing support and evolution remain open.\n",
+  "rows": [
+    {
+      "branch": "original_support",
+      "owners": 1194,
+      "auxiliary_energy": 1161.928121438641,
+      "polynomial_moment_relative_max": 2.5894413465149497e-15,
+      "condition_number_max": 15.016108765459823,
+      "residual_row_norm_min": 0.8407569227934295,
+      "work_closure_relative": 7.049987870092999e-18,
+      "net_force_relative": 1.690963606187126e-17,
+      "net_torque_relative": 1.77916932808591e-18
+    },
+    {
+      "branch": "drop_farthest",
+      "owners": 1194,
+      "auxiliary_energy": 1161.928121438641,
+      "polynomial_moment_relative_max": 2.3449379374286154e-15,
+      "condition_number_max": 12.215918800327938,
+      "residual_row_norm_min": 0.8118339919023199,
+      "work_closure_relative": 2.371849243046271e-18,
+      "net_force_relative": 2.3236770519081802e-17,
+      "net_torque_relative": 2.6385974812053427e-18
+    }
+  ],
+  "state_identity": "persistent particle ID and Cartesian component; identical z in both branches",
+  "limitation": "Support swap preserves E_aux algebraically but force continuity, accumulated phase, shock thermodynamics and actual moving-state stability are unverified."
+}

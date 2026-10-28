@@ -1,0 +1,27 @@
+{
+  "scope": "Uniform-density tangent check of weight-swept mass transport at W=0.\n\nUses actual t0 faces and velocities, but a manufactured uniform density to\nisolate the kinematic identity. Not an evolved candidate or actual mass reset.\n",
+  "identity": "Vdot=Bv+L Wdot; mdot=rho L Wdot implies rhodot/rho=-Bv/V at uniform density.",
+  "expected_circular_density_rate_RMS_r_lt_0p5": 0.12088741521033827,
+  "cases": [
+    {
+      "weight_rate_amplitude": 0,
+      "weight_volume_rate_RMS": 0.0,
+      "density_rate_identity_max_error": 0.0
+    },
+    {
+      "weight_rate_amplitude": 0.001,
+      "weight_volume_rate_RMS": 0.007244754614558633,
+      "density_rate_identity_max_error": 2.7755575615628914e-17
+    },
+    {
+      "weight_rate_amplitude": 0.01,
+      "weight_volume_rate_RMS": 0.07244754614558634,
+      "density_rate_identity_max_error": 5.551115123125783e-17
+    },
+    {
+      "weight_rate_amplitude": 0.1,
+      "weight_volume_rate_RMS": 0.7244754614558634,
+      "density_rate_identity_max_error": 2.2898349882893854e-16
+    }
+  ]
+}

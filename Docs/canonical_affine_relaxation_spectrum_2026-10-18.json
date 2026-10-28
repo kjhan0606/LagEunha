@@ -1,0 +1,43 @@
+{
+  "scope": "Frozen shared-face affine damping spectrum and a conservative RK4 bound.\n\ngamma_face=alpha*A*harmonic(rho*c_s) is an experimental numerical-viscosity\nscale, not an Euler tangential traction law. Here alpha=rho=c_s=1.\n",
+  "cases": [
+    {
+      "n": 4,
+      "degrees_of_freedom": 96,
+      "lambda_max": 45.44207466251319,
+      "absolute_row_sum_bound": 84.34911385190306,
+      "max_individual_contact_rate": 15.409585194192857,
+      "assembled_over_max_contact": 2.9489485985410013,
+      "minimum_eigenvalue": -1.5493946091847455e-14,
+      "count_eigenvalues_abs_below_1e_10": 30,
+      "max_affine_null_slip": 2.220446049250313e-16,
+      "conservative_frozen_dt": 0.002963872275397468,
+      "max_RK4_amplification_at_bound": 1.0,
+      "homogeneous_cold_background_cs": 0.06804141094417153,
+      "homogeneous_cold_background_scaled_lambda_max": 3.091942876267785,
+      "homogeneous_cold_background_scaled_dt": 0.0435598297311816
+    },
+    {
+      "n": 8,
+      "degrees_of_freedom": 384,
+      "lambda_max": 97.239337989431,
+      "absolute_row_sum_bound": 173.84535690333078,
+      "max_individual_contact_rate": 32.47331741836996,
+      "assembled_over_max_contact": 2.994438071621943,
+      "minimum_eigenvalue": -3.1043289756554067e-14,
+      "count_eigenvalues_abs_below_1e_10": 62,
+      "max_affine_null_slip": 2.7755575615628914e-16,
+      "conservative_frozen_dt": 0.0014380596896759004,
+      "max_RK4_amplification_at_bound": 1.0,
+      "homogeneous_cold_background_cs": 0.06804141094417153,
+      "homogeneous_cold_background_scaled_lambda_max": 6.616301756078064,
+      "homogeneous_cold_background_scaled_dt": 0.021135065686039914
+    }
+  ],
+  "limits": [
+    "Frozen linear mechanical block only; not nonlinear hydro/gravity/geometry stability or heat positivity.",
+    "Bound uses kinetic-normalized affine coordinates; raw-moment row sums are not equivalent.",
+    "Uniform background scaling is analytic on these small meshes, not the actual 192-square disk.",
+    "No chosen alpha or physical calibration, no production timestep changed."
+  ]
+}

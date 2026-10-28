@@ -1,0 +1,28 @@
+{
+  "status": "passed_stage_velocity_gravity_preparation",
+  "scope": "Actual moving-stage velocity and positive gravity preparation.\n\nUses the saved initial Psi fits without refitting. One necessary 2.32 GB\ncompiled-kernel input is sized before creation, reused by actual stage0.\nNo face/root/RHS/evolution is evaluated by this preparation alone.\n",
+  "cells": 19945,
+  "gravity_nodes": 91666392,
+  "gravity_input_bytes": 5133318080,
+  "gravity_input_sha256": "df1d4c143b529531b936f9a75d6fd43d724c623ae6ffa3ee18289a279b9428e1",
+  "provider_calls": 0,
+  "evolution_steps": 0,
+  "maximum_velocity_moment_defect": 5.789639601072594e-17,
+  "maximum_covariance_split_error": 2.1977946474120082e-15,
+  "maximum_orthogonality_error": 1.8301332671555315e-16,
+  "minimum_velocity_neighbors": 8,
+  "worker_prepare_wall_sum": 217.61710199341178,
+  "worker_gravity_and_moment_wall_sum": 63.32170185819268,
+  "peak_worker_RSS_KiB": 1694836,
+  "seconds": 90.66242571547627,
+  "state_sha256": "beddfa9f22cba18d9df352a2580da41120a5d80940bace4e1ea31bef1c2795da",
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/prepare_full_curved_stage_velocity_gravity.py": "bef92ab23d7dc775f369bbf20b8b8b5fc4df509b6e7d0e443caafddf5d87aef9",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/compact_potential_density.py": "b06c479b41136c4b0099c83144b058d67b186fc9d85379d284a9875d8c6a3c9f",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_arc_roots_modules_v7_20261019/quadratic_cell_prepare.py": "81956dd73853dd218c583f779afd5b563678fa5e23ff89ce9a8ca6ecf0bdcc74",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fine_midpoint_density_20261019/manifest.json": "af8ff3e2da0a5bc5ed8453b887edcc7158cf4b2d3e57070908d1863b38a2d0bc",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_fine_midpoint_density_20261019/report.json": "4795c9da2dab1c843a5ff8bd3991675b2e2f4f01a27eeaec46ab9ed03fbf4800"
+  },
+  "time": 0.00025,
+  "limits": "Actual moving-stage preparation only; no full closed-root/RHS, dynamic wall flux, timestep evolution or long-time stability claim. Same-state metadata and necessary gravity input are retained for first stage0 reuse."
+}

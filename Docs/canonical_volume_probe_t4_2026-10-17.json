@@ -1,0 +1,81 @@
+{
+  "reference": "/gpfs/kjhan/LagForce/Codex_volume_probe_t4_20261017/control/khout.000371.dat",
+  "candidate": "/gpfs/kjhan/LagForce/Codex_volume_probe_t4_20261017/volume_audit/khout.000371.dat",
+  "reference_sha256": "923d35833a0a5a13b579b0bdf6b8184e567f049e65ee514cc1b4783aeabc90ce",
+  "candidate_sha256": "50c369d486b7bfbcad4014b5b85d4d9ae3c55d644a667b7dffec24d6f56f460e",
+  "n": 36864,
+  "t": 4.008538150548696,
+  "dt": 0.001,
+  "fields": {
+    "x": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "y": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "mass": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vx": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "vy": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "den": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "pressure": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "ie": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "volume": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "w2": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    },
+    "csound": {
+      "bitwise_different_particles": 0,
+      "max_abs_difference": 0.0,
+      "worst_particle_id": 0
+    }
+  },
+  "all_physical_fields_bitwise_equal": true,
+  "scope": "Restart at constrained canonical t4; fixed dt .001 for three diagnostic steps, volume audit enabled vs disabled. Not a long-time run.",
+  "exit_codes": {
+    "control": 0,
+    "volume_audit": 0
+  },
+  "volume_records": [
+    "[VAUD] step=1 n=36864 res_abs/V=8.866e-05 booked_abs/V=9.765e-05 unbooked_PdV_abs=8.864e-08 signed=-3.051e-11 cum_abs=8.864e-08 cum_signed=-3.051e-11 w2clip=0",
+    "[VDEC] step=1 n_int=36864 cum: dI=4.7669e-09 diss=3.7642e-06 adb_booked=6.2804e-10 adb_geom=6.5697e-10 gcl(booked-geom)=-2.8926e-11 |gcl|=8.8640e-08 resid(dI-adb_b-diss)=-3.7600e-06",
+    "[VAUD] step=2 n=36864 res_abs/V=8.864e-05 booked_abs/V=9.769e-05 unbooked_PdV_abs=8.862e-08 signed=-3.083e-11 cum_abs=1.773e-07 cum_signed=-6.134e-11 w2clip=0",
+    "[VDEC] step=2 n_int=36864 cum: dI=9.5365e-09 diss=7.5283e-06 adb_booked=1.2552e-09 adb_geom=1.3133e-09 gcl(booked-geom)=-5.8180e-11 |gcl|=1.7726e-07 resid(dI-adb_b-diss)=-7.5200e-06"
+  ],
+  "retry_records": [],
+  "interpretation_limit": "Legacy vaud_stage accumulates raw phase1_ie_stage and vaud_rate even for frozen cells whose RK increments are zero. Global VDEC dissipation cannot be equated to actual accepted heat. Region-selective active-cell diagnostic required before attributing interior error.",
+  "next": "Use interior-region volume/pressure-work closure, preserve existing t20 runs, and compare full failure interval."
+}

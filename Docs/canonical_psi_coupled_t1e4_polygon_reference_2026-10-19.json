@@ -1,0 +1,4048 @@
+{
+  "scope": "Saved-state Eulerian Kepler reference; no fit, RHS, or evolution.\n\nRun on lageunha. q32 refines interface-crossing cells and the union of\nq16 maximum-error cells. Scientific judgments belong to the Astra review.\n",
+  "time": 0.0001,
+  "checkpoint": "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/accepted.npz",
+  "checkpoint_sha256": "cb4a64a1f20bfbd78b8a3c858aba9e99378cdb8a4c5a304781b976a576a591f0",
+  "initial": "/gpfs/kjhan/LagForce/Codex_psi_coupled_midpoint_once_20261019/initial.npz",
+  "initial_sha256": "dc660c274ac2cb54840ba316166adbb5f20a2de233eea8979f62019c110d17a2",
+  "physical": {
+    "gamma": 1.6666669845581055,
+    "pressure": 2.7777796321447566e-05,
+    "rin": 0.5,
+    "rout": 2.0,
+    "floor": 0.01,
+    "rc": 0.5,
+    "split_radii": [
+      0.25,
+      0.5,
+      2.0
+    ]
+  },
+  "numerical_minus_q16": {
+    "mass": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.1187130790271764e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.9220107115690377e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.5725754067121686e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 5.329612491422315e-13,
+        "maximum": 2.3476305755209268e-12,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.724333728378206e-11,
+        "maximum": 4.036610178771293e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.0299330050832588e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.852950566878142e-09,
+        "maximum": 2.7377689870364263e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 7.476141874990786e-10,
+        "maximum": 3.6454006540828643e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.0299330050832588e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.9994443324763734e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.0299330050832588e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 7.824202059841273e-10,
+        "maximum": 1.5845274610633286e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.790105762266496e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      }
+    },
+    "q": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 6.93027075589602e-09,
+        "maximum": 4.3923166768624426e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.0032201210645435e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 9.763086693245183e-09,
+        "maximum": 4.3923166768624426e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.2202704743072656e-13,
+        "maximum": 3.822871705662072e-13,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 2.2448500530916054e-11,
+        "maximum": 1.955250555992812e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.561422253282018e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.4718314846885615e-09,
+        "maximum": 1.4067948272201407e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 4.35638881098858e-10,
+        "maximum": 1.9920774085679277e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.561422253282018e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.2413073457754622e-08,
+        "maximum": 4.3923166768624426e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.561422253282018e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 4.771890635337146e-10,
+        "maximum": 9.648592306277627e-10,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.7321932114710045e-08,
+        "maximum": 4.3923166768624426e-08,
+        "maximum_id": 1204
+      }
+    },
+    "Q": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.2994256045737655e-09,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 5.256856262960076e-10,
+        "maximum": 7.690041100620792e-09,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.066067136716329e-09,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 3.684119051034517e-14,
+        "maximum": 1.276374412843397e-13,
+        "maximum_id": 448
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 1.0691159566862335e-11,
+        "maximum": 9.470833068754709e-11,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.046663706456942e-10,
+        "maximum": 7.690041100620792e-09,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 7.595242379683759e-10,
+        "maximum": 7.2271401586677154e-09,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 2.553346798472377e-10,
+        "maximum": 1.0885920801406098e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.046663706456942e-10,
+        "maximum": 7.690041100620792e-09,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 7.712473765005372e-09,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.046663706456942e-10,
+        "maximum": 7.690041100620792e-09,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 2.9103862549698473e-10,
+        "maximum": 5.875247042071092e-10,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.0762580160040271e-08,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      }
+    },
+    "momentum": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.51614651796849e-08,
+        "maximum": 9.3477780504827e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 2.663707455839103e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 2.1305156660068163e-08,
+        "maximum": 9.3477780504827e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 7.187809486000552e-13,
+        "maximum": 2.4749904248265376e-12,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 6.861858194448096e-11,
+        "maximum": 5.801439205402091e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.220726508352207e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 3.972411345724455e-09,
+        "maximum": 3.81893857916613e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 9.828417766697398e-10,
+        "maximum": 4.931310971595079e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.220726508352207e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 2.70873154373459e-08,
+        "maximum": 9.3477780504827e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.220726508352207e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.0041864388591859e-09,
+        "maximum": 2.0313565250264636e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 3.7800184404210674e-08,
+        "maximum": 9.3477780504827e-08,
+        "maximum_id": 1204
+      }
+    },
+    "D": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 9.36592230747566e-09,
+        "maximum": 5.764248148083334e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.3881944276858039e-09,
+        "maximum": 2.0780616948143008e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.3190946882023066e-08,
+        "maximum": 5.764248148083334e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.934201589265395e-13,
+        "maximum": 6.294820556336519e-13,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 3.2568255682667395e-11,
+        "maximum": 2.810087306673785e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.175057180635849e-09,
+        "maximum": 2.0780616948143008e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.049108283077121e-09,
+        "maximum": 1.9625628061013494e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 5.710514855106389e-10,
+        "maximum": 2.6947863557883142e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.175057180635849e-09,
+        "maximum": 2.0780616948143008e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.6770765618557727e-08,
+        "maximum": 5.764248148083334e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.175057180635849e-09,
+        "maximum": 2.0780616948143008e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 6.124327765241069e-10,
+        "maximum": 1.2369632932094564e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.3403734249050315e-08,
+        "maximum": 5.764248148083334e-08,
+        "maximum_id": 1204
+      }
+    },
+    "Pi": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 2.0442336018836147e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 3.6939202453644663e-09,
+        "maximum": 5.615649660412809e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 2.8712864403410628e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.1185758460722206e-12,
+        "maximum": 4.0668033293711155e-12,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 9.972094922520498e-11,
+        "maximum": 8.337877714359553e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.879540008605135e-09,
+        "maximum": 5.615649660412809e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 5.531433252541125e-09,
+        "maximum": 5.3267955758891076e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.2939273807400686e-09,
+        "maximum": 6.670807873978425e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.879540008605135e-09,
+        "maximum": 5.615649660412809e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 3.650431773936124e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.879540008605135e-09,
+        "maximum": 5.615649660412809e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.2888481865658258e-09,
+        "maximum": 2.604145272972767e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 5.094313956659476e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      }
+    },
+    "energy": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 9.454599514604257e-09,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.847005515084259e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.3261058966532505e-08,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 5.638434958036329e-13,
+        "maximum": 2.0409390137258532e-12,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.982184544087567e-11,
+        "maximum": 4.1675027384237967e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.939772232079903e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.7657962579828448e-09,
+        "maximum": 2.6634333628351714e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 6.470270049812371e-10,
+        "maximum": 3.3354532205870716e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.939772232079903e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.6860430155078023e-08,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.939772232079903e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 6.445489276324324e-10,
+        "maximum": 1.3026905653365853e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.3528129003132912e-08,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      }
+    },
+    "centroid": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 2.1116536565024537e-06,
+        "maximum": 1.0066193799190015e-05,
+        "maximum_id": 1277
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 4.9142210633233836e-08,
+        "maximum": 1.043504834777575e-06,
+        "maximum_id": 749
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 2.9901594822363315e-06,
+        "maximum": 1.0066193799190015e-05,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 3.547694550474992e-09,
+        "maximum": 7.906304430261815e-09,
+        "maximum_id": 9
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 1.3513019139724762e-07,
+        "maximum": 1.043504834777575e-06,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.276367593715578e-08,
+        "maximum": 8.545778593905285e-07,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 6.274870482638063e-08,
+        "maximum": 6.080989432339082e-07,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.4781951301794117e-08,
+        "maximum": 8.047169919112253e-08,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.276367593715578e-08,
+        "maximum": 8.545778593905285e-07,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 3.800420893990955e-06,
+        "maximum": 1.0066193799190015e-05,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.276367593715578e-08,
+        "maximum": 8.545778593905285e-07,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.4077152490899935e-08,
+        "maximum": 2.7480346125340408e-08,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 5.305221718382372e-06,
+        "maximum": 1.0066193799190015e-05,
+        "maximum_id": 1277
+      }
+    },
+    "velocity": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.377157333045702e-06,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.0663745166740991e-07,
+        "maximum": 2.8816544665997134e-06,
+        "maximum_id": 749
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.19809408104763e-06,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.5108890321643e-08,
+        "maximum": 7.137270811355925e-08,
+        "maximum_id": 11
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 3.287443422886529e-07,
+        "maximum": 2.8816544665997134e-06,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.2709212663351766e-07,
+        "maximum": 2.076993518392378e-06,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.1793214987738055e-07,
+        "maximum": 1.1475689137959457e-06,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 2.1500432681171187e-08,
+        "maximum": 1.4820639262796592e-07,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.2709212663351766e-07,
+        "maximum": 2.076993518392378e-06,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 7.87760829636701e-06,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.2709212663351766e-07,
+        "maximum": 2.076993518392378e-06,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.3788539362048238e-08,
+        "maximum": 2.6255696886052783e-08,
+        "maximum_id": 1169
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.0996825930755562e-05,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      }
+    },
+    "ell": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.50785333642708e-11,
+        "maximum": 1.606513430162641e-10,
+        "maximum_id": 1255
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 5.05170479522006e-13,
+        "maximum": 1.0947614058234682e-11,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.383909814642363e-11,
+        "maximum": 1.606513430162641e-10,
+        "maximum_id": 1255
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.923673926731359e-15,
+        "maximum": 1.0824959486903525e-14,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 2.1151357326492526e-14,
+        "maximum": 1.8756810429963625e-13,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2048543627265475e-12,
+        "maximum": 1.0947614058234682e-11,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 4.1588704329275705e-13,
+        "maximum": 2.8782400860469584e-12,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.9223426694868953e-13,
+        "maximum": 7.731997550899927e-13,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2048543627265475e-12,
+        "maximum": 1.0947614058234682e-11,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 8.113783405902366e-11,
+        "maximum": 1.606513430162641e-10,
+        "maximum_id": 1255
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2048543627265475e-12,
+        "maximum": 1.0947614058234682e-11,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 2.193756214360894e-13,
+        "maximum": 3.9334483801461336e-13,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.1326505224231456e-10,
+        "maximum": 1.606513430162641e-10,
+        "maximum_id": 1255
+      }
+    },
+    "R": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 8.996303070937331e-14,
+        "maximum": 3.287202330643033e-13,
+        "maximum_id": 1291
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 9.589529162908795e-15,
+        "maximum": 7.857318477830512e-14,
+        "maximum_id": 901
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.270439653127275e-13,
+        "maximum": 3.287202330643033e-13,
+        "maximum_id": 1291
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 8.474335397475092e-16,
+        "maximum": 1.9694742035848783e-15,
+        "maximum_id": 180
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.433188668083775e-16,
+        "maximum": 2.0425034113813954e-15,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998246326257618e-15,
+        "maximum": 2.0188991013898087e-14,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.4043475059489719e-14,
+        "maximum": 7.857318477830512e-14,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 8.028550347198847e-15,
+        "maximum": 1.3600582257582628e-14,
+        "maximum_id": 1157
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998246326257618e-15,
+        "maximum": 2.0188991013898087e-14,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.6164714089697878e-13,
+        "maximum": 3.287202330643033e-13,
+        "maximum_id": 1291
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998246326257618e-15,
+        "maximum": 2.0188991013898087e-14,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.0864640178875589e-14,
+        "maximum": 1.3600582257582628e-14,
+        "maximum_id": 1157
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.2540483447951316e-13,
+        "maximum": 3.287202330643033e-13,
+        "maximum_id": 1291
+      }
+    },
+    "thermal": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.626698647076437e-13,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.7381565663304146e-15,
+        "maximum": 1.0439085822505569e-14,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.552398710241321e-13,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 2.666250978448281e-15,
+        "maximum": 1.0439085822505569e-14,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 2.7335757230903655e-15,
+        "maximum": 8.557534902594623e-15,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.6079079722988214e-15,
+        "maximum": 8.013771937709357e-15,
+        "maximum_id": 815
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.3972183333950916e-15,
+        "maximum": 3.888165830967516e-15,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.080482139786859e-15,
+        "maximum": 2.2599110083287854e-15,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.6079079722988214e-15,
+        "maximum": 8.013771937709357e-15,
+        "maximum_id": 815
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 8.327918225327123e-13,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.6079079722988214e-15,
+        "maximum": 8.013771937709357e-15,
+        "maximum_id": 815
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.2589359872948236e-15,
+        "maximum": 2.2599110083287854e-15,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.162544277373262e-12,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      }
+    },
+    "pressure": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 3.173298705855819e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.1884652495483196e-12,
+        "maximum": 6.31402769695269e-12,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 4.494072423311287e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.802556311157226e-12,
+        "maximum": 6.31402769695269e-12,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 1.8663081384251103e-12,
+        "maximum": 5.842937075741916e-12,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.4707777738015494e-12,
+        "maximum": 5.486360836665961e-12,
+        "maximum_id": 847
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 9.55670859491745e-13,
+        "maximum": 2.659755496224733e-12,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 7.368708151554867e-13,
+        "maximum": 1.5415474920058101e-12,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.4707777738015494e-12,
+        "maximum": 5.486360836665961e-12,
+        "maximum_id": 847
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 5.71184219019404e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.4707777738015494e-12,
+        "maximum": 5.486360836665961e-12,
+        "maximum_id": 847
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 8.584730072875172e-13,
+        "maximum": 1.5415474920058101e-12,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 7.973504679523855e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      }
+    },
+    "pressure_relative_P0": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.1423867714825445e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 4.278472042185331e-08,
+        "maximum": 2.2730484534792106e-07,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.6178649923505127e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 6.489198388158138e-08,
+        "maximum": 2.2730484534792106e-07,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 6.718704813110432e-08,
+        "maximum": 2.1034559430585624e-07,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.894794047769126e-08,
+        "maximum": 1.9750885826856888e-07,
+        "maximum_id": 847
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 3.440412797446643e-08,
+        "maximum": 9.575113394330364e-08,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 2.65273316366907e-08,
+        "maximum": 5.549567266484573e-08,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.894794047769126e-08,
+        "maximum": 1.9750885826856888e-07,
+        "maximum_id": 847
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 2.0562618157668103e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.894794047769126e-08,
+        "maximum": 1.9750885826856888e-07,
+        "maximum_id": 847
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 3.09050076310294e-08,
+        "maximum": 5.549567266484573e-08,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.8704597683896968e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      }
+    },
+    "mass_relative_reference": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.1587862483391261e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 2.7437427079101175e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.6178650090363645e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 5.3724455816661345e-08,
+        "maximum": 2.1299275108914217e-07,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.820446277956719e-06,
+        "maximum": 4.0987617458471545e-05,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.058370247130005e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.9278340648788713e-06,
+        "maximum": 2.8097064293607123e-05,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 7.637846819623762e-07,
+        "maximum": 3.7310363601720825e-06,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.058370247130005e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 2.057014928003478e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.058370247130005e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 7.982714862266563e-07,
+        "maximum": 1.6115385308801932e-06,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.8704597979942237e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      }
+    },
+    "factor_R": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 8.996303076690396e-14,
+        "maximum": 3.287202330643026e-13,
+        "maximum_id": 1291
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 9.589530239294794e-15,
+        "maximum": 7.85732601789113e-14,
+        "maximum_id": 901
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.2704396531272758e-13,
+        "maximum": 3.287202330643026e-13,
+        "maximum_id": 1291
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 8.474335837722056e-16,
+        "maximum": 1.9694762542350338e-15,
+        "maximum_id": 180
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.4331889636271794e-16,
+        "maximum": 2.0425033506724966e-15,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998248080158432e-15,
+        "maximum": 2.018897157091021e-14,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.4043478525037929e-14,
+        "maximum": 7.85732601789113e-14,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 8.028549747351148e-15,
+        "maximum": 1.360055641632094e-14,
+        "maximum_id": 1157
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998248080158432e-15,
+        "maximum": 2.018897157091021e-14,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.6164714079217638e-13,
+        "maximum": 3.287202330643026e-13,
+        "maximum_id": 1291
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998248080158432e-15,
+        "maximum": 2.018897157091021e-14,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.0864636976009043e-14,
+        "maximum": 1.360055641632094e-14,
+        "maximum_id": 1157
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.2540483447951326e-13,
+        "maximum": 3.287202330643026e-13,
+        "maximum_id": 1291
+      }
+    }
+  },
+  "q32_minus_q16_selected": {
+    "mass": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 2
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 754
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 754
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1111
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 754
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1204
+      }
+    },
+    "q": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 3.984689399689415e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 781
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 3.8051901172026846e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 781
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 6.103476194852063e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 2.906092522431932e-22,
+        "maximum": 8.470329472543003e-22,
+        "maximum_id": 189
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 4.880551187007667e-22,
+        "maximum": 8.470329472543003e-22,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.780218856810852e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 781
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 7.902674545454794e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 7.1697883792718e-20,
+        "maximum": 1.084334513306563e-19,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.780218856810852e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 781
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 6.595709147278089e-20,
+        "maximum": 1.084334513306563e-19,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.780218856810852e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 781
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 6.961915841344979e-20,
+        "maximum": 1.084334513306563e-19,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 6.103476194852063e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1204
+      }
+    },
+    "Q": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 2.1504731482338275e-20,
+        "maximum": 7.666467083416871e-20,
+        "maximum_id": 1277
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 1.7338099991922483e-20,
+        "maximum": 5.749850312562652e-20,
+        "maximum_id": 1111
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 5.4189172925039234e-20,
+        "maximum": 7.666467083416871e-20,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 7.900987976178798e-23,
+        "maximum": 2.1260955556777753e-22,
+        "maximum_id": 224
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 1.258710522854196e-22,
+        "maximum": 1.5881867761018131e-22,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.5527676077824187e-20,
+        "maximum": 5.442310279007115e-20,
+        "maximum_id": 776
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.9166167708542177e-20,
+        "maximum": 1.9166167708542177e-20,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 2.723462424702056e-20,
+        "maximum": 5.749850312562652e-20,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.5527676077824187e-20,
+        "maximum": 5.442310279007115e-20,
+        "maximum_id": 776
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 4.190038404721311e-20,
+        "maximum": 7.666467083416871e-20,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.5527676077824187e-20,
+        "maximum": 5.442310279007115e-20,
+        "maximum_id": 776
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 2.859649051184943e-20,
+        "maximum": 5.749850312562652e-20,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 5.4189172925039234e-20,
+        "maximum": 7.666467083416871e-20,
+        "maximum_id": 1277
+      }
+    },
+    "momentum": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 1.1625090443469448e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1193
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 1.0249250774131194e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1193
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 2.439665405192823e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 1.83165839120228e-21,
+        "maximum": 6.776263578034403e-21,
+        "maximum_id": 213
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 2.290347160989122e-21,
+        "maximum": 3.492406309907713e-21,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.134725741960929e-20,
+        "maximum": 2.1726353818624857e-19,
+        "maximum_id": 827
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.53335084435784e-19,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 1.9001946458959928e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.134725741960929e-20,
+        "maximum": 2.1726353818624857e-19,
+        "maximum_id": 827
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 2.3344013754865295e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.134725741960929e-20,
+        "maximum": 2.1726353818624857e-19,
+        "maximum_id": 827
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 2.2472836349924546e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 2.439665405192823e-19,
+        "maximum": 4.336808689942018e-19,
+        "maximum_id": 1204
+      }
+    },
+    "D": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 4.930470954497386e-20,
+        "maximum": 1.6263032587282567e-19,
+        "maximum_id": 973
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 5.064733691248918e-20,
+        "maximum": 1.6263032587282567e-19,
+        "maximum_id": 973
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.948181156048034e-20,
+        "maximum": 2.7939250479261703e-20,
+        "maximum_id": 1291
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 5.35160770462663e-22,
+        "maximum": 1.697371392080067e-21,
+        "maximum_id": 448
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 1.2353766811781971e-21,
+        "maximum": 1.7589960230850996e-21,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.018221199565661e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 785
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.2713440680127334e-19,
+        "maximum": 1.3278710503032405e-19,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 7.657442746751997e-20,
+        "maximum": 1.6263032587282567e-19,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.018221199565661e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 785
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 1.2962318706373507e-20,
+        "maximum": 2.7939250479261703e-20,
+        "maximum_id": 1291
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.018221199565661e-20,
+        "maximum": 1.0863176909312428e-19,
+        "maximum_id": 785
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 1.4195718505458425e-22,
+        "maximum": 3.1763735522036263e-22,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.948181156048034e-20,
+        "maximum": 2.7939250479261703e-20,
+        "maximum_id": 1291
+      }
+    },
+    "Pi": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 1.504117611990883e-19,
+        "maximum": 5.311484201212962e-19,
+        "maximum_id": 1277
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 1.3967087991527495e-19,
+        "maximum": 4.337073379660592e-19,
+        "maximum_id": 778
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 2.6505146818018357e-19,
+        "maximum": 5.311484201212962e-19,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 2.419945322193986e-21,
+        "maximum": 5.082197683525802e-21,
+        "maximum_id": 206
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 4.920502573486948e-21,
+        "maximum": 6.789485568320268e-21,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2381470743698084e-19,
+        "maximum": 4.337073379660592e-19,
+        "maximum_id": 778
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.545169745232567e-19,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 2.2458441656476184e-19,
+        "maximum": 3.755786496842898e-19,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2381470743698084e-19,
+        "maximum": 4.337073379660592e-19,
+        "maximum_id": 778
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 2.448853768588325e-19,
+        "maximum": 5.311484201212962e-19,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2381470743698084e-19,
+        "maximum": 4.337073379660592e-19,
+        "maximum_id": 778
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 2.275985850874752e-19,
+        "maximum": 3.755786496842898e-19,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 2.6505146818018357e-19,
+        "maximum": 5.311484201212962e-19,
+        "maximum_id": 1277
+      }
+    },
+    "energy": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 6.634865007078573e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 833
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 6.562262722904547e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 833
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 7.659503645225973e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1255
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 1.3328716092408569e-21,
+        "maximum": 3.3881317890172014e-21,
+        "maximum_id": 177
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 2.1875351761474366e-21,
+        "maximum": 3.3881317890172014e-21,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.477861441055902e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 833
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.0842021724855044e-19,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 5.788484336375962e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.477861441055902e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 833
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 5.096117920442575e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1255
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.477861441055902e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 833
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 7.659503645225973e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1255
+      }
+    },
+    "centroid": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 5.978178377509306e-17,
+        "maximum": 2.2247786310271853e-16,
+        "maximum_id": 781
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 5.959967245519838e-17,
+        "maximum": 2.2247786310271853e-16,
+        "maximum_id": 781
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 6.249959623528512e-17,
+        "maximum": 1.1102230246251565e-16,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 3.132658446365711e-17,
+        "maximum": 1.1102230246251565e-16,
+        "maximum_id": 189
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 6.39703605183469e-17,
+        "maximum": 1.1102230246251565e-16,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.667119790603701e-17,
+        "maximum": 2.2247786310271853e-16,
+        "maximum_id": 781
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 8.092338734545709e-17,
+        "maximum": 1.1102230246251565e-16,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 7.341863300374323e-17,
+        "maximum": 1.1103585416259206e-16,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.667119790603701e-17,
+        "maximum": 2.2247786310271853e-16,
+        "maximum_id": 781
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 6.754006166812763e-17,
+        "maximum": 1.1103585416259206e-16,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.667119790603701e-17,
+        "maximum": 2.2247786310271853e-16,
+        "maximum_id": 781
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 7.129001821537259e-17,
+        "maximum": 1.1103585416259206e-16,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 6.249959623528512e-17,
+        "maximum": 1.1102230246251565e-16,
+        "maximum_id": 1204
+      }
+    },
+    "velocity": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 1.725864692883386e-16,
+        "maximum": 6.661338147750939e-16,
+        "maximum_id": 213
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 1.6628847083057948e-16,
+        "maximum": 6.661338147750939e-16,
+        "maximum_id": 213
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 2.498217374917451e-16,
+        "maximum": 4.440892098500626e-16,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 1.7873212212045445e-16,
+        "maximum": 6.661338147750939e-16,
+        "maximum_id": 213
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 2.932453933247684e-16,
+        "maximum": 4.577566798522237e-16,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.6214806428729665e-16,
+        "maximum": 4.449557262054371e-16,
+        "maximum_id": 827
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.570151264622428e-16,
+        "maximum": 2.220446049250313e-16,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 1.9457993173974966e-16,
+        "maximum": 4.440892098500626e-16,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.6214806428729665e-16,
+        "maximum": 4.449557262054371e-16,
+        "maximum_id": 827
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 2.390427008498206e-16,
+        "maximum": 4.440892098500626e-16,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.6214806428729665e-16,
+        "maximum": 4.449557262054371e-16,
+        "maximum_id": 827
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 2.3012184422322735e-16,
+        "maximum": 4.440892098500626e-16,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 2.498217374917451e-16,
+        "maximum": 4.440892098500626e-16,
+        "maximum_id": 1204
+      }
+    },
+    "ell": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 9.768760417020126e-20,
+        "maximum": 3.256312286600751e-19,
+        "maximum_id": 1193
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 9.205583217497289e-20,
+        "maximum": 3.256312286600751e-19,
+        "maximum_id": 1193
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.6086584070436548e-19,
+        "maximum": 2.981555974335137e-19,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 7.694788585380395e-22,
+        "maximum": 2.544407564213113e-21,
+        "maximum_id": 213
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 2.588692512259034e-21,
+        "maximum": 3.5998900258307764e-21,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.255393237206859e-20,
+        "maximum": 1.6305384234645282e-19,
+        "maximum_id": 830
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 2.395846624751043e-19,
+        "maximum": 3.2526065174565133e-19,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 1.6919096402223775e-19,
+        "maximum": 3.256312286600751e-19,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.255393237206859e-20,
+        "maximum": 1.6305384234645282e-19,
+        "maximum_id": 830
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 1.718296758798373e-19,
+        "maximum": 3.256312286600751e-19,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.255393237206859e-20,
+        "maximum": 1.6305384234645282e-19,
+        "maximum_id": 830
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 1.800627657768444e-19,
+        "maximum": 3.256312286600751e-19,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.6086584070436548e-19,
+        "maximum": 2.981555974335137e-19,
+        "maximum_id": 1204
+      }
+    },
+    "R": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 5.894582184154756e-19,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 5.47781336398998e-19,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.0353674055702229e-18,
+        "maximum": 1.8549968773551057e-18,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 6.178018543623553e-21,
+        "maximum": 1.7744089352986507e-20,
+        "maximum_id": 213
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 1.942539221251836e-20,
+        "maximum": 2.2509196542309606e-20,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.1128372302639463e-19,
+        "maximum": 1.1053640387008513e-18,
+        "maximum_id": 830
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.1387919110024488e-18,
+        "maximum": 1.4469204378777289e-18,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 9.994780573169425e-19,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.1128372302639463e-19,
+        "maximum": 1.1053640387008513e-18,
+        "maximum_id": 830
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 1.0860282100692614e-18,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.1128372302639463e-19,
+        "maximum": 1.1053640387008513e-18,
+        "maximum_id": 830
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 1.1246411882387e-18,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.0353674055702229e-18,
+        "maximum": 1.8549968773551057e-18,
+        "maximum_id": 1204
+      }
+    },
+    "thermal": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 9.157130887623694e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 778
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 9.24665287052347e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 778
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 7.659503645225973e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1255
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 1.648668627326671e-21,
+        "maximum": 5.082197683525802e-21,
+        "maximum_id": 215
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 9.761102374015335e-22,
+        "maximum": 1.6940658945086007e-21,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.366229964332544e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 778
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 7.6667542217892e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 9.160274870790196e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.366229964332544e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 778
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 8.078490787947984e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1111
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.366229964332544e-20,
+        "maximum": 2.168404344971009e-19,
+        "maximum_id": 778
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 8.396391221675592e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 7.659503645225973e-20,
+        "maximum": 1.0842021724855044e-19,
+        "maximum_id": 1255
+      }
+    },
+    "pressure": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 6.270306493134116e-17,
+        "maximum": 1.4933190860093315e-16,
+        "maximum_id": 834
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 6.330988467096397e-17,
+        "maximum": 1.4933190860093315e-16,
+        "maximum_id": 834
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 5.2562009808919387e-17,
+        "maximum": 7.456939254447958e-17,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 1.1191043402939625e-18,
+        "maximum": 3.435565634063442e-18,
+        "maximum_id": 215
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 6.676594023826489e-19,
+        "maximum": 1.1587410718438829e-18,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.417285505807953e-17,
+        "maximum": 1.4933190860093315e-16,
+        "maximum_id": 834
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 5.2447786459121046e-17,
+        "maximum": 7.416959299337555e-17,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 6.239732018555681e-17,
+        "maximum": 7.398324574497961e-17,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.417285505807953e-17,
+        "maximum": 1.4933190860093315e-16,
+        "maximum_id": 834
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 5.5153728795244236e-17,
+        "maximum": 7.456939254447958e-17,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.417285505807953e-17,
+        "maximum": 1.4933190860093315e-16,
+        "maximum_id": 834
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 5.712851167710772e-17,
+        "maximum": 7.395952882245649e-17,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 5.2562009808919387e-17,
+        "maximum": 7.456939254447958e-17,
+        "maximum_id": 1277
+      }
+    },
+    "pressure_relative_P0": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 2.2573088306118574e-12,
+        "maximum": 5.375945120802553e-12,
+        "maximum_id": 834
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 2.2791543266548347e-12,
+        "maximum": 5.375945120802553e-12,
+        "maximum_id": 834
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.892231089920392e-12,
+        "maximum": 2.684496339506373e-12,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 4.0287729355618064e-14,
+        "maximum": 1.2368028026077796e-13,
+        "maximum_id": 215
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 2.4035722440197358e-14,
+        "maximum": 4.171465073884227e-14,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.31022123985159e-12,
+        "maximum": 5.375945120802553e-12,
+        "maximum_id": 834
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.8881190520727334e-12,
+        "maximum": 2.6701035652748425e-12,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 2.2463020271114563e-12,
+        "maximum": 2.6633950688109936e-12,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.31022123985159e-12,
+        "maximum": 5.375945120802553e-12,
+        "maximum_id": 834
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 1.985532911142393e-12,
+        "maximum": 2.684496339506373e-12,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.31022123985159e-12,
+        "maximum": 5.375945120802553e-12,
+        "maximum_id": 834
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 2.0566250474303508e-12,
+        "maximum": 2.6625412601701404e-12,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.892231089920392e-12,
+        "maximum": 2.684496339506373e-12,
+        "maximum_id": 1277
+      }
+    },
+    "mass_relative_reference": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 2
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 754
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 754
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1111
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 754
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 0.0,
+        "maximum": 0.0,
+        "maximum_id": 1204
+      }
+    },
+    "factor_R": {
+      "all": {
+        "cells": 172,
+        "mass_weighted_RMS": 5.894582184154756e-19,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "active": {
+        "cells": 168,
+        "mass_weighted_RMS": 5.47781336398998e-19,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.0353674055702229e-18,
+        "maximum": 1.8549968773551057e-18,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 55,
+        "mass_weighted_RMS": 6.178018543623553e-21,
+        "maximum": 1.7744089352986507e-20,
+        "maximum_id": 213
+      },
+      "inner_transition": {
+        "cells": 3,
+        "mass_weighted_RMS": 1.942539221251836e-20,
+        "maximum": 2.2509196542309606e-20,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.1128372302639463e-19,
+        "maximum": 1.1053640387008513e-18,
+        "maximum_id": 830
+      },
+      "outer_interior": {
+        "cells": 2,
+        "mass_weighted_RMS": 1.1387919110024488e-18,
+        "maximum": 1.4469204378777289e-18,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 7,
+        "mass_weighted_RMS": 9.994780573169425e-19,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.1128372302639463e-19,
+        "maximum": 1.1053640387008513e-18,
+        "maximum_id": 830
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 9,
+        "mass_weighted_RMS": 1.0860282100692614e-18,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.1128372302639463e-19,
+        "maximum": 1.1053640387008513e-18,
+        "maximum_id": 830
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 5,
+        "mass_weighted_RMS": 1.1246411882387e-18,
+        "maximum": 2.2065499177494917e-18,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 4,
+        "mass_weighted_RMS": 1.0353674055702229e-18,
+        "maximum": 1.8549968773551057e-18,
+        "maximum_id": 1204
+      }
+    }
+  },
+  "numerical_minus_q32_selected_else_q16": {
+    "mass": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.1187130790271764e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.9220107115690377e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.5725754067121686e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 5.329612491422315e-13,
+        "maximum": 2.3476305755209268e-12,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.724333728378206e-11,
+        "maximum": 4.036610178771293e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.0299330050832588e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.852950566878142e-09,
+        "maximum": 2.7377689870364263e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 7.476141874990786e-10,
+        "maximum": 3.6454006540828643e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.0299330050832588e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.9994443324763734e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.0299330050832588e-09,
+        "maximum": 2.894599317605339e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 7.824202059841273e-10,
+        "maximum": 1.5845274610633286e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.790105762266496e-08,
+        "maximum": 7.118376390733653e-08,
+        "maximum_id": 1204
+      }
+    },
+    "q": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 6.930270755896445e-09,
+        "maximum": 4.392316676870587e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.0032201210645081e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 9.763086693245791e-09,
+        "maximum": 4.392316676870587e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.220270474249868e-13,
+        "maximum": 3.822871705662072e-13,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 2.244850053091563e-11,
+        "maximum": 1.955250555992812e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.5614222532808685e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.4718314846903019e-09,
+        "maximum": 1.4067948272211614e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 4.3563888109692616e-10,
+        "maximum": 1.9920774085679277e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.5614222532808685e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.2413073457755372e-08,
+        "maximum": 4.392316676870587e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.5614222532808685e-09,
+        "maximum": 1.4919556160990736e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 4.77189063532518e-10,
+        "maximum": 9.648592306277627e-10,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.7321932114711124e-08,
+        "maximum": 4.392316676870587e-08,
+        "maximum_id": 1204
+      }
+    },
+    "Q": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.299425604573434e-09,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 5.25685626295643e-10,
+        "maximum": 7.690041100619828e-09,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.066067136715889e-09,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 3.684119051060166e-14,
+        "maximum": 1.2763744146757687e-13,
+        "maximum_id": 448
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 1.0691159566860512e-11,
+        "maximum": 9.470833068754709e-11,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.046663706445587e-10,
+        "maximum": 7.690041100619828e-09,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 7.595242379674662e-10,
+        "maximum": 7.227140158658258e-09,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 2.55334679847986e-10,
+        "maximum": 1.0885920801505529e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.046663706445587e-10,
+        "maximum": 7.690041100619828e-09,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 7.71247376500482e-09,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.046663706445587e-10,
+        "maximum": 7.690041100619828e-09,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 2.910386254974192e-10,
+        "maximum": 5.875247042071092e-10,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.076258016003949e-08,
+        "maximum": 2.7095844560456462e-08,
+        "maximum_id": 1204
+      }
+    },
+    "momentum": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.5161465179687775e-08,
+        "maximum": 9.34777805051535e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 2.6637074558382798e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 2.1305156660072372e-08,
+        "maximum": 9.34777805051535e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 7.187809486153689e-13,
+        "maximum": 2.474990424748232e-12,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 6.861858194445759e-11,
+        "maximum": 5.801439205406791e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.2207265083475096e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 3.9724113457261194e-09,
+        "maximum": 3.81893857916613e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 9.82841776667284e-10,
+        "maximum": 4.931310971595079e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.2207265083475096e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 2.7087315437351163e-08,
+        "maximum": 9.34777805051535e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 4.2207265083475096e-09,
+        "maximum": 4.031749992661412e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.004186438854504e-09,
+        "maximum": 2.0313565249648064e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 3.7800184404218145e-08,
+        "maximum": 9.34777805051535e-08,
+        "maximum_id": 1204
+      }
+    },
+    "D": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 9.36592230747586e-09,
+        "maximum": 5.7642481480844304e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.3881944276872376e-09,
+        "maximum": 2.0780616948095538e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.3190946882023198e-08,
+        "maximum": 5.7642481480844304e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.934201589112171e-13,
+        "maximum": 6.294820557098743e-13,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 3.256825568267564e-11,
+        "maximum": 2.810087306664012e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.1750571806306826e-09,
+        "maximum": 2.0780616948095538e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.0491082830832483e-09,
+        "maximum": 1.9625628061087626e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 5.710514855108519e-10,
+        "maximum": 2.694786355677386e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.1750571806306826e-09,
+        "maximum": 2.0780616948095538e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.6770765618557896e-08,
+        "maximum": 5.7642481480844304e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.1750571806306826e-09,
+        "maximum": 2.0780616948095538e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 6.124327765241069e-10,
+        "maximum": 1.2369632932094564e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.3403734249050547e-08,
+        "maximum": 5.7642481480844304e-08,
+        "maximum_id": 1204
+      }
+    },
+    "Pi": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 2.0442336018833483e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 3.6939202453560406e-09,
+        "maximum": 5.6156496604124236e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 2.8712864403407918e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.118575846053147e-12,
+        "maximum": 4.06680332610005e-12,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 9.972094922525504e-11,
+        "maximum": 8.337877714330894e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.879540008596254e-09,
+        "maximum": 5.6156496604124236e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 5.531433252524408e-09,
+        "maximum": 5.3267955758704987e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.2939273807406249e-09,
+        "maximum": 6.670807873898868e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.879540008596254e-09,
+        "maximum": 5.6156496604124236e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 3.65043177393579e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 5.879540008596254e-09,
+        "maximum": 5.6156496604124236e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.2888481865718279e-09,
+        "maximum": 2.60414527304297e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 5.094313956658995e-08,
+        "maximum": 1.2260980896619704e-07,
+        "maximum_id": 1204
+      }
+    },
+    "energy": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 9.454599514603535e-09,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.8470055150798837e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.3261058966532083e-08,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 5.638434957708631e-13,
+        "maximum": 2.0409390120317873e-12,
+        "maximum_id": 256
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.982184544090276e-11,
+        "maximum": 4.167502738406856e-10,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.9397722320806995e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.7657962579739745e-09,
+        "maximum": 2.6634333628243294e-08,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 6.470270049764705e-10,
+        "maximum": 3.3354532204786513e-09,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.9397722320806995e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.686043015507749e-08,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.9397722320806995e-09,
+        "maximum": 2.807952014633429e-08,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 6.445489276324324e-10,
+        "maximum": 1.3026905653365853e-09,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.3528129003132168e-08,
+        "maximum": 5.890866419005266e-08,
+        "maximum_id": 1204
+      }
+    },
+    "centroid": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 2.111653656501788e-06,
+        "maximum": 1.0066193799145507e-05,
+        "maximum_id": 1277
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 4.9142210631915555e-08,
+        "maximum": 1.043504834777575e-06,
+        "maximum_id": 749
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 2.99015948223541e-06,
+        "maximum": 1.0066193799145507e-05,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 3.547694550494473e-09,
+        "maximum": 7.906304430229558e-09,
+        "maximum_id": 9
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 1.3513019139637666e-07,
+        "maximum": 1.043504834777575e-06,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.276367593660515e-08,
+        "maximum": 8.545778593905285e-07,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 6.274870482344407e-08,
+        "maximum": 6.080989432101989e-07,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.4781951300869872e-08,
+        "maximum": 8.047169919112253e-08,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.276367593660515e-08,
+        "maximum": 8.545778593905285e-07,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 3.800420893989781e-06,
+        "maximum": 1.0066193799145507e-05,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 9.276367593660515e-08,
+        "maximum": 8.545778593905285e-07,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.4077152489544773e-08,
+        "maximum": 2.7480346125340408e-08,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 5.305221718380736e-06,
+        "maximum": 1.0066193799145507e-05,
+        "maximum_id": 1277
+      }
+    },
+    "velocity": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.377157333044795e-06,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.0663745166945813e-07,
+        "maximum": 2.881654466719586e-06,
+        "maximum_id": 749
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.198094081046311e-06,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.5108890319309333e-08,
+        "maximum": 7.137270805918453e-08,
+        "maximum_id": 11
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 3.287443422918992e-07,
+        "maximum": 2.881654466719586e-06,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.2709212663906374e-07,
+        "maximum": 2.076993518392378e-06,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.1793214987795919e-07,
+        "maximum": 1.1475689137959457e-06,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 2.1500432683644314e-08,
+        "maximum": 1.4820639262796592e-07,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.2709212663906374e-07,
+        "maximum": 2.076993518392378e-06,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 7.87760829636534e-06,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.2709212663906374e-07,
+        "maximum": 2.076993518392378e-06,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.3788539369560401e-08,
+        "maximum": 2.6255696886052783e-08,
+        "maximum_id": 1169
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.0996825930753219e-05,
+        "maximum": 2.1096439723035388e-05,
+        "maximum_id": 1277
+      }
+    },
+    "ell": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.507853336500827e-11,
+        "maximum": 1.606513431246843e-10,
+        "maximum_id": 1255
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 5.051704805920431e-13,
+        "maximum": 1.094761399724831e-11,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.383909814745958e-11,
+        "maximum": 1.606513431246843e-10,
+        "maximum_id": 1255
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.9236739233088345e-15,
+        "maximum": 1.0824959500138415e-14,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 2.1151357417047346e-14,
+        "maximum": 1.8756810789952627e-13,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2048543631632296e-12,
+        "maximum": 1.094761399724831e-11,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 4.158870504790336e-13,
+        "maximum": 2.8782401809146485e-12,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.922342640151105e-13,
+        "maximum": 7.731999177203186e-13,
+        "maximum_id": 973
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2048543631632296e-12,
+        "maximum": 1.094761399724831e-11,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 8.113783406033111e-11,
+        "maximum": 1.606513431246843e-10,
+        "maximum_id": 1255
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 1.2048543631632296e-12,
+        "maximum": 1.094761399724831e-11,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 2.193756144327424e-13,
+        "maximum": 3.933445123833847e-13,
+        "maximum_id": 1193
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.1326505224415257e-10,
+        "maximum": 1.606513431246843e-10,
+        "maximum_id": 1255
+      }
+    },
+    "R": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 8.996302995112281e-14,
+        "maximum": 3.2872019990554727e-13,
+        "maximum_id": 1291
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 9.589526706520224e-15,
+        "maximum": 7.85729454789874e-14,
+        "maximum_id": 901
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.2704396442227197e-13,
+        "maximum": 3.2872019990554727e-13,
+        "maximum_id": 1291
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 8.474335230798938e-16,
+        "maximum": 1.9694800780102875e-15,
+        "maximum_id": 180
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.433187227807763e-16,
+        "maximum": 2.0425049162413912e-15,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.299830842764985e-15,
+        "maximum": 2.0188996436852635e-14,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.40434678868998e-14,
+        "maximum": 7.85729454789874e-14,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 8.028550523999795e-15,
+        "maximum": 1.3600481852884462e-14,
+        "maximum_id": 1157
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.299830842764985e-15,
+        "maximum": 2.0188996436852635e-14,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.6164713967177533e-13,
+        "maximum": 3.2872019990554727e-13,
+        "maximum_id": 1291
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.299830842764985e-15,
+        "maximum": 2.0188996436852635e-14,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.086463728460544e-14,
+        "maximum": 1.3600481852884462e-14,
+        "maximum_id": 1157
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.2540483289964284e-13,
+        "maximum": 3.2872019990554727e-13,
+        "maximum_id": 1291
+      }
+    },
+    "thermal": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 4.62669865438207e-13,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.7381551250073075e-15,
+        "maximum": 1.0439085822505569e-14,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 6.552398720626193e-13,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 2.6662509674676213e-15,
+        "maximum": 1.0439085822505569e-14,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 2.733575702997505e-15,
+        "maximum": 8.557533208528728e-15,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.607902924603894e-15,
+        "maximum": 8.013663517492109e-15,
+        "maximum_id": 815
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.3972211523644412e-15,
+        "maximum": 3.8882742511847646e-15,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 1.080480217208458e-15,
+        "maximum": 2.259802588111537e-15,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.607902924603894e-15,
+        "maximum": 8.013663517492109e-15,
+        "maximum_id": 815
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 8.327918238502852e-13,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.607902924603894e-15,
+        "maximum": 8.013663517492109e-15,
+        "maximum_id": 815
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.2589328431639406e-15,
+        "maximum": 2.259802588111537e-15,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 1.162544279215774e-12,
+        "maximum": 2.965990517425632e-12,
+        "maximum_id": 1204
+      }
+    },
+    "pressure": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 3.173298710881813e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 1.18846425122707e-12,
+        "maximum": 6.31402769695269e-12,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 4.4940724304557744e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 1.8025563038005423e-12,
+        "maximum": 6.31402769695269e-12,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 1.8663081246806353e-12,
+        "maximum": 5.842935917000844e-12,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.470774265599725e-12,
+        "maximum": 5.4862866094747276e-12,
+        "maximum_id": 847
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 9.556727881658264e-13,
+        "maximum": 2.6598296658177263e-12,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 7.368695067666706e-13,
+        "maximum": 1.5414735324769877e-12,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.470774265599725e-12,
+        "maximum": 5.4862866094747276e-12,
+        "maximum_id": 847
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 5.711842199258819e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 2.470774265599725e-12,
+        "maximum": 5.4862866094747276e-12,
+        "maximum_id": 847
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 8.584708674397978e-13,
+        "maximum": 1.5414735324769877e-12,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 7.973504692199798e-10,
+        "maximum": 2.0337816130601893e-09,
+        "maximum_id": 1204
+      }
+    },
+    "pressure_relative_P0": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.1423867732919012e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 4.278468448231233e-08,
+        "maximum": 2.2730484534792106e-07,
+        "maximum_id": 2
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.6178649949225265e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 6.489198361674094e-08,
+        "maximum": 2.2730484534792106e-07,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 6.718704763630355e-08,
+        "maximum": 2.103455525912055e-07,
+        "maximum_id": 747
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.89478141825099e-08,
+        "maximum": 1.9750618609146834e-07,
+        "maximum_id": 847
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 3.440419740668701e-08,
+        "maximum": 9.575380404686892e-08,
+        "maximum_id": 956
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 2.6527284534724767e-08,
+        "maximum": 5.5493010123585564e-08,
+        "maximum_id": 1111
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.89478141825099e-08,
+        "maximum": 1.9750618609146834e-07,
+        "maximum_id": 847
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 2.0562618190301287e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 8.89478141825099e-08,
+        "maximum": 1.9750618609146834e-07,
+        "maximum_id": 847
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 3.0904930596562924e-08,
+        "maximum": 5.5493010123585564e-08,
+        "maximum_id": 1111
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.870459772953033e-05,
+        "maximum": 7.32160891931475e-05,
+        "maximum_id": 1204
+      }
+    },
+    "mass_relative_reference": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 1.1587862483391261e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 2.7437427079101175e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.6178650090363645e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 5.3724455816661345e-08,
+        "maximum": 2.1299275108914217e-07,
+        "maximum_id": 2
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.820446277956719e-06,
+        "maximum": 4.0987617458471545e-05,
+        "maximum_id": 722
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.058370247130005e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 2.9278340648788713e-06,
+        "maximum": 2.8097064293607123e-05,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 7.637846819623762e-07,
+        "maximum": 3.7310363601720825e-06,
+        "maximum_id": 1067
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.058370247130005e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 2.057014928003478e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 6.058370247130005e-06,
+        "maximum": 5.785876577620242e-05,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 7.982714862266563e-07,
+        "maximum": 1.6115385308801932e-06,
+        "maximum_id": 1152
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.8704597979942237e-05,
+        "maximum": 7.321609440343129e-05,
+        "maximum_id": 1204
+      }
+    },
+    "factor_R": {
+      "all": {
+        "cells": 1590,
+        "mass_weighted_RMS": 8.99630300086552e-14,
+        "maximum": 3.2872019990554657e-13,
+        "maximum_id": 1291
+      },
+      "active": {
+        "cells": 1194,
+        "mass_weighted_RMS": 9.589527782938622e-15,
+        "maximum": 7.857302087924296e-14,
+        "maximum_id": 901
+      },
+      "frozen": {
+        "cells": 396,
+        "mass_weighted_RMS": 1.2704396442227202e-13,
+        "maximum": 3.2872019990554657e-13,
+        "maximum_id": 1291
+      },
+      "inner": {
+        "cells": 490,
+        "mass_weighted_RMS": 8.474335671047176e-16,
+        "maximum": 1.9694821286612023e-15,
+        "maximum_id": 180
+      },
+      "inner_transition": {
+        "cells": 264,
+        "mass_weighted_RMS": 4.43318752335047e-16,
+        "maximum": 2.0425048555590135e-15,
+        "maximum_id": 749
+      },
+      "contact_band": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998310178179583e-15,
+        "maximum": 2.0188976993841595e-14,
+        "maximum_id": 797
+      },
+      "outer_interior": {
+        "cells": 107,
+        "mass_weighted_RMS": 1.4043471352552005e-14,
+        "maximum": 7.857302087924296e-14,
+        "maximum_id": 901
+      },
+      "active_edge": {
+        "cells": 232,
+        "mass_weighted_RMS": 8.028549924166228e-15,
+        "maximum": 1.3600456001792863e-14,
+        "maximum_id": 1157
+      },
+      "contact_cells": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998310178179583e-15,
+        "maximum": 2.0188976993841595e-14,
+        "maximum_id": 797
+      },
+      "active_frozen_boundary_cells": {
+        "cells": 245,
+        "mass_weighted_RMS": 1.616471395669702e-13,
+        "maximum": 3.2872019990554657e-13,
+        "maximum_id": 1291
+      },
+      "contact_cells_active": {
+        "cells": 101,
+        "mass_weighted_RMS": 3.2998310178179583e-15,
+        "maximum": 2.0188976993841595e-14,
+        "maximum_id": 797
+      },
+      "contact_cells_frozen": {
+        "cells": 0
+      },
+      "active_frozen_boundary_cells_active": {
+        "cells": 119,
+        "mass_weighted_RMS": 1.0864634081655422e-14,
+        "maximum": 1.3600456001792863e-14,
+        "maximum_id": 1157
+      },
+      "active_frozen_boundary_cells_frozen": {
+        "cells": 126,
+        "mass_weighted_RMS": 2.2540483289964297e-13,
+        "maximum": 3.2872019990554657e-13,
+        "maximum_id": 1291
+      }
+    }
+  },
+  "refined_cells": 172,
+  "interface_cells": 151,
+  "q16_maximum_quad_vec_estimate": 1.0861888848908707e-14,
+  "q32_maximum_quad_vec_estimate": 1.0861888851781098e-14,
+  "geometric_area_difference_max": 3.686287386450715e-18,
+  "raw_R_minus_factor_R_max": 2.116846952872403e-19,
+  "covariance_note": "R metric derives raw S/C/Pi and includes cancellation; factor_R uses saved LL^T minus reference R. mass_relative_reference normalizes by q16 exact mass; pressure_relative_P0 normalizes by IC P0.",
+  "exact_field_potential_sum_q16": {
+    "all": -1.3003104752551282,
+    "active": -0.7111949806066596,
+    "frozen": -0.5891154946484685,
+    "inner": -0.017581302314316146,
+    "inner_transition": -0.005890386905714946,
+    "contact_band": -0.09874992748372399,
+    "outer_interior": -0.196368638819428,
+    "active_edge": -0.3926047250834767,
+    "contact_cells": -0.09874992748372399,
+    "active_frozen_boundary_cells": -0.39274073895396766,
+    "contact_cells_active": -0.09874992748372399,
+    "contact_cells_frozen": 0.0,
+    "active_frozen_boundary_cells_active": -0.19623774793150298,
+    "active_frozen_boundary_cells_frozen": -0.1965029910224647
+  },
+  "exact_reference_pressure_minus_P0_max_q16": 2.6134354554584183e-16,
+  "exact_reference_pressure_minus_P0_max_q32_selected": 2.2446034289060057e-16,
+  "numerical_potential_state": "absent: exact-field Psi is a reference integral, not numerical evolved Psi",
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_psi_coupled_modules_20261019/analyze_saved_kepler_polygon_reference.py": "72b66323511f54f47047c2d1f3cd521e1826419e2fe5b3621368a4830a0bb24f",
+    "/gpfs/kjhan/LagForce/Codex_steady_ale_reference_modules_20261018/steady_kepler_ale_reference.py": "7a4eacdab15e9107a6780526478cd605d3c0c40a8889cee60e9c6be90a6fdd42",
+    "/gpfs/kjhan/LagForce/Codex_contact_prior_evolution_modules_20261018/embedded_laguerre_geometry.py": "903a6f2ea739226db7564d4e6d9a8124c6a3d553ed672ad24d2379d88576c329",
+    "/gpfs/kjhan/LagForce/audit_canonical_pair_history.py": "1a61092f2d848085cf800a64d6aea9e0d2a1d31e51a2b4dd5c13c4c6b22f0cdd",
+    "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+    "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/environment.json": "7ed3814a2735e0e22b78e1c1f690cb7c5ccd8d52bb6c6990aea08b7209d6d77f",
+    "/gpfs/kjhan/LagForce/Codex_weighted_compression_geometry_20261017/audit.py": "a283918e67fc588b319b03c34acf438724d483097e56631e74593d44e038d0ef",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f"
+  },
+  "limits": "No material-centroid orbit scoring; fixed numerical mass is not substituted into reference. RMS uses numerical masses. q32 outside selected mask is a copy of q16, not independent integration. No order, long-time, closure-ranking or conservation verdict."
+}

@@ -1,0 +1,295 @@
+{
+  "scope": "Compare completed instantaneous RHS cases on common cells, no evolution.",
+  "source_report": {
+    "scope": "Instantaneous hydro moment RHS on new continuous t0 projection.\nFrozen outer patch, exact Euler pressure, no gravity or time evolution.\n",
+    "source": "/gpfs/kjhan/LagForce/Codex_continuous_kepler_interface_split_20261018/moments_split_q16.npz",
+    "sha256": "cc7a74956b9bb6a363cceb7b9cce365d4379397ceea9668ecfb3cc50c523037d",
+    "gamma": 1.6666669845581055,
+    "maximum_relative_pressure_decode_error": 6.276312802810935e-12,
+    "maximum_factor_recomposition_error": 5.169878828456423e-26,
+    "results": [
+      {
+        "cutoff": 0.45,
+        "face_order": 4,
+        "active_cells": 660,
+        "status": "completed",
+        "mass_flux": 1.0333801956502464e-19,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.2478044686653044e-16,
+          2.2042888957814373e-16,
+          2.974062909125489e-16,
+          -1.0235826714284743e-16
+        ],
+        "maximum_active_pressure_rate": 1.320292345878089e-06,
+        "weight_rate_range": 0.0025262944849213376,
+        "seconds": 5.525745017454028
+      },
+      {
+        "cutoff": 0.45,
+        "face_order": 8,
+        "active_cells": 660,
+        "status": "completed",
+        "mass_flux": 4.894952940194769e-14,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.126670286878467e-16,
+          -3.3855779846812296e-16,
+          -7.090332806964457e-17,
+          1.6720102153532828e-16
+        ],
+        "maximum_active_pressure_rate": 1.2957508524552243e-06,
+        "weight_rate_range": 0.0025271193260004397,
+        "seconds": 8.093875797465444
+      },
+      {
+        "cutoff": 0.5,
+        "face_order": 4,
+        "active_cells": 804,
+        "status": "completed",
+        "mass_flux": 4.336808689942018e-18,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.0224026486538307e-16,
+          2.0404684886177193e-16,
+          2.3527187142935446e-16,
+          -6.895525817007808e-17
+        ],
+        "maximum_active_pressure_rate": 1.438984491896868e-06,
+        "weight_rate_range": 0.042866632000226904,
+        "seconds": 5.14530379883945
+      },
+      {
+        "cutoff": 0.5,
+        "face_order": 8,
+        "active_cells": 804,
+        "status": "completed",
+        "mass_flux": 6.071532165918825e-18,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.1216071474362543e-16,
+          -3.415236843329339e-16,
+          1.1275702593849246e-17,
+          1.6328084717631697e-16
+        ],
+        "maximum_active_pressure_rate": 1.4085637109747878e-06,
+        "weight_rate_range": 0.04252137895154312,
+        "seconds": 8.280463067814708
+      },
+      {
+        "cutoff": 0.55,
+        "face_order": 4,
+        "active_cells": 962,
+        "status": "completed",
+        "mass_flux": 8.375461782450522e-18,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.165652860693478e-16,
+          2.499899159208452e-16,
+          1.521406698540284e-16,
+          -9.917739372811152e-17
+        ],
+        "maximum_active_pressure_rate": 1.305614643150898e-06,
+        "weight_rate_range": 0.004809813410239576,
+        "seconds": 5.259712938219309
+      },
+      {
+        "cutoff": 0.55,
+        "face_order": 8,
+        "active_cells": 962,
+        "status": "completed",
+        "mass_flux": 5.697417364280977e-14,
+        "minimum_pressure": 2.7777796321294592e-05,
+        "generator_velocity_defect": 0.0,
+        "conservation_ledger_residual": [
+          1.7604732775733378e-16,
+          -4.695950659577841e-16,
+          7.396969321782354e-17,
+          6.684106393373135e-17
+        ],
+        "maximum_active_pressure_rate": 1.2842019003061298e-06,
+        "weight_rate_range": 0.004821795572354214,
+        "seconds": 8.482663100585341
+      }
+    ],
+    "limits": "Instantaneous fixed geometry only. Frozen reservoir affects adjacent active cells. No gravity, time evolution, production restart, GPU or MPI test. Cholesky uses positive raw covariance without clipping."
+  },
+  "comparisons": [
+    {
+      "label": "face_quadrature",
+      "cases": [
+        [
+          0.45,
+          4
+        ],
+        [
+          0.45,
+          8
+        ]
+      ],
+      "cells": 660,
+      "momentum_rate": {
+        "difference_l2": 1.9568761923491122e-08,
+        "relative_to_second_l2": 0.0013829305149336473,
+        "maximum_absolute_difference": 3.939684728347577e-09
+      },
+      "hydro_energy_rate": {
+        "difference_l2": 1.603932493848662e-08,
+        "relative_to_second_l2": 0.005582679717221718,
+        "maximum_absolute_difference": 3.5876689173145586e-09
+      },
+      "pressure_rate": {
+        "difference_l2": 8.185655970695879e-07,
+        "relative_to_second_l2": 0.06588357186713736,
+        "maximum_absolute_difference": 1.700119599515379e-07
+      },
+      "weight_rate": {
+        "difference_l2": 0.0003685228709117965,
+        "relative_to_second_l2": 0.02501262995885051,
+        "maximum_absolute_difference": 3.243301060768032e-05
+      }
+    },
+    {
+      "label": "face_quadrature",
+      "cases": [
+        [
+          0.5,
+          4
+        ],
+        [
+          0.5,
+          8
+        ]
+      ],
+      "cells": 804,
+      "momentum_rate": {
+        "difference_l2": 1.5932691172935626e-05,
+        "relative_to_second_l2": 0.004095281841864723,
+        "maximum_absolute_difference": 6.058982902636318e-06
+      },
+      "hydro_energy_rate": {
+        "difference_l2": 4.76034895602143e-06,
+        "relative_to_second_l2": 0.011156558724337174,
+        "maximum_absolute_difference": 2.278594741471926e-06
+      },
+      "pressure_rate": {
+        "difference_l2": 1.2790099830418695e-06,
+        "relative_to_second_l2": 0.09055533975278222,
+        "maximum_absolute_difference": 3.6058234515905013e-07
+      },
+      "weight_rate": {
+        "difference_l2": 0.0021888812289922732,
+        "relative_to_second_l2": 0.003269274796387805,
+        "maximum_absolute_difference": 0.0003900594783108023
+      }
+    },
+    {
+      "label": "face_quadrature",
+      "cases": [
+        [
+          0.55,
+          4
+        ],
+        [
+          0.55,
+          8
+        ]
+      ],
+      "cells": 962,
+      "momentum_rate": {
+        "difference_l2": 2.3897239582825804e-06,
+        "relative_to_second_l2": 0.0021975205040856045,
+        "maximum_absolute_difference": 4.5795182336536336e-07
+      },
+      "hydro_energy_rate": {
+        "difference_l2": 8.384832443133568e-07,
+        "relative_to_second_l2": 0.0064342484112491685,
+        "maximum_absolute_difference": 1.7718399281228017e-07
+      },
+      "pressure_rate": {
+        "difference_l2": 1.8005856026545858e-06,
+        "relative_to_second_l2": 0.13053670492799957,
+        "maximum_absolute_difference": 3.3129526112679085e-07
+      },
+      "weight_rate": {
+        "difference_l2": 0.0010322630219105906,
+        "relative_to_second_l2": 0.01422894508787602,
+        "maximum_absolute_difference": 0.00012064669203267885
+      }
+    },
+    {
+      "label": "frozen_boundary_common_inner",
+      "cases": [
+        [
+          0.45,
+          8
+        ],
+        [
+          0.55,
+          8
+        ]
+      ],
+      "cells": 490,
+      "momentum_rate": {
+        "difference_l2": 1.307045936718526e-06,
+        "relative_to_second_l2": 0.2399691443386004,
+        "maximum_absolute_difference": 2.2033591304731915e-07
+      },
+      "hydro_energy_rate": {
+        "difference_l2": 5.040014432840269e-07,
+        "relative_to_second_l2": 0.25888648472589054,
+        "maximum_absolute_difference": 8.345656594041093e-08
+      },
+      "pressure_rate": {
+        "difference_l2": 3.028648333022355e-07,
+        "relative_to_second_l2": 0.027716160744133373,
+        "maximum_absolute_difference": 7.989420037709377e-08
+      },
+      "weight_rate": {
+        "difference_l2": 0.05055526035387755,
+        "relative_to_second_l2": 0.8357092226490098,
+        "maximum_absolute_difference": 0.002852295246449584
+      }
+    },
+    {
+      "label": "frozen_boundary_common_inner",
+      "cases": [
+        [
+          0.5,
+          8
+        ],
+        [
+          0.55,
+          8
+        ]
+      ],
+      "cells": 490,
+      "momentum_rate": {
+        "difference_l2": 1.4499605551928839e-06,
+        "relative_to_second_l2": 0.26620777738532453,
+        "maximum_absolute_difference": 2.0703031068292607e-07
+      },
+      "hydro_energy_rate": {
+        "difference_l2": 5.962493342253203e-07,
+        "relative_to_second_l2": 0.3062707383374628,
+        "maximum_absolute_difference": 1.1194519334964236e-07
+      },
+      "pressure_rate": {
+        "difference_l2": 2.965852792834816e-07,
+        "relative_to_second_l2": 0.027141498025165377,
+        "maximum_absolute_difference": 5.698785098829138e-08
+      },
+      "weight_rate": {
+        "difference_l2": 0.4806537378338943,
+        "relative_to_second_l2": 7.945498822412764,
+        "maximum_absolute_difference": 0.022784897812034643
+      }
+    }
+  ],
+  "limits": "Face order4/8 difference is not an established asymptotic convergence order. Common inner r<.4 comparison does not assess physical outer-boundary evolution. Weight gauge anchored to frozen cells."
+}

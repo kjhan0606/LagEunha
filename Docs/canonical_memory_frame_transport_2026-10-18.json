@@ -1,0 +1,17 @@
+{
+  "scope": "Constitutive frame-change audit of the auxiliary vector, not hydro stability.\n\nRebuild the same smooth residual on a rotated cloud. Compare zdot=Bv with\nthe candidate zdot=Bv+Wz, W=antisym(local reconstructed velocity gradient).\nTime-dependent frames also need inertial terms in the momentum equation;\nthis test concerns only the auxiliary constitutive equation.\n",
+  "constant_rotation_rate_residual": 2.3389836998737276e-16,
+  "force_covariance_residual": 5.553266113820394e-16,
+  "gradient_spin_transform_residual": 6.281232732100947e-16,
+  "current_time_dependent_rotation_defect": 0.9673680788614019,
+  "predicted_missing_spin_norm": 0.9673680788614021,
+  "current_defect_plus_missing_spin_residual": 3.510833468576701e-16,
+  "candidate_time_dependent_rotation_residual": 2.607399605677454e-16,
+  "candidate_power_residuals": [
+    -1.0408340855860843e-17,
+    8.673617379884035e-18,
+    5.204170427930421e-18
+  ],
+  "moment_max": 2.2756042061182476e-16,
+  "limitations": "One cloud algebra audit, scale=1. No hydro integration, no proof this causes Kepler growth, no candidate production implementation. Spin is reconstructed from actual velocities; no prescribed circular velocity."
+}

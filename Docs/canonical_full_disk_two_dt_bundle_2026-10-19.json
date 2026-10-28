@@ -1,0 +1,461 @@
+{
+  "status": "completed_prescribed_full_disk_two_dt_bundle",
+  "scope": "Evidence inventory for the prescribed full-disk t=.001 two-dt bundle.",
+  "cells": 19945,
+  "radius": 2.5,
+  "initial_checkpoint": "/gpfs/kjhan/LagForce/Codex_full_curved_kepler_IC_20261019/initial.npz",
+  "initial_sha256": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46",
+  "unique_provider_count": 5,
+  "unique_provider_budget": 5,
+  "implementation_attempts": {
+    "initial_stage": 2,
+    "other_stages": 1
+  },
+  "providers": [
+    {
+      "index": 1,
+      "time": 0.0,
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_initial_stage0_arc_roots_retry_20261019/report.json",
+      "report_sha256": "d2373c661dc0013291e9097f0a642554f1d8186a213ccc5a016a77cade793411",
+      "state": "/gpfs/kjhan/LagForce/Codex_full_curved_kepler_IC_20261019/initial.npz",
+      "state_sha256": "6794d8e56c0bf8829bf95bb2ae1a633d2b690588db243ccbccdf9f8d45809c46",
+      "nodes": 4043848,
+      "gravity_nodes": 41401872,
+      "mass_rate_max": 1.1807639284724947e-17,
+      "combined_energy_boundary_rate_residual": -4.942158289767437e-19,
+      "observed_provider_wall_seconds": 135.5277144126594,
+      "compiled_stage_seconds": 5.479786571115255,
+      "generator_velocity_defect": 0.0
+    },
+    {
+      "index": 2,
+      "time": 0.0005,
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_coarse_midpoint_stage_20261019/report.json",
+      "report_sha256": "e0e2e6b37bf1963363900572dd63b493edae02bb6d78738df405f5bedd8fa3bd",
+      "state": "/gpfs/kjhan/LagForce/Codex_full_disk_midpoint_predictors_20261019/coarse_midpoint/state.npz",
+      "state_sha256": "ee388cd1f82e89df4f1cc03f592b89aeaffd552103095aafd905f932d7e29892",
+      "nodes": 4339880,
+      "gravity_nodes": 91786416,
+      "mass_rate_max": 1.1567081927704725e-17,
+      "combined_energy_boundary_rate_residual": 3.451158979076733e-18,
+      "observed_provider_wall_seconds": 398.98953075148165,
+      "compiled_stage_seconds": 5.606575669720769,
+      "generator_velocity_defect": 0.0
+    },
+    {
+      "index": 3,
+      "time": 0.00025,
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_midpoint_stage_20261019/report.json",
+      "report_sha256": "50029aaac1a054d326a74236768f96292e9a9c7c424c1440837cb3c2518da223",
+      "state": "/gpfs/kjhan/LagForce/Codex_full_disk_midpoint_predictors_20261019/fine_first_midpoint/state.npz",
+      "state_sha256": "beddfa9f22cba18d9df352a2580da41120a5d80940bace4e1ea31bef1c2795da",
+      "nodes": 4341072,
+      "gravity_nodes": 91666392,
+      "mass_rate_max": 1.175512324199518e-17,
+      "combined_energy_boundary_rate_residual": -8.644086363605767e-18,
+      "observed_provider_wall_seconds": 394.8714057672769,
+      "compiled_stage_seconds": 4.5822913479059935,
+      "generator_velocity_defect": 0.0
+    },
+    {
+      "index": 4,
+      "time": 0.0005,
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_second_stage0_20261019/report.json",
+      "report_sha256": "b22950f617dcebe4cb46fe66139a5860458f1867435c01d66eeaafc13aa331a2",
+      "state": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_first_accepted_20261019/accepted.npz",
+      "state_sha256": "a5b22ba1594b2be2a1d7c79bb1d59deec410542e260b906432fae4be047f402a",
+      "nodes": 4339368,
+      "gravity_nodes": 91719312,
+      "mass_rate_max": 7.531189964080923e-17,
+      "combined_energy_boundary_rate_residual": 4.257453559308111e-18,
+      "observed_provider_wall_seconds": 394.7656711023301,
+      "compiled_stage_seconds": 5.802195345982909,
+      "generator_velocity_defect": 0.0
+    },
+    {
+      "index": 5,
+      "time": 0.00075,
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_second_midpoint_stage_20261019/report.json",
+      "report_sha256": "8905feb4aab78982bc299623c5b0587e179a7edb5b1b8d86f4c9e190522b6980",
+      "state": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_second_midpoint_predictor_20261019/candidate/state.npz",
+      "state_sha256": "831d55da6a9a38edd8113dc5f23b00f7e94cf39780f14194a39e9b1076f4e179",
+      "nodes": 4339408,
+      "gravity_nodes": 91678224,
+      "mass_rate_max": 1.0774234273656324e-17,
+      "combined_energy_boundary_rate_residual": 4.995920354195526e-18,
+      "observed_provider_wall_seconds": 391.7713956050575,
+      "compiled_stage_seconds": 4.661769708618522,
+      "generator_velocity_defect": 0.0
+    }
+  ],
+  "accepted_checkpoints": [
+    {
+      "label": "coarse",
+      "time": 0.001,
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_coarse_accepted_20261019/accepted.npz",
+      "sha256": "bc63a66a05e8557d07690c94c1c4d9e15e27a256d3a3b685b8f60ec0899d3cfb",
+      "mass_bitwise_equal_initial": true
+    },
+    {
+      "label": "fine_first",
+      "time": 0.0005,
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_first_accepted_20261019/accepted.npz",
+      "sha256": "a5b22ba1594b2be2a1d7c79bb1d59deec410542e260b906432fae4be047f402a",
+      "mass_bitwise_equal_initial": true
+    },
+    {
+      "label": "fine_final",
+      "time": 0.001,
+      "path": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_final_accepted_20261019/accepted.npz",
+      "sha256": "680c0d99ae8742d430c2b8f290de4647ceb225ae7353f1b2a39abcac00ea5467",
+      "mass_bitwise_equal_initial": true
+    }
+  ],
+  "physical_comparisons": [
+    {
+      "label": "coarse",
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_coarse_endpoint_physical_comparison_20261019/report.json",
+      "report_sha256": "6ee281135af361e4b76c1a4be166ccbd724c5dc35ab43046d78046c763ad6b8f",
+      "pressure": {
+        "all": {
+          "RMS": 2.7441968725746066e-07,
+          "maximum": 4.275266034250926e-06
+        },
+        "inner": {
+          "RMS": 6.7505969182883e-07,
+          "maximum": 2.276642916137278e-06
+        },
+        "cavity": {
+          "RMS": 6.98731975823838e-07,
+          "maximum": 2.276642916137278e-06
+        },
+        "disk_core": {
+          "RMS": 2.4682337804814647e-07,
+          "maximum": 2.6806875988111913e-06
+        },
+        "inner_contact": {
+          "RMS": 1.929619332211448e-06,
+          "maximum": 4.275266034250926e-06
+        },
+        "outer_contact": {
+          "RMS": 1.6410614428027417e-08,
+          "maximum": 4.005828258896653e-08
+        },
+        "dynamic_buffer": {
+          "RMS": 3.25817298385514e-09,
+          "maximum": 3.596284039251857e-08
+        },
+        "wall": {
+          "RMS": 3.282585441888035e-09,
+          "maximum": 1.187783709171039e-08
+        }
+      },
+      "global_values": {
+        "raw_totals_minus_reference": [
+          -1.0021246798965627e-17,
+          1.0277331809498935e-16,
+          1.4343639054319826e-16,
+          -6.55787780471693e-17,
+          -4.994736345687096e-17,
+          -4.994736345687096e-17,
+          -5.642334109196535e-17,
+          3.3092323000760866e-13,
+          -4.7625536162635266e-15,
+          -4.749748285911508e-13,
+          -2.3063004829708294e-14,
+          -2.3048337739568386e-14,
+          -3.340235447974781e-13,
+          -3.871407474623004e-11,
+          -7.152063493827218e-13,
+          -7.152063493827218e-13,
+          -3.9440672370646483e-11,
+          1.5628142990959222e-13
+        ],
+        "origin_L_change": -8.754998303679146e-18,
+        "hydro_energy_change": 1.562839319390393e-13,
+        "Psi_change": -1.5628201992180673e-13,
+        "combined_energy_change": 1.9120172325683603e-18,
+        "stored_P_E_L_ledger": [
+          3.3091805054249745e-13,
+          -4.757667162221721e-15,
+          1.562820282803013e-13,
+          -4.682735978760643e-21
+        ],
+        "Psi_reconstruction_q48_defect_signed": -2.7802315834576353e-15,
+        "Psi_reconstruction_q48_defect_absolute_sum": 7.426166939764615e-15,
+        "initial_Psi_reconstruction_q48_defect_signed": -1.2443331181639662e-15,
+        "combined_energy_change_using_q48_Psi_vs_IC_target": -2.778319566225067e-15,
+        "combined_energy_change_q48_vs_initial_q48": -1.5339864480611007e-15,
+        "measured_reconstruction_defect_absolute_sums": 1.360806795676194e-14,
+        "P_E_L_update_ledger_residual": [
+          4.540299782608686e-18,
+          3.3650526579019456e-18,
+          1.9036587380004625e-18,
+          -8.751134037067113e-18
+        ]
+      }
+    },
+    {
+      "label": "fine_first",
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_first_endpoint_physical_comparison_20261019/report.json",
+      "report_sha256": "d550202904e1a8ffcf80c139dcb0e9ac4ef4c11f0f838401e5a4ab91ce41a729",
+      "pressure": {
+        "all": {
+          "RMS": 4.482181453723549e-08,
+          "maximum": 1.4519493515576975e-06
+        },
+        "inner": {
+          "RMS": 3.248831392646518e-07,
+          "maximum": 1.1375226132370679e-06
+        },
+        "cavity": {
+          "RMS": 3.314509701925501e-07,
+          "maximum": 1.1375226132370679e-06
+        },
+        "disk_core": {
+          "RMS": 2.903886600611194e-08,
+          "maximum": 5.507463882770184e-07
+        },
+        "inner_contact": {
+          "RMS": 5.145800105811978e-07,
+          "maximum": 1.4519493515576975e-06
+        },
+        "outer_contact": {
+          "RMS": 8.120258749094331e-09,
+          "maximum": 1.991675696352731e-08
+        },
+        "dynamic_buffer": {
+          "RMS": 1.5910563729130026e-09,
+          "maximum": 1.6409560622969603e-08
+        },
+        "wall": {
+          "RMS": 1.6617539590075543e-09,
+          "maximum": 6.034726669939631e-09
+        }
+      },
+      "global_values": {
+        "raw_totals_minus_reference": [
+          -1.8870199998931303e-17,
+          2.3868167535042055e-17,
+          2.5147396562091025e-17,
+          -1.673032687104605e-17,
+          -6.078604198264635e-18,
+          -6.078604198264635e-18,
+          -1.1563063484288943e-17,
+          1.9489795497149113e-13,
+          1.563748942575834e-14,
+          -1.1613932661394122e-13,
+          -1.7222530076235e-14,
+          -1.7208115366964993e-14,
+          -3.681729254462305e-14,
+          -2.961706497689324e-12,
+          -3.783421278792685e-13,
+          -3.783421278792685e-13,
+          -3.3311301907217504e-12,
+          1.670821926595865e-13
+        ],
+        "origin_L_change": -2.6424648627475992e-18,
+        "hydro_energy_change": 1.6708283820457144e-13,
+        "Psi_change": -1.6708132443820107e-13,
+        "combined_energy_change": 1.513766370366183e-18,
+        "stored_P_E_L_ledger": [
+          1.9489682649240012e-13,
+          1.5637986150506002e-14,
+          1.6708132032923373e-13,
+          -4.336890415119553e-22
+        ],
+        "Psi_reconstruction_q48_defect_signed": -1.4784946418960335e-15,
+        "Psi_reconstruction_q48_defect_absolute_sum": 6.915605623275606e-15,
+        "initial_Psi_reconstruction_q48_defect_signed": -1.2443331181639662e-15,
+        "combined_energy_change_using_q48_Psi_vs_IC_target": -1.4769808755256674e-15,
+        "combined_energy_change_q48_vs_initial_q48": -2.326477573617012e-16,
+        "measured_reconstruction_defect_absolute_sums": 1.309750664027293e-14,
+        "P_E_L_update_ledger_residual": [
+          -2.3628649861252973e-18,
+          -1.8797330951312528e-18,
+          1.5178753377039195e-18,
+          -2.6425785863258383e-18
+        ]
+      }
+    },
+    {
+      "label": "fine_final",
+      "report": "/gpfs/kjhan/LagForce/Codex_full_disk_fine_final_endpoint_physical_comparison_20261019/report.json",
+      "report_sha256": "5b12631a3ef75811091664ff11f1472000545894876b7e8fbd2e10b4f70e9c0c",
+      "pressure": {
+        "all": {
+          "RMS": 8.980409878540832e-08,
+          "maximum": 2.8770000995583876e-06
+        },
+        "inner": {
+          "RMS": 6.492704592307151e-07,
+          "maximum": 2.2681466381764598e-06
+        },
+        "cavity": {
+          "RMS": 6.688503893404758e-07,
+          "maximum": 2.2681466381764598e-06
+        },
+        "disk_core": {
+          "RMS": 5.7528101554833414e-08,
+          "maximum": 1.0803576882060106e-06
+        },
+        "inner_contact": {
+          "RMS": 1.0389560359223102e-06,
+          "maximum": 2.8770000995583876e-06
+        },
+        "outer_contact": {
+          "RMS": 1.6300964008745377e-08,
+          "maximum": 3.986271564624377e-08
+        },
+        "dynamic_buffer": {
+          "RMS": 3.1876502243741406e-09,
+          "maximum": 3.1840624220765406e-08
+        },
+        "wall": {
+          "RMS": 3.3210460556724086e-09,
+          "maximum": 1.2062943902801395e-08
+        }
+      },
+      "global_values": {
+        "raw_totals_minus_reference": [
+          -1.232432938255007e-17,
+          1.5562043107613631e-16,
+          3.428286361954914e-17,
+          -1.8874635031183083e-16,
+          -4.6023375019753955e-17,
+          -4.6023375019753955e-17,
+          -3.119433695859138e-17,
+          3.8167441362817545e-13,
+          2.7847423048757933e-14,
+          -2.4707316501853463e-13,
+          -3.970677770190489e-14,
+          -3.9700581908470154e-14,
+          -8.313100316282124e-14,
+          -6.046300898959725e-12,
+          -7.536112815584198e-13,
+          -7.536112815584198e-13,
+          -6.8170638651938524e-12,
+          1.8386538341521761e-13
+        ],
+        "origin_L_change": -4.446430800620608e-18,
+        "hydro_energy_change": 1.8386664284733106e-13,
+        "Psi_change": -1.8386859589127445e-13,
+        "combined_energy_change": -1.9530439433849185e-18,
+        "stored_P_E_L_ledger": [
+          3.816766877956814e-13,
+          2.7845378870679373e-14,
+          1.838685960555953e-13,
+          1.1719877957256258e-21
+        ],
+        "Psi_reconstruction_q48_defect_signed": -1.5064799402502243e-15,
+        "Psi_reconstruction_q48_defect_absolute_sum": 6.510845502091344e-15,
+        "initial_Psi_reconstruction_q48_defect_signed": -1.2443331181639662e-15,
+        "combined_energy_change_using_q48_Psi_vs_IC_target": -1.5084329841936092e-15,
+        "combined_energy_change_q48_vs_initial_q48": -2.6409986602964306e-16,
+        "measured_reconstruction_defect_absolute_sums": 1.2692746519088668e-14,
+        "P_E_L_update_ledger_residual": [
+          -6.509758343608469e-18,
+          8.625033208355294e-19,
+          -1.9532082642474357e-18,
+          -4.447930455336481e-18
+        ]
+      }
+    }
+  ],
+  "equal_time_comparison": "/gpfs/kjhan/LagForce/Codex_full_disk_equal_time_comparison_20261019/report.json",
+  "equal_time_comparison_sha256": "5d345c89bbb43f8715e750e013049aeb67f33cfd524474ccc55d67c80a23c5ef",
+  "pressure_comparison": {
+    "all": {
+      "coarse": {
+        "maximum_absolute": 4.275266034250926e-06,
+        "mass_weighted_RMS": 2.7441968725746066e-07
+      },
+      "fine": {
+        "maximum_absolute": 2.8770000995583876e-06,
+        "mass_weighted_RMS": 8.980409878540832e-08
+      },
+      "fine_to_coarse_RMS_ratio": 0.327250933352876
+    },
+    "inner": {
+      "coarse": {
+        "maximum_absolute": 2.276642916137278e-06,
+        "mass_weighted_RMS": 6.7505969182883e-07
+      },
+      "fine": {
+        "maximum_absolute": 2.2681466381764598e-06,
+        "mass_weighted_RMS": 6.492704592307151e-07
+      },
+      "fine_to_coarse_RMS_ratio": 0.9617971078553834
+    },
+    "cavity": {
+      "coarse": {
+        "maximum_absolute": 2.276642916137278e-06,
+        "mass_weighted_RMS": 6.98731975823838e-07
+      },
+      "fine": {
+        "maximum_absolute": 2.2681466381764598e-06,
+        "mass_weighted_RMS": 6.688503893404758e-07
+      },
+      "fine_to_coarse_RMS_ratio": 0.957234551276789
+    },
+    "disk_core": {
+      "coarse": {
+        "maximum_absolute": 2.6806875988111913e-06,
+        "mass_weighted_RMS": 2.4682337804814647e-07
+      },
+      "fine": {
+        "maximum_absolute": 1.0803576882060106e-06,
+        "mass_weighted_RMS": 5.7528101554833414e-08
+      },
+      "fine_to_coarse_RMS_ratio": 0.2330739576200587
+    },
+    "inner_contact": {
+      "coarse": {
+        "maximum_absolute": 4.275266034250926e-06,
+        "mass_weighted_RMS": 1.9296193322114477e-06
+      },
+      "fine": {
+        "maximum_absolute": 2.8770000995583876e-06,
+        "mass_weighted_RMS": 1.0389560359223098e-06
+      },
+      "fine_to_coarse_RMS_ratio": 0.5384253871107366
+    },
+    "outer_contact": {
+      "coarse": {
+        "maximum_absolute": 4.005828258896653e-08,
+        "mass_weighted_RMS": 1.6410614428027417e-08
+      },
+      "fine": {
+        "maximum_absolute": 3.986271564624377e-08,
+        "mass_weighted_RMS": 1.630096400874538e-08
+      },
+      "fine_to_coarse_RMS_ratio": 0.9933183233471888
+    },
+    "dynamic_buffer": {
+      "coarse": {
+        "maximum_absolute": 3.596284039251857e-08,
+        "mass_weighted_RMS": 3.25817298385514e-09
+      },
+      "fine": {
+        "maximum_absolute": 3.1840624220765406e-08,
+        "mass_weighted_RMS": 3.1876502243741406e-09
+      },
+      "fine_to_coarse_RMS_ratio": 0.9783551211582525
+    },
+    "wall": {
+      "coarse": {
+        "maximum_absolute": 1.187783709171039e-08,
+        "mass_weighted_RMS": 3.282585441888035e-09
+      },
+      "fine": {
+        "maximum_absolute": 1.2062943902801395e-08,
+        "mass_weighted_RMS": 3.3210460556724086e-09
+      },
+      "fine_to_coarse_RMS_ratio": 1.0117165613706776
+    }
+  },
+  "research_integrator": "Explicit midpoint moment update with Sylvester loss, exponential/positive QR factor map; distinct base/linear factors at full updates",
+  "runtime_scope": "Observed audit-inclusive wall times. Density q48, physical reference projection, Python/CPU/CUDA factor shadows and provider timing remain separate in source reports; these are not exclusive production-step timings.",
+  "long_time_stability_verified": false,
+  "limits": "Common endpoint t=.001 only. Two dt paths do not prove time order, t1/t10 stability, production RK4 adoption, MPI or 3D validation. Checkpoints are preserved for continuation; no reset/floor/steering or physical-viscosity change."
+}

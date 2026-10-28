@@ -1,0 +1,33 @@
+{
+  "scope": "Frozen-geometry relaxed volume constraint; not a nonlinear simulation.",
+  "equation": "L Wdot = -Bv-L W/tau on r<1.9, outer W=0.",
+  "solve_relative_residual": 5.242182588336247e-16,
+  "cases": [
+    {
+      "tau": 0.01,
+      "stationary_weight_difference_over_d2_max": 0.004106297628237927,
+      "stationary_uniform_density_massrate_identity_max_error": 4.2012834183813297e-19,
+      "stationary_Wdot": 0,
+      "nonzero_massrate_L1_active": 0.13509256324129107
+    },
+    {
+      "tau": 0.1,
+      "stationary_weight_difference_over_d2_max": 0.041062976282379274,
+      "stationary_uniform_density_massrate_identity_max_error": 4.0657581468206416e-19,
+      "stationary_Wdot": 0,
+      "nonzero_massrate_L1_active": 0.1350925632412911
+    },
+    {
+      "tau": 1.0,
+      "stationary_weight_difference_over_d2_max": 0.41062976282379277,
+      "stationary_uniform_density_massrate_identity_max_error": 4.2012834183813297e-19,
+      "stationary_Wdot": 0,
+      "nonzero_massrate_L1_active": 0.1350925632412911
+    }
+  ],
+  "limits": [
+    "Uniform incompressible density for mass interpretation, not actual density interface.",
+    "Frozen L and Bv only: bounded solution here proves no nonlinear long-time bound.",
+    "Full face flux still required; equal-weight original-solver reduction unproved."
+  ]
+}

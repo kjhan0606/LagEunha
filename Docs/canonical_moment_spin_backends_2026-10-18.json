@@ -1,0 +1,77 @@
+{
+  "scope": "CPU/OpenMP/CUDA spin ledger component parity, not full solver validation.",
+  "valid_cells": 1590,
+  "guards": [
+    {
+      "case": "zero_mass",
+      "code": 1
+    },
+    {
+      "case": "negative_inertia",
+      "code": 2
+    },
+    {
+      "case": "nan",
+      "code": 1
+    }
+  ],
+  "CPU1_OMP4_bitwise_equal": true,
+  "CUDA_CPU_max_absolute_difference": 7.97731021864867e-13,
+  "backends": {
+    "cpu1": {
+      "maximum_absolute_error_by_field": [
+        1.0598499752519433e-19,
+        1.9566461081574338e-19,
+        1.2386663343529763e-12,
+        1.3003279229333595e-20,
+        2.6138907356675675e-21,
+        1.034637510181327e-20,
+        1.380233570105982e-20,
+        3.3881317890172014e-21
+      ],
+      "maximum_tolerance_fraction": 0.12386663342845641
+    },
+    "cpu4": {
+      "maximum_absolute_error_by_field": [
+        1.0598499752519433e-19,
+        1.9566461081574338e-19,
+        1.2386663343529763e-12,
+        1.3003279229333595e-20,
+        2.6138907356675675e-21,
+        1.034637510181327e-20,
+        1.380233570105982e-20,
+        3.3881317890172014e-21
+      ],
+      "maximum_tolerance_fraction": 0.12386663342845641
+    },
+    "cuda": {
+      "maximum_absolute_error_by_field": [
+        7.829760806181939e-20,
+        1.7374763330553836e-19,
+        1.1330207636662798e-12,
+        1.3001624868108489e-20,
+        2.2184984028672202e-21,
+        4.761251605855227e-21,
+        1.381060750718535e-20,
+        3.3881317890172014e-21
+      ],
+      "maximum_tolerance_fraction": 0.11330207620959913
+    }
+  },
+  "fields": [
+    "I",
+    "L_internal",
+    "omega",
+    "Krot",
+    "Idot",
+    "Ldot",
+    "Krotdot",
+    "Udot"
+  ],
+  "sha256": {
+    "input.bin": "4f880d9d908d5af06ec0809ff1c5a61d60c112e8b07e872bd5e5feae15bf16df",
+    "moment_spin_ledger.h": "ab50828e38c920b6b8a00ba2dc3a51561f138ebffc89685e2714791c5e477f96",
+    "probe": "d8801c1a7122e8beff69f79e1bb232494194333c057aaf90f03d7f45fc4ffecc"
+  },
+  "limits": "Chord direction between two remap states is not a physical time derivative. No MPI, force scatter, or full RK4 validation."
+}

@@ -1,0 +1,158 @@
+{
+  "scope": "Necessary-condition diagnostic at actual t2 circular-velocity geometry, with manufactured uniform density. Full density jump and thermodynamics not tested.",
+  "source": "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator",
+  "weight_rate_source": "/gpfs/kjhan/LagForce/Codex_shared_flux_weight_response_20261017/response.npz",
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator/rhs.dat": "709bf217329e3583132bfb68da0975331404248f3ef666b2e89a9c992b033c04",
+    "/gpfs/kjhan/LagForce/Codex_gradient_operator_20261017/operator/raw_faces.dat.common.rank0000": "c0ae52eb638f6649160f722e8dabcae51cadce6d6751833705b28677f0f1d81f",
+    "/gpfs/kjhan/LagForce/Codex_shared_flux_weight_response_20261017/response.npz": "90419edb24edcccfb0155123cd90cda0529681d4817a1510eeb1401d8e3988b6"
+  },
+  "proposed_restricted_mass_law": "mdot_i = rho * Vdot_i_weight; fixed mass if weight rates vanish",
+  "geometry": "Vdot_i = Vdot_i_generator + Vdot_i_weight",
+  "identity": "rhodot_i/rho_i = mdot_i/m_i - Vdot_i/V_i = -Vdot_i_generator/V_i",
+  "conclusion": "At a fixed instantaneous geometry and uniform density, mass exchange that is only conservative weight remapping cancels the weight contribution to density change. It cannot directly cancel generator-induced geometric compression by tuning weight rates.",
+  "limits": [
+    "Not a proof that every weight-coupled mass scheme is impossible. Weights can alter future geometry and generator-induced volume response.",
+    "A more general mass law requires a specified physical density/transport interpretation, not arbitrary reassignment.",
+    "Does not establish pressure response, stability, or a complete conservative time integrator.",
+    "Paired internal faces used; unpaired distant frozen cap terms are outside active region."
+  ],
+  "cases": [
+    {
+      "weight_rate_scale": 0.0,
+      "paired_global_mass_rate": 0.0,
+      "regions": {
+        "inner_background": {
+          "cells": 795,
+          "fractional_volume_rate_rms": 0.15160153266639378,
+          "fractional_mass_rate_rms": 0.0,
+          "fractional_density_rate_rms": 0.15160153266639378,
+          "cancellation_identity_max_error": 0.0
+        },
+        "disk_inner_edge": {
+          "cells": 399,
+          "fractional_volume_rate_rms": 0.07774386527573535,
+          "fractional_mass_rate_rms": 0.0,
+          "fractional_density_rate_rms": 0.07774386527573535,
+          "cancellation_identity_max_error": 0.0
+        },
+        "disk_core": {
+          "cells": 10304,
+          "fractional_volume_rate_rms": 0.015006355395984015,
+          "fractional_mass_rate_rms": 0.0,
+          "fractional_density_rate_rms": 0.015006355395984015,
+          "cancellation_identity_max_error": 0.0
+        },
+        "all_active": {
+          "cells": 19855,
+          "fractional_volume_rate_rms": 0.03409525505600922,
+          "fractional_mass_rate_rms": 0.0,
+          "fractional_density_rate_rms": 0.03409525505600922,
+          "cancellation_identity_max_error": 0.0
+        }
+      }
+    },
+    {
+      "weight_rate_scale": 0.25,
+      "paired_global_mass_rate": 5.930884992005208e-22,
+      "regions": {
+        "inner_background": {
+          "cells": 795,
+          "fractional_volume_rate_rms": 0.11368586079231466,
+          "fractional_mass_rate_rms": 0.03794332176585658,
+          "fractional_density_rate_rms": 0.15160153266639378,
+          "cancellation_identity_max_error": 5.551115123125783e-17
+        },
+        "disk_inner_edge": {
+          "cells": 399,
+          "fractional_volume_rate_rms": 0.05826726921518762,
+          "fractional_mass_rate_rms": 0.019480957632018722,
+          "fractional_density_rate_rms": 0.07774386527573533,
+          "cancellation_identity_max_error": 2.7755575615628914e-17
+        },
+        "disk_core": {
+          "cells": 10304,
+          "fractional_volume_rate_rms": 0.011247208041547796,
+          "fractional_mass_rate_rms": 0.0037598098606000177,
+          "fractional_density_rate_rms": 0.015006355395984015,
+          "cancellation_identity_max_error": 2.7755575615628914e-17
+        },
+        "all_active": {
+          "cells": 19855,
+          "fractional_volume_rate_rms": 0.02556517403004024,
+          "fractional_mass_rate_rms": 0.008535359363880776,
+          "fractional_density_rate_rms": 0.03409525505600922,
+          "cancellation_identity_max_error": 5.551115123125783e-17
+        }
+      }
+    },
+    {
+      "weight_rate_scale": 1.0,
+      "paired_global_mass_rate": 2.3723539968020834e-21,
+      "regions": {
+        "inner_background": {
+          "cells": 795,
+          "fractional_volume_rate_rms": 0.005017335496766239,
+          "fractional_mass_rate_rms": 0.15177328706342633,
+          "fractional_density_rate_rms": 0.15160153266639378,
+          "cancellation_identity_max_error": 1.1102230246251565e-16
+        },
+        "disk_inner_edge": {
+          "cells": 399,
+          "fractional_volume_rate_rms": 0.001437152139351986,
+          "fractional_mass_rate_rms": 0.07792383052807489,
+          "fractional_density_rate_rms": 0.07774386527573533,
+          "cancellation_identity_max_error": 2.7755575615628914e-17
+        },
+        "disk_core": {
+          "cells": 10304,
+          "fractional_volume_rate_rms": 0.00024635413955410493,
+          "fractional_mass_rate_rms": 0.01503923944240007,
+          "fractional_density_rate_rms": 0.015006355395984015,
+          "cancellation_identity_max_error": 2.7755575615628914e-17
+        },
+        "all_active": {
+          "cells": 19855,
+          "fractional_volume_rate_rms": 0.0010399780714299611,
+          "fractional_mass_rate_rms": 0.0341414374555231,
+          "fractional_density_rate_rms": 0.03409525505600922,
+          "cancellation_identity_max_error": 1.1102230246251565e-16
+        }
+      }
+    },
+    {
+      "weight_rate_scale": 2.0,
+      "paired_global_mass_rate": 4.744707993604167e-21,
+      "regions": {
+        "inner_background": {
+          "cells": 795,
+          "fractional_volume_rate_rms": 0.1521104333576398,
+          "fractional_mass_rate_rms": 0.30354657412685265,
+          "fractional_density_rate_rms": 0.15160153266639378,
+          "cancellation_identity_max_error": 1.6653345369377348e-16
+        },
+        "disk_inner_edge": {
+          "cells": 399,
+          "fractional_volume_rate_rms": 0.07812982114959609,
+          "fractional_mass_rate_rms": 0.15584766105614978,
+          "fractional_density_rate_rms": 0.07774386527573533,
+          "cancellation_identity_max_error": 5.551115123125783e-17
+        },
+        "disk_core": {
+          "cells": 10304,
+          "fractional_volume_rate_rms": 0.015076077887343789,
+          "fractional_mass_rate_rms": 0.03007847888480014,
+          "fractional_density_rate_rms": 0.015006355395984017,
+          "cancellation_identity_max_error": 5.551115123125783e-17
+        },
+        "all_active": {
+          "cells": 19855,
+          "fractional_volume_rate_rms": 0.03421917875260275,
+          "fractional_mass_rate_rms": 0.0682828749110462,
+          "fractional_density_rate_rms": 0.03409525505600922,
+          "cancellation_identity_max_error": 1.6653345369377348e-16
+        }
+      }
+    }
+  ]
+}

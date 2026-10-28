@@ -1,0 +1,453 @@
+{
+  "scope": "One accepted full HG/RK4/HG step at each pre-existing evolved checkpoint, with half-step-size check. Endpoint bins follow start-time particle IDs; HG bins use instantaneous radius. RK subtraction is supplied only when membership is identical at both endpoints. One particle crosses r=2 in each t2 case, so those disk/outer RK subtractions are omitted. RK contribution is obtained by subtracting measured HG increments from endpoint increment, not an independent stage budget. Local amplitude-rate estimates are not long-time fitted exponents.",
+  "cases": {
+    "t2_full": {
+      "t_start": 2.0029059177634028,
+      "t_end": 2.0039059177634027,
+      "dt": 0.001,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 1,
+      "regions": {
+        "inner": {
+          "n": 795,
+          "Epert_start": 6.738466659405545e-10,
+          "full_step_delta": 1.4121534603741549e-12,
+          "HG_delta": -1.9284119889026064e-13,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 1.6049946592644155e-12,
+          "net_rate": 1.412153460374155e-09,
+          "HG_rate": -1.9284119889026064e-10,
+          "RK_rate_by_subtraction": 1.6049946592644155e-09,
+          "instantaneous_amplitude_growth_estimate": 1.0478299676700726
+        },
+        "disk": {
+          "n": 12166,
+          "Epert_start": 2.948061584470345e-11,
+          "full_step_delta": 7.179838129555913e-14,
+          "HG_delta": -3.115291854630259e-14,
+          "HG_membership_matches_material_bin": false,
+          "RK_delta_by_subtraction": null,
+          "net_rate": 7.179838129555913e-11,
+          "HG_rate": -3.115291854630259e-11,
+          "RK_rate_by_subtraction": null,
+          "instantaneous_amplitude_growth_estimate": 1.2177218697495187
+        },
+        "outer_active": {
+          "n": 6894,
+          "Epert_start": 6.33763231359454e-11,
+          "full_step_delta": 3.392989386506001e-14,
+          "HG_delta": -3.600741871397079e-14,
+          "HG_membership_matches_material_bin": false,
+          "RK_delta_by_subtraction": null,
+          "net_rate": 3.392989386506001e-11,
+          "HG_rate": -3.600741871397078e-11,
+          "RK_rate_by_subtraction": null,
+          "instantaneous_amplitude_growth_estimate": 0.26768588162079615
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840"
+    },
+    "t2_half": {
+      "t_start": 2.0029059177634028,
+      "t_end": 2.003405917763403,
+      "dt": 0.0005,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 1,
+      "regions": {
+        "inner": {
+          "n": 795,
+          "Epert_start": 6.738466659405545e-10,
+          "full_step_delta": 7.074815843473908e-13,
+          "HG_delta": -9.632482798997912e-14,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 8.038064123373699e-13,
+          "net_rate": 1.4149631686947815e-09,
+          "HG_rate": -1.9264965597995822e-10,
+          "RK_rate_by_subtraction": 1.6076128246747398e-09,
+          "instantaneous_amplitude_growth_estimate": 1.049914795319034
+        },
+        "disk": {
+          "n": 12166,
+          "Epert_start": 2.948061584470345e-11,
+          "full_step_delta": 3.587252702071404e-14,
+          "HG_delta": -1.5570437282906845e-14,
+          "HG_membership_matches_material_bin": false,
+          "RK_delta_by_subtraction": null,
+          "net_rate": 7.174505404142807e-11,
+          "HG_rate": -3.114087456581369e-11,
+          "RK_rate_by_subtraction": null,
+          "instantaneous_amplitude_growth_estimate": 1.2168174236821099
+        },
+        "outer_active": {
+          "n": 6894,
+          "Epert_start": 6.33763231359454e-11,
+          "full_step_delta": 1.6979947587789358e-14,
+          "HG_delta": -1.8002294780929088e-14,
+          "HG_membership_matches_material_bin": false,
+          "RK_delta_by_subtraction": null,
+          "net_rate": 3.3959895175578716e-11,
+          "HG_rate": -3.600458956185818e-11,
+          "RK_rate_by_subtraction": null,
+          "instantaneous_amplitude_growth_estimate": 0.2679225734091029
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840"
+    },
+    "t4_full": {
+      "t_start": 4.005538150548695,
+      "t_end": 4.006538150548695,
+      "dt": 0.001,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 0,
+      "regions": {
+        "inner": {
+          "n": 803,
+          "Epert_start": 2.8008291985970123e-07,
+          "full_step_delta": 4.90595209934182e-10,
+          "HG_delta": -2.0965980349923971e-10,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 7.002550134334217e-10,
+          "net_rate": 4.905952099341819e-07,
+          "HG_rate": -2.096598034992397e-07,
+          "RK_rate_by_subtraction": 7.002550134334217e-07,
+          "instantaneous_amplitude_growth_estimate": 0.8758035123668559
+        },
+        "disk": {
+          "n": 12068,
+          "Epert_start": 2.0435980833173396e-09,
+          "full_step_delta": 3.791440075452318e-12,
+          "HG_delta": -3.657306532919781e-12,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 7.4487466083721e-12,
+          "net_rate": 3.791440075452318e-09,
+          "HG_rate": -3.6573065329197814e-09,
+          "RK_rate_by_subtraction": 7.4487466083721e-09,
+          "instantaneous_amplitude_growth_estimate": 0.927638390934908
+        },
+        "outer_active": {
+          "n": 6984,
+          "Epert_start": 6.930363583262643e-11,
+          "full_step_delta": -8.25483635120929e-15,
+          "HG_delta": -3.699137737101166e-14,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 2.873654101980237e-14,
+          "net_rate": -8.25483635120929e-12,
+          "HG_rate": -3.6991377371011656e-11,
+          "RK_rate_by_subtraction": 2.8736541019802367e-11,
+          "instantaneous_amplitude_growth_estimate": -0.059555579242230164
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "ea303303b3ad6a0155baba9d4c91c359ab68c3b95021c9bde7c7d6c0b2f6a729"
+    },
+    "t4_half": {
+      "t_start": 4.005538150548695,
+      "t_end": 4.006038150548695,
+      "dt": 0.0005,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 0,
+      "regions": {
+        "inner": {
+          "n": 803,
+          "Epert_start": 2.8008291985970123e-07,
+          "full_step_delta": 2.450340420569571e-10,
+          "HG_delta": -1.0480001800931112e-10,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 3.4983406006626824e-10,
+          "net_rate": 4.900680841139142e-07,
+          "HG_rate": -2.0960003601862223e-07,
+          "RK_rate_by_subtraction": 6.996681201325364e-07,
+          "instantaneous_amplitude_growth_estimate": 0.8748624949343545
+        },
+        "disk": {
+          "n": 12068,
+          "Epert_start": 2.0435980833173396e-09,
+          "full_step_delta": 1.8885071946492715e-12,
+          "HG_delta": -1.8274244141248832e-12,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 3.715931608774155e-12,
+          "net_rate": 3.777014389298543e-09,
+          "HG_rate": -3.6548488282497665e-09,
+          "RK_rate_by_subtraction": 7.43186321754831e-09,
+          "instantaneous_amplitude_growth_estimate": 0.9241089087261661
+        },
+        "outer_active": {
+          "n": 6984,
+          "Epert_start": 6.930363583262643e-11,
+          "full_step_delta": -4.0544006575055805e-15,
+          "HG_delta": -1.8496562378013308e-14,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 1.4442161720507728e-14,
+          "net_rate": -8.108801315011161e-12,
+          "HG_rate": -3.6993124756026614e-11,
+          "RK_rate_by_subtraction": 2.8884323441015456e-11,
+          "instantaneous_amplitude_growth_estimate": -0.058501990679064336
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "ea303303b3ad6a0155baba9d4c91c359ab68c3b95021c9bde7c7d6c0b2f6a729"
+    },
+    "t6_full": {
+      "t_start": 6.002110493120864,
+      "t_end": 6.0031104931208645,
+      "dt": 0.001,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 0,
+      "regions": {
+        "inner": {
+          "n": 803,
+          "Epert_start": 1.6811301127895356e-06,
+          "full_step_delta": 1.023865296017944e-10,
+          "HG_delta": -1.474344430019298e-09,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 1.5767309596210923e-09,
+          "net_rate": 1.023865296017944e-07,
+          "HG_rate": -1.4743444300192978e-06,
+          "RK_rate_by_subtraction": 1.5767309596210923e-06,
+          "instantaneous_amplitude_growth_estimate": 0.030451696993251228
+        },
+        "disk": {
+          "n": 12053,
+          "Epert_start": 3.200791279800237e-08,
+          "full_step_delta": 7.642606485330814e-12,
+          "HG_delta": -7.46133327358132e-11,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 8.225593922114402e-11,
+          "net_rate": 7.642606485330813e-09,
+          "HG_rate": -7.46133327358132e-08,
+          "RK_rate_by_subtraction": 8.225593922114402e-08,
+          "instantaneous_amplitude_growth_estimate": 0.11938620511687649
+        },
+        "outer_active": {
+          "n": 6999,
+          "Epert_start": 5.983567011780005e-11,
+          "full_step_delta": 1.330661363922311e-15,
+          "HG_delta": -3.3447816971277695e-14,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 3.4778478335200006e-14,
+          "net_rate": 1.330661363922311e-12,
+          "HG_rate": -3.3447816971277696e-11,
+          "RK_rate_by_subtraction": 3.4778478335200004e-11,
+          "instantaneous_amplitude_growth_estimate": 0.011119298583124439
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386"
+    },
+    "t6_half": {
+      "t_start": 6.002110493120864,
+      "t_end": 6.002610493120864,
+      "dt": 0.0005,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 0,
+      "regions": {
+        "inner": {
+          "n": 803,
+          "Epert_start": 1.6811301127895356e-06,
+          "full_step_delta": 5.219939693458942e-11,
+          "HG_delta": -7.364856576561228e-10,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 7.886850545907123e-10,
+          "net_rate": 1.0439879386917883e-07,
+          "HG_rate": -1.4729713153122457e-06,
+          "RK_rate_by_subtraction": 1.5773701091814245e-06,
+          "instantaneous_amplitude_growth_estimate": 0.031050182575085655
+        },
+        "disk": {
+          "n": 12053,
+          "Epert_start": 3.200791279800237e-08,
+          "full_step_delta": 3.762487974085511e-12,
+          "HG_delta": -3.7158386287707766e-11,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 4.092087426179328e-11,
+          "net_rate": 7.524975948171022e-09,
+          "HG_rate": -7.431677257541554e-08,
+          "RK_rate_by_subtraction": 8.184174852358656e-08,
+          "instantaneous_amplitude_growth_estimate": 0.11754868234708292
+        },
+        "outer_active": {
+          "n": 6999,
+          "Epert_start": 5.983567011780005e-11,
+          "full_step_delta": 6.492744414768931e-16,
+          "HG_delta": -1.672442519362875e-14,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 1.7373699635105644e-14,
+          "net_rate": 1.2985488829537862e-12,
+          "HG_rate": -3.34488503872575e-11,
+          "RK_rate_by_subtraction": 3.4747399270211285e-11,
+          "instantaneous_amplitude_growth_estimate": 0.010850959639938009
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386"
+    },
+    "t6_quarter": {
+      "t_start": 6.002110493120864,
+      "t_end": 6.0023604931208645,
+      "dt": 0.00025,
+      "mass_unchanged": true,
+      "radial_bin_crossings": 0,
+      "regions": {
+        "inner": {
+          "n": 803,
+          "Epert_start": 1.6811301127895356e-06,
+          "full_step_delta": 2.6752046675320065e-11,
+          "HG_delta": -3.6807639067771397e-10,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 3.9482843735303403e-10,
+          "net_rate": 1.0700818670128026e-07,
+          "HG_rate": -1.4723055627108558e-06,
+          "RK_rate_by_subtraction": 1.579313749412136e-06,
+          "instantaneous_amplitude_growth_estimate": 0.031826265524361845
+        },
+        "disk": {
+          "n": 12053,
+          "Epert_start": 3.200791279800237e-08,
+          "full_step_delta": 1.874395431414887e-12,
+          "HG_delta": -1.8549190907134434e-11,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 2.0423586338549322e-11,
+          "net_rate": 7.497581725659547e-09,
+          "HG_rate": -7.419676362853774e-08,
+          "RK_rate_by_subtraction": 8.169434535419729e-08,
+          "instantaneous_amplitude_growth_estimate": 0.11712075343643581
+        },
+        "outer_active": {
+          "n": 6999,
+          "Epert_start": 5.983567011780005e-11,
+          "full_step_delta": 3.2013375071118005e-16,
+          "HG_delta": -8.36233829942678e-15,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 8.68247205013796e-15,
+          "net_rate": 1.2805350028447202e-12,
+          "HG_rate": -3.344935319770712e-11,
+          "RK_rate_by_subtraction": 3.472988820055184e-11,
+          "instantaneous_amplitude_growth_estimate": 0.010700431701723214
+        },
+        "frozen": {
+          "n": 17009,
+          "Epert_start": 7.061829472213834e-14,
+          "full_step_delta": 0.0,
+          "HG_delta": 0.0,
+          "HG_membership_matches_material_bin": true,
+          "RK_delta_by_subtraction": 0.0,
+          "net_rate": 0.0,
+          "HG_rate": 0.0,
+          "RK_rate_by_subtraction": 0.0,
+          "instantaneous_amplitude_growth_estimate": 0.0
+        }
+      },
+      "binary": "ebb4c7dcbeee1a3b1e3da759b5ec2151f7f342775f2c4d0d78f65edfe4dc7697  /gpfs/kjhan/LagForce/Codex_integrated_cpu_cuda_20261017/eunha2.exe",
+      "snapshot_sha256": "a5101ac80d32ba07ee53cec39f5e0147e4e71ee997b86451502b62e103d00386"
+    }
+  },
+  "inner_comparison": {
+    "t2": {
+      "full_dt_net_rate": 1.412153460374155e-09,
+      "half_dt_net_rate": 1.4149631686947815e-09,
+      "relative_rate_change": 0.001989662171618453,
+      "half_dt_HG_rate": -1.9264965597995822e-10,
+      "half_dt_RK_rate": 1.6076128246747398e-09,
+      "half_dt_amplitude_growth_estimate": 1.049914795319034
+    },
+    "t4": {
+      "full_dt_net_rate": 4.905952099341819e-07,
+      "half_dt_net_rate": 4.900680841139142e-07,
+      "relative_rate_change": -0.0010744618161650002,
+      "half_dt_HG_rate": -2.0960003601862223e-07,
+      "half_dt_RK_rate": 6.996681201325364e-07,
+      "half_dt_amplitude_growth_estimate": 0.8748624949343545
+    },
+    "t6": {
+      "full_dt_net_rate": 1.023865296017944e-07,
+      "half_dt_net_rate": 1.0439879386917883e-07,
+      "relative_rate_change": 0.019653603605968583,
+      "half_dt_HG_rate": -1.4729713153122457e-06,
+      "half_dt_RK_rate": 1.5773701091814245e-06,
+      "half_dt_amplitude_growth_estimate": 0.031050182575085655,
+      "quarter_dt_net_rate": 1.0700818670128026e-07,
+      "quarter_vs_half_relative_change": 0.024994472976107653
+    }
+  },
+  "interpretation": {
+    "inner_HG_damps_at_all_sampled_times": true,
+    "inner_net_growth_positive_at_all_tested_dt": true,
+    "t6_rate_convergence_established": false,
+    "t6_caution": "Halving dt changes net rate by 1.97%, halving again by 2.50%; cancellation-sensitive growth rate is not shown converged. Positive sign persists for all three steps.",
+    "next_priority": "Single-rank physical onset: pressure/volume coupling and pressure/shear work before visible t4-t6 breakdown. Keep existing long runs; defer MPI extension per user steering."
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "scope": "Conservative quadratic velocity on actual discontinuous-density IC moments.\nInitial face accuracy and independent moment integration, not time evolution.\n",
+  "results": [
+    {
+      "mode": "affine",
+      "diagnostics": {},
+      "maximum_independent_p_D_Pi_errors": [
+        1.201106271733754e-15,
+        3.200347972742712e-15,
+        5.860925893913516e-16,
+        1.5619016496826177e-15,
+        2.454633718507182e-16,
+        5.838970799920684e-16,
+        6.45859234149615e-16,
+        1.5594621947945253e-15,
+        1.5594621947945253e-15,
+        4.153903783443713e-15
+      ],
+      "maximum_generator_velocity_change": 0.0,
+      "failures": [],
+      "regions": {
+        "interface": {
+          "samples": 4032,
+          "pressure_relative_RMS": 0.06944739566031334,
+          "velocity_RMS": 0.0014259736282112323,
+          "normal_jump_RMS": 0.001300608246356621
+        },
+        "other": {
+          "samples": 23640,
+          "pressure_relative_RMS": 0.05058962114885465,
+          "velocity_RMS": 0.002234149283631288,
+          "normal_jump_RMS": 0.0017248484007207562
+        }
+      }
+    },
+    {
+      "mode": "projected",
+      "diagnostics": {
+        "velocity_fit": "radial_fixed_mean",
+        "velocity_stencil": "area",
+        "velocity_quadratic_cells": 1590,
+        "velocity_quadratic_rank_deficient": 0,
+        "velocity_quadratic_covariance_split_error": 1.6901815956925651e-15,
+        "velocity_quadratic_orthogonality_error": 1.1449174941446927e-16,
+        "velocity_quadratic_max_resolved_fraction": 0.9999999999980013,
+        "velocity_quadratic_budget_backend": "scalar"
+      },
+      "maximum_independent_p_D_Pi_errors": [
+        1.1952515800023322e-15,
+        3.1968785257907584e-15,
+        5.837480021933517e-16,
+        1.5601669262066409e-15,
+        2.4519232130759683e-16,
+        5.832736637428892e-16,
+        6.449918724116266e-16,
+        1.5516559391526297e-15,
+        1.5516559391526297e-15,
+        4.143061761718858e-15
+      ],
+      "maximum_generator_velocity_change": 0.0023740388649525555,
+      "failures": [],
+      "regions": {
+        "interface": {
+          "samples": 4032,
+          "pressure_relative_RMS": 0.0032296647930428932,
+          "velocity_RMS": 0.0001233442876639591,
+          "normal_jump_RMS": 9.477048752065732e-05
+        },
+        "other": {
+          "samples": 23640,
+          "pressure_relative_RMS": 0.001106292110728377,
+          "velocity_RMS": 7.709944886530578e-05,
+          "normal_jump_RMS": 4.7720575146340205e-05
+        }
+      }
+    }
+  ],
+  "limits": "Existing smooth positive density with spatial moments, not the added-potential density. Independent volume quadrature24 versus density fit12. No mass solve, moving geometry, gravity, or stability claim. Analytic circular velocity only measures error."
+}

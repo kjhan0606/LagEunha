@@ -1,0 +1,51 @@
+{
+  "scope": "Pressure torque and inertia work on saved t0 polygons, manufactured fields.\n\nNonuniform affine density separates mass center from area center. Reuses\ncompleted CPU/OpenMP/CUDA pressure-moment outputs, not a new fluid evolution.\n",
+  "cells": 11498,
+  "density": "1+.08*x-.04*y, coordinates relative to (3,3)",
+  "max_abs_expected_torque": 2.5119035103092907e-11,
+  "backends": {
+    "cpu1": {
+      "torque_max_volume_scaled_error": 4.138347525379595e-16,
+      "inertia_rate_max_absolute": 6.558306525724519e-08,
+      "torque_work_sum": 1.722016775643824e-07,
+      "inertia_work_sum": -0.00016225058935513177,
+      "rotation_energy_rate_sum": -0.00016207838767756742,
+      "energy_derivative_centered_difference_errors": [
+        2.712455377158957e-15,
+        6.781337007603435e-16,
+        1.6950365082393704e-16
+      ]
+    },
+    "cpu4": {
+      "torque_max_volume_scaled_error": 4.138347525379595e-16,
+      "inertia_rate_max_absolute": 6.558306525724519e-08,
+      "torque_work_sum": 1.722016775643824e-07,
+      "inertia_work_sum": -0.00016225058935513177,
+      "rotation_energy_rate_sum": -0.00016207838767756742,
+      "energy_derivative_centered_difference_errors": [
+        2.712455377158957e-15,
+        6.781337007603435e-16,
+        1.6950365082393704e-16
+      ]
+    },
+    "cuda": {
+      "torque_max_volume_scaled_error": 4.138347525379595e-16,
+      "inertia_rate_max_absolute": 6.558306525724519e-08,
+      "torque_work_sum": 1.722016775643824e-07,
+      "inertia_work_sum": -0.00016225058935513177,
+      "rotation_energy_rate_sum": -0.00016207838767756742,
+      "energy_derivative_centered_difference_errors": [
+        2.712455377158957e-15,
+        6.781337007603435e-16,
+        1.6950365082393704e-16
+      ]
+    }
+  },
+  "limits": [
+    "Manufactured smooth fields on actual polygons, not measured Kepler forces.",
+    "Pressure moment backends reused; no new CUDA full evolution or MPI claim.",
+    "Inertia rate is an instantaneous material-affine rate. Moving Voronoi/Laguerre cells require ALE flux terms.",
+    "Finite-difference path checks the chain rule only, not Euler time evolution.",
+    "Pressure torque is reversible exchange, not a specified dissipative relaxation law."
+  ]
+}

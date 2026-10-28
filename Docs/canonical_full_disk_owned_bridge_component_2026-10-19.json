@@ -1,0 +1,289 @@
+{
+  "status": "passed_owned_moment_bridge_component",
+  "cells": 1590,
+  "nodes": 213064,
+  "partitions": [
+    {
+      "backend": "cpu",
+      "threads": 1,
+      "partition": "one",
+      "owned_counts": [
+        {
+          "cells": 1590,
+          "receiver_nodes": 213064,
+          "incidences": 423640
+        }
+      ],
+      "cross_partition_nodes": 0,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 1,
+      "partition": "two_contiguous",
+      "owned_counts": [
+        {
+          "cells": 795,
+          "receiver_nodes": 166240,
+          "incidences": 320288
+        },
+        {
+          "cells": 795,
+          "receiver_nodes": 59016,
+          "incidences": 103352
+        }
+      ],
+      "cross_partition_nodes": 12192,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 1,
+      "partition": "two_interleaved",
+      "owned_counts": [
+        {
+          "cells": 795,
+          "receiver_nodes": 177936,
+          "incidences": 211760
+        },
+        {
+          "cells": 795,
+          "receiver_nodes": 177976,
+          "incidences": 211880
+        }
+      ],
+      "cross_partition_nodes": 142848,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 1,
+      "transactional_failures": {
+        "stale_epoch": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "wrong_owner": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "missing_incidence": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "bad_spatial_moment": {
+          "status": 112,
+          "caller_outputs_unchanged": true
+        }
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 4,
+      "partition": "one",
+      "owned_counts": [
+        {
+          "cells": 1590,
+          "receiver_nodes": 213064,
+          "incidences": 423640
+        }
+      ],
+      "cross_partition_nodes": 0,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 4,
+      "partition": "two_contiguous",
+      "owned_counts": [
+        {
+          "cells": 795,
+          "receiver_nodes": 166240,
+          "incidences": 320288
+        },
+        {
+          "cells": 795,
+          "receiver_nodes": 59016,
+          "incidences": 103352
+        }
+      ],
+      "cross_partition_nodes": 12192,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 4,
+      "partition": "two_interleaved",
+      "owned_counts": [
+        {
+          "cells": 795,
+          "receiver_nodes": 177936,
+          "incidences": 211760
+        },
+        {
+          "cells": 795,
+          "receiver_nodes": 177976,
+          "incidences": 211880
+        }
+      ],
+      "cross_partition_nodes": 142848,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 4,
+      "transactional_failures": {
+        "stale_epoch": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "wrong_owner": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "missing_incidence": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "bad_spatial_moment": {
+          "status": 112,
+          "caller_outputs_unchanged": true
+        }
+      }
+    },
+    {
+      "backend": "cuda",
+      "threads": 1,
+      "partition": "one",
+      "owned_counts": [
+        {
+          "cells": 1590,
+          "receiver_nodes": 213064,
+          "incidences": 423640
+        }
+      ],
+      "cross_partition_nodes": 0,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cuda",
+      "threads": 1,
+      "partition": "two_contiguous",
+      "owned_counts": [
+        {
+          "cells": 795,
+          "receiver_nodes": 166240,
+          "incidences": 320288
+        },
+        {
+          "cells": 795,
+          "receiver_nodes": 59016,
+          "incidences": 103352
+        }
+      ],
+      "cross_partition_nodes": 12192,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cuda",
+      "threads": 1,
+      "partition": "two_interleaved",
+      "owned_counts": [
+        {
+          "cells": 795,
+          "receiver_nodes": 177936,
+          "incidences": 211760
+        },
+        {
+          "cells": 795,
+          "receiver_nodes": 177976,
+          "incidences": 211880
+        }
+      ],
+      "cross_partition_nodes": 142848,
+      "canonical_nodes_computed_once": 213064,
+      "exact_global_reassembly": {
+        "stage": true,
+        "Q": true,
+        "hydro": true,
+        "ledgers": true
+      }
+    },
+    {
+      "backend": "cuda",
+      "threads": 1,
+      "transactional_failures": {
+        "stale_epoch": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "wrong_owner": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "missing_incidence": {
+          "status": 1,
+          "caller_outputs_unchanged": true
+        },
+        "bad_spatial_moment": {
+          "status": 112,
+          "caller_outputs_unchanged": true
+        }
+      }
+    }
+  ],
+  "library_sha256": "d6ebf76b04c49749c3ba64a49e74d0abe7281f6bfb27ac5acfa52ac113d13981",
+  "seconds": 49.35793463140726,
+  "physical_providers": 0,
+  "evolution_steps": 0,
+  "MPI_evolution_verified": false,
+  "limits": "Captured-stage owned ABI only. Canonical flux and physical frozen flags preserved, no rank walls or local massroots. Native executable/runtime/service and actual MPI transactions still pending."
+}

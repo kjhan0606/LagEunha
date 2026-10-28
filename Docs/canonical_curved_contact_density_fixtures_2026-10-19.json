@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "scope": "Curved-domain m/q/Q/Psi and trace fixtures, no fluid provider.",
+  "results": {
+    "flat": {
+      "status": "passed",
+      "independent_q48_moment_error": 1.171128928697477e-17,
+      "independent_q48_Psi_error": 5.8259881505758276e-21,
+      "dual_residual": 2.5153490401663703e-16,
+      "condition": 238.25656519842482,
+      "sigma": 7.908093698527366e-06,
+      "rank_error": 3.014466353485742e-15,
+      "density_min": 1.2026429913313708e-11,
+      "scalar_batch_max_relative": 0.0,
+      "prior_region_areas": [
+        0.031415926535897934
+      ],
+      "area": 0.031415926535897934
+    },
+    "cut": {
+      "status": "passed",
+      "independent_q48_moment_error": 9.277128354802724e-18,
+      "independent_q48_Psi_error": 4.95134805037757e-21,
+      "dual_residual": 3.3133218391157016e-16,
+      "condition": 251.92941094376192,
+      "sigma": 7.90399044092557e-06,
+      "rank_error": 3.0727572512055565e-15,
+      "density_min": 8.418518482273013e-12,
+      "scalar_batch_max_relative": 0.0,
+      "prior_region_areas": [
+        0.015707963267948967,
+        0.015707963267948967
+      ],
+      "area": 0.031415926535897934
+    }
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/check_curved_contact_density.py": "310c5e5bf7cda0116ae3219988164813dcbda9c7878243ea4648b6d136ae2488",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/contact_potential_density.py": "23384e8efb3355917b6b1fc616b64a27c77050109f18c2406b9b901ab50b41da",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/curved_contact_density.py": "2c0f1b8d673a1a6cd668b7da1f08363001aa01d84e54ddfa45b59fd7ffc2e57d",
+    "/gpfs/kjhan/LagForce/Codex_full_disk_density_modules_20261019/curved_disk_cell.py": "d420df9e823ac878b27912519e69edf330799679f41f78a26089c156147a5427"
+  },
+  "limits": "Curved flat/cut density and trace fixtures; full-domain actual stage and long-time stability remain unverified."
+}

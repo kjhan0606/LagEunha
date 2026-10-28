@@ -1,0 +1,124 @@
+{
+  "cases": {
+    "old": {
+      "time": 0.4025000000000003,
+      "wall_seconds": 11.267950151115656,
+      "accepted": "[ACCEPTED_STATE] step=1 elapsed=0.0025000000000000001 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.013032650240790944 Py=-0.011009361664250407 Lz=14.405898147672477 K=4.8064225419999671 U=0.0014993627617374313 Phi=-9.6198021167274863 E=-4.8118802119657822 dM0=0 dPx0=2.122606515996342e-05 dPy0=2.1343193494220702e-05 dLz0=-7.3363537467230344e-11 dE0=-2.0464518968310585e-11 dEstep=-2.0464518968310585e-11 hg_dE=-1.4767917791425056e-14 hg_dPx=1.9878543255913428e-13 hg_dPy=4.4775294583132563e-13 hg_dLz=1.2789769243681803e-13 hg_dU=1.1522985256945395e-12 boundary_corrected=0"
+    },
+    "new_serial": {
+      "time": 0.4025000000000003,
+      "wall_seconds": 11.326915783807635,
+      "accepted": "[ACCEPTED_STATE] step=1 elapsed=0.0025000000000000001 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.013032650240790944 Py=-0.011009361664250407 Lz=14.405898147672477 K=4.8064225419999671 U=0.0014993627617374313 Phi=-9.6198021167274863 E=-4.8118802119657822 dM0=0 dPx0=2.122606515996342e-05 dPy0=2.1343193494220702e-05 dLz0=-7.3363537467230344e-11 dE0=-2.0464518968310585e-11 dEstep=-2.0464518968310585e-11 hg_dE=-1.4767917791425056e-14 hg_dPx=1.9878543255913428e-13 hg_dPy=4.4775294583132563e-13 hg_dLz=1.2789769243681803e-13 hg_dU=1.1522985256945395e-12 boundary_corrected=0"
+    },
+    "parallel1": {
+      "time": 0.4025000000000003,
+      "wall_seconds": 19.28987706452608,
+      "accepted": "[ACCEPTED_STATE] step=1 elapsed=0.0025000000000000001 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.013032650240790944 Py=-0.011009361664250407 Lz=14.405898147672477 K=4.8064225419999671 U=0.0014993627617374313 Phi=-9.6198021167274863 E=-4.8118802119657822 dM0=0 dPx0=2.122606515996342e-05 dPy0=2.1343193494220702e-05 dLz0=-7.3363537467230344e-11 dE0=-2.0464518968310585e-11 dEstep=-2.0464518968310585e-11 hg_dE=-1.4767917791425056e-14 hg_dPx=1.9878543255913428e-13 hg_dPy=4.4775294583132563e-13 hg_dLz=1.2789769243681803e-13 hg_dU=1.1522985256945395e-12 boundary_corrected=0"
+    },
+    "parallel4": {
+      "time": 0.4025000000000003,
+      "wall_seconds": 10.08520108833909,
+      "accepted": "[ACCEPTED_STATE] step=1 elapsed=0.0025000000000000001 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.013032650240790944 Py=-0.011009361664250407 Lz=14.405898147672477 K=4.8064225419999671 U=0.0014993627617374313 Phi=-9.6198021167274863 E=-4.8118802119657822 dM0=0 dPx0=2.122606515996342e-05 dPy0=2.1343193494220702e-05 dLz0=-7.3363537467230344e-11 dE0=-2.0464518968310585e-11 dEstep=-2.0464518968310585e-11 hg_dE=-1.4767917791425056e-14 hg_dPx=1.9878543255913428e-13 hg_dPy=4.4775294583132563e-13 hg_dLz=1.2789769243681803e-13 hg_dU=1.1522985256945395e-12 boundary_corrected=0"
+    }
+  },
+  "comparisons": {
+    "new_serial": {
+      "physical_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "auxiliary_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true
+      },
+      "physical_max_absolute_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      }
+    },
+    "parallel1": {
+      "physical_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "auxiliary_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true
+      },
+      "physical_max_absolute_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      }
+    },
+    "parallel4": {
+      "physical_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true,
+        "vx": true,
+        "vy": true,
+        "mass": true,
+        "volume": true,
+        "den": true,
+        "pressure": true,
+        "ie": true,
+        "w2": true
+      },
+      "auxiliary_fields_bitwise_equal": {
+        "id": true,
+        "x": true,
+        "y": true
+      },
+      "physical_max_absolute_difference": {
+        "x": 0.0,
+        "y": 0.0,
+        "vx": 0.0,
+        "vy": 0.0,
+        "mass": 0.0,
+        "volume": 0.0,
+        "den": 0.0,
+        "pressure": 0.0,
+        "ie": 0.0,
+        "w2": 0.0
+      }
+    }
+  },
+  "all_bitwise_equal": true,
+  "scope": "Actual nonzero-memory restart and one full RK4 step with production neighbor search, row build and ordered force scatter. Short backend control, not long-time physical stability. Wall times include startup and concurrent load; not an isolated performance benchmark."
+}

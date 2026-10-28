@@ -1,0 +1,90 @@
+{
+  "manifest": {
+    "raw_source": "/gpfs/kjhan/LagForce/Codex_shf_raw_geometry_20261017/audit/raw_faces.dat",
+    "raw_sha256": "681e72383eef941918093360f486d50c7a3569b8054a18e9a10184f2b613f06d",
+    "active_directed_records": 120130,
+    "serial_missing_reciprocals": 0,
+    "partition": "x slabs in [0,6] crossing inner disk at x=3",
+    "scope": "Original raw endpoints from single-rank tessellation; common face geometry recomputed per rank after MPI exchange. No distributed tessellation or hydro/HG evolution."
+  },
+  "cases": [
+    {
+      "ranks": 1,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 0,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_error": 1.3877787807814457e-17,
+      "max_centroid_error": 9.813077866773595e-18,
+      "unused": 0,
+      "case": "normal",
+      "returncode": 0
+    },
+    {
+      "ranks": 2,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 654,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_error": 1.3877787807814457e-17,
+      "max_centroid_error": 9.813077866773595e-18,
+      "unused": 0,
+      "case": "normal",
+      "returncode": 0
+    },
+    {
+      "ranks": 4,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 1764,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_error": 1.3877787807814457e-17,
+      "max_centroid_error": 9.813077866773595e-18,
+      "unused": 0,
+      "case": "normal",
+      "returncode": 0
+    },
+    {
+      "ranks": 2,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 654,
+      "stale": 2,
+      "missing": 0,
+      "mismatch": 0,
+      "max_area_error": 1.3877787807814457e-17,
+      "max_centroid_error": 9.813077866773595e-18,
+      "unused": 0,
+      "case": "stale",
+      "returncode": 1
+    },
+    {
+      "ranks": 2,
+      "sent": 120130,
+      "received": 120130,
+      "remote": 654,
+      "stale": 0,
+      "missing": 0,
+      "mismatch": 1,
+      "max_area_error": 0.041472508844437046,
+      "max_centroid_error": 9.813077866773595e-18,
+      "unused": 0,
+      "case": "corrupt",
+      "returncode": 1
+    }
+  ],
+  "test_source_sha256": "7e6ad817b3898b3a781c007568d3814490cec09e2db4389efc5c1ef8e2016b18",
+  "limitations": [
+    "Cells were tessellated on one rank before partitioning fixture; distributed cell construction and padding remain unimplemented",
+    "Reference common-segment geometry computed independently in Python; C recomputes geometry after MPI exchange",
+    "Only t10 active canonical geometry, not evolving ownership or periodic boundary stress cases",
+    "HG support ordering, state exchange, collective rejection and rollback still required",
+    "Production MPI1 guards unchanged"
+  ]
+}

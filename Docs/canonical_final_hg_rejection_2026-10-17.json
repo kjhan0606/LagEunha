@@ -1,0 +1,20 @@
+{
+  "root": "/gpfs/kjhan/LagForce/Codex_final_hg_rejection_20261017",
+  "changes": [
+    "Recheck gfs_attempt_failed after final HG preparation/application",
+    "Reject infinite internal energy or volume even if positive"
+  ],
+  "tests": {
+    "flag": {
+      "reject_bad": 1,
+      "rejections": 1,
+      "all_12_fields_bitwise_equal_to_half_step_control": true
+    },
+    "infinity": {
+      "reject_bad": 3,
+      "rejections": 1,
+      "all_12_fields_bitwise_equal_to_half_step_control": true
+    }
+  },
+  "scope": "Injected final failure flag and positive-infinite ie in isolated source; one accepted canonical t4 step after rollback. Volume infinity explicitly checked in source but not separately injected. No evidence that either failure occurred in live long runs."
+}

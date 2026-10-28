@@ -1,0 +1,75 @@
+[HG_TRANSFER] rank=0 tau=0.00125 bin=3 n=17009 changed=0 dPx=0 dPy=0 dLz=0 dK=0 dU=0 dE=0 maxdv=0 trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=0 dEpert=-1.6415331599087395e-10 identity_abs_sum=2.1762399250008534e-24 reference=prograde_circular trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=1 dEpert=-3.7929170030862555e-12 identity_abs_sum=8.1627023718842928e-25 reference=prograde_circular trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=2 dEpert=-4.7578351847057539e-14 identity_abs_sum=2.0266012467099896e-26 reference=prograde_circular trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=3 dEpert=0 identity_abs_sum=0 reference=prograde_circular trial=1
+[HGSPLIT] dt=2.5000e-03 modes=500808 heat=3.3573e-10 skipped=0 bulk_modes=0 bulk_skip=0 bulk_heat=0.0000e+00 bulk_test=0.00e+00 bp_modes=0 bp_skip=0 bp_heat=0.0000e+00 bp_test=0.00e+00
+Time= 3.81291  step= 908  dt= 0.0025
+[ACCEPTED_STATE] step=724 elapsed=1.8099999999999725 dt=0.0025000000000000001 retries=0 finite=1 M=12.19100448537078 Px=0.010783205404393125 Py=0.0085197888626533519 Lz=14.4058977684235 K=4.8064201749965347 U=0.0015013554289916634 Phi=-9.619801835363825 E=-4.811880304938299 dM0=0 dPx0=-0.0016499362387655848 dPy0=0.011577551259584155 dLz0=-2.1100630931414344e-07 dE0=-5.2729860477995771e-08 dEstep=-8.9487528498466418e-11 hg_dE=-4.074032777801051e-13 hg_dPx=1.7978674105023629e-14 hg_dPy=6.8211755688274422e-13 hg_dLz=-1.4068746168049984e-12 hg_dU=3.3572904872825049e-10 boundary_corrected=0
+[ACCEPTED_RK_BUDGET] step=724 stage_mask_min=15 stage_mask_max=15 rk_dPx=-1.6571919777336771e-05 rk_dPy=-3.1200510709663081e-06 rk_dLz=-3.5222818833721289e-10 rk_dEh=1.8006976011552874e-09 rk_dPhi=-1.8897845261729171e-09 residual_Px=2.0469737016526324e-16 residual_Py=-4.6143644460983069e-16 residual_Lz=-8.8817841970012523e-15 residual_E=7.1054273576010019e-15 scope=actual_stage_increments_plus_HG
+[ACCEPTED_HG_BOUNDARY] work=-3.6188046219576367e-13 heat_out=5.9567297934927559e-15 measured_dE=-4.074032777801051e-13 residual=-3.9566085790848677e-14
+[GPU dpq-tree 4345] np=36864 nodes=119103 kernel=20.5ms writeback=0.1ms total=26.0ms
+[FORCE_DBG] r0 alpha wrapper entry
+[FORCE_DBG] r0 beta after mkLinkedList2D
+[FORCE_DBG] r0 gamma impl entry call=4345
+[FORCE_DBG] r0 gamma1 before OMP loop mx=50 my=50 call=4345
+[GEOM_DT_AUDIT] rank=0 call=4345 phase=1 rk_stage=0 trial=1 i=442 j=443 dt_geom=0.01298663089256364 distance=0.012906766773482143 cfi=0.094961767687150075 cfj=0.097651662041820811 vdotr=0.026579623195453192 x=2.6424515622708213 y=3.0825248525791658 volume=0.00064154777397342194 force_dt=0.01089455891180305
+[FORCE_DBG] r0 delta impl exit Dtime=0.0108946 call=4345
+[FORCE_DBG] r0 eta wrapper after impl
+[FORCE_DBG] r0 theta-A before BASICCELL free
+[FORCE_DBG] r0 theta-B after BASICCELL free
+[FORCE_DBG] r0 theta wrapper after free
+[FORCE_DBG] iota wrapper after allreduce
+[HG_TRANSFER] rank=0 tau=0.00125 bin=0 n=800 changed=800 dPx=-4.4176053132297961e-11 dPy=2.3901336721363596e-10 dLz=1.936125882337878e-10 dK=3.7994246526682396e-10 dU=1.5401206743589922e-10 dE=5.3395453270272313e-10 maxdv=4.8148068303933351e-05 trial=1
+[HG_TRANSFER] rank=0 tau=0.00125 bin=1 n=12071 changed=12071 dPx=4.1685368238694748e-11 dPy=-2.6032464059566339e-10 dLz=-1.9240993633159241e-10 dK=-5.4771137232360717e-10 dU=1.4206747242972167e-11 dE=-5.3350462508063501e-10 maxdv=1.5819757949162193e-05 trial=1
+[HG_TRANSFER] rank=0 tau=0.00125 bin=2 n=6984 changed=6984 dPx=2.5266380259396714e-12 dPy=2.1548520505028255e-11 dLz=-1.9987350486832949e-12 dK=-6.9772923891475487e-13 dU=4.2998253898299792e-14 dE=-6.5473098501645569e-13 maxdv=1.0861800332684281e-07 trial=1
+[HG_TRANSFER] rank=0 tau=0.00125 bin=3 n=17009 changed=0 dPx=0 dPy=0 dLz=0 dK=0 dU=0 dE=0 maxdv=0 trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=0 dEpert=-1.6347103042060484e-10 identity_abs_sum=2.0660423814398602e-24 reference=prograde_circular trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=1 dEpert=-3.7683384751339403e-12 identity_abs_sum=7.6023239997613094e-25 reference=prograde_circular trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=2 dEpert=-4.7515335108868904e-14 identity_abs_sum=2.0309973602475081e-26 reference=prograde_circular trial=1
+[HG_PERTURBATION] rank=0 tau=0.00125 bin=3 dEpert=0 identity_abs_sum=0 reference=prograde_circular trial=1
+[GPU dpq-tree 4346] np=36864 nodes=119103 kernel=20.5ms writeback=0.1ms total=25.9ms
+[VAUD_REGION] sample=724 rmin=0 rmax=0.5 n=800 volume=0.78180739126806842 geom_abs=0.0007969153974340731 booked_abs=0.00079691219363457137 residual_abs=1.5760402786198183e-08 residual_abs_over_V=2.0158932957432492e-08 PdV_abs=4.4640982526108495e-13 PdV_signed=1.4589644629487465e-14 dU=9.8503018809401845e-09 diss_booked=8.2133446723386878e-09 ad_booked=1.3282910343462388e-09 ad_geom=1.3282719346862726e-09 scope=between_K1_active_cells
+[VAUD] step=724 n=36864 res_abs/V=2.221e-04 booked_abs/V=2.394e-04 unbooked_PdV_abs=2.221e-07 signed=3.534e-09 cum_abs=1.609e-04 cum_signed=2.567e-06 w2clip=0
+[VDEC] step=724 n_int=36864 cum: dI=1.8182e-06 diss=7.7803e-03 adb_booked=2.9002e-06 adb_geom=3.2624e-07 gcl(booked-geom)=2.5739e-06 |gcl|=1.6090e-04 resid(dI-adb_b-diss)=-7.7814e-03
+[FORCE_DBG] r0 alpha wrapper entry
+[FORCE_DBG] r0 beta after mkLinkedList2D
+[FORCE_DBG] r0 gamma impl entry call=4346
+[FORCE_DBG] r0 gamma1 before OMP loop mx=50 my=50 call=4346
+[GEOM_DT_AUDIT] rank=0 call=4346 phase=0 rk_stage=1 trial=1 i=442 j=443 dt_geom=0.012992975320436839 distance=0.012906766773482143 cfi=0.094964335024436061 cfj=0.097653982431642514 vdotr=0.02651664107039807 x=2.6424515622708213 y=3.0825248525791658 volume=0.00064154777397342194 force_dt=0.010894564589034351
+[FORCE_DBG] r0 delta impl exit Dtime=0.0108946 call=4346
+[FORCE_DBG] r0 eta wrapper after impl
+[FORCE_DBG] r0 theta-A before BASICCELL free
+[FORCE_DBG] r0 theta-B after BASICCELL free
+[FORCE_DBG] r0 theta wrapper after free
+[FORCE_DBG] iota wrapper after allreduce
+[ORBIT_WORK_STAGE] stage=1 wdt=0.00041666666666666664 hydro_minus_TCF=7.2884517590144887e-07 TCF=-3.5869255343397446e-07 shear=2.6500320928032656e-07 total=6.3515583174780097e-07 trial=1 scope=global_active
+[GPU dpq-tree 4347] np=36864 nodes=119103 kernel=20.6ms writeback=0.1ms total=26.2ms
+[FORCE_DBG] r0 alpha wrapper entry
+[FORCE_DBG] r0 beta after mkLinkedList2D
+[FORCE_DBG] r0 gamma impl entry call=4347
+[FORCE_DBG] r0 gamma1 before OMP loop mx=50 my=50 call=4347
+[GEOM_DT_AUDIT] rank=0 call=4347 phase=0 rk_stage=2 trial=1 i=442 j=443 dt_geom=0.012960895486008383 distance=0.012939944120636185 cfi=0.094940713714126698 cfj=0.097665071273062246 vdotr=0.027132865476419916 x=2.6420082053384117 y=3.0805557772036654 volume=0.0006421120697307017 force_dt=0.010894567158989963
+[FORCE_DBG] r0 delta impl exit Dtime=0.0108946 call=4347
+[FORCE_DBG] r0 eta wrapper after impl
+[FORCE_DBG] r0 theta-A before BASICCELL free
+[FORCE_DBG] r0 theta-B after BASICCELL free
+[FORCE_DBG] r0 theta wrapper after free
+[FORCE_DBG] iota wrapper after allreduce
+[ORBIT_WORK_STAGE] stage=2 wdt=0.00083333333333333328 hydro_minus_TCF=7.2897747710056511e-07 TCF=-3.6051081875628268e-07 shear=2.6393254099178332e-07 total=6.3239919933606586e-07 trial=1 scope=global_active
+[GPU dpq-tree 4348] np=36864 nodes=119103 kernel=20.6ms writeback=0.1ms total=26.1ms
+[FORCE_DBG] r0 alpha wrapper entry
+[FORCE_DBG] r0 beta after mkLinkedList2D
+[FORCE_DBG] r0 gamma impl entry call=4348
+[FORCE_DBG] r0 gamma1 before OMP loop mx=50 my=50 call=4348
+[GEOM_DT_AUDIT] rank=0 call=4348 phase=0 rk_stage=3 trial=1 i=442 j=443 dt_geom=0.01296162995413554 distance=0.012940651390560753 cfi=0.094938843248480467 cfj=0.097664574354770328 vdotr=0.027133111549230364 x=2.6420189958079092 y=3.08055323767611 volume=0.00064214083058491164 force_dt=0.010894567237461395
+[FORCE_DBG] r0 delta impl exit Dtime=0.0108946 call=4348
+[FORCE_DBG] r0 eta wrapper after impl
+[FORCE_DBG] r0 theta-A before BASICCELL free
+[FORCE_DBG] r0 theta-B after BASICCELL free
+[FORCE_DBG] r0 theta wrapper after free
+[FORCE_DBG] iota wrapper after allreduce
+[ORBIT_WORK_STAGE] stage=3 wdt=0.00083333333333333328 hydro_minus_TCF=7.2903193015052678e-07 TCF=-3.6026984661300426e-07 shear=2.641713986667485e-07 total=6.3293348220427102e-07 trial=1 scope=global_active
+[GPU dpq-tree 4349] np=36864 nodes=119103 kernel=20.6ms writeback=0.1ms total=26.2ms
+[QR_SMOOTH] insufficient rank owner=539 rank=0 nuse=8 nc=140
+Abort(2) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 2) - process 0

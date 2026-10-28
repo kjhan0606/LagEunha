@@ -1,0 +1,57 @@
+{
+  "scope": "Existing near-t12 snapshots: from-t0 timestep cap versus adaptive HG run.\nNot a temporal convergence order estimate; binaries also have audited changes.\n",
+  "cases": {
+    "adaptive_HG": {
+      "snapshot": "/gpfs/kjhan/LagForce/Codex_HG_constrained_20261017/omp8_t20/khout.004114.dat",
+      "sha256": "382d7456e6adbbd5b7dbdc6c784cead1fc7680e5104aed6fe1c6ca3c60cf59c9",
+      "time": 12.000731187642545,
+      "mass_unchanged": true,
+      "regions": {
+        "inner_background": {
+          "pressure_error_mass_RMS": 12.574893454905888,
+          "phase_error_mass_RMS_deg": 83.76056776070111,
+          "radial_displacement_mass_RMS": 0.03697477543995989,
+          "circular_velocity_error_mass_RMS": 0.04685507203068778
+        },
+        "inner_disk_edge": {
+          "pressure_error_mass_RMS": 11.550279364423204,
+          "phase_error_mass_RMS_deg": 4.612584618495484,
+          "radial_displacement_mass_RMS": 0.005077253596439266,
+          "circular_velocity_error_mass_RMS": 0.00511171888109975
+        },
+        "disk_core": {
+          "pressure_error_mass_RMS": 0.02239558655810433,
+          "phase_error_mass_RMS_deg": 0.010876201473246727,
+          "radial_displacement_mass_RMS": 2.4587276105018836e-05,
+          "circular_velocity_error_mass_RMS": 3.021639302552643e-05
+        }
+      }
+    },
+    "from_t0_cap0025": {
+      "snapshot": "/gpfs/kjhan/LagForce/Codex_t0_maxdt0025_t20_20261017/run/khout.006892.dat",
+      "sha256": "a2aa63a5dfadc26c3518df2e6f085a342a3eb099dd19a61e7598a96a087785cc",
+      "time": 12.000695265002683,
+      "mass_unchanged": true,
+      "regions": {
+        "inner_background": {
+          "pressure_error_mass_RMS": 11.772812640906556,
+          "phase_error_mass_RMS_deg": 81.36375792597457,
+          "radial_displacement_mass_RMS": 0.038432283103745815,
+          "circular_velocity_error_mass_RMS": 0.04466203600963185
+        },
+        "inner_disk_edge": {
+          "pressure_error_mass_RMS": 10.94070544174054,
+          "phase_error_mass_RMS_deg": 4.35204092531556,
+          "radial_displacement_mass_RMS": 0.004772922392988289,
+          "circular_velocity_error_mass_RMS": 0.004397488658393899
+        },
+        "disk_core": {
+          "pressure_error_mass_RMS": 0.0182289797840459,
+          "phase_error_mass_RMS_deg": 0.009520496860552842,
+          "radial_displacement_mass_RMS": 2.0561852122452642e-05,
+          "circular_velocity_error_mass_RMS": 2.2942581063411906e-05
+        }
+      }
+    }
+  }
+}

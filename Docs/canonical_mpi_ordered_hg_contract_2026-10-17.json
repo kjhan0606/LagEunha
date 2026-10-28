@@ -1,0 +1,22 @@
+{
+  "scope": "Diagnostic ordered HG operator implemented in Exam/exam.c; not enabled for ordinary MPI time integration",
+  "algorithm": [
+    "Replicate only globally unique mode keys and owning-rank/local-mode index metadata.",
+    "Sort by canonical global key. Walk forward and then reverse, applying tau/2 per mode as original hg_apply.",
+    "Group maximal consecutive keys owned by one rank; request current vx,vy,ie for the remote support union from actual owners.",
+    "Call the existing hg_apply_mode in original order and return modified remote state to owners before the next group.",
+    "After both passes, refresh pressure and sound speed on owned particles."
+  ],
+  "reference": "GFS_MPI_HG_APPLY_SERIAL=1 invokes original hg_apply; only valid at one rank.",
+  "guards": [
+    "Requires terminal geometry diagnostic, validated two-hop state, completed mode construction and positive finite tau.",
+    "Only ordinary HG kind 0; bulk/b-prime excluded by mode probe.",
+    "No RK integration, accepted-state update, particle migration or retry is permitted in this path."
+  ],
+  "limitations": [
+    "Synchronous ordered reference prioritizes matching equations; performance/scaling not claimed.",
+    "Owner/key maps and ghost states are scoped to one geometry snapshot.",
+    "Global RK accept/reject and ownership rollback remain to implement.",
+    "No CUDA hydrodynamic-force or HG acceleration coverage."
+  ]
+}

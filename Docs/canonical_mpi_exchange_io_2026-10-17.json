@@ -1,0 +1,37 @@
+{
+  "scope": "Exchange I/O separation; real migration and rollback diagnostic, not coupled MPI RK evolution.",
+  "cases": {
+    "control": {
+      "exchange_dump_files": 0,
+      "reference_records_identical": 10,
+      "comparison": "RHS records keyed by cell or face IDs; cache, HG state and mode files byte-identical"
+    },
+    "np1": {
+      "exchange_dump_files": 0,
+      "reference_records_identical": 10,
+      "comparison": "RHS records keyed by cell or face IDs; cache, HG state and mode files byte-identical"
+    },
+    "np2": {
+      "exchange_dump_files": 0,
+      "reference_records_identical": 20,
+      "comparison": "RHS records keyed by cell or face IDs; cache, HG state and mode files byte-identical"
+    },
+    "np4": {
+      "exchange_dump_files": 0,
+      "reference_records_identical": 40,
+      "comparison": "RHS records keyed by cell or face IDs; cache, HG state and mode files byte-identical"
+    }
+  },
+  "stale_geometry": {
+    "exit_code": 3,
+    "expected_invalid_record_rejection": true
+  },
+  "stale_state": {
+    "exit_code": 4,
+    "expected_invalid_record_rejection": true
+  },
+  "binary_sha256": "23e2dc7292a8b98cd04e1340556a7805529f26669805544bb9eebc897f112477",
+  "exam_sha256": "504452a16f6ad4971024cd236a71b2bb217ff253ebfa467740662d6d17dc6ca0",
+  "run_directory": "/gpfs/kjhan/LagForce/Codex_mpi_exchange_io_20261017",
+  "verification_correction": "Initial raw RHS file hash comparison rejected OpenMP row-order variation. The final verifier asserts unique cell/face IDs and compares all numeric bits after sorting by those IDs; initial verifier retained."
+}

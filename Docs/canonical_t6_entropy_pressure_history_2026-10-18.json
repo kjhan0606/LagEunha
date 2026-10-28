@@ -1,0 +1,134 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Codex_canonical_initial_20261017/run/khout.000000.dat",
+  "initial_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+  "seed": "/gpfs/kjhan/LagForce/Codex_coupled_onset_seed_20261018/reference/khout.000184.dat",
+  "seed_sha256": "cafde902076beac9f8ccd0efc5bdec0a2c6b07e35c5fd46736fac427f56cc840",
+  "seed_time": 2.0029059177634028,
+  "scope": "Algebraic pressure-error decomposition on each actual geometry. Signed projections sum to one but are not causal fractions or force/work budgets. No state or entropy is modified.",
+  "cases": {
+    "adaptive": {
+      "snapshot": "/gpfs/kjhan/LagForce/Codex_adaptive_qr_physical_to_t10_20261018/adaptive_from_t2/khout.001783.dat",
+      "sha256": "471f8c6a94482130b3cf1ea94476fc9c1155c27af82a6cc1f1e67de6bed13577",
+      "time": 6.000405917763673,
+      "decomposition_max_abs_residual": 1.7763568394002505e-15,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "total_pressure_error_RMS": 1.3749469176946088,
+          "components": {
+            "initial_entropy_compression": {
+              "RMS": 0.6712822760106404,
+              "signed_projection_on_total": 0.38285507639299
+            },
+            "inherited_entropy_before_t2": {
+              "RMS": 0.008082628743926238,
+              "signed_projection_on_total": 0.004775065021067389
+            },
+            "entropy_after_t2": {
+              "RMS": 0.9391809546533533,
+              "signed_projection_on_total": 0.6123698585859428
+            }
+          }
+        },
+        "inner_shear_band": {
+          "cells": 521,
+          "total_pressure_error_RMS": 1.578076353069597,
+          "components": {
+            "initial_entropy_compression": {
+              "RMS": 0.6938732708817374,
+              "signed_projection_on_total": 0.33620993033515745
+            },
+            "inherited_entropy_before_t2": {
+              "RMS": 0.00740999861315011,
+              "signed_projection_on_total": 0.0040486609509717214
+            },
+            "entropy_after_t2": {
+              "RMS": 1.1326762649020823,
+              "signed_projection_on_total": 0.6597414087138708
+            }
+          }
+        },
+        "disk_core": {
+          "cells": 10304,
+          "total_pressure_error_RMS": 0.002709964742613411,
+          "components": {
+            "initial_entropy_compression": {
+              "RMS": 0.0027076676403245026,
+              "signed_projection_on_total": 0.9987116821174127
+            },
+            "inherited_entropy_before_t2": {
+              "RMS": 1.7650649086911663e-05,
+              "signed_projection_on_total": -2.9324439512047476e-05
+            },
+            "entropy_after_t2": {
+              "RMS": 7.159597707162254e-05,
+              "signed_projection_on_total": 0.0013176423220995933
+            }
+          }
+        }
+      }
+    },
+    "legacy": {
+      "snapshot": "/gpfs/kjhan/LagForce/Codex_smooth_qr_physical_to_t10_20261018/legacy_continue/khout.001783.dat",
+      "sha256": "b4b9c80fad55b172cdbd133d346ad73ce90c48b293f6bbad09b3f5e4a3d7cfa4",
+      "time": 6.000405917763673,
+      "decomposition_max_abs_residual": 8.881784197001252e-16,
+      "regions": {
+        "inner_background": {
+          "cells": 804,
+          "total_pressure_error_RMS": 1.3170095679364207,
+          "components": {
+            "initial_entropy_compression": {
+              "RMS": 0.6136740992926798,
+              "signed_projection_on_total": 0.3624629500649101
+            },
+            "inherited_entropy_before_t2": {
+              "RMS": 0.007839904917518853,
+              "signed_projection_on_total": 0.00481752830300315
+            },
+            "entropy_after_t2": {
+              "RMS": 0.9179564001262828,
+              "signed_projection_on_total": 0.6327195216320867
+            }
+          }
+        },
+        "inner_shear_band": {
+          "cells": 521,
+          "total_pressure_error_RMS": 1.5053999966396485,
+          "components": {
+            "initial_entropy_compression": {
+              "RMS": 0.6248170563955282,
+              "signed_projection_on_total": 0.31536190016205434
+            },
+            "inherited_entropy_before_t2": {
+              "RMS": 0.007176407678715438,
+              "signed_projection_on_total": 0.004096539894922615
+            },
+            "entropy_after_t2": {
+              "RMS": 1.1016390477862168,
+              "signed_projection_on_total": 0.6805415599430231
+            }
+          }
+        },
+        "disk_core": {
+          "cells": 10304,
+          "total_pressure_error_RMS": 0.0027088099088351243,
+          "components": {
+            "initial_entropy_compression": {
+              "RMS": 0.002708987068187291,
+              "signed_projection_on_total": 0.9995882805749398
+            },
+            "inherited_entropy_before_t2": {
+              "RMS": 1.7651024026506537e-05,
+              "signed_projection_on_total": -1.2932149823309394e-05
+            },
+            "entropy_after_t2": {
+              "RMS": 7.446081772769563e-05,
+              "signed_projection_on_total": 0.00042465157488422455
+            }
+          }
+        }
+      }
+    }
+  }
+}

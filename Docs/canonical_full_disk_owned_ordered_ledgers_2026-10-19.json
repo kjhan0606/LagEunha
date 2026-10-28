@@ -1,0 +1,69 @@
+{
+  "status": "passed_owned_ordered_ledger_component",
+  "cells": 1590,
+  "nodes": 213064,
+  "backends": [
+    {
+      "backend": "cpu",
+      "threads": 1,
+      "ledger_bitwise": true,
+      "failures": {
+        "bad_status": {
+          "status": 1,
+          "caller_output_unchanged": true
+        },
+        "bad_owner": {
+          "status": 1,
+          "caller_output_unchanged": true
+        },
+        "nonfinite_flux": {
+          "status": 5,
+          "caller_output_unchanged": true
+        }
+      }
+    },
+    {
+      "backend": "cpu",
+      "threads": 4,
+      "ledger_bitwise": true,
+      "failures": {
+        "bad_status": {
+          "status": 1,
+          "caller_output_unchanged": true
+        },
+        "bad_owner": {
+          "status": 1,
+          "caller_output_unchanged": true
+        },
+        "nonfinite_flux": {
+          "status": 5,
+          "caller_output_unchanged": true
+        }
+      }
+    },
+    {
+      "backend": "cuda",
+      "threads": 1,
+      "ledger_bitwise": true,
+      "failures": {
+        "bad_status": {
+          "status": 1,
+          "caller_output_unchanged": true
+        },
+        "bad_owner": {
+          "status": 1,
+          "caller_output_unchanged": true
+        },
+        "nonfinite_flux": {
+          "status": 5,
+          "caller_output_unchanged": true
+        }
+      }
+    }
+  ],
+  "library_sha256": "51014e2fb7de34bb8eb1ed99c8ed0e22ecbbe5690a67327f8fec9892d5968471",
+  "seconds": 1.161127710947767,
+  "physical_providers": 0,
+  "evolution_steps": 0,
+  "limits": "Canonical ledger component only; no MPI evolution claim"
+}

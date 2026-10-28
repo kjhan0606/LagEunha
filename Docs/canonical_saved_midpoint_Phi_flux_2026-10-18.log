@@ -1,0 +1,135 @@
+{
+  "status": "completed",
+  "scope": "Saved actual midpoint potential/energy flux ledger; no fit or RHS.\n\nPsi here is a transport rate, not an evolved state or reconstructed integral.\nEndpoint reconstruction and its q24/48 uncertainty are a separate diagnostic.\n",
+  "stages": {
+    "stage0": {
+      "time": 0.0,
+      "nodes": 251888,
+      "transfers": {
+        "active_active": {
+          "nodes": 230768,
+          "mass_flux_absolute_sum": 0.43846637637188357,
+          "potential_flux_absolute_sum": 0.8108248010095676,
+          "active_mass_inward_rate": 0.0,
+          "active_hydro_boundary_rate": 0.0,
+          "active_potential_boundary_rate": 0.0
+        },
+        "active_frozen": {
+          "nodes": 10472,
+          "mass_flux_absolute_sum": 1.2226641135017127,
+          "potential_flux_absolute_sum": 2.004506398480685,
+          "active_mass_inward_rate": -3.382710778154774e-17,
+          "active_hydro_boundary_rate": 3.2732285434903738e-06,
+          "active_potential_boundary_rate": -5.971275243380619e-07
+        },
+        "frozen_frozen": {
+          "nodes": 8160,
+          "mass_flux_absolute_sum": 16.12503564101677,
+          "potential_flux_absolute_sum": 24.597701019824783,
+          "active_mass_inward_rate": 0.0,
+          "active_hydro_boundary_rate": 0.0,
+          "active_potential_boundary_rate": 0.0
+        },
+        "patch_exterior": {
+          "nodes": 2488,
+          "mass_flux_absolute_sum": 2.2422122181433403e-16,
+          "potential_flux_absolute_sum": 3.1890991895883234e-16,
+          "active_mass_inward_rate": 0.0,
+          "active_hydro_boundary_rate": 0.0,
+          "active_potential_boundary_rate": 0.0
+        }
+      },
+      "active_mass_residual_max": 5.844933911869354e-16,
+      "hydro_flux_vs_stored_active_max": 3.550762114890027e-18,
+      "shared_node_pair_cancellation_max": 0.0,
+      "gravity_Psi_cancellation_max": 0.0,
+      "active_hydro_energy_rate": 3.273228543501648e-06,
+      "active_gravity_energy_rate": 1.231057521178708e-10,
+      "active_Psi_transport_rate": -5.972506301357193e-07,
+      "active_boundary_hydro_rate": 3.273228543491675e-06,
+      "active_boundary_Phi_rate": -5.971275243397967e-07,
+      "active_combined_energy_rate": 2.6761010191180646e-06,
+      "combined_minus_boundary_residual": -3.381355525439167e-17,
+      "accumulation_roundoff_bound": 1.8455788129553615e-08,
+      "frozen_Psi_unmasked_sum": 5.971275559685761e-07,
+      "frozen_evolution_Psi_max": 0.0,
+      "active_patch_exterior_nodes": 0,
+      "frozen_note": "Frozen evolution is masked to zero; unmasked face/gravity exchange is separately retained, not claimed to evolve."
+    },
+    "midpoint": {
+      "time": 5e-05,
+      "nodes": 272336,
+      "transfers": {
+        "active_active": {
+          "nodes": 246664,
+          "mass_flux_absolute_sum": 0.4375820199987743,
+          "potential_flux_absolute_sum": 0.8091472311193105,
+          "active_mass_inward_rate": 0.0,
+          "active_hydro_boundary_rate": 0.0,
+          "active_potential_boundary_rate": 0.0
+        },
+        "active_frozen": {
+          "nodes": 12136,
+          "mass_flux_absolute_sum": 1.2226425330340005,
+          "potential_flux_absolute_sum": 2.0044726779960493,
+          "active_mass_inward_rate": 3.122502256758253e-17,
+          "active_hydro_boundary_rate": 4.287138307662586e-06,
+          "active_potential_boundary_rate": -2.651058578807819e-06
+        },
+        "frozen_frozen": {
+          "nodes": 10984,
+          "mass_flux_absolute_sum": 16.125366102330652,
+          "potential_flux_absolute_sum": 24.59824029581496,
+          "active_mass_inward_rate": 0.0,
+          "active_hydro_boundary_rate": 0.0,
+          "active_potential_boundary_rate": 0.0
+        },
+        "patch_exterior": {
+          "nodes": 2552,
+          "mass_flux_absolute_sum": 2.287484019180153e-16,
+          "potential_flux_absolute_sum": 3.25370297486383e-16,
+          "active_mass_inward_rate": 0.0,
+          "active_hydro_boundary_rate": 0.0,
+          "active_potential_boundary_rate": 0.0
+        }
+      },
+      "active_mass_residual_max": 6.949735925632083e-17,
+      "hydro_flux_vs_stored_active_max": 4.0318768289304696e-18,
+      "shared_node_pair_cancellation_max": 0.0,
+      "gravity_Psi_cancellation_max": 0.0,
+      "active_hydro_energy_rate": 4.28713830765688e-06,
+      "active_gravity_energy_rate": -1.2271402613813504e-09,
+      "active_Psi_transport_rate": -2.6498314386367866e-06,
+      "active_boundary_hydro_rate": 4.287138307668007e-06,
+      "active_boundary_Phi_rate": -2.651058578808903e-06,
+      "active_combined_energy_rate": 1.6360797287586944e-06,
+      "combined_minus_boundary_residual": -1.0040897963341927e-16,
+      "accumulation_roundoff_bound": 1.9948443104862785e-08,
+      "frozen_Psi_unmasked_sum": 2.651373172656295e-06,
+      "frozen_evolution_Psi_max": 0.0,
+      "active_patch_exterior_nodes": 0,
+      "frozen_note": "Frozen evolution is masked to zero; unmasked face/gravity exchange is separately retained, not claimed to evolve."
+    }
+  },
+  "dt": 0.0001,
+  "full_midpoint": {
+    "actual_hydro_energy_change": 4.285911154044096e-10,
+    "expected_hydro_plus_gravity_increment": 4.285911167395499e-10,
+    "hydro_update_residual": -1.3351402843017482e-18,
+    "transported_Psi_increment": -2.649831438636787e-10,
+    "hydro_plus_Phi_boundary_increment": 1.6360797288591037e-10,
+    "hydro_plus_transported_Psi_minus_boundary": -1.3451794393541805e-18
+  },
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/audit_saved_midpoint_potential_flux_ledger_20261018.py": "8095ed2f6995798f49de59bb15484b8d3ba4fe39b482bb4d7e2844e3e5732347",
+    "/gpfs/kjhan/LagForce/Codex_weight_remap_moments_centered_20261017/audit.py": "31c83d9b20df1a6b911d7752de7460c14998599ed25a32020ae9d643e9f4f94f",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/manifest.json": "85edff6b685c889d37354d678ec776b3def05894e90311f4925a1258e0641203",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/stage0/inputs.npz": "8f4ba27756a22da1e29b19d435421e5577e5d3ac9ff3140d098dc350cc9f4a4c",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/stage0/reference.npz": "762a21c63a444e55924dd0da604dff3b288420b1dc6d96e716ba55b3939dd592",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/inputs.npz": "8eb57f0abbe8ef0c0f7b6e50e776d2181da25f6d7d4ccfb2a3e4ceead2a20fa9",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/midpoint/reference.npz": "71d715ea09d22eac39ce6fdba81208e4f75b05a8abe8a15b10611a4456ab5d37",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/initial.npz": "33f57ff85740782970489c3186adcb129350638f14e1df205399d833b1f7f513",
+    "/gpfs/kjhan/LagForce/Codex_compiled_midpoint_once_20261018/accepted.npz": "76fe9ceac6a746a3c4a84c8fed87200c60c8685ebbab7a572eb5129931236072"
+  },
+  "limits": "Stored moment model flux ledger only. Potential transport is not an evolved variable. Numerical reconstructed endpoint Psi/q24-q48 still required; no analytic density replacement, heat correction or long-time success claim."
+}

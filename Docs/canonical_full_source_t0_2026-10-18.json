@@ -1,0 +1,197 @@
+{
+  "scope": "Direct instantaneous HG force/heat reconstructed from actual single-rank C mode assembly at saved epoch; no HG time integration.",
+  "time": 0.0,
+  "mode_count": 221079,
+  "support_entries": 4209105,
+  "source_sha256": "001e3ebbdfe5d006b9a3c3e510ca644ae347c2610f76d168a99b773c3c6cf862",
+  "mode_sha256": "ee031ad2ac0e6611e5f8305aeeff0f0b6a9de91d4a3aa1446b1e217c61d7323c",
+  "rhs_max_abs_difference_from_previous_dump": null,
+  "script_sha256": "f8524aba4db37ed271d0a3aac4e4d0fb65328c75b1a02ccb1000dda0b10c0f49",
+  "states": {
+    "actual": {
+      "heat_total": 3.234741126674043e-10,
+      "kinetic_power": -3.3155688706566905e-10,
+      "boundary_work": -8.082299376163735e-12,
+      "boundary_heat": 4.750220930581534e-16,
+      "energy_balance_residual": -7.97467219924792e-24,
+      "pair_radial_relative_acceleration": 0.00010069505299960875,
+      "cells": {
+        "803": {
+          "acceleration": [
+            3.0726533794995832e-06,
+            -3.405502423179653e-06
+          ],
+          "heat_over_U": 2.1506968205740734e-05
+        },
+        "804": {
+          "acceleration": [
+            0.00013874113615869373,
+            9.63512766700036e-05
+          ],
+          "heat_over_U": 5.8243474979740795e-06
+        },
+        "805": {
+          "acceleration": [
+            -0.00011673539306555654,
+            0.0005075597861686026
+          ],
+          "heat_over_U": 9.595815667131228e-06
+        },
+        "933": {
+          "acceleration": [
+            -8.522140703206917e-08,
+            9.902841328077047e-07
+          ],
+          "heat_over_U": 5.391712570769805e-07
+        },
+        "934": {
+          "acceleration": [
+            3.0338925591015386e-07,
+            1.0211202391289069e-06
+          ],
+          "heat_over_U": 7.117014574307488e-07
+        }
+      },
+      "regions": {
+        "initial_inner": {
+          "heat": 2.0752237000520843e-10,
+          "work_on_actual_velocity_departure": 8.840036062434743e-23,
+          "acceleration_mass_RMS": 8.831901457126208e-05
+        },
+        "initial_inner_edge": {
+          "heat": 7.094897602691436e-11,
+          "work_on_actual_velocity_departure": 1.2084139886964553e-24,
+          "acceleration_mass_RMS": 1.8783651549980425e-06
+        },
+        "initial_disk_core": {
+          "heat": 4.471578808097772e-11,
+          "work_on_actual_velocity_departure": -1.6914723997729202e-25,
+          "acceleration_mass_RMS": 2.0404460908598682e-07
+        }
+      }
+    },
+    "circular": {
+      "heat_total": 3.234741126675865e-10,
+      "kinetic_power": -3.3155688709613737e-10,
+      "boundary_work": -8.082299406457145e-12,
+      "boundary_heat": 4.750220930493937e-16,
+      "energy_balance_residual": -6.535130814838482e-25,
+      "pair_radial_relative_acceleration": 0.00010069505300045453,
+      "cells": {
+        "803": {
+          "acceleration": [
+            3.072653379507334e-06,
+            -3.4055024232064328e-06
+          ],
+          "heat_over_U": 2.150696820597826e-05
+        },
+        "804": {
+          "acceleration": [
+            0.00013874113615932322,
+            9.63512766708183e-05
+          ],
+          "heat_over_U": 5.824347497942767e-06
+        },
+        "805": {
+          "acceleration": [
+            -0.0001167353930666499,
+            0.0005075597861729409
+          ],
+          "heat_over_U": 9.595815667069629e-06
+        },
+        "933": {
+          "acceleration": [
+            -8.522140702374863e-08,
+            9.902841327958456e-07
+          ],
+          "heat_over_U": 5.391712570690128e-07
+        },
+        "934": {
+          "acceleration": [
+            3.033892558908587e-07,
+            1.021120239123613e-06
+          ],
+          "heat_over_U": 7.117014574136653e-07
+        }
+      },
+      "regions": {
+        "initial_inner": {
+          "heat": 2.0752237000520352e-10,
+          "work_on_actual_velocity_departure": 8.840036064904649e-23,
+          "acceleration_mass_RMS": 8.83190145716417e-05
+        },
+        "initial_inner_edge": {
+          "heat": 7.094897602710948e-11,
+          "work_on_actual_velocity_departure": 1.2084139890879128e-24,
+          "acceleration_mass_RMS": 1.8783651550029996e-06
+        },
+        "initial_disk_core": {
+          "heat": 4.4715788080972335e-11,
+          "work_on_actual_velocity_departure": -1.691472352348635e-25,
+          "acceleration_mass_RMS": 2.0404460908601115e-07
+        }
+      }
+    }
+  },
+  "limits": [
+    "NumPy reduction order differs from C; no bitwise modal-force claim.",
+    "Circular velocities reuse the same geometry, thermodynamic state and geometric mode coefficients.",
+    "Instantaneous modal sum is not a finite split step or a long-time stability proof."
+  ],
+  "full_source_audit": {
+    "initial_inner": {
+      "cells": 803,
+      "velocity_departure_mass_RMS": 1.9145377272522915e-15,
+      "pressure_acceleration_mass_RMS": 4.067571378262325e-11,
+      "TCF_acceleration_mass_RMS": 5.2640583736944345e-05,
+      "HG_acceleration_mass_RMS": 8.831901457126208e-05,
+      "total_hydro_acceleration_mass_RMS": 9.905672669495636e-05,
+      "gravity_acceleration_mass_RMS": 7.556783398719025,
+      "pressure_over_initial_min_max": [
+        0.9999999999999999,
+        1.0000000000000002
+      ],
+      "Vdot_over_V_mass_RMS": 0.12078829616699278,
+      "compression_Pdot_over_P_mass_RMS": 0.20131386534255324,
+      "TCF_Pdot_over_P_mass_RMS": 0.0026007236677692168,
+      "HG_Pdot_over_P_mass_RMS": 1.2066413029705628e-05,
+      "total_Pdot_over_P_mass_RMS": 0.20132642129575953
+    },
+    "initial_inner_edge": {
+      "cells": 390,
+      "velocity_departure_mass_RMS": 1.5286011561817646e-16,
+      "pressure_acceleration_mass_RMS": 1.3626815826545084e-14,
+      "TCF_acceleration_mass_RMS": 6.987975416779495e-08,
+      "HG_acceleration_mass_RMS": 1.8783651549980425e-06,
+      "total_hydro_acceleration_mass_RMS": 1.8628152380445412e-06,
+      "gravity_acceleration_mass_RMS": 3.2985609039011625,
+      "pressure_over_initial_min_max": [
+        0.9999999999999999,
+        1.0000000000000002
+      ],
+      "Vdot_over_V_mass_RMS": 0.05185842811290937,
+      "compression_Pdot_over_P_mass_RMS": 0.08643073000686595,
+      "TCF_Pdot_over_P_mass_RMS": 7.024177842839356e-05,
+      "HG_Pdot_over_P_mass_RMS": 1.1927065404390995e-05,
+      "total_Pdot_over_P_mass_RMS": 0.08643032017488468
+    },
+    "initial_disk_core": {
+      "cells": 10304,
+      "velocity_departure_mass_RMS": 1.0829684513368158e-16,
+      "pressure_acceleration_mass_RMS": 1.842630244257697e-15,
+      "TCF_acceleration_mass_RMS": 1.1208630768930136e-08,
+      "HG_acceleration_mass_RMS": 2.0404460908598682e-07,
+      "total_hydro_acceleration_mass_RMS": 2.0328228356844e-07,
+      "gravity_acceleration_mass_RMS": 0.8676863717985605,
+      "pressure_over_initial_min_max": [
+        0.9999999999999998,
+        1.0000000000000002
+      ],
+      "Vdot_over_V_mass_RMS": 0.013207799602870308,
+      "compression_Pdot_over_P_mass_RMS": 0.0220130035367636,
+      "TCF_Pdot_over_P_mass_RMS": 6.927297378219787e-06,
+      "HG_Pdot_over_P_mass_RMS": 6.199681920197642e-07,
+      "total_Pdot_over_P_mass_RMS": 0.022013141834746477
+    }
+  }
+}
