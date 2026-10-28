@@ -1,0 +1,68 @@
+{
+  "observed_at": "2026-10-29T02:59:08.207542+09:00",
+  "root": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_ada_20261029",
+  "source_frozen_batch": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029",
+  "cases": [
+    "qualifier_old",
+    "qualifier_new",
+    "control40",
+    "vertex40",
+    "vertex20",
+    "vertex20_reuse",
+    "vertex20_reuse_local_sync"
+  ],
+  "host": "LagEunha",
+  "GPU_UUID": "GPU-42b3367f-1df7-2b2d-7961-7781c87b022d",
+  "execution_mode": "manual_dedicated_Ada",
+  "parent_checkpoint_sha256": "c34a846dedaf2e01a8e5548de2aa091f98db53f761424ce6cd931107ff0fc4a4",
+  "canonical_binary_sha256": "6718551061d70e24e09f0fe000a35b5cf1ac8c1a15b579f1e97e6d907b42baa0",
+  "candidate_binary_sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+  "changes_from_A100_cases": [
+    "local MPI bootstrap",
+    "actual manual host/GPU/session recorder"
+  ],
+  "physical_geometry_force_and_timestep_gates_changed": false,
+  "outputs_estimated_GB": 1.8,
+  "evolution_processes_at_once": 1,
+  "OMP_threads": 2,
+  "execution_timeout_seconds": 2400,
+  "existing_Slurm_jobs_modified": false,
+  "source_hashes": {
+    "audit_kepler_vertex_halo_pair_20261029.py": "24de65f76730903b2f8c8b1f9a8ce868e7ea67c66e8e039f1a54e44da627e243",
+    "audit_kepler_geometry_force_dump_20261029.py": "31b384b9a4a60162181b2e5b9fdfceca5dd7406b3372995405ab1102f35552f3",
+    "audit_kepler_padding_reuse_pair_20261028.py": "db59592e2783483a179cfe72302fe5fe745201eda183f899bf8b5d65ac7f27da",
+    "audit_kepler_vertex_halo_manual_20261029.py": "b2e1d447c86e071aeb0a395dc14d8028ec2a3e9609f1be9285cd6eb6dd08966a",
+    "run_cases.sh": "92b367c7bfae00351bf73cc9fef4daf3e1a9c8bba01f7254da6de6ad6026c961",
+    "run_manual.sh": "73ed84d01ef5634e783690bc872a828d2efd3974a22fea45e2ae8336e3a10ffe",
+    "audit_kepler_polar_long_gate_20261027.py": "a7f0f33e52bbf820ef0e5059f5b505641119c4b483be4de85466137f99d7efe0",
+    "run_cases_remaining.sh": "0c596648478a12c3e675bb1591df3a647c11ade593664d067b901545296e397d",
+    "run_manual_remaining.sh": "5c16a2a4e3419970ef3fb3e129779a9df61d6e70697a18fb2a1aa447fe658c07"
+  },
+  "packaging_recovery": {
+    "observed_at": "2026-10-29T03:03:34.553912+09:00",
+    "cause": "Missing root-level transitive audit import",
+    "qualifier_native_runs_reused": true,
+    "completed_native_cases_replayed": 0,
+    "remaining_native_cases": [
+      "control40",
+      "vertex40",
+      "vertex20",
+      "vertex20_reuse",
+      "vertex20_reuse_local_sync"
+    ],
+    "physical_gates_changed": false,
+    "execution_context": "Same actual host/GPU and benchmark UUID; new actual supervisor recorded",
+    "archive": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_ada_20261029/packaging_recovery_20261029",
+    "source_hashes": {
+      "audit_kepler_vertex_halo_pair_20261029.py": "24de65f76730903b2f8c8b1f9a8ce868e7ea67c66e8e039f1a54e44da627e243",
+      "audit_kepler_geometry_force_dump_20261029.py": "31b384b9a4a60162181b2e5b9fdfceca5dd7406b3372995405ab1102f35552f3",
+      "audit_kepler_padding_reuse_pair_20261028.py": "db59592e2783483a179cfe72302fe5fe745201eda183f899bf8b5d65ac7f27da",
+      "audit_kepler_vertex_halo_manual_20261029.py": "b2e1d447c86e071aeb0a395dc14d8028ec2a3e9609f1be9285cd6eb6dd08966a",
+      "run_cases.sh": "92b367c7bfae00351bf73cc9fef4daf3e1a9c8bba01f7254da6de6ad6026c961",
+      "run_manual.sh": "73ed84d01ef5634e783690bc872a828d2efd3974a22fea45e2ae8336e3a10ffe",
+      "audit_kepler_polar_long_gate_20261027.py": "a7f0f33e52bbf820ef0e5059f5b505641119c4b483be4de85466137f99d7efe0",
+      "run_cases_remaining.sh": "0c596648478a12c3e675bb1591df3a647c11ade593664d067b901545296e397d",
+      "run_manual_remaining.sh": "5c16a2a4e3419970ef3fb3e129779a9df61d6e70697a18fb2a1aa447fe658c07"
+    }
+  }
+}
