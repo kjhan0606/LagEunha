@@ -1,0 +1,39 @@
+{
+  "observed_at": "2026-10-29T02:38:39.768384+09:00",
+  "reviewer": "Astra /root/astra_weighted_halo_review",
+  "scope": "Exact-arithmetic sufficient condition and isolated host reference, not native GPU or long-time verification",
+  "compile_command": [
+    "g++",
+    "-std=c++17",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "Docs/test_gfs_weighted_vertex_halo_reference_20261029.cpp",
+    "-o",
+    "/tmp/test_gfs_weighted_vertex_halo_reference_20261029"
+  ],
+  "compiler": "g++ (GCC) 13.2.0",
+  "compile_warnings": "",
+  "test_result": {
+    "zero_weight_reduction_cases": 100000,
+    "weighted_boundary_cases": 20000,
+    "accepted_checked_in_long_double": 9945,
+    "rejected": 10055,
+    "outside_sites_checked_standard_and_clamped": 238680,
+    "explicit_clamp_transition_cases": 10,
+    "tangent_invalid_overflow_stale_bound_cases": "pass",
+    "native_solver_changed": false
+  },
+  "source_sha256": {
+    "gfs_vertex_halo.h": "2d6dc31182d9dd50147df62deb40bacf3ec7780dc98d9e83ff77919de57b10de",
+    "gfs_weighted_vertex_halo_reference_20261029.h": "105d2dc7e2f165f946619f682c60ef3b26ba0d709e2f5f7d733993c9af05cf2c",
+    "test_gfs_weighted_vertex_halo_reference_20261029.cpp": "9ee689c0db2c8b541287866af61ce264090ee4025a771ec48ad858e227e5f553",
+    "KEPLER_WEIGHTED_VERTEX_HALO_REFERENCE_2026-10-29.md": "85f93642918f611c6c6c5dc6191355f128930eefb2926ba9612489be82e51b99"
+  },
+  "production_modified": false,
+  "frozen_W0_candidate_modified": false,
+  "slurm_jobs_submitted": 0,
+  "CUDA_compiled_or_executed": false
+}
