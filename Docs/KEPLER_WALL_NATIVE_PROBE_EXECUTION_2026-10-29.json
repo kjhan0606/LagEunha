@@ -1,0 +1,47 @@
+{
+  "observed_at": "2026-10-29T07:31:23.898335+09:00",
+  "preimpact_control_terminal": "0 wrapper / 98 expected old native wall abort",
+  "preimpact_time": 48.37534965270793,
+  "native_candidate_sha256": "3a9e98eaed65a903534a001f6c400c4ad815b7d873577ad52cd658ab1b580e45",
+  "native_first_RHS_matrix": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_band_probes",
+  "native_first_RHS_cases_passed": 7,
+  "flag_off_full_restart_parity_passed": true,
+  "native_independent_audit": {
+    "job": 1236226,
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "seconds": 2
+  },
+  "native_face_independent_audit": {
+    "job": 1236471,
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "seconds": 2
+  },
+  "superseded_postprocessor": {
+    "job": 1236092,
+    "seconds": 1,
+    "reason": "Reader physical-field whitelist excludes ax/ay/die; replaced postprocessor reads existing native RHS TSV. No GPU probes repeated for this correction."
+  },
+  "face_capture_output_correction": {
+    "auxiliary_stopped": "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_band_faces/run_ada.sh",
+    "completed_cases_reused": [
+      "baseline",
+      "inside"
+    ],
+    "remaining_cases_completed_under_GFS_GPU_TESS_DUMP_0": [
+      "on",
+      "outside",
+      "maximum_band"
+    ],
+    "large_derived_candidate_text_logs_removed_only": true,
+    "native_snapshots_or_input_records_deleted": false
+  },
+  "RK4_event_controller_implemented": false,
+  "collision_or_rollback_path_verified": false,
+  "new_Q1_boundary_evolution_started": false,
+  "production_files_modified": false,
+  "new_GPU_Slurm_jobs": 0,
+  "execution": "Finite manual Ada tasks and two short CPU Slurm audits; all terminal at this receipt",
+  "full_goal_achieved": false
+}

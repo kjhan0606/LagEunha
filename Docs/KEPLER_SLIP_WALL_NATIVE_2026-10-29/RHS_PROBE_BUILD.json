@@ -1,0 +1,129 @@
+{
+  "project": "LagEunha native CUDA+MPI+OpenMP fixed-polygon W0",
+  "base": "472e7fcc3419b060d8fa0c74f0961f6c1f9f188b",
+  "reconstruction": [
+    "Docs/KEPLER_NATIVE_SOURCE_OVERLAY_2026-10-27",
+    "Docs/KEPLER_FIXEDPOLY_SOURCE_OVERLAY_2026-10-27",
+    "Docs/KEPLER_BOUNDED_FAST_RK4_2026-10-27/Exam/exam.c",
+    "Docs/KEPLER_FIXEDPOLY_WALL_SELECT_PRECLIP_2026-10-27.patch",
+    "Docs/KEPLER_SLIP_WALL_NATIVE_2026-10-29/WALL_RHS_PROBE.patch"
+  ],
+  "source_hashes": {
+    "Exam/exam.c": "419daf0839c529808c50d868a4c1a0136625b27e452a2420b7f095a4ca8ba935",
+    "Exam/exam_gpu.cu": "51131a9e715147bc69041714d773938158d754f53e7a389646751ee1661ffc8b",
+    "Exam/exam_gpu_extract.c": "3f50f417275f2778758c920f513d4b61b87cbb651e4825b516febd85a44dc365",
+    "Exam/exam_gpu.h": "4729eaac9faa200cbfef77eab5f341efbdbf6db73e8fb215cc974b6b736143a8",
+    "Exam/KH/kh.c": "e07d97fe8bfb78f27c881bbc714f2bce826bc8d57362963b208211d7fda43d24",
+    "Exam/KH/util.c": "2df498afb2b8e38aef933bea40208091aeadea20100fddb66264189fa08e9e5e"
+  },
+  "patch_sha256": "cd28fa0c607d79317cb456d780829cf7c0303d477e2511cf7449dd79e7576f89",
+  "exact_patch_reconstruction_verified": true,
+  "binary_sha256": "3a9e98eaed65a903534a001f6c400c4ad815b7d873577ad52cd658ab1b580e45",
+  "build_host": "LagEunha",
+  "modules": "\nCurrently Loaded Modules:\n  1) intel/tbb/2022.3             4) intel/compiler/2025.3.0   7) cuda/13.0.2\n  2) intel/compiler-rt/2025.3.0   5) intel/mpi/2021.17\n  3) intel/umf/1.0.2              6) gnu13/13.2.0\n\n \n\n",
+  "build_script": "#!/bin/bash\nset -euo pipefail\ncd /gpfs/kjhan/LagForce/Kepler_SlipWall_EventsBuild_20261029/project\nmodule purge\nmodule load intel/tbb/2022.3 intel/compiler-rt/2025.3.0 intel/umf/1.0.2 intel/compiler/2025.3.0 intel/mpi/2021.17 gnu13/13.2.0 cuda/13.0.2\nhostname > ../build_host.txt\nmodule list > ../build_modules.txt 2>&1\nmake -C Exam/KH -j2 USE_CUDA=1 GFS_VARPRESS_W0=1 libkh.a > ../build_kh.log 2>&1\nmake -C Exam -j2 USE_CUDA=1 GFS_VARPRESS_W0=1 libexam.a > ../build_exam.log 2>&1\nmake -j2 USE_CUDA=1 GFS_VARPRESS_W0=1 this > ../build_link.log 2>&1\nsha256sum eunha2.exe Exam/exam.c Exam/exam_gpu.cu Exam/exam_gpu_extract.c Exam/exam.o Exam/exam_gpu.o > ../build_outputs.sha256\n",
+  "reused_non_Exam_archives": {
+    "Params/libheader.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Params/libheader.a",
+      "sha256": "7270f79b9c41badbdaf168a7f91b21fb7f0be371a553dc830ea76edcff380801"
+    },
+    "Cosmos/libcosmology.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Cosmos/libcosmology.a",
+      "sha256": "5e53906ed89320ee6294917eb8bf6db3d4562db4811d4cfd61f84a82fee1e1fa"
+    },
+    "Cosmos/CosmosIC/libtwolpt.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Cosmos/CosmosIC/libtwolpt.a",
+      "sha256": "ef5e955453651ddf21206d01d7d60530ddc12d316fd9c4fa9a23933cdaf0ac32"
+    },
+    "Cosmos/CosmosRW/libkjhrw.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Cosmos/CosmosRW/libkjhrw.a",
+      "sha256": "9f98070029266b85b52bdedad72d884187b25fa0a0a6f8aba48c9dff97b02a55"
+    },
+    "RkS/librks.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/RkS/librks.a",
+      "sha256": "3e1bd7f54fcd39d2d4c02f2ebf3665b840bab842e95b8e8bdb0e44a6e630625a"
+    },
+    "Timer/libtimerutil.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Timer/libtimerutil.a",
+      "sha256": "607a39ba318a7e5b398aeedc34413fc12dbdaf524a73f0d1404c0e48f04532a3"
+    },
+    "SPH/libsph.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/SPH/libsph.a",
+      "sha256": "5453f7ee5cd245bde0c0e3b65024405a19490217eba7c80e36fa25d4febd2347"
+    },
+    "RECFAST/librecfast.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/RECFAST/librecfast.a",
+      "sha256": "ea4c0f94751e8a9afd2d37565b2b1d317d91277d40cd1788e7a6329d73a105ba"
+    },
+    "DenRW/libdenrw.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/DenRW/libdenrw.a",
+      "sha256": "9f0ec5ea8cc93e0d9c4218acb970278975fc35958f1daa12a9fd39008c014e8b"
+    },
+    "MpiAux/libmpiaux.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/MpiAux/libmpiaux.a",
+      "sha256": "5f8d7ac9de9ca0c19c164b3667d21f7ddb87b242bed91cdce5b08e8a180d9e56"
+    },
+    "ParallelIO/libparallelIO.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/ParallelIO/libparallelIO.a",
+      "sha256": "0f0a0a0eedaf9a0dfc2b55da814b65916b1035b4ef03f0ca84c59aa6d113ffde"
+    },
+    "Exam/RT/librt.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Exam/RT/librt.a",
+      "sha256": "d30615c0b5f1d9cfa6bf3aab36e15a7bf1e5ae594c41ca9b43050ac7cf433079"
+    },
+    "Exam/RT_LF/librtold.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Exam/RT_LF/librtold.a",
+      "sha256": "02fd012bb89e5e0d140b5e6f36235ef3c29ffaa93301cf1c5df6cd511f827527"
+    },
+    "Exam/Kepler/libkp.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Exam/Kepler/libkp.a",
+      "sha256": "e2a17953272d77fa336d0b1b4fab3a742c18b7953d7feea1eeb92a1a8f8a53da"
+    },
+    "Exam/MkGlass2D/libglass2d.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Exam/MkGlass2D/libglass2d.a",
+      "sha256": "899faa22e6169a101d9ade25883048f3b5d8573537bf61dfd6c367db7dd7349a"
+    },
+    "Exam/Cylinder/libcyl.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Exam/Cylinder/libcyl.a",
+      "sha256": "20e69bb3dbf78e1c2ba789d2cc7cda9479a5270b45f08aa7aced6efcab14a28d"
+    },
+    "Exam/Sedov2D/libsedov2d.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Exam/Sedov2D/libsedov2d.a",
+      "sha256": "f70d2063c4361eb50abf1bdd9ac29537e49bac9af1fce700e35fbd50924732f8"
+    },
+    "OST/libost.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/OST/libost.a",
+      "sha256": "70dc1f4c8df6b682bf7a4e9a167260cb64a77b142005b290857f7e0531d6ba58"
+    },
+    "Colorize/libcolor.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Colorize/libcolor.a",
+      "sha256": "26162a584aac5d4d9f543a2bda662f66a4cb897b2fecf23ecd1972730e38b077"
+    },
+    "Voro/libmyvoro.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Voro/libmyvoro.a",
+      "sha256": "424bdff2f637e9b32eaf378d701f4343c2fed29b2baf13d5ff5455bbd5d24b06"
+    },
+    "SPH/JShin/cooling/libget_lambda.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/SPH/JShin/cooling/libget_lambda.a",
+      "sha256": "552c5d308b5e5e6e80200cf8faf5aedbd4142cdb76dd50850d2b42aa32490cd6"
+    },
+    "SPH/JShin/ssp/libnew_ssp.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/SPH/JShin/ssp/libnew_ssp.a",
+      "sha256": "1b6b5f384592b6925b717891e0302e0fc0eeaad766c2ee915b41743f4467042e"
+    },
+    "SPH/JShin/Extern/libextforce.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/SPH/JShin/Extern/libextforce.a",
+      "sha256": "1ac316db49b1f2d5c7dbae8dc99800f593151a50fb6447928056022db23f1bfd"
+    },
+    "Cosmos/CosmosIC/CAMB_Sources/libcamb.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/Cosmos/CosmosIC/CAMB_Sources/libcamb.a",
+      "sha256": "6b73a616cd9f7b37df616cebdb2b8ee894702151ed0400616d2ed43c94c80b17"
+    },
+    "FFT/libfft.a": {
+      "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_native_build_20261029/project/FFT/libfft.a",
+      "sha256": "1ee5657079726e9693a8b85f45052ce3899ff1da323c4cf9b7d9a09e18e3077a"
+    }
+  },
+  "scope": "First-K1-only RHS diagnostic candidate; no event controller or physical production switch. GPU band permitted only with GFS_WALL_RHS_PROBE_ONLY=1 and max1e-6. Both new flags absent preserve original behavior.",
+  "patch_application": "Zero-context source patch after exact baseline hash check; GNU patch -p1, or git apply --unidiff-zero"
+}

@@ -1,16 +1,17 @@
 {
-  "observed_at": "2026-10-29T06:50:18.017543+09:00",
+  "observed_at": "2026-10-29T07:31:23.945154+09:00",
   "native_header_scope": "Accepted-impact impulse only; not RK4 event handling, bounded tessellation, fluid evolution, or production activation",
   "sources": {
-    "Exam/kepler_slip_wall.h": "1ca3e2d658607b8c58de3cb18ac367c94dbe244aba46f3cedc862218a399abf3",
+    "Exam/kepler_slip_wall.h": "4032460b4631bb430dea0c61d36de51118918fa120efb826242b38fbf942cc25",
     "test_slip_wall.cpp": "c3fef5929d4a2bc37692b07021c080e1ffbfb4d8663d09f4367d5b6b422baa5c",
+    "test_slip_wall_c.c": "1d2781b4f812807545b0fe7f71eccb726a4f822e960d4ed6ac92cdd609fef56d",
     "test_slip_wall_cuda.cu": "a346bab05725cd43a4cc3f94dcc58e6b1444fa3f1a318fc821a470e74a2ff663"
   },
   "CPU_test": {
     "command": "g++ -std=c++17 -O2 -Wall -Wextra -Werror -pedantic test_slip_wall.cpp -o /tmp/kepler-slip-wall-test-20261029 && /tmp/kepler-slip-wall-test-20261029",
     "exit_code": 0,
     "cases": "1024 circular oblique impacts plus planar oblique, tangential, incoming, polygon torque and invalid-input cases",
-    "result": "PASS"
+    "result": "PASS: native slip impulse, 1024 circular oblique impacts, polygon torque ledger, tangent/incoming and invalid events"
   },
   "CUDA_test": {
     "host": "LagEunha",
@@ -29,5 +30,43 @@
   "uniform_pressure_boundary_test_completed": false,
   "Q2_crossing_replay_completed": false,
   "Q1_new_boundary_evolution_completed": false,
-  "test_root": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Primitives_20261029"
+  "test_root": "/gpfs/kjhan/LagForce/Kepler_SlipWall_EventsBuild_20261029/primitives_c_compatible",
+  "previous_CPP_only_header_validation": {
+    "observed_at": "2026-10-29T06:50:18.017543+09:00",
+    "native_header_scope": "Accepted-impact impulse only; not RK4 event handling, bounded tessellation, fluid evolution, or production activation",
+    "sources": {
+      "Exam/kepler_slip_wall.h": "1ca3e2d658607b8c58de3cb18ac367c94dbe244aba46f3cedc862218a399abf3",
+      "test_slip_wall.cpp": "c3fef5929d4a2bc37692b07021c080e1ffbfb4d8663d09f4367d5b6b422baa5c",
+      "test_slip_wall_cuda.cu": "a346bab05725cd43a4cc3f94dcc58e6b1444fa3f1a318fc821a470e74a2ff663"
+    },
+    "CPU_test": {
+      "command": "g++ -std=c++17 -O2 -Wall -Wextra -Werror -pedantic test_slip_wall.cpp -o /tmp/kepler-slip-wall-test-20261029 && /tmp/kepler-slip-wall-test-20261029",
+      "exit_code": 0,
+      "cases": "1024 circular oblique impacts plus planar oblique, tangential, incoming, polygon torque and invalid-input cases",
+      "result": "PASS"
+    },
+    "CUDA_test": {
+      "host": "LagEunha",
+      "device": "GPU-42b3367f-1df7-2b2d-7961-7781c87b022d, NVIDIA RTX 5000 Ada Generation",
+      "compiler": "/opt/ohpc/pub/cuda/13.0.2/bin/nvcc\nnvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Wed_Aug_20_01:58:59_PM_PDT_2025\nCuda compilation tools, release 13.0, V13.0.88\nBuild cuda_13.0.r13.0/compiler.36424714_0\n",
+      "command": "nvcc -std=c++17 -O2 -gencode arch=compute_80,code=sm_80 -gencode arch=compute_89,code=sm_89 test_slip_wall_cuda.cu -o test_slip_wall_cuda; ./test_slip_wall_cuda",
+      "exit_code": 0,
+      "native_result": "PASS CUDA primitive: GPU=NVIDIA RTX 5000 Ada Generation cases=4096 max_kinetic_roundoff=3.8149542613687919e-18 max_wall_torque=5.9554695540247083e-18",
+      "kernel_cases": 4096,
+      "max_absolute_kinetic_roundoff": 3.814954261368792e-18,
+      "max_absolute_circle_wall_torque": 5.955469554024708e-18,
+      "comparison": "Host/device impulse values and conservation within 256 double machine eps at unit scale; not asserted bitwise parity"
+    },
+    "production_enabled": false,
+    "RK4_event_controller_implemented": false,
+    "uniform_pressure_boundary_test_completed": false,
+    "Q2_crossing_replay_completed": false,
+    "Q1_new_boundary_evolution_completed": false,
+    "test_root": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Primitives_20261029"
+  },
+  "C_compatibility_test": {
+    "exit_code": 0,
+    "result": "PASS: C native header compatibility and oblique impulse/torque"
+  },
+  "header_change": "C-compatible typedef only; C/C++ and CUDA tests rerun on the new header"
 }

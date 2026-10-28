@@ -1,0 +1,45 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10955,0 +10956,17 @@
++#ifdef USE_CUDA
++    /* Diagnostic-only local extension probe. Serialize the computed K1
++     * arrays and stop before any position predictor or accepted evolution. */
++    const char *wall_rhs_probe=getenv("GFS_WALL_RHS_PROBE_ONLY");
++    if(wall_rhs_probe && strcmp(wall_rhs_probe,"1")==0){
++        if(NID(simpar)!=1 || postStage!=fixed_polygon_postStage_blend ||
++           GAS_AVMODE(simpar)!=5 || GAS_Kappa(simpar)!=0 ||
++           !GAS_GPU_ENABLED(simpar) || !gpu_varpress_w0_enabled() ||
++           tx.on || thermal64 || w2lin || dynw2){
++            fprintf(stderr,"[WALL_RHS_PROBE] unsupported native probe contract\n");MPI_Abort(MPI_COMM(simpar),99);
++        }
++        gfs_rk4_failure_snapshot(simpar,VORORK4_TBP(simpar),VORO_NP(simpar),
++            "wall_rhs_probe",Dtime,GAS_dtold(simpar));
++        fprintf(stderr,"[WALL_RHS_PROBE] computed K1 for all %td owned sites; diagnostic only, no accepted evolution\n",VORO_NP(simpar));
++        fflush(stderr);exit(0);
++    }
++#endif
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -43,0 +44,2 @@
++/* Diagnostic-only RHS extension; never an accepted external state. */
++static __constant__ double d_gfs_wall_rhs_probe_band;
+@@ -103,0 +106,11 @@
++    double probe_band=0.;
++    const char *band=getenv("GFS_WALL_RHS_PROBE_BAND");
++    if(band && band[0]) {
++        char *end=NULL;probe_band=strtod(band,&end);
++        const char *only=getenv("GFS_WALL_RHS_PROBE_ONLY");
++        if(*end || !isfinite(probe_band) || probe_band<0. || probe_band>1.e-6 ||
++           !only || strcmp(only,"1")) {
++            fprintf(stderr,"[WALL_RHS_PROBE] requires probe-only mode and 0<=band<=1e-6\n");exit(1);
++        }
++    }
++    CUDA_CHECK(cudaMemcpyToSymbol(d_gfs_wall_rhs_probe_band,&probe_band,sizeof(probe_band)));
+@@ -2822 +2835,2 @@
+-                if (!(threshold>0.0)) {
++                if (!isfinite(threshold) || threshold < -d_gfs_wall_rhs_probe_band ||
++                    (d_gfs_wall_rhs_probe_band==0. && !(threshold>0.0))) {
+@@ -2971 +2985,2 @@
+-                if (!(threshold>0.0)) {
++                if (!isfinite(threshold) || threshold < -d_gfs_wall_rhs_probe_band ||
++                    (d_gfs_wall_rhs_probe_band==0. && !(threshold>0.0))) {

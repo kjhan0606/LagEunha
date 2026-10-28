@@ -1,0 +1,100 @@
+{
+  "cases": [
+    {
+      "site_penetration": -0.0001,
+      "minimum_cell_area": 0.9065174521207688,
+      "outside_site_cell_area": 1.377410715191651,
+      "force_on_crossing_site": [
+        -0.08283891806432253,
+        -0.0971251275521226
+      ],
+      "gradient_errors": [
+        {
+          "h": 0.0001,
+          "gradient_error": 1.1910428253558629e-08
+        },
+        {
+          "h": 5e-05,
+          "gradient_error": 3.0143031714550364e-09
+        },
+        {
+          "h": 2.5e-05,
+          "gradient_error": 7.319638629109235e-10
+        }
+      ],
+      "adjoint_power_residual": 0.0,
+      "partition_error": 0.0,
+      "wall_traction_residual": 2.504777312823609e-15,
+      "wall_faces": 75,
+      "closure_residual": 1.1102230246251565e-16,
+      "reciprocal_residual": 1.2490009027033011e-15
+    },
+    {
+      "site_penetration": 0.0,
+      "minimum_cell_area": 0.9065174521207688,
+      "outside_site_cell_area": 1.3772917552010444,
+      "force_on_crossing_site": [
+        -0.08310351625464958,
+        -0.0972735724099617
+      ],
+      "gradient_errors": [
+        {
+          "h": 0.0001,
+          "gradient_error": 1.1877508120623905e-08
+        },
+        {
+          "h": 5e-05,
+          "gradient_error": 2.959592724078914e-09
+        },
+        {
+          "h": 2.5e-05,
+          "gradient_error": 8.291157538632939e-10
+        }
+      ],
+      "adjoint_power_residual": 1.3877787807814457e-17,
+      "partition_error": 7.105427357601002e-15,
+      "wall_traction_residual": 1.807312143953211e-15,
+      "wall_faces": 75,
+      "closure_residual": 1.1102230246251565e-16,
+      "reciprocal_residual": 1.2490009027033011e-15
+    },
+    {
+      "site_penetration": 0.0001,
+      "minimum_cell_area": 0.9065174521207688,
+      "outside_site_cell_area": 1.3771727931922442,
+      "force_on_crossing_site": [
+        -0.08336816168509331,
+        -0.097422033118947
+      ],
+      "gradient_errors": [
+        {
+          "h": 0.0001,
+          "gradient_error": 1.1899426654639735e-08
+        },
+        {
+          "h": 5e-05,
+          "gradient_error": 3.00962077779053e-09
+        },
+        {
+          "h": 2.5e-05,
+          "gradient_error": 7.244645161574949e-10
+        }
+      ],
+      "adjoint_power_residual": -2.7755575615628914e-17,
+      "partition_error": 7.105427357601002e-15,
+      "wall_traction_residual": 2.8887141192996264e-15,
+      "wall_faces": 75,
+      "closure_residual": 1.1102230246251565e-16,
+      "reciprocal_residual": 1.7208456881689926e-15
+    }
+  ],
+  "checks": {
+    "all_cells_positive": true,
+    "gradient_matches_inside_on_and_outside": true,
+    "static_wall_power_closes": true,
+    "area_partition_closes": true,
+    "wall_traction_closes": true
+  },
+  "passed": true,
+  "scope": "Independent 16-cell fixed-polygon variational geometry with one generator just inside/on/outside the boundary. Outside site does not imply empty clipped cell. Supports a local mathematical RHS extension only while every cell stays positive; does not certify native GPU behavior, arbitrary excursions, event accuracy or long-time stability."
+}

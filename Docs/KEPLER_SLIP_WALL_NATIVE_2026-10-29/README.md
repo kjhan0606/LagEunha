@@ -18,3 +18,11 @@ Host tests pass, and 4096 actual RTX 5000 Ada kernel cases pass host/device tole
 6. Test native Q1 t=3,6.5,10 using unchanged radial and zero-injection gates. Then establish boundary-radius/polygon convergence for t=120,600 and the interpreted approximately 1000 inner-orbit target. Closed-wall success is not automatically GIZMO boundary equivalence; meaningful wall dependence requires a genuine free/outflow branch.
 
 Astra recommended this bundle after the saved-state exterior-support attribution. Full long-time stability remains unverified.
+
+## First-RHS extension diagnostic added
+
+`WALL_RHS_PROBE.patch` reconstructs the limited native diagnostic from the tested fast-CPU/selective-wall source. `RHS_PROBE_BUILD.json` pins all source, linked archive and executable hashes. It permits a bounded outward generator excursion (at most 1e-6) only with `GFS_WALL_RHS_PROBE_ONLY=1`, computes the first native K1 RHS for all owned particles and exits before any predictor or accepted evolution. This is not the RK4 event controller or a production boundary switch. Normal flag-off output matched the original entire restart body (excluding the next pointer) and full footer exactly in a tiny accepted replay from the late Q2 fixture.
+
+The preimpact fixture is now captured at exact t=48.37534965270793; the unchanged native solver reproduces the original ID55283/side543 failure immediately after it. Inside/contact/outside/max-band probes pass independent volume/force/work and native selected-face support/reciprocity checks; band-exceeded and empty-cell fixtures reject. See the project-level probe result receipts. This validates a local trial RHS extension, not collision accuracy, rollback correctness or long-time stability.
+
+`EVENT_CONTROLLER_DESIGN.md` records the next integration points and unimplemented tests. The C-compatible header now passes C, C++ and actual Ada CUDA compilation/runtime checks; `VALIDATION.json` preserves the initial C++-only receipt alongside the updated header validation.

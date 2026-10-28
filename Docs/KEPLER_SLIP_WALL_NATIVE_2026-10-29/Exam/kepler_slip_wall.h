@@ -22,12 +22,12 @@ enum GfsSlipStatus {
     GFS_SLIP_REFLECTED = 1
 };
 
-struct GfsSlipImpulse {
+typedef struct GfsSlipImpulse {
     double vx_after, vy_after;
     double wall_jx, wall_jy;
     double wall_torque_impulse;
     double fluid_kinetic_roundoff;
-};
+} GfsSlipImpulse;
 
 GFS_SLIP_HD static inline int gfs_slip_impulse(
     double rx, double ry, double nx, double ny,
