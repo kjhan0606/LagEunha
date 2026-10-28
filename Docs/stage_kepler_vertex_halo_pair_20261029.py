@@ -14,6 +14,40 @@ ROOT=Q1/'vertex_halo_pair_t2654918_a100_20261029'
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def job_script(root):
+    return f'''#!/usr/bin/env bash
+#SBATCH --job-name=KepVertexHaloPair
+#SBATCH --partition=a100,a100_pcie
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --gres=gpu:A100:1
+#SBATCH --mem=48G
+#SBATCH --time=00:40:00
+#SBATCH --chdir={root}
+#SBATCH --output={root}/slurm-%j.out
+#SBATCH --error={root}/slurm-%j.err
+set -euo pipefail
+sha256sum -c audit_inputs.sha256
+pair_start_seconds=$SECONDS
+for name in qualifier_old qualifier_new control40 vertex40 vertex20 vertex20_reuse vertex20_reuse_local_sync; do
+  remaining=$((2400-(SECONDS-pair_start_seconds)))
+  case_budget=450
+  if [[ "$name" == qualifier_* ]]; then case_budget=90; fi
+  if (( remaining < case_budget+180 )); then
+    printf '{{"case":"%s","remaining_seconds":%d,"passed":false,"reason":"insufficient time for case and final comparison"}}\\n' "$name" "$remaining" > {root}/incomplete.json
+    exit 3
+  fi
+  cd {root}/$name
+  bash run.sh > runner.out 2> runner.err
+  if [[ "$name" == qualifier_new ]]; then
+    /home/kjhan/miniconda3/bin/python3 {root}/audit_kepler_vertex_halo_pair_20261029.py --qualifier > {root}/qualifier.log
+  fi
+done
+/home/kjhan/miniconda3/bin/python3 {root}/audit_kepler_vertex_halo_pair_20261029.py > {root}/comparison.log
+'''
+
+
 def main():
     build_root=Q1/'vertex_halo_native_build_20261029'
     build=json.loads((build_root/'build_result.json').read_text())
@@ -26,15 +60,18 @@ def main():
     assert sha(checkpoint)=='c34a846dedaf2e01a8e5548de2aa091f98db53f761424ce6cd931107ff0fc4a4'
     ROOT.mkdir()
     for name in ['audit_kepler_vertex_halo_pair_20261029.py','audit_kepler_geometry_force_dump_20261029.py',
-                 'audit_kepler_padding_reuse_pair_20261028.py','audit_kepler_polar_long_gate_20261027.py']:
+                 'audit_kepler_padding_reuse_pair_20261028.py','audit_kepler_polar_long_gate_20261027.py',
+                 'record_kepler_vertex_case_context_20261029.py']:
         shutil.copy2(DOCS/name,ROOT/name)
     start=2.6549183918680868
-    cases=[('qualifier_old',old,0,40,start+1e-5,0),
-           ('qualifier_new',candidate,0,40,start+1e-5,0),
-           ('control40',candidate,0,40,2.66,4),
-           ('vertex40',candidate,1,40,2.66,4),
-           ('vertex20',candidate,1,20,2.66,4)]
-    for name,binary,enabled,halo,target,dumps in cases:
+    cases=[('qualifier_old',old,0,40,start+1e-5,0,0,0),
+           ('qualifier_new',candidate,0,40,start+1e-5,0,0,0),
+           ('control40',candidate,0,40,2.66,4,0,0),
+           ('vertex40',candidate,1,40,2.66,4,0,0),
+           ('vertex20',candidate,1,20,2.66,4,0,0),
+           ('vertex20_reuse',candidate,1,20,2.66,4,1,0),
+           ('vertex20_reuse_local_sync',candidate,1,20,2.66,4,1,1)]
+    for name,binary,enabled,halo,target,dumps,reuse,alias in cases:
         run=ROOT/name;run.mkdir()
         inputs={'eunha2.exe':binary,'params.dat':(source/'params.dat').resolve(),
                 'khout.000000.dat':(source/'khout.000000.dat').resolve(),
@@ -48,47 +85,28 @@ def main():
         script=script.replace('HYDRO_TSTOP=2.6600000000000001',f'HYDRO_TSTOP={target:.17g}')
         script=script.replace('--time 2.6600000000000001',f'--time {target:.17g}')
         assert 'GFS_REUSE_TESS_PADDING=0' in script and 'GFS_GPU_LOCAL_PERIODIC_SYNC=0' in script
+        script=script.replace('GFS_REUSE_TESS_PADDING=0',f'GFS_REUSE_TESS_PADDING={reuse}')
+        script=script.replace('GFS_GPU_LOCAL_PERIODIC_SYNC=0',f'GFS_GPU_LOCAL_PERIODIC_SYNC={alias}')
         script=script.replace("TIMEFORMAT=",f'export GFS_GPU_VERTEX_HALO_CERT={enabled} GFS_GEOM_FORCE_DUMP_MAXCALL={dumps}\nTIMEFORMAT=',1)
+        script=script.replace('TIMEFORMAT=',f'"$PY" {ROOT}/record_kepler_vertex_case_context_20261029.py\nTIMEFORMAT=',1)
         (run/'run.sh').write_text(script)
         subprocess.run(['bash','-n',str(run/'run.sh')],check=True)
         (run/'inputs.sha256').write_text(''.join(f'{sha(path)}  {dest}\n' for dest,path in inputs.items())
                                        +f'{sha(run/"run.sh")}  run.sh\n')
-    job=f'''#!/usr/bin/env bash
-#SBATCH --job-name=KepVertexHaloPair
-#SBATCH --partition=a100_pcie
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --gres=gpu:A100:1
-#SBATCH --mem=48G
-#SBATCH --time=00:40:00
-#SBATCH --chdir={ROOT}
-#SBATCH --output={ROOT}/slurm-%j.out
-#SBATCH --error={ROOT}/slurm-%j.err
-set -euo pipefail
-sha256sum -c audit_inputs.sha256
-for name in qualifier_old qualifier_new control40 vertex40 vertex20; do
-  cd {ROOT}/$name
-  bash run.sh > runner.out 2> runner.err
-  if [[ "$name" == qualifier_new ]]; then
-    /home/kjhan/miniconda3/bin/python3 {ROOT}/audit_kepler_vertex_halo_pair_20261029.py --qualifier > {ROOT}/qualifier.log
-  fi
-done
-/home/kjhan/miniconda3/bin/python3 {ROOT}/audit_kepler_vertex_halo_pair_20261029.py > {ROOT}/comparison.log
-'''
+    job=job_script(ROOT)
     (ROOT/'job.slurm').write_text(job)
     subprocess.run(['bash','-n',str(ROOT/'job.slurm')],check=True)
     audit_files=[ROOT/p.name for p in ROOT.iterdir() if p.suffix=='.py']+[ROOT/'job.slurm']
     (ROOT/'audit_inputs.sha256').write_text(''.join(f'{sha(p)}  {p.name}\n' for p in audit_files))
     receipt={'recorded_at':datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(),
              'root':str(ROOT),'start':start,'target':2.66,'checkpoint':str(checkpoint),
-             'cases':[{'name':n,'binary_sha256':sha(b),'vertex_certificate':e,'halo':h,'target':t,'read_only_force_dumps':d} for n,b,e,h,t,d in cases],
+             'cases':[{'name':n,'binary_sha256':sha(b),'vertex_certificate':e,'halo':h,'target':t,'read_only_force_dumps':d,'padding_reuse':r,'local_alias':a} for n,b,e,h,t,d,r,a in cases],
              'native_binary':build,'qualifier':'Canonical executable vs candidate with all new options off; exact fields and accepted-step trace',
              'gate':'Exact ten endpoint fields, accepted-step traces, owned/face counts, all four RK4 per-cell force/work/timestep arrays and complete face geometry plus normalized neighbor/image identities',
              'safety':'Existing 15 physics checks and every energy ledger injection/count zero; actual-padding domain banners required; reduced halo must exercise the new certificate',
-             'relationship_to_job_439029':'Independent experiment: this changes geometric halo certification/width; 439029 measures redundant host padding and MPI/local alias refresh. New feature stays off in that job.',
-             'storage_policy':'Five endpoint dumps about 425 MB plus twelve binary face/force audits about 650 MB; parent states linked. About 1.2 GB total including executables/logs.',
-             'resources':{'partition':'a100_pcie','GPU':1,'CPUs':2,'memory_GB':48,'minutes':40},
+             'relationship_to_job_439029':'This tests exact single-rank combinations; 439029 separately validates MPI/rank behavior and host reuse on its frozen binary.',
+             'storage_policy':'Seven endpoints about 595 MB plus twenty full force/face dumps about 1.1 GB; parent states linked. About 1.8 GB including executables/logs.',
+             'resources':{'partition':'a100,a100_pcie','GPU':1,'CPUs':2,'memory_GB':48,'minutes':40},
              'production_modified':False,'production_promoted':False}
     (ROOT/'staging_receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
     result=subprocess.run(['ssh','syntax','sbatch','--parsable',str(ROOT/'job.slurm')],capture_output=True,text=True)

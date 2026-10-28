@@ -53,9 +53,46 @@ the new certificate. Wall measurements include the initial read-only dumps;
 production speed without dumps remains a later check. About 1.2 GB of output
 is budgeted. No early-time trajectory is restarted.
 
+### Seven-case revision before execution
+
+The five-case job 439065 was still pending with zero elapsed allocation when
+Astra reviewed the resource-constrained plan. Its submitted script, original
+workers, checksums and receipt were archived before replacement by **439115**.
+The new explicit batch retains those five cases and adds `vertex20_reuse`
+and `vertex20_reuse_local_sync`, each controlled against its direct predecessor.
+It reuses the same compiled binary and accepted restart; no build or evolution
+was repeated. Pending GPU job count is unchanged. Both A100 partitions are
+eligible, with one GPU for the entire paired batch; the user-wide GPU cap
+still applies, and other projects were not altered.
+
+Every case records its requested flags and Slurm allocation. All seven must
+complete on the same allocation. Reuse and device alias execution must be
+witnessed by their native banners; alias fallback or a no-op is not accepted
+as successful acceleration. The new four rejection-path tests cover absent
+branches, wrong domains, incomplete certificates and mixed/missing allocations.
+The batch checks remaining time before each case and reserves 180 seconds
+for final comparison. Insufficient time produces an incomplete receipt and
+exit 3, without changing the endpoint or weakening a gate. The seven-case
+storage budget is about 1.8 GB, including twenty full face/force dumps.
+
+Reported timing includes native total wall and native internal step means
+after the first, dump-producing step. The latter is a partial timer, not the
+complete driver wall cost; no stable production speedup is promised from one
+short screen. Only a fully validated exact combination may be considered at
+a natural checkpoint boundary of the long run. Its current executable and
+automatic continuation are unchanged.
+
+An independent CPU-only `cuobjdump` comparison checks the actual old/new
+SM80/86/89/90 kernel resource records. Register, stack, shared and explicit
+local allocations match for tessellation, force and EOS. In particular,
+tessellation still uses 128 registers and 2976-byte stack (2992 on SM90).
+This excludes a static footprint increase from the new guard; it is not a
+runtime occupancy, bandwidth or speed measurement.
+
 The pending host-padding/MPI/local-sync job 439029 is independent: it retains
 its previously frozen executable and auditor. The new vertex experiment
-keeps both padding reuse and local alias refresh off. The updated common
+keeps both padding reuse and local alias refresh off in its first five cases,
+then tests their exact single-rank combinations. The updated common
 auditor permits differing padding counts only when explicitly requested by
 the halo-width comparison; existing comparisons still require exact counts.
 
@@ -69,3 +106,16 @@ dependencies, libraries and commands. It preserves the original library as
 `libexam.input.a`; `rebuild.slurm` restores that input before repeating the
 original preflight. The initial submitted script, logs and binary remain
 unchanged. No build was repeated just to preserve this provenance.
+
+## Existing transaction path remains out of scope
+
+A source audit of `gfs_rk4_transaction.inc` confirms it is a guarded smooth-W0
+experiment with required geometry coefficient C=0.2 and an all-cell maximum
+entropy-defect budget proportional to accepted step size. The current long
+run uses C=0.1. This is not a drop-in positivity-only switch: both its
+configuration contract and entropy-based acceptance differ. Its rollback
+halves time, which cannot repair a missing halo image. A future positivity-only
+design must separately audit restoration, accepted flux/energy ledgers and
+shock admissibility; this revision enables none of those paths. The current
+work remains geometry/implementation equivalence, with long-term physical
+validation outstanding.

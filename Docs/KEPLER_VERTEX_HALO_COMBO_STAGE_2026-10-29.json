@@ -1,0 +1,32 @@
+{
+  "recorded_at": "2026-10-29T01:24:03.605655+09:00",
+  "old_job": 439065,
+  "new_job": 439115,
+  "before": "JobId=439065 JobName=KepVertexHaloPair UserId=kjhan(10396) GroupId=kjhan(10396) MCS_label=N/A Priority=2231 Nice=0 Account=kias QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:40:00 TimeMin=N/A SubmitTime=2026-10-29T00:51:02 EligibleTime=2026-10-29T00:51:02 AccrueTime=2026-10-29T00:51:02 StartTime=2026-10-30T22:24:27 EndTime=2026-10-30T23:04:27 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-29T01:23:51 Scheduler=Backfill:* Partition=a100,a100_pcie AllocNode:Sid=syntax:3937212 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=48G,node=1,billing=5,gres/gpu=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=48G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/job.slurm WorkDir=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029 StdErr=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/slurm-439065.err StdIn=/dev/null StdOut=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/slurm-439065.out TresPerNode=gres/gpu:A100:1 TresPerTask=cpu=2",
+  "held_state": "JobId=439065 JobName=KepVertexHaloPair UserId=kjhan(10396) GroupId=kjhan(10396) MCS_label=N/A Priority=0 Nice=0 Account=kias QOS=normal JobState=PENDING Reason=JobHeldUser Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:40:00 TimeMin=N/A SubmitTime=2026-10-29T00:51:02 EligibleTime=Unknown AccrueTime=Unknown StartTime=2026-10-30T22:24:27 EndTime=2026-10-30T23:04:27 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-29T01:23:51 Scheduler=Backfill:* Partition=a100,a100_pcie AllocNode:Sid=syntax:3937212 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=48G,node=1,billing=5,gres/gpu=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=48G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/job.slurm WorkDir=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029 StdErr=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/slurm-439065.err StdIn=/dev/null StdOut=/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/slurm-439065.out TresPerNode=gres/gpu:A100:1 TresPerTask=cpu=2",
+  "archive": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/unstarted_five_case_20261029",
+  "job_script": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/vertex_halo_pair_t2654918_a100_20261029/job_with_combinations.slurm",
+  "job_script_sha256": "482b37b06d997f5bf6a165b7ad179cd3b265aee0c66e9006ad8475c7ef063582",
+  "cases": [
+    "qualifier_old",
+    "qualifier_new",
+    "control40",
+    "vertex40",
+    "vertex20",
+    "vertex20_reuse",
+    "vertex20_reuse_local_sync"
+  ],
+  "native_binary_sha256": "a22e0e8ebea0eca807ab3762d95bf037184b7784218a42fd2eb1ae7a24526bfc",
+  "native_build_repeated": false,
+  "pending_GPU_job_count_change": 0,
+  "reason": "Astra recommends two sequential controlled combinations to validate single-GPU acceleration without waiting for the independent two-GPU allocation",
+  "physics_or_time_window_changed": false,
+  "checkpoint_start": 2.6549183918680868,
+  "full_case_target": 2.66,
+  "gate": "Exact first four RK4 complete face/support/image and force/work arrays plus strict endpoint and every zero-injection ledger; direct predecessor controls; all seven cases one allocation with exact requested flags",
+  "time_guard": "40 minutes total; require 450 seconds for each full case or 90 for a qualifier plus 180 seconds comparison reserve; insufficient time records incomplete and exits without shortening evolution",
+  "storage_policy": "About 1.8 GB: seven endpoints plus twenty full face/force dumps; parents linked",
+  "tests": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.004s\n\nOK\n",
+  "long_run_and_its_continuation_modified": false,
+  "production_promoted": false
+}
