@@ -1,0 +1,58 @@
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -2791,16 +2791,13 @@
+     }
+ 
+     if (d_gfs_fixedpoly_on && nc>=3) {
+-        /* The nearest real generators narrow the initial square enough for
+-         * its circular boundary to fit the corner buffer. Clip the fixed
+-         * domain before streaming the remaining candidates: near an outer
+-         * cell, unrelated real supports can otherwise fill all 48 slots
+-         * before the final wall cut discards them. Intersecting with the
+-         * fixed domain here still leaves a superset of the true cell, so
+-         * the subsequent radius-based competitor search stays complete. */
++        /* Eight exact fixed-wall planes make a cheap superset of the
++         * 1024-gon. They bound outer cells before candidate streaming without
++         * creating dozens of transient wall fragments. All 1024 planes
++         * are still applied after the real-site search below. */
+         const double cx=xi-3.0,cy=yi-3.0;
+         if (hypot(cx,cy)+1.4142135623730951*halfbox > d_gfs_fixedpoly_apothem) {
+-            for (int k=0;k<GFS_FIXEDPOLY_SIDES;k++) {
++            for (int k=0;k<GFS_FIXEDPOLY_SIDES;k+=128) {
+                 const double nx=d_gfs_fixedpoly_nx[k],ny=d_gfs_fixedpoly_ny[k];
+                 const double threshold=d_gfs_fixedpoly_apothem-nx*cx-ny*cy;
+                 if (!(threshold>0.0)) {
+@@ -2940,6 +2937,33 @@
+                     }
+                 }
+             }
++        }
++    }
++
++    if (d_gfs_fixedpoly_on && nc>=3) {
++        /* Complete the exact fixed-domain intersection after the real-site
++         * candidate search. The earlier eight-plane superset cannot lose a
++         * true competitor; this pass removes every remaining coarse excess. */
++        const double cx=xi-3.0,cy=yi-3.0;
++        if (hypot(cx,cy)+1.4142135623730951*halfbox > d_gfs_fixedpoly_apothem) {
++            for (int k=0;k<GFS_FIXEDPOLY_SIDES;k++) {
++                const double nx=d_gfs_fixedpoly_nx[k],ny=d_gfs_fixedpoly_ny[k];
++                const double threshold=d_gfs_fixedpoly_apothem-nx*cx-ny*cy;
++                if (!(threshold>0.0)) {
++                    atomicAdd(&d_gfs_tess_geometry_errors,1ull);
++                    face_count_out[i]=0;return;
++                }
++                if (threshold>=halfbox*(fabs(nx)+fabs(ny))) continue;
++                nc=gpu_clip_voronoi_halfplane(nx,ny,threshold,-1000-k,
++                    poly_x,poly_y,poly_neigh,nc,tmp_x,tmp_y,tmp_neigh,1);
++                if (nc<3) {
++                    atomicAdd(&d_gfs_tess_geometry_errors,1ull);
++                    face_count_out[i]=0;return;
++                }
++            }
++            maxdist2=0.0;
++            for (int e=0;e<nc;e++)
++                maxdist2=fmax(maxdist2,poly_x[e]*poly_x[e]+poly_y[e]*poly_y[e]);
+         }
+     }
+ 

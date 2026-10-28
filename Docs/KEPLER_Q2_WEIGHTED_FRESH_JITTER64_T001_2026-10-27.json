@@ -1,0 +1,74 @@
+{
+  "reference": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_fresh_jitter64_t001_a10_v1/accepted_initial.dat",
+  "initial": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_fresh_jitter64_t001_a10_v1/khout.000000.dat",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_fresh_jitter64_t001_a10_v1/khout.000001.dat",
+  "reference_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "initial_sha256": "5405246644f68f00dd5621b6b608406812747b95a8afbe61ffa19592ff1991e1",
+  "endpoint_sha256": "84f3ea95ab50a47621285dcfbb162d504312b3f0dbf14d4f15c86d1b463716db",
+  "binary_sha256": "7358c54996b820a7b45bd53bcf6f788f125754b3158845d2b4265afead570f38",
+  "time": 0.001,
+  "n": 55351,
+  "disk_sites": 49038,
+  "initial_field_matches": {
+    "x": true,
+    "y": true,
+    "vx": true,
+    "vy": true,
+    "mass": true,
+    "volume": true,
+    "ie": true,
+    "den": true,
+    "pressure": true,
+    "w2": true
+  },
+  "initial_state": {
+    "positive": true,
+    "density_relative_max": 5.053995821846513e-08,
+    "eos_pressure_relative_max": 9.845663573315733e-08,
+    "volume_sum": 23.758145390616846
+  },
+  "endpoint_state": {
+    "positive": true,
+    "density_relative_max": 5.901074429104369e-08,
+    "eos_pressure_relative_max": 9.172775028432056e-08,
+    "volume_sum": 23.758145372383296
+  },
+  "disk_density_abs_mass_weighted": 9.435523667174313e-08,
+  "disk_entropy_log_abs_mass_weighted": 3.8188496652953324e-08,
+  "total_energy_relative": 3.501137107511749e-14,
+  "independent_power_area_error_max": 5.958458371146946e-08,
+  "hidden_active_power_cells": 0,
+  "weight_range": 4.687419874471743e-08,
+  "weight_stages": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "rk4_injection": {
+    "floor_cum": 0.0,
+    "de_cum": 0.0,
+    "sfl_cum": 0.0
+  },
+  "checks": {
+    "accepted_t0_physical_fields_exact": true,
+    "finite_positive": true,
+    "fixed_mass_exact": true,
+    "initial_W0": true,
+    "nonnegative_nontrivial_weights": true,
+    "area_tiles_polygon": true,
+    "independent_power_area": true,
+    "density_and_EOS": true,
+    "one_step_density_safety": true,
+    "one_step_entropy_safety": true,
+    "total_energy": true,
+    "zero_injection": true,
+    "four_weight_stages": true,
+    "pressure_force_active": true,
+    "inside_polygon_incircle": true,
+    "no_geometry_abort": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true
+  },
+  "scope": "Native one-step fresh weighted jitter pilot. Passing is not a long-time or local moving-face conservation result."
+}

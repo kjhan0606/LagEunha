@@ -1,0 +1,15 @@
+{
+  "purpose": "Causal diagnostic only: suppress W0 variational pressure force while retaining geometric PdV and EOS",
+  "baseline_binary_sha256": "3fc66a5fd36d41d6191a7c26c7186db18aefe6c990b826604fa7bea6f75cd55e",
+  "baseline_gpu_source_sha256": "2194c4aa81ea0eee030c5b07955794d0b7dc8d25dbc32f5049d14c71add67865",
+  "diagnostic_gpu_source_sha256": "b17e681f4ef72e68450fd9bc95ec29c0bf606bc33331a03568a0d3410dd988c8",
+  "diagnostic_makefile_sha256": "4f45f553c2221fc253a83fa8600086003d3cc09f999569d81ba2ce81027c04b5",
+  "diagnostic_gpu_object_sha256": "a610a6800bf05f6fcd99ffd6a20b5024069c1f5831a77691dfb1e6626d77b035",
+  "diagnostic_binary_sha256": "0a65c373613a5b31f8449b456387ebcf80d72136a81e46eec10c9692a8bed5e7",
+  "compiler_stack": "Intel MPI and OpenMP, CUDA 13.0.2, sm80/sm86/sm89/sm90",
+  "flags": ["USE_CUDA=1", "GFS_VARPRESS_W0=1", "GFS_DIAG_PRESSURE_FORCE_OFF=1"],
+  "patch": "Docs/KEPLER_DIAG_PRESSURE_FORCE_OFF_2026-10-27.patch",
+  "build_script": "Docs/build_kepler_pressure_force_off_20261027.sh",
+  "long_run_binary_copy": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_to10_a10_v1/eunha2.exe",
+  "physics_status": "Not a physical hydrodynamics branch; momentum/energy adjoint broken by design"
+}

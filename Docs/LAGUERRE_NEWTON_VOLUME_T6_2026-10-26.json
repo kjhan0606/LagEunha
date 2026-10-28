@@ -1,0 +1,94 @@
+{
+  "n_sites": 71080,
+  "n_active": 22512,
+  "boundary_weights": "zero outside 1 <= initial r < 8",
+  "target": "initial unweighted Voronoi area at each active site",
+  "history": [
+    {
+      "stage": "unweighted",
+      "relative_l2": 12.103648599720543,
+      "median_rel": 9.532876518076389e-05,
+      "p95_rel": 0.0809128416713978,
+      "max_rel": 1.2125995444408266,
+      "inner_r2_2p25_median_rel": 0.07988683239300877,
+      "inner_r2_2p25_p95_rel": 0.26120636334417213,
+      "inner_r2_2p25_max_rel": 0.3456211368627717
+    },
+    {
+      "stage": "first_linear_step",
+      "cg_iterations": 334
+    },
+    {
+      "stage": "nonlinear_0",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 3.8505013900539615,
+      "median_rel": 4.3886151009549694e-09,
+      "p95_rel": 0.003435507512598532,
+      "max_rel": 0.9848232336021283,
+      "inner_r2_2p25_median_rel": 0.0014688140286125417,
+      "inner_r2_2p25_p95_rel": 0.02362364783217446,
+      "inner_r2_2p25_max_rel": 0.06560805733695613,
+      "cg_iterations": 346,
+      "accepted_factor": 0.5
+    },
+    {
+      "stage": "nonlinear_1",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 2.1198349374467544,
+      "median_rel": 4.178622879812287e-09,
+      "p95_rel": 0.0018338598695966841,
+      "max_rel": 0.6186381586421956,
+      "inner_r2_2p25_median_rel": 0.0007364833846218567,
+      "inner_r2_2p25_p95_rel": 0.011830202083420874,
+      "inner_r2_2p25_max_rel": 0.03287387396398521,
+      "cg_iterations": 338,
+      "accepted_factor": 0.5
+    },
+    {
+      "stage": "nonlinear_2",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 1.2011987737649878,
+      "median_rel": 2.3060238163452595e-09,
+      "p95_rel": 0.0008266440903601809,
+      "max_rel": 0.3240945693635745,
+      "inner_r2_2p25_median_rel": 0.00036873903046499536,
+      "inner_r2_2p25_p95_rel": 0.005918986418752562,
+      "inner_r2_2p25_max_rel": 0.016446884817519783,
+      "cg_iterations": 336,
+      "accepted_factor": 0.25
+    },
+    {
+      "stage": "nonlinear_3",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 0.9546356664671841,
+      "median_rel": 1.739762309524748e-09,
+      "p95_rel": 0.000619983489685991,
+      "max_rel": 0.27036962543765086,
+      "inner_r2_2p25_median_rel": 0.0002765845555485511,
+      "inner_r2_2p25_p95_rel": 0.004439507544596684,
+      "inner_r2_2p25_max_rel": 0.012335832023786174,
+      "cg_iterations": 334,
+      "accepted_factor": 0.125
+    },
+    {
+      "stage": "nonlinear_4",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 0.8599647252710433,
+      "median_rel": 1.5239089003039732e-09,
+      "p95_rel": 0.0005424855338990003,
+      "max_rel": 0.25402228842161395,
+      "inner_r2_2p25_median_rel": 0.00024201569193691184,
+      "inner_r2_2p25_p95_rel": 0.0038846069615071123,
+      "inner_r2_2p25_max_rel": 0.010793949961629955,
+      "cg_iterations": 334,
+      "accepted_factor": null
+    }
+  ],
+  "total_wall_seconds": 32.75557413500792,
+  "limitation": "Geometric t=6 existence test only; no time evolution, weighted-face conservation or near-AREPO runtime evidence"
+}

@@ -1,0 +1,40 @@
+{
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t6501_guard_a10_v2",
+  "mode": "experimental fixed-mass pressure-work-neutral weighted RK4",
+  "start_time": 6.5,
+  "target_time": 6.501,
+  "binary_sha256": "e90a287d25b0d82705f70ad645b5eadade7a18cd3aebff1622606960a333e7a1",
+  "guard_source_sha256": "75e2a75b3069052407d6c7ff20514850fe18872d5227430334b0673ab4b6164f",
+  "mask_sha256": "b560aca44c81e4560f8371c6d979e1afbe853f8cd18b592d0fc19a58becc8f4c",
+  "parent_sha256": {
+    "aligned": "6639d430782aa8d198991ecfac597a0caaae085155cfa452e16f14b2c6aab857",
+    "jitter": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff"
+  },
+  "root_inputs": {
+    "disk_active_mask.bin": "b560aca44c81e4560f8371c6d979e1afbe853f8cd18b592d0fc19a58becc8f4c",
+    "job.slurm": "0d07b7ce0e0132975cfa7a938b6c4b8a43432bc4cac55cf6d5290095fbb4553a"
+  },
+  "case_inputs": {
+    "aligned": {
+      "eunha2.exe": "e90a287d25b0d82705f70ad645b5eadade7a18cd3aebff1622606960a333e7a1",
+      "params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+      "khout.000001.dat": "6639d430782aa8d198991ecfac597a0caaae085155cfa452e16f14b2c6aab857",
+      "audit_kepler_q2_weighted_short_replay_20261027.py": "be53e4a036502e098ff530329ba1db5568279fa6ca0fa593d98bcbaf78320649",
+      "audit_kepler_sparse_area_t0825_20261027.py": "22691a957714845bf86bc63fd2acb85bb6280ad2a851718af7dba225746b6df4",
+      "audit_kepler_sparse_state_consistency_20261027.py": "d4e08e22abdbc3d40b635e6aee14a7b2124d9788fda89711ebb9195c263413ea",
+      "laguerre_nonlinear_volume_probe_t6_20261026.py": "851fe68c0c616fb25405c0c340169d325ef175028af5c1fddeffe9126a30d162",
+      "prepare_kepler_sparse_area_restart_20261027.py": "613f8e8fc5f355dd33b63e41074483dc0f1ee4ae783a3ff671f1268332cd1050"
+    },
+    "jitter": {
+      "eunha2.exe": "e90a287d25b0d82705f70ad645b5eadade7a18cd3aebff1622606960a333e7a1",
+      "params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+      "khout.000001.dat": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+      "audit_kepler_q2_weighted_short_replay_20261027.py": "be53e4a036502e098ff530329ba1db5568279fa6ca0fa593d98bcbaf78320649",
+      "audit_kepler_sparse_area_t0825_20261027.py": "22691a957714845bf86bc63fd2acb85bb6280ad2a851718af7dba225746b6df4",
+      "audit_kepler_sparse_state_consistency_20261027.py": "d4e08e22abdbc3d40b635e6aee14a7b2124d9788fda89711ebb9195c263413ea",
+      "laguerre_nonlinear_volume_probe_t6_20261026.py": "851fe68c0c616fb25405c0c340169d325ef175028af5c1fddeffe9126a30d162",
+      "prepare_kepler_sparse_area_restart_20261027.py": "613f8e8fc5f355dd33b63e41074483dc0f1ee4ae783a3ff671f1268332cd1050"
+    }
+  },
+  "scope": "One native weighted step only; not a release or long-term Kepler result."
+}

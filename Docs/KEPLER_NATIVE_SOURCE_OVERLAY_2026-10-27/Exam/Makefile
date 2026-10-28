@@ -1,0 +1,175 @@
+#CAMB Makefile
+#Edit for your compiler
+#Note there are many ifc versions, some of which behave oddly
+
+#Intel , -openmp toggles mutli-processor:
+#note version 10.0 gives wrong result for lensed when compiled with -openmp [fixed in 10.1]
+#F90C     = ifort
+#FFLAGS = -openmp -O2 -ip -W0 -WB -fpp2 -vec_report0
+#FFLAGS = -openmp -O2 -ip -W0 -WB -fpp2 -vec_report0
+include ../sRules.make
+CCFLAGS = $(OPT) $(specialrules)
+LDFLAGS = -L. -lkh  $(OPT)
+
+
+VORO = ../Voro
+RKS = ../RkS
+COSMOS = ../Cosmos
+TIMER = ../Timer
+MPIAUX = ../MpiAux
+COLOR = ../Colorize
+OST = ../OST
+# Intel 9 on IA-64 (eg. COSMOS)
+# (do "module load icomp90" before compiling)
+#F90C = ifort
+#FFLAGS = -openmp -fpp2 -w -O3 -ip -mP2OPT_hlo_prefetch=F
+
+#Intel ifc, add -openmp for multi-processor (some have bugs):
+#F90C     = ifc
+#FFLAGS = -O2 -Vaxlib -ip -W0 -WB -quiet -fpp2
+#some systems can can also add e.g. -tpp7 -xW
+
+#G95 compiler
+#F90C   = g95
+#FFLAGS = -O2
+
+#Gfortran compiler: if pre v4.3 add -D__GFORTRAN__
+#F90C     = gfc
+#FFLAGS =  -O2 
+
+#SGI, -mp toggles multi-processor. Use -O2 if -Ofast gives problems.
+#F90C     = f90
+#FFLAGS  = -Ofast -mp
+
+#Digital/Compaq fortran, -omp toggles multi-processor
+#F90C    = f90
+#FFLAGS  = -omp -O4 -arch host -math_library fast -tune host -fpe1
+
+#Absoft ProFortran, single processor:
+#F90C     = f95
+#FFLAGS = -O2 -cpu:athlon -s -lU77 -w -YEXT_NAMES="LCS" -YEXT_SFX="_"
+
+#NAGF95, single processor:
+#F90C     = f95
+#FFLAGS = -DNAGF95 -O3
+
+#PGF90
+#F90C = pgf90
+#FFLAGS = -O2 -DESCAPEBACKSLASH
+
+#Sun V880
+#F90C = mpf90
+#FFLAGS =  -O4 -openmp -ftrap=%none -dalign -DMPI
+
+#Sun parallel enterprise:
+#F90C     = f95
+#FFLAGS =  -O2 -xarch=native64 -openmp -ftrap=%none
+#try removing -openmp if get bus errors. -03, -04 etc are dodgy.
+
+#IBM XL Fortran, multi-processor (run gmake)
+#F90C     = xlf90_r
+#FFLAGS  = -DESCAPEBACKSLASH -DIBMXL -qsmp=omp -qsuffix=f=f90:cpp=F90 -O3 -qstrict -qarch=pwr3 -qtune=pwr3
+
+
+EXLIB       = libexam.a
+
+#Shouldn't need to change anything else...
+
+#CC            =  mpiicc
+
+EXOBJ       = exam.o mpirks.exam2d.o exam3d_gfs.o # exam.stress.o
+
+ifdef USE_CUDA
+CUDA_HOME  ?= /opt/ohpc/pub/cuda/13.0.2
+NVCC        = $(CUDA_HOME)/bin/nvcc
+NVCCFLAGS   = -O3 --use_fast_math -DXYZDBL -DGOTPM -DUSE_CUDA \
+              -gencode arch=compute_80,code=sm_80 \
+              -gencode arch=compute_86,code=sm_86 \
+              -gencode arch=compute_89,code=sm_89 \
+              -gencode arch=compute_90,code=sm_90 \
+              -I.. -I../../Voro
+CCFLAGS    += -DUSE_CUDA
+EXOBJ      += exam_gpu.o exam_gpu_extract.o
+ifdef GFS_FAST_SEED3
+NVCCFLAGS  += -DGFS_FAST_SEED3
+endif
+ifdef GFS_VARPRESS_W0
+NVCCFLAGS  += -DGFS_VARPRESS_W0
+endif
+ifdef GPU_VALIDATE
+CCFLAGS    += -DGPU_VALIDATE
+NVCCFLAGS  += -DGPU_VALIDATE
+endif
+endif
+
+
+INCLUDES = -I. -I../  -I$(VORO) -I$(FFTW)/include -I$(RKS) -I$(COSMOS) -I$(TIMER) -I$(MPIAUX) -I$(COLOR)  -I$(OST)
+
+
+KHEXE	= kh.exe
+
+LIBS = -L. -L$(VORO) -lmyvoro -L$(COLOR) -lcolor
+
+default: 
+	$(MAKE) $(EXLIB)
+
+
+all: 
+	$(MAKE) $(EXLIB)
+
+
+new: 
+	$(MAKE) clean  
+	$(MAKE) $(EXLIB)
+
+
+
+$(EXLIB): $(EXOBJ)
+	ar -rcv $@ $?
+	ranlib $@
+
+# The experimental integrator is included by exam.c.
+exam.o: gfs_thermal64.h gfs_thermal64_native.inc gfs_rk4_direct_u.inc gfs_rk4_transaction.inc gfs_ssprk3.inc gfs_moment_native.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_native.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_native.inc gfs_enriched_coupling.h gfs_enriched_coupling_native.inc
+
+
+%.c: 
+	$(CC) $(CCFLAGS) -c $*.c
+
+
+clean:
+	-rm -f *.o *.a *.d core *.exe
+
+
+#--- Suffix-based compilation rules
+.SUFFIXES: .exe .o .c .f .F .f90 .cu
+
+#rules to build binary from source
+
+.cc.o : 
+	$(CPP) $(CCFLAGS) $(INCLUDES) -c $<
+
+.c.o : 
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $<
+
+.c.exe :
+	$(CC) -o $*.exe $(DRAWOBJS) $(LIBS) $(LDFLAGS) $(INCLUDES)
+
+# 3D GFS path (CPU/OpenMP). exam3d_gfs.o goes into libexam.a and is called
+# from eunha2.c for "Simulation Model = Hydro3D". lag3d.exe is the same
+# source as a standalone binary (no MPI/FFTW):  make lag3d.exe
+# On a gcc box:  make lag3d.exe CC=gcc OPT="-O2 -fopenmp"
+exam3d_gfs.o: exam3d_gfs.c exam3d_gfs.h gfs_riemann.h gfs_pair.h Tests3D/common/lag3d_ic.h
+	$(CC) $(CCFLAGS) $(INCLUDES) -c exam3d_gfs.c -o $@
+
+lag3d.exe: exam3d_main.c exam3d_gfs.c exam3d_gfs.h gfs_riemann.h gfs_pair.h $(VORO)/voro.c $(VORO)/voro.h
+	$(CC) $(CCFLAGS) -I. -I.. -I$(VORO) -o $@ exam3d_main.c exam3d_gfs.c $(VORO)/voro.c -lm
+
+ifdef USE_CUDA
+exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_thermal64.h gfs_pair.h gfs_ale_flux.h gfs_ale_shadow.inc gfs_moment_gpu.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_gpu.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_gpu.inc gfs_enriched_coupling.h gfs_enriched_coupling_gpu.inc gfs_ale_fan.h
+	$(NVCC) $(NVCCFLAGS) $(INCLUDES) -c $< -o $@
+
+exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_thermal64.h gfs_pair.h gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_coupling.h
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
+endif
+
+#include ../sRules.make

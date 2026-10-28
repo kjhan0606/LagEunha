@@ -1,0 +1,105 @@
+{
+  "native_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to10_a10_v1/audit_t10.json",
+  "native_receipt_sha256": "493c80dbf2244eb178ae0f84a32516ddd259816512f3310cdcae45d016e1858c",
+  "endpoint_sha256": "0bf1963f55f38778427b1b15bc4249db4c1e0e889a3cb36d386dd0540781d854",
+  "time": 10.0,
+  "native_failed_checks": [
+    "disk_ballistic_residual"
+  ],
+  "disk_sites": 49038,
+  "faces_touching_disk": 148557,
+  "reference_area_max_relative_difference_from_native": 5.949771075819399e-08,
+  "force_formula": "Each i<j finite face: F_i += (P_i-P_j)L[n/2+(c-mid)/d]; F_j += (P_i-P_j)L[n/2-(c-mid)/d]. Native W=0 variational pressure only.",
+  "whole_disk": {
+    "cells": 49038,
+    "pressure_mean": 1.0000156834559733e-06,
+    "pressure_relative_rms": 0.0050875126362727235,
+    "acceleration_median": 2.6417802611633004e-07,
+    "acceleration_p95": 7.563029914837055e-07,
+    "acceleration_p99": 1.056031649292787e-06,
+    "acceleration_mass_weighted_rms": 3.88092118584486e-07,
+    "radial_acceleration_mass_weighted_rms": 1.1844600616280171e-07,
+    "tangential_acceleration_mass_weighted_rms": 3.6957548096630585e-07
+  },
+  "radial_bands": [
+    {
+      "r_min": 0.5,
+      "r_max": 0.75,
+      "cells": 3931,
+      "pressure_mean": 1.0000182549277754e-06,
+      "pressure_relative_rms": 0.005786617751619733,
+      "acceleration_median": 3.1791431107189074e-07,
+      "acceleration_p95": 8.840170180376192e-07,
+      "acceleration_p99": 1.2012203834831177e-06,
+      "acceleration_mass_weighted_rms": 4.5366353757703873e-07,
+      "radial_acceleration_mass_weighted_rms": 1.3583785313707314e-07,
+      "tangential_acceleration_mass_weighted_rms": 4.328494922972928e-07
+    },
+    {
+      "r_min": 0.75,
+      "r_max": 1.0,
+      "cells": 6050,
+      "pressure_mean": 1.0000197898087448e-06,
+      "pressure_relative_rms": 0.005622620217758154,
+      "acceleration_median": 3.0315942958732917e-07,
+      "acceleration_p95": 8.348392025701171e-07,
+      "acceleration_p99": 1.146409620599874e-06,
+      "acceleration_mass_weighted_rms": 4.360805973937283e-07,
+      "radial_acceleration_mass_weighted_rms": 1.353818403544042e-07,
+      "tangential_acceleration_mass_weighted_rms": 4.1453352666042055e-07
+    },
+    {
+      "r_min": 1.0,
+      "r_max": 1.25,
+      "cells": 7160,
+      "pressure_mean": 1.000016838227251e-06,
+      "pressure_relative_rms": 0.005362083491180945,
+      "acceleration_median": 2.8745258149417426e-07,
+      "acceleration_p95": 7.979460541182872e-07,
+      "acceleration_p99": 1.118833173113748e-06,
+      "acceleration_mass_weighted_rms": 4.1449369034376895e-07,
+      "radial_acceleration_mass_weighted_rms": 1.249275248500243e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.952190947685129e-07
+    },
+    {
+      "r_min": 1.25,
+      "r_max": 1.5,
+      "cells": 8705,
+      "pressure_mean": 1.0000197597738245e-06,
+      "pressure_relative_rms": 0.0052905990619017155,
+      "acceleration_median": 2.836973691549768e-07,
+      "acceleration_p95": 7.799406072917198e-07,
+      "acceleration_p99": 1.077525686937619e-06,
+      "acceleration_mass_weighted_rms": 4.0491433678807315e-07,
+      "radial_acceleration_mass_weighted_rms": 1.2460990254944986e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.8526353619716175e-07
+    },
+    {
+      "r_min": 1.5,
+      "r_max": 1.75,
+      "cells": 11258,
+      "pressure_mean": 1.0000146726707087e-06,
+      "pressure_relative_rms": 0.004888691892971657,
+      "acceleration_median": 2.54247873134279e-07,
+      "acceleration_p95": 7.196704562623849e-07,
+      "acceleration_p99": 9.87426645651328e-07,
+      "acceleration_mass_weighted_rms": 3.7022603633908113e-07,
+      "radial_acceleration_mass_weighted_rms": 1.1365826698641212e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.523480045764302e-07
+    },
+    {
+      "r_min": 1.75,
+      "r_max": 2.0,
+      "cells": 11934,
+      "pressure_mean": 1.0000100420131495e-06,
+      "pressure_relative_rms": 0.004368687294016891,
+      "acceleration_median": 2.1690697730312227e-07,
+      "acceleration_p95": 6.24567114760225e-07,
+      "acceleration_p99": 8.821231782845759e-07,
+      "acceleration_mass_weighted_rms": 3.20498476431574e-07,
+      "radial_acceleration_mass_weighted_rms": 9.696591821611363e-08,
+      "tangential_acceleration_mass_weighted_rms": 3.054781237657881e-07
+    }
+  ],
+  "scope": "Frozen-state pressure-force reconstruction from saved cell pressure and independent Voronoi faces. No RK4 force history, gravity, or native all-cell pressure dump."
+}

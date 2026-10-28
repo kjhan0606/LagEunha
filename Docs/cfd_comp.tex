@@ -1,0 +1,766 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{kotex}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\geometry{a4paper,margin=1in}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red!70!black},
+}
+
+\title{LagForce 2D Voronoi/Laguerre Hydro\\
+  \large av\_mode 1--5 Code Review (Revision 4)}
+\author{Claude Code Review (2026-04-11)}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section*{Revision 4 노트 (2026-04-11)}
+
+전문가 리뷰 서브에이전트(3 병렬)로 av\_mode=1, 2, 3을 재검증한 결과,
+av\_mode=2의 KH 실패 원인(lab-frame HLLC)과 av\_mode=3의 구조적 실패를
+확인하였다. 다음 수정을 \texttt{src/Exam/exam.c}에 반영하였다:
+
+\begin{itemize}
+  \item \textbf{av\_mode=2 FIX1 (critical)}: \texttt{getAccVoro2DBlend}에서
+    lab-frame HLLC 호출을 \texttt{hllc\_face\_2d\_rest\_frame}로 교체.
+    face velocity $w_n = \tfrac12(v_i+v_j)\cdot\hat n$로 Galilean boost 후
+    HLLC 해결 → unboost. Springel 2010 §32 Arepo 레시피를 따름. 이것이
+    KH Step 4/5 실패(dt 붕괴)의 주 원인이었다.
+  \item \textbf{av\_mode=2 FIX2 (major)}: $f_{pq} > 0.5$일 때 CD10 viscous
+    pressure $\Pi_{\mathrm{CD10}}$를 게이팅. HLLC가 이미 dissipation을
+    제공하므로 CD10과의 double-dissipation positive feedback을 차단한다.
+  \item \textbf{av\_mode=2 FIX3 (major)}: contact-aware MUSCL — 밀도 점프
+    $>10\%$이지만 압력 점프 $<2\%$인 pure contact 면에서는 velocity
+    재구성을 생략. 전단 구배가 매끄러운 접촉면에서 가짜 relative $v_n$을
+    만들어 HLLC가 이를 dissipate하는 것을 방지한다.
+  \item \textbf{av\_mode=3 deprecation}: 구조적 수학 증명 (Lagrangian 메쉬
+    $\to$ advection 항 부재 $\to$ 선형 축퇴파인 접촉면에서 HLLC 엔트로피
+    플럭스 = 0 $\to$ dt 붕괴 불가피)을 근거로 deprecation 주석 추가.
+    \texttt{av\_mode=5} 사용 권장.
+  \item \textbf{av\_mode=1 방어적 개선}: (a) \texttt{update\_alpha\_cd\_2d}
+    에 \texttt{cd\_amax<=0, cd\_ell<=0, dt<=0} 가드 (NaN 방지);
+    (b) \texttt{exam2d\_vph\_rk4\_int\_blend} 첫 호출 시 stress 필드
+    (\texttt{divv\_old}, \texttt{alpha\_cd}) 초기화 보장 (allocator
+    zero-init 의존 제거).
+\end{itemize}
+
+빌드 및 링크 확인 완료 (\texttt{src/eunha2.exe}, 7007448 bytes).
+회귀 테스트 계획: KH Step 4/5 재실행(av\_mode=2 검증), KH Step 6 재실행
+(av\_mode=1 무영향 확인), KH Step 10/11 재실행(av\_mode=4 회귀),
+RT blend 재실행, Cylinder 재실행, 1D 8-test suite.
+
+\newpage
+
+\section*{Revision 3 노트 (2026-04-11)}
+
+LagMFM(av\_mode=4)의 미구현 기능 6개(D-B1--D-B6)를 모두 보완하였다:
+\begin{itemize}
+  \item \textbf{D-B1}: $h_i$ Newton iteration (\texttt{LAGMFM\_H\_ITER=3},
+    \texttt{LAGMFM\_H\_TOL=0.005}) 도입.
+  \item \textbf{D-B2}: $P$, $(v_x, v_y)$ MUSCL 재구성 + pair-wise clamp limiter.
+  \item \textbf{D-B3}: \texttt{hllc\_face\_2d\_rest\_frame} 호출로 face rest
+    frame HLLC 전환 ($w = \tfrac12(v_i+v_j)$).
+  \item \textbf{D-B4}: Full face velocity ($v_n^*\hat n + v_t\hat t$)로
+    tangential viscous work 포함 + Newton 3rd law + 에너지 보존 주석 검증.
+  \item \textbf{D-B5}: \texttt{mfm\_invert2x2} singular fallback을 identity에서
+    zero matrix로 변경 (self-degrading to first-order).
+  \item \textbf{D-B6}: \texttt{LAGMFM\_WALL\_NOSLIP} 매크로 추가로 free-slip
+    (기본)/no-slip 선택 가능.
+\end{itemize}
+
+또한 av\_mode=1의 Rev 2 개선(A-M1/A-M2)을 LagMFM Pass 2에 동일하게 적용:
+\begin{itemize}
+  \item \textbf{A-M1 analog}: d=3 slab trace 규약 주석.
+  \item \textbf{A-M2 analog}: Pass 2 루프를 stride-aware 접근으로 전환.
+  \item A-M3/A-M4 analog: LagMFM은 원래부터 문제 없음을 확인 (home-only
+    vsig\_max, per-particle viscous CFL).
+\end{itemize}
+
+빌드 확인 완료. 상세는 §\ref{sec:av4rev3}.
+
+\newpage
+
+\section*{Revision 2 노트 (2026-04-11)}
+
+초기 리뷰에서 av\_mode=2에 대해 두 가지 ``critical bug''를 보고했으나,
+코드 재검토 결과 둘 다 \textbf{false positive}로 판명되었다:
+\begin{itemize}
+  \item \textbf{B-C1 취소}: \texttt{exam.c:1668--1673}의
+    \texttt{tauxx=tauxy=tauyy=0} zeroing은 \emph{설계 의도}이며
+    defensive cleanup이다. 힘 루프의 gate (\texttt{exam.c:2388--2389})에서
+    이미 av\_mode==2를 $\tau\cdot dS$ 적용에서 제외하므로, zeroing을 제거해도
+    동작은 변하지 않는다. 상세 분석은 §\ref{sec:av2rationale} 참조.
+  \item \textbf{B-C2 취소}: \texttt{exam.c:2487--2490}의 MUSCL 속도 limiter는
+    올바른 pair-wise clamp (no new extrema between $i$ and $j$)로 구현되어 있다.
+    no-op가 아니다.
+\end{itemize}
+
+Revision 2에서 실제로 수정된 버그:
+\begin{itemize}
+  \item \textbf{A-M3}: \texttt{vsig\_max} OMP \texttt{critical} section 제거
+    (home-only update로 대체; 대칭성으로 정확성 보존)
+  \item \textbf{A-M2}: \texttt{update\_alpha\_cd\_2d}를 stride-aware 접근으로 전환
+  \item \textbf{A-M4}: viscous CFL 체크를 face loop 밖으로 이동 (i-only 의존성)
+  \item \textbf{E-C1}: av\_mode=5의 face velocity를 \texttt{get2dUpqradRk4}
+    (Laguerre wfrac + AA 보정) 기준으로 통일
+  \item \textbf{A-M1}: 2D trace 규약 ((2/3)divv, 3D slab) 주석 문서화
+\end{itemize}
+
+수정 후 빌드 통과 확인.
+
+\newpage
+
+\section{개요}
+
+본 문서는 LagForce 2D Voronoi/Laguerre 하이드로 코드의
+\texttt{av\_mode} 분기 1번부터 5번까지의 세부 코드 리뷰 결과를 정리한다.
+
+\begin{itemize}
+  \item \texttt{av\_mode=1}: NS stress + CD10 + (optional) Monaghan AV
+  \item \texttt{av\_mode=2}: Two-tier blend of $f\cdot\mathrm{HLLC} + (1-f)\cdot(M(n,m)+\mathrm{NS})$
+  \item \texttt{av\_mode=3}: HLLC-only (no blend, no NS)
+  \item \texttt{av\_mode=4}: LagMFM (Hopkins 2015 GIZMO-MFM-style, kernel meshless)
+  \item \texttt{av\_mode=5}: Arepo-Laguerre (face rest frame HLLC + MUSCL + centroidal steering)
+\end{itemize}
+
+각 모드별로 다섯 항목으로 구성된다:
+\begin{enumerate}
+  \item 구현 위치 및 디스패치 경로
+  \item 핵심 알고리즘 확인
+  \item Critical/Major 버그
+  \item Minor 이슈 및 관측 사항
+  \item 강점 및 총평
+\end{enumerate}
+
+참조 파일:
+\begin{itemize}
+  \item \texttt{src/Exam/exam.c} (메인 구현, 약 6000줄)
+  \item \texttt{src/Exam/KH/kh.c} (디스패치)
+  \item \texttt{src/header/eunha.h} (\texttt{Stress} 구조체)
+  \item \texttt{memory/kh\_analysis.md} (설계 의도 및 테스트 결과)
+\end{itemize}
+
+\section{av\_mode=1: NS stress + CD10}
+
+\subsection{구현 위치}
+\begin{itemize}
+  \item \texttt{updateDenW2Pressure2DBlend} (\texttt{exam.c} $\sim$1499--1678):
+    볼륨/밀도/압력 + $\nabla\otimes v$ (Green-Gauss) + NS stress $\tau$ 계산
+  \item \texttt{getAccVoro2DBlend} (\texttt{exam.c} $\sim$2014--2530):
+    \texttt{if(av\_mode == 1)} 분기 (약 2412--2430)에서 M(n,m) pressure + $\tau\cdot dS$ 가속
+  \item \texttt{exam2d\_vph\_rk4\_int\_blend} (\texttt{exam.c} $\sim$5562--5890): RK4 통합
+  \item \texttt{update\_alpha\_cd\_2d} (\texttt{exam.c} $\sim$2017--2039): CD10 스위치
+  \item \texttt{kh.c} 204--218 디스패치: \texttt{use\_stress=(av\_mode>=1)} → blend 경로
+\end{itemize}
+
+\subsection{핵심 알고리즘 확인 (OK)}
+\begin{itemize}
+  \item \texttt{VoroStressRK4\_Scalar2D} 매크로로 $v_x, v_y, P$의 M(n,m) 4점 face-average 계산
+  \item Green-Gauss: $\langle\nabla Q\rangle_i = (1/V_i)\sum Q_\mathrm{face}\cdot dS$
+  \item $\tau_\mathrm{code} = -\nu\rho\,(\nabla v + \nabla v^T - \tfrac{2}{3}(\nabla\cdot v)I)$
+  \item $\nu = \max(\nu_\mathrm{phys},\ \alpha_\mathrm{CD}\cdot h\cdot c_s)$
+  \item 힘: $+(\tau_\mathrm{NS})\cdot dS$가 $-(\tau_\mathrm{code}\cdot dS)$로 구현됨 (부호 일관)
+  \item $\mathrm{d}i_e = (\tau\cdot dS)\cdot(v_\mathrm{face} - v_i)$ → $di = dte - dke$ 보존
+  \item Wall ghost 탐지는 \texttt{PINDX == MAX\_INDEX}
+  \item RK4 sub-stage 초입에 \texttt{vsig\_max} 리셋 (CD10 신호 재계산)
+\end{itemize}
+
+이전에 발견된 두 개의 critical 버그 (viscous traction 부호 오류, scalar vs vector traction)는
+이미 수정되어 있음을 확인하였다 (\texttt{exam.c:2408--2409}):
+\begin{lstlisting}[language=C]
+tau_dot_dS_x = -(txx_face * dS.x + txy_face * dS.y);
+tau_dot_dS_y = -(txy_face * dS.x + tyy_face * dS.y);
+\end{lstlisting}
+
+\subsection{Major Issues}
+
+\subsubsection*{A-M1. 2D trace 차수 모호성 (2/3 vs 1)}
+\texttt{exam.c:1665--1667}에서 deviatoric stress의 trace 차감 계수가 $2/3$이다:
+\begin{lstlisting}[language=C]
+bp[i].stress.tauxx = -nu * den * (2.0*gUxx - (2.0/3.0)*divv);
+bp[i].stress.tauyy = -nu * den * (2.0*gUyy - (2.0/3.0)*divv);
+\end{lstlisting}
+물리적으로 $d$차원 유체에서는 $-2\mu(S_{ij} - \tfrac{1}{d}\delta_{ij}\nabla\cdot v)$이므로
+\begin{itemize}
+  \item 순수 2D: $1/d = 1/2 \Rightarrow$ 계수는 \texttt{divv} (즉 $2\cdot 1/2 = 1$)
+  \item 3D slab (2D + $\partial_z=0$): $1/d = 1/3 \Rightarrow$ 계수는 \texttt{(2/3)*divv}
+\end{itemize}
+현재 코드는 3D slab을 가정하지만 주석이 없다. KH 테스트에서는 $\nabla\cdot v \approx 0$이므로
+영향이 작지만, RT나 Sod-2D에서는 물질에 따라 결과가 변한다. 문서화가 필요하다.
+
+\subsubsection*{A-M2. \texttt{update\_alpha\_cd\_2d} stride-aware 패턴 미사용}
+\texttt{exam.c:2017--2039}에서 \texttt{bp[i].volume} 직접 인덱싱을 사용한다.
+현재는 \texttt{kh.c}가 \texttt{di->n\_size}를 \texttt{stress} 크기로 먼저 업그레이드하므로
+동작하지만, 프로젝트 관례대로 \texttt{TVORORK4\_DDINFO(simpar)[0].n\_size}를 읽어
+byte 단위로 접근하는 것이 안전하다.
+
+\subsubsection*{A-M3. \texttt{vsig\_max} OMP critical 경합 (성능 핫스팟)}
+\texttt{exam.c:2609--2617}:
+\begin{lstlisting}[language=C]
+if(!jbp_is_ghost){
+#pragma omp critical(vsig_update)
+    {
+        if(vsig > jbp->stress.vsig_max) jbp->stress.vsig_max = vsig;
+    }
+}
+\end{lstlisting}
+1024$^2$ KH 기준으로 셀당 4 면 $\times$ 4 RK4 sub-stage = step당 $\sim$16M critical section.
+고스레드 환경에서 성능이 지배적으로 저하된다.
+
+권장:
+\begin{enumerate}
+  \item 홈 셀 (\texttt{ibp->stress.vsig\_max})만 업데이트 (대칭성으로 $j$는 자기 루프에서 커버)
+  \item 또는 thread-local \texttt{vsig\_max} 배열 후 reduction
+\end{enumerate}
+
+\subsubsection*{A-M4. Viscous CFL 체크가 face loop 내부에 있음}
+\texttt{exam.c:2585--2600}의 \texttt{dt\_visc = 0.5*h*h/nu\_eff}는 $i$의 상태만 사용하므로
+face loop 바깥으로 옮길 수 있다. 현재는 $N_\mathrm{face}$회 중복 계산.
+
+\subsection{Minor Issues}
+
+\begin{itemize}
+  \item \textbf{A-m1}: $\nabla P$는 항상 계산되지만 av\_mode=1에서는 사용되지 않음. \texttt{use\_muscl}에 게이트 가능.
+  \item \textbf{A-m2}: 고정 pressure floor \texttt{1e-6} 이 문제 스케일($P_0$)에 무관. \texttt{invw2Scale}에 스케일 가능.
+  \item \textbf{A-m3}: Ghost face에서 NS stress를 건너뛰므로 벽이 암묵적 free-slip이 됨. RT 점성 경계층 테스트에는 부적합.
+  \item \textbf{A-m4}: \texttt{VoroStressRK4\_Scalar2D} 매크로에 필드 이름 토큰을 넘기는 fragile pattern. 매크로 전개 경로 검증 필요.
+  \item \textbf{A-m5}: \texttt{cd\_amin=0} + \texttt{nu\_phys=0}이면 bootstrap이 완전 0 점성으로 시작. 문서화 필요.
+  \item \textbf{A-m6}: CFL floor \texttt{dramp\_cfl = max(dramp, 0.25*sqrt(V))}가 ghost가 아닌 real-real face에도 적용되어 조기 timestep 제약 완화. 감시 필요.
+\end{itemize}
+
+\subsection{강점 및 총평}
+\begin{itemize}
+  \item \textbf{부호 일관성}: 운동량/에너지 두 경로가 동일한 \texttt{tau\_dot\_dS\_\{x,y\}}를 사용 → $di = dte - dke$ 엄격 성립
+  \item \textbf{use\_stress 게이팅}: \texttt{av\_mode>=1 || nu\_phys>0}으로 올바르게 확장됨
+  \item \textbf{Wall ghost 탐지}: 프로젝트 규약 (\texttt{PINDX==MAX\_INDEX}) 준수
+  \item \textbf{Laguerre weight}: Green-Gauss에서 \texttt{wfrac} 적절히 반영
+  \item \textbf{RK4 통합}: \texttt{sbp} 전용 포인터로 stride 일관 유지
+  \item \textbf{KH 테스트 결과}: Step 3, 6에서 검증된 레시피. \texttt{kh\_analysis.md}의 ``best working recipe''.
+\end{itemize}
+
+\textbf{결론}: av\_mode=1은 기능적으로 올바르며 KH 프로덕션 실행에 적합하다.
+주요 개선 항목은 (A-M3) 성능 핫스팟 해결과 (A-M1) 2D trace 규약 문서화이다.
+
+
+\section{av\_mode=2: Two-tier HLLC + CD10 blend}
+\label{sec:av2rationale}
+
+\subsection{구현 위치}
+\begin{itemize}
+  \item \texttt{getAccVoro2DBlend}의 \texttt{else if(av\_mode == 2)} 분기 (약 2431--2519)
+  \item 블렌딩 팩터: $f_{ij} = \min(1, \max(\alpha_p,\alpha_q)/\alpha_\mathrm{max} + \theta_{ij})$
+\end{itemize}
+
+\subsection{핵심 힘 공식 (엄밀한 재분석)}
+
+\texttt{exam.c:2517}:
+\begin{lstlisting}[language=C]
+pi_total = (1.0-f_pq)*p_mnm + f_pq*(p_hllc + Pi_cd10);
+\end{lstlisting}
+\texttt{exam.c:2557--2558}:
+\begin{lstlisting}[language=C]
+fx += -pi_total * dS.x + tau_dot_dS_x;
+fy += -pi_total * dS.y + tau_dot_dS_y;
+\end{lstlisting}
+
+여기서 \texttt{tau\_dot\_dS\_\{x,y\}}는 \texttt{exam.c:2388--2389}에서
+\emph{이미} gate되어 있다:
+\begin{lstlisting}[language=C]
+tau_dot_dS_x = 0; tau_dot_dS_y = 0;
+if(av_mode == 1 || (av_mode == 0 && nu_phys > 0)){
+    /* compute tau_dot_dS from tauxx/xy/yy */
+}
+\end{lstlisting}
+따라서 \texttt{av\_mode==2}에서는 \texttt{tau\_dot\_dS\_\{x,y\} = 0}.
+
+\texttt{exam.c:2518--2519}의
+\begin{lstlisting}[language=C]
+tau_dot_dS_x *= (1.0-f_pq);
+tau_dot_dS_y *= (1.0-f_pq);
+\end{lstlisting}
+도 $0\cdot(1-f) = 0$이다.
+
+\subsection{\texttt{tauxx=0} zeroing은 설계 의도 (NOT a bug)}
+
+\texttt{exam.c:1668--1673}의
+\begin{lstlisting}[language=C]
+} else if(av_mode >= 2){
+    bp[i].stress.tauxx = 0;
+    bp[i].stress.tauxy = 0;
+    bp[i].stress.tauyy = 0;
+}
+\end{lstlisting}
+는 힘 루프의 gate 때문에 동작상 \emph{redundant}하지만 defensive cleanup 목적이다.
+진단 코드/디버깅/향후 리팩터링이 \texttt{bp[i].stress.tauxx}를 직접 읽을 때
+stale 값을 보는 것을 막는다.
+
+\subsubsection*{핵심 설계 원칙: $\alpha_{CD}$는 단일 소산 소스이다}
+
+av\_mode=2에서 CD10 스위치가 생성한 $\alpha_{CD}$는 \textbf{세 가지} 역할을
+동시에 수행한다:
+\begin{enumerate}
+  \item \textbf{블렌딩 팩터} (\texttt{exam.c:2439}):
+    \[ f_{pq} = \min\!\left(1,\ \frac{\max(\alpha_p,\alpha_q)}{\alpha_{\max}} + \theta_{pq}\right) \]
+  \item \textbf{HLLC 위의 viscous pressure} (\texttt{exam.c:2512}):
+    \[ \Pi_{CD10} = \tfrac{1}{2}\,\alpha_\mathrm{face}\, v_\mathrm{sig}\, \bar\rho\, (-\Delta v_n) \]
+  \item \textbf{M(n,m) 가중치} $(1-f_{pq})$
+\end{enumerate}
+
+만약 av\_mode=2에서 NS stress도 함께 활성화하면, $\nu = \alpha_{CD}\cdot h\cdot c_s$를
+통해 NS가 또 한 번 $\alpha_{CD}$를 사용하게 된다 → \textbf{동일 소스의 이중 계산}.
+이는 1D NS+AV 레시피 (\texttt{laguerre\_sod.c})에서 \texttt{use\_riemann=0}일 때만
+NS를 켜는 원칙과 같다.
+
+\subsubsection*{요약}
+av\_mode=2는 ``M(n,m) smooth path + HLLC+CD10 shock path''의 블렌드이며,
+NS stress는 av\_mode=1 전용이다. Step 4/5의 KH 실패는 코드 버그가 아니라
+구조적인 것 (\S\ref{sec:khgap}의 Lagrangian HLLC 한계 참조)이다.
+
+\subsection{Real Issues (Revision 2에서 수정)}
+
+\subsubsection*{B-m1 (수정됨). OMP race/hot spot: \texttt{vsig\_max}}
+원 구현 (\texttt{exam.c:2609--2617}):
+\begin{lstlisting}[language=C]
+if(!jbp_is_ghost){
+#pragma omp critical(vsig_update)
+    { if(vsig > jbp->stress.vsig_max) jbp->stress.vsig_max = vsig; }
+}
+\end{lstlisting}
+면마다 lock을 잡으므로 고스레드에서 심각한 직렬화.
+
+\textbf{수정}: \texttt{jbp} 업데이트를 제거하고 \texttt{ibp->stress.vsig\_max}만
+업데이트. 면 $i$-$j$는 $j$가 홈 입자인 반복에서도 나타나므로 $v_\mathrm{sig}$의
+대칭성에 의해 $j$의 \texttt{vsig\_max}도 거기서 정확히 계산된다. critical
+section이 완전히 제거되어 OMP 스케일링이 개선된다.
+
+\subsection{기타 관찰 (변경 없음)}
+
+\subsubsection*{$\alpha_\mathrm{CD}$ saturation에 의한 $f_{ij}$ 포화}
+\texttt{cd\_amax=1.0}일 때 충격 근방에서 $f$가 즉시 1로 포화된다. 이는
+설계 의도 (충격에서는 HLLC 전담)이며 버그가 아니다.
+
+\subsubsection*{Pair-wise clamp limiter (not full BJ)}
+\texttt{exam.c:2487--2490}의 속도 limiter는 ``no new extrema between
+$i$ and $j$''를 강제하는 pair-wise clamp이다. 완전한 Barth-Jespersen (모든
+이웃 min/max)은 아니지만 no-op도 아니다. 올바른 약한 limiter.
+
+\subsection{결론}
+av\_mode=2는 설계대로 동작한다. Step 4/5 실패는 \textbf{Lagrangian 극한의
+HLLC 한계} (\S\ref{sec:khgap}) 때문이며, 코드 수정으로 해결되지 않는다.
+Revision 2의 B-m1 수정으로 멀티스레드 성능은 개선되지만 KH 거동은 동일할 것이다.
+
+
+\section{av\_mode=3: HLLC-only}
+
+\subsection{구현 위치}
+\begin{itemize}
+  \item \texttt{getAccVoro2DBlend}의 \texttt{else if(av\_mode == 3)} 분기
+  \item 블렌딩 없음, NS stress 없음, Monaghan AV optional
+  \item 목적: HLLC 단독으로 Lagrangian KH를 풀 수 있는지 검증
+\end{itemize}
+
+\subsection{구조적 한계}
+
+\subsubsection*{C-F1. Lab frame HLLC는 Lagrangian contact에서 소산 0}
+Lagrangian limit에서 접촉면 양측은 $v_L \approx v_R$ (두 셀이 같이 이동).
+HLLC의 PVRS 추정: $p^* = \tfrac{1}{2}(p_L+p_R) - \tfrac{1}{2}(v_R-v_L)\bar\rho\bar c$.
+$v_L = v_R$이고 $p_L = p_R$ (접촉 조건)이므로 $p^* = p_\mathrm{centered}$ → 소산 0.
+결과적으로 격자 스케일 노이즈가 감쇠되지 않고 dt가 수축한다.
+
+\subsubsection*{C-C1. 밀도 reconstruction 없음}
+MUSCL이 압력/속도에만 적용되고 $\rho$는 cell-average 그대로.
+HLLC 입력에서 $\rho_L \ne \rho_R$가 cell-discontinuous하므로
+\texttt{hllc\_face\_2d}가 fake shock를 감지 → 접촉면 surface tension 아티팩트.
+
+\subsubsection*{C-C2. CD10이 압축 게이트}
+\texttt{update\_alpha\_cd\_2d}에서 $\alpha_\mathrm{loc} \propto -\dot{(\nabla\cdot v)}$이며
+shear만 있는 영역에서는 거의 활성화되지 않는다. KH 접촉면에서 CD10가 help를 못 준다.
+
+\subsubsection*{C-C3. Monaghan AV도 접근 속도 게이트}
+$\Pi_{ij} \propto -\min(0, v_{ij}\cdot\hat r_{ij})$.
+같이 이동하는 Lagrangian 접촉면에서는 $v_{ij}\cdot\hat r_{ij} \approx 0$ → AV도 0.
+
+\subsection{결론}
+av\_mode=3은 코드 수준에서는 올바르지만, 구조적으로 Lagrangian KH를 풀 수 없다.
+\texttt{kh\_analysis.md}의 dt 수축 관측을 직접 설명한다. 수정할 것이 아니라
+``HLLC 단독의 한계를 보여주는 reference implementation''으로 남기는 것이 적절하다.
+
+
+\section{av\_mode=4: LagMFM (Hopkins 2015)}
+
+\subsection{구현 위치}
+\begin{itemize}
+  \item \texttt{updateDenW2Pressure2D\_LagMFM} (신규)
+  \item \texttt{getAccVoro2D\_LagMFM} (신규)
+  \item \texttt{exam2d\_vph\_rk4\_int\_lagmfm} (신규 RK4)
+  \item \texttt{kh.c:204}에서 \texttt{av\_mode==4} → lagmfm 분기
+  \item Wendland C2 2D 커널, $h_i = \eta\sqrt{V_i}$, \texttt{LAGMFM\_ETA=1.8}
+  \item Effective face: $A_{ij} = V_i^2 W_{ij}\tilde E_i^{-1}\cdot dx + V_j^2 W_{ji}\tilde E_j^{-1}\cdot dx$
+\end{itemize}
+
+\subsection{Revision 3에서 보완된 사항}
+\label{sec:av4rev3}
+
+Revision 3 (2026-04-11)에서 LagMFM의 6개 미구현 항목(D-B1--D-B6)을 모두
+보완하였다. 그리고 av\_mode=1에 적용했던 품질 개선(A-M1, A-M2)의 LagMFM
+아날로그를 Pass 2에 적용하였다.
+
+\subsubsection*{D-B1. $h_i$ Newton iteration (구현 완료)}
+\texttt{updateDenW2Pressure2D\_LagMFM}의 Pass 1을 수정하여
+$h_i$를 self-consistent하게 수렴시킨다:
+\[
+ h_i^{(k+1)} = \eta\sqrt{V_i^{(k)}},\quad V_i^{(k)} = 1/n_i(h_i^{(k)}),\quad
+ \text{stop when } |h_i^{(k+1)} - h_i^{(k)}| < \mathrm{tol}\cdot h_i^{(k)}.
+\]
+매 iteration에서 $n_i$, $E$, $S$ 모멘트를 모두 재계산. 튜닝 상수는
+\texttt{LAGMFM\_H\_ITER=3} (최대 반복), \texttt{LAGMFM\_H\_TOL=0.005}.
+Cell walk radius \texttt{nbr}는 매 iteration에서 $h_i$에 맞춰 재산정된다.
+
+\subsubsection*{D-B2. MUSCL reconstruction (구현 완료)}
+\texttt{getAccVoro2D\_LagMFM}의 face 루프에서 $P$와 $(v_x, v_y)$를
+gradient 기반으로 재구성한다:
+\begin{align*}
+ P_L &= P_i + \nabla P_i\cdot \tfrac12 dx, \\
+ P_R &= P_j - \nabla P_j\cdot \tfrac12 dx, \\
+ v_{xL} &= v_{x,i} + (\partial_x v_x)_i\cdot\tfrac12 dx_x + (\partial_y v_x)_i\cdot\tfrac12 dx_y, \\
+ \text{(etc.)}
+\end{align*}
+Face 중심을 $x_\mathrm{face} = \tfrac12(x_i + x_j)$로 근사. 밀도는 재구성하지 않는다
+($\rho_L = \rho_i$, $\rho_R = \rho_j$) --- 이는 av\_mode=5와 동일한 단순화이며
+($\nabla\rho$는 현재 \texttt{Stress} 구조체에 저장되지 않음), 정확도는 $P$와 $v$의
+재구성이 지배한다. 매크로 \texttt{LAGMFM\_CLAMP}로 pair-wise ``no new extrema''
+limiter를 적용하여 $Q_L, Q_R \in [\min(Q_i,Q_j), \max(Q_i,Q_j)]$을 강제한다.
+벽 face($j$가 ghost)에서는 $j$-side gradient가 mirror되지 않으므로
+재구성을 건너뛰고 central state를 사용.
+
+\subsubsection*{D-B3. Face rest frame HLLC (구현 완료)}
+\texttt{hllc\_face\_2d\_rest\_frame} helper(기존 av\_mode=5와 공유)를 호출한다.
+Lagrangian face 속도는
+\[
+ w = \tfrac12(v_i + v_j),\qquad w_n = w\cdot \hat n.
+\]
+이는 face rest frame에서 $v_L - w$, $v_R - w$가 접촉면에서 작아져 HLLC
+소산이 자연스럽게 감소하는 구조 (Springel 2010 §32). 벽 face는 Riemann을
+bypass하고 $p^* = \tfrac12(p_L + p_R)$, $v_n^* = 0$을 사용.
+
+\subsubsection*{D-B4. Viscous heating + tangential $v_\mathrm{face}$ (구현 완료)}
+\emph{Newton 3법칙 및 에너지 보존 확인 (주석 및 코드 레벨):}
+\begin{itemize}
+ \item $A_{ij}$는 antisymmetric, $\tau_\mathrm{face}=\tfrac12(\tau_i+\tau_j)$는 symmetric.
+       따라서 $F_{ij} + F_{ji} = 0$.
+ \item Face별 총 viscous heating:
+       $(\tau_\mathrm{NS}\cdot A_{ij})\cdot(v_\mathrm{face} - v_i)
+         + (\tau_\mathrm{NS}\cdot A_{ji})\cdot(v_\mathrm{face} - v_j)
+         = (\tau_\mathrm{NS}\cdot A_{ij})\cdot(v_j - v_i) \ge 0$.
+ \item Face별 총 KE 변화: $(\tau_\mathrm{NS}\cdot A_{ij})\cdot(v_i - v_j)$.
+       합: $0$ $\Rightarrow$ 에너지 보존 충족.
+\end{itemize}
+\emph{Tangential face velocity 추가:}
+기존 코드는 $v_\mathrm{face} = v_n^*\hat n$로 normal 성분만 사용했으나,
+이는 tangential viscous work을 누락시킨다. Revision 3에서는
+\[
+ v_\mathrm{face} = v_n^* \hat n + v_t\,\hat t,\qquad
+ v_t = \tfrac12 (v_i + v_j)\cdot\hat t,
+\]
+($\hat t = (-\hat n_y, \hat n_x)$)로 full face velocity를 사용한다.
+
+\subsubsection*{D-B5. Singular $\tilde E$ fallback (구현 완료)}
+\texttt{mfm\_invert2x2}의 near-singular 처리를 identity matrix에서 \emph{zero matrix}로
+변경하였다. 그 결과 gradient가 자동으로 0이 되어 MUSCL이 first-order로 자연
+퇴행하므로 자기-소멸(self-degrading)적이고 안전한 fallback이 된다. 아울러
+absolute tolerance($10^{-30}$)를 relative tolerance
+($10^{-14}\cdot\|E\|^2 + 10^{-30}$)로 강화하여 저밀도 영역에서의 오작동 방지.
+
+\subsubsection*{D-B6. Wall slip option (구현 완료)}
+새 컴파일 매크로 \texttt{LAGMFM\_WALL\_NOSLIP} 추가:
+\begin{itemize}
+ \item \texttt{=0} (기본, free-slip): 벽 face에서 $v_\mathrm{face}$의 tangential
+       성분을 $v_i\cdot\hat t$로 유지. Normal 성분은 0.
+ \item \texttt{=1} (no-slip): 벽 face에서 $v_\mathrm{face} = 0$ (전체 0).
+\end{itemize}
+KH는 벽이 없으므로 dead code이지만, RT/Cylinder 테스트에서 물리적 경계
+조건을 정확히 구현할 수 있다. 기존 구현은 $v_n^*=0$만 강제하고 tangential을
+건드리지 않았으나, \texttt{die} 계산에서는 $v_\mathrm{face}=0$을 사용하여
+실질적으로는 no-slip으로 동작하고 있었다 (의도와 불일치). Rev 3에서는
+명시적으로 free-slip을 기본으로 채택.
+
+\subsubsection*{A-M1, A-M2, A-M3, A-M4 아날로그 (LagMFM 적용)}
+av\_mode=1에 대한 Rev 2 품질 개선을 LagMFM에도 적용/검증하였다:
+\begin{itemize}
+ \item \textbf{A-M1 아날로그}: Pass 2 NS stress 블록에 ``d=3 slab
+       convention'' 주석 추가 (av\_mode=1과 동일 규약 사용 확인).
+ \item \textbf{A-M2 아날로그}: Pass 2 입자 루프를 stride-aware 포인터
+       접근 (\texttt{TVORORK4\_DDINFO.n\_size})으로 전환. 미래 확장 시에도
+       레이아웃 독립적.
+ \item \textbf{A-M3 아날로그}: \texttt{vsig\_max} 업데이트를 확인한 결과
+       LagMFM에서는 원래부터 \texttt{ibp} (home-only)만 쓰고 있었으므로
+       OMP race가 존재하지 않음. 별도 수정 불필요.
+ \item \textbf{A-M4 아날로그}: viscous CFL 블록 역시 원래부터 face 루프
+       \emph{밖}에서 particle당 1회 계산되고 있었음. 별도 수정 불필요.
+\end{itemize}
+
+\subsection{결론 (Rev 3)}
+av\_mode=4는 더이상 ``Minimal LagMFM''이 아니다. Hopkins 2015의 주요 구성
+요소가 모두 구현되었다: (1) kernel density, (2) matrix-weighted gradient,
+(3) effective face $A_{ij}$, (4) adaptive $h_i$ Newton iteration,
+(5) MUSCL reconstruction with pair-wise clamp, (6) face rest frame HLLC.
+에너지 보존 및 Newton 3법칙은 코드 레벨에서 확인되었다.
+
+
+\section{av\_mode=5: Arepo-Laguerre (신규 구현)}
+
+\subsection{구현 위치 (본 세션에서 추가)}
+\begin{itemize}
+  \item \texttt{hllc\_face\_2d\_rest\_frame} (\texttt{exam.c} $\sim$1982): static inline helper
+  \item \texttt{getAccVoro2DBlend}의 \texttt{else if(av\_mode == 5)} 분기 ($\sim$2277):
+    면 rest frame HLLC + MUSCL ($P, v_n$) + 페어와이즈 clamp limiter
+  \item \texttt{exam2d\_vph\_rk4\_int\_blend} $\sim$5881:
+    \texttt{av\_mode==5 \&\& FCENTROID>0}일 때 centroidal steering 훅
+  \item Stress 구조체와 CD10 인프라 재사용 (blend 경로 그대로)
+\end{itemize}
+
+핵심 helper:
+\begin{lstlisting}[language=C]
+static inline void hllc_face_2d_rest_frame(
+        postype rhoL, postype pL, postype vnL_lab, postype cL,
+        postype rhoR, postype pR, postype vnR_lab, postype cR,
+        postype wn, postype Gamma,
+        postype *pstar, postype *vnstar_lab)
+{
+    postype vnL = vnL_lab - wn;
+    postype vnR = vnR_lab - wn;
+    postype pst, vnst;
+    hllc_face_2d(rhoL,pL,vnL,cL, rhoR,pR,vnR,cR, Gamma, &pst,&vnst);
+    *pstar      = pst;          /* frame-invariant */
+    *vnstar_lab = vnst + wn;    /* boost back */
+}
+\end{lstlisting}
+
+\subsection{Critical Concerns}
+
+\subsubsection*{E-C1. face velocity 정의 불일치 (가장 중요)}
+HLLC boost는 생성자 중점 $w_n = \tfrac{1}{2}(v_i+v_j)\cdot\hat n$을 사용하지만,
+에너지 업데이트 (\texttt{getAccVoro2DBlend}의 다른 경로와 공유)는
+\texttt{get2dUpqradRk4}의 Laguerre-aware face velocity를 사용한다.
+
+\begin{itemize}
+  \item 순수 Voronoi ($w^2_i = w^2_j$)에서는 두 정의가 일치
+  \item Laguerre ($w^2$가 공간에 따라 변함)에서는 face가 중점이 아니라
+    power diagram의 radical axis에 위치 → 두 face velocity가 \textbf{다름}
+  \item 그 결과 momentum/energy 일관성 (\texttt{die = dte - dke})이 깨질 위험
+\end{itemize}
+
+\textbf{권장}: 두 경로에서 동일한 face velocity를 사용하도록 통일.
+최소한 HLLC boost에도 \texttt{get2dUpqradRk4}의 $v_\mathrm{face}$를 사용.
+
+\subsubsection*{E-C2. 밀도 reconstruction 없음}
+MUSCL은 $P$와 $v_n$에만 적용되고 $\rho_L = \rho_i$, $\rho_R = \rho_j$ 그대로.
+HLLC의 star state는 $\rho$를 두 state 모두에 사용하므로 접촉면에서
+fake density jump로 인한 artificial sound mode가 섞일 수 있다.
+
+\subsubsection*{E-C3. Limiter: 페어와이즈 clamp (완전 Barth-Jespersen 아님)}
+현재 구현은 face 주위의 두 이웃 min/max로 clamp. Barth-Jespersen은
+전체 이웃 집합의 min/max를 사용. KH처럼 접촉면 부근 oscillation에
+민감한 경우 ``under-limiting'' 가능성.
+
+\subsubsection*{E-C4. Centroidal steering이 아직 검증되지 않음}
+hook 추가는 되어 있지만 \texttt{GAS\_FCENTROID} 기본값이 0이므로 꺼져 있다.
+\texttt{exam2d\_centroidShift}가 Laguerre weight를 인식하는지 확인 필요
+(일반적으로는 Voronoi 전용이므로 Laguerre 셀에서는 oscillation 가능).
+
+\subsubsection*{E-M1. av\_mode=5도 설계상 $\tau=0$ (의도된 동작)}
+\texttt{exam.c:1668--1673}의 \texttt{if(av\_mode >= 2)} 게이트는
+av\_mode=5에도 적용되어 NS stress = 0이다. 이는 Arepo 리시피(순수 HLLC)와
+일치하므로 \emph{의도된 동작}이다. 다만 CD10 기반의 $\nu = \alpha_\mathrm{CD}\cdot h\cdot c_s$
+계산 자체는 여전히 수행되어 $\alpha_\mathrm{CD}$ 값이 누적되지만
+힘 루프에서는 사용되지 않는 ``dead work''이다. 최적화 포인트.
+
+\subsubsection*{E-M2. Monaghan AV가 기본으로 활성}
+\texttt{alphavis>0}일 때 AV 블록이 실행된다. Arepo 순수 리시피에서는
+AV가 없어야 하지만, 현 구현은 사용자 파라미터로 켤 수 있게 해 두었다.
+첫 smoke test는 \texttt{alphavis=0, fcentroid=0, Kappa=0}으로 격리 권장.
+
+\subsection{첫 검증 프로토콜}
+\texttt{kh\_analysis.md}의 Step 11 (av\_mode=5)을 launch할 때 권장 파라미터:
+\begin{itemize}
+  \item \texttt{av\_mode=5, use\_muscl=1}
+  \item \texttt{Kappa=0} (Voronoi 모드, Laguerre 효과 배제 → E-C1 격리)
+  \item \texttt{Alpha=0, Beta=0} (AV off)
+  \item \texttt{cd\_amax=0, cd\_amin=0} (CD10 off)
+  \item \texttt{nu\_phys=0}
+  \item \texttt{fcentroid=0} (steering off)
+\end{itemize}
+이 상태에서 face rest frame HLLC의 단독 성능을 측정한 뒤, 하나씩 켠다.
+
+\subsection{결론}
+av\_mode=5는 \texttt{blend\_integrator + rest-frame HLLC}로 최소 코드 경로
+(inline helper + 1 branch + 1 hook)로 구현되었다. 코드 자체는 깨끗하지만,
+(E-C1) face velocity 일관성과 (E-C2) 밀도 reconstruction 두 항목이
+프로덕션 품질을 위해 필수 보완이다.
+
+
+\section{종합 비교 및 우선순위}
+
+\subsection{기능성 요약표}
+
+\begin{longtable}{l c c c c c}
+\toprule
+특성 & \texttt{=1} & \texttt{=2} & \texttt{=3} & \texttt{=4} & \texttt{=5} \\
+\midrule
+\endhead
+디스패처 & blend & blend & blend & lagmfm & blend \\
+밀도 추정 & Voronoi $m/V$ & Voronoi & Voronoi & kernel $\Sigma W$ & Voronoi \\
+Face 정의 & Voronoi 패싯 & Voronoi 패싯 & Voronoi 패싯 & MFM eff. & Laguerre 패싯 \\
+NS stress & 있음 & 의도적 0 & 없음 & avg($\tau$) & 없음 \\
+Riemann & --- & lab HLLC & lab HLLC & \textbf{rest HLLC} & \textbf{rest HLLC} \\
+MUSCL & 없음 & 있음 & 부분 & $P,v_x,v_y$ & $P,v_n$ \\
+$h_i$ iter & --- & --- & --- & \textbf{있음} & --- \\
+단일 소산원 & $\tau_\mathrm{NS}$ & $\alpha_\mathrm{CD}$ & HLLC & avg($\tau$)+rest HLLC & rest HLLC \\
+CD10 switch & 사용 & \textbf{핵심} & 사용 & 사용 & 사용 (dead) \\
+Monaghan AV & optional & tier 내 & optional & optional & optional \\
+KH 검증 & \textbf{Step 3,6 OK} & Step 4 실패 & dt 수축 & Rev 3 재실행 필요 & 미실시 \\
+\bottomrule
+\end{longtable}
+
+\subsection{발견된 이슈 우선순위 (Revision 2)}
+
+\paragraph{\textit{이번 리비전에서 수정 완료}}
+\begin{itemize}
+  \item \textbf{A-M3 = B-m1}: \texttt{vsig\_max} OMP \texttt{critical} 섹션 제거
+        (face-pair 대칭성에 의해 home-only 업데이트로 정확성 보존).
+  \item \textbf{A-M2}: \texttt{update\_alpha\_cd\_2d}의 입자 접근을 stride-aware
+        포인터 연산으로 전환 (future-proof; \texttt{treevorostressrk4particletype}
+        확장 시에도 레이아웃 독립).
+  \item \textbf{A-M4}: viscous CFL 체크를 face loop 밖으로 이동
+        (입자 $i$ 상태에만 의존하므로 $O(N_\mathrm{face})$ 중복 계산 제거).
+  \item \textbf{E-C1}: av\_mode=5의 HLLC boost용 face velocity를
+        \texttt{get2dUpqradRk4}의 Laguerre-aware 값으로 통일.
+  \item \textbf{A-M1}: NS stress의 2D trace 규약 ((2/3)divv, 3D slab)
+        \texttt{exam.c} 주석 및 본 문서에 명시.
+\end{itemize}
+
+\paragraph{\textit{리뷰 중 취소된 false positive}}
+\begin{itemize}
+  \item \textbf{B-C1 (취소)}: \texttt{av\_mode>=2}에서의 $\tau=0$ zeroing은 버그가
+        아닌 \emph{설계}. 힘 루프의 게이트가 이미 $\tau\cdot dS$를 av\_mode=2에서
+        배제하며, \texttt{zeroing}은 전용(defensive) cleanup이다. 자세한 논증은
+        §\ref{sec:av2rationale}.
+  \item \textbf{B-C2 (취소)}: MUSCL 속도 limiter는 no-op가 아니라
+        올바른 pair-wise ``no new extrema'' clamp이다.
+\end{itemize}
+
+\paragraph{\textit{Revision 3에서 추가로 수정 완료 (LagMFM)}}
+\begin{itemize}
+  \item \textbf{D-B1}: $h_i$ Newton iteration (\texttt{LAGMFM\_H\_ITER}, \texttt{LAGMFM\_H\_TOL}).
+  \item \textbf{D-B2}: MUSCL reconstruction ($P$, $v_x$, $v_y$) + pair-wise clamp limiter.
+  \item \textbf{D-B3}: Face rest frame HLLC ($w = \tfrac12(v_i+v_j)$).
+  \item \textbf{D-B4}: Tangential $v_\mathrm{face}$ 포함 + Newton 3rd law \& 에너지 보존 검증 주석.
+  \item \textbf{D-B5}: Singular $E$ fallback을 zero matrix로 변경 (self-degrading to 1st order).
+  \item \textbf{D-B6}: \texttt{LAGMFM\_WALL\_NOSLIP} 매크로 + free-slip 기본값.
+  \item \textbf{A-M1/A-M2 analog}: LagMFM Pass 2에 stride-aware + trace 규약 주석.
+\end{itemize}
+
+\paragraph{\textit{여전히 보완하면 품질 향상}}
+\begin{itemize}
+  \item \textbf{E-C2}: av\_mode=5의 밀도 reconstruction.
+  \item \textbf{E-C3}: Barth-Jespersen 전체 이웃 clamp로 승급 (현재 pair-wise).
+  \item \textbf{E-C4}: \texttt{exam2d\_centroidShift}의 Laguerre 인식 여부 확인.
+  \item \textbf{LagMFM $\nabla\rho$}: \texttt{Stress} 구조체 확장 후 $\rho$ 재구성 추가.
+\end{itemize}
+
+\paragraph{\textit{Cosmetic/문서화}}
+\begin{itemize}
+  \item A-M5, A-m1--m6
+\end{itemize}
+
+\subsection{추천 다음 작업 순서}
+\begin{enumerate}
+  \item \textbf{av\_mode=4 KH 재실행} — Revision 3의 D-B1--B6 수정으로 KH roll-up이
+        $\sim$1 turn에서 개선되는지 (Hopkins 기준 $\sim$4 turns 목표) 확인.
+        Step 10 파라미터 (Kappa=0.4, w2Power=0.2, Nx=256) 동일 조건 비교.
+  \item \textbf{av\_mode=1 회귀 확인} — KH Step 3/6 재실행하여 Rev 2의 A-M3/A-M4
+        수정이 수치적으로 동등한지 확인.
+  \item \textbf{av\_mode=5 smoke test} — §5.3의 격리 파라미터로 Kappa=0 실행.
+        Step 6 대비 spiral turn 수와 $dt$ 안정성 비교.
+  \item \textbf{av\_mode=2 구조적 이슈 분석} — B-C1이 bug가 아니므로 Step 4/5
+        실패는 Lagrangian HLLC limit 구조적 한계. 개선은 (a) 강한 CD10 튜닝
+        또는 (b) \texttt{LagMFM (Rev 3)}/Arepo-Laguerre 경로 권장.
+  \item \textbf{E-C2} — av\_mode=5 밀도 reconstruction 도입.
+\end{enumerate}
+
+
+\section{부록: 각 av\_mode별 참조 라인}
+
+\subsection*{av\_mode=1}
+\begin{itemize}
+  \item NS stress 계산 (d=3 slab trace 규약): \texttt{exam.c:1658--1667}
+  \item $\tau\cdot dS$ 적용 게이트 (\texttt{av\_mode==1 || (av\_mode==0 \&\& nu\_phys>0)}):
+        \texttt{exam.c:2388--2389}
+  \item $\tau\cdot dS$ 부호: \texttt{tau\_dot\_dS} $ = -(\tau_\mathrm{code}\cdot dS)$ at
+        \texttt{exam.c:2408--2409, 2557--2558}
+  \item CD10 스위치 (stride-aware, Rev 2 수정): \texttt{update\_alpha\_cd\_2d}
+  \item Viscous CFL (Rev 2: face loop 밖으로 이동): \texttt{exam.c:} 면 루프 종료 후
+  \item vsig\_max (Rev 2: home-only, OMP critical 제거): \texttt{exam.c:} $\sim$2602
+  \item Wall ghost fallback: \texttt{exam.c:2172--2193}
+\end{itemize}
+
+\subsection*{av\_mode=2}
+\begin{itemize}
+  \item $\tau$ zeroing (의도된 defensive cleanup; NOT a bug):
+        \texttt{exam.c:1668--1673}
+  \item MUSCL pair-wise velocity limiter (올바른 구현; NOT a bug):
+        \texttt{exam.c:2487--2490}
+  \item 블렌딩 팩터 $f_{pq} = \min(1, \max(\alpha_p,\alpha_q)/\alpha_{\max}+\theta)$:
+        \texttt{exam.c:2439}
+  \item HLLC 호출: \texttt{hllc\_face\_2d} ($\sim$1953)
+  \item 설계 근거: CD10 $\alpha_\mathrm{CD}$가 단일 소산 소스
+        — (1) 블렌드 팩터, (2) HLLC 후 $\Pi_\mathrm{CD10}$,
+        (3) M(n,m) 가중치. NS stress 활성 시 이중 소산.
+\end{itemize}
+
+\subsection*{av\_mode=3}
+\begin{itemize}
+  \item 분기: \texttt{getAccVoro2DBlend}의 \texttt{else if(av\_mode==3)}
+  \item Lab frame HLLC: \texttt{hllc\_face\_2d} 직접 호출 (boost 없음)
+\end{itemize}
+
+\subsection*{av\_mode=4}
+\begin{itemize}
+  \item 커널 초기화: \texttt{mfm\_W\_wendland2d}, \texttt{mfm\_dWdr\_wendland2d}
+  \item Gradient matrix: \texttt{mfm\_invert2x2}
+  \item 밀도/압력: \texttt{updateDenW2Pressure2D\_LagMFM}
+  \item 힘: \texttt{getAccVoro2D\_LagMFM}
+  \item RK4: \texttt{exam2d\_vph\_rk4\_int\_lagmfm}
+  \item \texttt{Stress} 신규 필드: \texttt{E\_inv\_xx, E\_inv\_xy, E\_inv\_yx, E\_inv\_yy, h\_mfm} (in \texttt{eunha.h})
+  \item 디스패처: \texttt{kh.c:204--210}
+\end{itemize}
+
+\subsection*{av\_mode=5 (본 세션에서 추가)}
+\begin{itemize}
+  \item \texttt{hllc\_face\_2d\_rest\_frame}: \texttt{exam.c} $\sim$1982 (static inline)
+  \item 분기: \texttt{exam.c} $\sim$2277 \texttt{else if(av\_mode == 5)}
+  \item Centroidal steering hook: \texttt{exam.c} $\sim$5881
+  \item 디스패처: 기존 \texttt{kh.c:211}의 \texttt{use\_stress} 경로 재사용
+  \item 신규 프로토타입: 없음 (static inline helper)
+  \item 신규 params: 없음 (\texttt{GAS\_FCENTROID}는 기존 필드 재사용)
+\end{itemize}
+
+\end{document}

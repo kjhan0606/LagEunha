@@ -1,0 +1,32 @@
+--- accepted/Exam/exam_gpu.cu
++++ clipcompact/Exam/exam_gpu.cu
+@@ -2525,6 +2525,29 @@
+         }
+         if(out_count>1 && tmp_x[0]==tmp_x[out_count-1] && tmp_y[0]==tmp_y[out_count-1])
+             out_count--;
++        /* The final raw-face path coalesces consecutive edges with the
++         * same support. Do it earlier when an intermediate polygon becomes
++         * large: repeated cuts through nearly cocircular sites can leave
++         * many collinear fragments even though the final Voronoi cell has
++         * only a few faces. This preserves the same support-based rule as
++         * final cleanup and avoids exhausting the fixed corner buffer. */
++        if(out_count>=24){
++            int changed=1;
++            while(changed && out_count>=3){
++                changed=0;
++                for(int e=0;e<out_count;e++){
++                    int prev=(e+out_count-1)%out_count;
++                    if(tmp_neigh[e]>=0 && tmp_neigh[e]==tmp_neigh[prev]){
++                        for(int k=e;k+1<out_count;k++){
++                            tmp_x[k]=tmp_x[k+1];
++                            tmp_y[k]=tmp_y[k+1];
++                            tmp_neigh[k]=tmp_neigh[k+1];
++                        }
++                        out_count--;changed=1;break;
++                    }
++                }
++            }
++        }
+         for(int e=0;e<out_count;e++){
+             poly_x[e]=tmp_x[e];poly_y[e]=tmp_y[e];poly_neigh[e]=tmp_neigh[e];
+         }

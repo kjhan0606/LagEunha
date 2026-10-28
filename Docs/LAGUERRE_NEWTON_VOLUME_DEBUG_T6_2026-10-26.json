@@ -1,0 +1,115 @@
+{
+  "n_sites": 71080,
+  "n_active": 22512,
+  "boundary_weights": "zero outside 1 <= initial r < 8",
+  "target": "initial unweighted Voronoi area at each active site",
+  "history": [
+    {
+      "stage": "unweighted",
+      "relative_l2": 12.103648599720543,
+      "median_rel": 9.532876518076389e-05,
+      "p95_rel": 0.0809128416713978,
+      "max_rel": 1.2125995444408266,
+      "inner_r2_2p25_median_rel": 0.07988683239300877,
+      "inner_r2_2p25_p95_rel": 0.26120636334417213,
+      "inner_r2_2p25_max_rel": 0.3456211368627717
+    },
+    {
+      "stage": "first_linear_step",
+      "cg_iterations": 334
+    },
+    {
+      "stage": "nonlinear_0",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 3.8505013900539615,
+      "median_rel": 4.3886151009549694e-09,
+      "p95_rel": 0.003435507512598532,
+      "max_rel": 0.9848232336021283,
+      "inner_r2_2p25_median_rel": 0.0014688140286125417,
+      "inner_r2_2p25_p95_rel": 0.02362364783217446,
+      "inner_r2_2p25_max_rel": 0.06560805733695613,
+      "cg_iterations": 346,
+      "jacobian_fd_relative_l2": 0.7090049196267206,
+      "jacobian_fd_norm_ratio": 0.516154441204403,
+      "jacobian_fd_cosine": 0.7398245274593068,
+      "jacobian_fd_inner_relative_l2": 1.627333602050074e-06
+    }
+  ],
+  "total_wall_seconds": 6.568759037996642,
+  "worst_cells": [
+    {
+      "site": 29058,
+      "initial_r": 1.3794317783964527,
+      "relative_volume_error": 0.9848232336021283,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 36389,
+      "initial_r": 1.3794317783964527,
+      "relative_volume_error": 0.9848232336021283,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 32099,
+      "initial_r": 1.3794317783964527,
+      "relative_volume_error": 0.9848232336021283,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 33348,
+      "initial_r": 1.3794317783964527,
+      "relative_volume_error": 0.984823233602103,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 28547,
+      "initial_r": 1.581293230634344,
+      "relative_volume_error": 0.7973613038174486,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 33598,
+      "initial_r": 1.581293230634344,
+      "relative_volume_error": 0.7973613038174108,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 31849,
+      "initial_r": 1.581293230634344,
+      "relative_volume_error": 0.7973613038173981,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 36900,
+      "initial_r": 1.581293230634344,
+      "relative_volume_error": 0.7973613038173981,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 32347,
+      "initial_r": 1.1802823417513286,
+      "relative_volume_error": 0.7899609147664819,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 35878,
+      "initial_r": 1.1802823417513286,
+      "relative_volume_error": 0.7899609147664692,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 33100,
+      "initial_r": 1.1802823417513286,
+      "relative_volume_error": 0.7899609147664692,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 29569,
+      "initial_r": 1.1802823417513286,
+      "relative_volume_error": 0.789960914766444,
+      "target_area": 0.0087890625
+    }
+  ],
+  "limitation": "Geometric t=6 existence test only; no time evolution, weighted-face conservation or near-AREPO runtime evidence"
+}

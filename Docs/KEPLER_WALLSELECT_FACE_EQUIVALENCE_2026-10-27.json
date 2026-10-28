@@ -1,0 +1,47 @@
+{
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_face_call1_a10_v1",
+  "restart_sha256": "134e4e76a475c6923f1106ffb944fd0d51a0df82e7d4c86ea2814057ce9a12f6",
+  "faces": {
+    "control": {
+      "rows": 333100,
+      "unique_directed_supports": 333052,
+      "total_directed_face_length": 3937.1955757722794,
+      "rows_length_at_most_1e-14": 48,
+      "path": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_face_call1_a10_v1/control/face_dump_r0_call1.tsv",
+      "sha256": "79eeeb434dabb0b243728e0413c1dac398875fe7fccf762f020ffc36b55c97c7"
+    },
+    "candidate": {
+      "rows": 333056,
+      "unique_directed_supports": 333052,
+      "total_directed_face_length": 3937.19557577228,
+      "rows_length_at_most_1e-14": 4,
+      "path": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_face_call1_a10_v1/candidate/face_dump_r0_call1.tsv",
+      "sha256": "0f07efc6653f24c9f5779bf2010e660d24847b32a22c8ef2a010cbf4e8746e0a"
+    }
+  },
+  "support_keys_only_control": 0,
+  "support_keys_only_candidate": 0,
+  "same_support_different_segment_count": 48,
+  "max_aggregated_length_difference": 1.3574211199518516e-16,
+  "max_aggregated_area_vector_difference": 1.3644967557071036e-16,
+  "field_bitwise_equal": {
+    "x": true,
+    "y": true,
+    "vx": true,
+    "vy": true,
+    "mass": true,
+    "volume": true,
+    "ie": true,
+    "den": true,
+    "pressure": true,
+    "w2": true
+  },
+  "checks": {
+    "both_native_physics_gates": true,
+    "same_directed_support_keys": true,
+    "same_integrated_face_lengths": true,
+    "same_integrated_face_area_vectors": true,
+    "same_physical_endpoint_fields_bitwise": true
+  },
+  "scope": "One accepted-state native force call. Segments are grouped by directed owner/neighbor/wall support; this proves equivalence here, not arbitrary late-time geometry."
+}

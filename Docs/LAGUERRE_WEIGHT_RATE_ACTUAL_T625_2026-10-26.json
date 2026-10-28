@@ -1,0 +1,46 @@
+{
+  "t": 6.250024729493809,
+  "n_active": 21436,
+  "generator_displacement": "native checkpoint velocity, forward Euler",
+  "volume_derivative": "centered finite difference at h=1e-4, fixed weights",
+  "target": "zero cell-volume derivative in the r>=2 disk",
+  "graph_laplacian": "current weighted power-face area/(2 generator distance)",
+  "rhs_l2": 0.027151969123118725,
+  "cg_iterations_cold": 322,
+  "cg_iterations_secant_warm": 308,
+  "cg_relative_residual_by_iteration": {
+    "8": 0.08683739709008832,
+    "16": 0.02889323563564253,
+    "32": 0.009175448763827728,
+    "64": 0.002471582127164748,
+    "128": 0.00021087989562090925,
+    "256": 2.9847172717060656e-08,
+    "322": 9.500679962099789e-11
+  },
+  "secant_rate_relative_l2": 0.10113720269017071,
+  "weight_rate_abs_quantiles": [
+    4.292482064675724e-05,
+    0.00043827247174884005,
+    0.0010569117905103649,
+    0.002336707884554695
+  ],
+  "step": 0.001,
+  "fixed_weight_area_change": {
+    "median": 2.9219437338802107e-08,
+    "p95": 1.1546566484969738e-05,
+    "max": 0.0003461670311379298,
+    "inner_median": 8.272353498896512e-05,
+    "inner_p95": 0.0002719846378290355,
+    "inner_max": 0.0003461670311379298
+  },
+  "predicted_weight_area_change": {
+    "median": 2.4940365821940886e-09,
+    "p95": 2.840223108553673e-08,
+    "max": 3.5466140010009687e-07,
+    "inner_median": 7.233464000618354e-08,
+    "inner_p95": 1.7260302532420838e-07,
+    "inner_max": 3.5466140010009687e-07
+  },
+  "wall_seconds": 6.554011298998375,
+  "limitation": "Geometry-only, one Euler displacement; no hydro flux, conservation or production GPU performance result"
+}

@@ -1,0 +1,171 @@
+{
+  "purpose": "Legacy fast CPU executable to rebuilt control and selective-wall CUDA compatibility on identical accepted restart",
+  "start_time": 0.825,
+  "endpoint_time": 0.85,
+  "n": 55351,
+  "fields": [
+    "x",
+    "y",
+    "vx",
+    "vy",
+    "mass",
+    "volume",
+    "ie",
+    "den",
+    "pressure",
+    "w2"
+  ],
+  "runs": {
+    "legacy_fast": {
+      "binary_sha256": "d92b6cd3b8491678cdfafa7610608378db89ca9bd16585a52a51aaf26f3b3367",
+      "restart_sha256": "134e4e76a475c6923f1106ffb944fd0d51a0df82e7d4c86ea2814057ce9a12f6",
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/rk_diag_hoist_pair_t085_a10_v1/profile/khout.000014.dat",
+      "endpoint_sha256": "97c6689ce1c5aebe610666ed33125533a6ed25f590a649d23fef22152ff155ed",
+      "native_short_checks_passed": 11
+    },
+    "rebuilt_control": {
+      "binary_sha256": "56d96440005d82b424f00041f0631540ab22628932b238df285a54216ba4bc7b",
+      "restart_sha256": "134e4e76a475c6923f1106ffb944fd0d51a0df82e7d4c86ea2814057ce9a12f6",
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_pair_t085_a10_v1/control/khout.000014.dat",
+      "endpoint_sha256": "96b77c414f7c0e60fd4a0f8ee910dc70285fff4def8904766b68e13198575bd0",
+      "native_short_checks_passed": 11
+    },
+    "selective_wall": {
+      "binary_sha256": "87d60c1cb059e1710dd2749c84af5c98ba17fe077e6fe080b9c8b42d5fd40968",
+      "restart_sha256": "134e4e76a475c6923f1106ffb944fd0d51a0df82e7d4c86ea2814057ce9a12f6",
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_pair_t085_a10_v1/candidate/khout.000014.dat",
+      "endpoint_sha256": "412b0a8be35f20a12c002e9cb3ae269ba656b4032df357e1b7cc7fc19bdb7ffa",
+      "native_short_checks_passed": 11
+    }
+  },
+  "pairwise_fields": {
+    "legacy_fast__rebuilt_control": {
+      "x": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "y": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "vx": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "vy": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "mass": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "volume": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "ie": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "den": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "pressure": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "w2": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      }
+    },
+    "legacy_fast__selective_wall": {
+      "x": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "y": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "vx": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "vy": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "mass": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "volume": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "ie": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "den": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "pressure": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "w2": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      }
+    },
+    "rebuilt_control__selective_wall": {
+      "x": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "y": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "vx": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "vy": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "mass": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "volume": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "ie": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "den": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "pressure": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      },
+      "w2": {
+        "bitwise_equal": true,
+        "max_abs_difference": 0.0
+      }
+    }
+  },
+  "all_ten_fields_bitwise_equal": true,
+  "scope": "13 RK4 steps on one accepted state; bitwise equality does not prove sustained or arbitrary-state equality."
+}

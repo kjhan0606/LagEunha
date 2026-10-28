@@ -1,0 +1,207 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10608,12 +10608,29 @@
+ 	}
+ }
+ 
++static void gfs_rk4_stage_diagnostic_timed(SimParameters *simpar,
++		const char *stage, postype h, int rhs_valid, double *elapsed){
++	double start=MPI_Wtime();
++	gfs_rk4_stage_diagnostic(simpar,stage,h,rhs_valid);
++	*elapsed+=MPI_Wtime()-start;
++}
++
+ #include "gfs_ssprk3.inc"
+ #include "gfs_rk4_transaction.inc"
+ #include "gfs_thermal64_native.inc"
+ #include "gfs_rk4_direct_u.inc"
+ #include "gfs_moment_native.inc"
+ #include "gfs_dg_native.inc"
++
++#ifdef USE_CUDA
++static int gfs_rk4_tx_valid_timed(SimParameters *simpar,
++		GfsRK4Transaction *tx, int rhs, double *elapsed){
++	double start=MPI_Wtime();
++	int valid=gfs_rk4_tx_valid(simpar,tx,rhs);
++	*elapsed+=MPI_Wtime()-start;
++	return valid;
++}
++#endif
+ 
+ double exam2d_vph_rk4_int_blend(
+ 		SimParameters *simpar,
+@@ -10667,6 +10684,7 @@
+ 		fprintf(stderr,"[SSPRK3] candidate requires native CUDA build\n");MPI_Abort(MPI_COMM(simpar),99);
+ #endif
+ 	}
++	double _t_rk_start=MPI_Wtime(), _t_diag=0., _t_tx_valid=0.;
+ 	/* All array indexing uses treevorostressrk4particletype* (sbp) for correct
+ 	   stride when particles are stress-sized.  Common fields (x, y, vx, vy,
+ 	   rk4, VoroQ, etc.) are at the same offsets in both struct types. */
+@@ -10819,19 +10837,19 @@
+     if(tx.on){
+         gfs_rk4_step_ceiling=tx.ceiling;
+         gpu_geometry_trial_begin();
+-        if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
++        if(!gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;
+     }
+ #endif
+ 	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
+ 	/* === K1 evaluation === */
+-	gfs_rk4_stage_diagnostic(simpar,"k1_input",0,0);
++	gfs_rk4_stage_diagnostic_timed(simpar,"k1_input",0,0,&_t_diag);
+ 	_t0 = MPI_Wtime();
+ 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
+ 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
+ 			mkLinkedList2D, 1);
+ 	_t_update += MPI_Wtime() - _t0;
+ #ifdef USE_CUDA
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 0;
+ 	if(gfs_vaud_on()) vaud_close(simpar, sbp, VORO_NP(simpar), targetBP, Lx, Ly);
+@@ -10901,7 +10919,7 @@
+     }
+ #endif
+ 	clamp_dK_rate_limiter(simpar, Dtime);
+-	gfs_rk4_stage_diagnostic(simpar,"k1_rhs",Dtime,1);
++	gfs_rk4_stage_diagnostic_timed(simpar,"k1_rhs",Dtime,1,&_t_diag);
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 	for(i=0;i<VORO_NP(simpar);i++){
+ 		sbp[i].rk4.k1x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
+@@ -10932,9 +10950,9 @@
+ 		sbp[i].stress.K += sbp[i].rk4.k1K*0.5;
+ 	}
+ #ifdef USE_CUDA
+-    if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+-#endif
+-	gfs_rk4_stage_diagnostic(simpar,"k2_input",Dtime,0);
++    if(tx.on && !gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;
++#endif
++	gfs_rk4_stage_diagnostic_timed(simpar,"k2_input",Dtime,0,&_t_diag);
+ 	_t0 = MPI_Wtime();
+ 	postStage(simpar);
+ 	_t_post += MPI_Wtime() - _t0;
+@@ -10951,7 +10969,7 @@
+ 			mkLinkedList2D, Dtime);
+ 	_t_update += MPI_Wtime() - _t0;
+ #ifdef USE_CUDA
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 1;
+ 	_t0 = MPI_Wtime();
+@@ -10980,7 +10998,7 @@
+ #endif
+ 
+ 	clamp_dK_rate_limiter(simpar, Dtime);
+-	gfs_rk4_stage_diagnostic(simpar,"k2_rhs",Dtime,1);
++	gfs_rk4_stage_diagnostic_timed(simpar,"k2_rhs",Dtime,1,&_t_diag);
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 	for(i=0;i<VORO_NP(simpar);i++){
+ 		sbp[i].rk4.k2x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
+@@ -11011,9 +11029,9 @@
+ 		sbp[i].stress.K += (sbp[i].rk4.k2K-sbp[i].rk4.k1K)*0.5;
+ 	}
+ #ifdef USE_CUDA
+-    if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+-#endif
+-	gfs_rk4_stage_diagnostic(simpar,"k3_input",Dtime,0);
++    if(tx.on && !gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;
++#endif
++	gfs_rk4_stage_diagnostic_timed(simpar,"k3_input",Dtime,0,&_t_diag);
+ 	_t0 = MPI_Wtime();
+ 	postStage(simpar);
+ 	_t_post += MPI_Wtime() - _t0;
+@@ -11030,7 +11048,7 @@
+ 			mkLinkedList2D, Dtime);
+ 	_t_update += MPI_Wtime() - _t0;
+ #ifdef USE_CUDA
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 2;
+ 	_t0 = MPI_Wtime();
+@@ -11059,7 +11077,7 @@
+ #endif
+ 
+ 	clamp_dK_rate_limiter(simpar, Dtime);
+-	gfs_rk4_stage_diagnostic(simpar,"k3_rhs",Dtime,1);
++	gfs_rk4_stage_diagnostic_timed(simpar,"k3_rhs",Dtime,1,&_t_diag);
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 	for(i=0;i<VORO_NP(simpar);i++){
+ 		sbp[i].rk4.k3x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
+@@ -11090,9 +11108,9 @@
+ 		sbp[i].stress.K += sbp[i].rk4.k3K - sbp[i].rk4.k2K*0.5;
+ 	}
+ #ifdef USE_CUDA
+-    if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+-#endif
+-	gfs_rk4_stage_diagnostic(simpar,"k4_input",Dtime,0);
++    if(tx.on && !gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;
++#endif
++	gfs_rk4_stage_diagnostic_timed(simpar,"k4_input",Dtime,0,&_t_diag);
+ 	_t0 = MPI_Wtime();
+ 	postStage(simpar);
+ 	_t_post += MPI_Wtime() - _t0;
+@@ -11109,7 +11127,7 @@
+ 			mkLinkedList2D, Dtime);
+ 	_t_update += MPI_Wtime() - _t0;
+ #ifdef USE_CUDA
+-    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
++    if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 3;
+ 	_t0 = MPI_Wtime();
+@@ -11138,7 +11156,7 @@
+ #endif
+ 
+ 	clamp_dK_rate_limiter(simpar, Dtime);
+-	gfs_rk4_stage_diagnostic(simpar,"k4_rhs",Dtime,1);
++	gfs_rk4_stage_diagnostic_timed(simpar,"k4_rhs",Dtime,1,&_t_diag);
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 	for(i=0;i<VORO_NP(simpar);i++){
+ 		sbp[i].rk4.k4x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
+@@ -11200,9 +11218,9 @@
+ 		}
+ 	}
+ #ifdef USE_CUDA
+-    if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+-#endif
+-	gfs_rk4_stage_diagnostic(simpar,"final_combination",Dtime,0);
++    if(tx.on && !gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;
++#endif
++	gfs_rk4_stage_diagnostic_timed(simpar,"final_combination",Dtime,0,&_t_diag);
+ 	postStage(simpar);
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 
+@@ -11239,9 +11257,9 @@
+     }
+ #endif
+ #ifdef USE_CUDA
+-    if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+-#endif
+-	gfs_rk4_stage_diagnostic(simpar,"final_geometry",Dtime,0);
++    if(tx.on && !gfs_rk4_tx_valid_timed(simpar,&tx,0,&_t_tx_valid)) goto gfs_rk4_trial_rejected;
++#endif
++	gfs_rk4_stage_diagnostic_timed(simpar,"final_geometry",Dtime,0,&_t_diag);
+ 
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 
+@@ -11489,6 +11507,15 @@
+ #ifdef USE_CUDA
+     gfs_rk4_tx_commit(&tx);
+ #endif
++	{
++		const char *fine=getenv("GFS_RK_FINE_PROFILE");
++		if(fine && atoi(fine)>0 && MYID(simpar)==0){
++			double wall=MPI_Wtime()-_t_rk_start;
++			double named=_t_update+_t_force+_t_post+_t_fin;
++			fprintf(stderr,"[RK_FINE] step=%d wall=%.9f named=%.9f stage_diag=%.9f tx_valid=%.9f residual=%.9f\n",
++				gfs_rk4_context_step,wall,named,_t_diag,_t_tx_valid,wall-named-_t_diag-_t_tx_valid);
++		}
++	}
+     return Dtime;
+ #ifdef USE_CUDA
+ gfs_rk4_trial_rejected:

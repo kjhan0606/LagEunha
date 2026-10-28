@@ -1,0 +1,49 @@
+{
+  "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/linear_pressure_torque_v1/w0_receipt.json",
+  "receipt_sha256": "49a34d307eb84bf42895cc281a144eae0d36422b0fb5aa5548352222b0bd3516",
+  "endpoint_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+  "time": 6.5,
+  "weighted": false,
+  "disk_sites": 49038,
+  "pressure_gradient": "independent inverse-distance weighted least-squares fit to neighboring saved cell pressures",
+  "exact_torque_relative_to_face_torque_scale_max": 3.165935883355091e-14,
+  "normalized_midpoint_torque_rms": 1.6635345212179706e-06,
+  "normalized_midpoint_torque_p95": 3.3692450588606274e-06,
+  "radial_bands": [
+    {
+      "r_min": 0.5,
+      "r_max": 0.75,
+      "cells": 3931,
+      "normalized_midpoint_torque_rms": 2.1083818015464266e-07,
+      "normalized_midpoint_torque_p95": 4.509453428458462e-07
+    },
+    {
+      "r_min": 0.75,
+      "r_max": 1.0,
+      "cells": 6050,
+      "normalized_midpoint_torque_rms": 5.120119624250456e-07,
+      "normalized_midpoint_torque_p95": 1.1137004486665427e-06
+    },
+    {
+      "r_min": 1.0,
+      "r_max": 1.5,
+      "cells": 15865,
+      "normalized_midpoint_torque_rms": 1.1632572170032698e-06,
+      "normalized_midpoint_torque_p95": 2.449593371663494e-06
+    },
+    {
+      "r_min": 1.5,
+      "r_max": 2.0,
+      "cells": 23192,
+      "normalized_midpoint_torque_rms": 2.2022411727965796e-06,
+      "normalized_midpoint_torque_p95": 4.7235744357830935e-06
+    }
+  ],
+  "checks": {
+    "tensor_positive": true,
+    "area_consistent": true,
+    "linear_pressure_exact_torque_zero": true,
+    "finite": true
+  },
+  "scope": "Hypothetical independent linear-pressure normal traction on reconstructed uniform-density polygons. Midpoint versus exact face integration is a geometric diagnostic, not the native variational force, physical spin source, accumulated torque, or a heating measurement."
+}

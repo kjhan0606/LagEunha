@@ -1,0 +1,102 @@
+{
+  "source": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_NATIVE_SOURCE_OVERLAY_2026-10-27/Exam/exam_gpu.cu",
+  "source_sha256": "9d2937a7bf5e9a4365d020c86cf05c2e2494d7746a7e20f3eef321deeecd97e9",
+  "reproducer": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_bounded_varpress_adjoint_20261027.py",
+  "reproducer_sha256": "0eae2e797daeb0423aae37ecde8ea98435103b2726b261db81c6a04bfcda27cd",
+  "grid": [
+    4,
+    4
+  ],
+  "boundary_sides": 64,
+  "boundary_center": [
+    2.0,
+    2.0
+  ],
+  "boundary_circumradius": 2.9,
+  "gamma": 1.6666666666666667,
+  "central_difference_h": 0.0001,
+  "cases": [
+    {
+      "seed": 17,
+      "uniform_pressure": false,
+      "sites": 16,
+      "boundary_faces": 76,
+      "area_partition_error": 3.552713678800501e-15,
+      "face_vector_closure_max": 1.1102230246251565e-16,
+      "reciprocal_face_error_max": 1.2490009027033011e-15,
+      "force_gradient_error_max": 4.741269340269266e-08,
+      "area_rate_error_max": 1.1380447695330531e-09,
+      "relative_sweep_error_max": 2.220446049250313e-16,
+      "total_area_rate_error": 5.551115123125783e-16,
+      "wall_momentum_balance_error": 3.1264164235997256e-15,
+      "energy_power_without_boundary": 0.4438074307764627,
+      "energy_power_with_boundary": 2.220446049250313e-16,
+      "force_max": 0.799333213182358
+    },
+    {
+      "seed": 17,
+      "uniform_pressure": true,
+      "sites": 16,
+      "boundary_faces": 76,
+      "area_partition_error": 3.552713678800501e-15,
+      "face_vector_closure_max": 1.1102230246251565e-16,
+      "reciprocal_face_error_max": 1.2490009027033011e-15,
+      "force_gradient_error_max": 5.705817440765484e-08,
+      "area_rate_error_max": 1.1380447695330531e-09,
+      "relative_sweep_error_max": 2.220446049250313e-16,
+      "total_area_rate_error": 5.551115123125783e-16,
+      "wall_momentum_balance_error": 2.2247786310271853e-16,
+      "energy_power_without_boundary": 0.7571849428535542,
+      "energy_power_with_boundary": 2.7755575615628914e-16,
+      "force_max": 0.0
+    },
+    {
+      "seed": 23,
+      "uniform_pressure": false,
+      "sites": 16,
+      "boundary_faces": 76,
+      "area_partition_error": 3.552713678800501e-15,
+      "face_vector_closure_max": 2.220446049250313e-16,
+      "reciprocal_face_error_max": 8.881784197001252e-16,
+      "force_gradient_error_max": 4.5941949727967745e-08,
+      "area_rate_error_max": 4.020268840054797e-09,
+      "relative_sweep_error_max": 2.7755575615628914e-16,
+      "total_area_rate_error": 3.0531133177191805e-16,
+      "wall_momentum_balance_error": 9.992007221626409e-16,
+      "energy_power_without_boundary": -0.5097372142374584,
+      "energy_power_with_boundary": 7.771561172376096e-16,
+      "force_max": 0.9135631036010724
+    },
+    {
+      "seed": 23,
+      "uniform_pressure": true,
+      "sites": 16,
+      "boundary_faces": 76,
+      "area_partition_error": 3.552713678800501e-15,
+      "face_vector_closure_max": 2.220446049250313e-16,
+      "reciprocal_face_error_max": 8.881784197001252e-16,
+      "force_gradient_error_max": 4.7225307684729744e-08,
+      "area_rate_error_max": 4.020268840054797e-09,
+      "relative_sweep_error_max": 2.7755575615628914e-16,
+      "total_area_rate_error": 3.0531133177191805e-16,
+      "wall_momentum_balance_error": 2.2247786310271853e-16,
+      "energy_power_without_boundary": -0.7347375017096183,
+      "energy_power_with_boundary": 0.0,
+      "force_max": 0.0
+    }
+  ],
+  "checks": {
+    "bounded_area_partition": true,
+    "reciprocal_interior_faces": true,
+    "closed_polygons": true,
+    "pressure_force_is_energy_gradient": true,
+    "geometric_area_rate": true,
+    "boundary_relative_sweep_closes": true,
+    "fixed_domain_area_rate_zero": true,
+    "wall_traction_accounts_for_momentum": true,
+    "total_energy_power_closes_with_boundary": true,
+    "unmodified_periodic_work_detectably_fails": true,
+    "uniform_pressure_force_zero": true
+  },
+  "scope": "Small fixed convex-domain mathematical W0 audit; no native CUDA boundary, fluid reflection, multi-rank scaling, or long-time Kepler result"
+}

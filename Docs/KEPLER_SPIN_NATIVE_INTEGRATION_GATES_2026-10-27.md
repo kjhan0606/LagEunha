@@ -1,0 +1,284 @@
+# Native cell-spin integration: required discrete contracts
+
+The user's target includes spin, evolving weights when useful, no generator
+steering, fixed individual mass at `W=0`, and inviscid Kepler flow
+(`Re=infinity`). The existing native CUDA/MPI/RK4 production path currently
+has no evolved spin. The two-cell ledgers and affine reconstruction are
+isolated prototypes, not native physics. The following contracts identify
+what must be implemented and tested before a spinning Kepler result can be
+claimed.
+
+There is already a distinct geometric face-speed correction in the source.
+For `W=0`, the Voronoi face-centroid correction is applied automatically on
+both CPU and GPU paths. `GFS_LAGUERRE_ROTATION=1` extends the same geometric
+correction to nonzero-weight Laguerre faces; the active W=0 long-run scripts
+in q1 and 420² leave that extension disabled, but still take the automatic
+Voronoi branch.
+This corrects the face-normal ALE/Riemann speed and is not an evolved cell
+spin: it adds no intrinsic angular-momentum state, torque transport, or spin
+energy reservoir. Keep these two mechanisms separately identified in
+diagnostics and claims.
+
+## State and initialization
+
+For each cell define mass `m`, momentum `p`, **mass centroid** `C`, total
+energy `E`, intrinsic angular momentum `S`, and a central mass-moment
+tensor `Q` with `I=trace(Q)`. If an affine velocity representation is
+used, distinguish its non-rigid kinetic part `K_nonrigid` from thermal
+energy `U`:
+
+```
+E = |p|^2/(2m) + S^2/(2I) + K_nonrigid + U + (defined potential term).
+```
+
+The initial total-energy convention, potential accounting and equation of
+state must be explicit. Adding reconstructed spin by subtracting it from the
+current cold-disk `U` is not generally viable: the
+[saved-state audit](KEPLER_SPIN_SHEAR_LOCAL_MODEL_2026-10-27.md) finds many
+cells would become nonpositive under that hypothetical conversion. A new
+consistent energy reference is a possible alternative, but needs its own
+initial-condition and conservation tests. The generator position must not
+be silently substituted for `C`; first mass moments and their volume/face
+transport need a closure. A uniform polygon density identifies `C` with its
+area centroid, which may conflict with zero face mass flux on a moving mesh.
+
+## Pair balance and physical closure
+
+For a physically specified shared traction `F` applied to cell i and `-F`
+to j at face point `c`, fixed masses and centroids moving with their bulk
+velocities give torque increments
+
+```
+dS_i = (c-C_i) x F * dt
+dS_j = -(c-C_j) x F * dt.
+```
+
+These cancel the pair's orbital angular-momentum change. For nonzero mass
+transfer, use a consistent first-moment and angular-momentum flux; the
+[pair ledger](gfs_spin_affine_face_exchange_20261027.h) is an algebraic
+testable example, but does not derive the flux. Use one common, equal-and-
+opposite total-energy face flux and obtain `U` after subtracting the other
+energy components; ensure positivity without silently injecting energy.
+At `Re=infinity`, pressure traction is normal to the face and no physical
+tangential viscosity or friction is introduced. A numerical Riemann solver
+can have its own dissipation and must be measured, not called physical
+viscosity by assumption.
+
+The existing W0 variational pressure operator has a globally conservative
+generator force and geometric work, but its per-face traction decomposition
+is not unique. Therefore choose and justify a specific pressure/traction and
+energy flux before deriving a torque; do not attach an arbitrary torque to a
+gauge-dependent decomposition. If spin alters a face velocity reconstruction,
+remove the rigid component already present in the existing gradient before
+adding the evolved spin. The [affine operator](gfs_affine_spin_reconstruction_20261027.h)
+shows that algebra, but does not define how `K_nonrigid` evolves or how a
+Riemann state is obtained.
+
+At `W=0` maintained in time, each mass must remain fixed and generator
+motion must not be regularized by steering. If nonzero weights are allowed
+to change mass, define the actual weight-linked mass, momentum, energy and
+moment fluxes and show they reduce to the approved W0 condition. The tested
+global projection of weight work is not by itself a proof of local
+moving-face transport. Turning the spin feature off must preserve the native
+baseline; enabled `S=0` is a separate reduction that must be specified and
+tested because the original gradient may already contain rotation.
+
+## Native integration and acceptance
+
+1. Implement a versioned, opt-in state and restart format, including any
+   centroid/first-moment, spin and non-rigid state; preserve existing
+   checkpoints and MPI ownership/halo identity. A restart must reproduce a
+   continuous run at the same temporal stage.
+2. Compute required polygon moments in O(number of faces), without global
+   subcell quadrature; stage them consistently with the native CUDA/MPI RK4
+   geometry and forces. Apply pair fluxes, torque and energy to the same RK4
+   stage and ensure race-free GPU/MPI accumulation and rollback.
+3. Independently verify mass, linear/angular momentum, total energy, thermal
+   positivity, zero unintended injection, and spin/non-rigid work on analytic
+   rigid rotation, affine shear, translating cells, equal-pressure and shock
+   controls. Establish the disabled and W0 fixed-mass reductions and actual
+   restart equivalence before any Kepler claim.
+4. Compare matched W0 and evolving-weight, no-steering, `Re=infinity`
+   Kepler runs at least through the historical `t=6–10` failure window,
+   with density fields, orbital drift, entropy and conservation. Continue
+   only on meaningful gates toward the GIZMO figure's `t=600` benchmark;
+   an aligned bounded control or a short snapshot is not a substitute.
+5. Measure full-step overhead and scaling on the user's native GPU/CUDA+MPI
+   solver against a matched baseline; a single-cell device test or arithmetic
+   operation count does not establish AREPO-like throughput. Extend spin from
+   a scalar in 2D to vector angular momentum and a 3D inertia tensor before
+   claiming a three-dimensional method.
+
+## 2026-10-28: first native torque candidate
+
+`W=0` is a geometric statement: every Laguerre weight vanishes, so the
+power cells become Voronoi cells. Fixed mass is a separate solver invariant;
+zero weights alone do not imply zero mass flux. Keep checking mass by particle
+identity whenever the weight or face-motion path changes.
+
+For the first spin-enabled native candidate, take torque from one shared
+inviscid ALE face flux, rather than assigning a moment to the existing
+variational generator force. The latter has a non-unique reciprocal
+face-force decomposition, so its generator force does not determine a unique
+cell spin source. With outward normal `n`, face area `A_f`, face centroid
+`x_f`, and one common Riemann pressure `P*`, use
+
+```
+F_i = -P* A_f n
+tau_i = (x_f - C_i) x F_i
+```
+
+and the equal-and-opposite force on the neighbor. For a zero-mass-flux face,
+the same face state must use the pressure-work flux `P* u*_n A_f`; including
+the reconstructed rigid and non-rigid velocities in `u*` makes its power
+consistent with bulk, spin, and affine kinetic energy. If mass flux is enabled,
+the momentum, energy, first-moment, and angular-momentum fluxes must all use
+the full ALE Euler flux and reduce to the fixed-mass expression when the mass
+flux is zero. This candidate adds no physical viscosity or spin relaxation
+at `Re=∞`.
+
+This is a physics selection for a separate opt-in branch, not a claim that the
+current variational W0 path already implements it. The implementation still
+needs a shared-face GPU/MPI/RK4 update, a consistent mass-centroid and `Q`
+evolution, extended-energy initialization, and the native reduction and
+restart gates above. Compare its disabled and enabled trajectories against
+the unchanged baseline before any long-time Kepler run.
+
+## Active-source audit (2026-10-28)
+
+The active source directory is `src/`, at commit `75aaeed`; it also contains
+existing uncommitted edits in `Exam/exam.c`, `Exam/exam_gpu.cu`, and
+`Exam/exam_gpu.h`. These were preserved during this audit. The separate
+polygon-moment candidate under `/tmp/Kepler_spin_moments_20261028` is based on
+another repository state, so its patch must not be copied wholesale into
+`src/`.
+
+The active `RK4` record in `src/eunha.h` stages position, velocity, internal
+energy and entropy, while the RK4 updates are explicitly assembled in
+`src/Exam/exam.c`; there is no spin stage yet. `ParticleSoA` in
+`src/Exam/exam_gpu.h` has no mass-centroid, central-moment or spin arrays, and
+its `PolygonOut` currently stores polygon vertices and connectivity only.
+The standalone `RunKepler` driver uses raw `kpout` particle records. The active
+q1/q2 experiments instead use `RunKH` and `khout`: its current header stores a
+magic value, particle count, record size, and stress flag, then writes complete
+stress-particle records. The `khout` reader already has a common-prefix path
+for legacy/smaller records. Affine state therefore has to extend this existing
+`khout` versioning and remain in the MPI-migrated stress particle; a separate
+sidecar would lose identity/state when particles migrate.
+
+## Active-job driver and force-path correction (2026-10-28)
+
+The earlier audit followed the standalone `RunKepler` function and incorrectly
+assigned that path to the active Slurm experiments. Direct inspection of jobs
+437771 and 438040 shows the active executables use the KH driver with the
+Kepler IC/force enabled by `EUNHA_IC=kepler`. Job 437771's executable hash is
+`7584426920df56413fa05bdc950b82f890412cfaa793269f4edcc66cd67c0284`; its ELF
+symbols include `RunKH` and `exam2d_vph_rk4_int_blend`, and omit `RunKepler`.
+Its startup log reads `khout.000014.dat`, reports `av_mode=5 use_stress=1`,
+and initializes an A10 GPU. The q1 job has the same KH/blend symbols and also
+uses the GPU path.
+
+The binary's debug source path resolves to
+`/gpfs/kjhan/LagForce/Kepler_stencil5x5_Nx256_A100_call33720_20261020/src`,
+at commit `472e7fcc`; `Exam/KH/kh.c` selects
+`exam2d_vph_rk4_int_blend` for `use_stress && GAS_EVOLMETHOD==1`. That RK4
+path contains the central Kepler acceleration and dispatches force evaluation
+to `getAccVoro2DBlend_GPU` when CUDA is enabled. The standalone
+`RunKepler`/`exam2d_vph_rk4_int` CPU path remains a separate driver and is not
+the path used by these active q1/q2 jobs.
+
+Therefore the first integrated affine-spin implementation for the current
+experiments must target the stress-particle blend RK4 and its CUDA face-force
+path, including device state transfer and MPI migration. The `src/` worktree
+at `75aaeed` remains the current development tree with user changes; its
+build must be matched to the running-job baseline before interpreting any
+comparison.
+
+## 2026-10-28: conservative affine cell state
+
+A torque-only scalar spin update is insufficient: the current `ie` stage gets
+the pressure-work residual after bulk kinetic work, so adding rotational work
+without changing that residual can double-count or omit energy. The cell state
+should carry conservative first, second, and momentum-cross moments together
+with total energy. This represents rigid rotation and affine shear in one
+velocity field; its antisymmetric part is the cell's intrinsic spin. It adds no
+viscosity or spin damping at `Re=infinity`.
+
+For one moving control volume, define
+
+```
+M       = integral rho dA              P_b = integral rho u_b dA
+H_a     = integral rho x_a dA          Q_ab = integral rho x_a x_b dA
+R_ab    = integral rho x_a u_b dA      E   = integral (rho e + rho |u|^2/2) dA
+```
+
+Use one common Riemann state on each face, with outward normal `n`, face speed
+`w`, and `Fmass = rho* (u* - w) dot n`. The ALE Euler moment equations are
+
+```
+dM/dt     = -sum_faces integral Fmass ds
+dH_a/dt   = integral rho u_a dA
+            -sum_faces integral x_a Fmass ds
+dP_b/dt   = -sum_faces integral [rho* u*_b (u* - w) dot n + P* n_b] ds
+            + integral rho a_b dA
+dQ_ab/dt  = integral rho (x_a u_b + x_b u_a) dA
+            -sum_faces integral x_a x_b Fmass ds
+dR_ab/dt  = integral [rho u_a u_b + P delta_ab] dA
+            -sum_faces integral x_a [rho* u*_b (u* - w) dot n + P* n_b] ds
+            + integral x_a rho a_b dA
+dE/dt     = -sum_faces integral [E* (u* - w) dot n + P* u* dot n] ds
+            + integral rho u dot a dA
+```
+
+For the fixed-mass reduction, explicitly set `Fmass=0`; the same equations
+still evolve the centroid and internal moments under the cell motion and face
+stress. `W=0` determines the Voronoi geometry but does not itself set the mass
+flux to zero. For nonzero/evolving Laguerre weights, retain the mass flux and
+use it in every moment equation. A face flux must be computed once and applied
+with opposite sign to its two cells to conserve global mass, momentum, and
+angular momentum.
+
+Recover the centroid and central moments by `C=H/M`,
+`S=Q-H H^T/M`, and `B=R-H P^T/M`. Under a linear within-cell velocity closure,
+`u(x)=P/M + G (x-C)` with `G=B^T S^{-1}`. Then
+`E_aff=0.5 tr(G S G^T)`, `E_bulk=|P|^2/(2M)`, and
+`E_thermal=E-E_bulk-E_aff`; in 2D the intrinsic angular momentum is
+`Lz=B_xy-B_yx`. This gives a direct positivity check for the thermal residual
+and avoids an independent spin-energy update inconsistent with pressure work.
+
+With the current midpoint face flux, segment geometry moments are inexpensive
+and exact for a constant face state: for endpoints `a,b`, length `l`, midpoint
+`m`, and `d=b-a`, use `integral(1)=l`, `integral(x)=l*m`, and
+`integral(x x^T)=l*(m m^T+d d^T/12)`. This is O(number of faces), not a cell
+interior quadrature.
+
+In the active RK4 path, this state must be staged at all four RK stages and
+included in the versioned checkpoint. The existing `ie` pressure-work update
+must be replaced by the total-energy residual above when this mode is enabled.
+Acceptance requires positive-definite `S`, positive `E_thermal`, restart
+equivalence, and conservation of total orbital plus intrinsic angular
+momentum and total energy before applying the mode to the Kepler disk.
+
+### Host-side affine-moment prototype (2026-10-28)
+
+An isolated development worktree at
+`/tmp/Kepler_affine_spin_20261028` was based on the current active source
+commit `75aaeed`, with its existing tracked local changes applied. The user's
+`src/` worktree was left untouched. `Exam/kepler_affine2d.h` now contains
+double-precision exact polygon area/centroid/central moments, exact straight
+face first/second moments, and recovery of the affine velocity gradient,
+intrinsic angular momentum, and bulk/affine/thermal energy split. It also has
+fixed-mass Lagrangian cell sources and a one-call shared pressure-face update
+that applies action/reaction, matching pressure work, and the corresponding
+intrinsic moment to both cells. Its initialization helper also computes the
+exact gradient of the softened Kepler IC field used by `kp_mkinitial`.
+
+A standalone C99 analytic check compiled with `-Wall -Wextra -Werror` and
+passed for a square in both windings, a rigid rotation with `Omega=3`, and a
+straight-face moment. It also verified zero shape change for rigid rotation
+under uniform pressure, equal/opposite face momentum and energy rates, and
+the face torque sign; the softened Kepler velocity gradient agrees with
+centered finite differences. The helper is not yet called by the active KH-driver
+RK4/GPU path; these checks validate its algebra only. Native RK4 stages,
+versioned `khout` restart integration, and GPU/MPI state transfer remain
+outstanding.

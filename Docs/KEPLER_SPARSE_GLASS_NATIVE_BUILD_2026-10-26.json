@@ -1,0 +1,19 @@
+{
+  "scope": "Opt-in sparse glass count; q1/q2/q2c active binaries unchanged",
+  "base_source": "/tmp/Kepler_weighted_native_20261026",
+  "experimental_source": "/tmp/Kepler_sparse_glass_native_20261026",
+  "modified_file": "Exam/KH/util.c",
+  "base_source_sha256": "e53411e64e9920bc0a4b3fbf6ccd9eb29f4df97627de6ff138faee0150ee9ba9",
+  "experimental_source_sha256": "9b9445fb1521ebc56445dcf9157aad926ee1926ac166f816cfb2388a77b6e65f",
+  "base_binary_sha256": "7584426920df56413fa05bdc950b82f890412cfaa793269f4edcc66cd67c0284",
+  "experimental_binary_sha256": "48d582a3072fb620892a045ee259aca4bced235f2f2c97f992800721349d3e48",
+  "q2_glass_sha256": "3ea6edbf56f882d648abea0bef620dac1564f9146194f332f2566af4412ad4a4",
+  "sparse_glass_sha256": "5ba16f7055600419c585bd2ebf1069a7c0f69409d7828cacb7aba7a0b20d558e",
+  "preflight_job_id": 436938,
+  "run_dir": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2_sparse_core_t001",
+  "build_commands": [
+    "make -C /tmp/Kepler_sparse_glass_native_20261026/Exam/KH -j2 USE_CUDA=1",
+    "make -C /tmp/Kepler_sparse_glass_native_20261026 this USE_CUDA=1"
+  ],
+  "pending": "Native t=0.001 positivity, fixed mass, orbit, and measured time-step gate"
+}

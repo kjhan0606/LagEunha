@@ -1,0 +1,29 @@
+{
+  "receipt": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_Q2_WEIGHTED_T10_EQUILIBRIUM_2026-10-27/jitter_corrected_audit.json",
+  "receipt_sha256": "1c05a7bdd35e9d6046a2822774332d7f8cebd565554374c2860ec66aa8c71f78",
+  "endpoint_sha256": "673ff76850cc45edb6730083e06b9069fb6760bae697459b16f670a9ea470218",
+  "time": 10.0,
+  "native_failed_checks": [
+    "disk_density_equilibrium"
+  ],
+  "weighted": true,
+  "disk_sites": 49038,
+  "directed_disk_faces": 294228,
+  "min_faces": 4,
+  "max_faces": 8,
+  "area_relative_error_max": 4.440892098500626e-16,
+  "centroid_absolute_error_max": 1.735570302229821e-18,
+  "inertia_relative_error_max": 8.881784197001252e-16,
+  "inertia_relative_error_p99": 4.440892098500626e-16,
+  "independent_power_area_error_max": 7.581046901350419e-12,
+  "native_saved_area_error_max": 5.958766724489806e-08,
+  "checks": {
+    "all_moments_positive": true,
+    "triangle_area_agreement": true,
+    "triangle_centroid_agreement": true,
+    "triangle_inertia_agreement": true,
+    "independent_power_area_agreement": true,
+    "native_saved_area_agreement": true
+  },
+  "scope": "CPU execution of CUDA-compatible polygon formula on independently reconstructed native checkpoint faces; triangle integration is a separate moment reference. Native GPU face extraction and GPU cost remain separate."
+}

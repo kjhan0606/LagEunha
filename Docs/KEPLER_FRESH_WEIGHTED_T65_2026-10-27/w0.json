@@ -1,0 +1,62 @@
+{
+  "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/affine_spin_thermal_risk_t65_v1/w0_receipt.json",
+  "receipt_sha256": "49a34d307eb84bf42895cc281a144eae0d36422b0fb5aa5548352222b0bd3516",
+  "initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "endpoint_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+  "time": 6.5,
+  "weighted": false,
+  "disk_sites": 49038,
+  "directed_faces": 294228,
+  "stored_gradient_relative_rms_vs_analytic": 0.0006505274898504549,
+  "total_affine_energy": 9.531527117843868e-05,
+  "rigid_spin_energy": 1.0798753393063576e-05,
+  "residual_affine_energy": 8.45165177853751e-05,
+  "rigid_spin_energy_fraction": 0.11329510223862604,
+  "radial_bands": [
+    {
+      "r_min": 0.5,
+      "r_max": 0.75,
+      "cells": 3931,
+      "rotational_to_affine_energy": 0.11309803160970983
+    },
+    {
+      "r_min": 0.75,
+      "r_max": 1.0,
+      "cells": 6050,
+      "rotational_to_affine_energy": 0.11335946902614775
+    },
+    {
+      "r_min": 1.0,
+      "r_max": 1.5,
+      "cells": 15865,
+      "rotational_to_affine_energy": 0.11348098137517097
+    },
+    {
+      "r_min": 1.5,
+      "r_max": 2.0,
+      "cells": 23192,
+      "rotational_to_affine_energy": 0.11356939241595404
+    }
+  ],
+  "checks": {
+    "finite_positive_tensor": true,
+    "independent_area": true,
+    "native_volume": true,
+    "positive_affine_energy": true,
+    "spin_energy_bounded": true,
+    "finite_gradients": true
+  },
+  "scope": "Postprocessing of saved native velocity gradients and independently reconstructed uniform-density polygon moments. Rigid spin is a projection of the affine velocity field, not an evolved native spin variable or a measured irreversible heating rate. Gradient stage timing and nonuniform subcell density remain limitations.",
+  "hypothetical_thermal_reallocation": {
+    "native_thermal_energy_sum": 1.7680695254790324e-05,
+    "rigid_rotation_over_thermal_sum": 0.6107652011103927,
+    "full_affine_over_thermal_sum": 5.390923253010336,
+    "rigid_rotation_over_thermal_median": 0.24581063285313914,
+    "rigid_rotation_over_thermal_p95": 2.6403661579334985,
+    "cells_nonpositive_if_spin_subtracted": 7649,
+    "mass_fraction_nonpositive_if_spin_subtracted": 0.15573730354131332,
+    "cells_nonpositive_if_affine_subtracted": 43198,
+    "mass_fraction_nonpositive_if_affine_subtracted": 0.8811281934835933,
+    "scope": "Counterfactual subtraction from current native thermal U at fixed total energy. The reconstructed affine energy is not a stored conserved variable, so this is a positivity risk analysis, not a required or physically valid initialization prescription."
+  }
+}

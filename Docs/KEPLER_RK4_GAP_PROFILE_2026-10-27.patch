@@ -1,0 +1,218 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10650,6 +10650,7 @@
+ 			void (*)(SimParameters *, postype)),
+ 		void (*postStage)(SimParameters *)
+ 		){
++	double _rk4_profile_begin = MPI_Wtime();
+ #ifdef USE_CUDA
+ 	gfs_t64_dispatch_guard(simpar);
+ #else
+@@ -10781,6 +10782,9 @@
+ 	}
+ 
+ 	double _t0, _t_update=0, _t_force=0, _t_post=0, _t_fin=0;
++	double _t_last_end=_rk4_profile_begin;
++	double _t_gap_prelude=0, _t_gap_after_update=0;
++	double _t_gap_after_force=0, _t_gap_after_post=0;
+ 
+ 	{
+ 		/* av_mode 5 / kappa guard, and clear any w2 the IC or a restart
+@@ -10849,11 +10853,11 @@
+ 	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
+ 	/* === K1 evaluation === */
+ 	gfs_rk4_stage_diagnostic(simpar,"k1_input",0,0);
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_prelude += _t0 - _t_last_end;
+ 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
+ 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
+ 			mkLinkedList2D, 1);
+-	_t_update += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_update += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+ #endif
+@@ -10884,7 +10888,7 @@
+ 			GFS_ES_V0(sbp[i])  = sbp[i].volume;
+ 		}
+ 	}
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_update += _t0 - _t_last_end;
+ #if defined(USE_CUDA) && defined(GPU_VALIDATE)
+ 	if (GAS_GPU_ENABLED(simpar))
+ 		Dtime = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+@@ -10901,7 +10905,7 @@
+ 	Dtime = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
+ 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
+ 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+-	_t_force += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_force += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+ #endif
+@@ -10959,9 +10963,9 @@
+     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+ #endif
+ 	gfs_rk4_stage_diagnostic(simpar,"k2_input",Dtime,0);
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_force += _t0 - _t_last_end;
+ 	postStage(simpar);
+-	_t_post += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_post += _t_last_end - _t0;
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 
+ 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+@@ -10969,16 +10973,16 @@
+ 	if(dynw2) gfs_dynw2_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime, 0);
+ 	if(av_mode >= 1)
+ 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_post += _t0 - _t_last_end;
+ 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
+ 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
+ 			mkLinkedList2D, Dtime);
+-	_t_update += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_update += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 1;
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_update += _t0 - _t_last_end;
+ #if defined(USE_CUDA) && defined(GPU_VALIDATE)
+ 	if (GAS_GPU_ENABLED(simpar))
+ 		dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+@@ -10995,7 +10999,7 @@
+ 	dt = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
+ 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
+ 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+-	_t_force += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_force += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+ #endif
+@@ -11038,9 +11042,9 @@
+     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+ #endif
+ 	gfs_rk4_stage_diagnostic(simpar,"k3_input",Dtime,0);
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_force += _t0 - _t_last_end;
+ 	postStage(simpar);
+-	_t_post += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_post += _t_last_end - _t0;
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 
+ 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+@@ -11048,16 +11052,16 @@
+ 	if(dynw2) gfs_dynw2_set(sbp, VORO_NP(simpar), (postype)0.5*Dtime, 1);
+ 	if(av_mode >= 1)
+ 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_post += _t0 - _t_last_end;
+ 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
+ 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
+ 			mkLinkedList2D, Dtime);
+-	_t_update += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_update += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 2;
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_update += _t0 - _t_last_end;
+ #if defined(USE_CUDA) && defined(GPU_VALIDATE)
+ 	if (GAS_GPU_ENABLED(simpar))
+ 		dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+@@ -11074,7 +11078,7 @@
+ 	dt = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
+ 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
+ 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+-	_t_force += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_force += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+ #endif
+@@ -11117,9 +11121,9 @@
+     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
+ #endif
+ 	gfs_rk4_stage_diagnostic(simpar,"k4_input",Dtime,0);
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_force += _t0 - _t_last_end;
+ 	postStage(simpar);
+-	_t_post += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_post += _t_last_end - _t0;
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 
+ 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+@@ -11127,16 +11131,16 @@
+ 	if(dynw2) gfs_dynw2_set(sbp, VORO_NP(simpar), (postype)1.0*Dtime, 2);
+ 	if(av_mode >= 1)
+ 		for(i=0;i<VORO_NP(simpar);i++) sbp[i].stress.vsig_max = 0;
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_post += _t0 - _t_last_end;
+ 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
+ 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
+ 			mkLinkedList2D, Dtime);
+-	_t_update += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_update += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORO_BASICCELL(simpar)=NULL;if(!gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;}
+ #endif
+ 	dyn_stage_cur = 3;
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_update += _t0 - _t_last_end;
+ #if defined(USE_CUDA) && defined(GPU_VALIDATE)
+ 	if (GAS_GPU_ENABLED(simpar))
+ 		dt = getAccVoro2DBlend_GPU_validate(simpar, xmin, ymin, xmax, ymax,
+@@ -11153,7 +11157,7 @@
+ 	dt = getAccVoro2DBlend(simpar, xmin, ymin, xmax, ymax,
+ 			OrderOfAccuracy, Courant, Gamma, paddingAllTreeParticles,
+ 			find2DNeighborBP, find2DCellBP, mkLinkedList2D);
+-	_t_force += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_force += _t_last_end - _t0;
+ #ifdef USE_CUDA
+     if(tx.on){VORORK4_TBPP(simpar)=NULL;VORO_BASICCELL(simpar)=NULL;}
+ #endif
+@@ -11180,7 +11184,7 @@
+ 	}
+ 	if(gfs_eaud_on()) gfs_eaud_stage(sbp, VORO_NP(simpar), targetBP, Lx, Ly, Dtime, 1.0/6.0);
+ 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(1.0/6.0));
+-	_t0 = MPI_Wtime();
++	/* The K4 undo arithmetic belongs to the following untracked gap. */
+ 
+ 	/* === Undo K4 shift and prepare for final combination === */
+ 	for(i=0;i<VORO_NP(simpar);i++){
+@@ -11193,9 +11197,9 @@
+ 		else sbp[i].ie -= sbp[i].rk4.k3ie;
+ 		sbp[i].stress.K -= sbp[i].rk4.k3K;
+ 	}
+-	_t0 = MPI_Wtime();
++	_t0 = MPI_Wtime(); _t_gap_after_force += _t0 - _t_last_end;
+ 	postStage(simpar);
+-	_t_post += MPI_Wtime() - _t0;
++	_t_last_end = MPI_Wtime(); _t_post += _t_last_end - _t0;
+ 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+ 
+ 	for(i=0;i<VORO_NP(simpar);i++) sbp[i].w2 = sbp[i].rk4.w2backup;
+@@ -11499,11 +11503,20 @@
+ 
+ 	gfs_w2lin_active = 0;
+ 	gfs_dynw2_active = 0;
+-	_t_fin = MPI_Wtime() - _t0;
++	_t_fin = MPI_Wtime() - _t_last_end;
++	_t_last_end = MPI_Wtime();
+ 	{
+ 		static int _step_timer = 0;
+ 		_step_timer++;
+ 		double _t_total = _t_update + _t_force + _t_post + _t_fin;
++		const char *_profile_env = getenv("GFS_RK4_GAP_PROFILE");
++		if (_profile_env && atoi(_profile_env)>0 && MYID(simpar)==0) {
++			double wall=_t_last_end-_rk4_profile_begin;
++			double gaps=_t_gap_prelude+_t_gap_after_update+_t_gap_after_force+_t_gap_after_post;
++			printf("[RK4 gap] step=%d wall=%.6fs tracked=%.6fs prelude=%.6fs after_update=%.6fs after_force=%.6fs after_post=%.6fs gaps=%.6fs closure=%.3e\n",
++				_step_timer,wall,_t_total,_t_gap_prelude,_t_gap_after_update,
++				_t_gap_after_force,_t_gap_after_post,gaps,wall-_t_total-gaps);
++		}
+ 		if(MYID(simpar) == 0)
+ 			printf("[CPU step %d] update=%.1fs force=%.1fs post=%.1fs final=%.1fs | total=%.1fs\n",
+ 				_step_timer, _t_update, _t_force, _t_post, _t_fin, _t_total);

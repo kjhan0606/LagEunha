@@ -1,0 +1,93 @@
+{
+  "time": 6.5,
+  "sites": 55351,
+  "disk_sites": 49038,
+  "cases": {
+    "aligned": {
+      "source_audit": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_Q2_BOUNDED_NATIVE_T65_2026-10-27.json",
+      "source_audit_sha256": "d64bb0f83e43f23c2de8c50168fb1c2a8d646d0138c297f33ef9e95f4350cc48",
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/to65_near32_a10_v1/khout.002927.dat",
+      "endpoint_sha256": "6639d430782aa8d198991ecfac597a0caaae085155cfa452e16f14b2c6aab857",
+      "checks_passed": 17,
+      "metrics": {
+        "disk_density_abs_mass_weighted": 0.00018649337406231558,
+        "disk_ballistic_density_abs_mass_weighted": 0.00018572657571010068,
+        "disk_native_minus_ballistic_abs_mass_weighted": 2.8825371278813675e-06,
+        "disk_entropy_log_abs_mass_weighted": 7.479028555482678e-06,
+        "disk_position_error_abs_mass_weighted": 1.6993807161764302e-07,
+        "disk_radial_speed_rms_over_circular": 1.751948438145168e-08,
+        "outer_density_abs_mass_weighted": 0.14346749969538639,
+        "total_energy_relative": 5.262785913951003e-09
+      }
+    },
+    "ring_coherent_5pct": {
+      "source_audit": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/ringcoherent005_to65_a10_v1/audit_t65.json",
+      "source_audit_sha256": "c90a93536bc63384df67883e6d8871ed38c301d2db0ef49d28ded8b028bd2c51",
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/ringcoherent005_to65_a10_v1/khout.003352.dat",
+      "endpoint_sha256": "d911d4e122aed677b2431fa7e7a3890c87d9a372b06c1d6abd364188bc0fb554",
+      "checks_passed": 17,
+      "metrics": {
+        "disk_density_abs_mass_weighted": 0.00020652969924881545,
+        "disk_ballistic_density_abs_mass_weighted": 0.0002055251226506233,
+        "disk_native_minus_ballistic_abs_mass_weighted": 3.7574837792744833e-06,
+        "disk_entropy_log_abs_mass_weighted": 8.182316074935187e-06,
+        "disk_position_error_abs_mass_weighted": 1.864777303602778e-07,
+        "disk_radial_speed_rms_over_circular": 2.0452115048357115e-08,
+        "outer_density_abs_mass_weighted": 0.143467494500822,
+        "total_energy_relative": 5.265144453538561e-09
+      }
+    },
+    "independent_site_jitter_5pct": {
+      "source_audit": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to65_a10_v1/audit_t65.json",
+      "source_audit_sha256": "49a34d307eb84bf42895cc281a144eae0d36422b0fb5aa5548352222b0bd3516",
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to65_a10_v1/khout.002927.dat",
+      "endpoint_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+      "checks_passed": 17,
+      "metrics": {
+        "disk_density_abs_mass_weighted": 0.0016982791291092992,
+        "disk_ballistic_density_abs_mass_weighted": 0.0014787874822204416,
+        "disk_native_minus_ballistic_abs_mass_weighted": 0.0003442528635364389,
+        "disk_entropy_log_abs_mass_weighted": 1.493889842414841e-05,
+        "disk_position_error_abs_mass_weighted": 5.214575271232128e-06,
+        "disk_radial_speed_rms_over_circular": 1.222087797061742e-06,
+        "outer_density_abs_mass_weighted": 0.14346749995433591,
+        "total_energy_relative": 5.2473931231906456e-09
+      }
+    }
+  },
+  "ratios": {
+    "disk_density_abs_mass_weighted": {
+      "ring_over_aligned": 1.1074371960250173,
+      "jitter_over_ring": 8.222929366992915
+    },
+    "disk_ballistic_density_abs_mass_weighted": {
+      "ring_over_aligned": 1.1066005059578874,
+      "jitter_over_ring": 7.1951665234340485
+    },
+    "disk_native_minus_ballistic_abs_mass_weighted": {
+      "ring_over_aligned": 1.3035335236206278,
+      "jitter_over_ring": 91.61792405738854
+    },
+    "disk_entropy_log_abs_mass_weighted": {
+      "ring_over_aligned": 1.0940346081359655,
+      "jitter_over_ring": 1.82575425922626
+    },
+    "disk_position_error_abs_mass_weighted": {
+      "ring_over_aligned": 1.0973275651841492,
+      "jitter_over_ring": 27.96352819801855
+    },
+    "disk_radial_speed_rms_over_circular": {
+      "ring_over_aligned": 1.1673925215521916,
+      "jitter_over_ring": 59.753614439006896
+    },
+    "outer_density_abs_mass_weighted": {
+      "ring_over_aligned": 0.9999999637927447,
+      "jitter_over_ring": 1.0000000380121918
+    },
+    "total_energy_relative": {
+      "ring_over_aligned": 1.0004481541955386,
+      "jitter_over_ring": 0.9966285197861978
+    }
+  },
+  "scope": "Three valid bounded-q2 fixed-mass W0 CUDA endpoints; ICs sample the same continuum profile but not identical discrete masses. This is a mechanism control, not a GIZMO-equivalent benchmark."
+}

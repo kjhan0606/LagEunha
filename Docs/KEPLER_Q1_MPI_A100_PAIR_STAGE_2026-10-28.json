@@ -1,0 +1,25 @@
+{
+  "root": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/mpi_scale_w0_to155_a100_pair_20261028",
+  "source": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/mpi_scale_w0_t15_to155_h200_20261028/np2_after438363_20261028",
+  "inputs_sha256": {
+    "eunha2.exe": "a6f16e8b1e143f70e8b8c32155008077bd84e813f7f4e4aff2f04b23dfd04572",
+    "params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+    "khout.013596.dat": "d34017cd118b6a7f67e4805e22694b616352a05c661bb473db16831d826bdadc",
+    "khout.000000.dat": "edb1f9d30700a95093a4f442afd3461238dd4e93ad9b075302557c15dcd693c9",
+    "audit_kepler_polar_long_gate_20261027.py": "a7f0f33e52bbf820ef0e5059f5b505641119c4b483be4de85466137f99d7efe0",
+    "audit_kepler_native_radial_20261026.py": "4970c8568d455522c5ce04d7fb493e60c2147584ca7037b312f3443b2be47fc2"
+  },
+  "ranks": [
+    1,
+    2
+  ],
+  "gpu_model": "A100",
+  "threads_per_rank": 2,
+  "target_time": 1.55,
+  "initial_job": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/mpi_scale_w0_to155_a100_pair_20261028/job.slurm",
+  "purpose": "Measure existing native CUDA+MPI evolution without waiting for H200 partition QoS",
+  "original_H200_job": 438394,
+  "original_job_preserved": true,
+  "output_policy": "one final native checkpoint per rank branch; about 170 MB total",
+  "pair_tolerances_declared_before_execution": true
+}

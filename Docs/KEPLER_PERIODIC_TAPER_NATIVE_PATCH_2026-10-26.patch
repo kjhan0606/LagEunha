@@ -1,0 +1,145 @@
+--- a/Exam/KH/util.c
++++ b/Exam/KH/util.c
+@@ -13,6 +13,7 @@
+ #include "exam2d.h"
+ #include "kh.h"
+ #include "color.h"
++#include "../kepler_periodic_taper.h"
+ 
+ 
+ 
+@@ -503,6 +504,12 @@
+             postype vamp = (eps > 0)
+                 ? R * pow(R*R + eps*eps, (postype)-0.75)
+                 : (postype)1.0 / sqrt(Rsafe);
++            {
++                const kepler_periodic_taper_config *taper = kepler_taper_get();
++                if(taper->active)
++                    vamp *= kepler_taper_speed((double)R*(double)R,
++                                               (double)eps*(double)eps, taper);
++            }
+             press = (postype)1.0e-6;
+             if(R < 1e-8){ vx = 0; vy_seed = 0; }
+             else { vx = -dy_c/R*vamp; vy_seed = dx_c/R*vamp; }
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -20,6 +20,7 @@
+ #include "exam2d.h"
+ #include "gfs_pair.h"
+ #include "gfs_velocity_limiter.h"
++#include "kepler_periodic_taper.h"
+ 
+ /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
+  * on (default off). The entropy K = P/rho^gamma is stress.K. It is set from
+@@ -4546,6 +4547,14 @@
+ 	}else{
+ 		return;
+ 	}
++	{
++		const kepler_periodic_taper_config *taper = kepler_taper_get();
++		if(taper->active){
++			double speed = kepler_taper_speed((double)r2,
++				(double)eps*(double)eps, taper);
++			f *= (postype)(speed*speed);
++		}
++	}
+ 	*ax += dx * f;
+ 	*ay += dy * f;
+ }
+@@ -4623,7 +4632,12 @@
+ 	postype dx = x - cx, dy = y - cy;
+ 	postype r2 = dx*dx + dy*dy + eps*eps;
+ 	if(!(r2 > (postype)1e-32)) return 0;
+-	return -(postype)1.0 / sqrt(r2);
++	{
++		const kepler_periodic_taper_config *taper = kepler_taper_get();
++		if(!taper->active) return -(postype)1.0 / sqrt(r2);
++		return (postype)kepler_taper_potential((double)(dx*dx + dy*dy),
++			(double)eps*(double)eps, taper);
++	}
+ }
+ 
+ static void gfs_eaud_stage(treevorostressrk4particletype *sbp, int np,
+--- /dev/null
++++ b/Exam/kepler_periodic_taper.h
+@@ -0,0 +1,80 @@
++#ifndef EUNHA_KEPLER_PERIODIC_TAPER_H
++#define EUNHA_KEPLER_PERIODIC_TAPER_H
++
++/* Optional boundary-control potential for a periodically tessellated Kepler
++ * disk. It leaves Phi=-1/sqrt(r^2+eps^2) inside r0. Beyond r1 both velocity
++ * and force vanish, so the periodic seams meet smoothly. The taper is in
++ * potential coordinate z=Phi_K(r), which gives an exact elementary Phi. */
++#include <math.h>
++#include <pthread.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++typedef struct {
++    int active;
++    double r0, r1;
++} kepler_periodic_taper_config;
++
++static kepler_periodic_taper_config kepler_taper_config;
++static pthread_once_t kepler_taper_once = PTHREAD_ONCE_INIT;
++
++static void kepler_taper_initialize(void){
++    const char *s0 = getenv("EUNHA_KEPLER_PERIODIC_TAPER_INNER");
++    const char *s1 = getenv("EUNHA_KEPLER_PERIODIC_TAPER_OUTER");
++    if(!s0 && !s1) return;
++    if(!s0 || !s1){
++        fprintf(stderr, "Kepler periodic taper requires both INNER and OUTER\n");
++        abort();
++    }
++    kepler_taper_config.r0 = strtod(s0, NULL);
++    kepler_taper_config.r1 = strtod(s1, NULL);
++    if(!(isfinite(kepler_taper_config.r0) && isfinite(kepler_taper_config.r1) &&
++         kepler_taper_config.r0 > 0 && kepler_taper_config.r1 > kepler_taper_config.r0)){
++        fprintf(stderr, "Invalid Kepler periodic taper radii: %s %s\n", s0, s1);
++        abort();
++    }
++    kepler_taper_config.active = 1;
++}
++
++static inline const kepler_periodic_taper_config *kepler_taper_get(void){
++    pthread_once(&kepler_taper_once, kepler_taper_initialize);
++    return &kepler_taper_config;
++}
++
++static inline double kepler_taper_u(double r2, double eps2,
++                                    const kepler_periodic_taper_config *cfg){
++    double z = -1.0 / sqrt(r2 + eps2);
++    double z0 = -1.0 / sqrt(cfg->r0*cfg->r0 + eps2);
++    double z1 = -1.0 / sqrt(cfg->r1*cfg->r1 + eps2);
++    double u = (z-z0)/(z1-z0);
++    return fmax(0.0, fmin(1.0, u));
++}
++
++static inline double kepler_taper_speed(double r2, double eps2,
++                                        const kepler_periodic_taper_config *cfg){
++    if(!cfg->active || r2 <= cfg->r0*cfg->r0) return 1.0;
++    if(r2 >= cfg->r1*cfg->r1) return 0.0;
++    double u = kepler_taper_u(r2, eps2, cfg);
++    double u3 = u*u*u;
++    return 1.0 - u3*(10.0 + u*(-15.0 + 6.0*u));
++}
++
++/* H'(u)=[1-10u^3+15u^4-6u^5]^2 and H(0)=0, H(1)=181/462. */
++static inline double kepler_taper_primitive(double u){
++    double u2 = u*u, u4 = u2*u2;
++    return u + u4*(-5.0 + u*(6.0 + u*(-2.0 + u*(100.0/7.0 +
++           u*(-75.0/2.0 + u*(115.0/3.0 + u*(-18.0 + u*36.0/11.0)))))));
++}
++
++static inline double kepler_taper_potential(double r2, double eps2,
++                                            const kepler_periodic_taper_config *cfg){
++    double z = -1.0 / sqrt(r2 + eps2);
++    if(!cfg->active || r2 <= cfg->r0*cfg->r0) return z;
++    double z0 = -1.0 / sqrt(cfg->r0*cfg->r0 + eps2);
++    double z1 = -1.0 / sqrt(cfg->r1*cfg->r1 + eps2);
++    if(r2 >= cfg->r1*cfg->r1) return z0 + (z1-z0)*(181.0/462.0);
++    double u = kepler_taper_u(r2, eps2, cfg);
++    return z0 + (z1-z0)*kepler_taper_primitive(u);
++}
++
++#endif

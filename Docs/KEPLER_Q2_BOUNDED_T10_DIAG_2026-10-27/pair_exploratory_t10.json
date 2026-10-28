@@ -1,0 +1,84 @@
+{
+  "time": 10.0,
+  "aligned_failed_checks": [],
+  "jitter_failed_checks": [
+    "disk_ballistic_residual"
+  ],
+  "aligned_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/to10_near32_a10_v1/audit_t10.json",
+  "jitter_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to10_a10_v1/audit_t10.json",
+  "aligned_tails": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/aligned_jitter_failed_t10_cpu_v2/aligned_radial_tails.json",
+  "jitter_tails": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/aligned_jitter_failed_t10_cpu_v2/jitter_radial_tails.json",
+  "metrics": {
+    "disk_density_abs_mass_weighted": {
+      "aligned": 0.00019689139118175142,
+      "jitter": 0.0023744566230898692,
+      "jitter_over_aligned_magnitude": 12.05972799947356
+    },
+    "disk_ballistic_density_abs_mass_weighted": {
+      "aligned": 0.0001942900523654185,
+      "jitter": 0.001471921993474236,
+      "jitter_over_aligned_magnitude": 7.575899926702691
+    },
+    "disk_native_minus_ballistic_abs_mass_weighted": {
+      "aligned": 6.031579860726353e-06,
+      "jitter": 0.0011966838851015498,
+      "jitter_over_aligned_magnitude": 198.40305736372017
+    },
+    "disk_entropy_log_abs_mass_weighted": {
+      "aligned": 1.1939572072916855e-05,
+      "jitter": 2.0330185174703598e-05,
+      "jitter_over_aligned_magnitude": 1.7027566022085165
+    },
+    "disk_radial_speed_rms_over_circular": {
+      "aligned": 2.0077511255841864e-08,
+      "jitter": 1.2971211057245976e-06,
+      "jitter_over_aligned_magnitude": 64.60567194787053
+    },
+    "disk_angular_momentum_relative": {
+      "aligned": 7.311928840181281e-13,
+      "jitter": -1.1621259510263826e-11,
+      "jitter_over_aligned_magnitude": 15.89356210142727
+    },
+    "total_energy_relative": {
+      "aligned": 8.1030618809375e-09,
+      "jitter": 8.076547859470891e-09,
+      "jitter_over_aligned_magnitude": 0.9967279009026226
+    }
+  },
+  "inner_disk_r05_r075": {
+    "aligned": {
+      "r_min": 0.5,
+      "r_max": 0.75,
+      "cells": 3931,
+      "mass": 0.9543813324031362,
+      "entropy_log_signed_mass_weighted": -3.942556425780655e-05,
+      "entropy_log_abs_mass_weighted": 5.7437122839244885e-05,
+      "entropy_log_abs_p99": 0.0001180881901555104,
+      "entropy_log_abs_max": 0.00012457694007918978,
+      "density_native_minus_ballistic_abs_mass_weighted": 2.8910247273718726e-05,
+      "density_native_minus_ballistic_abs_p99": 0.000363354589254094,
+      "density_native_minus_ballistic_abs_max": 0.0004963203893014745,
+      "position_error_rms_mass_weighted": 1.9749568561033443e-06,
+      "velocity_error_over_circular_rms_mass_weighted": 3.4773778335331563e-06,
+      "radial_speed_over_circular_rms_mass_weighted": 2.091789714632036e-08
+    },
+    "jitter": {
+      "r_min": 0.5,
+      "r_max": 0.75,
+      "cells": 3931,
+      "mass": 0.9543813900758688,
+      "entropy_log_signed_mass_weighted": 1.2762760673014535e-07,
+      "entropy_log_abs_mass_weighted": 8.494840067194856e-06,
+      "entropy_log_abs_p99": 2.8439530166134142e-05,
+      "entropy_log_abs_max": 3.936652202809598e-05,
+      "density_native_minus_ballistic_abs_mass_weighted": 0.0015913997470762644,
+      "density_native_minus_ballistic_abs_p99": 0.005784509237157509,
+      "density_native_minus_ballistic_abs_max": 0.00912526841139738,
+      "position_error_rms_mass_weighted": 2.608251743658018e-05,
+      "velocity_error_over_circular_rms_mass_weighted": 4.251102566912314e-05,
+      "radial_speed_over_circular_rms_mass_weighted": 3.469224510751062e-07
+    }
+  },
+  "inner_density_residual_jitter_over_aligned": 55.04621707345095,
+  "scope": "Equal-time native closed-wall W=0 comparison. Explicitly listed failed jitter gates remain failures; this exploratory comparison does not turn them into accepted physics. One jitter seed and one resolution cannot establish general solver accuracy."
+}

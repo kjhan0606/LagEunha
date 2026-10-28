@@ -1,0 +1,148 @@
+--- clipcompact/Exam/exam_gpu.cu
++++ tesswork/Exam/exam_gpu.cu
+@@ -35,6 +35,9 @@
+ static __device__ unsigned long long d_gfs_tess_geometry_errors;
+ static __device__ unsigned long long d_gfs_stencil_expanded_cells;
+ static __device__ unsigned long long d_gfs_stencil_halo_clipped_cells;
++/* Isolated diagnostic build: sums and encoded maxima for actual kernel-A
++ * candidate work. No production binary reads these counters. */
++static __device__ unsigned long long d_gfs_tess_work[14];
+ static long long h_gfs_pair_hits = 0;
+ static __device__ unsigned long long d_varpress_geom_max_key;
+ static double h_varpress_geom_max_rate=0;
+@@ -2645,7 +2648,7 @@
+     double cellsize, double xmin, double ymin,
+     double boxsize, double global_w2_max, double OoA, int av_mode,
+     int gradient_method, int raw_volume, int limit_velocity, int merge_small_faces,
+-    int thermal64, double *__restrict__ out_V64)
++    int thermal64, int work_profile, double *__restrict__ out_V64)
+ {
+     int i = blockIdx.x * blockDim.x + threadIdx.x;
+     if (i >= nbp) return;
+@@ -2668,6 +2671,7 @@
+     double poly_x[GPU_MAX_CORNERS], poly_y[GPU_MAX_CORNERS];
+     int    poly_neigh[GPU_MAX_CORNERS];
+     int    nc = 4, stencil_pad = GPU_SEED_PAD, seed_candidates = 0, box_retry = 0;
++    int work_nearest=0, work_seed=0, work_adaptive=0, work_clips=0;
+     double maxdist2;
+     double tmp_x[GPU_MAX_CORNERS], tmp_y[GPU_MAX_CORNERS];
+     int    tmp_neigh[GPU_MAX_CORNERS];
+@@ -2705,6 +2709,7 @@
+                 int cell=cx+mx*cy;
+                 for(int k=cell_offset[cell];k<cell_offset[cell+1];k++){
+                     int j=cell_particle_index[k];if(pindx[j]==indx_i)continue;
++                    work_nearest++;
+                     double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+                     if(!(d2>0))continue;
+                     double wf=fmax(.05,fmin(.95,.5+.5*(w2i-(double)pw2[j])/d2));
+@@ -2720,6 +2725,7 @@
+             int j=nearest[s];if(j<0 || offset2[s]>maxdist2)continue;
+             double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+             double wf=fmax(.05,fmin(.95,.5+.5*(w2i-(double)pw2[j])/d2));
++            work_clips++;
+             nc=gpu_clip_voronoi_halfplane(dx,dy,wf,j,poly_x,poly_y,poly_neigh,nc,
+                                          tmp_x,tmp_y,tmp_neigh,1);
+             maxdist2=0;
+@@ -2746,6 +2752,7 @@
+                 int j = cell_particle_index[k];
+                 if (pindx[j] == indx_i) continue;
+                 seed_candidates++;
++                work_seed++;
+ 
+                 double dx = px[j] - xi;
+                 double dy_val = py[j] - yi;
+@@ -2756,6 +2763,7 @@
+                 double drad2 = wfrac * wfrac * dist2;
+                 if (drad2 > maxdist2) continue;
+ 
++                work_clips++;
+                 nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
+                                                 poly_x, poly_y, poly_neigh, nc,
+                                                 tmp_x, tmp_y, tmp_neigh, raw_volume >= 2);
+@@ -2823,6 +2831,7 @@
+                     for (int k = c_begin; k < c_end && nc >= 3; k++) {
+                         const int j = cell_particle_index[k];
+                         if (pindx[j] == indx_i) continue;
++                        work_adaptive++;
+                         const double dx = px[j] - xi;
+                         const double dy_val = py[j] - yi;
+                         const double dist2 = dx * dx + dy_val * dy_val;
+@@ -2832,6 +2841,7 @@
+                         else if (wfrac > 0.95) wfrac = 0.95;
+                         if (wfrac * wfrac * dist2 > maxdist2) continue;
+ 
++                        work_clips++;
+                         nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
+                                                         poly_x, poly_y, poly_neigh, nc,
+                                                         tmp_x, tmp_y, tmp_neigh, raw_volume >= 2);
+@@ -2866,6 +2876,22 @@
+         atomicAdd(&d_gfs_candidate_fallback_cells, 1ull);
+     if (stencil_pad > GPU_SEED_PAD)
+         atomicAdd(&d_gfs_stencil_expanded_cells, 1ull);
++    if (work_profile) {
++        atomicAdd(&d_gfs_tess_work[0], (unsigned long long)work_nearest);
++        atomicAdd(&d_gfs_tess_work[1], (unsigned long long)work_seed);
++        atomicAdd(&d_gfs_tess_work[2], (unsigned long long)work_adaptive);
++        atomicAdd(&d_gfs_tess_work[3], (unsigned long long)work_clips);
++        atomicMax(&d_gfs_tess_work[4], ((unsigned long long)(unsigned int)work_nearest << 32) | (unsigned int)indx_i);
++        atomicMax(&d_gfs_tess_work[5], ((unsigned long long)(unsigned int)work_seed << 32) | (unsigned int)indx_i);
++        atomicMax(&d_gfs_tess_work[6], ((unsigned long long)(unsigned int)work_adaptive << 32) | (unsigned int)indx_i);
++        atomicMax(&d_gfs_tess_work[7], ((unsigned long long)(unsigned int)work_clips << 32) | (unsigned int)indx_i);
++        atomicMax(&d_gfs_tess_work[8], ((unsigned long long)(unsigned int)stencil_pad << 32) | (unsigned int)indx_i);
++        if (stencil_pad > GPU_SEED_PAD) atomicAdd(&d_gfs_tess_work[9], 1ull);
++        if (work_adaptive > 100) atomicAdd(&d_gfs_tess_work[10], 1ull);
++        if (work_adaptive > 1000) atomicAdd(&d_gfs_tess_work[11], 1ull);
++        if (work_clips > 20) atomicAdd(&d_gfs_tess_work[12], 1ull);
++        atomicAdd(&d_gfs_tess_work[13], (unsigned long long)box_retry);
++    }
+ 
+     if(raw_volume>=2){
+         /* A convex power-cell has one connected edge per support plane.
+@@ -3477,6 +3503,9 @@
+     cudaEvent_t tess_events[6];
+     if (tess_profile) {
+         for (int k = 0; k < 6; k++) CUDA_CHECK(cudaEventCreate(&tess_events[k]));
++        unsigned long long zero_work[14] = {};
++        CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_tess_work, zero_work,
++            sizeof(zero_work), 0, cudaMemcpyHostToDevice, s));
+     }
+ 
+     /* Causal controls for the explicit affine patch test only. Production
+@@ -3547,7 +3576,7 @@
+         ctx->d_polygons, ctx->d_face_count,
+         nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max, OoA, av_mode,
+         gradient_method, raw_geometry, limit_velocity, merge_small_faces,
+-        thermal64, ctx->d_parts.E_inv_xy);
++        thermal64, tess_profile, ctx->d_parts.E_inv_xy);
+     CUDA_CHECK(cudaGetLastError());
+     if (tess_profile) CUDA_CHECK(cudaEventRecord(tess_events[1], s));
+ 
+@@ -3603,6 +3632,19 @@
+         if (h_stencil_expanded > 0 || h_halo_clipped > 0)
+             fprintf(stderr, "[GPU_STENCIL_EXPANSION] expanded_cells=%llu halo_clipped_cells=%llu\n",
+                     h_stencil_expanded, h_halo_clipped);
++        if (tess_profile) {
++            unsigned long long w[14] = {};
++            CUDA_CHECK(cudaMemcpyFromSymbol(w, d_gfs_tess_work, sizeof(w)));
++            fprintf(stderr,
++                "[GPU_TESS_WORK] call=%llu nearest=%llu seed=%llu adaptive=%llu clips=%llu "
++                "max_nearest=%llu@id%u max_seed=%llu@id%u max_adaptive=%llu@id%u "
++                "max_clips=%llu@id%u max_pad=%llu@id%u expanded=%llu "
++                "adaptive_gt100=%llu adaptive_gt1000=%llu clips_gt20=%llu retries=%llu\n",
++                tess_profile_call, w[0], w[1], w[2], w[3],
++                w[4] >> 32, (unsigned int)w[4], w[5] >> 32, (unsigned int)w[5],
++                w[6] >> 32, (unsigned int)w[6], w[7] >> 32, (unsigned int)w[7],
++                w[8] >> 32, (unsigned int)w[8], w[9], w[10], w[11], w[12], w[13]);
++        }
+         unsigned long long invalid_volume=0,invalid_fit=0,geometry_errors=0;
+         CUDA_CHECK(cudaMemcpyFromSymbol(&invalid_volume,d_gfs_invalid_raw_volume_cells,sizeof(invalid_volume)));
+         CUDA_CHECK(cudaMemcpyFromSymbol(&invalid_fit,d_gfs_invalid_velocity_fit_cells,sizeof(invalid_fit)));
+@@ -3725,7 +3767,7 @@
+         ctx->d_polygons, ctx->d_face_count,
+         nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max, OoA, av_mode,
+         gradient_method, raw_geometry, 1, 0,
+-        thermal64, ctx->d_parts.E_inv_xy);
++        thermal64, 0, ctx->d_parts.E_inv_xy);
+     CUDA_CHECK(cudaGetLastError());
+     unsigned long long invalid = 0, clipped = 0, geometry_errors=0;
+     CUDA_CHECK(cudaMemcpyFromSymbolAsync(&geometry_errors,d_gfs_tess_geometry_errors,sizeof(geometry_errors),0,cudaMemcpyDeviceToHost,s));

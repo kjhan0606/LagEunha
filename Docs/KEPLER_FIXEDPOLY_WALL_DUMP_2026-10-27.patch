@@ -1,0 +1,31 @@
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -2300,20 +2300,25 @@
+             exit(1);
+         }
+         fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\n");
++        /* Opt-in compact wall budget: avoid writing every interior face. */
++        const char *wall_only_env = getenv("GFS_GPU_FACE_DUMP_WALL_ONLY");
++        const int wall_only = wall_only_env && atoi(wall_only_env) > 0;
+         long long nrows = 0;
+         for (int i = 0; i < n_particles; i++) {
+             if (!gfs_face_dump_selected(ctx->h_parts.indx[i],dump_ids,dump_nids)) continue;
+             for (int f = ctx->h_faces.face_offset[i];
+                  f < ctx->h_faces.face_offset[i + 1]; f++) {
+                 int j = ctx->h_faces.neighbor_idx[f];
+-                if (j < 0 || j >= n_total) continue;
++                if (wall_only && j > -1000) continue;
++                if (j >= n_total || (j < 0 && j > -1000)) continue;
+                 double x0 = ctx->h_parts.x[i], y0 = ctx->h_parts.y[i];
+                 double c1x = ctx->h_faces.c1x[f], c1y = ctx->h_faces.c1y[f];
+                 double c2x = ctx->h_faces.c2x[f], c2y = ctx->h_faces.c2y[f];
+                 fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
+                     mpi_rank, force_call, i, j,
+-                    ctx->h_parts.indx[i], ctx->h_parts.indx[j],
+-                    ctx->h_faces.is_ghost[f],
++                    ctx->h_parts.indx[i],
++                    j <= -1000 ? (long long)j : ctx->h_parts.indx[j],
++                    j <= -1000 ? 2 : ctx->h_faces.is_ghost[f],
+                     h_pressure[f], h_udotds[f], h_work[f],
+                     c2y-c1y, -(c2x-c1x),
+                     x0+c1x, y0+c1y, x0+c2x, y0+c2y);

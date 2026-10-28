@@ -1,0 +1,111 @@
+{
+  "n_all": 71080,
+  "n_active": 22512,
+  "n_active_faces": 68184,
+  "active_region": "1 <= initial r < 8; outside weights fixed to zero",
+  "target": "initial unweighted Voronoi area for every active cell",
+  "method": "frozen-topology linearized power-volume Jacobian J_ii=sum Aij/(2dij), J_ij=-Aij/(2dij)",
+  "rhs_sum": -0.0384077487309753,
+  "rhs_L2": 0.1063797240209941,
+  "pcg_iterations": 334,
+  "pcg_seconds": 0.07136072299908847,
+  "pcg_relative_residual": 9.238156964529672e-11,
+  "jacobi_relative_residual": {
+    "1": 0.6032689391466459,
+    "2": 0.46236699032010037,
+    "4": 0.30844545151673114,
+    "8": 0.16736805162445736,
+    "16": 0.07114953515322842,
+    "32": 0.026227084358099048,
+    "64": 0.011207476161299721,
+    "128": 0.0053156288325271785
+  },
+  "edge_abs_weight_difference_over_d2_quantiles": [
+    0.0014917580534817357,
+    0.0663982626831665,
+    0.4616371450838672,
+    5.169900791570833
+  ],
+  "edge_fraction_over_0p8": 0.003637216942391177,
+  "bands": [
+    {
+      "rlo": 1,
+      "rhi": 2,
+      "cells": 1076,
+      "volume_change_MW": 0.21918373201982633,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.2744593508672726,
+        0.8199140616643408,
+        0.9896223008305258
+      ]
+    },
+    {
+      "rlo": 2,
+      "rhi": 2.25,
+      "cells": 368,
+      "volume_change_MW": 0.09841729802097668,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.16205768939409354,
+        0.4685995698865348,
+        0.5448565433608245
+      ]
+    },
+    {
+      "rlo": 2.25,
+      "rhi": 2.5,
+      "cells": 440,
+      "volume_change_MW": 0.038778809905790475,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.14797545718998945,
+        0.29521738095506267,
+        0.3505235763130815
+      ]
+    },
+    {
+      "rlo": 2.5,
+      "rhi": 3,
+      "cells": 984,
+      "volume_change_MW": 0.01114382226456486,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.11259238908088655,
+        0.16711484385275002,
+        0.20526552156964029
+      ]
+    },
+    {
+      "rlo": 3,
+      "rhi": 4,
+      "cells": 2492,
+      "volume_change_MW": 0.0019916205774527527,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.08822287571451512,
+        0.12844996535182168,
+        0.14005744877436177
+      ]
+    },
+    {
+      "rlo": 4,
+      "rhi": 6,
+      "cells": 7172,
+      "volume_change_MW": 0.0002696592941062263,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.055064782285837624,
+        0.0987244750540532,
+        0.11269109700491696
+      ]
+    },
+    {
+      "rlo": 6,
+      "rhi": 8,
+      "cells": 9980,
+      "volume_change_MW": 4.161655022926894e-05,
+      "abs_weight_over_initial_area_p50_p95_p99": [
+        0.014706133019483366,
+        0.0427571064399019,
+        0.04991697955937873
+      ]
+    }
+  ],
+  "total_wall_seconds": 2.2857235390110873,
+  "limitation": "Linearization only; no nonlinear weighted-tessellation, conservation, or speed-of-evolution result"
+}

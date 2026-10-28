@@ -1,0 +1,68 @@
+{
+  "shared_initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "shared_t0825_sha256": "b929fc51043675f0bdb09eb1858dcf374cd0dbc8f9bac42e7dffc6bd12d7a6dc",
+  "raw_t1_sha256": "1972626f74e5a2e3840d474ece252e715cfb8d498e4b51238c56c4c521bdfac4",
+  "time": 6.5,
+  "modes": {
+    "projected": {
+      "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_capacity64_v5_recover_to65_a10_v1/audit_t65.json",
+      "endpoint_sha256": "bb94041e862efd8a16dd86c2ae8bc0d93475aa03f1a1ac9f8e333b0483f2af23",
+      "binary_sha256": "feae0a48f737a7eab215f2e31be1d7938f45f894376dcdfda177f7e09f57d26b",
+      "first_ring_entropy_log_mean_abs": 8.212900602804394e-06,
+      "first_ring_count": 294,
+      "first_ring_volume_change_rms": 0.0020799844116909548,
+      "first_ring_density_change_rms": 0.002080020902260069,
+      "first_ring_pressure_change_mean_abs": 0.0025712455479934503,
+      "first_ring_angular_pressure_jump_rms": 0.006736796764490923,
+      "first_ring_orbital_ell_change_mean_abs": 2.506671867036969e-07,
+      "disk_density_change_mean_abs": 5.0107977884986514e-05,
+      "total_energy_relative_change": -5.246665019416818e-09
+    },
+    "raw": {
+      "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_raw_rate_v11b_t1_to65_ada_v1/audit_t65.json",
+      "endpoint_sha256": "ac335ec8dd2baa4f28ebae84e7497273706a5f053b163bbdc1cecfa8d3c74b82",
+      "binary_sha256": "5d10fd4c17ac67bfafcc461fda03937bc645159758d1fff1ab73bd27ecf54f72",
+      "first_ring_entropy_log_mean_abs": 7.767186904615444e-06,
+      "first_ring_count": 294,
+      "first_ring_volume_change_rms": 0.0002340611576047747,
+      "first_ring_density_change_rms": 0.00023408095349697848,
+      "first_ring_pressure_change_mean_abs": 0.00031089599303090506,
+      "first_ring_angular_pressure_jump_rms": 0.0002407532914286057,
+      "first_ring_orbital_ell_change_mean_abs": 5.8178465163848736e-08,
+      "disk_density_change_mean_abs": 2.0158287572112362e-05,
+      "total_energy_relative_change": -5.256721579448806e-09
+    }
+  },
+  "ratios_projected_over_raw": {
+    "first_ring_volume_change_rms": 8.886499720740185,
+    "first_ring_density_change_rms": 8.885904090812403,
+    "first_ring_pressure_change_mean_abs": 8.270436434148097,
+    "first_ring_angular_pressure_jump_rms": 27.98215851802254,
+    "first_ring_orbital_ell_change_mean_abs": 4.308590575528931,
+    "first_ring_entropy_log_mean_abs": 1.0573841860203077
+  },
+  "raw_pressure_weight_work_t0825_to65": -3.677188998770867e-14,
+  "raw_work_ledgers": {
+    "early": {
+      "steps": 91,
+      "integrated_weight_work": -1.1799432481161667e-13,
+      "max_abs_alpha": 0.0,
+      "max_abs_work_rate": 9.939e-13,
+      "min_dt": 0.000413811,
+      "max_dt": 0.00193985,
+      "first_step_work": -1.1963701566666668e-15,
+      "last_step_work": -3.1675162994999995e-16
+    },
+    "long": {
+      "steps": 2836,
+      "integrated_weight_work": 8.1222434823908e-14,
+      "max_abs_alpha": 0.0,
+      "max_abs_work_rate": 1.361e-12,
+      "min_dt": 0.000554515,
+      "max_dt": 0.00193985,
+      "first_step_work": -1.4425694524999998e-15,
+      "last_step_work": -4.283535955833333e-16
+    }
+  },
+  "scope": "Both branches share exact t=0 and t=.825 states. Raw uses diagnostic v11b from .825; projected uses accepted v5 from .825. Default v11b was independently verified bitwise against v5 for one step, but the full t=6.5 pair is not the same executable."
+}

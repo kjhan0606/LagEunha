@@ -1,0 +1,61 @@
+{
+  "face_run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_capacity64_v5_first_ring_faces_t6501_ada_v1",
+  "baseline_receipt": "Docs/KEPLER_FRESH_WEIGHT_LOCAL_T6501_2026-10-27/audit_t6501.json",
+  "start_sha256": "bb94041e862efd8a16dd86c2ae8bc0d93475aa03f1a1ac9f8e333b0483f2af23",
+  "endpoint_sha256": "d0b5e0b4ed82ee1810c9d27b9cc17181b9656f531c4bdf610f75cc2562b52b60",
+  "face_dump_sha256": "ecc98cb44925e0a44c33b006e4284876d50a617be3c168e9cfc5bacea9ca473f",
+  "face_input_sha256": "db7f76b22ca3e3b8675165361df46b3f22ddd951a44bc124a5a3c85f95315b47",
+  "selected_cells": 64,
+  "directed_face_rows": 381,
+  "physics_fields_bitwise_equal_to_no_dump": {
+    "x": true,
+    "y": true,
+    "vx": true,
+    "vy": true,
+    "mass": true,
+    "volume": true,
+    "ie": true,
+    "den": true,
+    "pressure": true,
+    "w2": true
+  },
+  "max_first_call_state_gap": 0.0,
+  "max_first_call_pressure_gap": 1.1368683772161603e-13,
+  "max_first_call_weight_gap": 0.0,
+  "max_pstar_minus_owner_pressure": 0.0,
+  "pressure_acceleration": {
+    "cells": 64,
+    "face_pressure_acceleration_mean_abs": 1.265116332945412e-07,
+    "face_pressure_acceleration_rms": 1.5325913512926665e-07,
+    "nongrav_acceleration_mean_abs": 1.265199102231825e-07,
+    "nongrav_acceleration_rms": 1.532672209685571e-07,
+    "nongrav_minus_face_acceleration_rms": 1.0997010000502646e-09,
+    "nongrav_minus_face_relative_l2": 0.007175056695755377,
+    "vector_cosine": 0.9999742593143415,
+    "nongrav_on_face_slope": 1.0000270172210632
+  },
+  "observed_orbital_torque_rms": 7.326315580916813e-08,
+  "reconstructed_face_orbital_torque_rms": 7.327421690205086e-08,
+  "torque_relative_l2_difference": 0.0013435130490107548,
+  "categories": {
+    "same_ring": {
+      "directed_faces": 128,
+      "pressure_acceleration_rms": 1.4703881987248105e-07,
+      "orbital_torque_rms": 7.340346704186865e-08,
+      "orbital_torque_projection_on_observed_fraction": 0.9985251061050249
+    },
+    "cross_ring": {
+      "directed_faces": 129,
+      "pressure_acceleration_rms": 1.329947551862961e-07,
+      "orbital_torque_rms": 1.828405527956499e-09,
+      "orbital_torque_projection_on_observed_fraction": 0.0004998860018564611
+    },
+    "core_interface": {
+      "directed_faces": 124,
+      "pressure_acceleration_rms": 1.394606378755349e-07,
+      "orbital_torque_rms": 5.0826652721969714e-09,
+      "orbital_torque_projection_on_observed_fraction": 0.0011250943417718403
+    }
+  },
+  "scope": "64 selected first-ring cells, one accepted weighted GPU RK4 first-call face dump. Local fixed-weight geometric pressure-force reconstruction may omit nonlocal weight projection; agreement must be checked against the gravity-subtracted native one-step acceleration. Not an accumulated causal attribution or a full-disk force audit."
+}

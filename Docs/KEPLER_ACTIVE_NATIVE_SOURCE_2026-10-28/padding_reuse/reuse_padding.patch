@@ -1,0 +1,53 @@
+--- Exam/exam_gpu_extract.c
++++ Exam/exam_gpu_extract.c
+@@ -697,11 +697,21 @@
+     int av_mode = GAS_AVMODE(simpar);
+     int has_stress = (av_mode >= 1);
+     int fused = gpu_fused_ready();
++    int tess_on_device = g_gpu_ctx.initialized && g_gpu_ctx.tess_faces_on_device;
++    const char *reuse_env = getenv("GFS_REUSE_TESS_PADDING");
++    const char *sync_env_reuse = getenv("GFS_GPU_SYNC_HALO_STATE");
++    /* The cached device CSR indexes the tessellation's padding. Reuse it
++     * only when the existing post-gradient halo refresh remains enabled;
++     * that refresh verifies every image ID and position before upload. */
++    int reuse_tess_padding = tess_on_device && reuse_env && atoi(reuse_env)>0
++        && (!sync_env_reuse || atoi(sync_env_reuse)>0);
+ 
+     postype Lx = SIMBOX(simpar).x.max;
+     postype cellsize = BASICCELL_CELLWIDTH(simpar);
+ 
+-    if (fused) {
++    if (fused || reuse_tess_padding) {
++        /* GPU tessellation already freed the linked-cell array and retained
++         * the exact padding indexed by its device face CSR. */
+         /* Fused path: cells already freed by updateDenW2Pressure2DBlend,
+            padding still alive from that call. */
+         npad = VORO_NPAD(simpar);
+@@ -754,7 +764,17 @@
+ 
+     double t1_extract = MPI_Wtime();
+ 
+-    int tess_on_device = g_gpu_ctx.tess_faces_on_device;
++    if (reuse_tess_padding && !g_gpu_ctx.tess_faces_on_device) {
++        fprintf(stderr,"[TESS_PADDING_REUSE] unexpected context rebuild; refusing stale CSR\n");
++        MPI_Abort(MPI_COMM(simpar), 98);
++    }
++    tess_on_device = g_gpu_ctx.tess_faces_on_device;
++    if (reuse_tess_padding) {
++        static int reuse_banner = 0;
++        if (!reuse_banner++) fprintf(stderr,
++            "[TESS_PADDING_REUSE] rank=%d np=%d npad=%d reuse=1 refresh_validation=1\n",
++            MYID(simpar), nbp, npad);
++    }
+ 
+     if (tess_on_device) {
+         /* GPU tessellation already produced faces + SoA on device.
+@@ -927,7 +947,7 @@
+     double t7_done = MPI_Wtime();
+ 
+     /* Free: fused path only has padding; fallback has cells + padding */
+-    if (!fused)
++    if (!fused && !reuse_tess_padding)
+         my_free(VORO_BASICCELL(simpar));
+     my_free(VORORK4_TBPP(simpar));
+     VORORK4_TBPP(simpar) = NULL;

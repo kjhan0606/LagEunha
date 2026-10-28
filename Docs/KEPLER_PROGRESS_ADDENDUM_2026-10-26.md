@@ -1,0 +1,6 @@
+
+## 2026-10-26 19:30 KST: paper normalization and independent H200 profile
+
+- Primary-source audit: Hopkins (2015) Fig. 7 plots surface density at t=600 and says the r~0.5 inner edge completed >250 orbits. The main text also reports evolution to about 1000 orbits without a plotted endpoint. Its initial disk is a nearly constant-density annulus from r=0.5 to 2. The opening summary above must not be read as a claim that raw C010 t=600 would match the paper.
+- C010's accepted t=0 snapshot has a tapered approximately 2/r disk from r=2 to 8, not the published constant-density annulus. Its softened inner period is 17.778891990936625; t=6 and t=10 represent only 0.33748 and 0.56246 inner-edge orbits. The plotted Fig. 7 orbital count corresponds to about t=4802 in C010 units, but the initial-value problems remain different. Full evidence and the paper-matched IC requirements are in GIZMO_COMPARISON_CONTRACT_20261026.md in this run directory.
+- The independent 4-H200 profiling job 436751 has separate inputs/outputs and a 10-minute limit. Its unnecessary Slurm dependency was cleared, and an OWNER.txt was written. At 19:29 KST it was pending with Reason=None; there is no profile result yet. C010 job 436489 remained running, and its timeout-only continuation 436713 remained dependency-pending.

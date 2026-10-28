@@ -1,0 +1,73 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t10_a10_v1/aligned/initial.dat",
+  "restart": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t10_a10_v1/aligned/khout.000001.dat",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t10_a10_v1/aligned/khout.001805.dat",
+  "initial_sha256": "a4d557ae5837e933c8c2c8c335f91e5c97d36f9a3bdb8acd5568b0499140b665",
+  "restart_sha256": "b858df410ad389213ed88fd5501749645b0dd03aa4b0c9afa732e555e900d341",
+  "endpoint_sha256": "3ea1fa3017f996befa920505f111a8903dd9e89478ad50517bbaa89bd970478e",
+  "time": 10.0,
+  "n": 55351,
+  "disk_sites": 49038,
+  "initial_state": {
+    "positive": true,
+    "density_relative_max": 5.053995821846513e-08,
+    "eos_pressure_relative_max": 9.505319087388386e-08,
+    "volume_sum": 23.758145394618623
+  },
+  "restart_state": {
+    "positive": true,
+    "density_relative_max": 5.903685429409222e-08,
+    "eos_pressure_relative_max": 9.403924505768657e-08,
+    "volume_sum": 23.758145370535203
+  },
+  "endpoint_state": {
+    "positive": true,
+    "density_relative_max": 5.90831104041456e-08,
+    "eos_pressure_relative_max": 9.511981935439451e-08,
+    "volume_sum": 23.75814537127735
+  },
+  "total_energy_relative": 8.09030878506809e-09,
+  "rk4_injection": {
+    "floor_cum": 0.0,
+    "de_cum": 0.0,
+    "sfl_cum": 0.0
+  },
+  "disk_density_abs_mass_weighted": 0.00014595390244233464,
+  "disk_density_p99": 0.0012486901731650233,
+  "disk_entropy_log_abs_mass_weighted": 9.066146432847951e-06,
+  "disk_position_error_abs_mass_weighted": 3.3518004410546573e-07,
+  "disk_radial_speed_rms_over_circular": 3.184967303481324e-08,
+  "disk_angular_momentum_relative": 4.3076653355456074e-14,
+  "weight_min": 0.0,
+  "weight_max": 1.6824069462018088e-06,
+  "weight_range": 1.6824069462018088e-06,
+  "independent_power_area_error_max": 3.0285786434269824e-08,
+  "independent_power_area_error_p99": 2.9982780538340135e-08,
+  "hidden_active_power_cells": 0,
+  "weight_stages": 7216,
+  "max_abs_stage_weight_power": 1.287e-27,
+  "mean_stage_rate_seconds": 0.0029100802383592015,
+  "max_current_site_radius": 2.6511205142345107,
+  "checks": {
+    "finite_positive": true,
+    "fixed_mass_exact": true,
+    "initial_W0_and_weighted_restart": true,
+    "finite_nonnegative_variable_weights": true,
+    "initial_and_final_area_tile_polygon": true,
+    "independent_power_area": true,
+    "density_and_EOS": true,
+    "zero_injection": true,
+    "total_energy": true,
+    "disk_density": true,
+    "disk_entropy": true,
+    "disk_orbit": true,
+    "disk_radial_velocity": true,
+    "disk_angular_momentum": true,
+    "weight_stage_sequence": true,
+    "zero_stage_weight_power": true,
+    "inside_polygon_incircle": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true
+  },
+  "scope": "Experimental bounded one-rank fixed-mass weighted Kepler t=10. The exact-orbit density area reference for W0 is intentionally not used for weighted cells; GIZMO t=600 remains open."
+}

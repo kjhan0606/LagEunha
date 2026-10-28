@@ -1,0 +1,52 @@
+{
+  "n_sites": 71080,
+  "n_active": 22512,
+  "boundary_weights": "zero for r<1 and r>=8",
+  "first_order_step": "PCG of exact unweighted Voronoi volume Jacobian",
+  "checks": [
+    {
+      "scale": 0.0,
+      "wall_seconds": 1.5840341839939356,
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "finite_positive_fraction": 1.0,
+      "median_abs_target_relative": 9.532876639342349e-05,
+      "p95_abs_target_relative": 0.08091284167138862,
+      "inner_r2_2p25_median_abs_target_relative": 0.0798868323929835,
+      "baseline_vs_scipy_voronoi_median_rel": 4.041532604914383e-13,
+      "baseline_vs_scipy_voronoi_p99_rel": 3.2336575813439765e-12
+    },
+    {
+      "scale": 0.25,
+      "wall_seconds": 1.5145143839908997,
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "finite_positive_fraction": 1.0,
+      "median_abs_target_relative": 7.149697355796686e-05,
+      "p95_abs_target_relative": 0.060444413583933154,
+      "inner_r2_2p25_median_abs_target_relative": 0.059904865700673327
+    },
+    {
+      "scale": 0.5,
+      "wall_seconds": 1.4800688550021732,
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "finite_positive_fraction": 1.0,
+      "median_abs_target_relative": 4.7665971376570975e-05,
+      "p95_abs_target_relative": 0.04175675409762284,
+      "inner_r2_2p25_median_abs_target_relative": 0.04083041316797183
+    },
+    {
+      "scale": 1.0,
+      "wall_seconds": 1.4598092249943875,
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "finite_positive_fraction": 1.0,
+      "median_abs_target_relative": 4.3886151009549694e-09,
+      "p95_abs_target_relative": 0.003435507512598532,
+      "inner_r2_2p25_median_abs_target_relative": 0.0014688140286125417
+    }
+  ],
+  "total_wall_seconds": 8.257448118994944,
+  "limitation": "Frozen t=6 geometry; no nonlinear Newton iteration, hydro evolution, conservative weighted-face proof, or GPU speed test"
+}

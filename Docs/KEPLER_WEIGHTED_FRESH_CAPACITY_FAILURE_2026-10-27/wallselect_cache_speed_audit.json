@@ -1,0 +1,139 @@
+{
+  "cases": {
+    "w0": {
+      "runs": {
+        "baseline": {
+          "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_wallselect_cache_pair_v1/w0/baseline/audit.json",
+          "parent_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+          "endpoint_sha256": "6d5c25c0556cdbacc760e37374491c6f712c4b6155434ecaa30627c7823c41b3",
+          "wall_seconds": 23.852,
+          "tess_calls": 52,
+          "tess_post_warmup_median_ms": 163.007,
+          "tess_post_warmup_p90_ms": 167.39
+        },
+        "enabled": {
+          "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_wallselect_cache_pair_v1/w0/enabled/audit.json",
+          "parent_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+          "endpoint_sha256": "f6461987859faff3e99be5b98fae04998204507a1e0ac23c974e029cf6bde633",
+          "wall_seconds": 20.43,
+          "tess_calls": 52,
+          "tess_post_warmup_median_ms": 149.7305,
+          "tess_post_warmup_p90_ms": 153.8792
+        },
+        "enabled_vs_baseline_tess_median_ratio": 0.918552577496672
+      },
+      "fields": {
+        "x": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "y": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "vx": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "vy": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "mass": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "volume": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "ie": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "den": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "pressure": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "w2": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        }
+      }
+    },
+    "weighted": {
+      "runs": {
+        "baseline": {
+          "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_wallselect_cache_pair_v1/weighted/baseline/audit.json",
+          "parent_sha256": "b929fc51043675f0bdb09eb1858dcf374cd0dbc8f9bac42e7dffc6bd12d7a6dc",
+          "endpoint_sha256": "6fd2bf150989110eff2aab7c0c7f6730673683bf983381557b2e6a802830b4ab",
+          "wall_seconds": 25.185,
+          "tess_calls": 52,
+          "tess_post_warmup_median_ms": 172.6865,
+          "tess_post_warmup_p90_ms": 175.8588
+        },
+        "enabled": {
+          "receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_wallselect_cache_pair_v1/weighted/enabled/audit.json",
+          "parent_sha256": "b929fc51043675f0bdb09eb1858dcf374cd0dbc8f9bac42e7dffc6bd12d7a6dc",
+          "endpoint_sha256": "fec7e64478f3ac61887e86df129930e8ba6bd4a2145b7a0d110dc174deadd1a0",
+          "wall_seconds": 21.579,
+          "tess_calls": 52,
+          "tess_post_warmup_median_ms": 159.772,
+          "tess_post_warmup_p90_ms": 163.28040000000001
+        },
+        "enabled_vs_baseline_tess_median_ratio": 0.9252141887177052
+      },
+      "fields": {
+        "x": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "y": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "vx": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "vy": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "mass": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "volume": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "ie": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "den": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "pressure": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "w2": {
+          "bitwise_equal": true,
+          "max_abs_difference": 0.0
+        }
+      }
+    }
+  },
+  "checks": {
+    "all_physics_gates": true,
+    "ten_fields_bitwise_equal": true
+  },
+  "scope": "Same GPU, sequential short native replays, diagnostics off. Tessellation timings include host and GPU; warmup and ordering effects remain. Neither long-time nor MPI equivalence is established."
+}

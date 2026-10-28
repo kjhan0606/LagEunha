@@ -6,6 +6,8 @@ double gl2d_w2Measure(SimParameters *, double , double ,double );
 double kh_w2Measure2D(SimParameters *, double , double ,double );
 double rt_w2Measure2D(SimParameters *, double , double ,double );
 double kp_w2Measure2D(SimParameters *, double , double ,double );
+postype gfs_kepler_halo_width(postype cellsize);
+void gfs_rk4_set_step_context(int step, double time, double ceiling);
 double cyl_w2Measure2D(SimParameters *, double , double ,double );
 void  doDomainDecomp2D(SimParameters *, int );
 void SetEntireSimBox(SimParameters *);

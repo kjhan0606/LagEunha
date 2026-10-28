@@ -1,0 +1,163 @@
+{
+  "scope": "Read-only native K4 per-cell CFL plus actual orbital limiter. Frozen-timestep active-cell arithmetic only; no moving-face flux synchronization, GPU geometry cost, or runtime claim.",
+  "eta": 0.06,
+  "epsilon": 0.01175,
+  "cases": [
+    {
+      "snapshot": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/t001_v2/khout.000001.dat",
+      "snapshot_sha256": "5228f0ffb0b05c7c16c99575b593403c85b5aab6c30be8f2d55d0f09bc453ab6",
+      "time": 0.001,
+      "cells": 55351,
+      "span_for_frozen_budget": 6.5,
+      "global_step_from_native_fields": 0.001939849504924032,
+      "minimum_hydro_dt": 0.00402466906234622,
+      "minimum_orbital_dt": 0.001939849504924032,
+      "cells_within_2x_global_step": 8,
+      "regions": {
+        "core": {
+          "cells": 1476,
+          "mass": 0.3151458813541761,
+          "minimum_radius": 0.10080469003307006,
+          "minimum_orbital_dt": 0.001939849504924032,
+          "minimum_hydro_dt": 0.00402466906234622,
+          "minimum_combined_dt": 0.001939849504924032,
+          "median_combined_dt": 0.017637171742072768
+        },
+        "disk": {
+          "cells": 49038,
+          "mass": 11.904979377979908,
+          "minimum_radius": 0.5082329989778298,
+          "minimum_orbital_dt": 0.021748013423792574,
+          "minimum_hydro_dt": 0.09736331552267075,
+          "minimum_combined_dt": 0.021748013423792574,
+          "median_combined_dt": 0.10567951990147353
+        },
+        "outer": {
+          "cells": 4837,
+          "mass": 0.7764809300900615,
+          "minimum_radius": 2.010834908999243,
+          "minimum_orbital_dt": 0.17109093357317698,
+          "minimum_hydro_dt": 0.17033806443214417,
+          "minimum_combined_dt": 0.17033806443214417,
+          "median_combined_dt": 0.17676197982437694
+        }
+      },
+      "power2_levels": [
+        {
+          "level": 0,
+          "cells": 8
+        },
+        {
+          "level": 1,
+          "cells": 34
+        },
+        {
+          "level": 2,
+          "cells": 442
+        },
+        {
+          "level": 3,
+          "cells": 3315
+        },
+        {
+          "level": 4,
+          "cells": 8245
+        },
+        {
+          "level": 5,
+          "cells": 20677
+        },
+        {
+          "level": 6,
+          "cells": 22566
+        },
+        {
+          "level": 7,
+          "cells": 64
+        }
+      ],
+      "all_cell_updates_at_global_step": 185481201,
+      "power2_block_active_cell_updates": 6943434,
+      "power2_active_cell_arithmetic_ratio": 26.713179818516313,
+      "continuous_time_arithmetic_ratio": 26.81166177227453
+    },
+    {
+      "snapshot": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/to65_near32_a10_v1/khout.000427.dat",
+      "snapshot_sha256": "b3993e3569307fceab64a5c53cb3a46fe69edac6abaf979fd73010a5337d649f",
+      "time": 1.651374332206546,
+      "cells": 55351,
+      "span_for_frozen_budget": 6.5,
+      "global_step_from_native_fields": 0.0019398447550950085,
+      "minimum_hydro_dt": 0.004025021567940712,
+      "minimum_orbital_dt": 0.0019398447550950085,
+      "cells_within_2x_global_step": 8,
+      "regions": {
+        "core": {
+          "cells": 1476,
+          "mass": 0.3151458813541761,
+          "minimum_radius": 0.10080452324671915,
+          "minimum_orbital_dt": 0.0019398447550950085,
+          "minimum_hydro_dt": 0.004025021567940712,
+          "minimum_combined_dt": 0.0019398447550950085,
+          "median_combined_dt": 0.017637105743994196
+        },
+        "disk": {
+          "cells": 49038,
+          "mass": 11.904979377979908,
+          "minimum_radius": 0.5082329232622209,
+          "minimum_orbital_dt": 0.021748008566421017,
+          "minimum_hydro_dt": 0.0974121019244194,
+          "minimum_combined_dt": 0.021748008566421017,
+          "median_combined_dt": 0.10567951981079421
+        },
+        "outer": {
+          "cells": 4837,
+          "mass": 0.7764809300900615,
+          "minimum_radius": 2.0108348870454082,
+          "minimum_orbital_dt": 0.17109093077137524,
+          "minimum_hydro_dt": 0.16106319427490234,
+          "minimum_combined_dt": 0.16106319427490234,
+          "median_combined_dt": 0.17675932528122767
+        }
+      },
+      "power2_levels": [
+        {
+          "level": 0,
+          "cells": 8
+        },
+        {
+          "level": 1,
+          "cells": 34
+        },
+        {
+          "level": 2,
+          "cells": 442
+        },
+        {
+          "level": 3,
+          "cells": 3315
+        },
+        {
+          "level": 4,
+          "cells": 8245
+        },
+        {
+          "level": 5,
+          "cells": 20677
+        },
+        {
+          "level": 6,
+          "cells": 22566
+        },
+        {
+          "level": 7,
+          "cells": 64
+        }
+      ],
+      "all_cell_updates_at_global_step": 185481201,
+      "power2_block_active_cell_updates": 6943434,
+      "power2_active_cell_arithmetic_ratio": 26.713179818516313,
+      "continuous_time_arithmetic_ratio": 26.81166177227453
+    }
+  ]
+}

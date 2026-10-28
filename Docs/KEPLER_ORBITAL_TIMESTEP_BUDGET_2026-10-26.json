@@ -1,0 +1,268 @@
+{
+  "scope": "Initial native polar generators. Hydro caps, when given, are observed first-step global hydro CFL values applied to all cells. Local hydro CFL, mesh cost, and conservative face synchronization are not modeled; work ratios are not runtime predictions.",
+  "cases": [
+    {
+      "glass": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/glass.bin",
+      "cells": 147456,
+      "eta": 0.06,
+      "eps": 0.01175,
+      "span": 0.825,
+      "minimum_radius": 0.0,
+      "global_orbital_dt": 7.642017894509277e-05,
+      "disk_cells": 48680,
+      "disk_minimum_orbital_dt": 0.02122198907290854,
+      "disk_minimum_dt_over_global": 277.7013789532782,
+      "cells_within_2x_global_orbital_dt": 1,
+      "cells_within_4x_global_orbital_dt": 7,
+      "global_steps_over_span": 10796,
+      "global_cell_updates_over_span": 1591934976,
+      "ideal_local_cell_updates_over_span": 1304257,
+      "power2_block_cell_updates_over_span": 1851593,
+      "orbital_only_ideal_work_ratio": 1220.5684738513958,
+      "orbital_only_power2_work_ratio": 859.7650650007859,
+      "radial_bands": [
+        {
+          "r_lo": 0.0,
+          "r_hi": 0.1,
+          "cells": 134,
+          "orbital_dt_min": 7.642017894509277e-05,
+          "orbital_dt_median": 0.0013323614501464668,
+          "block_level_min": 0,
+          "block_level_median": 4.0
+        },
+        {
+          "r_lo": 0.1,
+          "r_hi": 0.5,
+          "cells": 3112,
+          "orbital_dt_min": 0.002189101680461407,
+          "orbital_dt_median": 0.012936626956104846,
+          "block_level_min": 4,
+          "block_level_median": 7.0
+        },
+        {
+          "r_lo": 0.5,
+          "r_hi": 0.75,
+          "cells": 4049,
+          "orbital_dt_min": 0.02122198907290854,
+          "orbital_dt_median": 0.03077277288457602,
+          "block_level_min": 8,
+          "block_level_median": 8.0
+        },
+        {
+          "r_lo": 0.75,
+          "r_hi": 1.0,
+          "cells": 5702,
+          "orbital_dt_min": 0.03897831688816044,
+          "orbital_dt_median": 0.05043711781807473,
+          "block_level_min": 8,
+          "block_level_median": 9.0
+        },
+        {
+          "r_lo": 1.0,
+          "r_hi": 2.0,
+          "cells": 38929,
+          "orbital_dt_min": 0.06000621270528661,
+          "orbital_dt_median": 0.11895464528368546,
+          "block_level_min": 9,
+          "block_level_median": 10.0
+        },
+        {
+          "r_lo": 2.0,
+          "r_hi": 3.0,
+          "cells": 63890,
+          "orbital_dt_min": 0.16971002058766674,
+          "orbital_dt_median": 0.24486351881036128,
+          "block_level_min": 11,
+          "block_level_median": 11.0
+        },
+        {
+          "r_lo": 3.0,
+          "r_hi": 5.0,
+          "cells": 31640,
+          "orbital_dt_min": 0.3117759037866997,
+          "orbital_dt_median": 0.36226795786969157,
+          "block_level_min": 11,
+          "block_level_median": 12.0
+        }
+      ],
+      "global_hydro_cfl_observed_initial": 0.0006824,
+      "orbital_and_global_hydro_cap_ideal_cell_work_ratio": 8.92730277250338,
+      "orbital_and_global_hydro_cap_power2_cell_work_ratio": 7.9949778640304165,
+      "orbital_and_global_hydro_cap_power2_cell_updates": 199116871
+    },
+    {
+      "glass": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2/glass.bin",
+      "cells": 147456,
+      "eta": 0.06,
+      "eps": 0.01175,
+      "span": 0.825,
+      "minimum_radius": 0.0,
+      "global_orbital_dt": 7.642017894509277e-05,
+      "disk_cells": 49038,
+      "disk_minimum_orbital_dt": 0.02174801342379263,
+      "disk_minimum_dt_over_global": 284.58469639829536,
+      "cells_within_2x_global_orbital_dt": 1,
+      "cells_within_4x_global_orbital_dt": 14,
+      "global_steps_over_span": 10796,
+      "global_cell_updates_over_span": 1591934976,
+      "ideal_local_cell_updates_over_span": 1303057,
+      "power2_block_cell_updates_over_span": 1907166,
+      "orbital_only_ideal_work_ratio": 1221.6925092302179,
+      "orbital_only_power2_work_ratio": 834.7123302323972,
+      "radial_bands": [
+        {
+          "r_lo": 0.0,
+          "r_hi": 0.1,
+          "cells": 129,
+          "orbital_dt_min": 7.642017894509277e-05,
+          "orbital_dt_median": 0.001048120817912895,
+          "block_level_min": 0,
+          "block_level_median": 3.0
+        },
+        {
+          "r_lo": 0.1,
+          "r_hi": 0.5,
+          "cells": 3102,
+          "orbital_dt_min": 0.0022221432113373415,
+          "orbital_dt_median": 0.012623893450420379,
+          "block_level_min": 4,
+          "block_level_median": 7.0
+        },
+        {
+          "r_lo": 0.5,
+          "r_hi": 0.75,
+          "cells": 3931,
+          "orbital_dt_min": 0.02174801342379263,
+          "orbital_dt_median": 0.030786496919947563,
+          "block_level_min": 8,
+          "block_level_median": 8.0
+        },
+        {
+          "r_lo": 0.75,
+          "r_hi": 1.0,
+          "cells": 6050,
+          "orbital_dt_min": 0.039079754042493586,
+          "orbital_dt_median": 0.04986563220293779,
+          "block_level_min": 8,
+          "block_level_median": 9.0
+        },
+        {
+          "r_lo": 1.0,
+          "r_hi": 2.0,
+          "cells": 39057,
+          "orbital_dt_min": 0.06149418576412526,
+          "orbital_dt_median": 0.12041214590766382,
+          "block_level_min": 9,
+          "block_level_median": 10.0
+        },
+        {
+          "r_lo": 2.0,
+          "r_hi": 3.0,
+          "cells": 63547,
+          "orbital_dt_min": 0.1710909335731771,
+          "orbital_dt_median": 0.2451109708263126,
+          "block_level_min": 11,
+          "block_level_median": 11.0
+        },
+        {
+          "r_lo": 3.0,
+          "r_hi": 5.0,
+          "cells": 31640,
+          "orbital_dt_min": 0.3117759037866997,
+          "orbital_dt_median": 0.36226795786969157,
+          "block_level_min": 11,
+          "block_level_median": 12.0
+        }
+      ],
+      "global_hydro_cfl_observed_initial": 0.002026,
+      "orbital_and_global_hydro_cap_ideal_cell_work_ratio": 26.418538047916226,
+      "orbital_and_global_hydro_cap_power2_cell_work_ratio": 15.970039623968855,
+      "orbital_and_global_hydro_cap_power2_cell_updates": 99682594
+    },
+    {
+      "glass": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2c/glass.bin",
+      "cells": 147456,
+      "eta": 0.06,
+      "eps": 0.01175,
+      "span": 0.825,
+      "minimum_radius": 0.011048543456039757,
+      "global_orbital_dt": 0.0001228987887753906,
+      "disk_cells": 49007,
+      "disk_minimum_orbital_dt": 0.02246064925492072,
+      "disk_minimum_dt_over_global": 182.75728734780066,
+      "cells_within_2x_global_orbital_dt": 6,
+      "cells_within_4x_global_orbital_dt": 25,
+      "global_steps_over_span": 6713,
+      "global_cell_updates_over_span": 989872128,
+      "ideal_local_cell_updates_over_span": 1303732,
+      "power2_block_cell_updates_over_span": 1868137,
+      "orbital_only_ideal_work_ratio": 759.2604369609705,
+      "orbital_only_power2_work_ratio": 529.8712717536241,
+      "radial_bands": [
+        {
+          "r_lo": 0.0,
+          "r_hi": 0.1,
+          "cells": 158,
+          "orbital_dt_min": 0.0001228987887753906,
+          "orbital_dt_median": 0.0013127699307440947,
+          "block_level_min": 0,
+          "block_level_median": 3.0
+        },
+        {
+          "r_lo": 0.1,
+          "r_hi": 0.5,
+          "cells": 3186,
+          "orbital_dt_min": 0.002559930936632449,
+          "orbital_dt_median": 0.013219584719510706,
+          "block_level_min": 4,
+          "block_level_median": 6.0
+        },
+        {
+          "r_lo": 0.5,
+          "r_hi": 0.75,
+          "cells": 3964,
+          "orbital_dt_min": 0.02246064925492072,
+          "orbital_dt_median": 0.03158585392441836,
+          "block_level_min": 7,
+          "block_level_median": 8.0
+        },
+        {
+          "r_lo": 0.75,
+          "r_hi": 1.0,
+          "cells": 5493,
+          "orbital_dt_min": 0.03994475822072694,
+          "orbital_dt_median": 0.048933744733098396,
+          "block_level_min": 8,
+          "block_level_median": 8.0
+        },
+        {
+          "r_lo": 1.0,
+          "r_hi": 2.0,
+          "cells": 39550,
+          "orbital_dt_min": 0.06049442660421794,
+          "orbital_dt_median": 0.11916010125026523,
+          "block_level_min": 8,
+          "block_level_median": 9.0
+        },
+        {
+          "r_lo": 2.0,
+          "r_hi": 3.0,
+          "cells": 63465,
+          "orbital_dt_min": 0.17250291070630522,
+          "orbital_dt_median": 0.245152204732041,
+          "block_level_min": 10,
+          "block_level_median": 10.0
+        },
+        {
+          "r_lo": 3.0,
+          "r_hi": 5.0,
+          "cells": 31640,
+          "orbital_dt_min": 0.3117759037866997,
+          "orbital_dt_median": 0.36226795786969157,
+          "block_level_min": 11,
+          "block_level_median": 11.0
+        }
+      ]
+    }
+  ]
+}

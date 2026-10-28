@@ -1,0 +1,147 @@
+{
+  "accepted_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/weight_feasibility_t10_cpu_v1/jitter_receipt.json",
+  "initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "endpoint_sha256": "0bf1963f55f38778427b1b15bc4249db4c1e0e889a3cb36d386dd0540781d854",
+  "time": 10.0,
+  "native_failed_checks": [
+    "disk_ballistic_residual"
+  ],
+  "sites": 55351,
+  "active_disk_sites": 49038,
+  "target": "Each disk site's own native t=0 Voronoi volume; core and exterior weights fixed at zero",
+  "native_voronoi_area_relative_max": 5.949771075819399e-08,
+  "history": [
+    {
+      "iteration": 0,
+      "geometry": {
+        "lower_facets": 110664,
+        "hidden_active": 0
+      },
+      "target_error": {
+        "median_relative": 0.001920533350111664,
+        "p95_relative": 0.006117845019720652,
+        "p99_relative": 0.008348679565274322,
+        "max_relative": 0.015923360292657507,
+        "inner_median_relative": 0.0022206646579669975,
+        "inner_p99_relative": 0.009314822741875783,
+        "inner_max_relative": 0.013989775141814875
+      },
+      "cg_iterations": 610,
+      "cg_info": 0,
+      "accepted_factor": 1.0
+    },
+    {
+      "iteration": 1,
+      "geometry": {
+        "lower_facets": 110664,
+        "hidden_active": 0
+      },
+      "target_error": {
+        "median_relative": 8.364580214026418e-07,
+        "p95_relative": 4.241456742659633e-06,
+        "p99_relative": 7.780403055118718e-06,
+        "max_relative": 3.0334778344798252e-05,
+        "inner_median_relative": 1.1637075377768369e-06,
+        "inner_p99_relative": 1.0493881272943768e-05,
+        "inner_max_relative": 2.229244731566382e-05
+      },
+      "cg_iterations": 586,
+      "cg_info": 0,
+      "accepted_factor": 1.0
+    },
+    {
+      "iteration": 2,
+      "geometry": {
+        "lower_facets": 110664,
+        "hidden_active": 0
+      },
+      "target_error": {
+        "median_relative": 1.801669924361704e-12,
+        "p95_relative": 7.277289881812976e-12,
+        "p99_relative": 1.4409442528062713e-11,
+        "max_relative": 1.7825163567408708e-10,
+        "inner_median_relative": 8.207878821053782e-13,
+        "inner_p99_relative": 2.0597923366949445e-11,
+        "inner_max_relative": 9.561418323755788e-11
+      }
+    }
+  ],
+  "converged_to_1e_minus_7": true,
+  "final_target_error": {
+    "median_relative": 1.801669924361704e-12,
+    "p95_relative": 7.277289881812976e-12,
+    "p99_relative": 1.4409442528062713e-11,
+    "max_relative": 1.7825163567408708e-10,
+    "inner_median_relative": 8.207878821053782e-13,
+    "inner_p99_relative": 2.0597923366949445e-11,
+    "inner_max_relative": 9.561418323755788e-11
+  },
+  "weight_abs_quantiles": [
+    5.038379571367218e-07,
+    1.7725731216418413e-06,
+    2.374274867854105e-06,
+    3.46813756093464e-06
+  ],
+  "weight_min": -3.46813756093464e-06,
+  "weight_max": 3.302703764886524e-06,
+  "native_face_guard": {
+    "faces_touching_active": 148557,
+    "max_absolute_weight_difference_over_d2": 0.017055512316038305,
+    "faces_over_0p8": 0,
+    "faces_over_1": 0,
+    "worst_faces": [
+      {
+        "i": 24136,
+        "j": 27836,
+        "ratio": 0.017055512316038305
+      },
+      {
+        "i": 17086,
+        "j": 17097,
+        "ratio": 0.01681775122512509
+      },
+      {
+        "i": 37142,
+        "j": 42727,
+        "ratio": 0.01674521849422916
+      },
+      {
+        "i": 20869,
+        "j": 31059,
+        "ratio": 0.016690774614660932
+      },
+      {
+        "i": 13999,
+        "j": 15672,
+        "ratio": 0.016074856652374896
+      },
+      {
+        "i": 39365,
+        "j": 40508,
+        "ratio": 0.015461728984534606
+      },
+      {
+        "i": 26056,
+        "j": 34843,
+        "ratio": 0.015339877617219222
+      },
+      {
+        "i": 18044,
+        "j": 20224,
+        "ratio": 0.015102812456864916
+      },
+      {
+        "i": 21085,
+        "j": 30849,
+        "ratio": 0.015024801955437098
+      },
+      {
+        "i": 7859,
+        "j": 20837,
+        "ratio": 0.015019804814689038
+      }
+    ]
+  },
+  "wall_seconds": 13.1976808780164,
+  "scope": "Static actual-position regular-triangulation geometry only. Listed native failed checks remain failures. No native GPU weighted tessellation, weight-rate integration, force/work/mass conservation or long-time result."
+}

@@ -1,0 +1,41 @@
+{
+  "reproducer": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_finite_weight_adjoint_20261027.py",
+  "reproducer_sha256": "e72ad0f40e983def7fa91a77a2decf78b0cebd69a65e62cf992b509c9f57f862",
+  "grid": [
+    5,
+    5
+  ],
+  "box": 5.0,
+  "sites": 25,
+  "gamma": 1.6666666666666667,
+  "central_difference_h": 0.0001,
+  "minimum_faces_per_cell": 4,
+  "area_partition_error": 3.552713678800501e-15,
+  "force_is_negative_energy_gradient_max_error": 3.8317411765133755e-09,
+  "volume_rate_finite_difference_max_error": 1.0252669824240002e-09,
+  "weight_rate_finite_difference_max_error": 4.8288761878012565e-11,
+  "jacobian_rate_error": 5.551115123125783e-17,
+  "jacobian_row_sum_max": 4.440892098500626e-16,
+  "jacobian_column_sum_max": 4.440892098500626e-15,
+  "global_force_norm": 3.3417600658610362e-15,
+  "kinetic_pressure_power": 0.036475409795902525,
+  "thermal_power_with_original_rate": 0.04652780292347955,
+  "unbalanced_total_power": 0.08300321271938207,
+  "predicted_unbalanced_power": 0.08300321271937988,
+  "unbalanced_identity_error": 2.192690473634684e-15,
+  "original_weight_power": -0.08300321271937988,
+  "projected_weight_power": 0.0,
+  "projected_total_power": 2.1094237467877974e-15,
+  "projected_rate_relative_change_l2": 0.15099849206443358,
+  "scope": "Finite nonzero W and Wdot, 25-cell periodic mathematical power diagram. Force/volume/work adjoint and one global energy-neutral rate are checked; no local material-face law, native CUDA, RK4 finite step, or long Kepler evolution is proven.",
+  "checks": {
+    "area_tiles_periodic_domain": true,
+    "finite_weight_force_adjoint": true,
+    "finite_weight_geometric_rate": true,
+    "finite_weight_jacobian_rate": true,
+    "nonzero_rate_energy_identity": true,
+    "energy_neutral_projection": true,
+    "nontrivial_weight_work": true,
+    "total_force_zero": true
+  }
+}

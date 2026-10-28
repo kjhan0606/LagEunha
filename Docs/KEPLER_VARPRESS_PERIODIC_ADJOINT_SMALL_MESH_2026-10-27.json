@@ -1,0 +1,132 @@
+{
+  "source": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_NATIVE_SOURCE_OVERLAY_2026-10-27/Exam/exam_gpu.cu",
+  "source_sha256": "9d2937a7bf5e9a4365d020c86cf05c2e2494d7746a7e20f3eef321deeecd97e9",
+  "reproducer": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_varpress_periodic_adjoint_20261027.py",
+  "reproducer_sha256": "90ff0b5d26222ebadf2b5eb548ca0aebabc4581274a6f40727e0e33c6d5fd9a9",
+  "grid": [
+    5,
+    5
+  ],
+  "box": 5.0,
+  "gamma": 1.6666666666666667,
+  "central_difference_h": 0.0001,
+  "seeds": [
+    17,
+    23,
+    41
+  ],
+  "cases": [
+    {
+      "seed": 17,
+      "uniform_pressure": false,
+      "sites": 25,
+      "faces_min": 4,
+      "periodic_area_error": 3.552713678800501e-15,
+      "face_vector_closure_max": 9.688531801769356e-16,
+      "force_gradient_error_max": 4.429446384972523e-09,
+      "area_rate_error_max": 1.0570396502540547e-09,
+      "thermal_work_error_max": 1.3605234300273494e-09,
+      "total_area_rate_error": 3.885780586188048e-16,
+      "total_force_error": 2.3273757686693183e-16,
+      "total_energy_power_error": 2.220446049250313e-16,
+      "force_max": 0.4370387849882475
+    },
+    {
+      "seed": 17,
+      "uniform_pressure": true,
+      "sites": 25,
+      "faces_min": 4,
+      "periodic_area_error": 3.552713678800501e-15,
+      "face_vector_closure_max": 9.688531801769356e-16,
+      "force_gradient_error_max": 3.166901009601951e-09,
+      "area_rate_error_max": 1.0570396502540547e-09,
+      "thermal_work_error_max": 1.0570395947429034e-09,
+      "total_area_rate_error": 3.885780586188048e-16,
+      "total_force_error": 0.0,
+      "total_energy_power_error": 3.3306690738754696e-16,
+      "force_max": 0.0
+    },
+    {
+      "seed": 23,
+      "uniform_pressure": false,
+      "sites": 25,
+      "faces_min": 4,
+      "periodic_area_error": 1.7763568394002505e-14,
+      "face_vector_closure_max": 1.3463600052204709e-15,
+      "force_gradient_error_max": 3.2735784070382955e-09,
+      "area_rate_error_max": 1.689445208730156e-09,
+      "thermal_work_error_max": 2.4710234136637865e-09,
+      "total_area_rate_error": 1.1102230246251565e-15,
+      "total_force_error": 1.2307493251107476e-15,
+      "total_energy_power_error": 8.187894806610529e-16,
+      "force_max": 0.41618825959857036
+    },
+    {
+      "seed": 23,
+      "uniform_pressure": true,
+      "sites": 25,
+      "faces_min": 4,
+      "periodic_area_error": 1.7763568394002505e-14,
+      "face_vector_closure_max": 1.3463600052204709e-15,
+      "force_gradient_error_max": 2.5246774277490926e-09,
+      "area_rate_error_max": 1.689445208730156e-09,
+      "thermal_work_error_max": 1.6894451393412169e-09,
+      "total_area_rate_error": 1.1102230246251565e-15,
+      "total_force_error": 0.0,
+      "total_energy_power_error": 7.771561172376096e-16,
+      "force_max": 0.0
+    },
+    {
+      "seed": 41,
+      "uniform_pressure": false,
+      "sites": 25,
+      "faces_min": 4,
+      "periodic_area_error": 7.105427357601002e-15,
+      "face_vector_closure_max": 1.2490009027033011e-15,
+      "force_gradient_error_max": 3.4916837308109596e-09,
+      "area_rate_error_max": 8.758276118236985e-10,
+      "thermal_work_error_max": 8.005037605007814e-10,
+      "total_area_rate_error": 4.579669976578771e-16,
+      "total_force_error": 6.961062950497062e-16,
+      "total_energy_power_error": 1.249000902703301e-16,
+      "force_max": 0.4642670529272619
+    },
+    {
+      "seed": 41,
+      "uniform_pressure": true,
+      "sites": 25,
+      "faces_min": 4,
+      "periodic_area_error": 7.105427357601002e-15,
+      "face_vector_closure_max": 1.2490009027033011e-15,
+      "force_gradient_error_max": 2.8853634865195876e-09,
+      "area_rate_error_max": 8.758276118236985e-10,
+      "thermal_work_error_max": 8.758275285569717e-10,
+      "total_area_rate_error": 4.579669976578771e-16,
+      "total_force_error": 0.0,
+      "total_energy_power_error": 6.938893903907228e-17,
+      "force_max": 0.0
+    }
+  ],
+  "maxima": {
+    "periodic_area_error": 1.7763568394002505e-14,
+    "face_vector_closure_max": 1.3463600052204709e-15,
+    "force_gradient_error_max": 4.429446384972523e-09,
+    "area_rate_error_max": 1.689445208730156e-09,
+    "thermal_work_error_max": 2.4710234136637865e-09,
+    "total_area_rate_error": 1.1102230246251565e-15,
+    "total_force_error": 1.2307493251107476e-15,
+    "total_energy_power_error": 8.187894806610529e-16
+  },
+  "checks": {
+    "periodic_area_partition": true,
+    "closed_cell_faces": true,
+    "force_is_negative_energy_gradient": true,
+    "face_rate_matches_area_derivative": true,
+    "thermal_work_is_negative_P_dVdt": true,
+    "total_area_rate_zero": true,
+    "total_force_zero": true,
+    "total_energy_power_zero": true,
+    "uniform_pressure_force_zero": true
+  },
+  "scope": "Small periodic smooth W=0 mathematical operator audit; no native CUDA execution, GPU seam-pair extraction, shocks, or long-time Kepler inference."
+}

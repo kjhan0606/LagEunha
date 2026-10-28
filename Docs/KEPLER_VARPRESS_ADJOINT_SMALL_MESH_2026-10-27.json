@@ -1,0 +1,631 @@
+{
+  "source": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_NATIVE_SOURCE_OVERLAY_2026-10-27/Exam/exam_gpu.cu",
+  "source_sha256": "9d2937a7bf5e9a4365d020c86cf05c2e2494d7746a7e20f3eef321deeecd97e9",
+  "reproducer": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_varpress_adjoint_20261027.py",
+  "reproducer_sha256": "b1bb982f70343b9a63812c8d3d721a2b2fb1d49d42ce39b3cbabdbcabc5e84d0",
+  "grid": [
+    7,
+    7
+  ],
+  "selected_sites": [
+    [
+      2,
+      2
+    ],
+    [
+      3,
+      2
+    ],
+    [
+      3,
+      3
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      4,
+      4
+    ]
+  ],
+  "seeds": [
+    17,
+    23,
+    41
+  ],
+  "central_difference_h": 0.0001,
+  "gamma": 1.6666666666666667,
+  "cases": [
+    {
+      "seed": 17,
+      "uniform_pressure": false,
+      "rows": [
+        {
+          "site": 16,
+          "faces": 6,
+          "source_force": [
+            -0.013499888633176202,
+            0.034735389558181444
+          ],
+          "negative_energy_gradient": [
+            -0.013499889064405579,
+            0.03473538981779711
+          ],
+          "force_absolute_error": 5.033478629954206e-10,
+          "area_vector_closure": 3.7238012298709097e-16,
+          "source_geometric_area_rate": 0.2558994391457077,
+          "finite_difference_area_rate": 0.25589943902559753,
+          "area_rate_absolute_error": 1.2011014405288734e-10,
+          "thermal_work_absolute_error": 1.0808820505303629e-10
+        },
+        {
+          "site": 17,
+          "faces": 7,
+          "source_force": [
+            0.03774861079875774,
+            -0.002127689412775267
+          ],
+          "negative_energy_gradient": [
+            0.0377486117031367,
+            -0.0021276878214848693
+          ],
+          "force_absolute_error": 1.8303295970878998e-09,
+          "area_vector_closure": 5.499807429452903e-16,
+          "source_geometric_area_rate": 0.1828380516080437,
+          "finite_difference_area_rate": 0.1828380516855077,
+          "area_rate_absolute_error": 7.746400743080528e-11,
+          "thermal_work_absolute_error": 7.359413078944499e-11
+        },
+        {
+          "site": 24,
+          "faces": 6,
+          "source_force": [
+            -0.06322529367298754,
+            0.24453543836477204
+          ],
+          "negative_energy_gradient": [
+            -0.06322529543467681,
+            0.2445354425617552
+          ],
+          "force_absolute_error": 4.551726774858678e-09,
+          "area_vector_closure": 1.7772239894833365e-16,
+          "source_geometric_area_rate": 0.13583942055343445,
+          "finite_difference_area_rate": 0.1358394202632951,
+          "area_rate_absolute_error": 2.9013935698429805e-10,
+          "thermal_work_absolute_error": 2.808908383666875e-10
+        },
+        {
+          "site": 30,
+          "faces": 7,
+          "source_force": [
+            0.16863240623805467,
+            -0.04174643548658799
+          ],
+          "negative_energy_gradient": [
+            0.1686324071670242,
+            -0.041746436636458384
+          ],
+          "force_absolute_error": 1.4782375749790888e-09,
+          "area_vector_closure": 7.830350387562368e-16,
+          "source_geometric_area_rate": -0.08019651720807539,
+          "finite_difference_area_rate": -0.08019651700053032,
+          "area_rate_absolute_error": 2.0754506446785115e-10,
+          "thermal_work_absolute_error": 2.2313313696731285e-10
+        },
+        {
+          "site": 32,
+          "faces": 6,
+          "source_force": [
+            -0.2510504176376023,
+            -0.051607212039637106
+          ],
+          "negative_energy_gradient": [
+            -0.2510504214114917,
+            -0.05160721229913179
+          ],
+          "force_absolute_error": 3.782800400335844e-09,
+          "area_vector_closure": 6.722137407118775e-16,
+          "source_geometric_area_rate": -0.23424577605055732,
+          "finite_difference_area_rate": -0.23424577651809386,
+          "area_rate_absolute_error": 4.67536537263058e-10,
+          "thermal_work_absolute_error": 4.2103559527717493e-10
+        }
+      ]
+    },
+    {
+      "seed": 17,
+      "uniform_pressure": true,
+      "rows": [
+        {
+          "site": 16,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -0.0,
+            -2.2737367544323206e-09
+          ],
+          "force_absolute_error": 2.2737367544323206e-09,
+          "area_vector_closure": 3.7238012298709097e-16,
+          "source_geometric_area_rate": 0.2558994391457077,
+          "finite_difference_area_rate": 0.25589943902559753,
+          "area_rate_absolute_error": 1.2011014405288734e-10,
+          "thermal_work_absolute_error": 1.2011019956403857e-10
+        },
+        {
+          "site": 17,
+          "faces": 7,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -0.0,
+            -0.0
+          ],
+          "force_absolute_error": 0.0,
+          "area_vector_closure": 5.499807429452903e-16,
+          "source_geometric_area_rate": 0.1828380516080437,
+          "finite_difference_area_rate": 0.1828380516855077,
+          "area_rate_absolute_error": 7.746400743080528e-11,
+          "thermal_work_absolute_error": 7.74640351863809e-11
+        },
+        {
+          "site": 24,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -0.0,
+            -0.0
+          ],
+          "force_absolute_error": 0.0,
+          "area_vector_closure": 1.7772239894833365e-16,
+          "source_geometric_area_rate": 0.13583942055343445,
+          "finite_difference_area_rate": 0.1358394202632951,
+          "area_rate_absolute_error": 2.9013935698429805e-10,
+          "thermal_work_absolute_error": 2.9013935698429805e-10
+        },
+        {
+          "site": 30,
+          "faces": 7,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -0.0,
+            -2.2737367544323206e-09
+          ],
+          "force_absolute_error": 2.2737367544323206e-09,
+          "area_vector_closure": 7.830350387562368e-16,
+          "source_geometric_area_rate": -0.08019651720807539,
+          "finite_difference_area_rate": -0.08019651700053032,
+          "area_rate_absolute_error": 2.0754506446785115e-10,
+          "thermal_work_absolute_error": 2.075448007898828e-10
+        },
+        {
+          "site": 32,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -2.2737367544323206e-09,
+            -0.0
+          ],
+          "force_absolute_error": 2.2737367544323206e-09,
+          "area_vector_closure": 6.722137407118775e-16,
+          "source_geometric_area_rate": -0.23424577605055732,
+          "finite_difference_area_rate": -0.23424577651809386,
+          "area_rate_absolute_error": 4.67536537263058e-10,
+          "thermal_work_absolute_error": 4.675366482853605e-10
+        }
+      ]
+    },
+    {
+      "seed": 23,
+      "uniform_pressure": false,
+      "rows": [
+        {
+          "site": 16,
+          "faces": 5,
+          "source_force": [
+            -0.08957232073047433,
+            -0.011224016878360263
+          ],
+          "negative_energy_gradient": [
+            -0.08957232040529561,
+            -0.011224017555377941
+          ],
+          "force_absolute_error": 7.510620044586465e-10,
+          "area_vector_closure": 3.6638411145107034e-16,
+          "source_geometric_area_rate": -0.004837442411080667,
+          "finite_difference_area_rate": -0.004837442251215407,
+          "area_rate_absolute_error": 1.5986525991884548e-10,
+          "thermal_work_absolute_error": 1.2693642968339414e-10
+        },
+        {
+          "site": 17,
+          "faces": 6,
+          "source_force": [
+            -0.1639766663310996,
+            -0.19742500630336487
+          ],
+          "negative_energy_gradient": [
+            -0.1639766679772947,
+            -0.19742500739994284
+          ],
+          "force_absolute_error": 1.977989265765339e-09,
+          "area_vector_closure": 1.7772239894833365e-16,
+          "source_geometric_area_rate": 0.28926603399244233,
+          "finite_difference_area_rate": 0.28926603523160566,
+          "area_rate_absolute_error": 1.2391633275044e-09,
+          "thermal_work_absolute_error": 1.7699897658651764e-09
+        },
+        {
+          "site": 24,
+          "faces": 8,
+          "source_force": [
+            0.28897249385824225,
+            0.0067338260612681555
+          ],
+          "negative_energy_gradient": [
+            0.2889724976284924,
+            0.006733827149218996
+          ],
+          "force_absolute_error": 3.9240824861190606e-09,
+          "area_vector_closure": 5.117875266520903e-16,
+          "source_geometric_area_rate": 0.028038350773716244,
+          "finite_difference_area_rate": 0.028038350805559276,
+          "area_rate_absolute_error": 3.184303168368707e-11,
+          "thermal_work_absolute_error": 3.056566805215155e-11
+        },
+        {
+          "site": 30,
+          "faces": 8,
+          "source_force": [
+            -0.32771041073677987,
+            0.19249463427522845
+          ],
+          "negative_energy_gradient": [
+            -0.3277104136145681,
+            0.19249463548476342
+          ],
+          "force_absolute_error": 3.1216405855407863e-09,
+          "area_vector_closure": 2.8449465006019636e-16,
+          "source_geometric_area_rate": -0.08725772217602734,
+          "finite_difference_area_rate": -0.08725772225659512,
+          "area_rate_absolute_error": 8.056777467402298e-11,
+          "thermal_work_absolute_error": 7.949184366307094e-11
+        },
+        {
+          "site": 32,
+          "faces": 5,
+          "source_force": [
+            0.04586571742750291,
+            -0.15372777707562174
+          ],
+          "negative_energy_gradient": [
+            0.04586571520803773,
+            -0.1537277762508893
+          ],
+          "force_absolute_error": 2.367743504370173e-09,
+          "area_vector_closure": 4.982493048981751e-16,
+          "source_geometric_area_rate": 0.038345295786096655,
+          "finite_difference_area_rate": 0.03834529525903463,
+          "area_rate_absolute_error": 5.270620259678616e-10,
+          "thermal_work_absolute_error": 6.893292464615897e-10
+        }
+      ]
+    },
+    {
+      "seed": 23,
+      "uniform_pressure": true,
+      "rows": [
+        {
+          "site": 16,
+          "faces": 5,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            1.1368683772161603e-09,
+            -0.0
+          ],
+          "force_absolute_error": 1.1368683772161603e-09,
+          "area_vector_closure": 3.6638411145107034e-16,
+          "source_geometric_area_rate": -0.004837442411080667,
+          "finite_difference_area_rate": -0.004837442251215407,
+          "area_rate_absolute_error": 1.5986525991884548e-10,
+          "thermal_work_absolute_error": 1.5986525991884548e-10
+        },
+        {
+          "site": 17,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -5.684341886080801e-10,
+            -5.684341886080801e-10
+          ],
+          "force_absolute_error": 8.038873388460928e-10,
+          "area_vector_closure": 1.7772239894833365e-16,
+          "source_geometric_area_rate": 0.28926603399244233,
+          "finite_difference_area_rate": 0.28926603523160566,
+          "area_rate_absolute_error": 1.2391633275044e-09,
+          "thermal_work_absolute_error": 1.2391632164820976e-09
+        },
+        {
+          "site": 24,
+          "faces": 8,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            1.9895196601282805e-09,
+            2.842170943040401e-10
+          ],
+          "force_absolute_error": 2.0097183471152323e-09,
+          "area_vector_closure": 5.117875266520903e-16,
+          "source_geometric_area_rate": 0.028038350773716244,
+          "finite_difference_area_rate": 0.028038350805559276,
+          "area_rate_absolute_error": 3.184303168368707e-11,
+          "thermal_work_absolute_error": 3.1843139236542584e-11
+        },
+        {
+          "site": 30,
+          "faces": 8,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -1.4210854715202004e-09,
+            2.842170943040401e-10
+          ],
+          "force_absolute_error": 1.449228509952941e-09,
+          "area_vector_closure": 2.8449465006019636e-16,
+          "source_geometric_area_rate": -0.08725772217602734,
+          "finite_difference_area_rate": -0.08725772225659512,
+          "area_rate_absolute_error": 8.056777467402298e-11,
+          "thermal_work_absolute_error": 8.056771916287175e-11
+        },
+        {
+          "site": 32,
+          "faces": 5,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -1.7053025658242404e-09,
+            1.1368683772161603e-09
+          ],
+          "force_absolute_error": 2.0495186137532013e-09,
+          "area_vector_closure": 4.982493048981751e-16,
+          "source_geometric_area_rate": 0.038345295786096655,
+          "finite_difference_area_rate": 0.03834529525903463,
+          "area_rate_absolute_error": 5.270620259678616e-10,
+          "thermal_work_absolute_error": 5.270622549513604e-10
+        }
+      ]
+    },
+    {
+      "seed": 41,
+      "uniform_pressure": false,
+      "rows": [
+        {
+          "site": 16,
+          "faces": 5,
+          "source_force": [
+            -0.012639122469824291,
+            0.20915144085803217
+          ],
+          "negative_energy_gradient": [
+            -0.012639125230862192,
+            0.20915144034461264
+          ],
+          "force_absolute_error": 2.808367835305261e-09,
+          "area_vector_closure": 3.134813796900204e-16,
+          "source_geometric_area_rate": -0.055341308651442156,
+          "finite_difference_area_rate": -0.05534130880668897,
+          "area_rate_absolute_error": 1.5524681540313168e-10,
+          "thermal_work_absolute_error": 1.0135847716696844e-10
+        },
+        {
+          "site": 17,
+          "faces": 6,
+          "source_force": [
+            -0.4358721617154853,
+            -0.1247812432350836
+          ],
+          "negative_energy_gradient": [
+            -0.4358721623987094,
+            -0.12478124446602123
+          ],
+          "force_absolute_error": 1.4078361420869413e-09,
+          "area_vector_closure": 1.1775693440128312e-16,
+          "source_geometric_area_rate": -0.18299147822596534,
+          "finite_difference_area_rate": -0.1829914784323705,
+          "area_rate_absolute_error": 2.0640517073289288e-10,
+          "thermal_work_absolute_error": 2.0802470857006483e-10
+        },
+        {
+          "site": 24,
+          "faces": 6,
+          "source_force": [
+            0.2591966338142232,
+            -0.013458216958768709
+          ],
+          "negative_energy_gradient": [
+            0.2591966342890828,
+            -0.013458217580364362
+          ],
+          "force_absolute_error": 7.822229812212066e-10,
+          "area_vector_closure": 3.0531133177191805e-16,
+          "source_geometric_area_rate": -0.06284769361388401,
+          "finite_difference_area_rate": -0.0628476939112943,
+          "area_rate_absolute_error": 2.9741029083929504e-10,
+          "thermal_work_absolute_error": 3.9698214160388545e-10
+        },
+        {
+          "site": 30,
+          "faces": 7,
+          "source_force": [
+            -0.3495231170026249,
+            -0.013469888345663563
+          ],
+          "negative_energy_gradient": [
+            -0.34952311949609793,
+            -0.01346988980799324
+          ],
+          "force_absolute_error": 2.8906428147830252e-09,
+          "area_vector_closure": 4.809409384954737e-16,
+          "source_geometric_area_rate": -0.1640102161486358,
+          "finite_difference_area_rate": -0.1640102166611257,
+          "area_rate_absolute_error": 5.124898838637648e-10,
+          "thermal_work_absolute_error": 6.607799307722928e-10
+        },
+        {
+          "site": 32,
+          "faces": 6,
+          "source_force": [
+            0.36311654299381857,
+            -0.5094616933405753
+          ],
+          "negative_energy_gradient": [
+            0.36311654227461077,
+            -0.5094616943779329
+          ],
+          "force_absolute_error": 1.2622878109382796e-09,
+          "area_vector_closure": 6.432246110830866e-16,
+          "source_geometric_area_rate": 0.3753142388963596,
+          "finite_difference_area_rate": 0.37531423902947836,
+          "area_rate_absolute_error": 1.3311873825472276e-10,
+          "thermal_work_absolute_error": 1.392505000197275e-10
+        }
+      ]
+    },
+    {
+      "seed": 41,
+      "uniform_pressure": true,
+      "rows": [
+        {
+          "site": 16,
+          "faces": 5,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -2.2737367544323206e-09,
+            -1.2789769243681803e-09
+          ],
+          "force_absolute_error": 2.608766145426361e-09,
+          "area_vector_closure": 3.134813796900204e-16,
+          "source_geometric_area_rate": -0.055341308651442156,
+          "finite_difference_area_rate": -0.05534130880668897,
+          "area_rate_absolute_error": 1.5524681540313168e-10,
+          "thermal_work_absolute_error": 1.552468709142829e-10
+        },
+        {
+          "site": 17,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            2.842170943040401e-10,
+            -4.263256414560601e-10
+          ],
+          "force_absolute_error": 5.123796534383003e-10,
+          "area_vector_closure": 1.1775693440128312e-16,
+          "source_geometric_area_rate": -0.18299147822596534,
+          "finite_difference_area_rate": -0.1829914784323705,
+          "area_rate_absolute_error": 2.0640517073289288e-10,
+          "thermal_work_absolute_error": 2.0640522624404412e-10
+        },
+        {
+          "site": 24,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            4.263256414560601e-10,
+            9.947598300641403e-10
+          ],
+          "force_absolute_error": 1.0822664515137473e-09,
+          "area_vector_closure": 3.0531133177191805e-16,
+          "source_geometric_area_rate": -0.06284769361388401,
+          "finite_difference_area_rate": -0.0628476939112943,
+          "area_rate_absolute_error": 2.9741029083929504e-10,
+          "thermal_work_absolute_error": 2.974102492059316e-10
+        },
+        {
+          "site": 30,
+          "faces": 7,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            -2.4158453015843406e-09,
+            -7.105427357601002e-10
+          ],
+          "force_absolute_error": 2.5181698712613853e-09,
+          "area_vector_closure": 4.809409384954737e-16,
+          "source_geometric_area_rate": -0.1640102161486358,
+          "finite_difference_area_rate": -0.1640102166611257,
+          "area_rate_absolute_error": 5.124898838637648e-10,
+          "thermal_work_absolute_error": 5.124897173303111e-10
+        },
+        {
+          "site": 32,
+          "faces": 6,
+          "source_force": [
+            0.0,
+            0.0
+          ],
+          "negative_energy_gradient": [
+            2.842170943040401e-10,
+            -1.4210854715202004e-10
+          ],
+          "force_absolute_error": 3.1776437161565096e-10,
+          "area_vector_closure": 6.432246110830866e-16,
+          "source_geometric_area_rate": 0.3753142388963596,
+          "finite_difference_area_rate": 0.37531423902947836,
+          "area_rate_absolute_error": 1.3311873825472276e-10,
+          "thermal_work_absolute_error": 1.3311873825472276e-10
+        }
+      ]
+    }
+  ],
+  "maxima": {
+    "force_absolute_error": 4.551726774858678e-09,
+    "area_vector_closure": 7.830350387562368e-16,
+    "area_rate_absolute_error": 1.2391633275044e-09,
+    "thermal_work_absolute_error": 1.7699897658651764e-09
+  },
+  "checks": {
+    "force_equals_negative_energy_gradient": true,
+    "closed_polygon_area_vectors": true,
+    "face_rate_equals_area_finite_difference": true,
+    "thermal_work_equals_negative_P_dVdt": true,
+    "uniform_pressure_force_zero": true
+  },
+  "scope": "Independent finite-difference check of the smooth interior W=0 CUDA source formula; does not test native GPU polygon pairing, periodic seams, ghost boundaries, shocks, or long-time stability."
+}

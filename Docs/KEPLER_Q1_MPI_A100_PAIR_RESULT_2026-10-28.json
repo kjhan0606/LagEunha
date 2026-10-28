@@ -1,0 +1,109 @@
+{
+  "scope": "short same-GPU-model MPI rank consistency and throughput; no long-time claim",
+  "time": 1.55,
+  "wall_seconds_np1_np2": [
+    893.109,
+    821.519
+  ],
+  "wall_speedup_np1_over_np2": 1.0871434501210562,
+  "checks": {
+    "both_native_physics_gates": true,
+    "same_exact_time": true,
+    "x_max_abs_below_1e_6": true,
+    "y_max_abs_below_1e_6": true,
+    "vx_max_abs_below_1e_5": true,
+    "vy_max_abs_below_1e_5": true,
+    "mass_exact": true,
+    "volume_normalized_rms_below_1e_6": true,
+    "volume_max_cell_relative_below_1e_3": true,
+    "ie_normalized_rms_below_1e_6": true,
+    "ie_max_cell_relative_below_1e_3": true,
+    "den_normalized_rms_below_1e_6": true,
+    "den_max_cell_relative_below_1e_3": true,
+    "pressure_normalized_rms_below_1e_6": true,
+    "pressure_max_cell_relative_below_1e_3": true,
+    "w2_exact": true
+  },
+  "field_differences": {
+    "x": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0
+    },
+    "y": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0
+    },
+    "vx": {
+      "bitwise_equal": false,
+      "different_cells": 5,
+      "max_absolute_difference": 8.673617379884035e-19,
+      "rms_difference": 3.571404488871447e-21,
+      "normalized_rms_difference": 6.5618145287678075e-21
+    },
+    "vy": {
+      "bitwise_equal": false,
+      "different_cells": 1,
+      "max_absolute_difference": 3.7223127564886245e-24,
+      "rms_difference": 9.693522803355793e-27,
+      "normalized_rms_difference": 1.781013008953998e-26
+    },
+    "mass": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0
+    },
+    "volume": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0,
+      "max_cell_relative_difference": 0.0
+    },
+    "ie": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0,
+      "max_cell_relative_difference": 0.0
+    },
+    "den": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0,
+      "max_cell_relative_difference": 0.0
+    },
+    "pressure": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0,
+      "max_cell_relative_difference": 0.0
+    },
+    "w2": {
+      "bitwise_equal": true,
+      "different_cells": 0,
+      "max_absolute_difference": 0.0,
+      "rms_difference": 0.0,
+      "normalized_rms_difference": 0.0
+    }
+  },
+  "predeclared_tolerances": {
+    "position_max_abs": 1e-06,
+    "velocity_max_abs": 1e-05,
+    "positive_scalar_normalized_rms": 1e-06,
+    "positive_scalar_max_cell_relative": 0.001
+  }
+}

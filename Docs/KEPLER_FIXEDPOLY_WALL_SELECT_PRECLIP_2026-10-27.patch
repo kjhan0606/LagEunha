@@ -1,0 +1,50 @@
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -2749,6 +2749,11 @@
+     poly_x[3] = -halfbox; poly_y[3] =  halfbox; poly_neigh[3] = -4;
+ 
+     maxdist2 = 2.0 * halfbox * halfbox;
++    /* A polygon contained in this local square cannot meet the fixed wall
++     * when the square itself does not. Re-evaluate after every box retry. */
++    const double wall_rx=xi-3.0,wall_ry=yi-3.0;
++    const int wall_may_touch=d_gfs_fixedpoly_on &&
++        hypot(wall_rx,wall_ry)+1.4142135623730951*halfbox > d_gfs_fixedpoly_apothem;
+ 
+     /* ---- Sutherland-Hodgman clipping ---- */
+ 
+@@ -2782,7 +2787,7 @@
+                         ? (dx>=0?(dy>=0?0:7):(dy>=0?3:4))
+                         : (dy>=0?(dx>=0?1:2):(dx>=0?6:5));
+                     if(dr2<offset2[s]){offset2[s]=dr2;nearest[s]=j;}
+-                    if(d_gfs_fixedpoly_on && dr2<offset2[31]){
++                    if(wall_may_touch && dr2<offset2[31]){
+                         int t=31;
+                         while(t>8 && dr2<offset2[t-1]){
+                             offset2[t]=offset2[t-1];nearest[t]=nearest[t-1];t--;
+@@ -2792,7 +2797,7 @@
+                 }
+             }
+         }
+-        const int n_pre=d_gfs_fixedpoly_on?32:8;
++        const int n_pre=wall_may_touch?32:8;
+         for(int s=0;s<n_pre && nc>=3;s++){
+             int j=nearest[s];if(j<0 || offset2[s]>maxdist2)continue;
+             double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+@@ -2810,7 +2815,7 @@
+          * creating dozens of transient wall fragments. All 1024 planes
+          * are still applied after the real-site search below. */
+         const double cx=xi-3.0,cy=yi-3.0;
+-        if (hypot(cx,cy)+1.4142135623730951*halfbox > d_gfs_fixedpoly_apothem) {
++        if (wall_may_touch) {
+             for (int k=0;k<GFS_FIXEDPOLY_SIDES;k+=128) {
+                 const double nx=d_gfs_fixedpoly_nx[k],ny=d_gfs_fixedpoly_ny[k];
+                 const double threshold=d_gfs_fixedpoly_apothem-nx*cx-ny*cy;
+@@ -2959,7 +2964,7 @@
+          * candidate search. The earlier eight-plane superset cannot lose a
+          * true competitor; this pass removes every remaining coarse excess. */
+         const double cx=xi-3.0,cy=yi-3.0;
+-        if (hypot(cx,cy)+1.4142135623730951*halfbox > d_gfs_fixedpoly_apothem) {
++        if (wall_may_touch) {
+             for (int k=0;k<GFS_FIXEDPOLY_SIDES;k++) {
+                 const double nx=d_gfs_fixedpoly_nx[k],ny=d_gfs_fixedpoly_ny[k];
+                 const double threshold=d_gfs_fixedpoly_apothem-nx*cx-ny*cy;

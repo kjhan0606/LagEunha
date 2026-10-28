@@ -1,0 +1,87 @@
+--- /tmp/Kepler_sparse_glass_native_20261026/Exam/KH/util.c	2026-10-26 22:14:22.365428788 +0900
++++ /tmp/Kepler_sparse_periodic_area_20261027/Exam/KH/util.c	2026-10-27 01:53:50.156318886 +0900
+@@ -1,6 +1,7 @@
+ #include<stdio.h>
+ #include<stdlib.h>
+ #include<stddef.h>
++#include<limits.h>
+ #include<string.h>
+ #include<math.h>
+ #include<mpi.h>
+@@ -637,6 +638,53 @@
+ 		const char *ic_env = getenv("EUNHA_IC");
+ 		int rebase_kepler_mass = use_glass && rebase_env && strcmp(rebase_env, "1") == 0
+ 			&& ic_env && strcmp(ic_env, "kepler") == 0 && GAS_Kappa(simpar) == 0;
++		const char *area_path = getenv("EUNHA_KEPLER_INITIAL_AREAS_FILE");
++		double *periodic_areas = NULL;
++		if(allow_sparse_glass && use_glass && ic_env && strcmp(ic_env, "kepler") == 0 &&
++		   (!rebase_kepler_mass || !(area_path && area_path[0]))){
++			fprintf(stderr, "[KEPLER_IC_AREA] sparse Kepler glass requires mass rebase and periodic-area sidecar\n");
++			MPI_Abort(MPI_COMM(simpar), 94);
++		}
++		if(area_path && area_path[0]){
++			if(!rebase_kepler_mass || glass_count > (size_t)INT_MAX){
++				fprintf(stderr, "[KEPLER_IC_AREA] sidecar requires Kepler glass mass rebase\n");
++				MPI_Abort(MPI_COMM(simpar), 94);
++			}
++			FILE *af = fopen(area_path, "rb");
++			int area_count = 0;
++			double area_lx = 0, area_ly = 0;
++			if(!af || fread(&area_count, sizeof(int), 1, af) != 1 ||
++			   fread(&area_lx, sizeof(double), 1, af) != 1 ||
++			   fread(&area_ly, sizeof(double), 1, af) != 1 ||
++			   area_count != (int)glass_count || area_lx != (double)Lx ||
++			   area_ly != (double)Ly){
++				fprintf(stderr, "[KEPLER_IC_AREA] invalid sidecar header: %s\n", area_path);
++				MPI_Abort(MPI_COMM(simpar), 94);
++			}
++			periodic_areas = (double*)malloc(glass_count * sizeof(double));
++			if(!periodic_areas ||
++			   fread(periodic_areas, sizeof(double), glass_count, af) != glass_count ||
++			   fgetc(af) != EOF){
++				fprintf(stderr, "[KEPLER_IC_AREA] invalid sidecar payload: %s\n", area_path);
++				MPI_Abort(MPI_COMM(simpar), 94);
++			}
++			fclose(af);
++			long double area_sum = 0;
++			for(size_t k=0;k<glass_count;k++){
++				if(!(periodic_areas[k] > 0) || !isfinite(periodic_areas[k])){
++					fprintf(stderr, "[KEPLER_IC_AREA] nonpositive area at site=%zu\n", k);
++					MPI_Abort(MPI_COMM(simpar), 94);
++				}
++				area_sum += periodic_areas[k];
++			}
++			if(fabsl(area_sum - (long double)Lx * (long double)Ly) > 1.e-8L){
++				fprintf(stderr, "[KEPLER_IC_AREA] periodic areas fail box tiling: sum=%.17Lg box=%.17g\n",
++					area_sum, (double)Lx * (double)Ly);
++				MPI_Abort(MPI_COMM(simpar), 94);
++			}
++			DEBUGPRINT("[KEPLER_IC_AREA] rank=%d sidecar=%s sites=%zu sum=%.17Lg\n",
++				MYID(simpar), area_path, glass_count, area_sum);
++		}
+ 		size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype)
+ 		                             : sizeof(treevorork4particletype);
+ 		char *bp_raw = (char*)res;
+@@ -644,6 +692,14 @@
+ 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+ 			if(rebase_kepler_mass){
+ 				postype target_rho = bpi->mass/meanvol;
++				if(periodic_areas){
++					size_t id = (size_t)PINDX(bpi);
++					if(id >= glass_count){
++						fprintf(stderr, "[KEPLER_IC_AREA] site id out of range: %zu\n", id);
++						MPI_Abort(MPI_COMM(simpar), 94);
++					}
++					bpi->volume = periodic_areas[id];
++				}
+ 				if(!(bpi->volume > 0) || !isfinite(bpi->volume) || !(target_rho > 0)){
+ 					fprintf(stderr, "[KEPLER_IC_MASS_REBASE] invalid initial cell id=%zu V=%g rho=%g\n",
+ 						(size_t)PINDX(bpi), (double)bpi->volume, (double)target_rho);
+@@ -658,6 +714,7 @@
+ 		if(rebase_kepler_mass)
+ 			DEBUGPRINT("[KEPLER_IC_MASS_REBASE] rank=%d cells=%d, m=rho_target*VoronoiVolume\n",
+ 				MYID(simpar), nbp);
++		free(periodic_areas);
+ 	}
+ 	VORO_NPAD(simpar) = 0;
+ 

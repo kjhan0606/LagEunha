@@ -1,0 +1,42 @@
+{
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_t65_short_a10_v1",
+  "restart": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_t65_short_a10_v1/khout.000001.dat",
+  "restart_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_t65_short_a10_v1/khout.000002.dat",
+  "endpoint_sha256": "0793c73fc5e0a0e2d45917b338c7cf435a0716bd586192033d4d51521fc9d683",
+  "start_time": 6.5,
+  "endpoint_time": 6.5005,
+  "initial_state": {
+    "positive": true,
+    "density_relative_max": 5.922340429176387e-08,
+    "eos_pressure_relative_max": 9.500345354851447e-08,
+    "volume_sum": 23.758145364685333
+  },
+  "final_state": {
+    "positive": true,
+    "density_relative_max": 5.924618329267162e-08,
+    "eos_pressure_relative_max": 9.516707044632255e-08,
+    "volume_sum": 23.758145358777256
+  },
+  "energy_relative_change_from_restart": 9.939246997131771e-14,
+  "disk_incremental_orbit_error_max": 2.880453397974092e-09,
+  "rk4_injection": {
+    "floor_cum": 0.0,
+    "de_cum": 0.0,
+    "sfl_cum": 0.0
+  },
+  "checks": {
+    "positive_state": true,
+    "fixed_mass_exact": true,
+    "W0_exact": true,
+    "bounded_area_tiling": true,
+    "density_and_EOS": true,
+    "energy": true,
+    "disk_incremental_orbit": true,
+    "zero_injection": true,
+    "no_geometry_abort": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true
+  },
+  "scope": "A short accepted-state replay of the revised tessellation; no t>6 stability claim"
+}

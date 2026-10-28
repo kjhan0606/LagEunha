@@ -1,0 +1,88 @@
+{
+  "time": 10.0,
+  "native_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to10_a10_v1/audit_t10.json",
+  "endpoint_sha256": "0bf1963f55f38778427b1b15bc4249db4c1e0e889a3cb36d386dd0540781d854",
+  "native_failed_checks": [
+    "disk_ballistic_residual"
+  ],
+  "weights_sha256": "5f947e3962d8ab37689a32ffcbb4dc11477d70a7705070cc5c95014e35b05811",
+  "native_force_reference_sha256": "74eaf512eb85ef72a6e6f3ba0c2f594820d1749cd0d0b752beccf45014b946cf",
+  "active_disk_sites": 49038,
+  "adjacent_inactive_sites": 1443,
+  "weighted_faces_touching_disk": 148557,
+  "target_area_max_relative_error": 1.7825163567408708e-10,
+  "pressure_reset": "Adiabatic P_new=P_native*(V_native/V_power)^gamma for every disk and directly adjacent inactive cell; mass and entropy labels held fixed.",
+  "w0_native_pressure": {
+    "whole_disk": {
+      "cells": 49038,
+      "pressure_mean": 1.0000156834559733e-06,
+      "pressure_relative_rms": 0.0050875126362727235,
+      "acceleration_median": 2.6417802611633004e-07,
+      "acceleration_p95": 7.563029914837055e-07,
+      "acceleration_p99": 1.056031649292787e-06,
+      "acceleration_mass_weighted_rms": 3.88092118584486e-07,
+      "radial_acceleration_mass_weighted_rms": 1.1844600616280171e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.6957548096630585e-07
+    },
+    "middle_disk_0p75_to_1p75": {
+      "cells": 33173,
+      "pressure_mean": 1.0000174082479126e-06,
+      "pressure_relative_rms": 0.0052371010864375395,
+      "acceleration_median": 2.773348371509153e-07,
+      "acceleration_p95": 7.763183614429922e-07,
+      "acceleration_p99": 1.0756977199273692e-06,
+      "acceleration_mass_weighted_rms": 4.016283442458713e-07,
+      "radial_acceleration_mass_weighted_rms": 1.2316642301922567e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.8227654798892545e-07
+    }
+  },
+  "static_weight_native_pressure": {
+    "whole_disk": {
+      "cells": 49038,
+      "pressure_mean": 1.0000156834559733e-06,
+      "pressure_relative_rms": 0.0050875126362727235,
+      "acceleration_median": 2.6408557178088995e-07,
+      "acceleration_p95": 7.556636542170742e-07,
+      "acceleration_p99": 1.0571374784320304e-06,
+      "acceleration_mass_weighted_rms": 3.8800597289537983e-07,
+      "radial_acceleration_mass_weighted_rms": 1.185130671750351e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.69463513640056e-07
+    },
+    "middle_disk_0p75_to_1p75": {
+      "cells": 33173,
+      "pressure_mean": 1.0000174082479126e-06,
+      "pressure_relative_rms": 0.0052371010864375395,
+      "acceleration_median": 2.7725809606180155e-07,
+      "acceleration_p95": 7.765321107524717e-07,
+      "acceleration_p99": 1.072253059683537e-06,
+      "acceleration_mass_weighted_rms": 4.015311513053321e-07,
+      "radial_acceleration_mass_weighted_rms": 1.2324464868644954e-07,
+      "tangential_acceleration_mass_weighted_rms": 3.8214921436362936e-07
+    }
+  },
+  "static_weight_adiabatic_pressure": {
+    "whole_disk": {
+      "cells": 49038,
+      "pressure_mean": 9.999992320279687e-07,
+      "pressure_relative_rms": 2.6790014077433954e-05,
+      "acceleration_median": 1.2498441432474244e-09,
+      "acceleration_p95": 4.9471895972841126e-09,
+      "acceleration_p99": 5.409830610399509e-08,
+      "acceleration_mass_weighted_rms": 1.0535215060993445e-08,
+      "radial_acceleration_mass_weighted_rms": 1.0167134741968214e-08,
+      "tangential_acceleration_mass_weighted_rms": 2.7604578460911286e-09
+    },
+    "middle_disk_0p75_to_1p75": {
+      "cells": 33173,
+      "pressure_mean": 9.99999524353731e-07,
+      "pressure_relative_rms": 2.361117694481432e-05,
+      "acceleration_median": 1.1081022183294183e-09,
+      "acceleration_p95": 3.372439559218754e-09,
+      "acceleration_p99": 4.77681918004375e-09,
+      "acceleration_mass_weighted_rms": 1.6909340836191448e-09,
+      "radial_acceleration_mass_weighted_rms": 6.123399362305639e-10,
+      "tangential_acceleration_mass_weighted_rms": 1.576165561621642e-09
+    }
+  },
+  "scope": "Frozen-state counterfactual force at fixed sites. Reweighted EOS fields have not been evolved, coupled to RK4 or checked for generalized weight-work conservation. Native failed gate remains failed."
+}

@@ -1,0 +1,53 @@
+{
+  "job_id": 437363,
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_jacobi_validation_a10_v1",
+  "smoke_log_sha256": "33e494a2fd57b6c445ff745bf499bcdbb9a18cd51f07a7ba55dce5559140ae32",
+  "input_sha256": {
+    "gfs_volume_rate_probe_smoke_a10": "5bd0bd2021033b6b4870964517b64f4146b0b9959a68b688285f919f5620b2d6",
+    "gfs_volume_rate_probe_full_check_a10": "c8c1ce7cedd2fda62095a389527ff146309cdf8d25b98dfd07292cc23731fd44",
+    "aligned.bin": "a9177cea8ee4e450328824ba1e130a6ec68f99e2ba4c8400d847a6e697af493b",
+    "jitter.bin": "9f7b6f0dabdc3d05e6529741555d98c0c500e5d1e73321166926d58ab5b162c6",
+    "job.slurm": "7eb524044d118fb1db9d79cc1b65a62fb55cee8d3be20d4fc9a9b8704d17b3ff"
+  },
+  "source_sha256": {
+    "kepler_gpu_jacobi_probe_20261027.cu": "d7824640d93bb971e41bcf3619f3a24624a392169322982a2b5e6d16cbbefb28",
+    "kepler_gpu_jacobi_probe_smoke_20261027.cu": "94ee0f8601bbbb5f5a90abc8577d4119c1233a61badd40e5214f06ed872d5fa5",
+    "kepler_gpu_jacobi_full_check_20261027.cu": "02dbf2dbad65976e1fdf1970c8630a343ef772409e4214e8ec0b4e0088d0a41e",
+    "export_kepler_q2_weight_rate_csr_t65_20261027.py": "4a60cfd14ea7dd82dce776d5a7a2a57be1f085aae85dcccb6ff7f13a878d3e31"
+  },
+  "checks": {
+    "staged_inputs_verified": true,
+    "synthetic_two_cell": true,
+    "dirichlet_inactive_neighbor": true,
+    "unsupported_wall_rejected": true,
+    "aligned_full_faces": true,
+    "jitter_full_faces": true
+  },
+  "cases": {
+    "aligned": {
+      "active": 49038,
+      "directed_faces": 297114,
+      "status": 0,
+      "unsupported": 0,
+      "nonfinite": 0,
+      "elapsed_seconds": 0.006214518,
+      "max_abs_rate_error": 1.8179664859011707e-15,
+      "relative_l2_rate_error": 1.1872493429243872e-10,
+      "input_sha256": "a9177cea8ee4e450328824ba1e130a6ec68f99e2ba4c8400d847a6e697af493b",
+      "log_sha256": "86d4f8ae17abca5b3041653039bdf0f58155da13a9b53a4c7a867c7a094ac438"
+    },
+    "jitter": {
+      "active": 49038,
+      "directed_faces": 297114,
+      "status": 0,
+      "unsupported": 0,
+      "nonfinite": 0,
+      "elapsed_seconds": 0.0054771,
+      "max_abs_rate_error": 1.5805160457314782e-15,
+      "relative_l2_rate_error": 1.1164173136040078e-10,
+      "input_sha256": "9f7b6f0dabdc3d05e6529741555d98c0c500e5d1e73321166926d58ab5b162c6",
+      "log_sha256": "328756f0e9efc38ead0744594e5c90519d75befacccebf052f817715fb6ab8ee"
+    }
+  },
+  "scope": "Independent H200/A10-compatible diagnostic CUDA kernel on CPU-exported t=6.5 power FaceCSR; no native GPU tessellation attachment, hydro evolution, conservation or end-to-end RK4 speed yet."
+}

@@ -1,0 +1,220 @@
+{
+  "project": "LagEunha native 2D CUDA+MPI+OpenMP Kepler solver",
+  "source_host": "syntax",
+  "source_worktree": "/tmp/Kepler_sparse_periodic_area_20261027",
+  "base_git_commit": "472e7fcc3419b060d8fa0c74f0961f6c1f9f188b",
+  "accepted_sparse_area_binary_sha256": "eff735174de1b487759f168d75e1e317a201692ef8d6cadba03cd03e49afb4b5",
+  "source_files": [
+    {
+      "path": "Exam/KH/Makefile",
+      "sha256": "808d531fde25ecc787d1f5faaacdf46a4363d40c07c57e89f15839b3e81760b0",
+      "bytes": 3006
+    },
+    {
+      "path": "Exam/KH/kh.c",
+      "sha256": "0cdba5080fbc6f0992ade9bece789b3410670b6c62bd3e00be0905c8f1ed5138",
+      "bytes": 13574
+    },
+    {
+      "path": "Exam/KH/util.c",
+      "sha256": "d5bca22da9733d0daf5370eccd4a73554d90c0ea5a075a7583f6fc5991386ff2",
+      "bytes": 35429
+    },
+    {
+      "path": "Exam/Makefile",
+      "sha256": "ff69856d858667f28ca3f2cadedc68d8c24fc474f129dda1b8859997064a37ca",
+      "bytes": 5042
+    },
+    {
+      "path": "Exam/exam.c",
+      "sha256": "f38f780d7fbb1f6325417a2dec6fc4110685699192c6087e54cbfcb98a05134a",
+      "bytes": 489148
+    },
+    {
+      "path": "Exam/exam2d.h",
+      "sha256": "1712f70093c05366695a65118f4bbde5e34598fcc284859df1df98e69aff88e2",
+      "bytes": 15970
+    },
+    {
+      "path": "Exam/exam_gpu.cu",
+      "sha256": "9d2937a7bf5e9a4365d020c86cf05c2e2494d7746a7e20f3eef321deeecd97e9",
+      "bytes": 223719
+    },
+    {
+      "path": "Exam/exam_gpu.h",
+      "sha256": "30e85f684cdf940e4d2eba255c998590d22c126ef1612da4124f737181bb4ca9",
+      "bytes": 17449
+    },
+    {
+      "path": "Exam/exam_gpu_extract.c",
+      "sha256": "3f50f417275f2778758c920f513d4b61b87cbb651e4825b516febd85a44dc365",
+      "bytes": 101910
+    },
+    {
+      "path": "Exam/gfs_ale_fan.h",
+      "sha256": "a112da76a7856b137b80d18a325b65d5169010362d0287d9e7f2c945c29ff55e",
+      "bytes": 4286
+    },
+    {
+      "path": "Exam/gfs_ale_flux.h",
+      "sha256": "58a7a7c1cd3854f693d8d22e09182e3569617e004600b4c8b4412d306fb641ba",
+      "bytes": 4316
+    },
+    {
+      "path": "Exam/gfs_ale_shadow.inc",
+      "sha256": "90e1401e57ba290ab88b684809802f373997bb16fa38dfbd185b1bf2a3a71660",
+      "bytes": 9268
+    },
+    {
+      "path": "Exam/gfs_dg_euler.h",
+      "sha256": "db2280be093d76ba4d81c7db945bad076d637ec497fc7cb367f7fc9f39ef1646",
+      "bytes": 9237
+    },
+    {
+      "path": "Exam/gfs_dg_gpu.inc",
+      "sha256": "78aec13a5244f8c32aa776cdbab49d3fc37044351707ff7718c0f9d6e27a34f5",
+      "bytes": 5103
+    },
+    {
+      "path": "Exam/gfs_dg_native.inc",
+      "sha256": "97c6e0becf6b247c50539720ca884fec52743ff1ebd4eadb5e94c0ae5f275b98",
+      "bytes": 6736
+    },
+    {
+      "path": "Exam/gfs_enriched_coupling.h",
+      "sha256": "267bace01b8fda52d26284baa2bb3331442f44b2c24eb03494eedc45d29b2669",
+      "bytes": 868
+    },
+    {
+      "path": "Exam/gfs_enriched_coupling_gpu.inc",
+      "sha256": "a39881876c8b4e4bf6b3970dc03f21bdbeaf0ac93a2cd5cd4bd7257b7f5a3aa3",
+      "bytes": 21238
+    },
+    {
+      "path": "Exam/gfs_enriched_coupling_native.inc",
+      "sha256": "8a430e7d317702852f5fb0a18039d66c32b33423d504f25e5ca76dc799c5f11f",
+      "bytes": 5606
+    },
+    {
+      "path": "Exam/gfs_enriched_euler.h",
+      "sha256": "76e5d2e8fac28199f22a5fd074d7770ff2f15f9f4ba91489f89a9a3e3954ad1a",
+      "bytes": 16013
+    },
+    {
+      "path": "Exam/gfs_enriched_gpu.inc",
+      "sha256": "a4189998d3ca8fd555a954d3731ad7cef5b576d8ee92213fd03391f63031e0be",
+      "bytes": 4178
+    },
+    {
+      "path": "Exam/gfs_enriched_native.inc",
+      "sha256": "b0194d57d223b93d61f483a4993d70a6bd600e4acb87e1b682e47b5d15648f1e",
+      "bytes": 3394
+    },
+    {
+      "path": "Exam/gfs_material_map.h",
+      "sha256": "1a3088cd640c0dbb7165bed2c4b7811f2abce3129bbe79d1beb9ecebf0c80ab8",
+      "bytes": 5208
+    },
+    {
+      "path": "Exam/gfs_material_map12.h",
+      "sha256": "27d31c8fd2109c92437d8520c8e1ac3bd2cd70eb9edab9cce5474a8f0f0f7702",
+      "bytes": 5843
+    },
+    {
+      "path": "Exam/gfs_material_p3.h",
+      "sha256": "ac43b2c6b8201b2e09d5ecf5ab3b0c5636bc7921017325b01f570d1d712a7615",
+      "bytes": 3226
+    },
+    {
+      "path": "Exam/gfs_material_p3_radial_input.h",
+      "sha256": "5a01f8facd4f9a6cca7b93852e5a8ea335a8b0018ff3b1ead9a014f7dbc3dcd9",
+      "bytes": 2032
+    },
+    {
+      "path": "Exam/gfs_material_trace.h",
+      "sha256": "c860abee056e61660cac5e4489d8db2e09b6e4497bd4f4048dcbe119fd4b0101",
+      "bytes": 1149
+    },
+    {
+      "path": "Exam/gfs_material_triangle.h",
+      "sha256": "f768b45c611d1585d5e56175d4b6e2d7ea492b07a764bad8b32af27d62f1adf3",
+      "bytes": 1855
+    },
+    {
+      "path": "Exam/gfs_moment.h",
+      "sha256": "7e05938aaa189f8ba7c3bccfd6731e91afd1a197a47fd9e697b09b209eb7c736",
+      "bytes": 6644
+    },
+    {
+      "path": "Exam/gfs_moment_density.h",
+      "sha256": "f8c5e1797500c3d05f67aea359ff40fc4598dd17c7bd5187b7b849de7007aea3",
+      "bytes": 7704
+    },
+    {
+      "path": "Exam/gfs_moment_gpu.inc",
+      "sha256": "b976b0e83703efe14efe2976abac51da529cdaf30d256c373dd592aabf12945c",
+      "bytes": 7071
+    },
+    {
+      "path": "Exam/gfs_moment_initial.h",
+      "sha256": "73e1849503dda30ff7903998c496627e6a2df3de98d34cc30ace2814b608210a",
+      "bytes": 1927
+    },
+    {
+      "path": "Exam/gfs_moment_native.inc",
+      "sha256": "3d1e22d9f5df73518faff1542c7ba5890424e0ec01204078eec5ea82736306cb",
+      "bytes": 6882
+    },
+    {
+      "path": "Exam/gfs_rk4_direct_u.inc",
+      "sha256": "4fda4e17a3ba58dc98735ed2e7b12ebebb0406e4d11e10b688a82f95134dbd41",
+      "bytes": 1548
+    },
+    {
+      "path": "Exam/gfs_rk4_transaction.inc",
+      "sha256": "96e7ee7fdfd5775a8d48b60c5139795caeb7a7fec8fc5dcee3247ac99acbf8df",
+      "bytes": 11245
+    },
+    {
+      "path": "Exam/gfs_sbp_flux.h",
+      "sha256": "a914bd7d82207621248baef634c61129c4f7c0ffc0a07b62d44f3a1119591cf6",
+      "bytes": 2565
+    },
+    {
+      "path": "Exam/gfs_sbp_polygon.h",
+      "sha256": "51c9b0908bfeafc44d74dad2eae6c8c8c988f730c841fc206af4043ef61939d9",
+      "bytes": 4108
+    },
+    {
+      "path": "Exam/gfs_sbp_upwind.h",
+      "sha256": "6612c923b4ee4b4772256484a89bdd9cd1a72957f1174b06f7965256b660a23b",
+      "bytes": 2786
+    },
+    {
+      "path": "Exam/gfs_ssprk3.inc",
+      "sha256": "764a69a1e13f8956fbe83695ca5a5c1a090e5e7ea1461b8a43de713a451c3848",
+      "bytes": 15533
+    },
+    {
+      "path": "Exam/gfs_thermal64.h",
+      "sha256": "8fb5b57c6bcf2efdbf9a9c442ce01701558bb2265c46202a5dbeba901d89c758",
+      "bytes": 1353
+    },
+    {
+      "path": "Exam/gfs_thermal64_native.inc",
+      "sha256": "bf4f314dd5c25a75bad24319518b03e9c36cfc6bc819132eea034e4ed8824c0f",
+      "bytes": 5409
+    },
+    {
+      "path": "Exam/gfs_velocity_limiter.h",
+      "sha256": "fed3277a8bc432446c3a391c69aae9ad06d66a36b3890613163570ba7c9ea996",
+      "bytes": 4315
+    },
+    {
+      "path": "Exam/mpirks.exam2d.c",
+      "sha256": "9faa3b0a388bbc13136560309f4cd51f01e2c9bdbdb927dcdfe946e39b7eaacb",
+      "bytes": 13987
+    }
+  ],
+  "reconstruction": "Checkout base_git_commit and overlay source_files at their relative paths; this preserves source inputs, not compiled binary reproducibility or run configuration."
+}

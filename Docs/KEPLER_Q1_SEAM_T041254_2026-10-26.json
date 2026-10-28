@@ -1,0 +1,71 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/khout.000000.dat",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/to0p825/khout.005403.dat",
+  "time": 0.41254840604704807,
+  "cells": 147456,
+  "short_pairs": 44,
+  "short_pair_endpoint_cells": 88,
+  "short_pairs_crossing_periodic_seam": 0,
+  "short_pair_distance_minmax": [
+    0.0013565722728181018,
+    0.002274503134193066
+  ],
+  "short_pair_relative_speed_min_median_max": [
+    0.9436342196115999,
+    0.9886648147546634,
+    1.141825393734576
+  ],
+  "short_pair_current_radius_minmax": [
+    2.9818962477230015,
+    3.338856034501178
+  ],
+  "short_pair_edge_distance_min_median_max": [
+    0.04582321823917468,
+    0.1035421635840712,
+    0.11455574953770054
+  ],
+  "regions": {
+    "disk_initial_0p5_to_2": {
+      "cells": 48680,
+      "density_change_abs_mass_weighted": 0.0005709481731590035,
+      "density_change_abs_p95": 0.0019033356647994992,
+      "pressure_change_abs_mass_weighted": 0.0009435369771094134,
+      "pressure_change_abs_p95": 0.0031956517512946123,
+      "entropy_log_signed_mass_weighted": -1.9033315794303234e-06,
+      "entropy_log_abs_mass_weighted": 9.584819750933787e-05
+    },
+    "outer_initial_r_ge_3": {
+      "cells": 31640,
+      "density_change_abs_mass_weighted": 0.036352156366469865,
+      "density_change_abs_p95": 0.15964252442120586,
+      "pressure_change_abs_mass_weighted": 0.06880059267821263,
+      "pressure_change_abs_p95": 0.2587854062025038,
+      "entropy_log_signed_mass_weighted": -2.3423790961986803e-06,
+      "entropy_log_abs_mass_weighted": 2.4337324071496754e-05
+    },
+    "current_edge_lt_0p2": {
+      "cells": 18992,
+      "density_change_abs_mass_weighted": 0.06811962840751852,
+      "density_change_abs_p95": 0.5447280134435832,
+      "pressure_change_abs_mass_weighted": 0.1297531254790026,
+      "pressure_change_abs_p95": 0.9830383785164618,
+      "entropy_log_signed_mass_weighted": -1.3317417341338048e-06,
+      "entropy_log_abs_mass_weighted": 4.723816819208502e-05
+    },
+    "current_edge_gt_0p5": {
+      "cells": 102392,
+      "density_change_abs_mass_weighted": 0.000590038868060701,
+      "density_change_abs_p95": 0.0019956756534734712,
+      "pressure_change_abs_mass_weighted": 0.0009752909845132889,
+      "pressure_change_abs_p95": 0.0033651701954493063,
+      "entropy_log_signed_mass_weighted": -1.6969083676644581e-06,
+      "entropy_log_abs_mass_weighted": 9.435800785876421e-05
+    }
+  },
+  "checks": {
+    "mass_fixed_exact": true,
+    "W0_exact": true,
+    "density_mass_volume_max_relative_below_1e_minus_6": true
+  },
+  "scope": "Native snapshot periodic generator-distance and radial/edge field audit. Short pairs are below the restoring-pressure distance cutoff, but pressure-work activation is determined separately by the native force loop. Region statistics are observational, not a causality proof."
+}

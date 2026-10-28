@@ -1,0 +1,55 @@
+--- a/Exam/KH/util.c
++++ b/Exam/KH/util.c
+@@ -618,14 +618,38 @@
+ 	nbp = VORO_NP(simpar);
+ 
+ 	{
++		/* A non-Cartesian Kepler generator file has unequal initial cell areas.
++		 * The profile above assigned m = rho(x_i) * meanvol before tessellation.
++		 * Rebase that mass once to the measured initial Voronoi area, so the
++		 * prescribed density and constant pressure are both true at t=0.
++		 * Subsequent W=0 evolution keeps this cell mass fixed. This opt-in is
++		 * limited to the glass-fed Kepler IC and never changes the original grid.
++		 */
++		const char *rebase_env = getenv("EUNHA_KEPLER_MASS_FROM_CELL_VOLUME");
++		const char *ic_env = getenv("EUNHA_IC");
++		int rebase_kepler_mass = use_glass && rebase_env && strcmp(rebase_env, "1") == 0
++			&& ic_env && strcmp(ic_env, "kepler") == 0 && GAS_Kappa(simpar) == 0;
+ 		size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype)
+ 		                             : sizeof(treevorork4particletype);
+ 		char *bp_raw = (char*)res;
+ 		for(i=0;i<nbp;i++){
+ 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
++			if(rebase_kepler_mass){
++				postype target_rho = bpi->mass/meanvol;
++				if(!(bpi->volume > 0) || !isfinite(bpi->volume) || !(target_rho > 0)){
++					fprintf(stderr, "[KEPLER_IC_MASS_REBASE] invalid initial cell id=%zu V=%g rho=%g\n",
++						(size_t)PINDX(bpi), (double)bpi->volume, (double)target_rho);
++					MPI_Abort(MPI_COMM_WORLD, 93);
++				}
++				bpi->mass = target_rho*bpi->volume;
++				bpi->den = target_rho;
++			}
+ 			bpi->ie = bpi->pressure*bpi->volume/(Gamma-1);
+ 			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
+ 		}
++		if(rebase_kepler_mass)
++			DEBUGPRINT("[KEPLER_IC_MASS_REBASE] rank=%d cells=%d, m=rho_target*VoronoiVolume\n",
++				MYID(simpar), nbp);
+ 	}
+ 	VORO_NPAD(simpar) = 0;
+ 
+--- a/Exam/KH/kh.c
++++ b/Exam/KH/kh.c
+@@ -272,6 +272,11 @@
+ 		bp = kh_mkinitial(simpar, &np);
+ 		printf("made initial conditions\n");
+ 		GAS_dtold(simpar) = dt;
++		/* Save an exact IC receipt when requested, before any RK4 stage. This
++		 * permits mass/volume/pressure audits for non-Cartesian generator sets. */
++		const char *dump_initial = getenv("GFS_DUMP_INITIAL");
++		if(dump_initial && strcmp(dump_initial, "1") == 0)
++			kh_outdata(simpar, 0, t, dt);
+ 	}
+ 	else{
+ 		int nstep = icont;

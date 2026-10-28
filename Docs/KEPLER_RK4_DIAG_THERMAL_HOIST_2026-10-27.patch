@@ -1,0 +1,37 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10555,6 +10555,7 @@
+ 		fprintf(out,"step\tt_start\tstage\th\trhs_valid\tid\tx\ty\tmass\tV\trho_stored\tP_stored\tU_raw\tvx\tvy\tax_hydro\tay_hydro\tdie_stored\tUdot\tEhyd\tlinear_U_positive_dt\tconserved_FE_positive_dt\n");
+ 	}
+ 	treevorostressrk4particletype *p = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
++	const int thermal64 = gfs_thermal64_requested();
+ 	if(save_failure && strcmp(stage,"k1_input")==0){
+ 		int np=VORO_NP(simpar);
+ 		if(np != gfs_rk4_saved_count){
+@@ -10576,12 +10577,15 @@
+ 	int bad = 0;
+ 	double stage_U_min=INFINITY,stage_V_min=INFINITY;
+ 	for(int i=0;i<VORO_NP(simpar);i++){
+-		double U=gfs_t64_U(p+i),m=p[i].mass,V=gfs_t64_V(p+i),vx=p[i].vx,vy=p[i].vy;
++		const int tagged = thermal64 && GFS_T64_TAGGED(p[i]);
++		double U=tagged ? GFS_T64_U(p[i]) : (double)p[i].ie;
++		double V=tagged ? GFS_T64_V(p[i]) : (double)p[i].volume;
++		double m=p[i].mass,vx=p[i].vx,vy=p[i].vy;
+ 		if(geom_audit){stage_U_min=fmin(stage_U_min,U); stage_V_min=fmin(stage_V_min,V);}
+ 		int invalid = !(U > 0) || !(V > 0) || !(m > 0)
+ 			|| !isfinite(U) || !isfinite(V) || !isfinite(m) || !isfinite(vx) || !isfinite(vy);
+ 		if(rhs_valid && (!isfinite(p[i].ax) || !isfinite(p[i].ay) || !isfinite(p[i].die) ||
+-			(gfs_thermal64_requested() && !isfinite(GFS_T64_RHS(p[i]))))) invalid=1;
++			(thermal64 && !isfinite(GFS_T64_RHS(p[i]))))) invalid=1;
+ 		if(invalid && bad++ < 8)
+ 			fprintf(stderr,"[RK4_INVALID_STATE] r%d step=%d t=%.17g stage=%s id=%zu U=%.17g V=%.17g m=%.17g\n",MYID(simpar),gfs_rk4_context_step,gfs_rk4_context_time,stage,(size_t)PINDX((treevorork4particletype*)(p+i)),U,V,m);
+ 		int emit=audit;
+@@ -10593,7 +10597,7 @@
+ 		if(emit){
+ 			double A=NAN,linear=NAN,compatible=NAN;
+ 			if(rhs_valid){
+-				A=gfs_thermal64_requested() ? GFS_T64_RHS(p[i]) :
++				A=thermal64 ? GFS_T64_RHS(p[i]) :
+ 					(sedov_phase1_on() ? p[i].die-m*(vx*p[i].ax+vy*p[i].ay) : p[i].die);
+ 				linear=A<0 && U>0 ? -U/A : INFINITY;
+ 				/* Counterfactual conservative-total-energy FE bound. The

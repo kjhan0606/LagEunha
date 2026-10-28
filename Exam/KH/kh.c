@@ -11,6 +11,7 @@
 #include "exam.h"
 #include "exam2d.h"
 #include "kh.h"
+#include "../gfs_moment.h"
 //#include "DD2d.h"
 
 #define Nneigh 50
@@ -157,6 +158,20 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 				my_free(scratch);
 			}
 		}
+		/* The tagged moment payload aliases unused legacy RK scratch. Refuse
+		 * every legacy integrator before it can overwrite that state. */
+		const char *moment_init=getenv("GFS_MOMENT_INIT_ONLY");
+		if(p_size==sizeof(treevorostressrk4particletype) && sizeof(PosType)==sizeof(double) &&
+		   offsetof(RK4,w2backup)==24*sizeof(double)){
+			treevorostressrk4particletype *check=(void*)VORORK4_TBP(simpar);
+			for(int ii=0;ii<np;ii++){
+				GfsMomentPayload moment;memcpy(&moment,&check[ii].rk4,sizeof(moment));
+				if(moment.tag==GFS_MOMENT_TAG && (!moment_init || atoi(moment_init)<=0)){
+					fprintf(stderr,"[MOMENT_STATE] legacy restart rejected: moment evolution is not implemented\n");
+					MPI_Abort(MPI_COMM(simpar),99);
+				}
+			}
+		}
 		fread(t,sizeof(postype), 1,fp);
 		fread(dt,sizeof(postype), 1,fp);
 		fread(&GAS_dtold(simpar),sizeof(float), 1,fp);
@@ -257,6 +272,11 @@ int RunKH(SimParameters *simpar, int icont){
 		bp = kh_mkinitial(simpar, &np);
 		printf("made initial conditions\n");
 		GAS_dtold(simpar) = dt;
+		/* Save an exact IC receipt when requested, before any RK4 stage. This
+		 * permits mass/volume/pressure audits for non-Cartesian generator sets. */
+		const char *dump_initial = getenv("GFS_DUMP_INITIAL");
+		if(dump_initial && strcmp(dump_initial, "1") == 0)
+			kh_outdata(simpar, 0, t, dt);
 	}
 	else{
 		int nstep = icont;
@@ -268,6 +288,24 @@ int RunKH(SimParameters *simpar, int icont){
 	}
 
 	do {
+		/* Optional exact endpoint for controlled comparisons/restart replay.
+		 * The native RK4 still selects its physical CFL; only the last step
+		 * is shortened. Ordinary runs retain their previous stepping. */
+		{
+			const char *exact = getenv("GFS_EXACT_STOP");
+			double ceiling = exact && atoi(exact) > 0 ? (double)kh_tmax()-(double)t : 0;
+			if(exact && atoi(exact) > 0 && !(ceiling > 0)) break;
+			const char *cap = getenv("GFS_DIAG_DT_MAX");
+			if(cap && cap[0]){
+				double requested=atof(cap);
+				if(!(requested>0) || !isfinite(requested)){
+					fprintf(stderr,"[RK4_DT_CEILING] invalid GFS_DIAG_DT_MAX=%s\n",cap);
+					MPI_Abort(MPI_COMM(simpar),97);
+				}
+				if(!(ceiling>0) || requested<ceiling) ceiling=requested;
+			}
+			gfs_rk4_set_step_context(icount, (double)t, ceiling);
+		}
 		/*
 		if(GAS_EVOLMETHOD(simpar) == 1) dt = exam2d_vph_rk4(simpar,
 				paddingTreeVorork4Particles, kh_w2Measure2D,
@@ -352,7 +390,15 @@ int RunKH(SimParameters *simpar, int icont){
 		}
 
 //		if(iflag != jflag || icount%100 ==0 || icount == 1 || icount == 2)
-		if(iflag != jflag )
+		/* One explicitly requested diagnostic checkpoint, in addition to
+		 * the existing time cadence. No extra dump unless configured. */
+		const char *checkpoint_s = getenv("GFS_DIAG_CHECKPOINT_STEP");
+		int checkpoint = checkpoint_s && atoi(checkpoint_s) == icount;
+		/* A requested exact endpoint must be restartable even if division
+		 * used by the cadence rounds the final quotient below an integer. */
+		const char *exact_output_s = getenv("GFS_EXACT_STOP");
+		int exact_output = exact_output_s && atoi(exact_output_s)>0 && t>=kh_tmax();
+		if(iflag != jflag || checkpoint || exact_output)
 		{
 			kh_outdata(simpar,  icount, t, dt);
 			kh_makemap(simpar, icount);

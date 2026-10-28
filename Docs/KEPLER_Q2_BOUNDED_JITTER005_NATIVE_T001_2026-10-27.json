@@ -1,0 +1,50 @@
+{
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_t001_a10_v1",
+  "initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "endpoint_sha256": "6c54048b0dd9effd7a548a479de0616d5fb126697c8d43d5f74a57c9fbe04fa1",
+  "area_sha256": "f71a8fd4b651b92fe461bfb0c6dbe3c2b7814bf36a354db4dab46b08c6a351b8",
+  "n": 55351,
+  "t0": 0.0,
+  "t1": 0.001,
+  "polygon_area": 23.75814536152613,
+  "sidecar_area_sum": 23.758145361524978,
+  "initial_state": {
+    "positive": true,
+    "density_relative_max": 5.053995821846513e-08,
+    "eos_pressure_relative_max": 9.845663573315733e-08,
+    "volume_sum": 23.758145390616846
+  },
+  "final_state": {
+    "positive": true,
+    "density_relative_max": 5.9011878272841045e-08,
+    "eos_pressure_relative_max": 9.172775028432056e-08,
+    "volume_sum": 23.758145374100422
+  },
+  "initial_area_relative_max": 5.9559760456906474e-08,
+  "initial_mass_relative_max": 5.9559760456906474e-08,
+  "initial_disk_sites": 49038,
+  "disk_orbit_position_error_max": 3.820199830714189e-15,
+  "energy_relative_change": 3.351799505769541e-14,
+  "ledger": {
+    "floor_cum": 0.0,
+    "de_cum": 0.0,
+    "sfl_cum": 0.0
+  },
+  "checks": {
+    "sidecar_tiles_fixed_polygon": true,
+    "initial_native_areas_match_sidecar": true,
+    "initial_native_area_tiles_polygon": true,
+    "evolved_native_area_tiles_polygon": true,
+    "initial_mass_matches_profile_and_area": true,
+    "fixed_mass_exact": true,
+    "W0_exact": true,
+    "positive_state": true,
+    "rho_and_EOS": true,
+    "disk_orbit": true,
+    "energy": true,
+    "zero_injection": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true
+  },
+  "scope": "First one-rank native CUDA fixed-polygon W0 step only; no multi-rank or long-time inference"
+}

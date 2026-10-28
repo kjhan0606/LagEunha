@@ -1,0 +1,49 @@
+{
+  "initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "w0_time": 2.4758079598035496,
+  "weighted_time": 2.4758079872808847,
+  "time_difference": 2.7477335073911036e-08,
+  "inputs": {
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_WEIGHTED_FRESH_CAPACITY_FAILURE_2026-10-27/w0_jitter_step852_audit.json": "46d974f92310997adc47a0928343954a8c02726aa2153737419baa837ddf6274",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_WEIGHTED_FRESH_CAPACITY_FAILURE_2026-10-27/live_step852_audit.json": "091f35868dd7257472f5d28aafdc2d649b67235fcc84d763d2728d9ed6172738",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_WEIGHTED_FRESH_CAPACITY_FAILURE_2026-10-27/w0_jitter_step852_entropy_sign.json": "4344629f81b78e5fc431e7b65602d34241bd0aa26fc2aab93b952f99c86a4398",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_WEIGHTED_FRESH_CAPACITY_FAILURE_2026-10-27/weighted_jitter_step852_entropy_sign.json": "1db775b2f8b1b08bb6c8b8d8c11ba1a776d8159e57b20ce2955f82ee1878a876"
+  },
+  "metrics": {
+    "disk_density_abs_mass_weighted": {
+      "w0": 0.0014709493124146404,
+      "weighted": 1.669354185383845e-05,
+      "weighted_over_w0": 0.011348821956641815
+    },
+    "disk_entropy_log_abs_mass_weighted": {
+      "w0": 7.95048752362145e-06,
+      "weighted": 2.416684788248636e-06,
+      "weighted_over_w0": 0.30396686757491254
+    },
+    "disk_position_error_abs_mass_weighted": {
+      "w0": 4.2413263938446885e-07,
+      "weighted": 2.6061589877699664e-09,
+      "weighted_over_w0": 0.0061446791540311725
+    },
+    "total_energy_relative": {
+      "w0": 1.9992410480489458e-09,
+      "weighted": 2.000527674453289e-09,
+      "weighted_over_w0": 1.0006435574167503
+    },
+    "disk_entropy_log_signed_mass_weighted": {
+      "w0": -1.0047866824896423e-07,
+      "weighted": -5.124984867881181e-07
+    },
+    "inner_entropy_log_signed_mass_weighted": {
+      "w0": 2.4989602454742002e-08,
+      "weighted": -1.32057301219393e-07
+    }
+  },
+  "checks": {
+    "both_native_gates": true,
+    "common_initial_hash": true,
+    "checkpoint_times_within_1e-6": true,
+    "entropy_lineage": true
+  },
+  "scope": "Same jittered initial snapshot and almost same checkpoint time. Different weighted and W0 binaries and trajectory/restart histories; cell density differs with the power geometry. This is not evidence that fixed-mass weighted face transport is physically conservative, that entropy state differences are irreversible heating, or that t>6 or GIZMO t=600 stability is established."
+}

@@ -1,0 +1,86 @@
+{
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t6501_guard_a10_v2/aligned",
+  "restart": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t6501_guard_a10_v2/aligned/khout.000001.dat",
+  "restart_sha256": "6639d430782aa8d198991ecfac597a0caaae085155cfa452e16f14b2c6aab857",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_weighted_t6501_guard_a10_v2/aligned/khout.000002.dat",
+  "endpoint_sha256": "cbb9c351369b16074cdd2bae27776e22b953f06367dbef45fd3bc19aae6dbf04",
+  "start_time": 6.5,
+  "endpoint_time": 6.501,
+  "initial_state": {
+    "positive": true,
+    "density_relative_max": 5.904786448684973e-08,
+    "eos_pressure_relative_max": 9.438771564340698e-08,
+    "volume_sum": 23.75814536487451
+  },
+  "final_state": {
+    "positive": true,
+    "density_relative_max": 5.903685429409222e-08,
+    "eos_pressure_relative_max": 9.403924505768657e-08,
+    "volume_sum": 23.758145370535203
+  },
+  "weight_min": 0.0,
+  "weight_max": 4.743955273056599e-08,
+  "active_weight_max": 4.743955273056599e-08,
+  "independent_active_area_error_max": 3.028606143651302e-08,
+  "independent_active_area_error_p99": 2.998451591573747e-08,
+  "energy_relative_change_from_restart": 4.579685187531234e-14,
+  "disk_incremental_orbit_error_max": 1.1333350665872962e-10,
+  "rk4_injection": {
+    "floor_cum": 0.0,
+    "de_cum": 0.0,
+    "sfl_cum": 0.0
+  },
+  "gpu_weight_stages": [
+    {
+      "stage": 0,
+      "active": 49038,
+      "faces": 333111,
+      "alpha": -55.0182756,
+      "projected_pressure_weight_power": -1.432e-30,
+      "elapsed_seconds": 0.003852
+    },
+    {
+      "stage": 1,
+      "active": 49038,
+      "faces": 333106,
+      "alpha": -149.878221,
+      "projected_pressure_weight_power": 3.115e-29,
+      "elapsed_seconds": 0.003882
+    },
+    {
+      "stage": 2,
+      "active": 49038,
+      "faces": 333126,
+      "alpha": -149.906026,
+      "projected_pressure_weight_power": -8.346e-29,
+      "elapsed_seconds": 0.003275
+    },
+    {
+      "stage": 3,
+      "active": 49038,
+      "faces": 333105,
+      "alpha": -243.972235,
+      "projected_pressure_weight_power": 6.621e-29,
+      "elapsed_seconds": 0.002992
+    }
+  ],
+  "checks": {
+    "positive_state": true,
+    "fixed_mass_exact": true,
+    "initial_W0": true,
+    "finite_nonnegative_new_weights": true,
+    "bounded_area_tiling": true,
+    "native_matches_independent_power_area": true,
+    "density_and_EOS": true,
+    "short_total_energy": true,
+    "short_incremental_orbit": true,
+    "four_projected_RK4_stages": true,
+    "zero_stage_weight_power": true,
+    "weighted_variational_pressure_active": true,
+    "zero_injection": true,
+    "no_geometry_abort": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true
+  },
+  "scope": "One native fixed-mass weighted RK4 step from accepted t=6.5 W0 state. Global power and one-step geometry/energy audited; local material-face and long-time physics remain open."
+}

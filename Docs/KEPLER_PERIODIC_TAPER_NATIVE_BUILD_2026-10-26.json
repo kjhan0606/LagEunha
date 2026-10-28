@@ -1,0 +1,32 @@
+{
+  "scope": "Opt-in smooth periodic outer-boundary diagnostic; baseline q1/q2 and queued sparse binaries unchanged",
+  "base_source": "/tmp/Kepler_sparse_glass_native_20261026",
+  "variant_source": "/tmp/Kepler_periodic_taper_native_20261026",
+  "base_binary_sha256": "48d582a3072fb620892a045ee259aca4bced235f2f2c97f992800721349d3e48",
+  "variant_binary_sha256": "6a735a7c196637b2a33830bc0e73719edc404c3d91f23ea70d51155b28213d6e",
+  "patch": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/KEPLER_PERIODIC_TAPER_NATIVE_PATCH_2026-10-26.patch",
+  "patch_sha256": "42e0f1f2d8ae739c97e04a4fbef637d822ea5674ebd6cf03dcde34fb4a7690ef",
+  "variant_file_sha256": {
+    "Exam/KH/util.c": "c3e8fa85bbc3c4325994a0fd80e269c8e67c27bcf5b521f48ea487847ae2a26a",
+    "Exam/exam.c": "70744f09834f52921366a8beb39d9758c6fce328c434e69c50828a2a485ca553",
+    "Exam/kepler_periodic_taper.h": "cf01cf3322a356aeb67befdbcdc71444ee5937f55bcab38c943259a49400717d"
+  },
+  "default": "taper off when both environment variables absent",
+  "diagnostic_env": {
+    "EUNHA_KEPLER_PERIODIC_TAPER_INNER": "2.35",
+    "EUNHA_KEPLER_PERIODIC_TAPER_OUTER": "2.75"
+  },
+  "math_check": "C standalone centered finite difference h=1e-5; maximum absolute dPhi/dr vs T^2 Kepler force error 1.50611044e-10",
+  "build_commands": [
+    "make -C /tmp/Kepler_periodic_taper_native_20261026/Exam/KH -j2 USE_CUDA=1",
+    "make -C /tmp/Kepler_periodic_taper_native_20261026/Exam -j2 USE_CUDA=1",
+    "make -C /tmp/Kepler_periodic_taper_native_20261026 this USE_CUDA=1"
+  ],
+  "native_preflight_job_id": 436955,
+  "native_preflight_run_dir": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2_profile_taper_t001",
+  "native_preflight_state_at_submission": "PENDING QOSGrpGRES; result not yet available",
+  "native_continuation_t0825_job_id": 436965,
+  "native_continuation_t0825_dependency": "afterok:436955",
+  "native_continuation_t10_job_id": 436966,
+  "native_continuation_t10_dependency": "afterok:436965"
+}

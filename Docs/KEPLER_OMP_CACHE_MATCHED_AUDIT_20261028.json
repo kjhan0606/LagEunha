@@ -1,0 +1,113 @@
+{
+  "baseline": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/dteta_006_t11_probe_20261028_a10",
+  "candidate": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/omp_rhs_t11_probe_20261028_a10",
+  "endpoint_time": 1.1,
+  "endpoint_files": {
+    "baseline": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/dteta_006_t11_probe_20261028_a10/khout.014534.dat",
+    "candidate": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/omp_rhs_t11_probe_20261028_a10/khout.014534.dat"
+  },
+  "per_field": {
+    "x": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "y": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "vx": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "vy": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "mass": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "volume": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "ie": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "den": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "pressure": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    },
+    "w2": {
+      "same_bits": true,
+      "different_values": 0,
+      "max_abs_difference": 0.0,
+      "max_relative_difference": 0.0,
+      "nonzero_difference_from_zero_reference": false
+    }
+  },
+  "timing": {
+    "baseline": {
+      "exit_zero": true,
+      "mpirun_wall_seconds": 4139.427,
+      "gpu_samples": 1334,
+      "gpu_stage_total_median_ms": 197.1,
+      "cpu_samples": 1334,
+      "cpu_step_total_median_s": 2.4
+    },
+    "candidate": {
+      "exit_zero": true,
+      "mpirun_wall_seconds": 4190.382,
+      "gpu_samples": 1334,
+      "gpu_stage_total_median_ms": 172.8,
+      "cpu_samples": 1334,
+      "cpu_step_total_median_s": 2.4
+    },
+    "mpirun_speedup_baseline_over_candidate": 0.9878400107675148,
+    "instrumented_cpu_phase_sum_ratio_baseline_over_candidate": 1.0,
+    "gpu_stage_total_ratio_baseline_over_candidate": 1.140625
+  },
+  "checks": {
+    "both_global_physics_gates_pass": true,
+    "both_radial_physics_gates_pass": true,
+    "both_radial_times_match_endpoint": true,
+    "both_runs_exit_zero": true,
+    "same_gpu_step_sample_count": true,
+    "same_cpu_step_sample_count": true,
+    "all_endpoint_fields_bitwise_equal": true,
+    "candidate_reduces_full_mpirun_wall_time": false
+  },
+  "scope": "Matched 384^2 q1 restart and eta=0.06 t=1.1 endpoint; speed gate uses complete mpirun wall time, not the partial CPU phase timer; this does not establish long-time stability."
+}

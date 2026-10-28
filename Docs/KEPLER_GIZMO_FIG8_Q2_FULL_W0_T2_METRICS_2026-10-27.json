@@ -1,0 +1,44 @@
+{
+  "paper": "Hopkins 2015, arXiv:1409.7395, section 4.2.4, Figures 7-8",
+  "paper_url": "https://arxiv.org/pdf/1409.7395",
+  "case": "full q2, W=0, halo 28, 384^2 native cells",
+  "scope": "Read-only metric evaluation on a complete saved checkpoint; this polar-layout control is not the paper's uniform effective-256^2 IC or boundary setup and is not a direct GIZMO reproduction.",
+  "initial": {
+    "path": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2/khout.000000.dat",
+    "sha256": "ffefb0d6e494330951ed1f923101a480b059f20a3d81cc6267afde84c9f1ff50",
+    "time": 0.0
+  },
+  "endpoint": {
+    "path": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2/halo12_after_failure_to0825/to2p221_h28/khout.026880.dat",
+    "sha256": "97828f2116a9554aa16504e231f93d3b92a83c4dd89d8a01aef63711c478b008",
+    "time": 2.0000159421021495,
+    "native_cells": 147456,
+    "orbits_at_R1": 0.318312423448151
+  },
+  "metric_definition": {
+    "annulus": "0.8 < R < 1.2, evaluated both at current positions and on the initial-ID membership; center=(3,3)",
+    "vphi": "(-y*vx+x*vy)/R",
+    "v_kepler": "R*(R^2+epsilon^2)^(-3/4)",
+    "epsilon_used": 0.01175,
+    "paper_L1_velocity": "arithmetic mean |vphi-v_kepler|/v_kepler",
+    "paper_L1_density": "arithmetic mean |Sigma-1|, using the native 2D density field",
+    "additional_density_metric": "arithmetic mean |Sigma/Sigma_t0-1|"
+  },
+  "current_position_annulus": {
+    "sites": 10453,
+    "L1_velocity": 7.0798427915228635e-9,
+    "L1_density_absolute_from_one": 0.010000044337234051,
+    "L1_density_relative_to_t0": 0.0001745466112144281,
+    "mean_density": 1.0100000443372341,
+    "mean_initial_density": 1.0099999904632568
+  },
+  "initial_id_annulus": {
+    "sites": 10453,
+    "L1_velocity": 7.0798427915228635e-9,
+    "L1_density_absolute_from_one": 0.010000044337234051,
+    "L1_density_relative_to_t0": 0.0001745466112144281,
+    "mean_density": 1.0100000443372341,
+    "mean_initial_density": 1.0099999904632568
+  },
+  "interpretation": "At only 0.318 orbit at R=1, the annular velocity metric is below the paper's 0.01 Figure-8 threshold. The literal density metric is dominated by the 0.01 density floor; the own-t0 relative metric is 1.75e-4. Neither result establishes survival to t>6, the Figure-6 t=120 image, or the Figure-7 t=600 target."
+}

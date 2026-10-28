@@ -1,0 +1,17 @@
+{
+  "scope": "Optional RK4 internal wall timing only; no physical formula or active q1/q2 binary changed",
+  "base_source": "/tmp/Kepler_KHprofile_native_20261026/Exam/exam.c",
+  "profile_source": "/tmp/Kepler_RKfine_native_20261027/Exam/exam.c",
+  "base_source_sha256": "f38f780d7fbb1f6325417a2dec6fc4110685699192c6087e54cbfcb98a05134a",
+  "profile_source_sha256": "329d464745dbc699c87b24f2111f5160cfbb7a80494192973f873ac5f05230ea",
+  "base_binary_sha256": "544ec6fe3f8200bd6559010154c6a33fd9b29e39e15076bfd6d43ebc38c813fb",
+  "profile_binary_sha256": "d3df88ddff178add26a482853ee0523a3f05aa9171c313999e8c34338dfccca0",
+  "patch_sha256": "6ed6256976543bd6bfb27989227834d7f55f75931beda08cca6a1902ef7624b8",
+  "build_flags": "USE_CUDA=1 GFS_FAST_SEED3=1 GFS_VARPRESS_W0=1 GPU_VALIDATE=1",
+  "measured_sections": [
+    "10 RK4 stage diagnostic calls",
+    "10 direct RK4 transaction validity checks",
+    "existing named CPU step sections",
+    "entire RK4 function wall"
+  ]
+}

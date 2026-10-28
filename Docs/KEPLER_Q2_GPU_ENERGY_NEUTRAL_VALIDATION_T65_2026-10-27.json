@@ -1,0 +1,52 @@
+{
+  "job_id": 437374,
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_validation_h200_v1",
+  "binary_sha256": "a7849bc2c049a0cbb4fa009e81ba13ba39cd5c20f7ef2008c87f122489ae8c91",
+  "source_sha256": {
+    "kepler_gpu_jacobi_probe_20261027.cu": "d7824640d93bb971e41bcf3619f3a24624a392169322982a2b5e6d16cbbefb28",
+    "kepler_gpu_energy_neutral_probe_validated_v1_20261027.cu": "ec21ef78806e8f5531d0c2adbedb0fb91a2df54dcd91545e8c6c62dcb32d6461",
+    "kepler_gpu_energy_neutral_full_check_20261027.cu": "480884ddaf51450cf32f2df13b7c78b4077714f16bd14fc67ad0e8f6adae8afa",
+    "export_kepler_q2_energy_neutral_csr_t65_20261027.py": "d879e2ec1656dd76ee8ca4f6070f3a2a3c8035cc9689469882efe399c47c87fd"
+  },
+  "cases": {
+    "aligned": {
+      "active": 49038,
+      "directed_faces": 297114,
+      "status": 0,
+      "unsupported": 0,
+      "nonfinite": 0,
+      "elapsed_seconds": 0.006695151,
+      "max_rate_difference": 1.8187491443444337e-15,
+      "max_pressure_gradient_difference": 1.34416849539867e-24,
+      "max_projected_rate_difference": 1.8209463478096113e-15,
+      "relative_work_orthogonality": 3.622213035862149e-21,
+      "reference_relative_work_orthogonality": 1.694497650527479e-20,
+      "projection_alpha": -55.02083782206238,
+      "input_sha256": "7df01a94848ea1503680d779652861463fcd36acfc0fa16292184d8f1a1b62e0",
+      "log_sha256": "544a1b88f8ec96b3d81575ce6a65d228822d0a69e9f650565bc99f15193975f7"
+    },
+    "jitter": {
+      "active": 49038,
+      "directed_faces": 297114,
+      "status": 0,
+      "unsupported": 0,
+      "nonfinite": 0,
+      "elapsed_seconds": 0.006866621,
+      "max_rate_difference": 1.5757946840834827e-15,
+      "max_pressure_gradient_difference": 1.3234889800848443e-23,
+      "max_projected_rate_difference": 1.5774447042647341e-15,
+      "relative_work_orthogonality": 2.6962365428760772e-21,
+      "reference_relative_work_orthogonality": 1.4689482085798441e-21,
+      "projection_alpha": 0.7251616676235413,
+      "input_sha256": "4cffa1d607c5f3a534d6a941aa4fd4f4693686a17328505e2580338e4d8c24be",
+      "log_sha256": "7b137de60b186c9e1bcfcc45a261b34c93ce865f7111b5e7c139a0169606b0dc"
+    }
+  },
+  "checks": {
+    "input_hashes": true,
+    "aligned_full_w0_faces": true,
+    "jitter_full_w0_faces": true,
+    "work_neutral": true
+  },
+  "scope": "A10 CUDA Jacobi16 plus pressure-gradient projection on CPU-exported accepted t=6.5 W0 FaceCSR. No native weighted-force attachment or hydro evolution yet. H200 submission 437373 was cancelled while QOSGrpGRES pending."
+}

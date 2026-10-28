@@ -1,0 +1,147 @@
+{
+  "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_wdot_native_probe_t6501_a10_v1",
+  "binary_sha256": "b731719d4455e7ec20fadb09e6c38d69e22391cf42f58d36e19ae108c80097ed",
+  "mask_sha256": "b560aca44c81e4560f8371c6d979e1afbe853f8cd18b592d0fc19a58becc8f4c",
+  "reference_sha256": "51ad74bfddd88df91baaafed5dc6680a2cc4097d0b5d6e27d999db07a245a168",
+  "cases": {
+    "aligned": {
+      "new_endpoint_sha256": "74b256e81546c89595cf2f01d97679f456f17583c4b325e0561470435515a2d4",
+      "original_endpoint_sha256": "06fd0a74db9c074c95243e1bf12dc777aa4facc07f03695d4842c763c112720d",
+      "new_short_gate": {
+        "positive_state": true,
+        "fixed_mass_exact": true,
+        "W0_exact": true,
+        "bounded_area_tiling": true,
+        "density_and_EOS": true,
+        "energy": true,
+        "disk_incremental_orbit": true,
+        "zero_injection": true,
+        "no_geometry_abort": true,
+        "no_wall_crossing": true,
+        "fixed_polygon_enabled": true
+      },
+      "physical_fields": {
+        "x": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "y": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "vx": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "vy": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "volume": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ie": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "den": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "pressure": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "w2": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "gpu_probe_dump_sha256": "7e4e81377cbd2b0dd259ececce99641bdcd57407240044a904e2a54aa89705fa",
+      "gpu_probe_log": "[GPU_WDOT_PROBE] active=49038 faces=333111 jacobi=16 omega=0.8 elapsed=0.001964 s",
+      "active_rate_max_abs_difference": 1.9797768838810542e-15,
+      "active_rate_relative_l2_difference": 1.278813066982597e-10,
+      "inactive_rate_max_abs": 0.0,
+      "native_rate_abs_max": 2.6351205062027216e-05,
+      "reference_rate_abs_max": 2.6351205061449997e-05
+    },
+    "jitter": {
+      "new_endpoint_sha256": "b9d4e3a2be0bac2b8433dc9abeec579df11daf2fe80a4c4d23d5ad96452947d3",
+      "original_endpoint_sha256": "c616abea12107c9897750b6cb0aa60e53cd1e10e00f11de4ed678fac7e6687c6",
+      "new_short_gate": {
+        "positive_state": true,
+        "fixed_mass_exact": true,
+        "W0_exact": true,
+        "bounded_area_tiling": true,
+        "density_and_EOS": true,
+        "energy": true,
+        "disk_incremental_orbit": true,
+        "zero_injection": true,
+        "no_geometry_abort": true,
+        "no_wall_crossing": true,
+        "fixed_polygon_enabled": true
+      },
+      "physical_fields": {
+        "x": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "y": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "vx": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "vy": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "volume": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ie": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "den": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "pressure": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "w2": {
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "gpu_probe_dump_sha256": "6e84121ac83d5c8515a166442cd5957dd57123ea706ca344851b195c8c052218",
+      "gpu_probe_log": "[GPU_WDOT_PROBE] active=49038 faces=333086 jacobi=16 omega=0.8 elapsed=0.001947 s",
+      "active_rate_max_abs_difference": 1.5469413537682122e-15,
+      "active_rate_relative_l2_difference": 1.2093453778072588e-10,
+      "inactive_rate_max_abs": 0.0,
+      "native_rate_abs_max": 3.053219173225645e-05,
+      "reference_rate_abs_max": 3.05321917330493e-05
+    }
+  },
+  "checks": {
+    "accepted_parent_replay": true,
+    "no_physical_change": true,
+    "finite_native_wdot": true,
+    "inactive_rate_zero": true
+  },
+  "scope": "One native W0 t=6.5->6.501 RK4 replay per IC with opt-in read-only GPU Jacobi on the actual tessellator FaceCSR. CPU comparison uses independent SciPy power geometry; no weighted hydro evolution."
+}

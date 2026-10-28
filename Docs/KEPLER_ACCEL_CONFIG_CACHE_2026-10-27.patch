@@ -1,0 +1,36 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -4526,14 +4526,25 @@
+  * EUNHA_KEPLER_EPS>0 switches on the softened force, which must
+  * match the circular speed set in the Kepler initial condition. */
+ static void kepler_accel(postype x, postype y, postype *ax, postype *ay){
+-	const char *e = getenv("EUNHA_IC");
+-	if(!e || strcmp(e, "kepler") != 0) return;
+-	const char *cxe = getenv("EUNHA_KEPLER_CX");
+-	const char *cye = getenv("EUNHA_KEPLER_CY");
+-	const char *ee = getenv("EUNHA_KEPLER_EPS");
+-	postype cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+-	postype cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+-	postype eps = ee && ee[0] ? atof(ee) : (postype)0.0;
++	/* Kepler parameters are process-constant in a run. This function is
++	 * called serially for every native RK stage particle, so resolve the
++	 * environment once per MPI process instead of parsing it per site. */
++	static int configured = 0, active = 0;
++	static postype cx, cy, eps;
++	if(!configured){
++		const char *e = getenv("EUNHA_IC");
++		active = e && strcmp(e, "kepler") == 0;
++		if(active){
++			const char *cxe = getenv("EUNHA_KEPLER_CX");
++			const char *cye = getenv("EUNHA_KEPLER_CY");
++			const char *ee = getenv("EUNHA_KEPLER_EPS");
++			cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
++			cy = cye && cye[0] ? atof(cye) : (postype)2.0;
++			eps = ee && ee[0] ? atof(ee) : (postype)0.0;
++		}
++		configured = 1;
++	}
++	if(!active) return;
+ 	postype dx = x - cx, dy = y - cy;
+ 	postype r2 = dx*dx + dy*dy;
+ 	postype f;

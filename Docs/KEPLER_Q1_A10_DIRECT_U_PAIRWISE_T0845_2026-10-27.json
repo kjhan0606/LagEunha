@@ -1,0 +1,254 @@
+{
+  "accepted_start": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo12_from061876_to0825/khout.010856.dat",
+  "time_start": 0.825,
+  "time_end": 0.845,
+  "cases": {
+    "energy": {
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_EntropyK_A10_20261027/energy/khout.011119.dat",
+      "time": 0.845,
+      "native_checks": {
+        "finite": true,
+        "mass_exact": true,
+        "W0_exact": true,
+        "positive_U_and_volume": true,
+        "initial_area_tiles_6x6_box": true,
+        "endpoint_area_tiles_6x6_box": true,
+        "rho_equals_mass_over_volume": true,
+        "no_floor_or_dual_energy_injection": true,
+        "gizmo_L1_velocity_below_0p01": true,
+        "gizmo_L1_density_below_0p25": true,
+        "disk_density_change_below_0p05": true,
+        "disk_entropy_log_abs_below_0p01": true,
+        "disk_position_error_below_0p01": true,
+        "disk_angular_momentum_drift_below_0p01": true,
+        "total_energy_drift_below_0p001": true
+      },
+      "native_gate_pass": true,
+      "radial_checks": {
+        "finite": true,
+        "fixed_mass_exact": true,
+        "W0_exact": true,
+        "positive_volume_internal_energy": true,
+        "rho_mass_over_volume_max_relative_below_1e_minus_6": true
+      },
+      "wall_seconds": 623.252,
+      "total_energy_relative_from_start": -1.5802294007994085e-12,
+      "regions": {
+        "core": {
+          "cells": 3246,
+          "mass": 0.32045205051779196,
+          "entropy_increment_signed_mass_weighted": -6.769406999852638e-07,
+          "entropy_increment_abs_mass_weighted": 3.685434770639679e-06,
+          "entropy_positive_mass_fraction": 0.4345059035376449,
+          "thermal_initial": 1.1752235549722378e-06,
+          "thermal_final": 1.1752257995378823e-06,
+          "adiabatic_thermal_final": 1.1752265233712187e-06,
+          "thermal_excess_signed_over_initial": -6.159111884632713e-07,
+          "thermal_excess_abs_over_initial": 2.855086168030436e-06,
+          "angular_momentum_relative": -1.254574786072049e-12
+        },
+        "disk": {
+          "cells": 48680,
+          "mass": 11.865523754812893,
+          "entropy_increment_signed_mass_weighted": -3.3282830312322644e-07,
+          "entropy_increment_abs_mass_weighted": 7.293135029722166e-06,
+          "entropy_positive_mass_fraction": 0.4401803972972436,
+          "thermal_initial": 1.7621906758163997e-05,
+          "thermal_final": 1.762189949433557e-05,
+          "adiabatic_thermal_final": 1.762190534234478e-05,
+          "thermal_excess_signed_over_initial": -3.3186018355507936e-07,
+          "thermal_excess_abs_over_initial": 7.293066722499238e-06,
+          "angular_momentum_relative": 2.4335676702957887e-14
+        },
+        "inner_disk": {
+          "cells": 4049,
+          "mass": 0.9869400684507855,
+          "entropy_increment_signed_mass_weighted": -2.8273683781424734e-07,
+          "entropy_increment_abs_mass_weighted": 7.430151280116633e-06,
+          "entropy_positive_mass_fraction": 0.49170056909637094,
+          "thermal_initial": 1.4657268288531533e-06,
+          "thermal_final": 1.4657252737360071e-06,
+          "adiabatic_thermal_final": 1.46572568791203e-06,
+          "thermal_excess_signed_over_initial": -2.8257381571927596e-07,
+          "thermal_excess_abs_over_initial": 7.429724421249751e-06,
+          "angular_momentum_relative": 2.8144923457790183e-13
+        },
+        "outer_disk": {
+          "cells": 38929,
+          "mass": 9.488693804895448,
+          "entropy_increment_signed_mass_weighted": -1.3732250957889533e-07,
+          "entropy_increment_abs_mass_weighted": 7.148153278741876e-06,
+          "entropy_positive_mass_fraction": 0.44535021548652226,
+          "thermal_initial": 1.4092060587139743e-05,
+          "thermal_final": 1.4092059154813263e-05,
+          "adiabatic_thermal_final": 1.4092061074177255e-05,
+          "thermal_excess_signed_over_initial": -1.3620179820977245e-07,
+          "thermal_excess_abs_over_initial": 7.148126176795878e-06,
+          "angular_momentum_relative": -7.980974821991671e-15
+        },
+        "transition": {
+          "cells": 19106,
+          "mass": 0.7045678813264004,
+          "entropy_increment_signed_mass_weighted": 1.0712456795782056e-07,
+          "entropy_increment_abs_mass_weighted": 6.694115429671417e-06,
+          "entropy_positive_mass_fraction": 0.4586471156484964,
+          "thermal_initial": 7.053329058398505e-06,
+          "thermal_final": 7.05335342099378e-06,
+          "adiabatic_thermal_final": 7.0533533043623456e-06,
+          "thermal_excess_signed_over_initial": 1.6535657585689028e-08,
+          "thermal_excess_abs_over_initial": 6.9650913959841225e-06,
+          "angular_momentum_relative": -7.3779490760632165e-09
+        },
+        "outer_background": {
+          "cells": 50128,
+          "mass": 0.1303069424087356,
+          "entropy_increment_signed_mass_weighted": -1.0170842600090616e-07,
+          "entropy_increment_abs_mass_weighted": 7.849205665992802e-06,
+          "entropy_positive_mass_fraction": 0.40231389977021953,
+          "thermal_initial": 1.8984072842665595e-05,
+          "thermal_final": 1.9015287438917117e-05,
+          "adiabatic_thermal_final": 1.9015284407796745e-05,
+          "thermal_excess_signed_over_initial": 1.5966649501692276e-07,
+          "thermal_excess_abs_over_initial": 1.1029038747691964e-05,
+          "angular_momentum_relative": -0.007961553553220643
+        }
+      }
+    },
+    "direct_u": {
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_DirectU_A10_20261027/khout.011119.dat",
+      "time": 0.845,
+      "native_checks": {
+        "finite": true,
+        "mass_exact": true,
+        "W0_exact": true,
+        "positive_U_and_volume": true,
+        "initial_area_tiles_6x6_box": true,
+        "endpoint_area_tiles_6x6_box": true,
+        "rho_equals_mass_over_volume": true,
+        "no_floor_or_dual_energy_injection": true,
+        "gizmo_L1_velocity_below_0p01": true,
+        "gizmo_L1_density_below_0p25": true,
+        "disk_density_change_below_0p05": true,
+        "disk_entropy_log_abs_below_0p01": true,
+        "disk_position_error_below_0p01": true,
+        "disk_angular_momentum_drift_below_0p01": true,
+        "total_energy_drift_below_0p001": true
+      },
+      "native_gate_pass": true,
+      "radial_checks": {
+        "finite": true,
+        "fixed_mass_exact": true,
+        "W0_exact": true,
+        "positive_volume_internal_energy": true,
+        "rho_mass_over_volume_max_relative_below_1e_minus_6": true
+      },
+      "wall_seconds": 592.672,
+      "total_energy_relative_from_start": -1.0438379472938107e-12,
+      "regions": {
+        "core": {
+          "cells": 3246,
+          "mass": 0.32045205051779196,
+          "entropy_increment_signed_mass_weighted": 1.749762660368363e-08,
+          "entropy_increment_abs_mass_weighted": 1.139675172098585e-06,
+          "entropy_positive_mass_fraction": 0.5020245415305213,
+          "thermal_initial": 1.1752235549722378e-06,
+          "thermal_final": 1.1752265135778206e-06,
+          "adiabatic_thermal_final": 1.1752265233712187e-06,
+          "thermal_excess_signed_over_initial": -8.33322147422716e-09,
+          "thermal_excess_abs_over_initial": 8.965949147378767e-07,
+          "angular_momentum_relative": -1.3058035555624237e-12
+        },
+        "disk": {
+          "cells": 48680,
+          "mass": 11.865523754812893,
+          "entropy_increment_signed_mass_weighted": -2.342558858989708e-07,
+          "entropy_increment_abs_mass_weighted": 3.630985996011943e-06,
+          "entropy_positive_mass_fraction": 0.444966282695441,
+          "thermal_initial": 1.7621906758163997e-05,
+          "thermal_final": 1.7621901212683255e-05,
+          "adiabatic_thermal_final": 1.762190534233022e-05,
+          "thermal_excess_signed_over_initial": -2.343473393973535e-07,
+          "thermal_excess_abs_over_initial": 3.630964920085024e-06,
+          "angular_momentum_relative": 2.4113740518250104e-14
+        },
+        "inner_disk": {
+          "cells": 4049,
+          "mass": 0.9869400684507855,
+          "entropy_increment_signed_mass_weighted": 2.7721599068730063e-08,
+          "entropy_increment_abs_mass_weighted": 2.764806092458395e-06,
+          "entropy_positive_mass_fraction": 0.5063091241917698,
+          "thermal_initial": 1.4657268288531533e-06,
+          "thermal_final": 1.465725728622136e-06,
+          "adiabatic_thermal_final": 1.4657256878974688e-06,
+          "thermal_excess_signed_over_initial": 2.778462278164988e-08,
+          "thermal_excess_abs_over_initial": 2.76466660684053e-06,
+          "angular_momentum_relative": 2.905747474232778e-13
+        },
+        "outer_disk": {
+          "cells": 38929,
+          "mass": 9.488693804895448,
+          "entropy_increment_signed_mass_weighted": -2.1312625499631863e-07,
+          "entropy_increment_abs_mass_weighted": 3.647302551278934e-06,
+          "entropy_positive_mass_fraction": 0.4410316314585774,
+          "thermal_initial": 1.4092060587139743e-05,
+          "thermal_final": 1.409205806898739e-05,
+          "adiabatic_thermal_final": 1.4092061074177255e-05,
+          "thermal_excess_signed_over_initial": -2.1325411195372068e-07,
+          "thermal_excess_abs_over_initial": 3.6473063885407506e-06,
+          "angular_momentum_relative": -9.434076783665368e-15
+        },
+        "transition": {
+          "cells": 19106,
+          "mass": 0.7045678813264004,
+          "entropy_increment_signed_mass_weighted": -9.173032290393001e-08,
+          "entropy_increment_abs_mass_weighted": 3.33034564585568e-06,
+          "entropy_positive_mass_fraction": 0.4466020274062193,
+          "thermal_initial": 7.053329058398505e-06,
+          "thermal_final": 7.053352943015012e-06,
+          "adiabatic_thermal_final": 7.053353304347752e-06,
+          "thermal_excess_signed_over_initial": -5.1228680373965766e-08,
+          "thermal_excess_abs_over_initial": 3.418718914562035e-06,
+          "angular_momentum_relative": -7.377938820649077e-09
+        },
+        "outer_background": {
+          "cells": 50128,
+          "mass": 0.1303069424087356,
+          "entropy_increment_signed_mass_weighted": -9.123685035479867e-08,
+          "entropy_increment_abs_mass_weighted": 7.540264876152747e-06,
+          "entropy_positive_mass_fraction": 0.39934062695405004,
+          "thermal_initial": 1.8984072842665595e-05,
+          "thermal_final": 1.9015287583398766e-05,
+          "adiabatic_thermal_final": 1.9015284407831955e-05,
+          "thermal_excess_signed_over_initial": 1.6727531738846551e-07,
+          "thermal_excess_abs_over_initial": 1.0736621805635754e-05,
+          "angular_momentum_relative": -0.007961553553249854
+        }
+      }
+    }
+  },
+  "direct_u_anchor_receipt": {
+    "accepted_start": "khout.010856.dat",
+    "endpoint": "/gpfs/kjhan/LagForce/Kepler_DirectU_A10_20261027/khout.011119.dat",
+    "time_start": 0.825,
+    "time_end": 0.845,
+    "anchor_offset": 472,
+    "endpoint_anchor_min": 5.279894577103761e-11,
+    "endpoint_anchor_max": 7.136652380168584e-10,
+    "max_relative_anchor_vs_final_U": 0.0028557588514017684,
+    "checks": {
+      "accepted_start_t0825": true,
+      "endpoint_t0845": true,
+      "accepted_start_anchor_zero": true,
+      "all_endpoint_anchors_positive_finite": true,
+      "anchor_tracks_final_U": true,
+      "native_physics_gate": true,
+      "mass_exact": true
+    },
+    "scope": "Branch-use certificate for opt-in same-equation RK4 direct-U arithmetic; not a physical or t>6 stability result"
+  },
+  "same_time_disk_difference": {
+    "position_abs_mass_weighted": 3.796772496928097e-14,
+    "density_relative_abs_mass_weighted": 0.0
+  },
+  "scope": "Same-checkpoint same-equation native RK4 arithmetic attribution only; no t>6 stability or general speedup claim"
+}

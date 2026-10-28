@@ -1,0 +1,143 @@
+{
+  "accepted_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/material_rate_t65_cpu_v1/jitter_receipt.json",
+  "endpoint_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+  "static_weights_sha256": "2396ab2c9c331029436d9384da0c29d6260445ffc174a070817b216f6b96a021",
+  "volume_rates_sha256": "5a0158de0303e71357ab22dda3fdd89500bad6596d87cbbe9927d2fbee2e4823",
+  "time": 6.5,
+  "disk_disk_faces": 145671,
+  "objective": "Minimize sum over disk-disk faces of L*(v_face,n-v_Kepler(c).n)^2 with one scalar Wdot per disk cell",
+  "material_rate_cg_iterations": 1467,
+  "material_rate_linear_residual": 9.96951960196437e-10,
+  "material_rate_abs_quantiles": [
+    2.4892737520299093e-06,
+    8.791364389452458e-06,
+    1.735914305846552e-05,
+    5.219765059881201e-05
+  ],
+  "fixed_weight_slip": {
+    "all_disk_disk": {
+      "faces": 145671,
+      "total_face_length": 1575.8811024672084,
+      "length_weighted_mean_absolute_slip": 0.00012580955127173134,
+      "length_weighted_rms_slip": 0.0002025824087345353,
+      "integrated_absolute_slip": 0.19826089435900077,
+      "maximum_absolute_slip": 0.0020889186369273116
+    },
+    "same_initial_shell": {
+      "faces": 49038,
+      "total_face_length": 1039.898023687989,
+      "length_weighted_mean_absolute_slip": 0.00011395980751778728,
+      "length_weighted_rms_slip": 0.0001896465241624272,
+      "integrated_absolute_slip": 0.11850657861761063,
+      "maximum_absolute_slip": 0.0015520002228666119
+    },
+    "different_initial_shell": {
+      "faces": 96633,
+      "total_face_length": 535.9830787792192,
+      "length_weighted_mean_absolute_slip": 0.00014880006272407402,
+      "length_weighted_rms_slip": 0.0002255741985918947,
+      "integrated_absolute_slip": 0.07975431574139012,
+      "maximum_absolute_slip": 0.0020889186369273116
+    }
+  },
+  "volume_rate_slip": {
+    "all_disk_disk": {
+      "faces": 145671,
+      "total_face_length": 1575.8811024672084,
+      "length_weighted_mean_absolute_slip": 0.00011371376711763513,
+      "length_weighted_rms_slip": 0.0001811843161099625,
+      "integrated_absolute_slip": 0.17919937669103825,
+      "maximum_absolute_slip": 0.0023897125836045735
+    },
+    "same_initial_shell": {
+      "faces": 49038,
+      "total_face_length": 1039.898023687989,
+      "length_weighted_mean_absolute_slip": 0.00010070483828626404,
+      "length_weighted_rms_slip": 0.0001632744901727164,
+      "integrated_absolute_slip": 0.10472276230970452,
+      "maximum_absolute_slip": 0.0010093934957670718
+    },
+    "different_initial_shell": {
+      "faces": 96633,
+      "total_face_length": 535.9830787792192,
+      "length_weighted_mean_absolute_slip": 0.0001389532941057864,
+      "length_weighted_rms_slip": 0.00021165312375059271,
+      "integrated_absolute_slip": 0.07447661438133373,
+      "maximum_absolute_slip": 0.0023897125836045735
+    }
+  },
+  "material_rate_slip": {
+    "all_disk_disk": {
+      "faces": 145671,
+      "total_face_length": 1575.8811024672084,
+      "length_weighted_mean_absolute_slip": 0.00011158658164420812,
+      "length_weighted_rms_slip": 0.00017911434174655002,
+      "integrated_absolute_slip": 0.17584718530202187,
+      "maximum_absolute_slip": 0.0025516844527839304
+    },
+    "same_initial_shell": {
+      "faces": 49038,
+      "total_face_length": 1039.898023687989,
+      "length_weighted_mean_absolute_slip": 9.468445807609813e-05,
+      "length_weighted_rms_slip": 0.0001526888530585115,
+      "integrated_absolute_slip": 0.09846218082730271,
+      "maximum_absolute_slip": 0.0009468582861295774
+    },
+    "different_initial_shell": {
+      "faces": 96633,
+      "total_face_length": 535.9830787792192,
+      "length_weighted_mean_absolute_slip": 0.00014437956633066653,
+      "length_weighted_rms_slip": 0.0002215704697870184,
+      "integrated_absolute_slip": 0.07738500447471915,
+      "maximum_absolute_slip": 0.0025516844527839304
+    }
+  },
+  "volume_rate_cell_volume_rate_l2_over_fixed": 9.809183464266176e-11,
+  "material_rate_cell_volume_rate_l2_over_fixed": 0.2957553581783556,
+  "euler_step": 0.00193983,
+  "one_step_geometry": {
+    "volume_rate": {
+      "valid_power_cells": true,
+      "area_change_from_current": {
+        "median_relative": 6.333068735542291e-07,
+        "p95_relative": 7.024250715975681e-06,
+        "p99_relative": 1.3725783556320894e-05,
+        "max_relative": 4.362206524599621e-05,
+        "inner_median_relative": 7.843815602925908e-06,
+        "inner_p99_relative": 3.117049668740486e-05,
+        "inner_max_relative": 4.362206524599621e-05
+      },
+      "area_error_to_initial_target": {
+        "median_relative": 6.33306877551032e-07,
+        "p95_relative": 7.024251328929813e-06,
+        "p99_relative": 1.3725783388051052e-05,
+        "max_relative": 4.362206501107302e-05,
+        "inner_median_relative": 7.843816494879086e-06,
+        "inner_p99_relative": 3.1170496707799655e-05,
+        "inner_max_relative": 4.362206501107302e-05
+      }
+    },
+    "material_rate": {
+      "valid_power_cells": true,
+      "area_change_from_current": {
+        "median_relative": 2.3327185827426433e-06,
+        "p95_relative": 1.8032569371589928e-05,
+        "p99_relative": 3.373546165989939e-05,
+        "max_relative": 0.0001782003217168926,
+        "inner_median_relative": 1.6038879000035422e-05,
+        "inner_p99_relative": 8.407904959304434e-05,
+        "inner_max_relative": 0.0001782003217168926
+      },
+      "area_error_to_initial_target": {
+        "median_relative": 2.332721356079759e-06,
+        "p95_relative": 1.803256936273035e-05,
+        "p99_relative": 3.373546243303983e-05,
+        "max_relative": 0.00017820032148629927,
+        "inner_median_relative": 1.6038878679180968e-05,
+        "inner_p99_relative": 8.40790498905397e-05,
+        "inner_max_relative": 0.00017820032148629927
+      }
+    }
+  },
+  "scope": "One geometry-only least-squares weight-rate comparison. Analytic Kepler material velocity, disk-disk faces only; no native weighted flux or long-time physical solution."
+}

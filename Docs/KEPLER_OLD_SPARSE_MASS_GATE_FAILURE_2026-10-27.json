@@ -1,0 +1,41 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2_profile_buffered_t001/khout.000000.dat",
+  "evolved": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2_profile_buffered_t001/khout.000001.dat",
+  "t0": 0.0,
+  "t1": 0.001,
+  "n": 54312,
+  "sha256": {
+    "glass.bin": "03448f6151f85195b49e8ea7bd7543611094b8b0a957c3891134d1d83f0156a7",
+    "KEPLER_Q2_PROFILE_BUFFERED_PERIODIC_AREAS_2026-10-27.bin": "828c3431f27e0e0ae8d1652ebc4bba1c9687e96e3c922c45f20a18e2b69b9417",
+    "khout.000000.dat": "015f2526571bd902020b4e8de18efa10436d7314285a2419721822f83917f033",
+    "khout.000001.dat": "47bc042e1e48c54eea56b7b7402ac81e74447608469e82f7b1da85e166034f29",
+    "eunha2.exe": "48d582a3072fb620892a045ee259aca4bced235f2f2c97f992800721349d3e48"
+  },
+  "initial_volume_sum": 30469.710305536442,
+  "evolved_volume_sum": 35.99999999445572,
+  "initial_volume_max": 44.44444274902344,
+  "expected_total_mass": 13.136044857711521,
+  "initial_total_mass": 363.26845651214717,
+  "initial_mass_max": 0.5986779132265277,
+  "disk_mass": 11.904979378053394,
+  "initial_area_relative_error_max": 1876.7777061467239,
+  "initial_mass_relative_error_max": 1876.777706146724,
+  "disk_orbit_error_max": 5.9580819677934555e-15,
+  "checks": {
+    "finite": true,
+    "periodic_area_sidecar_tiles_box": true,
+    "initial_native_areas_match_sidecar": false,
+    "initial_native_areas_tile_box": false,
+    "evolved_native_areas_tile_box": true,
+    "initial_mass_matches_target_profile_and_sidecar": false,
+    "initial_total_mass_matches_profile": false,
+    "mass_exact_across_step": true,
+    "W0": true,
+    "positive_state": true,
+    "no_floor_injection": true,
+    "glass_initial_positions": true,
+    "disk_pressure": true,
+    "disk_orbit": true
+  },
+  "scope": "Native t=.001 sparse W0 CUDA+MPI+OpenMP IC gate with independently certified periodic t=0 volumes and fixed mass; not a long-time result"
+}

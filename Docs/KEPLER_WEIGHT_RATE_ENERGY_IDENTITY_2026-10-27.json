@@ -1,0 +1,36 @@
+{
+  "reproducer": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_weight_rate_energy_identity_20261027.py",
+  "reproducer_sha256": "6e3a1e5c09f47dba8abd3043409b9342ef644a84be01a1b27947e09c6ef8d84b",
+  "reference": "W0 variational force in Exam/exam_gpu.cu; J_ij from power-face conductance",
+  "grid": [
+    5,
+    5
+  ],
+  "box": 5.0,
+  "sites": 25,
+  "h": 0.0001,
+  "voronoi_power_area_max_difference": 7.105427357601002e-15,
+  "jacobian_finite_difference_max_error": 7.918299349540803e-11,
+  "jacobian_row_sum_max": 4.440892098500626e-16,
+  "jacobian_column_sum_max": 6.661338147750939e-16,
+  "unweighted_area_rate_sum": 3.885780586188048e-16,
+  "compensated_area_rate_max": 5.551115123125783e-16,
+  "kinetic_pressure_power": -0.16711705331856114,
+  "unweighted_thermal_power": 0.16711705331856136,
+  "weighted_thermal_power": -1.115636196167423e-15,
+  "weight_power": 0.16711705331856166,
+  "unweighted_total_power": 2.220446049250313e-16,
+  "weighted_total_power": -0.16711705331856225,
+  "weighted_power_identity_error": 5.828670879282072e-16,
+  "scope": "Small periodic smooth mesh at W=0 with nonzero Wdot; first-order weighted-volume audit, not native CUDA or finite-W evolution. Weight power must be represented by another conservative degree of freedom or a modified force/work law before a weighted fixed-mass hydro claim.",
+  "checks": {
+    "power_reduces_to_voronoi": true,
+    "weight_jacobian_matches_power_geometry": true,
+    "jacobian_has_constant_gauge": true,
+    "jacobian_preserves_total_area": true,
+    "compensated_area_rate_zero": true,
+    "unweighted_energy_conserved": true,
+    "weighted_power_identity": true,
+    "weight_power_is_nontrivial": true
+  }
+}

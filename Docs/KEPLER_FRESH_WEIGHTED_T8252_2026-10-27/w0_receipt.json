@@ -1,0 +1,61 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_t001_a10_v1/khout.000000.dat",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to10_a10_v1/khout.000904.dat",
+  "initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+  "endpoint_sha256": "5082662888d659c3aefca565599f7b075a50ad494fa9257bafcbfbf4c9ca9fa8",
+  "time": 8.251666223756754,
+  "n": 55351,
+  "disk_sites": 49038,
+  "initial_state": {
+    "positive": true,
+    "density_relative_max": 5.053995821846513e-08,
+    "eos_pressure_relative_max": 9.845663573315733e-08,
+    "volume_sum": 23.758145390616846
+  },
+  "endpoint_state": {
+    "positive": true,
+    "density_relative_max": 5.936498892467057e-08,
+    "eos_pressure_relative_max": 9.523445843040435e-08,
+    "volume_sum": 23.758145338884788
+  },
+  "total_energy_relative": 6.661831773291817e-09,
+  "rk4_ledger": {
+    "floor_cum": 0.0,
+    "de_cum": 0.0,
+    "sfl_cum": 0.0
+  },
+  "disk_density_abs_mass_weighted": 0.001962465490512998,
+  "disk_ballistic_density_abs_mass_weighted": 0.0014740940371775325,
+  "disk_native_minus_ballistic_abs_mass_weighted": 0.0006987649230527947,
+  "disk_entropy_log_abs_mass_weighted": 1.772055541840697e-05,
+  "disk_position_error_abs_mass_weighted": 9.846061169634003e-06,
+  "disk_radial_speed_rms_over_circular": 1.2773601668806807e-06,
+  "disk_angular_momentum_relative": -1.0698553154497858e-11,
+  "outer_density_abs_mass_weighted": 0.1822834873277919,
+  "minimum_ballistic_image_safety_ratio": 41.06790964477382,
+  "max_current_site_radius": 2.6499329676953702,
+  "checks": {
+    "finite_positive": true,
+    "fixed_mass_exact": true,
+    "W0_exact": true,
+    "initial_area_tiles_polygon": true,
+    "endpoint_area_tiles_polygon": true,
+    "density_and_EOS": true,
+    "zero_injection": true,
+    "total_energy": true,
+    "disk_density": true,
+    "disk_entropy": true,
+    "disk_orbit": true,
+    "disk_ballistic_residual": true,
+    "disk_radial_velocity": true,
+    "disk_angular_momentum": true,
+    "inside_polygon_incircle": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true,
+    "no_geometry_abort": true,
+    "expected_binary": true
+  },
+  "scope": "One-rank native fixed-polygon CUDA W0 endpoint; requires later boundary, scaling, and long-time validation",
+  "log_scope": "Completed steps through endpoint marker only",
+  "binary_sha256": "3fc66a5fd36d41d6191a7c26c7186db18aefe6c990b826604fa7bea6f75cd55e"
+}

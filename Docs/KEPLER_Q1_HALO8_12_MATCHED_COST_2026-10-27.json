@@ -1,0 +1,99 @@
+{
+  "matched_start_time": 0.63,
+  "matched_end_time": 0.65,
+  "native_accepted_solver": "q1 147456-site W0 RK4 CUDA, only global periodic halo width changed",
+  "cases": {
+    "halo8": {
+      "log": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/to0p825/log",
+      "samples": {
+        "cpu_update_s": 263,
+        "cpu_force_s": 263,
+        "cpu_final_s": 263,
+        "cpu_total_s": 263,
+        "gpu_soa_ms": 263,
+        "gpu_kernel_ms": 263,
+        "gpu_total_ms": 263,
+        "tess_ms": 1052,
+        "npad": 1052
+      },
+      "first_last_logged_time": [
+        0.630053,
+        0.649927
+      ],
+      "mean": {
+        "cpu_update_s": 0.3,
+        "cpu_force_s": 0.3,
+        "cpu_final_s": 0.2,
+        "cpu_total_s": 0.8,
+        "gpu_soa_ms": 37.1787072243346,
+        "gpu_kernel_ms": 1.0901140684410646,
+        "gpu_total_ms": 75.45779467680609,
+        "tess_ms": 48.26539258555133,
+        "npad": 51554.69961977186
+      },
+      "median": {
+        "cpu_update_s": 0.3,
+        "cpu_force_s": 0.3,
+        "cpu_final_s": 0.2,
+        "cpu_total_s": 0.8,
+        "gpu_soa_ms": 37.1,
+        "gpu_kernel_ms": 1.1,
+        "gpu_total_ms": 75.4,
+        "tess_ms": 48.210499999999996,
+        "npad": 51580.0
+      }
+    },
+    "halo12": {
+      "log": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/halo12_from061876_to0825/log",
+      "samples": {
+        "cpu_update_s": 263,
+        "cpu_force_s": 263,
+        "cpu_final_s": 263,
+        "cpu_total_s": 263,
+        "gpu_soa_ms": 263,
+        "gpu_kernel_ms": 263,
+        "gpu_total_ms": 263,
+        "tess_ms": 1052,
+        "npad": 1052
+      },
+      "first_last_logged_time": [
+        0.630053,
+        0.649927
+      ],
+      "mean": {
+        "cpu_update_s": 0.4,
+        "cpu_force_s": 0.4,
+        "cpu_final_s": 0.2,
+        "cpu_total_s": 0.9996197718631179,
+        "gpu_soa_ms": 50.679847908745245,
+        "gpu_kernel_ms": 1.2,
+        "gpu_total_ms": 101.39353612167301,
+        "tess_ms": 51.60554182509506,
+        "npad": 80929.5674904943
+      },
+      "median": {
+        "cpu_update_s": 0.4,
+        "cpu_force_s": 0.4,
+        "cpu_final_s": 0.2,
+        "cpu_total_s": 1.0,
+        "gpu_soa_ms": 50.4,
+        "gpu_kernel_ms": 1.2,
+        "gpu_total_ms": 101.2,
+        "tess_ms": 51.46,
+        "npad": 80931.0
+      }
+    }
+  },
+  "halo12_over_halo8_mean_ratio": {
+    "npad": 1.5697806036572621,
+    "cpu_update_s": 1.3333333333333335,
+    "cpu_force_s": 1.3333333333333335,
+    "cpu_final_s": 1.0,
+    "cpu_total_s": 1.2495247148288973,
+    "gpu_soa_ms": 1.3631417467784823,
+    "gpu_kernel_ms": 1.10080223229857,
+    "gpu_total_ms": 1.3437118929323673,
+    "tess_ms": 1.0692038137599988
+  },
+  "limitations": "CPU lines round to 0.1 s and GPU lines to 0.1 ms; live halo12 log sampled only through present output. Matching physical time controls early IC evolution, but run startup and I/O variance remain."
+}

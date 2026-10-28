@@ -1,0 +1,107 @@
+{
+  "method": "fixed-mass Lagrangian radial-cohort audit",
+  "results": [
+    {
+      "initial_snapshot": "/gpfs/kjhan/LagForce/Kepler_res256_t120_tcommon_ringIC_rho0p7_1d0ba7e/khout.000056.dat",
+      "target_snapshot": "/gpfs/kjhan/LagForce/Kepler_res256_t120_tcommon_ringIC_rho0p7_1d0ba7e/khout.006968.dat",
+      "initial_time": 2.026209538012982,
+      "target_time": 64.00093939943851,
+      "cell_count": 48254,
+      "gamma": 1.666667,
+      "center": [
+        3.0,
+        3.0
+      ],
+      "fixed_mass_bitwise_equal_by_cell_id": true,
+      "total_mass": 11.78076171875,
+      "global_internal_energy_sum_ratio": 822.0233930269123,
+      "initial_radius_cohorts": {
+        "central": {
+          "initial_radius": [
+            0.0,
+            0.5
+          ],
+          "cell_count": 0,
+          "empty": true
+        },
+        "disk_inner": {
+          "initial_radius": [
+            0.5,
+            1.0
+          ],
+          "cell_count": 9650,
+          "mass_fraction": 0.19998342106353878,
+          "internal_energy_sum_ratio": 4071.289597203206,
+          "mass_weighted_mean_dln_density": 0.17944299456816518,
+          "mass_weighted_mean_dln_pressure": 4.391524137628013,
+          "mass_weighted_mean_dln_specific_internal_energy": 4.212081158359045,
+          "mass_weighted_mean_dln_entropy_proxy": 4.092452420200074,
+          "mass_weighted_mean_abs_dln_entropy_proxy": 4.119324182971539,
+          "dln_pressure_minus_gamma_dln_density": 4.092452420200074,
+          "dln_u_minus_gamma_minus_1_dln_density": 4.092452435499273,
+          "rms_fractional_radius_drift": 0.08681276853378227,
+          "p99_abs_fractional_radius_drift": 0.3741763822070432,
+          "radius_drift_excluded_near_center_count": 0,
+          "fraction_still_in_initial_radial_band": 0.9483937823834196
+        },
+        "disk_outer": {
+          "initial_radius": [
+            1.0,
+            2.0
+          ],
+          "cell_count": 38604,
+          "mass_fraction": 0.8000165789364613,
+          "internal_energy_sum_ratio": 1.057432922593547,
+          "mass_weighted_mean_dln_density": 0.035307615848947996,
+          "mass_weighted_mean_dln_pressure": 0.0800515761007597,
+          "mass_weighted_mean_dln_specific_internal_energy": 0.04474397460265813,
+          "mass_weighted_mean_dln_entropy_proxy": 0.021205537916641135,
+          "mass_weighted_mean_abs_dln_entropy_proxy": 0.03067447707365696,
+          "dln_pressure_minus_gamma_dln_density": 0.021205537916641135,
+          "dln_u_minus_gamma_minus_1_dln_density": 0.021205552267487528,
+          "rms_fractional_radius_drift": 0.00048139146886528315,
+          "p99_abs_fractional_radius_drift": 0.002068587116937048,
+          "radius_drift_excluded_near_center_count": 0,
+          "fraction_still_in_initial_radial_band": 1.0
+        },
+        "disk": {
+          "initial_radius": [
+            0.5,
+            2.0
+          ],
+          "cell_count": 48254,
+          "mass_fraction": 1.0,
+          "internal_energy_sum_ratio": 822.0233930269123,
+          "mass_weighted_mean_dln_density": 0.06413230198150585,
+          "mass_weighted_mean_dln_pressure": 0.942274608776558,
+          "mass_weighted_mean_dln_specific_internal_energy": 0.8781423213355534,
+          "mass_weighted_mean_dln_entropy_proxy": 0.835387417429948,
+          "mass_weighted_mean_abs_dln_entropy_proxy": 0.8483366327895469,
+          "dln_pressure_minus_gamma_dln_density": 0.835387417429948,
+          "dln_u_minus_gamma_minus_1_dln_density": 0.8353874319704494,
+          "rms_fractional_radius_drift": 0.03882462882888782,
+          "p99_abs_fractional_radius_drift": 0.19796687364323362,
+          "radius_drift_excluded_near_center_count": 0,
+          "fraction_still_in_initial_radial_band": 0.9896796120528868
+        },
+        "edge_transition": {
+          "initial_radius": [
+            2.0,
+            2.5
+          ],
+          "cell_count": 0,
+          "empty": true
+        },
+        "ambient": {
+          "initial_radius": [
+            2.5,
+            4.3
+          ],
+          "cell_count": 0,
+          "empty": true
+        }
+      },
+      "interpretation": "Cohorts are selected by initial radius and tracked by cell ID. The entropy proxy is ln(P/rho^gamma); the two residuals compare changes with ideal-gas adiabatic compression."
+    }
+  ]
+}

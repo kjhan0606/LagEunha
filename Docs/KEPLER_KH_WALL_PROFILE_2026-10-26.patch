@@ -1,0 +1,41 @@
+--- a/Exam/KH/kh.c
++++ b/Exam/KH/kh.c
+@@ -287,7 +287,10 @@
+ 		GAS_w2Power(simpar) = (Gamma-1)/Gamma;
+ 	}
+ 
++	const char *profile_env = getenv("GFS_KH_WALL_PROFILE");
++	const int profile_step = profile_env && profile_env[0] == '1';
+ 	do {
++		double profile_iter_start = profile_step ? MPI_Wtime() : 0.0;
+ 		/* Optional exact endpoint for controlled comparisons/restart replay.
+ 		 * The native RK4 still selects its physical CFL; only the last step
+ 		 * is shortened. Ordinary runs retain their previous stepping. */
+@@ -319,6 +322,7 @@
+ #  define KH_MKLL      mkLinkedList2D_oExam
+ #  define KH_POSTSTAGE periodic_postStage_blend
+ #endif
++		double profile_evol_start = profile_step ? MPI_Wtime() : 0.0;
+ 		if(av_mode == 4 && GAS_EVOLMETHOD(simpar) == 1)
+ 			dt = exam2d_vph_rk4_int_lagmfm(simpar,
+ 				paddingTreeVorork4Particles,kh_w2Measure2D,
+@@ -362,6 +366,7 @@
+                 kh_evolBP,
+ 				mkLinkedList2D_oExam
+                 );
++		double profile_evol_wall = profile_step ? MPI_Wtime()-profile_evol_start : 0.0;
+ 		t += dt;
+ 
+ 
+@@ -407,6 +412,11 @@
+ 		if(MYID(simpar)==0){
+ 			printf("Time= %g  step= %d  dt= %g\n", t, icount, dt);
+ 			fflush(stdout);
++			if(profile_step){
++				double iter_wall = MPI_Wtime()-profile_iter_start;
++				fprintf(stderr,"[KH_WALL] step=%d t=%.9g evol=%.6fs outside=%.6fs total=%.6fs\n",
++					icount,(double)t,profile_evol_wall,iter_wall-profile_evol_wall,iter_wall);
++			}
+ 		}
+ 
+ 	} while(t<kh_tmax());

@@ -1,0 +1,81 @@
+"""Stage a mode-off W0 bitwise reduction test for the weighted native binary."""
+
+import argparse
+import json
+from pathlib import Path
+import shutil
+import subprocess
+
+from prepare_kepler_sparse_area_restart_20261027 import digest, snapshot_time
+
+
+DOCS=Path(__file__).resolve().parent
+ROOT=Path("/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027")
+BINARY=ROOT/"gpu_energy_neutral_native_build_v2/eunha2_energy_neutral_v2.exe"
+BINARY_SHA="5214b5b3a68f3a309e8650de918ca906aaac7d8f41bfcfd9f07ef8f9c4a55342"
+PARAMS_SHA="2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43"
+RUNNER="kepler_q2_energy_neutral_v2_w0_reduction_t6501_a10_20261027.slurm"
+HELPERS=("audit_kepler_bounded_short_replay_20261027.py",
+         "audit_kepler_sparse_area_t0825_20261027.py",
+         "audit_kepler_sparse_state_consistency_20261027.py",
+         "prepare_kepler_sparse_area_restart_20261027.py")
+CASES={
+    "aligned":("to65_near32_a10_v1","KEPLER_Q2_BOUNDED_NATIVE_T65_2026-10-27.json"),
+    "jitter":("jitter005_to65_a10_v1","KEPLER_Q2_BOUNDED_JITTER005_NATIVE_T65_2026-10-27.json"),
+}
+
+
+def copied(directory,files):
+    directory.mkdir()
+    hashes={}
+    for name,source in files.items():
+        shutil.copy2(source,directory/name)
+        hashes[name]=digest(directory/name)
+    with (directory/"inputs.sha256").open("x") as stream:
+        for name,value in sorted(hashes.items()):
+            stream.write(f"{value}  {name}\n")
+    return hashes
+
+
+def main():
+    ap=argparse.ArgumentParser()
+    ap.add_argument("destination",type=Path)
+    args=ap.parse_args()
+    dest=args.destination.resolve()
+    if dest.exists(): raise FileExistsError(dest)
+    subprocess.run(["bash","-n",str(DOCS/RUNNER)],check=True)
+    if digest(BINARY)!=BINARY_SHA:
+        raise ValueError("Weighted v2 native binary changed")
+    sources={}
+    for label,(subdir,receipt_name) in CASES.items():
+        receipt=json.loads((DOCS/receipt_name).read_text())
+        parent=ROOT/subdir
+        endpoint=Path(receipt["endpoint"])
+        if (receipt["time"]!=6.5 or not all(receipt["checks"].values()) or
+                endpoint.parent!=parent or digest(endpoint)!=receipt["endpoint_sha256"] or
+                abs(snapshot_time(endpoint,55351)-6.5)>1e-10 or
+                digest(parent/"params.dat")!=PARAMS_SHA):
+            raise ValueError(f"{label}: accepted parent changed")
+        sources[label]=(parent,endpoint,receipt)
+    dest.mkdir(parents=True)
+    shutil.copy2(DOCS/RUNNER,dest/"job.slurm")
+    with (dest/"inputs.sha256").open("x") as stream:
+        stream.write(f"{digest(dest/'job.slurm')}  job.slurm\n")
+    staged={}
+    for label,(parent,endpoint,_) in sources.items():
+        staged[label]=copied(dest/label,{
+            "eunha2.exe":BINARY,"params.dat":parent/"params.dat",
+            "khout.000001.dat":endpoint,
+            **{name:DOCS/name for name in HELPERS},
+        })
+    manifest={"run":str(dest),"binary_sha256":BINARY_SHA,
+              "mode":"GFS_GPU_VOLW2 unset; expected W0 Voronoi fixed-mass reduction",
+              "parent_sha256":{label:sources[label][2]["endpoint_sha256"] for label in CASES},
+              "inputs":staged}
+    with (dest/"stage_manifest.json").open("x") as stream:
+        json.dump(manifest,stream,indent=2)
+        stream.write("\n")
+    print(json.dumps({"run":str(dest),"binary_sha256":BINARY_SHA},indent=2))
+
+
+if __name__=="__main__": main()

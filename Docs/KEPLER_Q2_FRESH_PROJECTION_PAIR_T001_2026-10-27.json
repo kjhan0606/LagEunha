@@ -1,0 +1,74 @@
+{
+  "time": 0.001,
+  "modes": {
+    "projected": {
+      "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_v11b_fresh_projected_t001_a10_v1",
+      "initial_sha256": "ac67abe06bc49734b3ddaa65a8d261ca4fcd308ea6240e31e8dd68e7a28032b0",
+      "endpoint_sha256": "3082771b241f666ec0f2e68ff02b99cffc87e52fe0d79e58b265792caaf3e610",
+      "binary_sha256": "5d10fd4c17ac67bfafcc461fda03937bc645159758d1fff1ab73bd27ecf54f72",
+      "audit_passed": 18,
+      "gpu_stage_pressure_weight_works": [
+        4.294e-33,
+        1.077e-31,
+        5.977e-31,
+        -2.654e-31
+      ],
+      "first_ring_count": 294,
+      "first_ring_volume_change_rms": 1.8088490837386883e-06,
+      "first_ring_density_change_rms": 1.8091800864064457e-06,
+      "first_ring_pressure_change_mean_abs": 2.086578836375817e-06,
+      "first_ring_angular_pressure_jump_rms": 4.835158207151647e-06,
+      "first_ring_orbital_ell_change_mean_abs": 8.310302985850514e-14,
+      "disk_density_change_mean_abs": 9.435523667174313e-08,
+      "total_energy_relative_change": -3.501137107511749e-14
+    },
+    "raw": {
+      "run": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/gpu_energy_neutral_v11b_fresh_raw_t001_a10_v1",
+      "initial_sha256": "0db7b63ca40929e9fd8eeafb1e51fffbddebb6dcb0d3b559a2a7bee676a32c80",
+      "endpoint_sha256": "cfe27dc33746a1b90368697f69d921a0aee64a4fe7f41e1cddee0feeb0c2ec8e",
+      "binary_sha256": "5d10fd4c17ac67bfafcc461fda03937bc645159758d1fff1ab73bd27ecf54f72",
+      "audit_passed": 18,
+      "gpu_stage_pressure_weight_works": [
+        -4.983e-17,
+        -2.842e-15,
+        -2.661e-15,
+        -6.008e-15
+      ],
+      "first_ring_count": 294,
+      "first_ring_volume_change_rms": 8.484838240967858e-08,
+      "first_ring_density_change_rms": 9.132115561158585e-08,
+      "first_ring_pressure_change_mean_abs": 9.899262084659252e-08,
+      "first_ring_angular_pressure_jump_rms": 1.2225763232091926e-07,
+      "first_ring_orbital_ell_change_mean_abs": 3.2130118329734615e-14,
+      "disk_density_change_mean_abs": 5.831027935933318e-08,
+      "total_energy_relative_change": -3.318613372049051e-14
+    }
+  },
+  "scope": "Same-binary, same-fresh-t0 native causal one-step comparison; not a long-time Kepler stability claim.",
+  "initial_state_fields_exact": [
+    "u4if",
+    "x",
+    "y",
+    "mass",
+    "vx",
+    "vy",
+    "den",
+    "pressure",
+    "volume",
+    "ie",
+    "w2",
+    "stress.gUxx",
+    "stress.gUxy",
+    "stress.gUyx",
+    "stress.gUyy",
+    "stress.dRhodx"
+  ],
+  "initial_file_hashes_differ": true,
+  "ratios_projected_over_raw": {
+    "first_ring_volume_change_rms": 21.31860422518031,
+    "first_ring_density_change_rms": 19.811182570897255,
+    "first_ring_pressure_change_mean_abs": 21.07812500094688,
+    "first_ring_angular_pressure_jump_rms": 39.548927256006685,
+    "first_ring_orbital_ell_change_mean_abs": 2.586452654971954
+  }
+}

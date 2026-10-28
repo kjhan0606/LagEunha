@@ -1,0 +1,142 @@
+{
+  "n_sites": 71080,
+  "n_active": 21436,
+  "boundary_weights": "zero outside 2 <= initial r < 8",
+  "target": "initial unweighted Voronoi area at each active site",
+  "history": [
+    {
+      "stage": "unweighted",
+      "relative_l2": 2.768468053627484,
+      "median_rel": 8.528374261610831e-05,
+      "p95_rel": 0.010808497779281525,
+      "max_rel": 0.3456211368627717,
+      "inner_r2_2p25_median_rel": 0.07988683239300877,
+      "inner_r2_2p25_p95_rel": 0.26120636334417213,
+      "inner_r2_2p25_max_rel": 0.3456211368627717
+    },
+    {
+      "stage": "first_linear_step",
+      "cg_iterations": 323
+    },
+    {
+      "stage": "nonlinear_0",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 0.16183179575415368,
+      "median_rel": 3.465781143556039e-09,
+      "p95_rel": 2.3736169781487762e-05,
+      "max_rel": 0.031963050285412464,
+      "inner_r2_2p25_median_rel": 0.0015577385990531588,
+      "inner_r2_2p25_p95_rel": 0.021562231827137013,
+      "inner_r2_2p25_max_rel": 0.031963050285412464,
+      "cg_iterations": 308,
+      "jacobian_fd_relative_l2": 8.0070981855958e-05,
+      "jacobian_fd_norm_ratio": 1.0000000333450991,
+      "jacobian_fd_cosine": 0.9999999967943212,
+      "jacobian_fd_inner_relative_l2": 2.2225882759246966e-06,
+      "accepted_factor": 1.0
+    },
+    {
+      "stage": "nonlinear_1",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 0.0005175565244781218,
+      "median_rel": 8.084397349092695e-13,
+      "p95_rel": 3.4444585455478066e-10,
+      "max_rel": 0.00011143381117209274,
+      "inner_r2_2p25_median_rel": 1.322980387562388e-06,
+      "inner_r2_2p25_p95_rel": 8.735904116292658e-05,
+      "inner_r2_2p25_max_rel": 0.00011143381117209274,
+      "cg_iterations": 303,
+      "accepted_factor": 1.0
+    },
+    {
+      "stage": "nonlinear_2",
+      "lower_facets": 141866,
+      "hidden_active": 0,
+      "relative_l2": 5.827342006321146e-09,
+      "median_rel": 4.0421986745463475e-13,
+      "p95_rel": 1.616879469818539e-12,
+      "max_rel": 1.4799499897182815e-09,
+      "inner_r2_2p25_median_rel": 1.503192632096923e-12,
+      "inner_r2_2p25_p95_rel": 8.395596119549332e-10,
+      "inner_r2_2p25_max_rel": 1.4799499897182815e-09
+    }
+  ],
+  "total_wall_seconds": 12.089352490002057,
+  "worst_cells": [
+    {
+      "site": 33603,
+      "initial_r": 2.042158210386747,
+      "relative_volume_error": 1.4799499897182815e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 27267,
+      "initial_r": 2.042158210386747,
+      "relative_volume_error": 1.4797478797845542e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 38180,
+      "initial_r": 2.042158210386747,
+      "relative_volume_error": 1.4796468248176906e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 31844,
+      "initial_r": 2.042158210386747,
+      "relative_volume_error": 1.4790404950165086e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 31338,
+      "initial_r": 2.0805319707348886,
+      "relative_volume_error": 1.4236623731752236e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 27269,
+      "initial_r": 2.0805319707348886,
+      "relative_volume_error": 1.4229549884071781e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 34109,
+      "initial_r": 2.0805319707348886,
+      "relative_volume_error": 1.4228539334403143e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 38178,
+      "initial_r": 2.0805319707348886,
+      "relative_volume_error": 1.422651823506587e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 33853,
+      "initial_r": 2.0593014971708246,
+      "relative_volume_error": 1.35009435729848e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 38179,
+      "initial_r": 2.0593014971708246,
+      "relative_volume_error": 1.3499933023316164e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 27268,
+      "initial_r": 2.0593014971708246,
+      "relative_volume_error": 1.3498922473647528e-09,
+      "target_area": 0.0087890625
+    },
+    {
+      "site": 31594,
+      "initial_r": 2.0593014971708246,
+      "relative_volume_error": 1.3488816976961162e-09,
+      "target_area": 0.0087890625
+    }
+  ],
+  "limitation": "Geometric t=6 existence test only; no time evolution, weighted-face conservation or near-AREPO runtime evidence"
+}

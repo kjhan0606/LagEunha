@@ -1,0 +1,81 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/rk4_diagnostics/varpress_w0_geom_cfl_long_20261026/C010/to10/log",
+  "start_t": 6.00015,
+  "final_t": 6.59892,
+  "start_step": 32480,
+  "final_step": 40724,
+  "time_advance": 0.59877,
+  "records": 8245,
+  "global_dt": {
+    "n": 8245,
+    "min": 8.93704e-08,
+    "p05": 5.527884e-06,
+    "median": 6.05265e-05,
+    "p95": 0.0001763286,
+    "max": 0.000326334
+  },
+  "cpu_step_seconds": {
+    "n": 8245,
+    "min": 0.4,
+    "p05": 0.4,
+    "median": 0.4,
+    "p95": 0.5,
+    "max": 1.7
+  },
+  "gpu_tess_milliseconds": {
+    "n": 32983,
+    "min": 27.582,
+    "p05": 29.075,
+    "median": 30.93,
+    "p95": 33.86979999999999,
+    "max": 51.563
+  },
+  "bins": [
+    {
+      "tlo": 6.0,
+      "thi": 6.25,
+      "steps": 3538,
+      "dt": {
+        "n": 3538,
+        "min": 1.12788e-07,
+        "p05": 4.914869000000001e-06,
+        "median": 5.8252e-05,
+        "p95": 0.00017316514999999994,
+        "max": 0.000293338
+      },
+      "count_dt_below_1e_minus_5": 321,
+      "count_dt_below_1e_minus_6": 46
+    },
+    {
+      "tlo": 6.25,
+      "thi": 6.5,
+      "steps": 3427,
+      "dt": {
+        "n": 3427,
+        "min": 8.93704e-08,
+        "p05": 5.537406e-06,
+        "median": 6.1121e-05,
+        "p95": 0.0001749143,
+        "max": 0.000298494
+      },
+      "count_dt_below_1e_minus_5": 296,
+      "count_dt_below_1e_minus_6": 49
+    },
+    {
+      "tlo": 6.5,
+      "thi": 6.6,
+      "steps": 1280,
+      "dt": {
+        "n": 1280,
+        "min": 4.44577e-07,
+        "p05": 9.54412e-06,
+        "median": 6.378579999999999e-05,
+        "p95": 0.00018603544999999994,
+        "max": 0.000326334
+      },
+      "count_dt_below_1e_minus_5": 74,
+      "count_dt_below_1e_minus_6": 12
+    }
+  ],
+  "limitation": "Log line timings only; CPU and GPU stage measurements can overlap or omit communication. Throughput from wall clock must be measured separately."
+}

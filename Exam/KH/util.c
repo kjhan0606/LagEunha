@@ -31,7 +31,6 @@ int kh_makemap(SimParameters *simpar, int icount){
 	int nyimg = NY(simpar);
 	float *map = (float*)malloc(sizeof(float)*nximg*nyimg);
 	float *img = (float*)malloc(sizeof(float)*nximg*nyimg);
-	postype meanvol = Lx*Ly/nximg/nyimg;
 //	float *ndist = (float*)malloc(sizeof(float)*nximg*nyimg);
 	int i,j;
 	int ii,jj;
@@ -90,8 +89,8 @@ int kh_makemap(SimParameters *simpar, int icount){
 							postype dist2 = distx*distx + disty*disty;
 							if(dist2 < idist) {
 								idist = dist2;
+								/* Cell density, including refined cells and evolved volumes. */
 								nearden = tt->den;
-								nearden = tt->mass/meanvol;
 							}
 						}
 						tmp = tmp->next;
@@ -619,14 +618,38 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	nbp = VORO_NP(simpar);
 
 	{
+		/* A non-Cartesian Kepler generator file has unequal initial cell areas.
+		 * The profile above assigned m = rho(x_i) * meanvol before tessellation.
+		 * Rebase that mass once to the measured initial Voronoi area, so the
+		 * prescribed density and constant pressure are both true at t=0.
+		 * Subsequent W=0 evolution keeps this cell mass fixed. This opt-in is
+		 * limited to the glass-fed Kepler IC and never changes the original grid.
+		 */
+		const char *rebase_env = getenv("EUNHA_KEPLER_MASS_FROM_CELL_VOLUME");
+		const char *ic_env = getenv("EUNHA_IC");
+		int rebase_kepler_mass = use_glass && rebase_env && strcmp(rebase_env, "1") == 0
+			&& ic_env && strcmp(ic_env, "kepler") == 0 && GAS_Kappa(simpar) == 0;
 		size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype)
 		                             : sizeof(treevorork4particletype);
 		char *bp_raw = (char*)res;
 		for(i=0;i<nbp;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			if(rebase_kepler_mass){
+				postype target_rho = bpi->mass/meanvol;
+				if(!(bpi->volume > 0) || !isfinite(bpi->volume) || !(target_rho > 0)){
+					fprintf(stderr, "[KEPLER_IC_MASS_REBASE] invalid initial cell id=%zu V=%g rho=%g\n",
+						(size_t)PINDX(bpi), (double)bpi->volume, (double)target_rho);
+					MPI_Abort(MPI_COMM_WORLD, 93);
+				}
+				bpi->mass = target_rho*bpi->volume;
+				bpi->den = target_rho;
+			}
 			bpi->ie = bpi->pressure*bpi->volume/(Gamma-1);
 			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
 		}
+		if(rebase_kepler_mass)
+			DEBUGPRINT("[KEPLER_IC_MASS_REBASE] rank=%d cells=%d, m=rho_target*VoronoiVolume\n",
+				MYID(simpar), nbp);
 	}
 	VORO_NPAD(simpar) = 0;
 
@@ -817,10 +840,11 @@ void kh_findVol(SimParameters *simpar){
     postype xmin,ymin,zmin,xmax,ymax,zmax, cellsize;
     cellsize = BASICCELL_CELLWIDTH(simpar) = KH_GridSize(simpar);
     // xmin,ymin,xmax,ymax are the boundaries of the local domain.
-    xmin = KH_XMIN(simpar)-cellsize;
-    ymin = KH_YMIN(simpar)-cellsize;
-    xmax = KH_XMAX(simpar)+cellsize;
-    ymax = KH_YMAX(simpar)+cellsize;
+    postype halo_width = gfs_kepler_halo_width(cellsize);
+    xmin = KH_XMIN(simpar)-halo_width;
+    ymin = KH_YMIN(simpar)-halo_width;
+    xmax = KH_XMAX(simpar)+halo_width;
+    ymax = KH_YMAX(simpar)+halo_width;
 
 //  DEBUGPRINT("P%d has cell info. %g : %g %g %g %g\n", MYID(simpar), cellsize, xmin,ymin,xmax,ymax);
 

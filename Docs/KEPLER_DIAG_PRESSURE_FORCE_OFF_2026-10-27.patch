@@ -1,0 +1,41 @@
+diff --git a/Exam/Makefile b/Exam/Makefile
+--- a/Exam/Makefile
++++ b/Exam/Makefile
+@@ -96,6 +96,9 @@ ifdef GFS_VARPRESS_W0
+ NVCCFLAGS  += -DGFS_VARPRESS_W0
+ endif
++ifdef GFS_DIAG_PRESSURE_FORCE_OFF
++NVCCFLAGS  += -DGFS_DIAG_PRESSURE_FORCE_OFF
++endif
+ ifdef GPU_VALIDATE
+ CCFLAGS    += -DGPU_VALIDATE
+ NVCCFLAGS  += -DGPU_VALIDATE
+ endif
+diff --git a/Exam/exam_gpu.cu b/Exam/exam_gpu.cu
+--- a/Exam/exam_gpu.cu
++++ b/Exam/exam_gpu.cu
+@@ -1164,8 +1164,14 @@
+         const double b_ix = 0.5*dSx + facearea*off_x*dramp_inv;
+         const double b_iy = 0.5*dSy + facearea*off_y*dramp_inv;
+         const double dp = ibp_pressure - jbp_pressure;
++#ifdef GFS_DIAG_PRESSURE_FORCE_OFF
++        /* Causal control only: retain geometric PdV and EOS, suppress F_p. */
++        const double var_fx = 0.0;
++        const double var_fy = 0.0;
++#else
+         const double var_fx = dp*b_ix;
+         const double var_fy = dp*b_iy;
++#endif
+         const double var_vdot = uradx*dSx + urady*dSy;
+         if (thermal64) thermal_rate64 -= ibp_pressure * var_vdot;
+         if (var_geom_cfl>0 || var_geom_audit) var_sweep_abs+=fabs(var_vdot);
+@@ -2138,5 +2144,9 @@
+     if (force_call == 1)
+         fprintf(stderr, "[VARPRESS_W0] experimental smooth fixed-mass variational pressure active\n");
++#ifdef GFS_DIAG_PRESSURE_FORCE_OFF
++    if (force_call == 1)
++        fprintf(stderr, "[DIAG_PRESSURE_FORCE_OFF] pressure force suppressed; geometric PdV retained; not a physical solution\n");
++#endif
+ #endif
+     if (dump_call < 0) {
+         const char *s = getenv("GFS_GPU_FACE_DUMP_CALL");

@@ -1,0 +1,64 @@
+{
+  "field": "v=(0,x), rho=1, divergence(v)=0, W=0, exact geometric Voronoi faces",
+  "cell": 24,
+  "area": 1.0646331284866322,
+  "finite_difference_epsilon": 1e-05,
+  "area_rate_finite_difference": -0.005208347542140501,
+  "area_rate_from_faces": -0.005208347562135115,
+  "integrated_fluid_normal_flux": 1.5959455978986625e-16,
+  "ale_cell_mass_rate": -0.005208347562135274,
+  "relative_mass_rate": -0.004892152444606811,
+  "face_vector_closure_norm": 8.694409141350492e-17,
+  "faces": [
+    {
+      "neighbor": 30,
+      "length": 0.019080284302665507,
+      "face_normal_speed": -0.3416971583547949,
+      "fluid_normal_speed": -0.34285102108735543,
+      "relative_normal_speed": -0.0011538627325605177
+    },
+    {
+      "neighbor": 17,
+      "length": 1.0375393798237893,
+      "face_normal_speed": -0.03314181264469044,
+      "fluid_normal_speed": -0.014461675753852422,
+      "relative_normal_speed": 0.018680136890838018
+    },
+    {
+      "neighbor": 23,
+      "length": 0.9595116114050811,
+      "face_normal_speed": 0.03550399126572721,
+      "fluid_normal_speed": 0.023664137174246896,
+      "relative_normal_speed": -0.011839854091480313
+    },
+    {
+      "neighbor": 25,
+      "length": 0.9745046503586052,
+      "face_normal_speed": -0.0205401610560272,
+      "fluid_normal_speed": -0.007773764115926708,
+      "relative_normal_speed": 0.012766396940100493
+    },
+    {
+      "neighbor": 31,
+      "length": 1.0404861145528266,
+      "face_normal_speed": -0.001078832439890246,
+      "fluid_normal_speed": -0.015954580559560002,
+      "relative_normal_speed": -0.014875748119669756
+    },
+    {
+      "neighbor": 32,
+      "length": 0.06480020036409748,
+      "face_normal_speed": 0.3513842201955526,
+      "fluid_normal_speed": 0.35518914053155576,
+      "relative_normal_speed": 0.003804920336003159
+    }
+  ],
+  "checks": {
+    "finite_closed_cell": true,
+    "incompressible_fluid_flux": true,
+    "face_speed_matches_area_derivative": true,
+    "ale_mass_rate_matches_rho_area_rate": true,
+    "nonzero_mass_rate_at_W0": true
+  },
+  "scope": "Kinematic counterexample for exact geometric ALE flux, not a native Kepler run or a proof that fixed-mass schemes cannot converge."
+}

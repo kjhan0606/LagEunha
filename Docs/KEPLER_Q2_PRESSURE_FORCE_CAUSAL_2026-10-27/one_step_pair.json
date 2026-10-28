@@ -1,0 +1,27 @@
+{
+  "original_one_step_audit": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/force_inputs_t65_a10_v1/jitter/audit_short.json",
+  "diagnostic_one_step_audit": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_t65_short_a10_v1/audit_short.json",
+  "accepted_parent_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+  "original_endpoint_sha256": "5a85190e87b38143c9efd483eb3f5c239df4fabab51fe01a466c8c70cf161027",
+  "diagnostic_endpoint_sha256": "0793c73fc5e0a0e2d45917b338c7cf435a0716bd586192033d4d51521fc9d683",
+  "diagnostic_binary_sha256": "0a65c373613a5b31f8449b456387ebcf80d72136a81e46eec10c9692a8bed5e7",
+  "time": 6.5005,
+  "dt": 0.0005,
+  "disk_velocity_difference_mass_weighted_rms": 1.253450799445883e-10,
+  "disk_velocity_difference_over_dt_rms": 2.5069015988917657e-07,
+  "frozen_t65_pressure_force_rms": 2.5068546781099286e-07,
+  "difference_acceleration_over_frozen_pressure_force_rms": 1.0000187169931496,
+  "disk_position_difference_mass_weighted_rms": 3.134019640388414e-14,
+  "disk_density_difference_mass_weighted_mean": 2.4582177739560746e-12,
+  "original_short_energy_relative": 3.1526826869032327e-15,
+  "diagnostic_short_energy_relative": 9.939246997131771e-14,
+  "original_short_orbit_error_max": 2.8804555372885906e-09,
+  "diagnostic_short_orbit_error_max": 2.880453397974092e-09,
+  "checks": {
+    "same_restart_sha256": true,
+    "both_short_safety_gates": true,
+    "changed_disk_velocity": true,
+    "bounded_intervention": true
+  },
+  "scope": "Pressure-force-off causal control at one saved RK4 step. Geometric PdV/EOS retained; energy conservation is not the physical variational operator. No long-time repair claim."
+}

@@ -1,0 +1,72 @@
+{
+  "time": 10.0,
+  "stage": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_to10_a10_v1/staging.json",
+  "one_step_pair": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_t65_short_a10_v1/pressure_off_pair.json",
+  "one_step_pressure_acceleration_ratio": 1.0000187169931496,
+  "original_t10_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/jitter005_to10_a10_v1/audit_t10.json",
+  "original_t10_failed_checks": [
+    "disk_ballistic_residual"
+  ],
+  "diagnostic_native_receipt": "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/pressure_force_off_jitter_to10_a10_v1/audit_t10_native.json",
+  "diagnostic_native_failed_checks": [
+    "disk_ballistic_residual"
+  ],
+  "accepted_parent_sha256": "d02e15ebd01193f1da002d87d689f83525b0150541a9f78dedbc451702c5a2ff",
+  "diagnostic_endpoint_sha256": "8f8fbdb78fe03f2b51d88b514dffc06f6f8c585b8acb2b1a80f589e39590ad73",
+  "safety_checks": {
+    "finite_positive": true,
+    "fixed_mass_exact": true,
+    "W0_exact": true,
+    "initial_area_tiles_polygon": true,
+    "endpoint_area_tiles_polygon": true,
+    "density_and_EOS": true,
+    "zero_injection": true,
+    "inside_polygon_incircle": true,
+    "no_wall_crossing": true,
+    "fixed_polygon_enabled": true
+  },
+  "metric_comparison": {
+    "disk_density_abs_mass_weighted": {
+      "original": 0.0023744566230898692,
+      "pressure_force_off": 0.00232123206865578,
+      "diagnostic_over_original_magnitude": 0.9775845328499503
+    },
+    "disk_ballistic_density_abs_mass_weighted": {
+      "original": 0.001471921993474236,
+      "pressure_force_off": 0.001471921993474236,
+      "diagnostic_over_original_magnitude": 1.0
+    },
+    "disk_native_minus_ballistic_abs_mass_weighted": {
+      "original": 0.0011966838851015498,
+      "pressure_force_off": 0.001135360709316635,
+      "diagnostic_over_original_magnitude": 0.9487557436442698
+    },
+    "disk_entropy_log_abs_mass_weighted": {
+      "original": 2.0330185174703598e-05,
+      "pressure_force_off": 2.0336325274987775e-05,
+      "diagnostic_over_original_magnitude": 1.0003020189059477
+    },
+    "disk_position_error_abs_mass_weighted": {
+      "original": 1.6248517997752304e-05,
+      "pressure_force_off": 1.524822277576776e-05,
+      "diagnostic_over_original_magnitude": 0.938437756469672
+    },
+    "disk_radial_speed_rms_over_circular": {
+      "original": 1.2971211057245976e-06,
+      "pressure_force_off": 6.440486630471257e-07,
+      "diagnostic_over_original_magnitude": 0.49652161251924687
+    },
+    "disk_angular_momentum_relative": {
+      "original": -1.1621259510263826e-11,
+      "pressure_force_off": -9.58910728598994e-12,
+      "diagnostic_over_original_magnitude": 0.8251349414855506
+    },
+    "total_energy_relative": {
+      "original": 8.076547859470891e-09,
+      "pressure_force_off": 1.8485491865618727e-08,
+      "diagnostic_over_original_magnitude": 2.2887862719641885
+    }
+  },
+  "hypothesis_density_residual_reduced": true,
+  "scope": "Causal diagnostic with native pressure force suppressed from accepted t6.5 jitter state. Geometric PdV/EOS retained, but physical momentum-energy adjoint broken; this is not an accepted hydro solution or a method to use at long time."
+}

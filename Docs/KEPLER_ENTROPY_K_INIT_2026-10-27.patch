@@ -1,0 +1,44 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10714,6 +10714,41 @@
+ 		sbp[i].rk4.w2backup = sbp[i].w2;
+ 	}
+ 
++	/* The Kepler/KH initializer leaves stress.K at zero.  In the optional
++	 * entropy formulation K is the authoritative adiabatic state, so set it
++	 * from each accepted cell's U, mass and volume before the first geometry
++	 * and EOS update.  A positive K in an entropy-mode restart is retained. */
++	if(GAS_ENTROPY_MODE(simpar) == 1){
++		static int entropy_k_initialized = 0;
++		if(!entropy_k_initialized){
++			int nset = 0;
++			for(i=0;i<VORO_NP(simpar);i++){
++				if(sbp[i].stress.K > 0) continue;
++				double U = (double)sbp[i].ie;
++				double V = (double)sbp[i].volume;
++				double m = (double)sbp[i].mass;
++				if(!(U > 0 && V > 0 && m > 0)){
++					fprintf(stderr,"[ENTROPY_K_INIT] invalid accepted state rank=%d i=%d U=%g V=%g m=%g\n",
++						MYID(simpar),i,U,V,m);
++					MPI_Abort(MPI_COMM(simpar),97);
++				}
++				double rho = m / V;
++				double K = ((double)Gamma - 1.0) * (U / V) / pow(rho, (double)Gamma);
++				if(!(K > 0 && isfinite(K))){
++					fprintf(stderr,"[ENTROPY_K_INIT] invalid K rank=%d i=%d K=%g\n",
++						MYID(simpar),i,K);
++					MPI_Abort(MPI_COMM(simpar),97);
++				}
++				sbp[i].stress.K = (postype)K;
++				if(!(sbp[i].stress.K > 0)) MPI_Abort(MPI_COMM(simpar),97);
++				nset++;
++			}
++			fprintf(stderr,"[ENTROPY_K_INIT] rank=%d initialized=%d retained=%td\n",
++				MYID(simpar),nset,VORO_NP(simpar)-nset);
++			entropy_k_initialized = 1;
++		}
++	}
++
+ 	/* GFS_DUAL_ENERGY: give every particle an entropy on the first call.
+ 	 * The KH/Kepler IC leaves stress.K = 0. */
+ 	{

@@ -1,0 +1,64 @@
+{
+  "definition": "RMS of (native velocity at t=.001 minus t=0 velocity rotated by softened circular Omega*t) divided by .001; mass weights from initial cells",
+  "cases": {
+    "aligned": {
+      "initial_sha256": "a4d557ae5837e933c8c2c8c335f91e5c97d36f9a3bdb8acd5568b0499140b665",
+      "t001_sha256": "5228f0ffb0b05c7c16c99575b593403c85b5aab6c30be8f2d55d0f09bc453ab6",
+      "t001": 0.001,
+      "late_time": 5.775473491592131,
+      "late_endpoint_sha256": "95ef285cc048bcf733876792d3d29d2917563d98b5915f9eb55cb44bf5044bdd",
+      "bands": {
+        "inner": {
+          "r_min": 0.5,
+          "r_max": 0.75,
+          "mean_abs_velocity_defect_per_t": 4.4687934577152996e-10,
+          "rms_velocity_defect_per_t": 6.835527160398621e-10,
+          "p99_velocity_defect_per_t": 2.7575982085590445e-09,
+          "naive_constant_accel_position_at_t577547": 1.140032434289135e-08,
+          "actual_position_rms_at_t577547": 6.353649499654858e-07,
+          "actual_over_naive": 55.73218189723404
+        },
+        "disk": {
+          "r_min": 0.5,
+          "r_max": 2.0,
+          "mean_abs_velocity_defect_per_t": 8.723308194281814e-11,
+          "rms_velocity_defect_per_t": 2.1765711163846232e-10,
+          "p99_velocity_defect_per_t": 9.052601708145546e-10,
+          "naive_constant_accel_position_at_t577547": 3.6300955434586834e-09,
+          "actual_position_rms_at_t577547": 2.3647472529359667e-07,
+          "actual_over_naive": 65.1428378296314
+        }
+      }
+    },
+    "jitter005": {
+      "initial_sha256": "8b561cdf05bfa06d2f42c5e7b782a2174719d5306967f4201b487d6113c4ab5b",
+      "t001_sha256": "6c54048b0dd9effd7a548a479de0616d5fb126697c8d43d5f74a57c9fbe04fa1",
+      "t001": 0.001,
+      "late_time": 5.775473491594761,
+      "late_endpoint_sha256": "1feeb7317bbfb7a3c03bbba95aa99192bf2e03c40b89879bfc74434e134e9faa",
+      "bands": {
+        "inner": {
+          "r_min": 0.5,
+          "r_max": 0.75,
+          "mean_abs_velocity_defect_per_t": 1.4336081978025234e-09,
+          "rms_velocity_defect_per_t": 1.8645315589950594e-09,
+          "p99_velocity_defect_per_t": 5.435778950182237e-09,
+          "naive_constant_accel_position_at_t577547": 3.109674502248677e-08,
+          "actual_position_rms_at_t577547": 7.316899351866641e-06,
+          "actual_over_naive": 235.29470195596429
+        },
+        "disk": {
+          "r_min": 0.5,
+          "r_max": 2.0,
+          "mean_abs_velocity_defect_per_t": 4.92134154809076e-10,
+          "rms_velocity_defect_per_t": 7.696930974878347e-10,
+          "p99_velocity_defect_per_t": 2.9916775103120767e-09,
+          "naive_constant_accel_position_at_t577547": 1.2836977675533499e-08,
+          "actual_position_rms_at_t577547": 5.152420350812626e-06,
+          "actual_over_naive": 401.3733201883514
+        }
+      }
+    }
+  },
+  "scope": "A one-step velocity-defect proxy, not a direct acceleration field or proof of later force causation."
+}
