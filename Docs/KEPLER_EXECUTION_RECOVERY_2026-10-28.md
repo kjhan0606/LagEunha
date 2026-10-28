@@ -105,3 +105,43 @@ Its immediate continuation 437779 is the sole pending Kepler job. Existing
 sources, snapshots, receipts and scripts are preserved; other projects were
 excluded. The active native recovery still advances via its guarded
 successive segments.
+
+
+## 2026-10-29 — measured MPI result and late-checkpoint acceleration gate
+
+The completed 438959 comparison supersedes its earlier pending status: both
+one- and two-rank runs reached exact t=1.55 and passed the native and pair
+checks. Wall times were 893.109 and 821.519 s, respectively (1.08714x
+speedup, 54.36% parallel efficiency). Adding GPUs alone is insufficient.
+See `KEPLER_Q1_MPI_A100_PAIR_RESULT_2026-10-28.json` for field differences.
+
+The single focused padding-reuse benchmark was revised before any allocation
+started. Unstarted job 439001 was replaced by 439029, using the same late
+accepted t=2.6549183918680868 checkpoint, native candidate executable and
+halo=40. The seven cases include the canonical-executable qualifier, one-
+and two-rank reuse off/on pairs, and one extra single-rank case enabling the
+existing `GFS_GPU_LOCAL_PERIODIC_SYNC=1` device alias refresh. Only that
+extra case changes the alias flag. The accepted checkpoint has all 147456
+IDs in identity order, satisfying the existing alias kernel's indexing
+precondition; runtime image/state checks and fallback remain in the kernel.
+The late-state runtime result is not available yet. Initial t=.001 parity
+and wrapper speedup are historical feasibility evidence, not promotion.
+
+The revised auditor requires exact field bytes, identical printed accepted
+step traces and per-stage tessellation/force counts for each same-rank pair,
+distinct devices per MPI rank, existing native physics gates, and zero
+negative-energy/floor/dual-energy/source-floor events in every ledger. The
+extra device-alias case must actually use that path without host fallback.
+Nine targeted acceptance/rejection tests pass. See
+`KEPLER_PADDING_REUSE_LOCAL_SYNC_STAGE_2026-10-29.json` for scripts, hashes
+and job replacement provenance. Seven endpoint snapshots require about
+595 MB; the extension adds one approximately 85 MB snapshot and no extra
+queued job. The first archive command incorrectly used `scontrol show
+batch_script`; it stopped before changing the auditor or cancelling the
+job. Corrected `scontrol write batch_script` preserved the queued script
+and the replacement completed. Original long job 438957 was untouched.
+
+No acceleration path has been promoted. t>6, intrinsic-spin dynamics and
+GIZMO's t=120/t=600 density-field comparison remain unverified; retain the
+paper's longer approximate 1000-orbit prose target for explicit reference-
+radius interpretation, as required by the benchmark comparison contract.

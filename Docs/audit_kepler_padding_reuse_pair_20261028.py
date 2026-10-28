@@ -11,7 +11,8 @@ from audit_kepler_polar_long_gate_20261027 import ordered
 ROOT = Path('/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q1/tess_padding_reuse_pair_20261028')
 FIELDS = ('x', 'y', 'vx', 'vy', 'mass', 'volume', 'ie', 'den', 'pressure', 'w2')
 RANKS = {'qualifier_old': 1, 'qualifier_new': 1, 'np1_control': 1,
-         'np1_reuse': 1, 'np2_control': 2, 'np2_reuse': 2}
+         'np1_reuse': 1, 'np2_control': 2, 'np2_reuse': 2,
+         'np1_reuse_local_sync': 1}
 
 
 def bitwise_equal(a, b):
@@ -59,6 +60,8 @@ def load(name):
                'GPU_assignments': re.findall(r'^\[GPU\] rank .*$', text, re.M),
                'parsed_GPU_assignments': assignments,
                'distinct_GPU_per_rank': bool(assignments_valid),
+               'local_periodic_sync_used': '[LOCAL_PERIODIC_SYNC] rank=0 device alias refresh' in text,
+               'host_refresh_or_alias_fallback': '[HALO_SYNC]' in text or 'alias invariants failed' in text,
                'force_wrapper_mean_ms': float(np.mean([float(t[2]) for t in timings])) if timings else None,
                'force_sync_SoA_mean_ms': float(np.mean([float(t[0]) for t in timings])) if timings else None}
     return state, trace, metrics
@@ -109,12 +112,18 @@ def main():
         one = compare('np1_control', 'np1_reuse', exact=True)
         two = compare('np2_control', 'np2_reuse', exact=True)
         rank = compare('np1_reuse', 'np2_reuse', exact=False)
+        local = compare('np1_reuse', 'np1_reuse_local_sync', exact=True)
+        local_executed = (local['metrics'][1]['local_periodic_sync_used']
+                          and not local['metrics'][1]['host_refresh_or_alias_fallback'])
         banners = one['metrics'][1]['reuse_ranks'] == [0] and two['metrics'][1]['reuse_ranks'] == [0, 1]
         result = {'scope': 'Short operator parity and throughput check at the preserved late checkpoint; no t>6 claim',
                   'one_rank_pair': one, 'two_rank_pair': two, 'candidate_rank_comparison': rank,
+                  'one_rank_local_sync_pair': local,
+                  'local_sync_executed_without_host_fallback': local_executed,
                   'reuse_executed_on_all_ranks': banners,
                   'candidate_MPI_speedup_np1_over_np2': rank['wall_speedup_control_over_candidate'],
-                  'passed': bool(one['passed'] and two['passed'] and rank['passed'] and banners),
+                  'passed': bool(one['passed'] and two['passed'] and rank['passed'] and local['passed']
+                                 and banners and local_executed),
                   'production_promoted': False}
         output = ROOT / 'comparison.json'
     result['auditor_sha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()

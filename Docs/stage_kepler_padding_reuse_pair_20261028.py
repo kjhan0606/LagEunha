@@ -35,7 +35,8 @@ def main():
              ('np1_control', 1, 0, 2.66, ROOT / 'eunha2.reuse.exe'),
              ('np2_control', 2, 0, 2.66, ROOT / 'eunha2.reuse.exe'),
              ('np2_reuse', 2, 1, 2.66, ROOT / 'eunha2.reuse.exe'),
-             ('np1_reuse', 1, 1, 2.66, ROOT / 'eunha2.reuse.exe')]
+             ('np1_reuse', 1, 1, 2.66, ROOT / 'eunha2.reuse.exe'),
+             ('np1_reuse_local_sync', 1, 1, 2.66, ROOT / 'eunha2.reuse.exe')]
     for name, ranks, reuse, target, binary in cases:
         run = ROOT / name
         run.mkdir()
@@ -52,6 +53,8 @@ def main():
         script = script.replace('--time 1.55', f'--time {target:.17g}')
         script = script.replace('GFS_KEPLER_HALO_CELLS=28', 'GFS_KEPLER_HALO_CELLS=40')
         script = script.replace('t1p55', 'endpoint')
+        if name == 'np1_reuse_local_sync':
+            script = script.replace('GFS_GPU_LOCAL_PERIODIC_SYNC=0', 'GFS_GPU_LOCAL_PERIODIC_SYNC=1')
         script = script.replace("TIMEFORMAT=", f'export GFS_REUSE_TESS_PADDING={reuse}\nTIMEFORMAT=', 1)
         (run / 'run.sh').write_text(script)
         subprocess.run(['bash', '-n', str(run / 'run.sh')], check=True)
@@ -71,7 +74,7 @@ def main():
 #SBATCH --output={ROOT}/slurm-%j.out
 #SBATCH --error={ROOT}/slurm-%j.err
 set -euo pipefail
-for name in qualifier_old qualifier_new np1_control np2_control np2_reuse np1_reuse; do
+for name in qualifier_old qualifier_new np1_control np2_control np2_reuse np1_reuse np1_reuse_local_sync; do
   cd {ROOT}/$name
   bash run.sh > runner.out 2> runner.err
   if [[ "$name" == qualifier_new ]]; then
@@ -88,7 +91,8 @@ done
                'qualifier': 'Old canonical executable versus new executable with reuse disabled; all ten fields exact',
                'operator_gate': 'Same new executable with reuse off/on; exact ten fields and accepted-step trace per rank count',
                'physics_gate': 'Existing 15 checks per run, strict stage positivity and zero injection in every ledger',
-               'storage_policy': 'Six exact endpoint snapshots, about 510 MB plus binaries; existing parent files linked',
+               'storage_policy': 'Seven exact endpoint snapshots, about 595 MB plus binaries; existing parent files linked',
+               'local_sync_gate': 'Additional single-rank case enables existing GPU periodic alias refresh; require exact fields/stage counts and no host fallback',
                'build': build, 'cases': [{'name': n, 'ranks': r, 'reuse': e, 'target': t} for n, r, e, t, _ in cases],
                'native_simulator': 'Compiled CUDA+MPI+OpenMP eunha2; Python only stages and audits',
                'existing_long_run_untouched': True}

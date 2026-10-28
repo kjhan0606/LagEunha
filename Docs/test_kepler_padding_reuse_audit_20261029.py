@@ -1,5 +1,10 @@
 """Exercise rejection paths of the native padding-reuse acceptance gate."""
 from copy import deepcopy
+from contextlib import redirect_stdout
+import io
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
@@ -68,6 +73,35 @@ class AcceptanceGateTests(unittest.TestCase):
         self.assertFalse(audit.gpu_assignments(good.replace('device 1/2', 'device 0/2'), 2)[1])
         self.assertFalse(audit.gpu_assignments(good.splitlines()[0], 2)[1])
         self.assertFalse(audit.gpu_assignments('', 1)[1])
+
+    def aggregate(self, local_used, fallback):
+        def pair(ranks):
+            m = {'reuse_ranks': list(range(ranks))}
+            return {'passed': True, 'metrics': [m, deepcopy(m)],
+                    'wall_speedup_control_over_candidate': 1.1}
+        one, two, cross, local = pair(1), pair(2), pair(2), pair(1)
+        local['metrics'][1].update(local_periodic_sync_used=local_used,
+                                   host_refresh_or_alias_fallback=fallback)
+        with TemporaryDirectory() as directory:
+            with (patch.object(audit, 'ROOT', Path(directory)),
+                  patch.object(audit, 'compare', side_effect=[one, two, cross, local]),
+                  patch('sys.argv', ['audit']), redirect_stdout(io.StringIO())):
+                try:
+                    audit.main()
+                except SystemExit:
+                    pass
+            return json.loads((Path(directory) / 'comparison.json').read_text())
+
+    def test_aggregate_accepts_verified_local_device_path(self):
+        self.assertTrue(self.aggregate(True, False)['passed'])
+
+    def test_aggregate_rejects_alias_fallback(self):
+        result = self.aggregate(True, True)
+        self.assertFalse(result['passed'])
+        self.assertFalse(result['local_sync_executed_without_host_fallback'])
+
+    def test_aggregate_rejects_unexecuted_alias_path(self):
+        self.assertFalse(self.aggregate(False, False)['passed'])
 
 
 if __name__ == '__main__':
