@@ -1,0 +1,5 @@
+# Radial localization of timestep-dependent entropy changes
+
+Using the three existing t=10 to 10.1 control snapshots, cells were binned by their original t=0 radius and matched by global ID. The absolute incremental log-entropy change increased from half to quarter cap in every reported radial band. In the r0=0.75–1.0 band, the mass-weighted mean increased from 5.90e-5 to 1.47e-4. The mass-weighted Pearson correlation between the signed half and quarter increments in that band was -0.390; the same-sign mass fraction was 0.409. For r0=1.75–2.0 the corresponding correlation was 0.058 and same-sign mass fraction 0.802. See `ENTROPY_LOCALITY.json` for all bands, signed means, tails, counts and endpoint hashes.
+
+These are descriptive measurements of a short evolution from the same already-damaged t10 state. A negative correlation does not identify the cause or prove roundoff; signed increments also should not automatically be called physical heating. The thermal64 comparison is needed to assess sensitivity to the changed arithmetic path.
