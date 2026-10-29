@@ -238,6 +238,36 @@ use it in every moment equation. A face flux must be computed once and applied
 with opposite sign to its two cells to conserve global mass, momentum, and
 angular momentum.
 
+**Qualification added 2026-10-29:** simply imposing `Fmass=0` is not by
+itself a valid Euler ALE flux on a generator-defined Voronoi face. The
+continuum flux is `rho (u_n - w_n)`, so for positive interface density it
+vanishes only when the face's geometric normal speed `w_n` agrees with the
+normal material/contact speed. In a moving Voronoi mesh, its speed is
+determined by the generators and can differ from the fluid speed; the
+[Q2 diagnostic](KEPLER_Q2_FACE_SLIP_2026-10-29.json) provides a kinematic
+example, although it does not itself measure the Riemann contact speed.
+
+For a simple counterexample, take a uniform stationary fluid on either side
+of a face moving right with speed `w_n>0`. The Euler ALE mass flux is
+`-rho*w_n`; zeroing it while retaining the same moving face is a different
+discrete model. Therefore the fixed-mass spin branch needs a derived
+non-Euler moment closure or a material-interface representation compatible
+with the generator geometry; it cannot claim that the displayed continuum
+ALE equations remain exact after zeroing their mass flux. No generator
+steering is allowed. The compatibility of that closure with fixed mass,
+pressure work, moments, energy and the W0 Voronoi limit is a prerequisite,
+not a post-hoc conservation test. A branch that moves mass with evolving
+weights also needs the actual geometric face speed and the full consistent
+fluxes; weight changes alone do not establish this compatibility.
+
+The running Q1 native log identifies `GFS_VARPRESS_W0`, whose
+[CUDA force/work branch](../Exam/exam_gpu.cu) uses a fixed-mass variational
+`B^T P` force and `-P Vdot` internal-energy work. It is not the candidate
+Euler ALE moment formulation above, and its successful fixed-mass bookkeeping
+does not supply the missing moment/traction closure. This distinction also
+means a pressure-work-only or shared-normal-traction substitution cannot be
+claimed as a spin implementation. Existing W0 runs remain unchanged.
+
 Recover the centroid and central moments by `C=H/M`,
 `S=Q-H H^T/M`, and `B=R-H P^T/M`. Under a linear within-cell velocity closure,
 `u(x)=P/M + G (x-C)` with `G=B^T S^{-1}`. Then
