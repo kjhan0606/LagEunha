@@ -327,3 +327,10 @@ stage-by-stage trajectory, positivity, bitwise or tolerance-based baseline
 equivalence, device runtime and adverse-seed costs must be measured before
 using this option in a solver. It does not make the nonlinear fit itself an
 AREPO-speed method.
+
+The host test also covers an affinely changed polygon, passing the seed
+in-place, and a finite but extreme seed that makes the seeded Newton attempt
+fail. In that case the warm wrapper recovers the exact cold-start result;
+nonfinite seeds similarly fall back. This is a safety check on a few synthetic
+states, not a performance qualification for a moving native mesh; a failed
+seed incurs the cost of both attempts.

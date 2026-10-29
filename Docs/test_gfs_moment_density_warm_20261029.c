@@ -34,9 +34,24 @@ int main(void){
     double invalid[]={NAN,0,0,0,0};
     check(gfs_moment_density_fit_warm(poly,&b,0,0,invalid,&bad),"invalid seed fallback");
     for(int k=0;k<5;k++)check(bad.lambda[k]==cold.lambda[k],"fallback did not use cold solution");
+    double extreme[]={1e6,-1e6,1e6,1e6,-1e6};
+    check(!gfs_moment_density_fit_seeded(poly,&b,0,0,extreme,&bad),"extreme seed should exercise retry");
+    check(gfs_moment_density_fit_warm(poly,&b,0,0,extreme,&bad),"finite bad seed fallback");
+    for(int k=0;k<5;k++)check(bad.lambda[k]==cold.lambda[k],"finite fallback differs from cold");
+    GfsMomentDensity in_place=old;
+    check(gfs_moment_density_fit_warm(poly,&b,0,0,in_place.lambda,&in_place),"in-place seed");
+    for(int k=0;k<5;k++)check(fabs(in_place.lambda[k]-cold.lambda[k])<1e-9,"in-place mismatch");
+    double sx[5],sy[5];
+    for(int k=0;k<5;k++){sx[k]=1.02*x[k]+.03*y[k]+.2;sy[k]=.01*x[k]+.98*y[k]-.1;}
+    GfsMomentPolygon moved={sx,sy,5,1};
+    GfsMomentState moved_state=make_state(moved,second);
+    GfsMomentDensity moved_cold,moved_warm;
+    check(gfs_moment_density_fit(moved,&moved_state,0,0,&moved_cold),"moved polygon cold fit");
+    check(gfs_moment_density_fit_warm(moved,&moved_state,0,0,old.lambda,&moved_warm),"moved polygon warm fit");
+    for(int k=0;k<5;k++)check(fabs(moved_warm.lambda[k]-moved_cold.lambda[k])<1e-9,"moved polygon mismatch");
     GfsMomentState impossible=b;impossible.a[GFM_QXX]=-1;
     check(!gfs_moment_density_fit_warm(poly,&impossible,0,0,old.lambda,&bad),"invalid state accepted");
-    printf("moment density fit: cold=%d warm=%d iterations; residual %.3g %.3g; fallback passes\n",
+    printf("moment density fit: cold=%d warm=%d iterations; residual %.3g %.3g; finite/nonfinite fallback, alias and moved polygon pass\n",
            cold.iterations,warm.iterations,cold.residual,warm.residual);
     return 0;
 }
