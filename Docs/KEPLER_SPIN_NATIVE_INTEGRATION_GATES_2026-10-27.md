@@ -396,3 +396,25 @@ handling, race-free GPU/MPI ownership, or RK4 staging. Exact pair conservation
 does not prove consistency, convergence, entropy behavior or Kepler stability.
 The helper is unused by the native solver and the ongoing runs; those physics
 and implementation gates must be closed before activation.
+
+### Independent geometry check
+
+The actual C flux helper was loaded through a [small bridge](gfs_weight_exchange_bridge_20261029.c)
+and compared to centered finite differences of independently rebuilt power-cell
+areas at fixed generators, with unit density. The geometry was taken from
+the saved Q2 t=47.50031653561342 state; all **3,931** inner-disk cells and
+their touching faces were checked with a reproducible nonuniform weight-rate
+field. For W=0, the relative RMS difference between the flux-predicted area
+rate and the finite-difference rate was **2.27e-9** for step 1e-4. Repeating
+with small synthetic nonzero **signed** power weights gave **1.82e-9**.
+Results for two smaller differencing steps show increasing roundoff, not a
+measured convergence order. See [W0 receipt](KEPLER_WEIGHT_EXCHANGE_GEOMETRY_2026-10-29.json),
+[weighted receipt](KEPLER_WEIGHT_EXCHANGE_WEIGHTED_GEOMETRY_2026-10-29.json),
+and their matching audit scripts.
+
+This validates the infinitesimal weight-speed sign and area coefficient for
+these frozen geometries and sample rates; the nonzero signed weights are a
+mathematical power-diagram test, not evidence that all native weight paths
+support negative values. It does not validate the unresolved material-slip
+closure, finite-step conservation through topology changes, physical face
+states, pressure work, or a native GPU/MPI evolution.
