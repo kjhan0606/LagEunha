@@ -77,3 +77,17 @@ The t47.5 nearest-neighbor radial relative speed has mass mean -6.29e-5, while t
 At t47.5003 all 244 close-neighbor **sites** identified above have a nearest peer on the same original radial ring, within 1e-10 in initial radius. Their separation is predominantly azimuthal: median absolute projection of the separation unit vector on the radial direction is 0.0232, and none exceed 1/sqrt(2). All 244 have negative relative speed along their separation line, with mass mean -5.95e-4. For the same 244 sites, the independently reconstructed **total** W0 pressure accelerations give mass-mean `(a_pressure,j-a_pressure,i) dot n_ij = +4.24e-5`; all 244 projected differences are positive. Positive means the pressure contribution to the second derivative of separation acts in the separating direction at that instant. At t48.4 all 312 close sites likewise approach while all reconstructed pressure differences have positive projection (mean +4.93e-5).
 
 The reconstruction includes each site's pressure contributions from all faces; it does not isolate the shared face. Gravity and transverse relative motion also contribute to the full second derivative of pair separation. This is not a direct native Q2 RHS output, a time-integrated force, evidence about artificial-viscosity forces, or proof of the instability's cause. It argues against a claim that the reconstructed **net pressure acceleration at these snapshots** directly pulls these close pairs together. It also does not imply these results hold for the earlier HLLC/AV configurations or for other initial meshes. Full definitions and source hashes are in [the receipt](KEPLER_Q2_PAIR_PRESSURE_2026-10-29.json) and [reader](audit_kepler_q2_pair_pressure_20261029.py).
+
+## Why approaching despite pressure response?
+
+For separation d=|x_j-x_i|, the instantaneous identity is `d_ddot = n dot (a_j-a_i) + |v_rel - n(n dot v_rel)|^2/d`. For the same 244 close-neighbor sites at t47.5003, the mass-mean contributions reconstructed from the saved state are:
+
+| Contribution to separation acceleration | Mass mean |
+|---|---:|
+| Central gravity projected along pair | -4.57455e-2 |
+| Transverse relative-velocity curvature | +4.55791e-2 |
+| Gravity plus curvature | -1.66417e-4 |
+| Reconstructed total pressure-acceleration difference | +4.24079e-5 |
+| Sum of these three terms | -1.24010e-4 |
+
+The gravity and velocity-curvature terms nearly cancel, but their residual is negative. The positive pressure term offsets about a quarter of that residual at this saved instant. The modeled sum is negative for all 244 selected sites; all are already approaching. As a check, applying the gravity-plus-curvature expression to the same IDs on exact circular orbits yields a mass-mean absolute separation acceleration of 1.90e-16. The result describes the instantaneous stored state, not why the velocity or position perturbation appeared. Pressure may have helped generate the earlier velocity deviations even though its current projection resists them. The reconstructed pressure has not been checked against native Q2 RHS, and the sum does not claim to include any other native acceleration terms. See [receipt](KEPLER_Q2_PAIR_KINEMATICS_2026-10-29.json) and [script](audit_kepler_q2_pair_kinematics_20261029.py).
