@@ -88,3 +88,16 @@ cost. Its interpretation must also distinguish cell-average momentum from
 generator point velocity; reconstructing physical point velocity is not
 itself a steering term, but it changes the relation `p=m*x_dot` and needs a
 consistent model. No historical code was merged into the current branch.
+
+After reviewing the older pressure-kick and positive-transport history, Astra
+withdrew its suggestion to repeat linear-shear evolution. The historical
+`staggered_pressure_kick_2026-10-09.md` already found that independently
+moving adjacent positive pieces after a pressure kick can create gaps or
+overlap. One potential research direction is a shared space-time face
+construction coupling pressure impulse/work, positive transport and the same
+finite-step mass constraint. It must be reconciled with the later historical
+gravity/fluid prototype and its documented cold-vacuum failure; it is not a
+complete derived closure or an approved production implementation. A new
+pressure-gradient/compression test with topology changes is warranted only
+after a candidate actually addresses a previously observed failure, and must
+measure positivity, budgets, convergence, iterations and full-step cost.
