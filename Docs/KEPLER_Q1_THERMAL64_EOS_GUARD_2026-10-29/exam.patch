@@ -1,0 +1,5 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -11390 +11390 @@
+-    if(thermal64 && wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
++    if(thermal64 && wall.on && (!gfs_wall_valid(simpar,&wall,0) || !gfs_wall_t64_eos_valid(simpar,&wall))) goto gfs_wall_trial_rejected;

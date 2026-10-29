@@ -1,0 +1,21 @@
+--- a/Exam/gfs_wall_events.inc
++++ b/Exam/gfs_wall_events.inc
+@@ -169,0 +170,18 @@
++/* Reject an unrepresentable trial before gfs_t64_eos can abort.
++ * No state, pressure floor or internal energy is modified here. */
++static int gfs_wall_t64_eos_valid(SimParameters *s,GfsWallEventStep *w){
++    if(!w->on || !gfs_thermal64_requested())return 1;
++    treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
++    for(ptrdiff_t i=0;i<w->np;i++){
++        double U=GFS_T64_U(p[i]),V=GFS_T64_V(p[i]);
++        double rho=p[i].mass/V,P=(GAS_GAMMA(s)-1.)*U/V;
++        double cs=sqrt(GAS_GAMMA(s)*P/rho);
++        float rf=(float)rho,pf=(float)P,cf=(float)cs;
++        if(!GFS_T64_TAGGED(p[i]) || !(U>0) || !(V>0) || !isfinite(U) || !isfinite(V) ||
++           !(rho>0) || !(P>0) || !(cs>0) || !isfinite(rho) || !isfinite(P) || !isfinite(cs) ||
++           !(rf>0) || !(pf>0) || !(cf>0) || !isfinite(rf) || !isfinite(pf) || !isfinite(cf)){
++            w->reason="nonpositive_or_nonfinite_trial";return 0;
++        }
++    }
++    return 1;
++}

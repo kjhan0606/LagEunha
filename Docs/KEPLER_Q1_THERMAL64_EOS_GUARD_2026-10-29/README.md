@@ -1,0 +1,9 @@
+# Experimental bounded thermal64 final-EOS trial guard
+
+In the earlier wall/thermal64 candidate, final U64 and V64 could each be positive and finite while EOS pressure, density, sound speed, or their float mirrors were nonfinite or unrepresentable. `gfs_t64_eos` could abort before the wall transaction had a chance to reject the trial. The separate candidate checks the final double EOS and float representability before that call, and routes an invalid trial through the existing wall reject/restore/shorten path. It changes neither U nor pressure to repair the state. Accepted-start initialization and other failure paths are unchanged.
+
+The actual extracted guard passes compiled tests for a normal state, double overflow, float overflow/underflow, zero volume, missing tag, density underflow and disabled thermal mode. A native Ada no-rejection one-step comparison matches the original candidate's entire saved particle body except runtime pointers and matches the full restart footer for all 90,352 cells (`NORMAL_PARITY.json`).
+
+A separate **verification-only** executable deliberately inserts an invalid U64 into a trial after final geometry. In a real CUDA run from the preserved t=0.0015284 checkpoint, the guard rejected this trial, the wall controller reported exact payload/ledger restoration and GPU cache invalidation, and two smaller steps reached t=0.0016. The final payload, EOS, fixed masses, W0 and no-injection checks passed; the total-energy difference rounded to zero in the independent sum (`INJECTION_AUDIT.json`). The injection executable is never a production candidate.
+
+This validates one artificial failure and one normal step, not all invalid intermediate stages, wall impacts, long-time physics, MPI or performance. The existing H200 jobs still use the earlier frozen candidate; this experimental guard has not been promoted into their runs. Full source changes are the two patches, the build script and pinned build receipts.
