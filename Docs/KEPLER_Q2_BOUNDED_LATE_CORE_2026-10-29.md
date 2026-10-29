@@ -135,3 +135,27 @@ The earlier handover's `m≈0.4N` referred to tangential displacement in differe
 The matched tangential-displacement analysis now uses the same 11 rings and snapshots. It measures each site's angular offset from its same-time analytic softened circular orbit, multiplies by its original radius, and removes the per-ring mean. At t47.5, **63.3%** of the ring-mass-weighted displacement power is in `0.2 <= m/N < 0.3`, and **0.037%** is in `0.4 <= m/N <= 0.5`. The largest individual displacement mode has the same integer `m` as the angular-momentum residual in all 11 rings at this checkpoint. At t30 the two largest modes agree in 5 of 11 rings. See the [receipt](KEPLER_Q2_RING_DISPLACEMENT_2026-10-29.json) and [reader](audit_kepler_q2_ring_displacement_20261029.py).
 
 This is a comparison of spectra, not a demonstrated common growth rate or pressure-driven causal mechanism. The old `m≈0.4N` result used a different experiment; the individual Q2 peak modes are integer-valued and their normalization differs across rings. Both the ring-index transforms and analytic circular reference are post-processing of a fixed-polygon run, not a periodic physical boundary. No simulation was restarted for this comparison.
+
+## Pressure-torque projection onto the full-ring modes
+
+The independently reconstructed W0 pressure force was projected onto the
+mean-subtracted specific-angular-momentum error of **all** original sites in
+the same 11 inner rings, rather than selecting close pairs. For the band
+`0.2 <= m/N < 0.3`, the ring-mass-weighted projection
+`sum Re(conj(L_k) tau_k) / sum |L_k|^2` is **0.190–0.205** per unit time
+across the eight snapshots from t30 to t47.5. The band power increases by a
+factor of **894.3** over that interval; the corresponding average logarithmic
+amplitude rate is **0.1942** per unit time. Reconstructed cell areas match
+stored volumes to relative error below 5.95e-8. See the [receipt](KEPLER_Q2_MODE_TORQUE_2026-10-29.json) and [reader](audit_kepler_q2_mode_torque_20261029.py).
+
+The projection is the instantaneous contribution of reconstructed pressure
+torque to the amplitude's logarithmic rate, not physical energy injection.
+Its agreement with the interval-averaged rate is evidence consistent with
+pressure-torque feedback across the whole inner ring population, beyond the
+late-selected close pairs. The snapshots are sparse, the force is reconstructed
+and only three extreme pairs have a native RHS cross-check, and the coupled
+trajectory includes other possible terms. This does not prove causality or
+show a remedy. A pressure/resolution-controlled native comparison and a
+conservative operator that changes this feedback without steering remain
+necessary. Weak-power bands in the receipt can have large, noisy normalized
+rates and should not be ranked by rate alone.
