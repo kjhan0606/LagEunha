@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
+#include<stdint.h>
 #include<string.h>
 #include<mpi.h>
 #include<omp.h>
@@ -24,6 +25,14 @@ static Voro2D_point neigh[Nneigh];
  * with full per-particle stride (so stress fields survive restart). Old
  * snapshots start with tnp >= 0 in the first int, so detection is safe. */
 #define KH_SNAP_MAGIC (-1)
+
+static void kh_read_checked(FILE *fp,void *dst,size_t size,size_t count,
+                            const char *field,MPI_Comm comm){
+	if(fread(dst,size,count,fp)!=count){
+		fprintf(stderr,"[KH_RESTART] incomplete or unreadable %s\n",field);
+		MPI_Abort(comm,99);
+	}
+}
 
 void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	int np = VORO_NP(simpar);
@@ -102,14 +111,18 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 		if(!fp) { fprintf(stderr,"P0: cannot open %s for read\n",infile); MPI_Abort(MPI_COMM(simpar),1); }
 		/* Detect format: new snapshots start with magic == -1, old ones with tnp >= 0. */
 		int first;
-		fread(&first, sizeof(int), 1, fp);
+		kh_read_checked(fp,&first,sizeof(int),1,"snapshot header",MPI_COMM(simpar));
 		int file_has_stress;
 		size_t file_p_size;
 		if(first == KH_SNAP_MAGIC){
 			int ps_int, hs_int;
-			fread(&np, sizeof(int), 1, fp);
-			fread(&ps_int, sizeof(int), 1, fp);
-			fread(&hs_int, sizeof(int), 1, fp);
+			kh_read_checked(fp,&np,sizeof(int),1,"particle count",MPI_COMM(simpar));
+			kh_read_checked(fp,&ps_int,sizeof(int),1,"particle stride",MPI_COMM(simpar));
+			kh_read_checked(fp,&hs_int,sizeof(int),1,"stress flag",MPI_COMM(simpar));
+			if(ps_int<=0 || (hs_int!=0 && hs_int!=1)){
+				fprintf(stderr,"[KH_RESTART] invalid particle stride or stress flag\n");
+				MPI_Abort(MPI_COMM(simpar),99);
+			}
 			file_p_size = (size_t)ps_int;
 			file_has_stress = hs_int;
 			printf("P0: new-format snapshot (np=%d p_size=%zu has_stress=%d)\n",
@@ -120,6 +133,11 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 			file_has_stress = 0;
 			printf("P0: legacy snapshot (np=%d, no stress fields)\n", np);
 		}
+		if(np<=0 || file_p_size<offsetof(treevorork4particletype,bp) ||
+		   (size_t)np>SIZE_MAX/file_p_size || (size_t)np>SIZE_MAX/p_size){
+			fprintf(stderr,"[KH_RESTART] invalid particle count or incompatible record prefix\n");
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
 		/* The stress record contains tagged extended state. Its offsets are
 		 * known only for the current ABI; prefix conversion of an unknown
 		 * stress stride can silently erase a thermal or moment tag. Old
@@ -129,20 +147,35 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 				file_p_size, sizeof(treevorostressrk4particletype));
 			MPI_Abort(MPI_COMM(simpar),99);
 		}
+		/* Reject a truncated or impossible file before allocating from its
+		 * untrusted particle count. The reader requires at least the records
+		 * plus time, dt and previous dt; later legacy footer fields may vary. */
+		long record_start=ftell(fp);
+		if(record_start<0 || fseek(fp,0,SEEK_END)!=0){
+			fprintf(stderr,"[KH_RESTART] cannot inspect snapshot length\n");MPI_Abort(MPI_COMM(simpar),99);
+		}
+		long file_end=ftell(fp);
+		size_t record_bytes=(size_t)np*file_p_size;
+		size_t footer_bytes=2*sizeof(postype)+sizeof(float);
+		if(file_end<record_start || record_bytes>SIZE_MAX-footer_bytes ||
+		   (size_t)(file_end-record_start)<record_bytes+footer_bytes ||
+		   fseek(fp,record_start,SEEK_SET)!=0){
+			fprintf(stderr,"[KH_RESTART] truncated snapshot or invalid record count\n");MPI_Abort(MPI_COMM(simpar),99);
+		}
 		VORO_TNP(simpar) = VORO_NP(simpar) = np;
 		VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*np);
 		if(use_stress){
 			treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 			if(file_has_stress && file_p_size == sizeof(treevorostressrk4particletype)){
 				/* Direct read: file and memory layouts match */
-				fread(sbp, file_p_size, np, fp);
+				kh_read_checked(fp,sbp,file_p_size,(size_t)np,"particle records",MPI_COMM(simpar));
 			} else {
 				/* Legacy or smaller: read common prefix only, zero-init the rest,
 				 * and seed alpha_cd = cd_amax so CD10 has a non-zero starting
 				 * value (decays toward local equilibrium over ~hundreds of steps). */
 				size_t common_size = offsetof(treevorork4particletype, bp);
 				treevorork4particletype *tmp_buf = (treevorork4particletype*)my_malloc(file_p_size*np);
-				fread(tmp_buf, file_p_size, np, fp);
+				kh_read_checked(fp,tmp_buf,file_p_size,(size_t)np,"particle records",MPI_COMM(simpar));
 				float cd_amax = GAS_CDAMAX(simpar);
 				int ii;
 				char *tbuf_raw = (char*)tmp_buf;
@@ -155,7 +188,7 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 			}
 		} else {
 			if(file_p_size == p_size){
-				fread(VORORK4_TBP(simpar), p_size, np, fp);
+				kh_read_checked(fp,VORORK4_TBP(simpar),p_size,(size_t)np,"particle records",MPI_COMM(simpar));
 			} else {
 				/* File has more (stress) than we need: read each particle, take common */
 				size_t common_size = offsetof(treevorork4particletype, bp);
@@ -163,7 +196,7 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 				char *dst = (char*)VORORK4_TBP(simpar);
 				int ii;
 				for(ii=0;ii<np;ii++){
-					fread(scratch, file_p_size, 1, fp);
+					kh_read_checked(fp,scratch,file_p_size,1,"particle record",MPI_COMM(simpar));
 					if(file_has_stress){
 						treevorostressrk4particletype *full=(void*)scratch;
 						if(kh_restart_has_extended_state(full)){
@@ -190,9 +223,9 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 				}
 			}
 		}
-		fread(t,sizeof(postype), 1,fp);
-		fread(dt,sizeof(postype), 1,fp);
-		fread(&GAS_dtold(simpar),sizeof(float), 1,fp);
+		kh_read_checked(fp,t,sizeof(postype),1,"time",MPI_COMM(simpar));
+		kh_read_checked(fp,dt,sizeof(postype),1,"timestep",MPI_COMM(simpar));
+		kh_read_checked(fp,&GAS_dtold(simpar),sizeof(float),1,"previous timestep",MPI_COMM(simpar));
 		fclose(fp);
 	}
 	else {

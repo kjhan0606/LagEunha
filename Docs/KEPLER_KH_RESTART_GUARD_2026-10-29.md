@@ -45,3 +45,26 @@ moment reading used `GFS_MOMENT_INIT_ONLY=1`. These exercise the actual reader
 branch and MPI abort in one process, not CUDA kernels, migration, real legacy
 file compatibility across ABIs, truncated-file handling, multi-rank I/O or
 continuous-versus-restarted evolution. Those production gates remain open.
+
+## Truncated-file and header rejection
+
+The native reader now checks every header, particle-record and required
+time/timestep read; it validates positive particle count, legal stress flag,
+minimum common-prefix stride and multiplication bounds. Before allocating
+from the file's count, it checks that the file contains the claimed complete
+records plus the required time, dt and previous-dt fields. The reader does
+not demand an exact total file length, preserving legacy variations in later
+footer fields. Truncation or an impossible header calls `MPI_Abort` instead
+of continuing with partially read state.
+
+The actual-reader harness was rebuilt on lageunha in CPU and `USE_CUDA`
+configurations using singleton MPI. Old headers, current non-stress and
+untagged current stress records remained accepted; thermal/moment tags were
+preserved in the stress build and rejected in non-stress conversion. Both
+builds rejected truncated headers, records, and required footer data, a
+too-small prefix, a claimed two-billion-particle file with insufficient
+bytes, an invalid stress flag, and incompatible stress stride. This checks
+the CPU file reader compiled with the CUDA configuration; it does not run
+GPU kernels, exercise corrupted-but-same-length data, validate snapshot
+checksums, or prove a continuous-versus-restarted simulation. The existing
+running binaries and frozen submissions were not modified.
