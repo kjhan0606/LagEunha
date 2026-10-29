@@ -1,0 +1,81 @@
+{
+  "initial_sha256": "a4d557ae5837e933c8c2c8c335f91e5c97d36f9a3bdb8acd5568b0499140b665",
+  "cases": [
+    {
+      "time": 30.0,
+      "cells": 3931,
+      "position_error_over_sqrt_initial_area": {
+        "mass_mean": 0.0012666282731227426,
+        "cell_p99": 0.010031489584955396,
+        "max": 0.01814757770878142
+      },
+      "actual_density_change_abs": 0.0013626256021418601,
+      "variants": {
+        "actual": {
+          "moved_generators": 0,
+          "absolute_mass_mean": 0.0013626260638729961,
+          "signed_mass_mean": 7.625794090225165e-06,
+          "p99_abs": 0.0122400421378322
+        },
+        "inner_disk_only": {
+          "moved_generators": 3931,
+          "absolute_mass_mean": 0.00040744280231101536,
+          "signed_mass_mean": 8.511464637440185e-08,
+          "p99_abs": 0.0012655801109538439
+        },
+        "all_inside_0p75": {
+          "moved_generators": 5407,
+          "absolute_mass_mean": 0.00040738851576114507,
+          "signed_mass_mean": 2.6980585871731405e-07,
+          "p99_abs": 0.0012655801109361469
+        },
+        "all_inside_0p85": {
+          "moved_generators": 7704,
+          "absolute_mass_mean": 0.00040732573632224763,
+          "signed_mass_mean": 2.7138279575943234e-07,
+          "p99_abs": 0.0012655801109361469
+        }
+      },
+      "endpoint_sha256": "12ea9ff96ec70c4816f834618229c972d0a8e47814bcdc2a38a20a8e89aad50e"
+    },
+    {
+      "time": 48.4,
+      "cells": 3931,
+      "position_error_over_sqrt_initial_area": {
+        "mass_mean": 0.02831084214774637,
+        "cell_p99": 0.23768595816638424,
+        "max": 0.4049443864685808
+      },
+      "actual_density_change_abs": 0.04007784186689609,
+      "variants": {
+        "actual": {
+          "moved_generators": 0,
+          "absolute_mass_mean": 0.04007784234446507,
+          "signed_mass_mean": 0.0066190081085341435,
+          "p99_abs": 0.36096979151597147
+        },
+        "inner_disk_only": {
+          "moved_generators": 3931,
+          "absolute_mass_mean": 0.0004424172562830404,
+          "signed_mass_mean": -3.7574019195718752e-06,
+          "p99_abs": 0.00174416596421802
+        },
+        "all_inside_0p75": {
+          "moved_generators": 5407,
+          "absolute_mass_mean": 0.00041390520135306834,
+          "signed_mass_mean": 1.979101608813229e-07,
+          "p99_abs": 0.0013377407944555105
+        },
+        "all_inside_0p85": {
+          "moved_generators": 7704,
+          "absolute_mass_mean": 0.00041239223010437184,
+          "signed_mass_mean": 2.913327682855284e-07,
+          "p99_abs": 0.0013377407944555105
+        }
+      },
+      "endpoint_sha256": "709acb748dd3670fe0942254ff074749027d546eabde8ce77a5dfbb0b1bf386f"
+    }
+  ],
+  "script_sha256": "6b7fc551f7baeddc961cc700f728f4192f3934dce0bdd039fbd0e4e86be4bc1d",
+  "scope": "Each counterfactual replaces specified current generator positions with exact circular-reference positions; it is not a physical evolution, a force decomposition, a flux, or a causal explanation. Density norms are not additive."
+}
