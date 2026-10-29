@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "checks": {
+    "source_hash": true,
+    "one_step_completed": true,
+    "fixed_mass": true,
+    "finite_state": true,
+    "positive_thermal": true,
+    "finite_stage_mass_residual": true,
+    "active_generator_velocity_no_steering": true,
+    "gas_energy_boundary_and_gravity_budget": true,
+    "central_angular_momentum_boundary_budget": true
+  },
+  "cells": 4084,
+  "frozen_cells": 1878,
+  "dt": 1e-05,
+  "min_thermal_energy": 1.7986754465115633e-07,
+  "gas_energy_delta": -4.51466121431654e-14,
+  "boundary_energy_exchange": 2.0934284776865948e-14,
+  "gravity_work": -6.607291827355468e-14,
+  "gas_energy_budget_residual": -7.978646476664026e-18,
+  "central_angular_momentum_delta": 7.505975008204047e-14,
+  "central_boundary_angular_exchange": 7.511119086678862e-14,
+  "central_angular_budget_residual": -5.1440784748153553e-17,
+  "wall_seconds_shared_host": 69.21167267201236,
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_LU_FrozenBoundaryFix_20261029/initial_state.json": "4722b8054be55b9a03e6cddd7039034c5c1bd34d3dc4fd6b548e93af0b9d25ab",
+    "/gpfs/kjhan/LagForce/Kepler_LU_FrozenBoundaryFix_20261029/one_step_checkpoint.json": "9791357a3a3cc8281522c80f1fde0b443690b88551d40eac7695e9202002fe48",
+    "/gpfs/kjhan/LagForce/Kepler_LU_FrozenBoundaryFix_20261029/kinetic_factor_rhs.py": "57ee42ae5927d951b4712a64934849e19db5db37e6336640adf587bdd77e5861",
+    "/gpfs/kjhan/LagForce/Kepler_LU_FrozenBoundaryFix_20261029/resume_one_step.py": "b76b03b1031cce97040573a73bf84e115c2556f0b4b3942be1322230a2dee900",
+    "/gpfs/kjhan/LagForce/Git_publish_20261028/Docs/audit_kepler_lu_frozen_exterior_20261029.py": "c454b4c6467dac959b3fd458c8a946e903f3a9cddab975cae1e36d464a6d27f2"
+  },
+  "scope": "One historical 4084-cell Python moment step from saved initial state with prescribed frozen outer cells, not the current no-steering production wall setup or native CUDA/MPI. Energy and angular budgets are one-step checks, not temporal convergence, endpoint geometry realizability, physical accuracy, performance or t>6 stability."
+}

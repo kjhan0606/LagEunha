@@ -1,0 +1,12 @@
+--- a/kinetic_factor_rhs.py
++++ b/kinetic_factor_rhs.py
+@@ -124,6 +124,9 @@
+         else:
+             z=prescribed_z;analytic_mass=float(max(abs(evaluate_bins(bin_arrays(bins),N,z)[0])))
+     for edge_id,(i,j,a,b,n,length) in enumerate(edges):
++        # A boundary touching only a prescribed frozen cell cannot affect
++        # any active equation or active/exterior exchange.
++        if has_frozen and j<0 and frozen[i]: continue
+         epsilon=face_speed(states,i,j,smoothing,smoothing_length)
+         d=np.linalg.norm(x[j]-x[i]) if j>=0 else 0.
+         edge_nodes=nodes
