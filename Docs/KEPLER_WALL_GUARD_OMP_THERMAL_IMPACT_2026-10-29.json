@@ -1,0 +1,172 @@
+{
+  "passed": true,
+  "checks": {
+    "both_physical_and_thermal_gates": true,
+    "both_real_impacts": true,
+    "both_real_rollbacks": true,
+    "full_record_footer_parity": true
+  },
+  "cases": {
+    "thermal_impact_A": {
+      "initial": "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/thermal_impact_A/khout.011580.dat",
+      "initial_sha256": "c4b11f1996349f5ce8ab664569fa4415cd91b5f836fe9579c98f7dcd51aff758",
+      "initial_time": 48.37534965270793,
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/thermal_impact_A/khout.011584.dat",
+      "endpoint_sha256": "219bd9a62374e8c9444275452d76fde1543a1119909303c146b272d5a94c16af",
+      "time": 48.378,
+      "checks": {
+        "native_exit_zero": true,
+        "native_binary_and_initial_hashes": true,
+        "complete_owned_IDs": true,
+        "same_fixed_masses": true,
+        "W0_exact": true,
+        "finite_positive_state": true,
+        "all_endpoints_inside_polygon_to_roundoff": true,
+        "no_energy_injection": true,
+        "expected_collision_reached": true,
+        "all_impact_gaps_within_tolerance": true,
+        "one_permanent_ledger_per_accepted_prefix": true,
+        "positive_physical_time_prefixes": true,
+        "prefix_times_close": true,
+        "wall_momentum_and_torque_balance": true,
+        "restart_total_energy": true,
+        "no_failed_rollback": true,
+        "no_stop_or_original_crossing_abort": true,
+        "all_double_payload_tagged_finite_positive": true,
+        "float_mirrors_exact": true,
+        "eos_relative_1e-6": true,
+        "double_energy_relative_1e-7": true,
+        "thermal_initialization_log": true
+      },
+      "passed": true,
+      "impacts": [
+        {
+          "step": 11582,
+          "time": 48.377024019249085,
+          "id": 55283,
+          "side": 543,
+          "gap": 9.43689570931383e-16,
+          "tolerance": 2.296963665840794e-14,
+          "vn_before": 0.015025811828864326,
+          "kinetic_roundoff": -3.6753109133386764e-22
+        }
+      ],
+      "accepted_prefixes": 4,
+      "rollbacks": 8,
+      "minimum_accepted_h": 0.0003049587947626331,
+      "maximum_momentum_residual": 5.700296687732331e-18,
+      "maximum_angular_residual": 4.177955474e-15,
+      "restart_relative_total_energy_change": -4.5133128038745116e-14,
+      "minimum_internal_energy": 8.2322412775504e-11,
+      "maximum_endpoint_plane_penetration": -1.4728063930657953e-05,
+      "scope": "Late bounded Q2 event replay past original failure. Validates local collision/rollback/ledger behavior only; not Q1 boundary IC, full event-order convergence, long-time stability or GIZMO reproduction.",
+      "energy64_relative_change": -4.612871174548214e-14,
+      "log_sha256": "7407ffa4a5fbe7d54dc873cd20f68a3bd7fa539f7a6ab276a9767c3eb526ff67"
+    },
+    "thermal_impact_B": {
+      "initial": "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/thermal_impact_B/khout.011580.dat",
+      "initial_sha256": "c4b11f1996349f5ce8ab664569fa4415cd91b5f836fe9579c98f7dcd51aff758",
+      "initial_time": 48.37534965270793,
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/thermal_impact_B/khout.011584.dat",
+      "endpoint_sha256": "bd117f7182db6dc9f9af7af0c6c8c00d515acedeb546dec6045add9a54e1e13e",
+      "time": 48.378,
+      "checks": {
+        "native_exit_zero": true,
+        "native_binary_and_initial_hashes": true,
+        "complete_owned_IDs": true,
+        "same_fixed_masses": true,
+        "W0_exact": true,
+        "finite_positive_state": true,
+        "all_endpoints_inside_polygon_to_roundoff": true,
+        "no_energy_injection": true,
+        "expected_collision_reached": true,
+        "all_impact_gaps_within_tolerance": true,
+        "one_permanent_ledger_per_accepted_prefix": true,
+        "positive_physical_time_prefixes": true,
+        "prefix_times_close": true,
+        "wall_momentum_and_torque_balance": true,
+        "restart_total_energy": true,
+        "no_failed_rollback": true,
+        "no_stop_or_original_crossing_abort": true,
+        "all_double_payload_tagged_finite_positive": true,
+        "float_mirrors_exact": true,
+        "eos_relative_1e-6": true,
+        "double_energy_relative_1e-7": true,
+        "thermal_initialization_log": true
+      },
+      "passed": true,
+      "impacts": [
+        {
+          "step": 11582,
+          "time": 48.377024019249085,
+          "id": 55283,
+          "side": 543,
+          "gap": 9.43689570931383e-16,
+          "tolerance": 2.296963665840794e-14,
+          "vn_before": 0.015025811828864326,
+          "kinetic_roundoff": -3.6753109133386764e-22
+        }
+      ],
+      "accepted_prefixes": 4,
+      "rollbacks": 8,
+      "minimum_accepted_h": 0.0003049587947626331,
+      "maximum_momentum_residual": 5.700296687732331e-18,
+      "maximum_angular_residual": 4.177955474e-15,
+      "restart_relative_total_energy_change": -4.5133128038745116e-14,
+      "minimum_internal_energy": 8.2322412775504e-11,
+      "maximum_endpoint_plane_penetration": -1.4728063930657953e-05,
+      "scope": "Late bounded Q2 event replay past original failure. Validates local collision/rollback/ledger behavior only; not Q1 boundary IC, full event-order convergence, long-time stability or GIZMO reproduction.",
+      "energy64_relative_change": -4.612871174548214e-14,
+      "log_sha256": "2478042e0b0b095abc7c5c24ddc6865dbe0be2ab73923198667b096193563ae6"
+    }
+  },
+  "parity": {
+    "passed": true,
+    "checks": {
+      "native_headers_exact": true,
+      "all_record_bytes_after_next_pointer_exact": true,
+      "full_precision_restart_footer_exact": true
+    },
+    "paths": [
+      "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/thermal_impact_A/khout.011584.dat",
+      "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/thermal_impact_B/khout.011584.dat"
+    ],
+    "sha256": [
+      "219bd9a62374e8c9444275452d76fde1543a1119909303c146b272d5a94c16af",
+      "bd117f7182db6dc9f9af7af0c6c8c00d515acedeb546dec6045add9a54e1e13e"
+    ],
+    "records": 55351,
+    "stride": 576,
+    "changed_records_excluding_pointer": 0,
+    "first_changed_record_indices": [],
+    "differing_body_byte_columns": {},
+    "records_with_different_next_pointer": 51147,
+    "footer_fields": [
+      [
+        48.378,
+        0.0009759807509155394,
+        0.0009759807726368308,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      [
+        48.378,
+        0.0009759807509155394,
+        0.0009759807726368308,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+  },
+  "audit_sha256": "cba88473c36de32192cfdfef5f84889b8f9b7f518382babe2bd4b6a65b338100",
+  "scope": "Same thermal64 executable and legacy pre-impact input, initialized natively at t48.3753, serial vs OpenMP wall guard; one physical collision. Shared Ada GPU: no timing qualification, independent conversion snapshot, MPI, temporal convergence or long-time stability claim."
+}

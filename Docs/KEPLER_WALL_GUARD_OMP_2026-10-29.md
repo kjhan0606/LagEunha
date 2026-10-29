@@ -38,12 +38,35 @@ thermal state and invalid geometry. This is a mock harness using the actual
 extracted guard function, not native fault injection or race-detection proof.
 
 Both native comparisons ran concurrently with the ongoing Ada production
-diagnostic, so their timings are **not valid speed measurements**. A thermal64
-wall-impact comparison, multiple realistic checkpoint geometries, exact
+diagnostic, so their timings are **not valid speed measurements**. Multiple
+realistic checkpoint geometries, an exact
 restart bridge, and isolated ABBA performance test remain required before
 the option is promoted. The current wall-event branch itself is one MPI rank;
 this change does not establish MPI scaling, spin closure or Kepler stability.
 The running Q1 binary was not changed or restarted.
+
+## Actual thermal64 wall impact
+
+Using the separately preserved compact-ID Q2 checkpoint at t=48.37534965270793,
+the same candidate was run with serial and OpenMP guards and thermal64 enabled.
+The native initialization promotes the stored float internal energy exactly
+and recalculates double volume before stepping; no separate initialization
+checkpoint was written. Both runs reach t=48.378, hit the same facet, and
+report eight rollbacks and four accepted prefixes. The physical, finite-state,
+W0/fixed-mass, double-U/V payload and EOS gates pass. Total-energy change
+from the stored pre-initialization state using the authoritative final U64 is
+-4.61e-14 relative in both cases. All records except runtime next pointers,
+and the full footer, agree between serial and OpenMP. See
+[thermal collision receipt](KEPLER_WALL_GUARD_OMP_THERMAL_IMPACT_2026-10-29.json)
+and its [auditor](audit_wall_guard_omp_thermal_impact_20261029.py).
+
+The serial candidate endpoint also matches the pre-existing thermal64 wall
+candidate's independently saved t=48.378 endpoint under the same full-record
+comparison; see [original-candidate parity](KEPLER_WALL_GUARD_OMP_THERMAL_ORIGINAL_PARITY_2026-10-29.json).
+This adds a physical-impact check in thermal64, but the geometry is one
+preserved Q2 event, not a Q1 boundary-convergence or long-time test. These
+Ada runs shared the device with the ongoing Q1 simulation and cannot qualify
+performance. Exact restart-bridge, independent ABBA timing and MPI remain open.
 
 ## Actual wall-impact comparison
 
@@ -54,8 +77,8 @@ accepted prefixes, passed the existing physical gates, and produced identical
 full restart records excluding only runtime next pointers and identical full
 precision footers. See [impact receipt](KEPLER_WALL_GUARD_OMP_IMPACT_2026-10-29.json).
 This collision uses the legacy thermal representation of that checkpoint;
-the earlier Q1 no-impact and forced-retry checks exercise thermal64. It does
-not establish a thermal64 physical-impact replay, MPI, a restart bridge, or
+the earlier Q1 no-impact and forced-retry checks exercise thermal64. On its
+own it does not establish a thermal64 physical-impact replay, MPI, a restart bridge, or
 long-time accuracy. The GPU was shared and timing is not a speed qualification.
 
 In the raw serial-case log, an unrelated CPU line was appended immediately
