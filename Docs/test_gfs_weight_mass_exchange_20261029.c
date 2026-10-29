@@ -11,7 +11,13 @@ int main(void){
     eq(f[0],-1.5*.16/4.);for(int k=0;k<4;k++){eq(f[k]+reverse[k],0);eq(zero[k],0);}
     GfsMomentState a,b;gfs_moment_zero(&a);gfs_moment_zero(&b);
     double ox1=-.2,oy1=.3,ox2=1.7,oy2=-.4;
-    gfs_weight_exchange_pair(&a,&b,.8,-.6,ox1,oy1,ox2,oy2,2.3,f);
+    const double ax=-.3,ay=.2,bx=1.9,by=-1.4;
+    const double dx=bx-ax,dy=by-ay,length=hypot(dx,dy);
+    const double cx=.5*(ax+bx)-ox1,cy=.5*(ay+by)-oy1;
+    if(!gfs_weight_exchange_segment(&a,&b,ax,ay,bx,by,ox1,oy1,ox2,oy2,f))return 5;
+    eq(a.a[GFM_QXX],-f[0]*length*(cx*cx+dx*dx/12));
+    eq(a.a[GFM_QXY],-f[0]*length*(cx*cy+dx*dy/12));
+    eq(a.a[GFM_QYY],-f[0]*length*(cy*cy+dy*dy/12));
     eq(a.a[GFM_M]+b.a[GFM_M],0);eq(a.a[GFM_PX]+b.a[GFM_PX],0);
     eq(a.a[GFM_PY]+b.a[GFM_PY],0);eq(a.a[GFM_E]+b.a[GFM_E],0);
     eq(gfs_moment_Lz(&a,ox1,oy1)+gfs_moment_Lz(&b,ox2,oy2),0);
@@ -27,6 +33,9 @@ int main(void){
     double boosted[4];if(!gfs_weight_exchange_flux(.12,-.04,2.,1.5,.3+vx,-.7+vy,energy,boosted))return 3;
     eq(boosted[0],f[0]);eq(boosted[1],f[1]+vx*f[0]);eq(boosted[2],f[2]+vy*f[0]);
     eq(boosted[3],f[3]+vx*f[1]+vy*f[2]+.5*(vx*vx+vy*vy)*f[0]);
+    GfsMomentState before=a;
+    if(gfs_weight_exchange_segment(&a,&b,0,0,0,0,ox1,oy1,ox2,oy2,f))return 6;
+    for(int k=0;k<GFM_NSTATE;k++)eq(a.a[k],before.a[k]);
     if(gfs_weight_exchange_flux(0,0,0,1,0,0,1,f) ||
        gfs_weight_exchange_flux(NAN,0,1,1,0,0,1,f) ||
        gfs_weight_exchange_flux(0,0,1,-1,0,0,1,f))return 4;

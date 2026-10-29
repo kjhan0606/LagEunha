@@ -20,14 +20,31 @@ GFS_MOM_HD static inline int gfs_weight_exchange_flux(
     return isfinite(flux[0]) && isfinite(flux[1]) && isfinite(flux[2]) && isfinite(flux[3]);
 }
 
-/* One canonical face point and common state. Apply once with opposite signs
- * in fixed reference frames. The caller supplies pressure work separately,
- * chooses a physically justified face state, controls positivity/timestep,
- * and owns race-free shared-face/MPI accumulation. */
-GFS_MOM_HD static inline void gfs_weight_exchange_pair(
+/* One face quadrature point with its own quadrature weight. This point
+ * helper alone is not an exact integral of a segment's second moments. */
+GFS_MOM_HD static inline void gfs_weight_exchange_point(
     GfsMomentState *ri,GfsMomentState *rj,double face_x,double face_y,
-    double ox_i,double oy_i,double ox_j,double oy_j,double length,const double flux[4]){
-    gfs_moment_face_rhs(ri,face_x-ox_i,face_y-oy_i,flux,length);
-    gfs_moment_face_rhs(rj,face_x-ox_j,face_y-oy_j,flux,-length);
+    double ox_i,double oy_i,double ox_j,double oy_j,double quadrature_weight,const double flux[4]){
+    gfs_moment_face_rhs(ri,face_x-ox_i,face_y-oy_i,flux,quadrature_weight);
+    gfs_moment_face_rhs(rj,face_x-ox_j,face_y-oy_j,flux,-quadrature_weight);
+}
+
+/* Two-point Gauss integration for a straight face with a constant shared
+ * flux: exact up to quadratic geometric moments. The caller supplies
+ * pressure work separately, chooses the face state, controls positivity
+ * and timestep, and owns race-free shared-face/MPI accumulation. */
+GFS_MOM_HD static inline int gfs_weight_exchange_segment(
+    GfsMomentState *ri,GfsMomentState *rj,double ax,double ay,double bx,double by,
+    double ox_i,double oy_i,double ox_j,double oy_j,const double flux[4]){
+    if(!isfinite(ax) || !isfinite(ay) || !isfinite(bx) || !isfinite(by) ||
+       !isfinite(ox_i) || !isfinite(oy_i) || !isfinite(ox_j) || !isfinite(oy_j))return 0;
+    for(int k=0;k<4;k++)if(!isfinite(flux[k]))return 0;
+    double dx=bx-ax,dy=by-ay,length=hypot(dx,dy);
+    if(!(length>0) || !isfinite(length))return 0;
+    double cx=ax+.5*dx,cy=ay+.5*dy;
+    const double scale=.28867513459481288225; /* 1/(2 sqrt(3)) */
+    gfs_weight_exchange_point(ri,rj,cx-scale*dx,cy-scale*dy,ox_i,oy_i,ox_j,oy_j,.5*length,flux);
+    gfs_weight_exchange_point(ri,rj,cx+scale*dx,cy+scale*dy,ox_i,oy_i,ox_j,oy_j,.5*length,flux);
+    return 1;
 }
 #endif

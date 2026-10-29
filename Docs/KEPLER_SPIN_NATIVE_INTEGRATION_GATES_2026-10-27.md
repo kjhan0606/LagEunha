@@ -418,3 +418,28 @@ mathematical power-diagram test, not evidence that all native weight paths
 support negative values. It does not validate the unresolved material-slip
 closure, finite-step conservation through topology changes, physical face
 states, pressure work, or a native GPU/MPI evolution.
+
+### Segment-integrated moment correction
+
+The initial exchange helper treated the whole face flux as if concentrated
+at its midpoint. Although that preserves global pair sums, it does **not**
+give the correct local second spatial moments of a finite segment. The point
+interface is now explicitly named `gfs_weight_exchange_point` and takes a
+quadrature weight; the new `gfs_weight_exchange_segment` uses two Gauss
+points for a constant shared flux, integrating straight-face mass moments
+through degree two exactly. A changing reconstructed face state must instead
+be evaluated consistently at the quadrature points; a constant-state segment
+call does not provide higher-order flux reconstruction.
+
+The updated host test checks the analytic local `xx`, `xy`, and `yy` segment
+moments, pair conservation, invalid-segment rejection, and Wdot=0 reduction;
+it passes with strict C99 warnings. A minimal CUDA caller compiles but has
+not run on a GPU. An independent finite-difference check of power-polygon
+area and first/second moments for all 3,931 inner Q2 cells with synthetic
+nonzero signed weights agrees with the actual C segment operator to relative
+RMS **1.82e-9–2.18e-9** across `M`, `H_x`, `H_y`, `Q_xx`, `Q_xy`, and
+`Q_yy` at differencing step 1e-4. See [receipt](KEPLER_WEIGHT_EXCHANGE_MOMENTS_2026-10-29.json)
+and [reader](audit_kepler_weight_exchange_moments_20261029.py).
+This remains an infinitesimal frozen-geometry test, not proof of finite-time
+conservative transport, native negative-weight support, or a working spin
+solver.
