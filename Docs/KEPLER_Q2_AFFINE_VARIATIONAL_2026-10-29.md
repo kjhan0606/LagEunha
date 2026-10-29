@@ -89,3 +89,26 @@ test of baseline contamination, not a definitive linear-response calculation.
 Do not interpret the previous negative numbers as a predicted cure; a proper
 coupled perturbation and full angular-momentum/energy closure are still
 required before implementing or evolving this model.
+
+## Exact-orbit reference with analytic velocity gradients
+
+A second counterfactual replaces both positions and the velocity gradient
+with their softened analytic Kepler values. The reference `A` is rebuilt as
+`G_exact S_exact`, rather than retaining the actual-state `A`. Its analytic
+gradient agrees with centered velocity differences on a sample of inner-disk
+sites to max absolute error below 2.35e-10. Results are:
+
+| Time | Actual projection | Analytic-position/gradient reference projection | Actual minus this reference |
+| --- | ---: | ---: | ---: |
+| 30 | -6.545 | +0.0994 | **-6.644** |
+| 47.5 | -6.906 | +0.00130 | **-6.907** |
+
+This is the **opposite sign** from the fixed-actual-`A` reference above. The
+comparison is strongly sensitive to how the affine moment is perturbed along
+with position. Neither result is a measured mode growth rate, and neither
+reference is a proven solution of an evolved fixed-mass affine model. In
+particular, the analytic reference still assumes uniform cell density and
+does not reproduce the actual exterior boundary's evolution. The result
+reinforces that the `A` dynamics and its coupled conservation law cannot be
+replaced by a frozen-state force projection. See [receipt](KEPLER_Q2_AFFINE_REFERENCE_ANALYTIC_2026-10-29.json)
+and [reader](audit_kepler_q2_affine_reference_analytic_20261029.py).
