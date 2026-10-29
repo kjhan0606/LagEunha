@@ -37,3 +37,25 @@ The native eta=.06 Ada branch completed exact t=.825 from its preserved t=.4125 
 The cap has a significant countervailing thermal result: mass-mean absolute disk log-entropy change rises from **8.49e-6** without the cap to **1.54e-4** with it, although the underlying smooth trajectory is similar. The two runs used the original single-precision thermal representation; this observation is consistent with the independently measured step-count/thermal-precision sensitivity, but is not proof of a unique cause. The separately staged thermal64 comparison is needed before selecting the cap as a long-time physical solution. The existing saved t=.825 snapshot and all prior Q1/Q2 results are preserved.
 
 For the original r0=.5–.75 inner disk at t=.825, both cases have zero sites whose nearest-neighbor distance is below 80% of the same pair's exact-circular reference distance. The one-percentile ratio is about 0.999999 in both; the RMS difference of the nearest pair's specific angular momenta is 3.50e-9 uncapped and 3.53e-9 capped. Its mass-mean absolute log-entropy change is 3.36e-6 uncapped and 3.92e-5 capped. The [receipt](INNER_PAIRS_0825.json) and [reader](../audit_kepler_q1_0825_inner_pairs_20261029.py) choose each endpoint's nearest neighbor independently; their IDs could differ, and mutual pairs can be counted twice. This is an early-time observation, not a demonstration that Q1 will avoid the close-pair growth seen in the distinct Q2 late run.
+
+## Frozen-state individual-timestep arithmetic
+
+The saved capped legacy-thermal Q1 t=.4125 state contains 90,352 cells. Its
+smallest saved final-stage hydro timestep is **6.8301e-4**, while the
+eta=.06 softened orbital limit is **7.6420e-5**, about 8.9 times smaller.
+One cell occupies the shortest power-of-two timestep bin; seven are within
+the first two bins. The initial-radius r0<.1 region has 134 cells; in
+r0=.5–.75 the median combined local constraint is **0.03077**. See
+[receipt](LOCAL_DT_BUDGET_04125.json) and [reader](../audit_kepler_q1_local_dt_budget_20261029.py).
+
+For a frozen .4125-time interval, counting independently active cell updates
+under these stored constraints gives 487,720,096 global updates versus
+821,516 idealized power-of-two block updates, a **594-fold arithmetic count
+ratio**. This is not a wall-time speedup prediction or a performance upper
+bound: the calculation omits same-time face impulses and work, evolving CFLs,
+neighbor timestep coupling, mesh reconstruction, GPU/MPI scheduling,
+gravity accuracy, impact events and rollback. It does not validate an
+asynchronous integrator, and pressure work can itself require short steps.
+It does quantify why the user-planned individual stepping is important after
+the current (3) development, while the small eta global stepping remains a
+diagnostic rather than an AREPO-speed production strategy.
