@@ -47,3 +47,17 @@ comparison auditor was exercised with a deliberately artificial mock in which
 both cases point to the old unscaled t32.5017 endpoint; that checks file and
 calculation plumbing only, and the x4 mock numbers are **not** a simulation
 result. No new evolved results are available at submission.
+
+An additional [quality auditor](audit_kepler_q2_pressure_quality_20261029.py)
+checks the pressure-comparison receipt against independent reconstructed
+power-cell areas for 50,514 original `r<2` cells, full-domain volume, density,
+EOS, fixed polygon and W0 pressure modes, halo clipping, logged injection,
+boundary/geometry failures, and each case's own energy reference. It reads
+the log only through the saved endpoint's exact step marker: later failures
+must not be attributed to an earlier checkpoint. Its reference-path mock
+used the historical t32.5017 checkpoint and historical log for both cases;
+all listed geometric and log checks passed, with active-cell area error
+5.84e-8. This mock does not validate an x4 evolution or prove all production
+acceptance criteria. The first mock attempt correctly exposed a JSON boolean
+serialization problem, and another exposed the need to truncate later log
+events; both were fixed and rerun before use.
