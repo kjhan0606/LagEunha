@@ -12,6 +12,8 @@
 #include "exam2d.h"
 #include "kh.h"
 #include "../gfs_moment.h"
+#include "../gfs_thermal64.h"
+#include "kh_restart_guard.h"
 //#include "DD2d.h"
 
 #define Nneigh 50
@@ -118,6 +120,15 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 			file_has_stress = 0;
 			printf("P0: legacy snapshot (np=%d, no stress fields)\n", np);
 		}
+		/* The stress record contains tagged extended state. Its offsets are
+		 * known only for the current ABI; prefix conversion of an unknown
+		 * stress stride can silently erase a thermal or moment tag. Old
+		 * non-stress snapshots retain their existing conversion path. */
+		if(!kh_restart_stress_stride_valid(file_has_stress,file_p_size)){
+			fprintf(stderr,"[KH_RESTART] incompatible stress record size %zu; expected %zu; refusing state loss\n",
+				file_p_size, sizeof(treevorostressrk4particletype));
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
 		VORO_TNP(simpar) = VORO_NP(simpar) = np;
 		VORORK4_TBP(simpar) = (treevorork4particletype*)my_malloc(p_size*np);
 		if(use_stress){
@@ -153,6 +164,13 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
 				int ii;
 				for(ii=0;ii<np;ii++){
 					fread(scratch, file_p_size, 1, fp);
+					if(file_has_stress){
+						treevorostressrk4particletype *full=(void*)scratch;
+						if(kh_restart_has_extended_state(full)){
+							fprintf(stderr,"[KH_RESTART] refusing to discard tagged thermal or moment state\n");
+							MPI_Abort(MPI_COMM(simpar),99);
+						}
+					}
 					memcpy(dst + ii*p_size, scratch, common_size);
 				}
 				my_free(scratch);
