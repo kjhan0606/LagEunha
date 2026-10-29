@@ -531,6 +531,30 @@ overhead; it only rules out an obvious cost explosion in this one kernel
 under the stated setup. The concurrent native process was confirmed live
 afterward.
 
+### Affine velocity in weight-linked exchange
+
+The new `gfs_weight_exchange_segment_affine` in
+[the exchange header](../Exam/gfs_weight_mass_exchange.h) takes a single
+shared affine velocity field at a face midpoint, constant face density and
+constant specific internal energy. It evaluates velocity, mass flux,
+momentum flux and total specific energy at both Gauss points before applying
+equal/opposite mass, first/second mass moments, momentum, momentum-cross
+moments and energy. It rejects invalid inputs without changing either RHS.
+For this specified field and constant weight-induced face speed, two-point
+quadrature is exact for the tested polynomial moment/energy integrals.
+
+The [C test](test_gfs_weight_affine_exchange_20261029.c) verifies analytic
+segment moments including velocity-gradient cross terms, pair mass, momentum,
+energy, total angular momentum, Galilean boost, zero-rate reduction and
+unchanged output on invalid input. The [Ada GPU test](test_gfs_weight_affine_exchange_gpu_20261029.cu)
+also matches the host reference for one face. Both passed. The current
+experimental multi-face GPU kernel still uses the older constant-face-state
+helper; this new operation is **not** connected to that kernel or the native
+solver. A real face state/Riemann solver, material/geometry closure,
+nonuniform density and pressure work, positivity, shared MPI ownership,
+time integration and a Kepler run remain unverified. Zero weight rates give
+zero for this incremental exchange; they do not solve the W=0 material slip.
+
 ## 2026-10-29: inviscid material-face pressure building block
 
 The [material-pressure flux helper](../Exam/gfs_moment_material_pressure.h)

@@ -47,4 +47,36 @@ GFS_MOM_HD static inline int gfs_weight_exchange_segment(
     gfs_weight_exchange_point(ri,rj,cx+scale*dx,cy+scale*dy,ox_i,oy_i,ox_j,oy_j,.5*length,flux);
     return 1;
 }
+
+/* Two-point segment exchange with constant density/specific internal energy
+ * and a single shared affine velocity at the midpoint. This represents only
+ * weight-driven advection; pressure traction/work remain separate. No state
+ * is modified if either quadrature state or resulting RHS is invalid. */
+GFS_MOM_HD static inline int gfs_weight_exchange_segment_affine(
+    GfsMomentState *ri,GfsMomentState *rj,double ax,double ay,double bx,double by,
+    double ox_i,double oy_i,double ox_j,double oy_j,double wdot_i,double wdot_j,
+    double distance,double rho,double ux,double uy,const double grad[4],double specific_internal_energy){
+    if(ri==rj || !isfinite(ax) || !isfinite(ay) || !isfinite(bx) || !isfinite(by) ||
+       !isfinite(ox_i) || !isfinite(oy_i) || !isfinite(ox_j) || !isfinite(oy_j) ||
+       !isfinite(ux) || !isfinite(uy) || !(specific_internal_energy>0) || !isfinite(specific_internal_energy))return 0;
+    for(int k=0;k<4;k++)if(!isfinite(grad[k]))return 0;
+    double dx=bx-ax,dy=by-ay,length=hypot(dx,dy);
+    if(!(length>0) || !isfinite(length))return 0;
+    double cx=ax+.5*dx,cy=ay+.5*dy,fluxes[2][4];
+    const double scale=.28867513459481288225;
+    for(int k=0;k<2;k++){
+        double sign=k?1.:-1.;double rx=sign*scale*dx,ry=sign*scale*dy;
+        double vx=ux+grad[0]*rx+grad[1]*ry,vy=uy+grad[2]*rx+grad[3]*ry;
+        double specific_energy=specific_internal_energy+.5*(vx*vx+vy*vy);
+        if(!gfs_weight_exchange_flux(wdot_i,wdot_j,distance,rho,vx,vy,specific_energy,fluxes[k]))return 0;
+    }
+    GfsMomentState ai=*ri,aj=*rj;
+    for(int k=0;k<2;k++){
+        double sign=k?1.:-1.;
+        gfs_weight_exchange_point(&ai,&aj,cx+sign*scale*dx,cy+sign*scale*dy,
+            ox_i,oy_i,ox_j,oy_j,.5*length,fluxes[k]);
+    }
+    for(int q=0;q<GFM_NSTATE;q++)if(!isfinite(ai.a[q]) || !isfinite(aj.a[q]))return 0;
+    *ri=ai;*rj=aj;return 1;
+}
 #endif
