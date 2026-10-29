@@ -51,18 +51,30 @@ eta from 0.01 to 0.005 reduced endpoint position error from
 `7.878e-3` to `1.969e-3` (ratio 4.000); the fine run's relative energy and
 angular-momentum errors were `8.148e-14` and `5.663e-15`.
 
-After correcting the one-time configuration cache, both helper tests pass
-with `-std=c11 -O2 -Wall -Wextra -Werror`; the 100-period KDK convergence
-numbers above were reproduced. `mpiicx -fsyntax-only` passes for both the
-host and `USE_CUDA` host-side configurations after the thermal64 connection.
-The compiler reports one pre-existing format warning at `Exam/exam.c:8298`
-(`ptrdiff_t` passed to `%d`). No CUDA object was built and no native hydro
-simulation has exercised this path; the MPI startup consistency guard has
-only been syntax-checked, not run multi-rank. These ODE checks do not establish
-disk stability or production speed. This `grammar` shell has neither the Makefile's
-`/opt/ohpc/pub/cuda/13.0.2/bin/nvcc` nor a loadable CUDA module, so a device
-build must be done in the configured CUDA environment; no build job was
-submitted here.
+CUDA runtime evidence now exists. Commit 7209164 built on syntax with CUDA 13.0.2 and was exercised on the Ada RTX 5000. The global- and local-gravity KDK paths both stopped at exact t=0.826 from the accepted t=0.825 checkpoint; both passed the 29-check bounded-Q1 audit. Their total-energy changes were about -3.5e-7, with exact masses, W=0, positive volume/internal energy, and no floor or clip injection.
+
+The C helper tests still pass with -std=c11 -O2 -Wall -Wextra -Werror, and
+mpiicx -fsyntax-only passes for host and CUDA host-side configurations. The
+CUDA objects and executable were actually built with CUDA 13.0.2 on syntax.
+One pre-existing format warning remains at Exam/exam.c:8298 (ptrdiff_t passed
+to %d). The integrator's MPI startup consistency path has not been exercised
+with more than one rank.
+
+### Same-time t=3 comparison
+
+The global-gravity KDK run reached exact t=3 in 895 s but failed one of 29 checks: cumulative KDK floor injection was 4.72e-9 and 17 internal-energy reset events were counted. Its disk gates passed (0.0498% mass-weighted density change; total-energy change -3.07e-7), while its r<0.1 core had 8.63% density change, 0.968 absolute log-entropy change, and 0.00487 mean orbit-position error.
+
+The local-gravity KDK run, with eta 0.005 and maximum level 12, reached the same exact t=3 checkpoint in 616 s and passed all 29 checks. It had zero clip, floor, or pair-pressure events through t=3. Disk density change was 0.0498%; total-energy change was -3.54e-7. Core errors were smaller at this time: 5.03% density, 0.0200 absolute log-entropy, and 0.00185 orbit-position error.
+
+### Local-gravity KDK at t=6.5
+
+The accepted local t=3 checkpoint khout.004447.dat was continued to exact t=6.5 as khout.010970.dat in 1313 s. All 29 bounded-Q1 disk/state checks passed. The run preserved exact masses and W=0 and reported zero negative cells, internal-energy resets, clip injection, and floor injection. Disk density change was 0.0557%, absolute log-entropy change 5.21e-5, orbit-position error 1.05e-6, angular-momentum change -3.31e-12, and total-energy change -3.54e-7.
+
+The inner core remains inaccurate: for original radius r<0.1, density change is 38.4%, absolute log-entropy change 12.5%, and orbit-position error 1.71%. These are comparable to or worse than the existing bounded RK4 t=6.5 result (33.4% core density and 1.70% position error). Local central-gravity subcycling prevents the early KDK floor-reset failure and keeps the disk stable through t=6.5, but it does not resolve the core error.
+
+The t=3 global/local full-density and core-zoom comparison uses a shared linear density scale [0,1.05]: /home/kjhan/.codex/visualizations/2026/09/29/01a0eb12-3d2a-7402-8478-d6fa000154a2/kepler_q1_kdk_t3_density_shared.png.
+
+One-rank CUDA+OpenMP runtime was about 10 minutes for t=0.825 to 3 and 22 minutes for t=3 to 6.5 on the Ada RTX 5000. This is not MPI scaling evidence or a t=600 performance qualification.
 
 ## Relation to intrinsic cell spin
 
@@ -88,16 +100,8 @@ mass-centroid conditions in
 
 ## Next validation
 
-The Ada continuation recorded on 2026-10-29 remains an RK4 run and must not be
-modified or restarted with this prototype. After the live RK4 continuation
-finishes, use a separate run directory and an EVOLMETHOD=3 binary built in a
-CUDA-enabled environment. First compare one global-KDK and one local-gravity-
-KDK macro-step from the same accepted checkpoint, with RK4-only wall events
-disabled; abort-on-crossing keeps this initial comparison bounded. Audit exact
-masses and W=0, double `U64`/volume validity, density/entropy, orbit phase,
-total energy including the Plummer potential, angular momentum, positive
-internal energy, bounded-domain membership, and actual macro/substep counts.
-Before extending through any wall impact or toward t>6, implement and validate
-KDK event localization and its wall impulse/energy ledger. Full local
-hydrodynamic stepping still needs conservative face-flux registers and MPI
-halo synchronization; this prototype does not solve that part.
+A local-gravity KDK continuation from accepted t=6.5 checkpoint khout.010970.dat to exact t=10 is running in /gpfs/kjhan/LagForce/Kepler_Q1_LocalGravityKDK_4fbf10b_T065_20261029/local/t10. It does not regenerate or replay t=0. Audit the unchanged 29 disk/state checks and report inner-core density, entropy, orbit, and cell-volume distributions separately.
+
+After t=10, the primary unresolved error is the inner core, not the outer disk's energy or angular momentum. Compare the KDK result with the preserved RK4 checkpoint, then design a controlled inner-resolution and timestep study from the same accepted state. Do not infer a need for intrinsic spin from the t=6.5 core error: the material-moment and torque closure objections above still apply. Do not promote to t=120/600 until the core error and radius/shape sensitivity are bounded.
+
+KDK still has no wall-event localization or wall impulse/energy ledger, so any wall crossing aborts the run. The current trajectory has remained inside the fixed polygon. Full local hydrodynamic stepping still requires conservative face-flux registers and MPI halo synchronization; the present local KDK only subcycles the central gravity per generator while hydro and face fluxes retain one global macro-step. No multi-rank runtime test has been made.
