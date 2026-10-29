@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "checks": {
+    "time_advanced": true,
+    "fixed_mass": true,
+    "zero_weight": true,
+    "thermal_tag": true,
+    "positive_finite_U_V": true,
+    "float_U_V_mirrors": true,
+    "density_eos_relative_1e-6": true,
+    "pressure_eos_relative_1e-6": true,
+    "finite_total_energy": true,
+    "wall_angular_budget": true
+  },
+  "time_initial": 48.37534965270793,
+  "time_final": 48.378,
+  "initial_thermal64_tagged": false,
+  "energy_initial": -5.3527096537834185,
+  "energy_final": -5.352709653783665,
+  "energy_relative_change": -4.612871174548214e-14,
+  "density_max_relative_eos_error": 5.938107849878804e-08,
+  "pressure_max_relative_eos_error": 5.918935663817848e-08,
+  "angular_budget": {
+    "passed": true,
+    "checks": {
+      "complete_accepted_interval": true,
+      "fixed_mass_W0": true,
+      "wall_budget_matches_logged_integrator_residual": true
+    },
+    "initial_time": 48.37534965270793,
+    "time": 48.378,
+    "accepted_prefixes": 4,
+    "impacts": 1,
+    "total_L_initial": 15.24493183471268,
+    "total_L_final": 15.244932018317463,
+    "total_fluid_L_change": 1.8360478293288907e-07,
+    "disk_L_initial": 13.91243586880438,
+    "disk_L_final": 13.912435868775447,
+    "disk_L_change": -2.893330020015128e-11,
+    "disk_L_relative_change": -2.0796697697278432e-12,
+    "non_disk_L_change": 1.8363371623308922e-07,
+    "pressure_wall_impulse_and_torque": [
+      -1.225962736484795e-09,
+      -1.6651157711341652e-10,
+      1.4477856660632332e-13
+    ],
+    "collision_wall_impulse_and_torque": [
+      -2.4993588036735447e-05,
+      -4.891868858139461e-06,
+      -1.836049362730389e-07
+    ],
+    "wall_angular_impulse_over_initial_disk_L": -1.319717073457756e-08,
+    "fluid_plus_wall_angular_balance": -8.561583217156686e-15,
+    "sum_logged_integrator_angular_residual": -8.5615832039e-15,
+    "budget_minus_sum_residual": -1.32566860276597e-23,
+    "source_hashes": {
+      "/gpfs/kjhan/LagForce/Kepler_Thermal64WallImpact_20261029/khout.011580.dat": "c4b11f1996349f5ce8ab664569fa4415cd91b5f836fe9579c98f7dcd51aff758",
+      "/gpfs/kjhan/LagForce/Kepler_Thermal64WallImpact_20261029/khout.011584.dat": "bea19e38d38f49d176ebddfd1cda4fc0788546fcb97676213ad80cd7bee41032",
+      "/gpfs/kjhan/LagForce/Kepler_Thermal64WallImpact_20261029/log": "3cff166447a7d90e1a60fa45fa0ca66730d8e3215cb63ced23e36fa10b1d4864"
+    },
+    "scope": "Wall torque itself and actual disk/non-disk angular changes are reported separately. Small corrected balance does not establish an isolated disk or GIZMO boundary equivalence. Non-disk is initial core plus exterior, not a measured pairwise inter-region flux."
+  },
+  "audit_sha256": "23f489bf30334a0a78d0bd666ea4f700a119e14d03d1da0452fea479a8d045c4",
+  "scope": "Endpoint EOS and full-interval angular accounting in bounded W0 fixed-mass run. Energy change is reported, not given an a priori pass threshold. No shock, MPI, core-accuracy, boundary-convergence or long-time certification."
+}
