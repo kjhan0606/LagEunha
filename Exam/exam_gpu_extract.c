@@ -1804,6 +1804,34 @@ double getAccVoro2DBlend_GPU_validate(
  *  Includes BOTH real and padding particles (padding follow linked
  *  list via the `next` pointer, same as real particles).
  * ================================================================ */
+/* Count independent cell lists in parallel, then prefix them serially. */
+static int gpu_count_cell_entries(HydroTreeLinkedCell *cells, int n_cells,
+                                  int *cell_offset)
+{
+    int cell;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
+    for (cell = 0; cell < n_cells; cell++) {
+        int count = 0;
+        linkedlisttype *tmp = cells[cell].link;
+        while (tmp) {
+            count++;
+            tmp = tmp->next;
+        }
+        cell_offset[cell] = count;
+    }
+
+    int running_count = 0;
+    for (cell = 0; cell < n_cells; cell++) {
+        int count = cell_offset[cell];
+        cell_offset[cell] = running_count;
+        running_count += count;
+    }
+    cell_offset[n_cells] = running_count;
+    return running_count;
+}
+
 void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
                         int mx, int my, size_t p_size)
 {
@@ -1823,18 +1851,10 @@ void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
         gpu_alloc_tess_buffers(ctx, ctx->max_particles, n_cells, est_entries);
     }
 
-    /* First pass: count entries per cell */
-    int running_count = 0;
     int cell;
-    for (cell = 0; cell < n_cells; cell++) {
-        ctx->h_cells.cell_offset[cell] = running_count;
-        linkedlisttype *tmp = cells[cell].link;
-        while (tmp) {
-            running_count++;
-            tmp = tmp->next;
-        }
-    }
-    ctx->h_cells.cell_offset[n_cells] = running_count;
+    /* Count cell entries, then prefix their disjoint CSR ranges. */
+    int running_count = gpu_count_cell_entries(cells, n_cells,
+                                                ctx->h_cells.cell_offset);
 
     /* Reallocate if needed */
     if (running_count > ctx->max_cell_entries) {
@@ -1842,28 +1862,22 @@ void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
                 ctx->max_cell_entries, running_count * 2);
         gpu_free_tess_buffers(ctx);
         gpu_alloc_tess_buffers(ctx, ctx->max_particles, n_cells, running_count * 2);
-        /* Redo count pass */
-        running_count = 0;
-        for (cell = 0; cell < n_cells; cell++) {
-            ctx->h_cells.cell_offset[cell] = running_count;
-            linkedlisttype *tmp = cells[cell].link;
-            while (tmp) {
-                running_count++;
-                tmp = tmp->next;
-            }
-        }
-        ctx->h_cells.cell_offset[n_cells] = running_count;
+        /* Redo the count/prefix pass with the new buffer. */
+        running_count = gpu_count_cell_entries(cells, n_cells,
+                                                ctx->h_cells.cell_offset);
     }
 
-    /* Second pass: fill particle indices */
-    running_count = 0;
+    /* Second pass: fill each cell's disjoint range in parallel. */
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
     for (cell = 0; cell < n_cells; cell++) {
+        int write_index = ctx->h_cells.cell_offset[cell];
         linkedlisttype *tmp = cells[cell].link;
         while (tmp) {
             int idx = ptr_to_soa_index((void *)tmp, real_base, pad_base,
                                        nbp, npad, p_size);
-            ctx->h_cells.particle_index[running_count] = idx;
-            running_count++;
+            ctx->h_cells.particle_index[write_index++] = idx;
             tmp = tmp->next;
         }
     }

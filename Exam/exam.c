@@ -3200,6 +3200,9 @@ void updateDenW2Pressure2DBlend(
 			ParticleSoA *h = &gctx->h_parts;
 			h->n_total = n_total;
 			int ii;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 			for (ii = 0; ii < n_total; ii++) {
 				char *raw;
 				if (ii < nbp)
@@ -3232,13 +3235,17 @@ void updateDenW2Pressure2DBlend(
 		}
 
 		double _tess_t_pack = _tess_profile ? MPI_Wtime() : 0.0;
-		double local_w2_bounds[2] = {0.0, 0.0};
+		double local_w2_max = 0.0, local_w2_abs_max = 0.0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(max:local_w2_max,local_w2_abs_max)
+#endif
 		for (int ii = 0; ii < n_total; ii++) {
 			double w2 = (double)gctx->h_parts.w2[ii];
-			if (ii < nbp && w2 > local_w2_bounds[0]) local_w2_bounds[0] = w2;
+			if (ii < nbp && w2 > local_w2_max) local_w2_max = w2;
 			double abs_w2 = fabs(w2);
-			if (abs_w2 > local_w2_bounds[1]) local_w2_bounds[1] = abs_w2;
+			if (abs_w2 > local_w2_abs_max) local_w2_abs_max = abs_w2;
 		}
+		double local_w2_bounds[2] = {local_w2_max, local_w2_abs_max};
 		double global_w2_bounds[2] = {0.0, 0.0};
 		MPI_Allreduce(local_w2_bounds, global_w2_bounds, 2, MPI_DOUBLE, MPI_MAX,
 			MPI_COMM(simpar));
