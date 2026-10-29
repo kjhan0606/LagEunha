@@ -1,0 +1,591 @@
+{
+  "passed": true,
+  "restart_selection": {
+    "passed": true,
+    "candidate_eligible": false,
+    "candidate": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat",
+    "regions": [
+      {
+        "rlo": 0,
+        "rhi": 0.1,
+        "cells": 134,
+        "passed": false,
+        "checks": {
+          "density_native_relative_to_circular_geometry": {
+            "absolute_mass_mean_max": true,
+            "absolute_cell_p99_max": true,
+            "absolute_max_max": true
+          },
+          "circular_position_error_over_max_r0_eps": {
+            "absolute_mass_mean_max": false,
+            "absolute_cell_p99_max": false,
+            "absolute_max_max": false
+          },
+          "log_entropy_relative_to_original_IC": {
+            "absolute_mass_mean_max": true,
+            "absolute_cell_p99_max": true,
+            "absolute_max_max": true
+          }
+        },
+        "values": {
+          "density_native_relative_to_circular_geometry": {
+            "signed_mass_mean": 0.0002298116750512418,
+            "absolute_mass_mean": 0.0053624419859408905,
+            "absolute_cell_p99": 0.07229048304308001,
+            "absolute_max": 0.07289476032222098
+          },
+          "circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.01918541295553232,
+            "absolute_mass_mean": 0.01918541295553232,
+            "absolute_cell_p99": 0.5493097333090274,
+            "absolute_max": 0.5495081507092097
+          },
+          "log_entropy_relative_to_original_IC": {
+            "signed_mass_mean": -5.879895339650043e-05,
+            "absolute_mass_mean": 0.0008062808178473575,
+            "absolute_cell_p99": 0.013840882687062983,
+            "absolute_max": 0.01810885990995455
+          }
+        }
+      },
+      {
+        "rlo": 0.1,
+        "rhi": 0.5,
+        "cells": 3112,
+        "passed": true,
+        "checks": {
+          "density_native_relative_to_circular_geometry": {
+            "absolute_mass_mean_max": true,
+            "absolute_cell_p99_max": true,
+            "absolute_max_max": true
+          },
+          "circular_position_error_over_max_r0_eps": {
+            "absolute_mass_mean_max": true,
+            "absolute_cell_p99_max": true,
+            "absolute_max_max": true
+          },
+          "log_entropy_relative_to_original_IC": {
+            "absolute_mass_mean_max": true,
+            "absolute_cell_p99_max": true,
+            "absolute_max_max": true
+          }
+        },
+        "values": {
+          "density_native_relative_to_circular_geometry": {
+            "signed_mass_mean": 6.6405450067145065e-09,
+            "absolute_mass_mean": 5.062249086821357e-06,
+            "absolute_cell_p99": 0.000914937852845923,
+            "absolute_max": 0.0021572827904171588
+          },
+          "circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 7.573878736662905e-07,
+            "absolute_mass_mean": 7.573878736662905e-07,
+            "absolute_cell_p99": 0.00018936216329917455,
+            "absolute_max": 0.00046666195141067685
+          },
+          "log_entropy_relative_to_original_IC": {
+            "signed_mass_mean": -4.742849047512765e-06,
+            "absolute_mass_mean": 7.351371133564866e-06,
+            "absolute_cell_p99": 5.924592372969684e-05,
+            "absolute_max": 0.00013610255106139913
+          }
+        }
+      }
+    ],
+    "selected_source": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat",
+    "selected_source_sha256": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+    "selected_time": 0.0,
+    "reason": "Earliest chain checkpoint fails added core screens; reuse exact saved original IC, never regenerate or select a later state to hide failure"
+  },
+  "selected_eta": 0.06,
+  "cases": [
+    {
+      "eta": 0.2,
+      "global_h_ceiling": 0.0002547339298169759,
+      "targets": [
+        {
+          "time": 0.825,
+          "steps": 3239,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 0.00014338759379732528,
+                "absolute_cell_p99": 0.004190355227981458,
+                "absolute_max": 0.004190355228113602
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 2.384808471042359e-12,
+                "absolute_cell_p99": 1.404578203738643e-09,
+                "absolute_max": 1.4047412152909949e-09
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "time": 3.0,
+          "steps": 11778,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 0.0018574070579930612,
+                "absolute_cell_p99": 0.05439782788515174,
+                "absolute_max": 0.05439782788519977
+              },
+              "checks": {
+                "absolute_mass_mean_max": false,
+                "absolute_cell_p99_max": false,
+                "absolute_max_max": false
+              },
+              "passed": false
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 1.033963122775551e-11,
+                "absolute_cell_p99": 6.441315364669674e-09,
+                "absolute_max": 6.442829327789347e-09
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": false
+        },
+        {
+          "time": 6.5,
+          "steps": 25518,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 0.008661868962649135,
+                "absolute_cell_p99": 0.25378554578907425,
+                "absolute_max": 0.25378554579328283
+              },
+              "checks": {
+                "absolute_mass_mean_max": false,
+                "absolute_cell_p99_max": false,
+                "absolute_max_max": false
+              },
+              "passed": false
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 2.8985133941714848e-11,
+                "absolute_cell_p99": 1.98058744915591e-08,
+                "absolute_max": 1.9812336796065096e-08
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": false
+        },
+        {
+          "time": 10.0,
+          "steps": 39258,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 0.020229663049785192,
+                "absolute_cell_p99": 0.5926670388175053,
+                "absolute_max": 0.5926670388239537
+              },
+              "checks": {
+                "absolute_mass_mean_max": false,
+                "absolute_cell_p99_max": false,
+                "absolute_max_max": false
+              },
+              "passed": false
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 5.439863781427922e-11,
+                "absolute_cell_p99": 3.90087560118217e-08,
+                "absolute_max": 3.901899774179866e-08
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    {
+      "eta": 0.1,
+      "global_h_ceiling": 0.00012736696490848795,
+      "targets": [
+        {
+          "time": 0.825,
+          "steps": 6478,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 4.611232445579541e-06,
+                "absolute_cell_p99": 0.00013437720928761215,
+                "absolute_max": 0.00013437720945387694
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 1.5342725687738354e-13,
+                "absolute_cell_p99": 8.240901426437343e-11,
+                "absolute_max": 8.298809171861505e-11
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "time": 3.0,
+          "steps": 23555,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 5.855006891187706e-05,
+                "absolute_cell_p99": 0.0017133361386810998,
+                "absolute_max": 0.0017133361389305723
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 6.656602858385726e-13,
+                "absolute_cell_p99": 3.3183675144613935e-10,
+                "absolute_max": 3.3597257148384275e-10
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "time": 6.5,
+          "steps": 51035,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 0.00027251925376671775,
+                "absolute_cell_p99": 0.007981899866220188,
+                "absolute_max": 0.007981899866914954
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": false,
+                "absolute_max_max": true
+              },
+              "passed": false
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 1.7732621467521427e-12,
+                "absolute_cell_p99": 9.079236882751054e-10,
+                "absolute_max": 9.184850370107654e-10
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": false
+        },
+        {
+          "time": 10.0,
+          "steps": 78515,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 0.0006433502415842782,
+                "absolute_cell_p99": 0.01884845465196239,
+                "absolute_max": 0.018848454653411718
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": false,
+                "absolute_max_max": false
+              },
+              "passed": false
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 3.1708104182308367e-12,
+                "absolute_cell_p99": 1.6587953249286621e-09,
+                "absolute_max": 1.6780510502830572e-09
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    {
+      "eta": 0.06,
+      "global_h_ceiling": 7.642017894509277e-05,
+      "targets": [
+        {
+          "time": 0.825,
+          "steps": 10796,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 3.718121364070443e-07,
+                "absolute_cell_p99": 1.0796480144439984e-05,
+                "absolute_max": 1.079648065682569e-05
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 3.963472869236914e-14,
+                "absolute_cell_p99": 1.0407936784261621e-11,
+                "absolute_max": 1.0651441534018003e-11
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "time": 3.0,
+          "steps": 39258,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 4.601671945911382e-06,
+                "absolute_cell_p99": 0.00013450978440220098,
+                "absolute_max": 0.00013450978555869304
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 2.412685239806118e-13,
+                "absolute_cell_p99": 3.9058178283449697e-11,
+                "absolute_max": 4.195589605026863e-11
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "time": 6.5,
+          "steps": 85058,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 2.1298595895135355e-05,
+                "absolute_cell_p99": 0.0006234994895767115,
+                "absolute_max": 0.0006234994926241281
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 7.178266237500214e-13,
+                "absolute_cell_p99": 1.0108362580648353e-10,
+                "absolute_max": 1.0941875554292345e-10
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "time": 10.0,
+          "steps": 130858,
+          "finite": true,
+          "regions": [
+            {
+              "rlo": 0,
+              "rhi": 0.1,
+              "values": {
+                "absolute_mass_mean": 5.0195264046453217e-05,
+                "absolute_cell_p99": 0.001470093936258055,
+                "absolute_max": 0.0014700939440351077
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            },
+            {
+              "rlo": 0.1,
+              "rhi": 0.5,
+              "values": {
+                "absolute_mass_mean": 1.3325595256811084e-12,
+                "absolute_cell_p99": 1.7627199057063404e-10,
+                "absolute_max": 1.9147115289247704e-10
+              },
+              "checks": {
+                "absolute_mass_mean_max": true,
+                "absolute_cell_p99_max": true,
+                "absolute_max_max": true
+              },
+              "passed": true
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "contract_sha256": "1bfa47a6d1c0f84bd342862394e8b35d609c249cba75455e6546ef876dd95a49",
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat": "e5fa9be0d2f596e1940afb08f9c03afcf2e1a19801ee31990842e808e6c9f6c1",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/geometry_t0825.json": "9656edb3c3d15573f55328039ab100e2cb41e706e446d3b9fbd407dd8d89baf8",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_q1_gravity_cap_preflight_20261029.py": "0d1bc8ff643041c8e11b8d98be3e286dc6b2f47a86818a5aa749a7f02f08d1fa",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_q1_core_rk4_control_20261029.py": "7659b3f5b56047d7deaa09faa2a3709e2eb4f4ef722ac92e306f3ec40ddfd70d",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_q1_restart_dt_bundle_20261029.py": "112a0dc460a7ffe98568801956b486b5036f18b7681904a6877cd420bc0a4680"
+  },
+  "analysis_seconds": 43.5131547159981,
+  "scope": "Gravity-only RK4 ODE screening from the preserved original IC on all original r<.5 sites. A stationary central generator makes eta*eps^1.5 the global orbital ceiling. This supports a candidate native cap through t10 only. It neither evolves gas, repairs inherited error, proves long-time accuracy, nor qualifies t120/600. Current native chain and dependent controls are unchanged."
+}

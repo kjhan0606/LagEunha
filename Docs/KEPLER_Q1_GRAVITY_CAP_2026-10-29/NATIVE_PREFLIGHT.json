@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "checks": {
+    "original_28_gates": true,
+    "exact_time": true,
+    "complete_accepted_clock": true,
+    "native_exit_zero": true,
+    "positive_h_under_orbital_ceiling": true,
+    "twenty_full_orbital_cap_steps": true,
+    "frozen_initial": true,
+    "frozen_native": true,
+    "frozen_runner": true,
+    "no_full_particle_TSV": true
+  },
+  "accepted_steps": 21,
+  "regular_steps": 20,
+  "roundoff_endpoint_tails": [
+    {
+      "step": 21,
+      "t": 0.001528403578901855,
+      "h": 4.336808689942018e-19
+    }
+  ],
+  "target_time": 0.0015284035789018555,
+  "orbital_eta": 0.06,
+  "maximum_accepted_h": 7.642017894509277e-05,
+  "native_RK4_median_wall_seconds": 0.7446515,
+  "timing_samples_after_two_warmup_steps": 18,
+  "native_exec_wall_seconds": 18.867,
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/khout.000022.dat",
+  "endpoint_sha256": "0f60d80dec2668a7e53a6e99ec84760af824ed70fb7a868ddd605fe53ffe11bc",
+  "frozen_cost_extrapolation": {
+    "minimum_cap_steps_to_t10": 130856,
+    "same_median_step_cost_hours_to_t10": 27.067254634444446,
+    "assumptions": "Ada original v2, frozen early geometry/per-step cost, cap dominant. Not a measured long run, H200 estimate, upper bound, or claimed cached speedup."
+  },
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/preflight.json": "b5dc11655889874903e6f6d071f0f529bd9698989ee4c22ea0f2bd7aa91f5afb",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/checkpoint_gate.json": "79a62b1421f76801758cc56a6134bcc8d94e51f52cdc0abfa6eba5bc9d9a4647",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/log": "050a889a55c7dca847302f1e9665d95f4a19da3abea15799dd1385529ac5d70d",
+    "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/Docs/audit_kepler_q1_cap_native_preflight_20261029.py": "01e0a298c2383d1c379cbb89501d09b35703a514f08cc4af9f5bd96ee2d126d3"
+  },
+  "scope": "Actual native CUDA+MPI+OpenMP orbital-cap setup/timing check only, about 20 steps. One final IEEE-roundoff time tail is reported explicitly. Does not establish cap accuracy through .825/3/6.5/10, final physical stability, or GIZMO runtime competitiveness."
+}

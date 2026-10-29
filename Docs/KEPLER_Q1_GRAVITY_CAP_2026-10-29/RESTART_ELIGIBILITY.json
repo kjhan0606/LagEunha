@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "candidate_eligible": false,
+  "candidate": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat",
+  "regions": [
+    {
+      "rlo": 0,
+      "rhi": 0.1,
+      "cells": 134,
+      "passed": false,
+      "checks": {
+        "density_native_relative_to_circular_geometry": {
+          "absolute_mass_mean_max": true,
+          "absolute_cell_p99_max": true,
+          "absolute_max_max": true
+        },
+        "circular_position_error_over_max_r0_eps": {
+          "absolute_mass_mean_max": false,
+          "absolute_cell_p99_max": false,
+          "absolute_max_max": false
+        },
+        "log_entropy_relative_to_original_IC": {
+          "absolute_mass_mean_max": true,
+          "absolute_cell_p99_max": true,
+          "absolute_max_max": true
+        }
+      },
+      "values": {
+        "density_native_relative_to_circular_geometry": {
+          "signed_mass_mean": 0.0002298116750512418,
+          "absolute_mass_mean": 0.0053624419859408905,
+          "absolute_cell_p99": 0.07229048304308001,
+          "absolute_max": 0.07289476032222098
+        },
+        "circular_position_error_over_max_r0_eps": {
+          "signed_mass_mean": 0.01918541295553232,
+          "absolute_mass_mean": 0.01918541295553232,
+          "absolute_cell_p99": 0.5493097333090274,
+          "absolute_max": 0.5495081507092097
+        },
+        "log_entropy_relative_to_original_IC": {
+          "signed_mass_mean": -5.879895339650043e-05,
+          "absolute_mass_mean": 0.0008062808178473575,
+          "absolute_cell_p99": 0.013840882687062983,
+          "absolute_max": 0.01810885990995455
+        }
+      }
+    },
+    {
+      "rlo": 0.1,
+      "rhi": 0.5,
+      "cells": 3112,
+      "passed": true,
+      "checks": {
+        "density_native_relative_to_circular_geometry": {
+          "absolute_mass_mean_max": true,
+          "absolute_cell_p99_max": true,
+          "absolute_max_max": true
+        },
+        "circular_position_error_over_max_r0_eps": {
+          "absolute_mass_mean_max": true,
+          "absolute_cell_p99_max": true,
+          "absolute_max_max": true
+        },
+        "log_entropy_relative_to_original_IC": {
+          "absolute_mass_mean_max": true,
+          "absolute_cell_p99_max": true,
+          "absolute_max_max": true
+        }
+      },
+      "values": {
+        "density_native_relative_to_circular_geometry": {
+          "signed_mass_mean": 6.6405450067145065e-09,
+          "absolute_mass_mean": 5.062249086821357e-06,
+          "absolute_cell_p99": 0.000914937852845923,
+          "absolute_max": 0.0021572827904171588
+        },
+        "circular_position_error_over_max_r0_eps": {
+          "signed_mass_mean": 7.573878736662905e-07,
+          "absolute_mass_mean": 7.573878736662905e-07,
+          "absolute_cell_p99": 0.00018936216329917455,
+          "absolute_max": 0.00046666195141067685
+        },
+        "log_entropy_relative_to_original_IC": {
+          "signed_mass_mean": -4.742849047512765e-06,
+          "absolute_mass_mean": 7.351371133564866e-06,
+          "absolute_cell_p99": 5.924592372969684e-05,
+          "absolute_max": 0.00013610255106139913
+        }
+      }
+    }
+  ],
+  "selected_source": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat",
+  "selected_source_sha256": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+  "selected_time": 0.0,
+  "reason": "Earliest chain checkpoint fails added core screens; reuse exact saved original IC, never regenerate or select a later state to hide failure"
+}

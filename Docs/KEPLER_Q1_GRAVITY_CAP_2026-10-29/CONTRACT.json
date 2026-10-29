@@ -1,0 +1,59 @@
+{
+  "registered_at": "2026-10-29T11:20:40.247426+09:00",
+  "model": "Existing bounded Q1, W0 fixed mass, Re=infinity; same native RK4/force/mesh and existing EUNHA_KEPLER_DTETA only",
+  "initial": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat",
+  "earliest_chain_restart_candidate": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat",
+  "candidate_eta_descending": [
+    0.2,
+    0.1,
+    0.06
+  ],
+  "native_comparison_times": [
+    0.825,
+    3.0,
+    6.5,
+    10.0
+  ],
+  "regions_initial_radii": [
+    [
+      0,
+      0.1
+    ],
+    [
+      0.1,
+      0.5
+    ]
+  ],
+  "core_accuracy_screen": {
+    "density_native_relative_to_circular_geometry": {
+      "absolute_mass_mean_max": 0.01,
+      "absolute_cell_p99_max": 0.1,
+      "absolute_max_max": 0.5
+    },
+    "circular_position_error_over_max_r0_eps": {
+      "absolute_mass_mean_max": 0.01,
+      "absolute_cell_p99_max": 0.05,
+      "absolute_max_max": 0.1
+    },
+    "log_entropy_relative_to_original_IC": {
+      "absolute_mass_mean_max": 0.01,
+      "absolute_cell_p99_max": 0.05,
+      "absolute_max_max": 0.1
+    }
+  },
+  "gravity_only_screen": {
+    "targets": [
+      0.825,
+      3.0,
+      6.5,
+      10.0
+    ],
+    "position_error_budget_fraction_of_native_screen": 0.1,
+    "choose_largest_eta_passing_all_targets": true,
+    "qualifies_hydrodynamics_or_t600": false
+  },
+  "restart_policy": "Use earliest main-chain positive checkpoint .825 only if its original 28 checks and all added core screens pass; otherwise reuse the exact saved original IC, without IC regeneration. Never choose a later checkpoint to hide an early failure.",
+  "future_branch_policy": "Keep current t10/short-step bundle. A single capped native branch follows their evaluation. Existing coarse endpoints are the controls; do not rerun coarse. No integrator/mesh/weights/spin changes in that branch.",
+  "invariants": "Report regional energy/angular-momentum increments and trends; do not assume each region separately conserves them. Retain all original 28 global/disk gates.",
+  "scope": "Preregistered numerical accuracy screens for restart eligibility and capped-branch diagnosis. These tolerances are experimental criteria, not thresholds attributed to the GIZMO paper. Circular tessellation is a kinematic reference, not an exact finite-cell fluid solution. Passing cannot establish boundary equivalence or final long-time stability."
+}

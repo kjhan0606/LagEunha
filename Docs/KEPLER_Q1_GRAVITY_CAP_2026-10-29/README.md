@@ -1,0 +1,31 @@
+# Bounded Q1 gravitational timestep diagnostic preparation
+
+This work follows the focused Astra t6.5 assessment. The running bounded Q1 chain and its already submitted post-t10 controls are unchanged. The final objective remains native CUDA+MPI+OpenMP Kepler stability through the GIZMO long-time tests; none of the checks here qualifies t120/t600 or final runtime competitiveness.
+
+## Preregistered core screens and restart selection
+
+`CONTRACT.json` was written before examining the new .825 distributions or the candidate-cap outcomes. It uses original core IDs in r0<.1 and .1–.5, mean plus cell-p99/max density, normalized circular-orbit error and log-entropy criteria. These are numerical diagnostic criteria, not GIZMO-paper tolerances. Regional energy/angular trends are reported rather than assumed separately conserved.
+
+The earliest main-chain checkpoint at exact t=.825 passes the old 28 gates but **fails the added core orbit screen**. For r0<.1 its mass-mean normalized position error is 1.9185%, cell p99 54.9310%, maximum 54.9508%. Normalization is max(original radius, Plummer softening), including the stationary central site. Its density/entropy screens and the .1–.5 screens pass. `RESTART_ELIGIBILITY.json` preserves every outcome; no threshold was changed after observing failure.
+
+A future accurate native branch therefore needs the exact preserved original snapshot, SHA256 `0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca`. It must not inherit the .825 phase error, choose a later favorable checkpoint, regenerate the IC, or repeat the existing coarse branch. No long capped branch has been launched here.
+
+## Independent gravity-only screen
+
+Existing classical RK4 gravity-only ODE code advanced all 3,246 original r<.5 sites from their saved initial state to .825/3/6.5/10. The reference uses their Plummer circular frequencies. It does not evolve gas or update the running native state. The screen reserves 90% of the native orbit-error budget for other errors.
+
+| eta | Global cap | Core normalized position mean at t10 | Core cell p99 at t10 | All-target gravity-only screen |
+| --- | ---: | ---: | ---: | --- |
+| .2 | 2.54734e-4 | 2.02297% | 59.2667% | FAIL |
+| .1 | 1.27367e-4 | 0.064335% | 1.88485% | FAIL |
+| .06 | 7.64202e-5 | 0.0050195% | 0.147009% | PASS |
+
+The .1 failure is against the stricter **gravity-only headroom screen**, not a measured native hydrodynamic failure. The largest passing preregistered candidate is .06. This is an eta candidate through t10, not a physically validated long-time choice. The entire ODE diagnostic took 43.5 seconds on Ada. The earlier 95%-attribution test remains a preserved failure; these results do not prove that every core density/entropy error is caused by gravity integration.
+
+## Actual native setup/timing preflight
+
+The original frozen v2 executable read the same preserved t0 IC using native restart argument 1, W0/fixed masses, Re=infinity and the same bounded polygon. Only existing `EUNHA_KEPLER_DTETA=.06` was enabled. No force/integrator/mesh/weights/spin implementation changed. One 52 MB endpoint was requested, with periodic dumps and full-particle TSV disabled.
+
+The actual native CUDA+MPI+OpenMP run on Ada completed 20 full capped intervals plus one 4.34e-19 IEEE endpoint-time tail, at exact t=.0015284035789018555. Maximum accepted h was 7.642017894509277e-5. All 28 original physical/state checks, source/runner hashes, fixed mass, zero injections and exact accepted-clock checks passed. Total native execution was 18.867 seconds; regular RK4 median after two warmup steps was .7446515 seconds. The saved endpoint is **timing/setup evidence only**, never a substitute for long-time testing.
+
+At that frozen early-geometry cost, 130,856 cap-limited steps to t10 would take about 27.1 hours on the original Ada binary. This is an extrapolation, not an observed long run, an upper bound or an H200/cache estimate. It demonstrates why a globally small step cannot simply be adopted as the production solution. The real late-state H200 cache qualification and incremental controls in job 439375 remain the next data source. A diagnostic capped branch needs an explicit cost bound, early core checks, accepted-restart continuation and comparison against already stored coarse endpoints. Core accuracy must be established alongside acceleration before unqualified t120/t600 expansion.
