@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "single": {
+    "steps": 2101,
+    "median_h": 4.760027150041424e-05
+  },
+  "thermal64": {
+    "steps": 2101,
+    "median_h": 4.760027150041424e-05
+  },
+  "regions": {
+    "core_r0_lt_0p1": {
+      "cells": 134,
+      "single_incremental_log_entropy": {
+        "signed_mass_mean": -2.178278394281669e-09,
+        "abs_mass_mean": 4.2306619680971726e-06,
+        "abs_cell_p99": 2.6262558832092438e-05
+      },
+      "thermal64_incremental_log_entropy": {
+        "signed_mass_mean": -1.810275605883241e-08,
+        "abs_mass_mean": 2.6517091205308944e-06,
+        "abs_cell_p99": 2.458738950070941e-05
+      },
+      "endpoint_log_entropy_difference": {
+        "signed_mass_mean": -1.5867658205754114e-08,
+        "abs_mass_mean": 2.3075541956686716e-06,
+        "abs_cell_p99": 7.483041055585943e-06
+      }
+    },
+    "core_r0_0p1_to0p5": {
+      "cells": 3112,
+      "single_incremental_log_entropy": {
+        "signed_mass_mean": -1.7915968835986885e-06,
+        "abs_mass_mean": 1.6485096337534855e-05,
+        "abs_cell_p99": 7.285037089312e-05
+      },
+      "thermal64_incremental_log_entropy": {
+        "signed_mass_mean": 8.694562161071717e-11,
+        "abs_mass_mean": 1.8320586257229343e-09,
+        "abs_cell_p99": 1.9239195939435525e-07
+      },
+      "endpoint_log_entropy_difference": {
+        "signed_mass_mean": 1.7917480296936243e-06,
+        "abs_mass_mean": 1.648494197301606e-05,
+        "abs_cell_p99": 7.285195929903335e-05
+      }
+    },
+    "disk_r0_0p5_to2": {
+      "cells": 48680,
+      "single_incremental_log_entropy": {
+        "signed_mass_mean": -6.2350423158690235e-06,
+        "abs_mass_mean": 6.025799424341891e-05,
+        "abs_cell_p99": 0.00015361579010997068
+      },
+      "thermal64_incremental_log_entropy": {
+        "signed_mass_mean": -2.2389944305695084e-14,
+        "abs_mass_mean": 1.996407110898684e-11,
+        "abs_cell_p99": 4.38570058563896e-10
+      },
+      "endpoint_log_entropy_difference": {
+        "signed_mass_mean": 6.2350087448275656e-06,
+        "abs_mass_mean": 6.025807953626893e-05,
+        "abs_cell_p99": 0.00015360394022669277
+      }
+    }
+  },
+  "source_sha256": "58afbe3ab219ddef0b8dbb9b032789236ec01815bcf80457a5d73e6b90bd6c28",
+  "single_endpoint_sha256": "1352cab65fef8c3254c9b194d24b8e56e10ccbf8f0a372c70e4f24eed7133975",
+  "thermal64_endpoint_sha256": "fdca435743faba1b1120b39e3576f2696f5d2a18d56ddd62356e87d7dcaf41b8",
+  "promotion_sha256": "0456a8c6dafb3f7ee7e681089c8c475462a4fe7e4ee062a19cf19f4f2db52381",
+  "double_restart_energy_relative_change": -8.301604255811394e-14,
+  "double_polygon_area_absolute_error": 7.105427357601002e-15,
+  "double_max_wall_gap": -0.09055341557298169,
+  "double_eos_max_relative_errors": {
+    "density": 5.929815460881116e-08,
+    "pressure": 5.910882994175637e-08
+  },
+  "scope": "Same-parent short t10 to t10.1 comparison; initial double volume uses independent Ada promotion and may have small cross-GPU roundoff. Neither inherited-error repair nor long-time stability nor convergence order is established."
+}
