@@ -1,0 +1,8 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -10873 +10872,0 @@
+-    if(thermal64 && !tx.on){ fprintf(stderr,"[THERMAL64] transactional RK4 gate is required\n"); MPI_Abort(MPI_COMM(simpar),99); }
+@@ -10876,0 +10876 @@
++    if(thermal64 && !tx.on && !wall.on){ fprintf(stderr,"[THERMAL64] transactional RK4 gate is required\n"); MPI_Abort(MPI_COMM(simpar),99); }
+@@ -11389,0 +11390 @@
++    if(thermal64 && wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;

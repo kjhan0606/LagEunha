@@ -1,0 +1,8 @@
+--- a/Exam/gfs_thermal64_native.inc
++++ b/Exam/gfs_thermal64_native.inc
+@@ -16,0 +17 @@
++    const char *wall=getenv("GFS_KEPLER_WALL_EVENTS");
+@@ -19 +20,2 @@
+-       (init_gate || (tx && atoi(tx)>0 && (!txdiag || atoi(txdiag)==0))) &&
++       (init_gate || (tx && atoi(tx)>0 && (!txdiag || atoi(txdiag)==0)) ||
++        (wall && strcmp(wall,"1")==0 && (!tx || atoi(tx)==0))) &&

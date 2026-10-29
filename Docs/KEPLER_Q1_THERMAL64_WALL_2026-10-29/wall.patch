@@ -1,0 +1,19 @@
+--- a/Exam/gfs_wall_events.inc
++++ b/Exam/gfs_wall_events.inc
+@@ -30,2 +30,3 @@
+-        a[3]+=p[i].ie+.5*m*(vx*vx+vy*vy)+m*kepler_phi(p[i].x,p[i].y);
+-        a[4]+=m;a[5]+=p[i].ie;a[6]+=.5*m*(vx*vx+vy*vy);
++        double U=gfs_t64_U(p+i);
++        a[3]+=U+.5*m*(vx*vx+vy*vy)+m*kepler_phi(p[i].x,p[i].y);
++        a[4]+=m;a[5]+=U;a[6]+=.5*m*(vx*vx+vy*vy);
+@@ -72 +73 @@
+-       gfs_vaud_on() || gfs_thermal64_requested() ||
++       gfs_vaud_on() ||
+@@ -112 +113,2 @@
+-        if(w->base[id].present || !isfinite(p[i].mass) || !(p[i].mass>0) || !(p[i].ie>0) ||
++        if((gfs_thermal64_requested() && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])))) ||
++           w->base[id].present || !isfinite(p[i].mass) || !(p[i].mass>0) || !(p[i].ie>0) ||
+@@ -158 +160,2 @@
+-        if(!(p[i].ie>0) || !(p[i].volume>0) || !isfinite(p[i].mass) || !(p[i].mass>0) || p[i].w2!=0 ||
++        if((gfs_thermal64_requested() && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])) || (rhs && !isfinite(GFS_T64_RHS(p[i]))))) ||
++           !(p[i].ie>0) || !(p[i].volume>0) || !isfinite(p[i].mass) || !(p[i].mass>0) || p[i].w2!=0 ||
