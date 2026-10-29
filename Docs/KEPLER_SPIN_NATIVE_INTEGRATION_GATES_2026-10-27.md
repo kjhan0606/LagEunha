@@ -443,3 +443,27 @@ and [reader](audit_kepler_weight_exchange_moments_20261029.py).
 This remains an infinitesimal frozen-geometry test, not proof of finite-time
 conservative transport, native negative-weight support, or a working spin
 solver.
+
+### Experimental CUDA face accumulation
+
+The isolated [CUDA kernel](../Exam/gfs_weight_exchange_gpu.cuh) evaluates the
+same segment-integrated weight-only contribution for a caller-supplied list
+of unique interior faces and accumulates all 13 moment derivatives using
+double-precision atomics into a disposable cell RHS. A bad face increments an
+error counter; because other faces may already have contributed, the caller
+must discard the **entire** RHS on any error. The kernel cannot certify that
+the face list is unique or complete, and does not handle MPI ownership,
+ghosts, wall faces, physical face-state reconstruction, full ALE transport,
+weight evolution or positivity. It is not connected to the production CUDA
+RK4 path.
+
+The [CUDA test](test_gfs_weight_exchange_gpu_20261029.cu) was compiled for
+sm_89 and ran briefly on the lageunha Ada GPU. Six faces concurrently update
+four cells; all 13 resulting components agree with the serial CPU reference,
+and total mass, momentum, energy and angular momentum cancel. Zero weight
+rates give zero RHS and an out-of-range neighbor is reported invalid. The
+existing long-running solver remained live. This is a small kernel correctness
+test, not an end-to-end solver, MPI test, GPU performance measurement, or
+proof that the moment closure suppresses Kepler instability. Atomic ordering
+is not deterministic; a native integration needs conservation tolerances and
+single-face ownership tests under realistic parallel decomposition.
