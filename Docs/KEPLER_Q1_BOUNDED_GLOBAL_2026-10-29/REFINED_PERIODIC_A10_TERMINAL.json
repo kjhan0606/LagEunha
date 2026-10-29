@@ -1,0 +1,25 @@
+{
+  "job": "437779",
+  "scheduler_state": "FAILED",
+  "scheduler_exit": "1:0",
+  "elapsed": "02:37:58",
+  "scheduler_end": "2026-10-29T10:12:23",
+  "run_directory": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2/local_refined_w0_r075_n420_20261027/to6p5_a10",
+  "particles": 176400,
+  "last_accepted_start_time": 2.3533343390390575,
+  "failure": "GPU tessellation reported halo_clipped_cells=4 at an RK4 predictor; accepted step-start state was saved, failed predictor not serialized",
+  "native_failure_lines": [
+    "[GPU_STENCIL_EXPANSION] expanded_cells=464 halo_clipped_cells=4",
+    "[GPU_TESS_INVALID] volume=0 velocity_fit=0 geometry=0 halo=4",
+    "[RK4_FAILURE_SNAPSHOT] khdiag.step032010.start_geometry.dat np=176400 t_start=2.3533343390390575; failed stage is not a restart state",
+    "[RK4_GEOMETRY_ABORT_CHECKPOINT] accepted step-start saved; failed geometry is not serialized",
+    "EXIT:1"
+  ],
+  "preserved_accepted_start": "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2/local_refined_w0_r075_n420_20261027/to6p5_a10/khdiag.step032010.start_geometry.dat",
+  "checkpoint_bytes": 101606468,
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_PolarIC384_H200_20261026/q2/local_refined_w0_r075_n420_20261027/to6p5_a10/log": "0cc02fe99c1bccc18d9d110e08fa819d6b1a79afd3d9ccb606e7e8eafd02f193"
+  },
+  "action": "Preserve existing outputs. No t0 replay or halo-size escalation submitted. Current bounded Q1 chain 439333 is a separate experiment and continues unchanged.",
+  "scope": "Older periodic locally refined W0 n420 control, not the bounded Q1 n90352 run. Terminal halo invalidation is distinct from passing t6.5 or a measured disk heating failure."
+}

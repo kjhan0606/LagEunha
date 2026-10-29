@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-10-29T11:01:21.267276+09:00",
+  "job": "439375",
+  "scheduler_state_confirmed": "PENDING Dependency afterok:439333(unfulfilled)",
+  "scheduler_observation": "JobId=439375 JobName=KepQ1RestartDt UserId=kjhan(10396) GroupId=kjhan(10396) MCS_label=N/A Priority=2228 Nice=0 Account=kias QOS=normal JobState=PENDING Reason=Dependency Dependency=afterok:439333(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-10-29T10:17:50 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-29T10:17:50 Scheduler=Main Partition=h200 AllocNode:Sid=syntax:2174149 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=32G,node=1,billing=20,gres/gpu=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/job.slurm WorkDir=/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1 StdErr=/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/slurm-439375.err StdIn=/dev/null StdOut=/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/slurm-439375.out KillOInInvalidDependent=Yes TresPerNode=gres/gpu:H200:1 TresPerTask=cpu=8",
+  "old_bundle_sha256": "71c3c3830930c2779066d6462965273cc7068fc7cbe0b097c197e300316f8b3b",
+  "new_bundle_sha256": "f6992147a9571b02cbc5d06cf5f0893ffb7a3c6fe52d9d4df95a32f6864d4b65",
+  "old_auditor_sha256": "636b25bb6ce7aff2e801aeae0490c010954d24cd956e5083f3e17cb9874963ad",
+  "new_auditor_sha256": "112a0dc460a7ffe98568801956b486b5036f18b7681904a6877cd420bc0a4680",
+  "original_inputs_preserved": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/audit_revision_t65",
+  "native_execution_started": false,
+  "native_physics_or_duration_or_gates_changed": false,
+  "reason": "Focused Astra t6.5 review: mass means hide core/adjacent tails. Add regional percentile/max density, entropy and circular orbit error, plus incremental regional energy/angular momentum.",
+  "validation": "REGIONAL_DISTRIBUTIONS_T65.json reproduces independent disk gate metrics, same-state increments zero, central generator normalization finite. No new gas evolution."
+}

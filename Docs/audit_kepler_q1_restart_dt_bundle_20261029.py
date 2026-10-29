@@ -9,6 +9,37 @@ from kepler_native_global_ids_20261029 import ordered_global, ID_MASK
 from audit_kepler_native_radial_20261026 import mean, energy, GAMMA_MINUS_ONE
 
 
+def region_metrics(initial, seed, final, mask, target_time):
+    mass=seed['mass'][mask].astype(float)
+    def describe(values):
+        a=np.asarray(values)[mask]
+        return {'signed_mass_mean':mean(a,mass),'absolute_mass_mean':mean(abs(a),mass),
+                'absolute_cell_p99':float(np.percentile(abs(a),99)),
+                'absolute_max':float(np.max(abs(a)))}
+    def angular(state):
+        return float(np.sum(mass*((state['x'][mask]-3.)*state['vy'][mask]
+                            -(state['y'][mask]-3.)*state['vx'][mask]),dtype=np.longdouble))
+    entropy=np.log(final['ie'].astype(float)/seed['ie'].astype(float))+GAMMA_MINUS_ONE*np.log(final['volume'].astype(float)/seed['volume'].astype(float))
+    entropy0=np.log(final['ie'].astype(float)/initial['ie'].astype(float))+GAMMA_MINUS_ONE*np.log(final['volume'].astype(float)/initial['volume'].astype(float))
+    x0=initial['x']-3.;y0=initial['y']-3.;r0=np.hypot(x0,y0)
+    phase=target_time*(r0*r0+.01175**2)**(-.75)
+    position=np.hypot(final['x']-(3.+x0*np.cos(phase)-y0*np.sin(phase)),
+                      final['y']-(3.+x0*np.sin(phase)+y0*np.cos(phase)))
+    e0=energy(seed[mask],'baseline');l0=angular(seed)
+    if not np.isfinite(e0) or e0==0 or not np.isfinite(l0) or l0==0:
+        raise ValueError('Undefined regional invariant normalization')
+    return {'cells':int(mask.sum()),'incremental_entropy_signed':mean(entropy[mask],mass),
+            'incremental_entropy_abs':mean(abs(entropy[mask]),mass),
+            'incremental_density_abs':mean(abs(final['den'][mask].astype(float)/seed['den'][mask].astype(float)-1),mass),
+            'incremental_entropy_distribution':describe(entropy),
+            'restart_relative_energy_change':(energy(final[mask],'baseline')-e0)/abs(e0),
+            'restart_relative_angular_momentum_change':angular(final)/l0-1,
+            'original_t0_density_change':describe(final['den'].astype(float)/initial['den'].astype(float)-1),
+            'original_t0_entropy_change':describe(entropy0),
+            'original_circular_position_error':describe(position),
+            'original_circular_position_error_over_max_r0_eps':describe(position/np.maximum(r0,.01175))}
+
+
 def audit(root):
     cfg=json.loads((root/'stage.json').read_text())
     seed=Path(cfg['parent']['endpoint']);p0,m0=ordered_global(seed);ids=p0['u4if']&ID_MASK
@@ -18,7 +49,8 @@ def audit(root):
         raise ValueError('Requires the exact accepted t10 restart')
     initial,_=ordered_global(Path(cfg['initial']),ids)
     r0=np.hypot(initial['x']-3.,initial['y']-3.)
-    masks={'core_r0_lt_0p1':r0<.1,'disk_r0_0p5_to2':(r0>=.5)&(r0<2.)}
+    masks={'core_r0_lt_0p1':r0<.1,'core_r0_0p1_to0p5':(r0>=.1)&(r0<.5),
+           'disk_r0_0p5_to2':(r0>=.5)&(r0<2.),'exterior_r0_ge2':r0>=2.}
     states={};cases={};checks={}
     for name in ['coarse','half','quarter']:
         d=root/name;gate=json.loads((d/'checkpoint_gate.json').read_text())
@@ -35,13 +67,9 @@ def audit(root):
         checks[name+'_all_original_physics_gates']=len(gate['checks'])==28 and all(gate['checks'].values())
         checks[name+'_same_parent_and_exact_target']=covered and m['t']==cfg['target_time'] and np.array_equal(p0['mass'],p['mass'])
         checks[name+'_positive_h_and_correct_cap']=bool(len(hs)>0 and np.all(np.isfinite(hs)) and np.all(hs>0) and (cap is None or np.all(hs<=cap*(1+1e-12))))
-        entropy=np.log(p['ie'].astype(float)/p0['ie'].astype(float))+GAMMA_MINUS_ONE*np.log(p['volume'].astype(float)/p0['volume'].astype(float))
         regions={}
         for label,mask in masks.items():
-            mass=p0['mass'][mask].astype(float)
-            regions[label]={'cells':int(mask.sum()),'incremental_entropy_signed':mean(entropy[mask],mass),
-                'incremental_entropy_abs':mean(abs(entropy[mask]),mass),
-                'incremental_density_abs':mean(abs(p['den'][mask].astype(float)/p0['den'][mask].astype(float)-1),mass)}
+            regions[label]=region_metrics(initial,p0,p,mask,cfg['target_time'])
         cases[name]={'endpoint':gate['endpoint'],'sha256':hashlib.sha256(Path(gate['endpoint']).read_bytes()).hexdigest(),
             'accepted_steps':len(hs),'h_min':float(hs.min()),'h_median':float(np.median(hs)),
             'h_max':float(hs.max()),'requested_cap':cap,'restart_relative_energy_change':(energy(p,'baseline')-energy(p0,'baseline'))/abs(energy(p0,'baseline')),
