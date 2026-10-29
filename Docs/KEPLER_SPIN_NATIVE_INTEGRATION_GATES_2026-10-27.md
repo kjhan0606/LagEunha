@@ -302,3 +302,28 @@ restart, or a Kepler evolution. In particular, testing a general face mass
 flux does not alter the required fixed-mass `W=0` reduction. The production
 spin/affine integration and its conservation and performance gates above
 remain open.
+
+## 2026-10-29: optional density-fit warm start
+
+The positive exponential-quadratic density reconstruction currently starts
+its five-parameter Newton iteration at zero. `gfs_moment_density_fit_warm`
+now accepts a finite initial guess in the current polygon's normalized basis,
+uses the same moment residual tolerance and line search, and retries the
+unchanged zero-start solve if the guess fails. A nonfinite seed also takes
+the original path. No state projection, density clipping or thermal-energy
+injection is introduced; the original `gfs_moment_density_fit` entry point
+continues to use the same zero initialization. This optional API is not
+connected to initialization or an evolution path.
+
+In the [host test](test_gfs_moment_density_warm_20261029.c), two nearby
+realizable nonuniform states on an asymmetric polygon produced matching
+cold/warm fitted parameters within 1e-9, residuals below 5e-12, and **4 vs
+2 Newton iterations**; nonfinite seed fallback and rejection of an invalid
+moment state passed. A minimal CUDA kernel calling the warm API compiled with
+`nvcc`, but was not executed on the GPU. This one favorable synthetic case
+does not measure full-step speed or worst-case retry overhead. A moving polygon
+changes the normalized basis, so previous parameters are only a guess; actual
+stage-by-stage trajectory, positivity, bitwise or tolerance-based baseline
+equivalence, device runtime and adverse-seed costs must be measured before
+using this option in a solver. It does not make the nonlinear fit itself an
+AREPO-speed method.

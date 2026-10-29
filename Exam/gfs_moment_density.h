@@ -138,8 +138,8 @@ GFS_MOM_HD static inline int gfs_moment_solve5(double H[25],double b[5]){
 
 /* State q,Q are relative to fixed O; polygon vertices relative to generator,
  * whose offset from the appropriate image of O is (rx,ry). */
-GFS_MOM_HD static inline int gfs_moment_density_fit(GfsMomentPolygon p,
-    const GfsMomentState *s,double rx,double ry,GfsMomentDensity *d){
+GFS_MOM_HD static inline int gfs_moment_density_fit_seeded(GfsMomentPolygon p,
+    const GfsMomentState *s,double rx,double ry,const double seed[5],GfsMomentDensity *d){
     d->status=0;d->iterations=0;d->residual=DBL_MAX;
     if(!gfs_moment_geometry(p,d)){d->status=-1;return 0;}
     GfsMomentPrimitive r;if(!gfs_moment_primitive(s,&r)){d->status=-2;return 0;}
@@ -149,7 +149,7 @@ GFS_MOM_HD static inline int gfs_moment_density_fit(GfsMomentPolygon p,
     double target[5]={mx,my,a*a*r.S[0]/m+mx*mx,
         a*(b*r.S[0]+c*r.S[1])/m+mx*my,
         (b*b*r.S[0]+2*b*c*r.S[1]+c*c*r.S[2])/m+my*my};
-    for(int k=0;k<5;k++)d->lambda[k]=0;
+    for(int k=0;k<5;k++)d->lambda[k]=seed?seed[k]:0;
     for(int it=0;it<32;it++){
         double mean[5],H[25],grad[5];
         if(!gfs_moment_partition(p,d,d->lambda,&d->logZ,mean,H)){d->status=-3;return 0;}
@@ -176,6 +176,22 @@ GFS_MOM_HD static inline int gfs_moment_density_fit(GfsMomentPolygon p,
         if(!accepted){d->status=-6;return 0;}
     }
     d->status=-7;return 0;
+}
+
+/* Original zero-initialized solve remains the default. A warm seed is only
+ * an initial guess, expressed in this polygon's current normalized basis.
+ * The same residual and positivity criteria apply; a failed or nonfinite
+ * guess retries the original cold solve without projecting the state. */
+GFS_MOM_HD static inline int gfs_moment_density_fit(GfsMomentPolygon p,
+    const GfsMomentState *s,double rx,double ry,GfsMomentDensity *d){
+    return gfs_moment_density_fit_seeded(p,s,rx,ry,0,d);
+}
+GFS_MOM_HD static inline int gfs_moment_density_fit_warm(GfsMomentPolygon p,
+    const GfsMomentState *s,double rx,double ry,const double seed[5],GfsMomentDensity *d){
+    int finite=seed!=0;
+    if(seed)for(int k=0;k<5;k++)if(!isfinite(seed[k]))finite=0;
+    if(finite && gfs_moment_density_fit_seeded(p,s,rx,ry,seed,d))return 1;
+    return gfs_moment_density_fit(p,s,rx,ry,d);
 }
 
 GFS_MOM_HD static inline double gfs_moment_density_value(const GfsMomentDensity *d,
