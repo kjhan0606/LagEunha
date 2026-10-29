@@ -1,0 +1,5 @@
+# Preserved host-side affine/spin prototype
+
+These two files are byte-for-byte copies recovered on 2026-10-29 from `syntax:/tmp/Kepler_affine_spin_20261028/Exam/kepler_affine2d.h` and `syntax:/tmp/test_kepler_affine2d.c`. They were described in the [original integration notes](../KEPLER_SPIN_NATIVE_INTEGRATION_GATES_2026-10-27.md), but previously only existed on that machine's ephemeral filesystem. Their SHA256 values are respectively `a90ac065afa16a115579d9cfae34d6acd00a3ba06d8b448f2b4ed77bbe4c7c63` and `5dfdc1ff2888cf3746fa27ea4a7fd95120b803d8a747cb4bad386efc906372e6`.
+
+The recovered C99 test was rebuilt and run on lageunha using `gcc -std=c99 -Wall -Wextra -Werror -O2 -I. test_kepler_affine2d.c -lm -o /tmp/lagforce_affine_recovered_20261029`; it reported `kepler_affine2d analytic checks: PASS`. The result covers its analytic polygon, rigid-rotation, face, and softened-orbit-gradient checks only. This header is an isolated host prototype, not an integrated CUDA/MPI/RK4 cell-spin method, an evolved Kepler run, or a conservation proof for the production solver. Existing user source and checkpoints were not modified.
