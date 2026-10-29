@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "checks": {
+    "same_header": true,
+    "same_records_without_next_pointer": true,
+    "same_footer": true,
+    "serial_retry_exit_zero": true,
+    "serial_retry_thermal_and_cuda": true,
+    "serial_retry_accepted_steps": true,
+    "serial_retry_exact_rollback": true,
+    "omp_retry_exit_zero": true,
+    "omp_retry_thermal_and_cuda": true,
+    "omp_retry_accepted_steps": true,
+    "omp_retry_exact_rollback": true,
+    "numeric_ledgers_exact": true
+  },
+  "binary_sha256": "da70844984a52fec77e2d6dec451e9b5695e761ba93a42d0f0d079c1091edf44",
+  "input_sha256": "0f60d80dec2668a7e53a6e99ec84760af824ed70fb7a868ddd605fe53ffe11bc",
+  "output_sha256": [
+    "9c2ae231f6e0a13bd2cc77aa6bf4d6051aea8974c6b5ce1f4a23fbfedef05306",
+    "74d28825c7aef3af9516a06f0309aa06df7b02398d4bbf64817bfc54c13e2c20"
+  ],
+  "script_sha256": "df7ff348cd659c5585125f28312d08fe1f5374e58e4b70d78c9d2bd960ac1334",
+  "scope": "One-step forced rollback native Ada same-binary serial/OMP comparison on shared GPU. Excludes runtime next pointers, compares all other records, footer and printed numerical ledgers. Not a benchmark, physical wall-impact, multi-rank or long-time qualification."
+}

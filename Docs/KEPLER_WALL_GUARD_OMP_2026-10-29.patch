@@ -1,0 +1,33 @@
+--- a/Exam/gfs_wall_events.inc
++++ b/Exam/gfs_wall_events.inc
+@@ -152,6 +152,30 @@
+     if(VORO_NP(s)!=w->np){w->reason="owned_count";return 0;}
+     treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
+     gfs_wall_new_generation(w);
++#ifdef _OPENMP
++    /* Optional parallel trial-state validation. Each ID is claimed with an
++     * atomic epoch exchange: duplicate IDs are rejected without a data race.
++     * A trial is still discarded if any entry fails. */
++    const char *parallel_env=getenv("GFS_WALL_OMP_VALIDATE");
++    if(parallel_env && strcmp(parallel_env,"1")==0){
++        const int thermal=gfs_thermal64_requested();
++        int bad=0;
++#pragma omp parallel for schedule(static) reduction(|:bad)
++        for(ptrdiff_t i=0;i<w->np;i++){
++            size_t id=(size_t)PINDX((treevorork4particletype*)(p+i));
++            if(id>=w->extent || !w->base[id].present || p[i].mass!=w->base[id].m){bad|=1;continue;}
++            unsigned int previous=__atomic_exchange_n(&w->base[id].seen,w->generation,__ATOMIC_RELAXED);
++            if(previous==w->generation){bad|=1;continue;}
++            if((thermal && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])) || (rhs && !isfinite(GFS_T64_RHS(p[i]))))) ||
++               !(p[i].ie>0) || !(p[i].volume>0) || !isfinite(p[i].mass) || !(p[i].mass>0) || p[i].w2!=0 ||
++               !isfinite(p[i].ie) || !isfinite(p[i].volume) || !isfinite(p[i].x) || !isfinite(p[i].y) ||
++               !isfinite(p[i].vx) || !isfinite(p[i].vy) ||
++               (rhs && (!isfinite(p[i].ax) || !isfinite(p[i].ay) || !isfinite(p[i].die)))) bad|=2;
++        }
++        if(bad){w->reason=(bad&1)?"trial_ID_or_mass_changed":"nonpositive_or_nonfinite_trial";return 0;}
++        return 1;
++    }
++#endif
+     for(ptrdiff_t i=0;i<w->np;i++){
+         /* N distinct members of the immutable N-member initial ID set imply
+          * exact set equality, even after native particle reordering.
