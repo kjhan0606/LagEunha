@@ -1914,6 +1914,9 @@ void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
     gpu_upload_particles(&g_gpu_ctx, n_total, has_stress);
     gpu_upload_cells(&g_gpu_ctx, mx * my, g_gpu_ctx.h_cells.n_entries);
     double local_wmax = 0, global_wmax = 0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(max:local_wmax)
+#endif
     for (int k = 0; k < nbp; k++)
         if (g_gpu_ctx.h_parts.w2[k] > local_wmax)
             local_wmax = g_gpu_ctx.h_parts.w2[k];
@@ -1922,9 +1925,14 @@ void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
     int failed = gpu_tessellate_raw_volume(&g_gpu_ctx, nbp, mx, my,
         cellsize, xmin, ymin, boxsize, global_wmax, OoA, GAS_AVMODE(simpar),
         GAS_GRADIENT_METHOD(simpar));
+    int invalid_volume = 0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(|:invalid_volume)
+#endif
     for (int k = 0; k < nbp; k++)
         if (!(g_gpu_ctx.h_parts.volume[k] > 0) ||
-            !isfinite(g_gpu_ctx.h_parts.volume[k])) failed = 1;
+            !isfinite(g_gpu_ctx.h_parts.volume[k])) invalid_volume = 1;
+    failed = failed || invalid_volume;
     int any_failed = 0;
     MPI_Allreduce(&failed, &any_failed, 1, MPI_INT, MPI_MAX, MPI_COMM(simpar));
     if (any_failed) {
@@ -1937,11 +1945,15 @@ void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
         MPI_Abort(MPI_COMM(simpar), 1);
     }
     char *base = (char *)VORORK4_TBP(simpar);
+    int thermal64 = gfs_thermal64_requested();
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
     for (int k = 0; k < nbp; k++) {
         treevorork4particletype *b =
             (treevorork4particletype *)(base + (size_t)k * p_size);
         b->volume = g_gpu_ctx.h_parts.volume[k];
-        if (gfs_thermal64_requested() && has_stress)
+        if (thermal64 && has_stress)
             ((treevorostressrk4particletype *)b)->stress.E_inv_xy = g_gpu_ctx.h_parts.E_inv_xy[k];
         b->den = b->mass / b->volume;
         b->avgNeighboringPressure = g_gpu_ctx.h_parts.avgNeighP[k];
