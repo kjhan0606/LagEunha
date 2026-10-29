@@ -364,3 +364,35 @@ fail. In that case the warm wrapper recovers the exact cold-start result;
 nonfinite seeds similarly fall back. This is a safety check on a few synthetic
 states, not a performance qualification for a moving native mesh; a failed
 seed incurs the cost of both attempts.
+
+## 2026-10-29: weight-linked mass-exchange building block
+
+An isolated [weight exchange helper](../Exam/gfs_weight_mass_exchange.h)
+implements a candidate incremental mass flux associated with the weight-rate
+contribution to power-face speed, relative to a separately defined fixed-mass
+baseline. With the normal from i to j, generator separation `d`, signed power
+weights `W_i`, and one common face state, its contribution is
+
+```
+delta_w_n = (Wdot_i - Wdot_j)/(2 d)
+F_m       = -rho_face delta_w_n
+(F_momentum, F_energy) = F_m (u_face, e_total_face)
+```
+
+The helper applies this flux once at one common face point, with opposite
+signs and each cell's own fixed moment origin. `Wdot_i=Wdot_j=0` gives zero
+exchange, including the approved W=0-for-all-time fixed-mass case. The
+[C99 host test](test_gfs_weight_mass_exchange_20261029.c) checks the sign,
+swapped-face antisymmetry, mass/momentum/energy, global first/second moments,
+angular momentum, Galilean transformation and invalid inputs. It passed with
+`gcc -O2 -Wall -Wextra -Werror`; a minimal CUDA caller compiled with `nvcc`.
+
+This is **not a complete Euler ALE flux** or a validated fixed-mass spinning
+scheme: the unweighted geometric/material slip discussed above is deliberately
+not represented by this incremental term. It also does not supply a physical
+face density/velocity/energy state, pressure traction and work, a weight
+evolution law, positivity, finite-time geometric remapping, topology-change
+handling, race-free GPU/MPI ownership, or RK4 staging. Exact pair conservation
+does not prove consistency, convergence, entropy behavior or Kepler stability.
+The helper is unused by the native solver and the ongoing runs; those physics
+and implementation gates must be closed before activation.
