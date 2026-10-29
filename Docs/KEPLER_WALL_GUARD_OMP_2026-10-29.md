@@ -92,6 +92,32 @@ native process and logs establish that execution. This remains a short,
 no-impact test on one rank, not a wall-crossing restart, speed measurement,
 long-time run or MPI qualification.
 
+## Independent H200 ABBA speed qualification
+
+Slurm job **440421** requests one H200 (`--gres=gpu:H200:1`), eight CPUs,
+32 GiB and 20 minutes. It is independent of the existing thermal-cache and
+pressure-sensitivity jobs. The same thermal64 candidate binary and saved
+Q1 t=0.0015284 checkpoint are used in serial/OMP/OMP/serial order, each to
+t=0.003056807157803711 (about 20 steps). The job writes four final snapshots
+(about 208 MB total) with no intermediate dumps. Input, binary, runners and
+audit dependencies are hash-frozen; H200 device identity is checked at run
+time. One GPU is allocated, but the compute node may also host other jobs.
+
+Before measuring speed, the [auditor](audit_wall_guard_omp_abba_20261029.py)
+requires all four complete restart records and numeric ledgers to match,
+valid thermal64 payloads and fixed mass/W0, zero injection and successful
+native completion. It discards the first two step timings, and the
+predeclared median speedup threshold is 1.05. Failure of correctness or
+speed leaves the candidate unpromoted. The auditor was exercised with a
+clearly synthetic repeated-log positive control and an impossible speed gate
+negative control; those are not physical or performance results. See
+[test](test_wall_guard_omp_abba_20261029.py) and
+[stager](stage_wall_guard_omp_abba_20261029.py).
+
+At submission, the scheduler reports `QOSGrpGRES`; no benchmark result exists.
+The scheduler's test-only estimated start (2026-11-23) is a changing forecast,
+not an execution reservation. The existing Ada Q1 run remains unchanged.
+
 ## Actual wall-impact comparison
 
 The saved Q2 gapped-ID t=48.37534965270793 checkpoint was replayed to t=48.4
