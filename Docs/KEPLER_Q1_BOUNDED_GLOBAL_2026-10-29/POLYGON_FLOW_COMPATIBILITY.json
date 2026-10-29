@@ -1,0 +1,44 @@
+{
+  "radius": 2.75,
+  "epsilon": 0.01175,
+  "pressure": 1e-06,
+  "gamma": 1.6666669845581055,
+  "profile_density_at_wall": 0.011628332994097292,
+  "profile_sound_speed_at_wall": 0.01197197182963106,
+  "rows": [
+    {
+      "sides": 512,
+      "circumradius_minus_apothem": 5.176797284711654e-05,
+      "circular_speed_at_R": 0.6030144326110528,
+      "facet_normal_speed_vertex_limit": 0.0037000270002767546,
+      "facet_normal_speed_conservative_bound": 0.0037000618248423716,
+      "normal_speed_over_profile_sound_speed": 0.30905744291170606
+    },
+    {
+      "sides": 1024,
+      "circumradius_minus_apothem": 1.294202366564079e-05,
+      "circular_speed_at_R": 0.6030144326110528,
+      "facet_normal_speed_vertex_limit": 0.0018500222066951703,
+      "facet_normal_speed_conservative_bound": 0.0018500265597505118,
+      "normal_speed_over_profile_sound_speed": 0.1545294487008647
+    },
+    {
+      "sides": 2048,
+      "circumradius_minus_apothem": 3.235507819887573e-06,
+      "circular_speed_at_R": 0.6030144326110528,
+      "facet_normal_speed_vertex_limit": 0.000925012191669105,
+      "facet_normal_speed_conservative_bound": 0.0009250127358005427,
+      "normal_speed_over_profile_sound_speed": 0.07726481525621925
+    },
+    {
+      "sides": 4096,
+      "circumradius_minus_apothem": 8.088770737657569e-07,
+      "circular_speed_at_R": 0.6030144326110528,
+      "facet_normal_speed_vertex_limit": 0.0004625062318748025,
+      "facet_normal_speed_conservative_bound": 0.00046250629989121717,
+      "normal_speed_over_profile_sound_speed": 0.038632418991338
+    }
+  ],
+  "derivation": "On a flat facet with outward normal at theta0, a circular velocity at polar angle theta has v.n=-v_phi(r)*sin(theta-theta0). The facet spans |theta-theta0|<=pi/N. Pure circular flow therefore does not exactly obey impermeable flat-facet slip conditions. The small radial geometry error scales as N^-2 while the normal-flow mismatch scales as N^-1.",
+  "scope": "Analytic continuum compatibility audit of the intended circular reference and polygon boundary, not a measured native wall flux, acoustic wave, error bound on the disk, or proof of failure. Current native trajectory is unchanged. Radius/shape convergence remains required before GIZMO equivalence."
+}
