@@ -1,0 +1,40 @@
+WMAP5 is detected
+###############################################[DBG] after mk_default_param simmodel=0 NWGROUP=4
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after Mpi_Basic_Set myid=0
+[DBG] after HAMB
+
+EUNHA2: compiled at 07:46:24 Oct 29 2026
+###############################################
+Kelvin Helmholtz Instability Test is set
+box size nx/ny/nz= 384 384 1
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after ReadSimulationParameters simmodel=3
+[BSRMS] myid=0 nid=1 enter
+[BSRMS] myid=0 nid=1 nsubgroup=1
+[BSRMS] myid=0 returning early NDDINFO=0
+DEBUG: gpu_enabled=1 av_mode=5 use_stress=1 w2_mode=0
+P0: is now reading starting file: khout.020790.dat
+P0: new-format snapshot (np=90352 p_size=576 has_stress=1)
+[KEPLER_HALO] blend cells=1 cellsize=0.0625 width=0.0625
+[DPQ_SKIP] nearest-neighbor tree not needed for fixed/zero Kappa
+[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)
+[GPU] Initialized: max_particles=109446, max_faces=2188920
+[GPU] Tessellation buffers: max_cells=9604, max_entries=180704, PolygonOut=135.3 MB
+[FIXED_POLYGON] enabled N=1024 R=2.75 apothem=2.7499870579763344
+[GPU_STENCIL_EXPANSION] expanded_cells=1056 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542614 time=82.696 ms
+[HALO_SYNC] rank=0 refreshed 0 padding states after GPU gradients
+[VARPRESS_GEOM_CFL] coefficient=0.10000000000000001 audit=0
+[VARPRESS_W0] experimental smooth fixed-mass variational pressure active
+[DK_LIMIT_ENTRY] rate_max=0.000000 em=0 Dtime=1.000e-04 K_floor=0.000e+00
+[RK4_FAILURE_SNAPSHOT] khdiag.step020790.wall_rhs_probe.dat np=90352 t_start=10; failed stage is not a restart state
+[WALL_RHS_PROBE] computed K1 for all 90352 owned sites; diagnostic only, no accepted evolution

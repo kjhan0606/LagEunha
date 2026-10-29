@@ -10,11 +10,21 @@ The disk mean absolute density change is 0.0574304%, mean absolute log-entropy c
 
 Upper panels use common surface-density limits [0,1.05], and lower panels use [-1%,1%] relative to each original disk ID. Colors saturate outside these limits. White lower-panel regions exclude non-disk IDs and are not vacuum measurements. The full-disk view does not resolve the small low-density core, whose error is quantified above.
 
+The core can be inspected separately at higher density contrast:
+
+![Native bounded W0 core density with common scales](CORE_DENSITY_T10.png)
+
+Upper panels share the same logarithmic density scale [0.004,0.2]. Lower panels share [-100%,100%] for each initial ID; colors saturate beyond these values. The dashed circle is current radius 0.1.
+
 ## Independent geometry and wall angular budget
 
 Two all-site independent Voronoi reconstructions clipped to the same polygon agree with native cell volumes to maximum relative error 5.94980e-8. The circular-site kinematic reference has disk mean absolute density change 0.0574247%, close to the native 0.0574304%. Native density versus circular geometry differs by 0.0009743% in disk mass mean. This is a geometric reference, not an exact finite-cell fluid solution or proof of entropy accuracy.
 
 For r0<.1, native density differs from circular geometry by 56.4117% in mass mean, whereas the circular reference alone changes by 0.6118%. The large core error cannot be explained as saved-cell-volume arithmetic error alone. Cumulative physical wall angular impulse / initial disk angular momentum is -6.12151e-15, with zero wall collisions and a passing independent angular budget. Small wall torque does not rule out radial boundary influence or prove boundary equivalence with GIZMO.
+
+## Pressure and thermal rates
+
+The separate [native RHS and independent population analysis](RHS_T10_README.md) finds core mass-mean abs(Udot)/(U Omega) 0.236 and cell p99 0.889, versus disk mass mean 0.00349. These are instantaneous compressional-work rates in an already inaccurate core, not entropy generation. Pressure-force acceleration can be small relative to gravity while thermal work remains fast; both time scales must be converged in any proposed split integrator.
 
 ## Native H200 timing and live follow-up
 

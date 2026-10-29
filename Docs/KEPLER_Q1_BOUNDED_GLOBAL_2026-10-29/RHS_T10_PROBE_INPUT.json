@@ -1,0 +1,77 @@
+{
+  "initial": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat",
+  "initial_sha256": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0/khout.020790.dat",
+  "endpoint_sha256": "58afbe3ab219ddef0b8dbb9b032789236ec01815bcf80457a5d73e6b90bd6c28",
+  "binary": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v2/eunha2.exe",
+  "binary_sha256": "f26816122df101ea71f72b4f3fb9233e965d06784ed94e88cfb46245fa251444",
+  "restart_step": 20790,
+  "selected": [
+    {
+      "id": 73920,
+      "purpose": "center",
+      "initial_radius": 0.0,
+      "density_change_abs": 0.016106665494441952,
+      "orbit_error_over_max_r0_eps": 7.019132058990021e-07
+    },
+    {
+      "id": 73540,
+      "purpose": "core_density_extreme",
+      "initial_radius": 0.07812499999999996,
+      "density_change_abs": 4.443356615447633,
+      "orbit_error_over_max_r0_eps": 0.44377345461489115
+    },
+    {
+      "id": 73532,
+      "purpose": "core_orbit_extreme",
+      "initial_radius": 0.04687500000000022,
+      "density_change_abs": 2.2459342734573986,
+      "orbit_error_over_max_r0_eps": 2.0013324259561083
+    },
+    {
+      "id": 74301,
+      "purpose": "core_entropy_extreme",
+      "initial_radius": 0.046874999999999944,
+      "density_change_abs": 0.38757918712830686,
+      "orbit_error_over_max_r0_eps": 0.6824151368908706
+    },
+    {
+      "id": 76610,
+      "purpose": "adjacent_density_extreme",
+      "initial_radius": 0.12499999999999992,
+      "density_change_abs": 4.62318248536397,
+      "orbit_error_over_max_r0_eps": 0.1961037940246449
+    },
+    {
+      "id": 72774,
+      "purpose": "adjacent_orbit_extreme",
+      "initial_radius": 0.10937500000000024,
+      "density_change_abs": 0.3885061375060166,
+      "orbit_error_over_max_r0_eps": 1.1800940737830794
+    },
+    {
+      "id": 65495,
+      "purpose": "disk_density_extreme",
+      "initial_radius": 0.5000000000000001,
+      "density_change_abs": 0.005621485243896274,
+      "orbit_error_over_max_r0_eps": 7.575756807532389e-06
+    },
+    {
+      "id": 64215,
+      "purpose": "disk_entropy_extreme",
+      "initial_radius": 1.671875,
+      "density_change_abs": 5.936858733690542e-05,
+      "orbit_error_over_max_r0_eps": 1.4527923530057914e-06
+    }
+  ],
+  "maximum_selected_rows": 8,
+  "helper_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/rhs_t10_selected_v1/probe.py": "9210c5d1238bc18687c6e2f744e0aba8b5e98e0b2a7135650c9f9759af8f5492",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/rhs_t10_selected_v1/kepler_native_global_ids_20261029.py": "3f2dd650e61ab8fb84742f0c468a860fcd631629a7d28a7c14cf8107b87ed53a",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/rhs_t10_selected_v1/audit_kepler_native_radial_20261026.py": "4970c8568d455522c5ce04d7fb493e60c2147584ca7037b312f3443b2be47fc2",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/audit_snapshot.py": "d163c40164bc03b45b4afd202c1a0d6577e849d5ed01bea64b31a543c587e6a2",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/snapshot_offsets.json": "c9be19a29148fdd8991050f97a7ac189248eedeb2494997bdcda42e1c3785d03"
+  },
+  "output_policy": "One bounded native K1 snapshot about 52 MB and eight selected-ID TSV rows. No accepted time evolution, no full-face dump. Per-process file-size ceiling at most 128 MiB.",
+  "scope": "Single frozen-state Q1 native pressure acceleration/work sample. Purposefully includes extremes; not a population statistic, a force history, or proof that pressure is slow."
+}
