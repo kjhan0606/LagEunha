@@ -11859,6 +11859,9 @@ double exam2d_vph_kdk_int_blend(
 				Dtime = (postype)nextafter(guard_global, 0.0);
 		}
 	}
+	/* KH supplies the same exact-stop/diagnostic ceiling to RK4 and KDK. */
+	if(gfs_rk4_step_ceiling > 0 && Dtime > (postype)gfs_rk4_step_ceiling)
+		Dtime = (postype)gfs_rk4_step_ceiling;
 
 	/* dK rate-limiter: clamp |dK|*dt_ref/K <= rate_max before stage-1 half-kick */
 	clamp_dK_rate_limiter(simpar, Dtime);
