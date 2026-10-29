@@ -1,6 +1,6 @@
 # Q1 bounded-domain experiment, 2026-10-29
 
-Latest: [exact t=10 passed all 28 disk/state checks](RESULT_T10.md). Independent whole-mesh volume and wall-angular budgets also pass. The r0<.1 core density error is 56.3%, and the existing disk checks do not establish core accuracy. Independent H200 timestep controls and the Ada capped comparison are in progress; the damaged coarse state is not qualified for t120/t600.
+Latest: [the cache and timestep follow-up](CACHE_ACCELERATION_AND_DT_CAP_2026-10-29.md) records completed t=10 controls, an isolated cache optimization with 1.97x H200 and 1.51x t=.825 ABBA speedup, and the original-IC eta=.06 branch (job 440745, now running on syn104; last observed at t=0.0119). The t=10 disk checks pass; the r0<.1 core density discrepancy remains 56.3%, so t120/t600 are not qualified.
 
 Update: exact t=.825 passed all 28 checkpoint checks and continued from its accepted restart to t=2.5. [The first-checkpoint report](RESULT_T0825.md) includes common-scale density fields, core accuracy caveats, a gravity-only timestep control and the actual cumulative wall angular impulse. The earlier startup notes below remain preserved.
 
@@ -18,7 +18,7 @@ One independent polygon contained a 2.20e-16 edge from co-circular degeneracy. I
 
 ## Active continuation
 
-Slurm job **439333**, `KepQ1BoundEvents`, completed the planned chain on `syn104`, with `--partition=h200 --gres=gpu:H200:1`, eight CPUs/OpenMP threads and 32 GiB. Its exact t10 checkpoint passed the existing checks. Dependent job 439375 has started its H200 time-step controls. The exact source/binary and stage inputs are pinned in `CHAIN.json`; `job.slurm` records the submitted resource request.
+Slurm job **439333**, `KepQ1BoundEvents`, completed the planned chain on `syn104`, with `--partition=h200 --gres=gpu:H200:1`, eight CPUs/OpenMP threads and 32 GiB. Its exact t10 checkpoint passed the existing checks. Dependent job 439375 completed the t=10 to 10.1 timestep controls and H200 cache ABBA comparison; see CACHE_ACCELERATION_AND_DT_CAP_2026-10-29.md. The exact source/binary and stage inputs are pinned in `CHAIN.json`; `job.slurm` records the submitted resource request.
 
 One allocation executes the dependent sequence `.825 -> 2.5 -> 3 -> 6.5 -> 10`, reading each preceding accepted checkpoint. Only five exact endpoints are requested, about 260 MB total, plus small logs/audits. Periodic snapshots and face/tessellation dumps are disabled. The driver refuses existing output rather than replaying a stage. `.825` and `2.5` are diagnostic comparison checkpoints; invalid state, IDs, mass, injection or geometry stops immediately. Exact t=3 and later must pass all original 15 physics thresholds and unchanged 9 radial thresholds; the area invariant correctly uses polygon area instead of periodic area 36. Extra ID/population, endpoint-domain and rollback checks are retained. A failed gate stops the chain without altering thresholds.
 

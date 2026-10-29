@@ -13,8 +13,33 @@
 #define GFS_T64_RHS(p) ((p).stress.E_inv_yx)
 #define GFS_T64_TAGGED(p) ((p).stress.E_inv_yy==GFS_T64_TAG)
 #define GFS_T64_ANCHOR(p) ((p).stress.h_mfm)
+/* Optional process-constant environment cache. When enabled, callers must
+ * keep GFS_NATIVE_CONST_CONFIG, GFS_THERMAL64, EUNHA_IC and the Kepler center/
+ * softening settings fixed for this process. Default-off preserves the legacy
+ * dynamic environment reads. */
+static inline int gfs_native_const_config_on(void){
+    static int mode=-1;
+    int value=__atomic_load_n(&mode,__ATOMIC_RELAXED);
+    if(value<0){
+        const char *s=getenv("GFS_NATIVE_CONST_CONFIG");
+        value=s && atoi(s)>0;
+        __atomic_store_n(&mode,value,__ATOMIC_RELAXED);
+    }
+    return value;
+}
 static inline int gfs_thermal64_requested(void){
-    const char *s=getenv("GFS_THERMAL64");return s && atoi(s)>0;
+    if(!gfs_native_const_config_on()){
+        const char *s=getenv("GFS_THERMAL64");
+        return s && atoi(s)>0;
+    }
+    static int cached=-1;
+    int value=__atomic_load_n(&cached,__ATOMIC_RELAXED);
+    if(value<0){
+        const char *s=getenv("GFS_THERMAL64");
+        value=s && atoi(s)>0;
+        __atomic_store_n(&cached,value,__ATOMIC_RELAXED);
+    }
+    return value;
 }
 #ifndef __CUDACC__
 static inline double gfs_t64_U(const treevorostressrk4particletype *p){

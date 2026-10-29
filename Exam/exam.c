@@ -4617,18 +4617,45 @@ static void kepler_center(postype *cx, postype *cy){
  * Plummer when EUNHA_KEPLER_EPS>0, which is the potential of the
  * softened force above. Returns 0 when EUNHA_IC is not kepler. */
 static postype kepler_phi(postype x, postype y){
-	const char *e = getenv("EUNHA_IC");
-	if(!e || strcmp(e, "kepler") != 0) return 0;
-	const char *cxe = getenv("EUNHA_KEPLER_CX");
-	const char *cye = getenv("EUNHA_KEPLER_CY");
-	const char *ee = getenv("EUNHA_KEPLER_EPS");
-	postype cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
-	postype cy = cye && cye[0] ? atof(cye) : (postype)2.0;
-	postype eps = ee && ee[0] ? atof(ee) : (postype)0.0;
-	postype dx = x - cx, dy = y - cy;
-	postype r2 = dx*dx + dy*dy + eps*eps;
-	if(!(r2 > (postype)1e-32)) return 0;
-	return -(postype)1.0 / sqrt(r2);
+    postype cx,cy,eps;
+    if(gfs_native_const_config_on()){
+        static int state=0,active=0;
+        static postype cached_cx,cached_cy,cached_eps;
+        if(__atomic_load_n(&state,__ATOMIC_ACQUIRE)!=2){
+            int expected=0;
+            if(__atomic_compare_exchange_n(&state,&expected,1,0,
+                                            __ATOMIC_ACQ_REL,__ATOMIC_ACQUIRE)){
+                const char *e=getenv("EUNHA_IC");
+                active=e && strcmp(e,"kepler")==0;
+                if(active){
+                    const char *cxe=getenv("EUNHA_KEPLER_CX");
+                    const char *cye=getenv("EUNHA_KEPLER_CY");
+                    const char *ee=getenv("EUNHA_KEPLER_EPS");
+                    cached_cx=cxe && cxe[0]?atof(cxe):(postype)2.0;
+                    cached_cy=cye && cye[0]?atof(cye):(postype)2.0;
+                    cached_eps=ee && ee[0]?atof(ee):(postype)0.0;
+                }
+                __atomic_store_n(&state,2,__ATOMIC_RELEASE);
+            }else{
+                while(__atomic_load_n(&state,__ATOMIC_ACQUIRE)!=2){}
+            }
+        }
+        if(!active)return 0;
+        cx=cached_cx;cy=cached_cy;eps=cached_eps;
+    }else{
+        const char *e = getenv("EUNHA_IC");
+        if(!e || strcmp(e, "kepler") != 0) return 0;
+        const char *cxe = getenv("EUNHA_KEPLER_CX");
+        const char *cye = getenv("EUNHA_KEPLER_CY");
+        const char *ee = getenv("EUNHA_KEPLER_EPS");
+        cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+        cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+        eps = ee && ee[0] ? atof(ee) : (postype)0.0;
+    }
+    postype dx = x - cx, dy = y - cy;
+    postype r2 = dx*dx + dy*dy + eps*eps;
+    if(!(r2 > (postype)1e-32)) return 0;
+    return -(postype)1.0 / sqrt(r2);
 }
 
 static void gfs_eaud_stage(treevorostressrk4particletype *sbp, int np,
