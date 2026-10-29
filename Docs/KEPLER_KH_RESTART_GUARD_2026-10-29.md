@@ -28,3 +28,20 @@ Before production use, build a separate native binary and exercise actual
 legacy, tagged, incompatible, truncated and continuous-vs-restarted files,
 including multi-rank behavior; the existing snapshot format has further I/O
 validation limitations beyond this guard.
+
+## Actual reader-path fixtures
+
+The [reader harness](test_kh_restart_reader_20261029.c) links the actual
+`kh_readdata` function and uses singleton MPI on lageunha. It stubs particle
+migration and creates isolated one-particle fixture files in fresh `/tmp`
+directories; it does not evolve the fluid or access an existing snapshot.
+Both a CUDA-defined stress reader and a CPU non-stress reader accepted the
+old header format, a new-format non-stress record, and an untagged current
+stress record. Both rejected a deliberately incompatible stress stride with
+exit 99. The non-stress reader rejected current-stride thermal64 and moment
+tags with exit 99. The stress reader accepted those tagged records and the
+test verified exact preservation of the thermal64 double value and moment tag;
+moment reading used `GFS_MOMENT_INIT_ONLY=1`. These exercise the actual reader
+branch and MPI abort in one process, not CUDA kernels, migration, real legacy
+file compatibility across ABIs, truncated-file handling, multi-rank I/O or
+continuous-versus-restarted evolution. Those production gates remain open.
