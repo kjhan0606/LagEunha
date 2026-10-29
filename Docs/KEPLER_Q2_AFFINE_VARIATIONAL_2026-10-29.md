@@ -57,3 +57,35 @@ Reproducible data and scripts: [t30](KEPLER_Q2_AFFINE_VARIATIONAL_T30_2026-10-29
 [t47.5](KEPLER_Q2_AFFINE_VARIATIONAL_2026-10-29.json),
 [t30 script](audit_kepler_q2_affine_variational_t30_20261029.py),
 [t47.5 script](audit_kepler_q2_affine_variational_20261029.py).
+
+## Exact-orbit geometry counterfactual
+
+The negative projection above includes the force of this shape-energy
+functional on the unperturbed mesh itself. To distinguish that baseline,
+the same particle IDs were placed at their analytic softened circular-orbit
+positions at the same time; each site's **actual-state reconstructed `A` was
+held fixed** while polygon moments and shape forces were recomputed. Project
+both the actual-state torque and this reference torque onto the same actual
+angular-momentum error. Their difference is not a growth rate.
+
+| Time | Actual projection | Exact-orbit-position reference, same `A` | Actual minus reference |
+| --- | ---: | ---: | ---: |
+| 30 | -6.545 | -25.977 | **+19.432** |
+| 47.5 | -6.906 | -26.401 | **+19.495** |
+
+Thus the large negative raw projection is not evidence of a restoring
+response: in this particular fixed-`A` counterfactual, subtracting the
+reference gives a positive projection. The mass-weighted mean magnitude of
+the actual affine force in the inner disk is 9.41e-5 and 1.31e-4 of local
+gravity at t30 and t47.5, respectively; those small absolute ratios can still
+matter for a cold disk. See [receipt](KEPLER_Q2_AFFINE_REFERENCE_2026-10-29.json)
+and [reader](audit_kepler_q2_affine_reference_20261029.py).
+
+The reference changes all site positions while preserving the actual-state
+`A`, so it is not necessarily a dynamically realizable affine state. The
+analytic circular motion is also not the actual outer-boundary model, though
+all face neighbors of the inner diagnostic set are included. It is a useful
+test of baseline contamination, not a definitive linear-response calculation.
+Do not interpret the previous negative numbers as a predicted cure; a proper
+coupled perturbation and full angular-momentum/energy closure are still
+required before implementing or evolving this model.
