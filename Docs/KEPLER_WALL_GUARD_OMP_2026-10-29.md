@@ -39,8 +39,8 @@ extracted guard function, not native fault injection or race-detection proof.
 
 Both native comparisons ran concurrently with the ongoing Ada production
 diagnostic, so their timings are **not valid speed measurements**. Multiple
-realistic checkpoint geometries, an exact
-restart bridge, and isolated ABBA performance test remain required before
+realistic checkpoint geometries, an event-crossing restart bridge, and an
+isolated ABBA performance test remain required before
 the option is promoted. The current wall-event branch itself is one MPI rank;
 this change does not establish MPI scaling, spin closure or Kepler stability.
 The running Q1 binary was not changed or restarted.
@@ -66,7 +66,31 @@ comparison; see [original-candidate parity](KEPLER_WALL_GUARD_OMP_THERMAL_ORIGIN
 This adds a physical-impact check in thermal64, but the geometry is one
 preserved Q2 event, not a Q1 boundary-convergence or long-time test. These
 Ada runs shared the device with the ongoing Q1 simulation and cannot qualify
-performance. Exact restart-bridge, independent ABBA timing and MPI remain open.
+performance. Event-crossing restart-bridge, independent ABBA timing and MPI remain open.
+
+## Thermal64 no-impact restart bridge
+
+A four-step native Q1 run with the OpenMP guard enabled wrote an explicit
+intermediate checkpoint after step 23, without changing the original time
+step. A second process loaded that checkpoint and executed steps 24 and 25.
+Both the continuous and restarted runs used the same candidate binary, the
+same final target `t=0.0018340842946822263`, and the same per-step sizes and
+wall-accept ledgers in the resumed interval. All 90,352 full particle records
+match except their runtime next pointers, and the complete footer is exact;
+see [bridge verification](KEPLER_WALL_GUARD_OMP_BRIDGE_VERIFIED_2026-10-29.json)
+and [auditor](audit_wall_guard_omp_bridge_20261029.py). The
+continuous control with intermediate checkpoint output also matches the prior
+four-step no-intermediate-output control by the same record comparison.
+
+The first attempted split forced an exact stop at the intermediate time and
+shortened that final step by about 9e-20 relative to the natural full step.
+That output was preserved but excluded as an exact reference. The accepted
+bridge instead wrote the mid-step-count checkpoint during an untruncated
+continuous run. The stored byte-comparator's generic scope text says its
+comparison alone is not an executed restart bridge; here the separate resumed
+native process and logs establish that execution. This remains a short,
+no-impact test on one rank, not a wall-crossing restart, speed measurement,
+long-time run or MPI qualification.
 
 ## Actual wall-impact comparison
 

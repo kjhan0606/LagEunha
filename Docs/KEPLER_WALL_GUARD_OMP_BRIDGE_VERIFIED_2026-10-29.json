@@ -1,0 +1,117 @@
+{
+  "passed": true,
+  "checks": {
+    "full_restart_record_and_footer_parity": true,
+    "intermediate_output_does_not_change_final": true,
+    "continuous_has_four_accepted_steps": true,
+    "restart_has_two_accepted_steps": true,
+    "resumed_accepted_ledgers_exact": true,
+    "both_exit_zero": true,
+    "both_enable_omp_and_thermal64": true,
+    "restart_reads_exact_intermediate": true,
+    "unchanged_binary": true
+  },
+  "restart_comparison": {
+    "passed": true,
+    "checks": {
+      "native_headers_exact": true,
+      "all_record_bytes_after_next_pointer_exact": true,
+      "full_precision_restart_footer_exact": true
+    },
+    "paths": [
+      "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_untruncated/khout.000026.dat",
+      "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_restart/khout.000026.dat"
+    ],
+    "sha256": [
+      "5101ac5fdc57ed9ab00007404c7420ca28829a5fe985d77de7f514cd06d86006",
+      "b29a9ad808d7f463ab9df7b3dcd6d5ec3a010ac431dce68126d09bdcf3a5629a"
+    ],
+    "records": 90352,
+    "stride": 576,
+    "changed_records_excluding_pointer": 0,
+    "first_changed_record_indices": [],
+    "differing_body_byte_columns": {},
+    "records_with_different_next_pointer": 84560,
+    "footer_fields": [
+      [
+        0.0018340842946822263,
+        7.642017894509269e-05,
+        7.642017590114847e-05,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0018340842946822263,
+        7.642017894509269e-05,
+        7.642017590114847e-05,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+  },
+  "intermediate_output_comparison": {
+    "passed": true,
+    "checks": {
+      "native_headers_exact": true,
+      "all_record_bytes_after_next_pointer_exact": true,
+      "full_precision_restart_footer_exact": true
+    },
+    "paths": [
+      "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/omp/khout.000026.dat",
+      "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_untruncated/khout.000026.dat"
+    ],
+    "sha256": [
+      "278e2e0c3554cf9e2c7b31d828486ebde4f3a7b68ff7798a2071930f474a6292",
+      "5101ac5fdc57ed9ab00007404c7420ca28829a5fe985d77de7f514cd06d86006"
+    ],
+    "records": 90352,
+    "stride": 576,
+    "changed_records_excluding_pointer": 0,
+    "first_changed_record_indices": [],
+    "differing_body_byte_columns": {},
+    "records_with_different_next_pointer": 84560,
+    "footer_fields": [
+      [
+        0.0018340842946822263,
+        7.642017894509269e-05,
+        7.642017590114847e-05,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0018340842946822263,
+        7.642017894509269e-05,
+        7.642017590114847e-05,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+  },
+  "hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_untruncated/khout.000024.dat": "e7fedd8df1ab73d98a52fbfe324f23a3ff590d294dbf21e63b85ba86d3ae2ef9",
+    "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_untruncated/log": "b096f59e47be18d93eaa69b5de34fcc704fc4ae6c49d6b410a7d2c03bb9f0a0d",
+    "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_restart/log": "02c443215c2988873eb1893185e536e450578689e57d1ddc895667ace67b2655",
+    "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_untruncated/run.sh": "49fb7cc86475f24a1f3ce5980876b436fb78ec425cce4f9be7ccc835e9dae211",
+    "/gpfs/kjhan/LagForce/Kepler_WallGuardOMP_20261029/bridge_restart/run.sh": "dc252863263c057a3a1a07d35719e860b4d9fc8e82c8a456710207bfcd1d3605",
+    "/gpfs/kjhan/LagForce/Git_publish_20261028/Docs/audit_wall_guard_omp_bridge_20261029.py": "c4c76d3badd1332683c1d7765ff007d7f44c5aa10d1121a14e8fa10ff567b422"
+  },
+  "scope": "Executed native thermal64 Q1 short no-impact restart from an untruncated intermediate step, OpenMP guard enabled in both paths. Shared GPU, one rank; no physical wall crossing, performance or long-time stability proof."
+}
