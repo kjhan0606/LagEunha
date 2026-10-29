@@ -47,3 +47,21 @@ The gravity-only endpoint differs from the actual native preimpact endpoint by a
 An independent W0 variational face reconstruction was applied to the same t30 and t48.4 saved states for all sites originally at r<2. Maximum area discrepancies from stored native areas are below 6e-8. In the inner disk, the mass-mean magnitude of reconstructed pressure acceleration rises from **2.15e-7** at t30 to **7.26e-6** at t48.4, a factor of about 33.8; cell p99 rises from **1.43e-6** to **5.34e-5**. Its mass-mean acceleration ratio relative to central gravity rises from 7.74e-8 to 2.59e-6. The mean instantaneous absolute compressional-work rate `|Udot|/(U Omega)` changes from 0.00525 to 0.01612; it is not entropy production. The complete radial statistics and source hashes are in [the receipt](KEPLER_Q2_LATE_PRESSURE_2026-10-29.json) and [reader](audit_kepler_q2_late_pressure_20261029.py).
 
 This is a reconstruction from two endpoints, not accumulated impulse or a causal attribution for the orbit discrepancy. The reconstruction method previously matched eight Q1 native RHS samples at t10, but no direct Q2 native RHS comparison was made here; actual Q2 forces and their time history require separate checks. The pressure acceleration is small relative to gravity at both endpoints and may vary significantly between them.
+
+## Existing intermediate checkpoints
+
+Seven saved checkpoints from the original t30→60 attempt fill in the interval without rerunning the simulation. Their exact times are read from the checkpoint footers; all retain the original IDs, fixed masses and W0. The [history reader](audit_kepler_q2_pressure_history_20261029.py) applies the same independent pressure reconstruction, compares actual areas to stored areas and records all hashes in [the receipt](KEPLER_Q2_PRESSURE_HISTORY_2026-10-29.json). The rows below give mass means for the original .5<=r0<.75 inner disk; displacement is normalized by sqrt(initial cell area).
+
+| t | Absolute density change | Position error / cell scale | Pressure acceleration |
+|---:|---:|---:|---:|
+| 30.000 | 0.136% | 0.127% | 2.15e-7 |
+| 32.502 | 0.202% | 0.177% | 3.37e-7 |
+| 35.001 | 0.313% | 0.258% | 5.34e-7 |
+| 37.500 | 0.489% | 0.391% | 8.35e-7 |
+| 40.001 | 0.780% | 0.603% | 1.37e-6 |
+| 42.501 | 1.229% | 0.943% | 2.13e-6 |
+| 45.001 | 2.023% | 1.492% | 3.57e-6 |
+| 47.500 | 3.301% | 2.385% | 5.92e-6 |
+| 48.400 | 4.008% | 2.831% | 7.26e-6 |
+
+These sampled quantities rise together throughout this interval, and the large change is already present at t47.5, before the single wall impact at t48.377. This excludes that specific final impact as the sole origin of the preimpact change. It does not exclude earlier wall effects or establish whether pressure perturbations drive the geometric displacement, result from it, or both. Reconstructed pressure forces still need direct native Q2 RHS validation, and snapshots 2.5 time units apart do not resolve all intermediate behavior.
