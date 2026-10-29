@@ -381,6 +381,26 @@ behavior, not the actual pressure or spin dynamics. Face/geometry stages,
 reconstruction, rollback of whole-system side effects, MPI collective
 acceptance, KH restart and production integration remain unimplemented.
 
+### Moment-only MPI commit gate
+
+The separate [MPI commit helper](../Exam/gfs_moment_rk4_mpi.h) checks each
+tentative cell's RK4 completion, unchanged base, realizability, fixed-mass
+constraint when requested, and identical positive `dt` across nonempty ranks.
+It commits moment arrays only after an all-rank success vote. Every rank,
+including an empty rank, must call the collectives in the same order. The
+[two-rank test](test_gfs_moment_rk4_mpi_20261029.c), run with Intel MPI on
+lageunha, passed intentional one-rank rejection, different-rank timestep
+rejection, successful shared-face conservation, stale-base rejection and an
+empty-rank vote. Rejected accepted-state arrays stayed unchanged.
+
+This is still a **moment-array-only** transaction and is not wired into the
+native RK4 driver. Its vote does not establish matching physical start times,
+unique cross-rank faces, correct halo exchange, or stage-by-stage collective
+ordering. Geometry, generator position, pressure/thermal state, face ledgers,
+wall events and device buffers require a joint rollback and common acceptance
+before it can be used in the real solver. Testing a single shared flux on two
+local CPU ranks does not establish CUDA+MPI correctness or a Kepler solution.
+
 The host test also covers an affinely changed polygon, passing the seed
 in-place, and a finite but extreme seed that makes the seeded Newton attempt
 fail. In that case the warm wrapper recovers the exact cold-start result;
