@@ -358,6 +358,29 @@ equivalence, device runtime and adverse-seed costs must be measured before
 using this option in a solver. It does not make the nonlinear fit itself an
 AREPO-speed method.
 
+## 2026-10-29: tentative moment RK4 stage storage
+
+The existing tagged moment payload aliases the legacy particle RK4 scratch;
+the legacy integrator must not use both at once. A separate opt-in
+[moment RK4 helper](../Exam/gfs_moment_rk4.h) now stores base, tentative stage,
+and weighted stage sum outside that legacy scratch. It implements classical
+four-stage RK4 without overwriting the accepted state. Each tentative stage
+requires positive-definite mass moments, positive thermal residual, and
+finite derivatives; an optional fixed-mass contract rejects nonzero mass
+RHS. Failure leaves the previous stage scratch unchanged. A completed result
+remains tentative: a native implementation must perform an all-cell/all-rank
+decision before committing any particle.
+
+The [host check](test_gfs_moment_rk4_20261029.c) reports oscillator error
+ratio **15.995** when halving the step, exercises stage rejection and
+unchanged input, and checks mass, momentum, energy and angular momentum for a
+two-cell conservative exchange. The separate [CUDA check](test_gfs_moment_rk4_gpu_20261029.cu)
+compiled for sm_89 and ran successfully on Ada for one cell and ten analytic
+oscillator steps. This verifies RK4 algebra and the helper's fail-closed
+behavior, not the actual pressure or spin dynamics. Face/geometry stages,
+reconstruction, rollback of whole-system side effects, MPI collective
+acceptance, KH restart and production integration remain unimplemented.
+
 The host test also covers an affinely changed polygon, passing the seed
 in-place, and a finite but extreme seed that makes the seeded Newton attempt
 fail. In that case the warm wrapper recovers the exact cold-start result;
