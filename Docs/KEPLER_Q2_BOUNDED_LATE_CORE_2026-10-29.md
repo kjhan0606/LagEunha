@@ -207,3 +207,25 @@ relative to `Omega^2` does not establish that rotation is irrelevant over many
 orbits or that a spin model would fail; equally, nonzero torque does not
 establish that adding spin cures the measured error. An integrated conservative
 spin/affine operator remains necessary to answer that question.
+
+## Face-normal velocity diagnostic for the fixed-mass design
+
+For interior faces whose two sites originated in the inner disk, the exact
+instantaneous Voronoi geometric normal speed was compared with the arithmetic
+mean of the two saved-gradient linear velocity reconstructions at the face
+centroid. At t30, the face-length-weighted mean absolute difference is
+**0.286 times the mean local sound speed**; at t47.5 it is **0.395**. At the
+latter time, **6.51% of the included face length** has a difference greater
+than that sound-speed scale. There are 11,078 selected faces at each saved
+time. The face-speed formula differentiates the perpendicular-bisector
+equation and includes the off-center face correction. See [receipt](KEPLER_Q2_FACE_SLIP_2026-10-29.json)
+and [reader](audit_kepler_q2_face_slip_20261029.py).
+
+This compares geometric speed with a simple reconstruction average: it is
+not the actual Riemann contact speed or measured native mass flux, and saved
+velocity gradients can come from a nearby RK stage. It cannot establish that
+the existing fixed-mass solver violates its own equations. For an eventual
+spin/ALE design it does show why assuming that generator-defined face speed
+automatically equals reconstructed fluid speed is unsafe. The W0 fixed-mass
+limit must explicitly define its interface motion and flux closure, including
+energy and moments, while keeping the no-steering condition.
