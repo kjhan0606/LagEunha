@@ -51,3 +51,40 @@ were not merged or used to overwrite the user's current native CUDA source.
 The new [receipt](KEPLER_Q2_ZERO_NET_MASS_WEIGHT_2026-10-29.json) and
 [reader](audit_kepler_q2_zero_net_mass_weight_20261029.py) record inputs,
 solver residuals and the explicitly limited conclusion.
+
+## Independent Astra evaluation and additional history
+
+An independent Astra review recommends this **as a research priority**, not a
+production method. Unlike the incremental weight-swept exchange, full ALE
+slip transport can have nonzero face fluxes whose cell sums are zero. The
+review emphasizes three open requirements: the W0-maintained model and the
+evolving-weight ALE model need an explicit consistent connection; the fit
+above uses free outer-neighbor rates rather than whole-domain constraints; and
+each RK stage's global/nonlinear graph solve plus MPI, geometry and density
+reconstruction must meet the user's speed requirement. The 775/888 observed
+LSMR iterations use column-norm scaling; they are neither a performance lower
+bound nor evidence of an efficient native solver.
+
+Astra's suggestion of a short self-evolving linear-shear moment test must be
+read against the preserved historical branch. Its
+`Docs/staggered_moment_evolution_2026-10-09.md` already reports such RK4
+tests: conservation and smooth-stage convergence were observed, but moment
+realizability and topology-transition errors remained. The related
+`Docs/staggered_positive_transport_2026-10-09.md` reports a positive-piece
+overlap method passing a special uniform linear-shear free-flight test while
+leaving general pressure forces, nonuniform states and cost unresolved. Do
+not simply repeat either result. The same branch's
+`Docs/kepler_moment_coupling_plan_2026-10-17.md` records a later gravity and
+fluid prototype and 432 regression checks, followed by a cold Kepler first
+RHS failure due to a reconstructed vacuum. Those are prior research results,
+not evidence that the current CUDA/MPI solver has the feature. Its historical
+frozen-outer-cell boundary is distinct from the present wall setup and must
+not be silently adopted.
+
+The next useful candidate should specifically address those observed
+realizability, geometry-transition and cold-interface failures, preserve full
+face momentum/energy/moment transport, and expose iteration and end-to-end
+cost. Its interpretation must also distinguish cell-average momentum from
+generator point velocity; reconstructing physical point velocity is not
+itself a steering term, but it changes the relation `p=m*x_dot` and needs a
+consistent model. No historical code was merged into the current branch.
