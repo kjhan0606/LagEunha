@@ -1,0 +1,14 @@
+{
+  "source": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v2/Exam/exam_gpu.cu",
+  "source_sha256": "09a2d6a16d44f03534d38ea6fdfbaa556736d62fad7504981258a11ffbf6f5a3",
+  "legacy_counter_increment_line": 1073,
+  "selected_force_and_work_lines": [
+    1206,
+    1226,
+    1227,
+    1228,
+    1362
+  ],
+  "interpretation": "The legacy pair restoring-pressure branch increments d_gfs_pair_hits. With GFS_VARPRESS_W0 and phase1, active force accumulates var_fx/var_fy, active stored energy uses dte from variational face_work, and die_out selects dte. The pair-pressure counter is therefore not a measure of actually applied pair restoring force or AV heat in this branch. Close geometry may still matter for the real separation CFL; the counter alone does not classify pair provenance.",
+  "scope": "Read-only code-path audit of the frozen active executable source; no kernel or diagnostics were changed."
+}

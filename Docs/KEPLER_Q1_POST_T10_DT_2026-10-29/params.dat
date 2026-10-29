@@ -1,0 +1,52 @@
+#Start of the Ascii Header of the GOTPM Simulation (AutoGen)
+##################################################
+# <<SIM_MODEL value>> 0(Cosmos), 1(Galaxy) 3(KH:RK4,2D), 4(Blast:3D),
+#    5(Bow Shock:3D), 6(RT:2D), 7(Keplyer:2D), 8(Cylinder:2D), 30(MkGlass2D) 60(RT:2D:LF)
+define SIM_MODEL           = 3 # SIMULATION MODEL
+define flag for Hydro      = V # N: no hydro, S: SPH hydro, V: Voro hydro
+define Self Gravity        = N # Whether to include the self gravity
+define Hydro time-stepping way = 1 # KDK
+define Voro centroid shift factor = 0.000000 # 0: no, >0: fshift
+define Gamma_hydro         = 1.666667 # Polytropic index (hydro) = 5/3
+define KH Den in R1     = 1.000000 # Initial Density in Region 1
+define KH Den in R2     = 2.000000 # Initial Density in Region 2
+define KH Vel in R1     = -1.000000 # Outer velocity (Lecoanet+2016)
+define KH Vel in R2     = 1.000000 # Inner velocity (Lecoanet+2016)
+define KH Transition size  = 0.050000 # tanh width 'a' (Lecoanet+2016)
+define KH Global Pressure  = 10.000000 # Initial global pressure (Lecoanet+2016)
+define KH Vel Perturb Amp  = 0.010000 # Initial Perturbation of Vel in Y-direction
+define KH Xmin             = 0 # Minimum X of the simulation space
+define KH Xmax             = 6 # Maximum X of the simulation space
+define KH Ymin             = 0 # Minimum Y of the simulation space
+define KH Ymax             = 6 # Maximum Y of the simulation space (Lecoanet+2016)
+define KH Order of Accuracy= 0.333333 # Order of Accuracy in Voro mode. 0<=w<0.5
+define KH Kappa            = 0.000000
+define GAS w2 power       = 0.200000 # a power to w2 (reduced from 0.4)
+##################################################
+### Nx, Ny, and Nz should be same & nspace should be int.
+define Nx                  = 384 # Number of grids along x axis
+define Ny                  = 384 # Number of grids along y axis
+define Nz                  = 1 # Number of grids along z axis
+##################################################
+define Courant_hydro       = 0.400000 # Courant number in hydro
+# INFORMATION ON THE VORONOI VISCOSITY (AV:artificial viscosity)
+define Alpha parameter in Voro  = 0.000000 # no Monaghan AV
+define Beta parameter in Voro  = 0.000000 # no Monaghan AV
+define Eta parameter in Voro  = 0.001953 # Eta factor of Voronoi AV ~ HydroGridSize/4
+define Eps parameter in Voro  = 0.010000 # Eps factor of Voronoi AV
+define Re parameter in Voro   = 0.000000 # no physical visc
+define GAS av_mode        = 5 # MUSCL + HLLC, face speed v*
+define GAS use_muscl      = 1
+define GAS cd_amax        = 0.000000 # Riemann only
+define GAS cd_ell         = 0.050000 # CD10 ell parameter
+define GAS cd_amin        = 0.000000 # Riemann only
+define GAS blend_theta    = 0.000000 # two-tier theta_0
+define GAS prandtl        = 1.000000 # Prandtl number Pr=nu/chi
+define GAS w2_relax_tau   = 0.000000 # w2 relaxation timescale (d/c units, 0=off)
+define GAS w2_rate_max    = 0.000000 # max fractional dw2/w2 per step (0=off)
+define GAS w2_floor_frac  = 0.000000 # w floor as fraction of dMean (0=off)
+##################################################
+define GAS gpu_enabled    = 1 # GFS on GPU
+define GAS entropy_mode   = 0
+define GAS gradient_method= 1
+#End of Ascii Header

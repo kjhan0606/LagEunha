@@ -1,0 +1,53 @@
+{
+  "project": "LagEunha native bounded Q1 accepted-restart accuracy and performance",
+  "parent_root": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2",
+  "parent_job": "439333",
+  "initial": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat",
+  "initial_sha256": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+  "parent_params_sha256": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+  "baseline": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v2/eunha2.exe",
+  "candidate": "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_const_cache_v1/eunha2.exe",
+  "binary_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_v2/eunha2.exe": "f26816122df101ea71f72b4f3fb9233e965d06784ed94e88cfb46245fa251444",
+    "/gpfs/kjhan/LagForce/Kepler_SlipWall_Integration_20261029/candidate_const_cache_v1/eunha2.exe": "7364a05c09eeb393d4e8528f01a82efb7f6d9c6fba9b394d2d1e62e6bd78345f"
+  },
+  "frozen_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/run_kepler_q1_restart_dt_bundle_20261029.py": "957765593ddad623fa941a9bf06cdc8693b0ae88e7d40835366d41c73768f913",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/audit_kepler_q1_restart_dt_bundle_20261029.py": "636b25bb6ce7aff2e801aeae0490c010954d24cd956e5083f3e17cb9874963ad",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/audit_kepler_const_config_cache_20261029.py": "cae3213e372d9b49d7ae222d0accf58198b46887968d509912010a0e3610c34e",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/audit_kepler_q1_bounded_gate_20261029.py": "d06fcb8fcf193f23417ba49f695c36d3abc8663a54aca60d387b5bcd5d323ea1",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/audit_kepler_restart_bytes_20261029.py": "bf3013b6d5d15348cd7570ca7bf551920b20faf2f10f2e1dc8ec4dad42836dc9",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/kepler_native_global_ids_20261029.py": "3f2dd650e61ab8fb84742f0c468a860fcd631629a7d28a7c14cf8107b87ed53a",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/audit_kepler_native_radial_20261026.py": "4970c8568d455522c5ce04d7fb493e60c2147584ca7037b312f3443b2be47fc2",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/native_template.sh": "a06d26d261b44fb126a4f90122d97f7dc06eb600d2c4b24f9ba11c520a23e83e",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/audit_snapshot.py": "d163c40164bc03b45b4afd202c1a0d6577e849d5ed01bea64b31a543c587e6a2",
+    "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/snapshot_offsets.json": "c9be19a29148fdd8991050f97a7ac189248eedeb2494997bdcda42e1c3785d03"
+  },
+  "template_directory": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0",
+  "physical_interval": 0.1,
+  "allocation_seconds": 7200,
+  "predeclared_policy": {
+    "required_parent_exact_time": 10.0,
+    "original_checkpoint_checks": 28,
+    "cache_ABBA_speedup_min": 1.05,
+    "time_levels": [
+      "original_CFL",
+      "half_of_recent_min_h",
+      "quarter_of_recent_min_h"
+    ],
+    "required_actual_median_h_ratio_max": 0.75,
+    "no_claim_of_inherited_error_repair": true,
+    "no_long_time_promotion": true
+  },
+  "output_policy": {
+    "qualification_final_snapshots": 4,
+    "timestep_control_final_snapshots": 3,
+    "expected_bytes_per_snapshot": 52042820,
+    "expected_total_snapshot_GB": 0.365,
+    "periodic_dumps": false,
+    "full_particle_TSV": false,
+    "source_snapshot_reused_by_symlinks": true
+  },
+  "scope": "One dependent finite allocation after the unchanged t10 chain. No parent modification and no t0 rerun. All original physical gates remain."
+}

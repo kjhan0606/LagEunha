@@ -16,10 +16,10 @@ def audit(root):
     checks['frozen_initial_hash']=hashlib.sha256(Path(stage['initial']).read_bytes()).hexdigest()==stage['initial_sha256']
     for name in stage['order']:
         d=root/name;text=(d/'log').read_text(errors='replace')
-        files=[p for p in d.glob('khout.*.dat') if p.name!='khout.001218.dat']
+        files=[p for p in d.glob('khout.*.dat') if p.name!=Path(stage['initial']).name]
         if len(files)!=1:raise ValueError('Expected one complete endpoint: '+name)
         p,m=ordered_global(files[0],ids);endpoints[name]=files[0]
-        expected_binary=('f26816122df101ea71f72b4f3fb9233e965d06784ed94e88cfb46245fa251444'
+        expected_binary=(stage.get('baseline_binary_sha256','f26816122df101ea71f72b4f3fb9233e965d06784ed94e88cfb46245fa251444')
                          if name in ['A1','A2'] else stage['candidate_manifest']['eunha2.exe'])
         checks[name+'_frozen_binary']=hashlib.sha256((d/'eunha2.exe').read_bytes()).hexdigest()==expected_binary
         ledger=[s for s in text.splitlines() if '[RK4E]'in s or '[WALL_ACCEPT]'in s]
