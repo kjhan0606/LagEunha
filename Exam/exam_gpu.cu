@@ -35,6 +35,12 @@ static __device__ unsigned long long d_gfs_invalid_velocity_fit_cells;
 static __device__ unsigned long long d_gfs_tess_geometry_errors;
 static __device__ unsigned long long d_gfs_stencil_expanded_cells;
 static __device__ unsigned long long d_gfs_stencil_halo_clipped_cells;
+/* Static support planes for the opt-in bounded Kepler research branch. */
+#define GFS_FIXEDPOLY_SIDES 1024
+static __constant__ int d_gfs_fixedpoly_on;
+static __constant__ double d_gfs_fixedpoly_nx[GFS_FIXEDPOLY_SIDES];
+static __constant__ double d_gfs_fixedpoly_ny[GFS_FIXEDPOLY_SIDES];
+static __constant__ double d_gfs_fixedpoly_apothem;
 static long long h_gfs_pair_hits = 0;
 static __device__ unsigned long long d_varpress_geom_max_key;
 static double h_varpress_geom_max_rate=0;
@@ -71,6 +77,34 @@ static double h_diag_global_w2_max = 0.0;
         exit(1); \
     } \
 } while(0)
+
+static void gfs_fixedpoly_sync(cudaStream_t stream)
+{
+    (void)stream;
+    const char *setting=getenv("GFS_KEPLER_FIXED_POLYGON");
+    const int enabled=setting && strcmp(setting,"1")==0;
+    if (!enabled) return;
+    const char *ic=getenv("EUNHA_IC");
+    if (!ic || strcmp(ic,"kepler")!=0) {
+        fprintf(stderr,"[FIXED_POLYGON] requires EUNHA_IC=kepler\n"); exit(1);
+    }
+    static int uploaded=0;
+    if (uploaded) return;
+    double nx[GFS_FIXEDPOLY_SIDES],ny[GFS_FIXEDPOLY_SIDES];
+    const double step=2.0*M_PI/(double)GFS_FIXEDPOLY_SIDES;
+    for (int k=0;k<GFS_FIXEDPOLY_SIDES;k++) {
+        const double angle=((double)k+0.5)*step;
+        nx[k]=cos(angle);ny[k]=sin(angle);
+    }
+    const double apothem=2.75*cos(0.5*step);
+    CUDA_CHECK(cudaMemcpyToSymbol(d_gfs_fixedpoly_nx,nx,sizeof(nx)));
+    CUDA_CHECK(cudaMemcpyToSymbol(d_gfs_fixedpoly_ny,ny,sizeof(ny)));
+    CUDA_CHECK(cudaMemcpyToSymbol(d_gfs_fixedpoly_apothem,&apothem,sizeof(apothem)));
+    CUDA_CHECK(cudaMemcpyToSymbol(d_gfs_fixedpoly_on,&enabled,sizeof(enabled)));
+    uploaded=1;
+    fprintf(stderr,"[FIXED_POLYGON] enabled N=%d R=2.75 apothem=%.17g\n",
+            GFS_FIXEDPOLY_SIDES,apothem);
+}
 
 /* ================================================================
  *  Device inline: get2dUpqradRk4 (Laguerre face velocity)
@@ -446,6 +480,30 @@ void getAccVoro2DBlend_kernel(
             audit_udotds[f] = 0.0;
         }
         int j = neighbor_idx[f];
+        if (j <= -1000) {
+#ifdef GFS_VARPRESS_W0
+            /* A static physical boundary has zero lab-frame face speed.
+             * Include its relative sweep so the cell's complete face
+             * vectors close: sum(w_n-v_i.n)A = dV_i/dt. The interior-pair
+             * pressure force already accounts for wall traction through
+             * the bounded-area gradient; there is no ghost-pair force. */
+            const double dSx=c2y[f]-c1y[f], dSy=-(c2x[f]-c1x[f]);
+            const double relative_sweep=-(ibp_vx*dSx+ibp_vy*dSy);
+            const double wall_work=-ibp_pressure*relative_sweep;
+            if (thermal64) thermal_rate64+=wall_work;
+            if (phase1) dte+=wall_work;
+            if (var_geom_cfl>0 || var_geom_audit) var_sweep_abs+=fabs(relative_sweep);
+            if (audit_work) {
+                audit_work[f]=phase1 ? wall_work : 0.0;
+                audit_pressure[f]=ibp_pressure;
+                audit_udotds[f]=relative_sweep;
+            }
+#else
+            ax_out[i]=NAN;ay_out[i]=NAN;die_out[i]=NAN;dt_out[i]=NAN;
+            return;
+#endif
+            continue;
+        }
         if (j < 0) continue;
 
         int jbp_is_ghost = is_ghost[f];
@@ -2242,20 +2300,25 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             exit(1);
         }
         fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\n");
+        /* Opt-in compact wall budget: avoid writing every interior face. */
+        const char *wall_only_env = getenv("GFS_GPU_FACE_DUMP_WALL_ONLY");
+        const int wall_only = wall_only_env && atoi(wall_only_env) > 0;
         long long nrows = 0;
         for (int i = 0; i < n_particles; i++) {
             if (!gfs_face_dump_selected(ctx->h_parts.indx[i],dump_ids,dump_nids)) continue;
             for (int f = ctx->h_faces.face_offset[i];
                  f < ctx->h_faces.face_offset[i + 1]; f++) {
                 int j = ctx->h_faces.neighbor_idx[f];
-                if (j < 0 || j >= n_total) continue;
+                if (wall_only && j > -1000) continue;
+                if (j >= n_total || (j < 0 && j > -1000)) continue;
                 double x0 = ctx->h_parts.x[i], y0 = ctx->h_parts.y[i];
                 double c1x = ctx->h_faces.c1x[f], c1y = ctx->h_faces.c1y[f];
                 double c2x = ctx->h_faces.c2x[f], c2y = ctx->h_faces.c2y[f];
                 fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
                     mpi_rank, force_call, i, j,
-                    ctx->h_parts.indx[i], ctx->h_parts.indx[j],
-                    ctx->h_faces.is_ghost[f],
+                    ctx->h_parts.indx[i],
+                    j <= -1000 ? (long long)j : ctx->h_parts.indx[j],
+                    j <= -1000 ? 2 : ctx->h_faces.is_ghost[f],
                     h_pressure[f], h_udotds[f], h_work[f],
                     c2y-c1y, -(c2x-c1x),
                     x0+c1x, y0+c1y, x0+c2x, y0+c2y);
@@ -2855,11 +2918,42 @@ void voronoi_tessellate_kernel(
         }
     }
 
+    if (d_gfs_fixedpoly_on && nc>=3) {
+        /* First narrow the superset with real generators. Only then apply
+         * the 1024-gon: clipping the local square first can create >48
+         * transient wall fragments even when the final cell has few faces.
+         * The real-site search above used the larger superset, so its
+         * candidate completeness remains valid after this intersection. */
+        const double cx=xi-3.0,cy=yi-3.0;
+        if (hypot(cx,cy)+1.4142135623730951*halfbox > d_gfs_fixedpoly_apothem) {
+            for (int k=0;k<GFS_FIXEDPOLY_SIDES;k++) {
+                const double nx=d_gfs_fixedpoly_nx[k],ny=d_gfs_fixedpoly_ny[k];
+                const double threshold=d_gfs_fixedpoly_apothem-nx*cx-ny*cy;
+                if (!(threshold>0.0)) {
+                    atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+                    face_count_out[i]=0;return;
+                }
+                if (threshold>=halfbox*(fabs(nx)+fabs(ny))) continue;
+                nc=gpu_clip_voronoi_halfplane(nx,ny,threshold,-1000-k,
+                    poly_x,poly_y,poly_neigh,nc,tmp_x,tmp_y,tmp_neigh,1);
+                if (nc<3) {
+                    atomicAdd(&d_gfs_tess_geometry_errors,1ull);
+                    face_count_out[i]=0;return;
+                }
+            }
+            maxdist2=0.0;
+            for (int e=0;e<nc;e++)
+                maxdist2=fmax(maxdist2,poly_x[e]*poly_x[e]+poly_y[e]*poly_y[e]);
+        }
+    }
+
     if (raw_volume < 2 || nc < 3) break;
     int touches_box=0;
     for (int e=0;e<nc;e++)
-        if (poly_neigh[e]<0 || fabs(poly_x[e])>=halfbox*(1-32*DBL_EPSILON) ||
-            fabs(poly_y[e])>=halfbox*(1-32*DBL_EPSILON)) touches_box=1;
+        if (d_gfs_fixedpoly_on
+            ? (poly_neigh[e]>=-4 && poly_neigh[e]<0)
+            : (poly_neigh[e]<0 || fabs(poly_x[e])>=halfbox*(1-32*DBL_EPSILON) ||
+               fabs(poly_y[e])>=halfbox*(1-32*DBL_EPSILON))) touches_box=1;
     if (!touches_box) break;
     if (halfbox>=max_halfbox || ++box_retry>32) {
         atomicAdd(&d_gfs_tess_geometry_errors,1ull);
@@ -3295,7 +3389,8 @@ void voronoi_tessellate_kernel(
         po->edge_neigh[e] = poly_neigh[e];
         int en = (e+1)%nc;
         double ex = poly_x[en]-poly_x[e], ey = poly_y[en]-poly_y[e];
-        if (poly_neigh[e] >= 0 && (raw_volume < 2 || ex*ex+ey*ey > 0.0)) n_real_faces++;
+        if ((poly_neigh[e] >= 0 || (d_gfs_fixedpoly_on && poly_neigh[e] <= -1000))
+            && (raw_volume < 2 || ex*ex+ey*ey > 0.0)) n_real_faces++;
     }
     po->n_real_faces = n_real_faces;
     if (nc >= 3) {
@@ -3313,7 +3408,7 @@ void voronoi_tessellate_kernel(
                                                  fmax(d_clamped, d_unclamped));
         const double grid_xmax = xmin + (double)mx * cellsize;
         const double grid_ymax = ymin + (double)my * cellsize;
-        po->halo_clipped =
+        po->halo_clipped = !d_gfs_fixedpoly_on &&
             (xi - final_search_radius < xmin || xi + final_search_radius > grid_xmax ||
              yi - final_search_radius < ymin || yi + final_search_radius > grid_ymax);
         if (po->halo_clipped)
@@ -3430,7 +3525,7 @@ void scatter_faces_kernel(
 
     for (int e = 0; e < nc; e++) {
         int j_neigh = po->edge_neigh[e];
-        if (j_neigh < 0) continue;  /* skip box boundary edges */
+        if (j_neigh < 0 && j_neigh > -1000) continue; /* artificial box only */
 
         int en = (e + 1) % nc;
         double ex=po->cx[en]-po->cx[e], ey=po->cy[en]-po->cy[e];
@@ -3449,7 +3544,7 @@ void scatter_faces_kernel(
         f_kp_idx[dst] = (kp >= 0) ? kp : -1;
         f_km_idx[dst] = (km >= 0) ? km : -1;
 
-        f_is_ghost[dst] = (pindx[j_neigh] == MAX_INDEX_GPU) ? 1 : 0;
+        f_is_ghost[dst] = (j_neigh >= 0 && pindx[j_neigh] == MAX_INDEX_GPU) ? 1 : 0;
         local_f++;
     }
 }
@@ -3473,6 +3568,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     h_diag_tess_xmin = xmin; h_diag_tess_ymin = ymin;
     h_diag_global_w2_max = global_w2_max;
     cudaStream_t s = (cudaStream_t)ctx->stream;
+    gfs_fixedpoly_sync(s);
     int blockSize = 256;
     int gridSize = (nbp + blockSize - 1) / blockSize;
     int n_total = ctx->d_parts.n_total;
@@ -3699,6 +3795,7 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
     ctx->tess_faces_on_device = 0;
     if (nbp <= 0) return 0;
     cudaStream_t s = (cudaStream_t)ctx->stream;
+    gfs_fixedpoly_sync(s);
     int blockSize = 256, gridSize = (nbp + blockSize - 1) / blockSize;
     int n_total = ctx->d_parts.n_total;
     unsigned long long zero = 0;

@@ -20,6 +20,7 @@
 #include "exam2d.h"
 #include "gfs_pair.h"
 #include "gfs_velocity_limiter.h"
+#include "gfs_kepler_kdk.h"
 
 /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
  * on (default off). The entropy K = P/rho^gamma is stress.K. It is set from
@@ -4613,6 +4614,60 @@ static void kepler_center(postype *cx, postype *cy){
 	*cy = cye && cye[0] ? atof(cye) : (postype)2.0;
 }
 
+static postype kepler_dt_eta(void){
+	static int cached = 0;
+	static postype eta = 0;
+	if(!cached){
+		const char *s = getenv("EUNHA_KEPLER_DTETA");
+		eta = (s && s[0]) ? atof(s) : (postype)0;
+		cached = 1;
+	}
+	return eta;
+}
+
+static postype gfs_local_gravity_kdk_eta(int *valid){
+	static int cached = 0, cached_valid = 1;
+	static postype eta = (postype)0.005;
+	if(!cached){
+		const char *s = getenv("GFS_KEPLER_LOCAL_GRAVITY_ETA");
+		if(s && s[0]){
+			char *end = NULL;
+			double v = strtod(s, &end);
+			if(!end || end == s || *end || !isfinite(v) || !(v > 0)) cached_valid = 0;
+			else eta = (postype)v;
+		}
+		cached = 1;
+	}
+	if(valid) *valid = cached_valid;
+	return eta;
+}
+
+static int gfs_local_gravity_kdk_on(void){
+	static int on = -1;
+	if(on < 0){
+		const char *s = getenv("GFS_KEPLER_LOCAL_GRAVITY_KDK");
+		on = (s && s[0] && atoi(s) > 0) ? 1 : 0;
+	}
+	return on;
+}
+
+static unsigned gfs_local_gravity_kdk_max_level(int *valid){
+	static int cached = 0, cached_valid = 1;
+	static unsigned level = 12;
+	if(!cached){
+		const char *s = getenv("GFS_KEPLER_LOCAL_GRAVITY_MAX_LEVEL");
+		if(s && s[0]){
+			char *end = NULL;
+			unsigned long v = strtoul(s, &end, 10);
+			if(!end || *end || v > GFS_TIMEBINS_MAX_LEVEL) cached_valid = 0;
+			else level = (unsigned)v;
+		}
+		cached = 1;
+	}
+	if(valid) *valid = cached_valid;
+	return level;
+}
+
 /* Potential of the same central mass, for the energy diagnostics only.
  * Plummer when EUNHA_KEPLER_EPS>0, which is the potential of the
  * softened force above. Returns 0 when EUNHA_IC is not kepler. */
@@ -4666,13 +4721,7 @@ static void gfs_eaud_start(treevorostressrk4particletype *sbp, int np,
  * limits dt to eta * (R^2+eps^2)^(3/4), i.e. eta/(2 pi) of the local
  * orbital period. Default 0 leaves dt alone. Returns a global minimum. */
 static postype kepler_dt_limit(SimParameters *simpar, void *base, size_t stride, int np){
-	static int cached = 0;
-	static postype eta = 0;
-	if(!cached){
-		const char *s = getenv("EUNHA_KEPLER_DTETA");
-		eta = (s && s[0]) ? atof(s) : (postype)0;
-		cached = 1;
-	}
+	postype eta = kepler_dt_eta();
 	const char *e = getenv("EUNHA_IC");
 	postype dtl = (postype)1e30, dtg;
 	if(eta > 0 && e && strcmp(e, "kepler") == 0){
@@ -10231,6 +10280,30 @@ void periodic_postStage_blend(SimParameters *simpar){
 	migrateTreeVorork4Particles(simpar);
 }
 
+/* Bounded Kepler research branch: sites evolve freely inside the static
+ * 1024-gon. An attempted wall crossing fails visibly until a tested
+ * specular impact and wall impulse/torque ledger are installed. */
+void fixed_polygon_postStage_blend(SimParameters *simpar){
+	const double apothem=2.75*cos(M_PI/1024.0);
+	const double step=2.0*M_PI/1024.0;
+	treevorostressrk4particletype *sbp=(treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	const int np=VORO_NP(simpar);
+	for(int i=0;i<np;i++){
+		const double cx=sbp[i].x-3.0,cy=sbp[i].y-3.0;
+		if(hypot(cx,cy)<apothem) continue;
+		for(int k=0;k<1024;k++){
+			const double angle=((double)k+0.5)*step;
+			const double penetration=cx*cos(angle)+cy*sin(angle)-apothem;
+			if(penetration>=0){
+				fprintf(stderr,"[FIXED_POLYGON_CROSSING] id=%zu xy=(%.17g,%.17g) side=%d penetration=%.17g\n",
+					(size_t)PINDX(sbp+i),(double)sbp[i].x,(double)sbp[i].y,k,penetration);
+				MPI_Abort(MPI_COMM(simpar),98);
+			}
+		}
+	}
+	migrateTreeVorork4Particles(simpar);
+}
+
 /* walls_xy_postStage_blend: reflecting walls on all four sides.
  * Used by the 2D Sedov blast wave. Mirror logic identical to wallx but
  * applied to both x and y; both axes also clamp near-wall particles
@@ -11540,6 +11613,12 @@ gfs_rk4_trial_rejected:
  *      6) half-kick: v += 0.5·Dtime·a_{n+1}; ie += 0.5·Dtime·du_{n+1}
  *
  *    Same Dtime is used throughout the step (consistent leapfrog).
+ *
+ *    Optional GFS_KEPLER_LOCAL_GRAVITY_KDK=1 splits the central Plummer
+ *    operator from the synchronized hydro kicks and advances each generator
+ *    through the common hydro interval with its own dyadic KDK substeps.
+ *    Hydro forces and finite-volume face updates remain globally synchronized;
+ *    this is not yet individual hydrodynamic time stepping.
  * ================================================================ */
 double exam2d_vph_kdk_int_blend(
 		SimParameters *simpar,
@@ -11558,6 +11637,118 @@ double exam2d_vph_kdk_int_blend(
 	postype Gamma = GAS_GAMMA(simpar);
 	int av_mode = GAS_AVMODE(simpar);
 	postype xsph_eps = GAS_XSPHEPS(simpar);
+	int local_gravity_kdk = gfs_local_gravity_kdk_on();
+	int thermal64 = 0;
+	postype gravity_eta = 0, gravity_cx = 0, gravity_cy = 0, gravity_eps = 0;
+	int gravity_max_level_valid = 1;
+	unsigned gravity_max_level = gfs_local_gravity_kdk_max_level(&gravity_max_level_valid);
+	static int local_gravity_mode_checked = 0;
+	if(!local_gravity_mode_checked){
+		/* All ranks must take the same branch before any feature-specific
+		 * collective below; otherwise inconsistent rank environments deadlock. */
+		int mode_local[2] = {local_gravity_kdk, -local_gravity_kdk};
+		int mode_range[2] = {0, 0};
+		MPI_Allreduce(mode_local, mode_range, 2, MPI_INT, MPI_MAX, MPI_COMM(simpar));
+		if(mode_range[0] != -mode_range[1]){
+			if(MYID(simpar)==0)
+				fprintf(stderr,"[LOCAL_GRAVITY_KDK] inconsistent enable flag across MPI ranks\n");
+			MPI_Abort(MPI_COMM(simpar), 99);
+		}
+		local_gravity_mode_checked = 1;
+	}
+	{
+		const char *ic=getenv("EUNHA_IC");
+		const char *fixed_poly=getenv("GFS_KEPLER_FIXED_POLYGON");
+		const char *wall_events=getenv("GFS_KEPLER_WALL_EVENTS");
+		int is_kepler=ic && strcmp(ic,"kepler")==0;
+		int local_bad=is_kepler &&
+			(!fixed_poly || strcmp(fixed_poly,"1")!=0 ||
+			 postStage!=fixed_polygon_postStage_blend ||
+			 (wall_events && strcmp(wall_events,"1")==0));
+		int global_bad=0;
+		MPI_Allreduce(&local_bad,&global_bad,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+		if(global_bad){
+			if(MYID(simpar)==0)
+				fprintf(stderr,"[KEPLER_KDK] requires fixed-polygon geometry/callback and rejects RK4-only wall events\n");
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
+	}
+#ifdef USE_CUDA
+	gfs_t64_kdk_dispatch_guard(simpar);
+#else
+	if(gfs_thermal64_requested()){
+		fprintf(stderr,"[THERMAL64] native CUDA build required\n");
+		MPI_Abort(MPI_COMM(simpar),99);
+	}
+#endif
+	static int local_gravity_config_checked = 0;
+	static postype local_gravity_eta_cfg = 0, local_gravity_cx_cfg = 0;
+	static postype local_gravity_cy_cfg = 0, local_gravity_eps_cfg = 0;
+	if(local_gravity_kdk && !local_gravity_config_checked){
+		const char *ic = getenv("EUNHA_IC");
+		const char *eps_env = getenv("EUNHA_KEPLER_EPS");
+		int gravity_eta_valid = 1;
+		gravity_eta = gfs_local_gravity_kdk_eta(&gravity_eta_valid);
+		kepler_center(&gravity_cx, &gravity_cy);
+		gravity_eps = (eps_env && eps_env[0]) ? atof(eps_env) : (postype)0.0;
+		int local_bad = !ic || strcmp(ic, "kepler") != 0 ||
+			!gravity_eta_valid || !isfinite((double)gravity_eta) || !(gravity_eta > 0) ||
+			!isfinite((double)gravity_eps) || !(gravity_eps > 0) ||
+			!gravity_max_level_valid || xsph_eps != 0 ||
+			GAS_ACCX(simpar) != 0 || GAS_ACCY(simpar) != 0 ||
+			GAS_Kappa(simpar) != 0 || GAS_FCENTROID(simpar) != 0;
+		int global_bad = 0;
+		MPI_Allreduce(&local_bad, &global_bad, 1, MPI_INT, MPI_MAX, MPI_COMM(simpar));
+		if(global_bad){
+			if(MYID(simpar)==0)
+				fprintf(stderr,"[LOCAL_GRAVITY_KDK] rejected configuration; requires Kepler IC, finite positive eta/softening, no XSPH/constant acceleration/weight evolution/steering, max_level<=%u\n",
+					GFS_TIMEBINS_MAX_LEVEL);
+			MPI_Abort(MPI_COMM(simpar), 99);
+		}
+		double cfg_local[8] = {(double)gravity_eta, (double)gravity_cx,
+			(double)gravity_cy, (double)gravity_eps, -(double)gravity_eta,
+			-(double)gravity_cx, -(double)gravity_cy, -(double)gravity_eps};
+		double cfg_range[8];
+		MPI_Allreduce(cfg_local, cfg_range, 8, MPI_DOUBLE, MPI_MAX, MPI_COMM(simpar));
+		int level_local[2] = {(int)gravity_max_level, -(int)gravity_max_level};
+		int level_range[2];
+		MPI_Allreduce(level_local, level_range, 2, MPI_INT, MPI_MAX, MPI_COMM(simpar));
+		int config_mismatch = level_range[0] != -level_range[1];
+		for(int k=0;k<4;k++)
+			if(cfg_range[k] != -cfg_range[k+4]) config_mismatch = 1;
+		if(config_mismatch){
+			if(MYID(simpar)==0)
+				fprintf(stderr,"[LOCAL_GRAVITY_KDK] inconsistent Kepler parameters across MPI ranks\n");
+			MPI_Abort(MPI_COMM(simpar), 99);
+		}
+		local_gravity_eta_cfg = gravity_eta;
+		local_gravity_cx_cfg = gravity_cx;
+		local_gravity_cy_cfg = gravity_cy;
+		local_gravity_eps_cfg = gravity_eps;
+		static int local_gravity_banner = 0;
+		if(!local_gravity_banner && MYID(simpar)==0){
+			fprintf(stderr,"[LOCAL_GRAVITY_KDK] local_eta=%.9g max_level=%u split=hydro-half + per-cell-central-KDK + hydro-half\n",
+				(double)gravity_eta, gravity_max_level);
+			local_gravity_banner = 1;
+		}
+		local_gravity_config_checked = 1;
+	}
+#ifdef USE_CUDA
+	thermal64 = gfs_t64_initialize(simpar,paddingAllTreeParticles,find2DNeighborBP,
+		find2DCellBP,mkLinkedList2D);
+#endif
+	/* thermal64 initialization can rebuild GPU geometry and replace its
+	 * borrowed host pointers; reacquire the particle base afterwards. */
+	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	if(local_gravity_kdk && local_gravity_config_checked){
+		/* These parameters must survive every integrator call, not just the
+		 * first macro-step where environment parsing and collective validation
+		 * happen. */
+		gravity_eta = local_gravity_eta_cfg;
+		gravity_cx = local_gravity_cx_cfg;
+		gravity_cy = local_gravity_cy_cfg;
+		gravity_eps = local_gravity_eps_cfg;
+	}
 
 	postype cellsize = BASICCELL_CELLWIDTH(simpar);
 	xmin = Xmin_HydroExam(simpar)-cellsize;
@@ -11608,6 +11799,9 @@ double exam2d_vph_kdk_int_blend(
 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, 1);
+#ifdef USE_CUDA
+	if(thermal64) gfs_t64_eos(simpar);
+#endif
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] L after stage1 updateDen\n"); fflush(stderr); }
 	_t_update += MPI_Wtime() - _t0;
 	_t0 = MPI_Wtime();
@@ -11642,10 +11836,27 @@ double exam2d_vph_kdk_int_blend(
 		 * step above stays larger than a gap that has already narrowed,
 		 * so a converging pair crosses in one drift. */
 		if(dt_dummy > (postype)0 && dt_dummy < Dtime) Dtime = dt_dummy;
-		{
+		if(!local_gravity_kdk){
 			postype dtk = kepler_dt_limit(simpar, VORORK4_TBP(simpar),
 					TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
 			if(dtk < Dtime) Dtime = dtk;
+		}else{
+			/* Bound the macro interval only if the configured local bin depth
+			 * cannot resolve a cell's central orbit. */
+			double guard_local = 1.0e300, guard_global;
+			double bin_span = ldexp(1.0, (int)gravity_max_level);
+			for(i=0;i<VORO_NP(simpar);i++){
+				if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
+				double dx = (double)sbp[i].x - (double)gravity_cx;
+				double dy = (double)sbp[i].y - (double)gravity_cy;
+				double r2soft = dx*dx + dy*dy + (double)gravity_eps*(double)gravity_eps;
+				double guard = (double)gravity_eta * pow(r2soft, 0.75) * bin_span;
+				if(guard < guard_local) guard_local = guard;
+			}
+			MPI_Allreduce(&guard_local, &guard_global, 1, MPI_DOUBLE, MPI_MIN,
+					MPI_COMM(simpar));
+			if(guard_global < (double)Dtime)
+				Dtime = (postype)nextafter(guard_global, 0.0);
 		}
 	}
 
@@ -11655,26 +11866,88 @@ double exam2d_vph_kdk_int_blend(
 
 	/* Half-kick with a_n, du_n */
 	postype half_dt = 0.5 * Dtime;
+	int local_gravity_bad = 0, local_max_level = 0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(max:local_gravity_bad,local_max_level) if((local_gravity_kdk || thermal64) && (thermal64 || !sedov_phase1_on()))
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
-			postype axk = accx_ext, ayk = accy_ext;
-			kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
-			if(sedov_phase1_on()){
-				phase1_half_kick(sbp+i, half_dt, axk, ayk);
-			} else {
-				sbp[i].vx += (sbp[i].ax + axk) * half_dt;
-				sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
-				sbp[i].ie += sbp[i].die             * half_dt;
-				sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+			if(local_gravity_kdk){
+				if(thermal64){
+					sbp[i].vx += sbp[i].ax * half_dt;
+					sbp[i].vy += sbp[i].ay * half_dt;
+					double U=GFS_T64_U(sbp[i]) + GFS_T64_RHS(sbp[i])*(double)half_dt;
+					if(!(U>0) || !isfinite(U)) local_gravity_bad=1;
+					GFS_T64_U(sbp[i])=U;
+					sbp[i].ie=(float)U;
+				}else if(sedov_phase1_on()){
+					/* Keep the phase-1 total gas-energy correction; central
+					 * gravity is excluded from this hydro-only kick. */
+					phase1_half_kick(sbp+i,half_dt,0,0);
+				}else{
+					sbp[i].vx += sbp[i].ax * half_dt;
+					sbp[i].vy += sbp[i].ay * half_dt;
+					sbp[i].ie += sbp[i].die * half_dt;
+					sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+				}
+				double x=(double)sbp[i].x, y=(double)sbp[i].y;
+				double vx=(double)sbp[i].vx, vy=(double)sbp[i].vy;
+				unsigned used_level=0;
+				int rc=gfs_kepler_kdk_advance(&x,&y,&vx,&vy,
+					(double)gravity_cx,(double)gravity_cy,(double)gravity_eps,
+					(double)gravity_eta,(double)Dtime,gravity_max_level,&used_level);
+				if(rc != GFS_TIMEBINS_OK) local_gravity_bad=1;
+				else{
+					if((int)used_level > local_max_level) local_max_level=(int)used_level;
+					sbp[i].x=(postype)x; sbp[i].y=(postype)y;
+					sbp[i].vx=(postype)vx; sbp[i].vy=(postype)vy;
+				}
+			}else{
+				postype axk = accx_ext, ayk = accy_ext;
+				kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
+				if(thermal64){
+					sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+					sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
+					double U=GFS_T64_U(sbp[i]) + GFS_T64_RHS(sbp[i])*(double)half_dt;
+					if(!(U>0) || !isfinite(U)) local_gravity_bad=1;
+					GFS_T64_U(sbp[i])=U;
+					sbp[i].ie=(float)U;
+				}else if(sedov_phase1_on()){
+					phase1_half_kick(sbp+i, half_dt, axk, ayk);
+				} else {
+					sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+					sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
+					sbp[i].ie += sbp[i].die * half_dt;
+					sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+				}
 			}
+		}
+	}
+	if(local_gravity_kdk || thermal64){
+		if(local_gravity_bad){
+			fprintf(stderr,"[LOCAL_GRAVITY_KDK] rank=%d local gravity/thermal substep failed; macro step aborted\n",MYID(simpar));
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
+	}
+	if(local_gravity_kdk){
+		static int level_reported = 0;
+		if(!level_reported){
+			int global_max_level=0;
+			MPI_Allreduce(&local_max_level,&global_max_level,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
+			if(MYID(simpar)==0)
+				fprintf(stderr,"[LOCAL_GRAVITY_KDK] first_step max_bin=%d max_subcycles=%u\n",
+					global_max_level,1u<<(unsigned)global_max_level);
+			level_reported=1;
 		}
 	}
 
 	/* Full drift with half-kicked v (XSPH offset added when xsph_eps>0) */
-	for(i=0;i<VORO_NP(simpar);i++){
-		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
-			sbp[i].x += (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x) * Dtime;
-			sbp[i].y += (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y) * Dtime;
+	if(!local_gravity_kdk){
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
+				sbp[i].x += (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x) * Dtime;
+				sbp[i].y += (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y) * Dtime;
+			}
 		}
 	}
 
@@ -11693,6 +11966,9 @@ double exam2d_vph_kdk_int_blend(
 	updateDenW2Pressure2DBlend(simpar, xmin,ymin,xmax,ymax,
 			Gamma, paddingAllTreeParticles, find2DNeighborBP, find2DCellBP,
 			mkLinkedList2D, Dtime);
+#ifdef USE_CUDA
+	if(thermal64) gfs_t64_eos(simpar);
+#endif
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] O after stage2 updateDen\n"); fflush(stderr); }
 	_t_update += MPI_Wtime() - _t0;
 	_t0 = MPI_Wtime();
@@ -11717,21 +11993,54 @@ double exam2d_vph_kdk_int_blend(
 
 	/* Second half-kick with a_{n+1}, du_{n+1} */
 	{
+		int local_thermal_bad=0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(max:local_thermal_bad) if((local_gravity_kdk || thermal64) && (thermal64 || !sedov_phase1_on()))
+#endif
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
-				postype axk = accx_ext, ayk = accy_ext;
-				kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
-				if(sedov_phase1_on()){
-					phase1_half_kick(sbp+i, half_dt, axk, ayk);
+				if(local_gravity_kdk){
+					if(thermal64){
+						sbp[i].vx += sbp[i].ax * half_dt;
+						sbp[i].vy += sbp[i].ay * half_dt;
+						double U=GFS_T64_U(sbp[i]) + GFS_T64_RHS(sbp[i])*(double)half_dt;
+						if(!(U>0) || !isfinite(U)) local_thermal_bad=1;
+						GFS_T64_U(sbp[i])=U;
+						sbp[i].ie=(float)U;
+					}else if(sedov_phase1_on()){
+						phase1_half_kick(sbp+i,half_dt,0,0);
+					}else{
+						sbp[i].vx += sbp[i].ax * half_dt;
+						sbp[i].vy += sbp[i].ay * half_dt;
+						sbp[i].ie += sbp[i].die * half_dt;
+						sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+					}
 				} else {
-					sbp[i].vx += (sbp[i].ax + axk) * half_dt;
-					sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
-					sbp[i].ie += sbp[i].die             * half_dt;
-					sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+					postype axk = accx_ext, ayk = accy_ext;
+					kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
+					if(thermal64){
+						sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+						sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
+						double U=GFS_T64_U(sbp[i]) + GFS_T64_RHS(sbp[i])*(double)half_dt;
+						if(!(U>0) || !isfinite(U)) local_thermal_bad=1;
+						GFS_T64_U(sbp[i])=U;
+						sbp[i].ie=(float)U;
+					}else if(sedov_phase1_on()){
+						phase1_half_kick(sbp+i, half_dt, axk, ayk);
+					} else {
+						sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+						sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
+						sbp[i].ie += sbp[i].die * half_dt;
+						sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+					}
 				}
 			} else {
 				sbp[i].vx = sbp[i].vy = 0;
 			}
+		}
+		if((local_gravity_kdk || thermal64) && local_thermal_bad){
+			fprintf(stderr,"[LOCAL_GRAVITY_KDK] rank=%d thermal64 half-kick became nonpositive/nonfinite; macro step aborted\n",MYID(simpar));
+			MPI_Abort(MPI_COMM(simpar),99);
 		}
 	}
 
@@ -11752,6 +12061,9 @@ double exam2d_vph_kdk_int_blend(
 
 	/* Refresh volume & density after migration/centroidShift */
 	exam2dUpdateVol(simpar,paddingAllTreeParticles,find2DNeighborBP, find2DCellBP,mkLinkedList2D);
+#ifdef USE_CUDA
+	if(thermal64) gfs_t64_eos(simpar);
+#endif
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] S after end-of-step exam2dUpdateVol\n"); fflush(stderr); }
 
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
@@ -11777,15 +12089,16 @@ double exam2d_vph_kdk_int_blend(
 		int nneg_l = 0, ncell_l = 0;
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
-			double V = (double)sbp[i].volume;
+			double V = thermal64 ? GFS_T64_V(sbp[i]) : (double)sbp[i].volume;
 			double m = (double)sbp[i].mass;
 			double rho = (V > 0) ? m/V : 0;
+			double U = thermal64 ? GFS_T64_U(sbp[i]) : (double)sbp[i].ie;
 			double ke = 0.5*m*((double)sbp[i].vx*(double)sbp[i].vx
 					+ (double)sbp[i].vy*(double)sbp[i].vy);
 			if(V < vmin_l) vmin_l = V;
 			if(rho > rhomax_l) rhomax_l = rho;
-			etot_l += (double)sbp[i].ie + ke;
-			if(sbp[i].ie <= 0) nneg_l++;
+			etot_l += U + ke;
+			if(U <= 0) nneg_l++;
 			ncell_l++;
 		}
 		double vmin_g, rhomax_g, etot_g;
@@ -11815,7 +12128,7 @@ double exam2d_vph_kdk_int_blend(
 
 	/* Floor energy of the refresh below, and the clip ledger of this step. */
 	double kdke_floor_l = 0;
-	if(sedov_phase1_on() && GAS_ENTROPY_MODE(simpar) != 1){
+	if(sedov_phase1_on() && GAS_ENTROPY_MODE(simpar) != 1 && !thermal64){
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(!targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)) continue;
 			if(sbp[i].ie <= 0)
@@ -11855,6 +12168,12 @@ double exam2d_vph_kdk_int_blend(
 
 	/* Pressure/csound refresh */
 	{
+#ifdef USE_CUDA
+		if(thermal64){
+			gfs_t64_eos(simpar);
+		}else
+#endif
+		{
 		int entropy_mode = GAS_ENTROPY_MODE(simpar);
 		postype K_floor = GAS_K_FLOOR(simpar);
 #ifdef _OPENMP
@@ -11880,6 +12199,7 @@ double exam2d_vph_kdk_int_blend(
 				sbp[i].vx = sbp[i].vy = 0;
 				sbp[i].w2 = sbp[i].rk4.w2backup;
 			}
+		}
 		}
 	}
 

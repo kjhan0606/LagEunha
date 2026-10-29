@@ -129,7 +129,7 @@ $(EXLIB): $(EXOBJ)
 	ranlib $@
 
 # The experimental integrator is included by exam.c.
-exam.o: gfs_thermal64.h gfs_thermal64_native.inc gfs_rk4_direct_u.inc gfs_rk4_transaction.inc gfs_ssprk3.inc gfs_moment_native.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_native.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_native.inc gfs_enriched_coupling.h gfs_enriched_coupling_native.inc
+exam.o: gfs_thermal64.h gfs_thermal64_native.inc gfs_kepler_kdk.h gfs_timebins.h gfs_rk4_direct_u.inc gfs_rk4_transaction.inc gfs_ssprk3.inc gfs_moment_native.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_native.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_native.inc gfs_enriched_coupling.h gfs_enriched_coupling_native.inc
 
 
 %.c: 

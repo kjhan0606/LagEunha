@@ -1,5 +1,5 @@
 /* Included after all legacy helpers and before the native RK4 driver. */
-static void gfs_t64_dispatch_guard(SimParameters *simpar){
+static void gfs_t64_dispatch_guard_impl(SimParameters *simpar,int kdk_integrator){
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(simpar);
     int enabled=gfs_thermal64_requested(),tagged=0;
     for(ptrdiff_t k=0;k<VORO_NP(simpar);k++)if(GFS_T64_TAGGED(p[k]))tagged++;
@@ -23,8 +23,12 @@ static void gfs_t64_dispatch_guard(SimParameters *simpar){
     const char *rot=getenv("GFS_LAGUERRE_ROTATION"),*charge=getenv("GFS_FACE_CHARGE_LIMIT");
     const char *geomface=getenv("GFS_GEOM_FACE_VEL"),*initonly=getenv("GFS_THERMAL64_INIT_ONLY");
     int init_gate=initonly && atoi(initonly)>0;
+    int tx_gate=tx && atoi(tx)>0 && (!txdiag || atoi(txdiag)==0);
+    int integrator_gate=kdk_integrator
+        ? (!init_gate && (!tx || atoi(tx)==0) && (!txdiag || atoi(txdiag)==0))
+        : (init_gate || tx_gate);
     if(NID(simpar)==1 && GAS_GPU_ENABLED(simpar) && gpu_varpress_w0_enabled() &&
-       (init_gate || (tx && atoi(tx)>0 && (!txdiag || atoi(txdiag)==0))) &&
+       integrator_gate &&
        (!rot || atoi(rot)==0) && (!charge || atoi(charge)==0) && (!geomface || atoi(geomface)==0) &&
        GAS_AVMODE(simpar)==5 && GAS_Kappa(simpar)==0 && GAS_ENTROPY_MODE(simpar)==0 &&
        GAS_XSPHEPS(simpar)==0 && GAS_FCENTROID(simpar)==0 && GAS_VISCOSITY(simpar)==0 &&
@@ -37,8 +41,14 @@ static void gfs_t64_dispatch_guard(SimParameters *simpar){
        getenv("GFS_GPU_FINAL_VOLUME") && atoi(getenv("GFS_GPU_FINAL_VOLUME"))==1 &&
        TVORORK4_DDINFO(simpar)[0].n_size==sizeof(*p) && (tagged==0 || tagged==VORO_NP(simpar)))return;
 #endif
-    fprintf(stderr,"[THERMAL64] unsupported or mixed payload contract; smooth periodic one-rank native W0 only\n");
+    fprintf(stderr,"[THERMAL64] unsupported or mixed payload contract; requires one-rank GPU Kepler W=0 phase1 with raw faces/final volume, periodic alias sync disabled\n");
     MPI_Abort(MPI_COMM(simpar),99);
+}
+static void gfs_t64_dispatch_guard(SimParameters *simpar){
+    gfs_t64_dispatch_guard_impl(simpar,0);
+}
+static void gfs_t64_kdk_dispatch_guard(SimParameters *simpar){
+    gfs_t64_dispatch_guard_impl(simpar,1);
 }
 static void gfs_t64_eos(SimParameters *simpar){
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(simpar);

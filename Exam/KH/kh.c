@@ -370,12 +370,25 @@ int RunKH(SimParameters *simpar, int icont){
 #  define KH_MKLL      mkLinkedList2D_oExam
 #  define KH_POSTSTAGE periodic_postStage_blend
 #endif
+		const char *fixed_poly_env=getenv("GFS_KEPLER_FIXED_POLYGON");
+		int fixed_poly=fixed_poly_env && strcmp(fixed_poly_env,"1")==0;
+		void (*kh_poststage)(SimParameters *)=fixed_poly
+			? fixed_polygon_postStage_blend : KH_POSTSTAGE;
+		if(fixed_poly){
+			int ranks=0;
+			MPI_Comm_size(MPI_COMM(simpar),&ranks);
+			if(ranks!=1 || GAS_Kappa(simpar)!=0 ||
+				(GAS_EVOLMETHOD(simpar)!=1 && GAS_EVOLMETHOD(simpar)!=3) || !use_stress){
+				fprintf(stderr,"[FIXED_POLYGON] native gate requires one rank, W=0, stress RK4/KDK\n");
+				MPI_Abort(MPI_COMM(simpar),98);
+			}
+		}
 		if(av_mode == 4 && GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_lagmfm(simpar,
 				paddingTreeVorork4Particles,kh_w2Measure2D,
 				kh_evolBP,
 				KH_MKLL,
-				KH_POSTSTAGE
+				kh_poststage
 				);
 		else
 		if(use_stress && GAS_EVOLMETHOD(simpar) == 1)
@@ -384,7 +397,7 @@ int RunKH(SimParameters *simpar, int icont){
 				searchCellRk4Neighbors2D,findCellRk4BP2D,
 				kh_evolBP,
 				KH_MKLL,
-				KH_POSTSTAGE
+				kh_poststage
 				);
 		else if(use_stress && GAS_EVOLMETHOD(simpar) == 3)
 			dt = exam2d_vph_kdk_int_blend(simpar,
@@ -392,7 +405,7 @@ int RunKH(SimParameters *simpar, int icont){
 				searchCellRk4Neighbors2D,findCellRk4BP2D,
 				kh_evolBP,
 				KH_MKLL,
-				KH_POSTSTAGE
+				kh_poststage
 				);
 		else if(GAS_EVOLMETHOD(simpar) == 2)
 			dt = exam2d_vph_rk4_int_kNN(simpar,

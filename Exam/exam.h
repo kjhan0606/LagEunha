@@ -225,6 +225,7 @@ postype w2in2D(SimParameters *, treevorork4particletype *);
 
 void periodic_postStage_kNN(SimParameters *);
 void periodic_postStage_blend(SimParameters *);
+void fixed_polygon_postStage_blend(SimParameters *);
 
 
 /*
