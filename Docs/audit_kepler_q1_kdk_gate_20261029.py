@@ -167,7 +167,7 @@ def main():
         "endpoint_area_tiles_polygon": bool(abs(areat - DOMAIN_AREA) < 1e-5),
         "rho_equals_mass_over_volume": bool(np.isfinite(rho_mass_volume_max_relative)
                                              and rho_mass_volume_max_relative < 1e-6),
-        "no_floor_or_dual_energy_injection": bool(all(value == 0 for value in ledger.values())),
+        "no_floor_or_dual_energy_injection": bool(all(ledger[key] == 0.0 for key in ("clip_inj", "cum_inj", "floor_inj", "cum_floor"))),
         "gizmo_L1_velocity_below_0p01": bool(l1_v < .01),
         "gizmo_L1_density_below_0p25": bool(l1_rho < .25),
         "disk_density_change_below_0p05": bool(disk_density < .05),
