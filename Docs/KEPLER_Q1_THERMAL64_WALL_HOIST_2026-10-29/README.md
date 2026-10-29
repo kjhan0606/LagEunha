@@ -1,0 +1,7 @@
+# Experimental wall thermal flag hoist
+
+This separate candidate evaluates the thermal64 configuration once per wall total/validation traversal rather than once per particle. The selected flag is constant within each traversal; the expression for authoritative energy retains its tag check. This is a local optimization on top of the experimental thermal64 wall candidate, and does not change the currently running H200 or Ada executables.
+
+One-step native Ada comparisons used the same accepted Q1 t=0.0015284035789018555 checkpoint and the same t=0.0016 endpoint, once without a rejection and once with a forced rejection. All 90,352 full records except the runtime linked-list pointer and all restart footer bytes matched exactly; numerical RK4 and wall ledgers matched after excluding interleaved timing output. The injected rollback reported exact particle/ledger restoration and cache invalidation.
+
+The original strict line comparison is retained as `parity.json`: it reports failure for the no-rejection pair because the native stdout/stderr writes placed an `[RK4 gap]` timing record on the same line as `[RK4E]`. The corrected parser in `parity_normalized.json` separates timing records from the numerical ledger without changing either log. This is a one-step test, not impact, long-time, MPI or performance qualification. Ada's GPU was shared, so its timings cannot support a speedup claim. A controlled H200 A/B or ABBA comparison remains necessary before promotion.

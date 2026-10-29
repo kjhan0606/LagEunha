@@ -1,0 +1,17 @@
+--- a/Exam/gfs_wall_events.inc
++++ b/Exam/gfs_wall_events.inc
+@@ -26,0 +27 @@
++    const int thermal64=gfs_thermal64_requested();
+@@ -30 +31 @@
+-        double U=gfs_t64_U(p+i);
++        double U=thermal64 && GFS_T64_TAGGED(p[i])?GFS_T64_U(p[i]):(double)p[i].ie;
+@@ -110,0 +112 @@
++    const int thermal64=gfs_thermal64_requested();
+@@ -113 +115 @@
+-        if((gfs_thermal64_requested() && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])))) ||
++        if((thermal64 && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])))) ||
+@@ -154,0 +157 @@
++    const int thermal64=gfs_thermal64_requested();
+@@ -160 +163 @@
+-        if((gfs_thermal64_requested() && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])) || (rhs && !isfinite(GFS_T64_RHS(p[i]))))) ||
++        if((thermal64 && (!GFS_T64_TAGGED(p[i]) || !isfinite(GFS_T64_U(p[i])) || !(GFS_T64_U(p[i])>0) || !isfinite(GFS_T64_V(p[i])) || !(GFS_T64_V(p[i])>0) || !isfinite(GFS_T64_ANCHOR(p[i])) || (rhs && !isfinite(GFS_T64_RHS(p[i]))))) ||
