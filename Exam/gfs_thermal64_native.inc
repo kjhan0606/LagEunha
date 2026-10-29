@@ -7,6 +7,14 @@ static void gfs_t64_dispatch_guard(SimParameters *simpar){
         if(tagged){fprintf(stderr,"[THERMAL64] tagged state cannot enter legacy RK4\n");MPI_Abort(MPI_COMM(simpar),99);}
         return;
     }
+    /* Moment initialization rewrites the legacy thermal mirror and exits
+     * before thermal64 initialization. Until a joint energy/state contract
+     * exists, allowing both flags can serialize a stale authoritative U64. */
+    const char *moment_init=getenv("GFS_MOMENT_INIT_ONLY");
+    if(moment_init && atoi(moment_init)>0){
+        fprintf(stderr,"[THERMAL64] moment initialization cannot share the thermal64 payload contract\n");
+        MPI_Abort(MPI_COMM(simpar),99);
+    }
     gfs_es_config();
 #ifdef USE_CUDA
     const char *direct=getenv("GFS_RK4_DIRECT_U"),*ssp=getenv("GFS_SSPRK3");
