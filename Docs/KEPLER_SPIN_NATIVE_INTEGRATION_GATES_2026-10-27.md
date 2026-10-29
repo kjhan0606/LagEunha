@@ -282,3 +282,23 @@ centered finite differences. The helper is not yet called by the active KH-drive
 RK4/GPU path; these checks validate its algebra only. Native RK4 stages,
 versioned `khout` restart integration, and GPU/MPI state transfer remain
 outstanding.
+
+## 2026-10-29: independent affine moment balance check
+
+The actual `Exam/gfs_moment.h` source operators now have a separate
+[analytic test](test_gfs_moment_affine_balance_20261029.c). Unequal point
+masses, an anisotropic distribution and a general affine velocity field
+independently reconstruct the velocity gradient and thermal energy; direct
+point sums verify all first/second moment and momentum-moment volume source
+terms, including isotropic pressure. A shared ALE face flux with **nonzero
+mass flux** and distinct cell reference origins verifies pair mass, momentum,
+energy, first-moment and total angular-momentum balance. A central-gravity
+point checks zero torque and consistent gravitational work. On lageunha the
+C99 test passed with `gcc -O2 -Wall -Wextra -Werror`.
+
+These are small host algebra checks on the existing moment helpers; they do
+not execute the CUDA face solver, RK4 stages, mesh motion, MPI migration,
+restart, or a Kepler evolution. In particular, testing a general face mass
+flux does not alter the required fixed-mass `W=0` reduction. The production
+spin/affine integration and its conservation and performance gates above
+remain open.
