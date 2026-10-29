@@ -72,6 +72,14 @@ The accepted local t=3 checkpoint khout.004447.dat was continued to exact t=6.5 
 
 The inner core remains inaccurate: for original radius r<0.1, density change is 38.4%, absolute log-entropy change 12.5%, and orbit-position error 1.71%. These are comparable to or worse than the existing bounded RK4 t=6.5 result (33.4% core density and 1.70% position error). Local central-gravity subcycling prevents the early KDK floor-reset failure and keeps the disk stable through t=6.5, but it does not resolve the core error.
 
+### Local-gravity KDK at t=10
+
+The accepted local-KDK t=6.5 checkpoint `local/t65/khout.010970.dat` continued to exact t=10 as `local/t10/khout.020441.dat`. The process exited 0 after 2053.356 s. The KDK gate at `local/t10/kdk_gate.json` passes all 29 checks: exact mass and W=0, positive internal energy and volume, no floor/clip injection, bounded polygon geometry, and all configured disk and GIZMO-annulus thresholds. The final ledger is zero for clip, floor, and dual-energy events. Minimum cell volume is positive (`1.636e-5`).
+
+Against the bounded RK4 t=10 checkpoint from the same initial IC, the disk remains effectively unchanged in either method: mass-weighted density change is 0.057431% for local KDK and 0.057430% for RK4. KDK has slightly smaller total-energy drift (`-3.545e-7` versus `-2.229e-6`), while both conserve disk angular momentum to about `1e-12` relative.
+
+The core comparison is unfavorable to KDK. For original radius r<0.1, KDK has 76.8% mass-weighted density change, 0.304 absolute log-entropy change, and 5.36% orbit-position error. The matched RK4 t=10 values are 56.3%, 0.00369, and 5.07%. Thus passing the disk/state gate does not mean that the core is accurate: local-gravity KDK does not solve the late-time core error and is worse than RK4 in these core diagnostics. Keep this implementation experimental; do not promote it to the default integrator or extend it to longer production-like durations on this evidence.
+
 The t=3 global/local full-density and core-zoom comparison uses a shared linear density scale [0,1.05]: /home/kjhan/.codex/visualizations/2026/09/29/01a0eb12-3d2a-7402-8478-d6fa000154a2/kepler_q1_kdk_t3_density_shared.png.
 
 One-rank CUDA+OpenMP runtime was about 10 minutes for t=0.825 to 3 and 22 minutes for t=3 to 6.5 on the Ada RTX 5000. This is not MPI scaling evidence or a t=600 performance qualification.
@@ -100,8 +108,6 @@ mass-centroid conditions in
 
 ## Next validation
 
-A local-gravity KDK continuation from accepted t=6.5 checkpoint khout.010970.dat to exact t=10 is running in /gpfs/kjhan/LagForce/Kepler_Q1_LocalGravityKDK_4fbf10b_T065_20261029/local/t10. It does not regenerate or replay t=0. Audit the unchanged 29 disk/state checks and report inner-core density, entropy, orbit, and cell-volume distributions separately.
-
-After t=10, the primary unresolved error is the inner core, not the outer disk's energy or angular momentum. Compare the KDK result with the preserved RK4 checkpoint, then design a controlled inner-resolution and timestep study from the same accepted state. Do not infer a need for intrinsic spin from the t=6.5 core error: the material-moment and torque closure objections above still apply. Do not promote to t=120/600 until the core error and radius/shape sensitivity are bounded.
+The t=10 comparison identifies the inner core—not the disk energy or angular momentum—as the unresolved error. The next useful study should separate inner-resolution effects from timestep effects using matched initial states and explicit core thresholds. Keep the local-gravity KDK path isolated while doing that; the current result gives no basis to add further KDK physics patches or to infer that intrinsic spin is needed. The material-moment and torque-closure objections above still apply. Do not promote any path to t=120/600 until core error, radius/shape sensitivity, and multi-rank behavior are bounded.
 
 KDK still has no wall-event localization or wall impulse/energy ledger, so any wall crossing aborts the run. The current trajectory has remained inside the fixed polygon. Full local hydrodynamic stepping still requires conservative face-flux registers and MPI halo synchronization; the present local KDK only subcycles the central gravity per generator while hydro and face fluxes retain one global macro-step. No multi-rank runtime test has been made.
