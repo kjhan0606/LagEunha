@@ -1,0 +1,31 @@
+{
+  "time_start": 30.0,
+  "time_end": 48.37534965270793,
+  "cells": 3931,
+  "logged_steps": 11579,
+  "printed_timestep_sum_minus_exact_interval": 7.079206909565983e-08,
+  "sum_rescale_factor": 0.9999999961474437,
+  "cases": [
+    {
+      "substeps": 1,
+      "mass_mean_position_difference_from_native": 0.00037539530214006773,
+      "cell_p99_position_difference_from_native": 0.0031172661642310654
+    },
+    {
+      "substeps": 2,
+      "mass_mean_position_difference_from_native": 0.00037539530217486076,
+      "cell_p99_position_difference_from_native": 0.0031172665997095963
+    }
+  ],
+  "one_vs_two_substeps_mass_mean_position_difference": 1.4876414344958443e-10,
+  "one_vs_two_substeps_p99_position_difference": 4.3727481736812754e-10,
+  "source_sha256": {
+    "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/t001_v2/khout.000000.dat": "a4d557ae5837e933c8c2c8c335f91e5c97d36f9a3bdb8acd5568b0499140b665",
+    "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_to30_a10_v1/khout.005247.dat": "12ea9ff96ec70c4816f834618229c972d0a8e47814bcdc2a38a20a8e89aad50e",
+    "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/control_capture/khout.011580.dat": "c4b11f1996349f5ce8ab664569fa4415cd91b5f836fe9579c98f7dcd51aff758",
+    "/gpfs/kjhan/LagForce/Kepler_BoundedPoly1024_A10_20261027/wallselect_to60_a10_v1/log": "d66214d0033899e726af79ea29992140eb0c1434a213a41d2fe8c2111825dc2e",
+    "/gpfs/kjhan/LagForce/Git_publish_20261028/Docs/audit_kepler_q2_late_gravity_control_20261029.py": "dd6a7cd23f1393b086f2151cf802a01940d853f77e887722ff514f0a2d554dc1"
+  },
+  "elapsed_seconds": 7.305831737990957,
+  "scope": "Gravity-only continuations from the actual t30 native state. Printed h values are rounded and timing alignment is approximate; sequence is globally rescaled to the exact saved interval. Difference from native includes pressure and all other dynamics plus approximation, not an isolated pressure force. One-vs-two substeps assesses gravity RK4 sensitivity, not a rigorous error bound or a full coupled gas calculation."
+}
