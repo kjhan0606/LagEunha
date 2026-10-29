@@ -530,3 +530,28 @@ therefore cannot establish an AREPO-comparable evolution rate or production
 overhead; it only rules out an obvious cost explosion in this one kernel
 under the stated setup. The concurrent native process was confirmed live
 afterward.
+
+## 2026-10-29: inviscid material-face pressure building block
+
+The [material-pressure flux helper](../Exam/gfs_moment_material_pressure.h)
+returns the fixed-mass inviscid face flux `(0, P*n_x, P*n_y, P*u_n)` only
+when the caller supplies a unit normal, finite nonnegative pressure, and a
+material normal speed matching the **actual geometric** face-normal speed
+within an explicit absolute tolerance. A rejected input does not alter the
+output. It supplies neither a Riemann state nor a justification for a chosen
+tolerance, and cannot turn an arbitrary Voronoi face into a material face.
+The normal traction has no added physical tangential viscosity; its off-center
+moment can still change intrinsic angular momentum.
+
+The [host test](test_gfs_material_pressure_20261029.c) integrates all four
+faces of a uniform-density square with two quadrature points per edge.
+Stationary and rigidly rotating affine states show the expected pressure
+cancellation, pressure work, moment evolution and zero net torque. A shared
+two-cell face verifies equal/opposite momentum and energy and total angular
+momentum; a deliberately nonmaterial face is rejected without altering its
+flux. It passed C99 `-O2 -Wall -Wextra -Werror`; a minimal CUDA caller also
+compiled. These are material-boundary analytic checks only, not an evolved
+spin simulation or native CUDA/MPI integration. In particular, Q2's measured
+geometric/reconstructed slip means this helper cannot simply be switched on
+for the existing W0 Voronoi trajectory. A different consistent closure or a
+material-interface representation remains necessary.
