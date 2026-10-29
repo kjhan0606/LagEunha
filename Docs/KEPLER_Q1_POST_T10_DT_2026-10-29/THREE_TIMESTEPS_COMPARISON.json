@@ -1,0 +1,821 @@
+{
+  "passed": true,
+  "checks": {
+    "coarse_same_restart_bytes": true,
+    "coarse_same_frozen_executable": true,
+    "coarse_all_original_physics_gates": true,
+    "coarse_same_parent_and_exact_target": true,
+    "coarse_positive_h_and_correct_cap": true,
+    "half_same_restart_bytes": true,
+    "half_same_frozen_executable": true,
+    "half_all_original_physics_gates": true,
+    "half_same_parent_and_exact_target": true,
+    "half_positive_h_and_correct_cap": true,
+    "quarter_same_restart_bytes": true,
+    "quarter_same_frozen_executable": true,
+    "quarter_all_original_physics_gates": true,
+    "quarter_same_parent_and_exact_target": true,
+    "quarter_positive_h_and_correct_cap": true,
+    "actual_timestep_levels_separated": true
+  },
+  "cases": {
+    "coarse": {
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/controls/coarse/khout.021048.dat",
+      "sha256": "daf8bd593a064ffaab213c7a34c51a732c232c9679faba0dff7ccb5e56857299",
+      "accepted_steps": 258,
+      "h_min": 0.00023423896345775574,
+      "h_median": 0.0003975641302531585,
+      "h_max": 0.000496379507239908,
+      "requested_cap": null,
+      "restart_relative_energy_change": -3.739142840196862e-09,
+      "initial_t0_absolute_gate_metrics": {
+        "disk_density_abs_mass_weighted": 0.0005522108737110158,
+        "disk_entropy_log_abs_mass_weighted": 9.394666425126638e-05,
+        "disk_position_error_abs_mass_weighted": 1.065783371859243e-06,
+        "total_energy_relative": -2.232496192022558e-06
+      },
+      "restart_increment_regions": {
+        "core_r0_lt_0p1": {
+          "cells": 134,
+          "incremental_entropy_signed": 1.490354514076261e-05,
+          "incremental_entropy_abs": 0.00029553481269017635,
+          "incremental_density_abs": 0.3777486175049129,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": 1.490354514076261e-05,
+            "absolute_mass_mean": 0.00029553481269017635,
+            "absolute_cell_p99": 0.003242048204004154,
+            "absolute_max": 0.010650485171286625
+          },
+          "restart_relative_energy_change": -4.52159192053825e-06,
+          "restart_relative_angular_momentum_change": 2.477149170232451e-07,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.24829607255285246,
+            "absolute_mass_mean": 0.48471209333123205,
+            "absolute_cell_p99": 3.2220570061093916,
+            "absolute_max": 4.845941391102312
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -5.702480937884806e-05,
+            "absolute_mass_mean": 0.0037324379473262187,
+            "absolute_cell_p99": 0.061031605278497436,
+            "absolute_max": 0.09386488250334296
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 0.05176385215004228,
+            "absolute_mass_mean": 0.05176385215004228,
+            "absolute_cell_p99": 0.15365600697435874,
+            "absolute_max": 0.15478661922703335
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.8527131561431386,
+            "absolute_mass_mean": 0.8527131561431386,
+            "absolute_cell_p99": 1.9951544846044897,
+            "absolute_max": 2.0089073599447995
+          }
+        },
+        "core_r0_0p1_to0p5": {
+          "cells": 3112,
+          "incremental_entropy_signed": -7.600522619178648e-07,
+          "incremental_entropy_abs": 1.2279765781627691e-06,
+          "incremental_density_abs": 0.003841838256272636,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -7.600522619178648e-07,
+            "absolute_mass_mean": 1.2279765781627691e-06,
+            "absolute_cell_p99": 1.934366882812417e-05,
+            "absolute_max": 5.20797403594786e-05
+          },
+          "restart_relative_energy_change": -6.105190212986176e-09,
+          "restart_relative_angular_momentum_change": -3.859514929871466e-10,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.0013847662054071335,
+            "absolute_mass_mean": 0.004838767803471333,
+            "absolute_cell_p99": 0.8366811924193218,
+            "absolute_max": 10.81289287729577
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -6.482929494475766e-05,
+            "absolute_mass_mean": 8.16583699937599e-05,
+            "absolute_cell_p99": 0.00025978893022465485,
+            "absolute_max": 0.0032179525867560566
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 8.428433695530541e-05,
+            "absolute_mass_mean": 8.428433695530541e-05,
+            "absolute_cell_p99": 0.0312191100606339,
+            "absolute_max": 0.13086246297198434
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.0005876229276632203,
+            "absolute_mass_mean": 0.0005876229276632203,
+            "absolute_cell_p99": 0.25527413360711576,
+            "absolute_max": 1.1964568043152828
+          }
+        },
+        "disk_r0_0p5_to2": {
+          "cells": 48680,
+          "incremental_entropy_signed": -7.66946312763514e-07,
+          "incremental_entropy_abs": 3.012520331057379e-06,
+          "incremental_density_abs": 0.00041908154507963564,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -7.66946312763514e-07,
+            "absolute_mass_mean": 3.012520331057379e-06,
+            "absolute_cell_p99": 1.4981041578472191e-05,
+            "absolute_max": 1.572227533691711e-05
+          },
+          "restart_relative_energy_change": -2.4019548529728785e-12,
+          "restart_relative_angular_momentum_change": -1.887379141862766e-13,
+          "original_t0_density_change": {
+            "signed_mass_mean": 5.866421133025881e-07,
+            "absolute_mass_mean": 0.0005522108737110158,
+            "absolute_cell_p99": 0.0026954341897438665,
+            "absolute_max": 0.004844854419489675
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -6.33815459896385e-05,
+            "absolute_mass_mean": 9.394666425126638e-05,
+            "absolute_cell_p99": 0.0006447441509474895,
+            "absolute_max": 0.0007163469527757203
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 1.065783371859243e-06,
+            "absolute_mass_mean": 1.065783371859243e-06,
+            "absolute_cell_p99": 5.275402899742677e-06,
+            "absolute_max": 1.195651824827104e-05
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 9.063404924119129e-07,
+            "absolute_mass_mean": 9.063404924119129e-07,
+            "absolute_cell_p99": 7.853672682326067e-06,
+            "absolute_max": 2.391303649654208e-05
+          }
+        },
+        "exterior_r0_ge2": {
+          "cells": 38426,
+          "incremental_entropy_signed": -1.5787920680766794e-06,
+          "incremental_entropy_abs": 4.00097975065349e-06,
+          "incremental_density_abs": 0.0013658892220019716,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -1.5787920680766794e-06,
+            "absolute_mass_mean": 4.00097975065349e-06,
+            "absolute_cell_p99": 1.2846884867840918e-05,
+            "absolute_max": 1.5684311921367253e-05
+          },
+          "restart_relative_energy_change": -3.523220045078843e-11,
+          "restart_relative_angular_momentum_change": 3.248512570053208e-13,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.0023373371575674817,
+            "absolute_mass_mean": 0.01152163172095236,
+            "absolute_cell_p99": 0.41599297373624006,
+            "absolute_max": 1.5735831301526995
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -8.3585472644497e-05,
+            "absolute_mass_mean": 0.00012692258853694115,
+            "absolute_cell_p99": 0.0003368169538386595,
+            "absolute_max": 0.0005348671485053797
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 0.0005081766013720555,
+            "absolute_mass_mean": 0.0005081766013720555,
+            "absolute_cell_p99": 0.018841492716095525,
+            "absolute_max": 0.05129075101742819
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.00020579954354904993,
+            "absolute_mass_mean": 0.00020579954354904993,
+            "absolute_cell_p99": 0.007545138192806734,
+            "absolute_max": 0.019470983762921484
+          }
+        }
+      },
+      "native_exec_wall_seconds": 93.402
+    },
+    "half": {
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/controls/half/khout.022891.dat",
+      "sha256": "1352cab65fef8c3254c9b194d24b8e56e10ccbf8f0a372c70e4f24eed7133975",
+      "accepted_steps": 2101,
+      "h_min": 3.942984912974623e-05,
+      "h_median": 4.760027150041424e-05,
+      "h_max": 4.760027150041424e-05,
+      "requested_cap": 4.760027150041424e-05,
+      "restart_relative_energy_change": -2.1549470359320334e-11,
+      "initial_t0_absolute_gate_metrics": {
+        "disk_density_abs_mass_weighted": 0.0005522108833914257,
+        "disk_entropy_log_abs_mass_weighted": 0.00013070952384441225,
+        "disk_position_error_abs_mass_weighted": 1.0657833646233267e-06,
+        "total_energy_relative": -2.228778590367108e-06
+      },
+      "restart_increment_regions": {
+        "core_r0_lt_0p1": {
+          "cells": 134,
+          "incremental_entropy_signed": -2.1782783944995806e-09,
+          "incremental_entropy_abs": 4.230661968096435e-06,
+          "incremental_density_abs": 0.37775712227312847,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -2.1782783944995806e-09,
+            "absolute_mass_mean": 4.230661968096435e-06,
+            "absolute_cell_p99": 2.6262558832092438e-05,
+            "absolute_max": 2.8486104684477542e-05
+          },
+          "restart_relative_energy_change": 6.338995345992566e-07,
+          "restart_relative_angular_momentum_change": 7.423024186437033e-07,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.24830116418766665,
+            "absolute_mass_mean": 0.48471806492817066,
+            "absolute_cell_p99": 3.222108187385933,
+            "absolute_max": 4.846153942048701
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -7.193053279799143e-05,
+            "absolute_mass_mean": 0.0036852738395022964,
+            "absolute_cell_p99": 0.0605968096379426,
+            "absolute_max": 0.0939454439069003
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 0.05176376500727972,
+            "absolute_mass_mean": 0.05176376500727972,
+            "absolute_cell_p99": 0.1536560076453725,
+            "absolute_max": 0.1547866207952099
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.8527075304228137,
+            "absolute_mass_mean": 0.8527075304228137,
+            "absolute_cell_p99": 1.9951544869300972,
+            "absolute_max": 2.0089073904745596
+          }
+        },
+        "core_r0_0p1_to0p5": {
+          "cells": 3112,
+          "incremental_entropy_signed": -1.7915968835986644e-06,
+          "incremental_entropy_abs": 1.6485096337534852e-05,
+          "incremental_density_abs": 0.003841836866471404,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -1.7915968835986644e-06,
+            "absolute_mass_mean": 1.6485096337534852e-05,
+            "absolute_cell_p99": 7.285037089312e-05,
+            "absolute_max": 0.00011575346778551189
+          },
+          "restart_relative_energy_change": -6.105312779281267e-09,
+          "restart_relative_angular_momentum_change": -3.8594327733676437e-10,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.0013847653194408063,
+            "absolute_mass_mean": 0.004838766993213342,
+            "absolute_cell_p99": 0.8366811924193218,
+            "absolute_max": 10.812923115749967
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -6.586083956644222e-05,
+            "absolute_mass_mean": 8.478656240086362e-05,
+            "absolute_cell_p99": 0.00026390079134148633,
+            "absolute_max": 0.0031913331213586638
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 8.428433703527066e-05,
+            "absolute_mass_mean": 8.428433703527066e-05,
+            "absolute_cell_p99": 0.031219109841354033,
+            "absolute_max": 0.13086246310452718
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.0005876229279632855,
+            "absolute_mass_mean": 0.0005876229279632855,
+            "absolute_cell_p99": 0.25527414094562645,
+            "absolute_max": 1.196456805527103
+          }
+        },
+        "disk_r0_0p5_to2": {
+          "cells": 48680,
+          "incremental_entropy_signed": -6.235042315869022e-06,
+          "incremental_entropy_abs": 6.025799424341891e-05,
+          "incremental_density_abs": 0.000419081593570256,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -6.235042315869022e-06,
+            "absolute_mass_mean": 6.025799424341891e-05,
+            "absolute_cell_p99": 0.00015361579010997068,
+            "absolute_max": 0.0001606441633022462
+          },
+          "restart_relative_energy_change": -2.263936815443256e-11,
+          "restart_relative_angular_momentum_change": -1.7530421558831222e-13,
+          "original_t0_density_change": {
+            "signed_mass_mean": 5.866129934176364e-07,
+            "absolute_mass_mean": 0.0005522108833914257,
+            "absolute_cell_p99": 0.0026954341897438665,
+            "absolute_max": 0.004844854419489675
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -6.884964199274452e-05,
+            "absolute_mass_mean": 0.00013070952384441225,
+            "absolute_cell_p99": 0.0006505037532257476,
+            "absolute_max": 0.0007200042761478871
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 1.0657833646233267e-06,
+            "absolute_mass_mean": 1.0657833646233267e-06,
+            "absolute_cell_p99": 5.275404400187366e-06,
+            "absolute_max": 1.1956514260247497e-05
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 9.063404819381257e-07,
+            "absolute_mass_mean": 9.063404819381257e-07,
+            "absolute_cell_p99": 7.853671355066557e-06,
+            "absolute_max": 2.3913028520494993e-05
+          }
+        },
+        "exterior_r0_ge2": {
+          "cells": 38426,
+          "incremental_entropy_signed": -1.605656174674407e-06,
+          "incremental_entropy_abs": 4.792452512234241e-05,
+          "incremental_density_abs": 0.0013658936153730264,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -1.605656174674407e-06,
+            "absolute_mass_mean": 4.792452512234241e-05,
+            "absolute_cell_p99": 0.0001506561346565829,
+            "absolute_max": 0.0002247046513082294
+          },
+          "restart_relative_energy_change": -1.772307139556597e-11,
+          "restart_relative_angular_momentum_change": 1.8074430840897548e-13,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.002337337293136211,
+            "absolute_mass_mean": 0.011521634319397442,
+            "absolute_cell_p99": 0.41599297373624006,
+            "absolute_max": 1.5735831301526995
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -8.361233675109466e-05,
+            "absolute_mass_mean": 0.0001489144661439743,
+            "absolute_cell_p99": 0.00034741171607245594,
+            "absolute_max": 0.000581694760389934
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 0.0005081766037282843,
+            "absolute_mass_mean": 0.0005081766037282843,
+            "absolute_cell_p99": 0.018841492857736862,
+            "absolute_max": 0.051290751117041414
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.00020579954449919652,
+            "absolute_mass_mean": 0.00020579954449919652,
+            "absolute_cell_p99": 0.007545138312141731,
+            "absolute_max": 0.019470983800736634
+          }
+        }
+      },
+      "native_exec_wall_seconds": 695.704
+    },
+    "quarter": {
+      "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/post_t10_restart_dt_h200_v1/controls/quarter/khout.024992.dat",
+      "sha256": "fd17bd8378f6da7a488a9a5bcdbf0bf3cf1ae818f6e372a4765428e497ff23a9",
+      "accepted_steps": 4202,
+      "h_min": 1.5629713379539112e-05,
+      "h_median": 2.380013575020712e-05,
+      "h_max": 2.380013575020712e-05,
+      "requested_cap": 2.380013575020712e-05,
+      "restart_relative_energy_change": -3.550214266414766e-11,
+      "initial_t0_absolute_gate_metrics": {
+        "disk_density_abs_mass_weighted": 0.0005522108712498724,
+        "disk_entropy_log_abs_mass_weighted": 0.0001765573463027336,
+        "disk_position_error_abs_mass_weighted": 1.0657833898888385e-06,
+        "total_energy_relative": -2.2287925430705103e-06
+      },
+      "restart_increment_regions": {
+        "core_r0_lt_0p1": {
+          "cells": 134,
+          "incremental_entropy_signed": 7.758659919115242e-07,
+          "incremental_entropy_abs": 5.445253716921469e-06,
+          "incremental_density_abs": 0.3777571290005417,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": 7.758659919115242e-07,
+            "absolute_mass_mean": 5.445253716921469e-06,
+            "absolute_cell_p99": 1.9984903525001735e-05,
+            "absolute_max": 2.3691743722076275e-05
+          },
+          "restart_relative_energy_change": 6.340187593952629e-07,
+          "restart_relative_angular_momentum_change": 7.423180308219202e-07,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.2483011283723816,
+            "absolute_mass_mean": 0.48471802907085926,
+            "absolute_cell_p99": 3.222107883340031,
+            "absolute_max": 4.846152695415585
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -7.115248852769705e-05,
+            "absolute_mass_mean": 0.0036850358668088883,
+            "absolute_cell_p99": 0.06059590291467334,
+            "absolute_max": 0.0939499945811611
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 0.05176376500630683,
+            "absolute_mass_mean": 0.05176376500630683,
+            "absolute_cell_p99": 0.15365600785402944,
+            "absolute_max": 0.1547866205074413
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.8527075296758776,
+            "absolute_mass_mean": 0.8527075296758776,
+            "absolute_cell_p99": 1.995154485585226,
+            "absolute_max": 2.0089073917662565
+          }
+        },
+        "core_r0_0p1_to0p5": {
+          "cells": 3112,
+          "incremental_entropy_signed": 2.4854227497004795e-06,
+          "incremental_entropy_abs": 4.630350892845589e-05,
+          "incremental_density_abs": 0.0038418369236558904,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": 2.4854227497004795e-06,
+            "absolute_mass_mean": 4.630350892845589e-05,
+            "absolute_cell_p99": 0.0001770874481858045,
+            "absolute_max": 0.00026770064515185615
+          },
+          "restart_relative_energy_change": -6.102502705965156e-09,
+          "restart_relative_angular_momentum_change": -3.8505798549692827e-10,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.0013847648058985147,
+            "absolute_mass_mean": 0.004838767007883961,
+            "absolute_cell_p99": 0.8366812952343393,
+            "absolute_max": 10.812921952732498
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -6.158381993314153e-05,
+            "absolute_mass_mean": 0.00010183422722458672,
+            "absolute_cell_p99": 0.0002842152099450292,
+            "absolute_max": 0.0031780329010498987
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 8.428433689366664e-05,
+            "absolute_mass_mean": 8.428433689366664e-05,
+            "absolute_cell_p99": 0.031219109837473044,
+            "absolute_max": 0.13086246284344386
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.0005876229265803011,
+            "absolute_mass_mean": 0.0005876229265803011,
+            "absolute_cell_p99": 0.2552741374940295,
+            "absolute_max": 1.1964568031400555
+          }
+        },
+        "disk_r0_0p5_to2": {
+          "cells": 48680,
+          "incremental_entropy_signed": -8.663549446514785e-06,
+          "incremental_entropy_abs": 0.00010760291014323207,
+          "incremental_density_abs": 0.0004190817172566351,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -8.663549446514785e-06,
+            "absolute_mass_mean": 0.00010760291014323207,
+            "absolute_cell_p99": 0.00030417204793235775,
+            "absolute_max": 0.0003217271370180828
+          },
+          "restart_relative_energy_change": -3.1714437194002173e-11,
+          "restart_relative_angular_momentum_change": -1.7930101847696278e-13,
+          "original_t0_density_change": {
+            "signed_mass_mean": 5.866154508417434e-07,
+            "absolute_mass_mean": 0.0005522108712498724,
+            "absolute_cell_p99": 0.0026954341897438665,
+            "absolute_max": 0.004844854419489675
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -7.127814912339024e-05,
+            "absolute_mass_mean": 0.0001765573463027336,
+            "absolute_cell_p99": 0.0006587862330367729,
+            "absolute_max": 0.0007200042761478871
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 1.0657833898888385e-06,
+            "absolute_mass_mean": 1.0657833898888385e-06,
+            "absolute_cell_p99": 5.275401181024622e-06,
+            "absolute_max": 1.1956515865852328e-05
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 9.063405072269513e-07,
+            "absolute_mass_mean": 9.063405072269513e-07,
+            "absolute_cell_p99": 7.853679472921981e-06,
+            "absolute_max": 2.3913031731704656e-05
+          }
+        },
+        "exterior_r0_ge2": {
+          "cells": 38426,
+          "incremental_entropy_signed": -9.049463913362736e-07,
+          "incremental_entropy_abs": 6.0619943942747314e-05,
+          "incremental_density_abs": 0.0013658935571016914,
+          "incremental_entropy_distribution": {
+            "signed_mass_mean": -9.049463913362736e-07,
+            "absolute_mass_mean": 6.0619943942747314e-05,
+            "absolute_cell_p99": 0.00028582171043732156,
+            "absolute_max": 0.0004791759497154921
+          },
+          "restart_relative_energy_change": -1.9246795119945356e-10,
+          "restart_relative_angular_momentum_change": 7.038813976123492e-14,
+          "original_t0_density_change": {
+            "signed_mass_mean": 0.002337337274819057,
+            "absolute_mass_mean": 0.011521635548064625,
+            "absolute_cell_p99": 0.41599297373624006,
+            "absolute_max": 1.5735831301526995
+          },
+          "original_t0_entropy_change": {
+            "signed_mass_mean": -8.291162696775743e-05,
+            "absolute_mass_mean": 0.0001583590294907135,
+            "absolute_cell_p99": 0.00038747955098056557,
+            "absolute_max": 0.000581694760389934
+          },
+          "original_circular_position_error": {
+            "signed_mass_mean": 0.0005081766018564358,
+            "absolute_mass_mean": 0.0005081766018564358,
+            "absolute_cell_p99": 0.0188414925230661,
+            "absolute_max": 0.051290751021214796
+          },
+          "original_circular_position_error_over_max_r0_eps": {
+            "signed_mass_mean": 0.0002057995437246125,
+            "absolute_mass_mean": 0.0002057995437246125,
+            "absolute_cell_p99": 0.007545138452209603,
+            "absolute_max": 0.019470983764358952
+          }
+        }
+      },
+      "native_exec_wall_seconds": 1388.317
+    }
+  },
+  "observed_median_h_ratios": {
+    "half_over_coarse": 0.1197297942098137,
+    "quarter_over_half": 0.5
+  },
+  "endpoint_differences": {
+    "coarse_versus_quarter": {
+      "core_r0_lt_0p1": {
+        "x": {
+          "mass_RMS_absolute": 1.3649694643507951e-06,
+          "max_absolute": 1.1993342587945932e-05
+        },
+        "y": {
+          "mass_RMS_absolute": 1.8035178334733537e-06,
+          "max_absolute": 1.2236982587232603e-05
+        },
+        "vx": {
+          "mass_RMS_absolute": 0.0006679735297866649,
+          "max_absolute": 0.0045309312183545725
+        },
+        "vy": {
+          "mass_RMS_absolute": 0.0005176346748903423,
+          "max_absolute": 0.004538741525105472
+        },
+        "volume": {
+          "mass_RMS_absolute": 9.947958722196182e-09,
+          "max_absolute": 6.699701771140099e-08
+        },
+        "ie": {
+          "mass_RMS_absolute": 6.298228592119886e-13,
+          "max_absolute": 7.795819545464155e-12
+        },
+        "den": {
+          "mass_RMS_absolute": 8.539842117585355e-07,
+          "max_absolute": 9.078532457351685e-06
+        },
+        "pressure": {
+          "mass_RMS_absolute": 4.856862687393009e-09,
+          "max_absolute": 6.192749424371868e-08
+        }
+      },
+      "core_r0_0p1_to0p5": {
+        "x": {
+          "mass_RMS_absolute": 8.451589977900379e-11,
+          "max_absolute": 1.1952657974489966e-08
+        },
+        "y": {
+          "mass_RMS_absolute": 1.0054336969551505e-10,
+          "max_absolute": 1.696291329622568e-08
+        },
+        "vx": {
+          "mass_RMS_absolute": 2.9359667402255913e-09,
+          "max_absolute": 3.611456069751995e-07
+        },
+        "vy": {
+          "mass_RMS_absolute": 3.1205477961302155e-09,
+          "max_absolute": 4.360653718116225e-07
+        },
+        "volume": {
+          "mass_RMS_absolute": 1.823516137663244e-11,
+          "max_absolute": 3.055902197957039e-09
+        },
+        "ie": {
+          "mass_RMS_absolute": 2.3928396939911604e-14,
+          "max_absolute": 9.711675907908557e-14
+        },
+        "den": {
+          "mass_RMS_absolute": 1.2943500452275096e-08,
+          "max_absolute": 2.5331974029541016e-06
+        },
+        "pressure": {
+          "mass_RMS_absolute": 6.618159061085479e-11,
+          "max_absolute": 3.7471181713044643e-10
+        }
+      },
+      "disk_r0_0p5_to2": {
+        "x": {
+          "mass_RMS_absolute": 7.780044215183311e-12,
+          "max_absolute": 3.3220537432043784e-11
+        },
+        "y": {
+          "mass_RMS_absolute": 7.892277101397479e-12,
+          "max_absolute": 3.3860914072647574e-11
+        },
+        "vx": {
+          "mass_RMS_absolute": 2.2830291324085302e-10,
+          "max_absolute": 9.924548821649282e-10
+        },
+        "vy": {
+          "mass_RMS_absolute": 2.318606150684793e-10,
+          "max_absolute": 1.0039428177677223e-09
+        },
+        "volume": {
+          "mass_RMS_absolute": 1.3008650870674814e-12,
+          "max_absolute": 1.4551915228366852e-11
+        },
+        "ie": {
+          "mass_RMS_absolute": 4.9594126450551004e-14,
+          "max_absolute": 1.1651790643441018e-13
+        },
+        "den": {
+          "mass_RMS_absolute": 7.388851207853046e-09,
+          "max_absolute": 1.1920928955078125e-07
+        },
+        "pressure": {
+          "mass_RMS_absolute": 1.3699998001049147e-10,
+          "max_absolute": 3.21847437589895e-10
+        }
+      },
+      "exterior_r0_ge2": {
+        "x": {
+          "mass_RMS_absolute": 4.2624236390499904e-10,
+          "max_absolute": 1.229707713434891e-08
+        },
+        "y": {
+          "mass_RMS_absolute": 4.264854794382223e-10,
+          "max_absolute": 1.2225381595953877e-08
+        },
+        "vx": {
+          "mass_RMS_absolute": 1.1850441504771631e-08,
+          "max_absolute": 3.96859085594059e-07
+        },
+        "vy": {
+          "mass_RMS_absolute": 1.1946385279812077e-08,
+          "max_absolute": 4.861898453834002e-07
+        },
+        "volume": {
+          "mass_RMS_absolute": 5.055326740340441e-10,
+          "max_absolute": 1.3387762010097504e-08
+        },
+        "ie": {
+          "mass_RMS_absolute": 8.829138812486914e-14,
+          "max_absolute": 1.4375167722846527e-12
+        },
+        "den": {
+          "mass_RMS_absolute": 5.942950409840955e-09,
+          "max_absolute": 2.2258609533309937e-07
+        },
+        "pressure": {
+          "mass_RMS_absolute": 8.705198283319953e-11,
+          "max_absolute": 7.862581696826965e-10
+        }
+      }
+    },
+    "half_versus_quarter": {
+      "core_r0_lt_0p1": {
+        "x": {
+          "mass_RMS_absolute": 4.935470312312055e-10,
+          "max_absolute": 2.0784511889360147e-09
+        },
+        "y": {
+          "mass_RMS_absolute": 5.457888134433541e-10,
+          "max_absolute": 3.137263338004459e-09
+        },
+        "vx": {
+          "mass_RMS_absolute": 7.491217201371606e-08,
+          "max_absolute": 6.855988805565261e-07
+        },
+        "vy": {
+          "mass_RMS_absolute": 4.725036935669564e-08,
+          "max_absolute": 2.972028858572173e-07
+        },
+        "volume": {
+          "mass_RMS_absolute": 2.1254935364103525e-11,
+          "max_absolute": 1.4551915228366852e-10
+        },
+        "ie": {
+          "mass_RMS_absolute": 4.802503039907601e-15,
+          "max_absolute": 2.270406085358445e-14
+        },
+        "den": {
+          "mass_RMS_absolute": 3.300980130754737e-09,
+          "max_absolute": 2.2351741790771484e-08
+        },
+        "pressure": {
+          "mass_RMS_absolute": 3.0361010407353365e-11,
+          "max_absolute": 1.5916157281026244e-10
+        }
+      },
+      "core_r0_0p1_to0p5": {
+        "x": {
+          "mass_RMS_absolute": 1.8733108657533165e-11,
+          "max_absolute": 1.866744092637873e-09
+        },
+        "y": {
+          "mass_RMS_absolute": 2.1994392234590637e-11,
+          "max_absolute": 1.9497061742868027e-09
+        },
+        "vx": {
+          "mass_RMS_absolute": 5.894947460657126e-10,
+          "max_absolute": 6.03837242429961e-08
+        },
+        "vy": {
+          "mass_RMS_absolute": 5.644752968449713e-10,
+          "max_absolute": 4.5434534801103155e-08
+        },
+        "volume": {
+          "mass_RMS_absolute": 2.2636955338764117e-12,
+          "max_absolute": 2.473825588822365e-10
+        },
+        "ie": {
+          "mass_RMS_absolute": 2.755718933755488e-14,
+          "max_absolute": 1.153799278341694e-13
+        },
+        "den": {
+          "mass_RMS_absolute": 5.020327124256672e-09,
+          "max_absolute": 1.6391277313232422e-07
+        },
+        "pressure": {
+          "mass_RMS_absolute": 7.613209437697391e-11,
+          "max_absolute": 3.219611244276166e-10
+        }
+      },
+      "disk_r0_0p5_to2": {
+        "x": {
+          "mass_RMS_absolute": 9.063869565319283e-12,
+          "max_absolute": 3.950884064352067e-11
+        },
+        "y": {
+          "mass_RMS_absolute": 9.711583370831271e-12,
+          "max_absolute": 3.79460907140583e-11
+        },
+        "vx": {
+          "mass_RMS_absolute": 2.6532444024809897e-10,
+          "max_absolute": 1.1160835589052454e-09
+        },
+        "vy": {
+          "mass_RMS_absolute": 2.8537838262038175e-10,
+          "max_absolute": 1.1050122483702296e-09
+        },
+        "volume": {
+          "mass_RMS_absolute": 1.3468525834550752e-12,
+          "max_absolute": 1.4551915228366852e-11
+        },
+        "ie": {
+          "mass_RMS_absolute": 5.968247375425433e-14,
+          "max_absolute": 1.1665668431248832e-13
+        },
+        "den": {
+          "mass_RMS_absolute": 7.698321735039578e-09,
+          "max_absolute": 1.1920928955078125e-07
+        },
+        "pressure": {
+          "mass_RMS_absolute": 1.648669912017231e-10,
+          "max_absolute": 3.2298430596711114e-10
+        }
+      },
+      "exterior_r0_ge2": {
+        "x": {
+          "mass_RMS_absolute": 4.862780512175293e-10,
+          "max_absolute": 1.5871158609570557e-08
+        },
+        "y": {
+          "mass_RMS_absolute": 4.872541516119148e-10,
+          "max_absolute": 1.5869554392811125e-08
+        },
+        "vx": {
+          "mass_RMS_absolute": 1.3266807049620904e-08,
+          "max_absolute": 4.4764976436795223e-07
+        },
+        "vy": {
+          "mass_RMS_absolute": 1.3378526442592257e-08,
+          "max_absolute": 5.075606718252246e-07
+        },
+        "volume": {
+          "mass_RMS_absolute": 5.70403020120926e-10,
+          "max_absolute": 1.8277205526828766e-08
+        },
+        "ie": {
+          "mass_RMS_absolute": 9.629441496371608e-14,
+          "max_absolute": 1.865174681370263e-12
+        },
+        "den": {
+          "mass_RMS_absolute": 5.870594228895199e-09,
+          "max_absolute": 2.1047890186309814e-07
+        },
+        "pressure": {
+          "mass_RMS_absolute": 9.673788365363288e-11,
+          "max_absolute": 9.717950888443738e-10
+        }
+      }
+    }
+  },
+  "start_time": 10.0,
+  "time": 10.1,
+  "scope": "Three real native trajectories over the same short physical interval, from the identical inherited accepted t10 state. Reports incremental sensitivity and absolute old-IC metrics. Does not reset inherited core error, establish formal convergence order, prove improved thermal accuracy, or qualify a t120/600 expansion by itself."
+}
