@@ -1,0 +1,10 @@
+{
+  "baseline_sha256": "328982249341cc46b365eb89850683d575ebe54029e453159e73a35297b3ece7",
+  "candidate_host_sha256": "09286ebd3234ae03658695f6f08a38d05958e392f83dc51f6a9c427076e2e2e4",
+  "candidate_binary_sha256": "6a68e803c310b65784fa613d844fa2e519450af18943419d82e8f0844fe6e7e5",
+  "source_change": {
+    "before": "double u_final=(direct_u?sbp[i].stress.E_inv_xx:(double)sbp[i].ie)+u_increment;",
+    "after": "double u_final=(thermal64?GFS_T64_ANCHOR(sbp[i]):(direct_u?sbp[i].stress.E_inv_xx:(double)sbp[i].ie))+u_increment;"
+  },
+  "scope": "Experimental build only. Legacy and wall compatibility guards remain unchanged. No physical or runtime validation implied."
+}

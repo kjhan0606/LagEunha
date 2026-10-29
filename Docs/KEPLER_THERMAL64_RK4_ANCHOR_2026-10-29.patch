@@ -1,0 +1,5 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -11340 +11340 @@
+-                double u_final=(direct_u?sbp[i].stress.E_inv_xx:(double)sbp[i].ie)+u_increment;
++                double u_final=(thermal64?GFS_T64_ANCHOR(sbp[i]):(direct_u?sbp[i].stress.E_inv_xx:(double)sbp[i].ie))+u_increment;
