@@ -181,3 +181,29 @@ Equal-and-opposite force gives pair momentum balance but is not by itself a
 complete energy- and spin-conservative solver. The outcome does not exclude a
 different traction or evolved affine/spin model; it argues against spending a
 long GPU run on this simplified substitution alone.
+
+## Candidate normal-pressure torque about cell centroids
+
+On the t30 and t47.5 saved states, each of the 3,931 original inner-disk
+polygons was independently reconstructed. Assuming uniform cell density,
+its area centroid and polar mass moment define a provisional mass centroid
+`C` and inertia `I`. For the same arithmetic-mean shared normal traction used
+above, add `(face centroid - C) cross force` over all faces of each cell. The
+sum of absolute **net** cell torques divided by the sum of absolute individual
+face torques is **0.00090 at t30** and **0.0241 at t47.5**: most face torques
+cancel, although the residual grows. The mass-mean of the instantaneous
+scale `|tau|/(I Omega^2)` is **9.95e-8** and **4.14e-6** respectively;
+the t47.5 cell p99 is **3.33e-5**. For faces between selected cells, the
+orbital-plus-intrinsic pair torque cancellation closes to relative error
+4.01e-16 at t47.5. Reconstructed areas agree with stored volumes to better
+than 5.88e-8. See [receipt](KEPLER_Q2_PRESSURE_SPIN_2026-10-29.json) and
+[reader](audit_kepler_q2_pressure_spin_20261029.py).
+
+This is an instantaneous hypothetical traction calculation, not an evolved
+spin measurement. The mass centroid and inertia are not native evolved state;
+uniform density is an assumption. `tau/I` alone omits `I_dot`, affine strain,
+spin transport, pressure work and the choice of Riemann state. Its small value
+relative to `Omega^2` does not establish that rotation is irrelevant over many
+orbits or that a spin model would fail; equally, nonzero torque does not
+establish that adding spin cures the measured error. An integrated conservative
+spin/affine operator remains necessary to answer that question.
