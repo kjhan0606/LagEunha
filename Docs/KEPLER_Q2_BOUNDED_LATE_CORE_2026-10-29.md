@@ -159,3 +159,25 @@ show a remedy. A pressure/resolution-controlled native comparison and a
 conservative operator that changes this feedback without steering remain
 necessary. Weak-power bands in the receipt can have large, noisy normalized
 rates and should not be ranked by rate alone.
+
+## Frozen-state normal-traction counterfactual
+
+On the same eight saved geometries, replace the reconstructed W0 force in
+post-processing by a single equal-and-opposite normal traction per interior
+face, using the arithmetic mean of its two stored pressures as face pressure.
+No native trajectory or snapshot is modified. In the main `0.2 <= m/N < 0.3`
+band its torque projection is **0.1901–0.2047** per time unit; at t47.5 it
+is **0.204713**, versus **0.204999** from the existing variational-force
+reconstruction. The eight-snapshot difference is at most 0.000286 per time
+unit. See [receipt](KEPLER_Q2_NORMAL_TRACTION_2026-10-29.json) and
+[reader](audit_kepler_q2_normal_traction_20261029.py).
+
+Thus, on these frozen states, replacing the existing force by this particular
+mean-pressure normal traction does not materially alter the projection driving
+the main angular-momentum error. This is a negative screening result, not a
+stability test: an actual Riemann pressure, evolved spin, mass-centroid
+closure, energy/pressure work and future trajectories are not represented.
+Equal-and-opposite force gives pair momentum balance but is not by itself a
+complete energy- and spin-conservative solver. The outcome does not exclude a
+different traction or evolved affine/spin model; it argues against spending a
+long GPU run on this simplified substitution alone.
