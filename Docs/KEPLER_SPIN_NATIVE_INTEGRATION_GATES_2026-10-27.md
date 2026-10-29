@@ -467,3 +467,23 @@ test, not an end-to-end solver, MPI test, GPU performance measurement, or
 proof that the moment closure suppresses Kepler instability. Atomic ordering
 is not deterministic; a native integration needs conservation tolerances and
 single-face ownership tests under realistic parallel decomposition.
+
+An isolated [microbenchmark](bench_gfs_weight_exchange_gpu_20261029.cu)
+uses a synthetic 235x235 triangular-neighbor grid: **55,225 cells, 164,736
+unique faces**. On the same Ada GPU while the native Q1 calculation was
+running, ten timed kernels after three warmups had median **0.139 ms**
+(range 0.136–0.141 ms). The result's 13 components agreed with serial host
+accumulation to relative RMS **1.39e-16**, maximum absolute 2.71e-20;
+global mass, momentum, energy and angular-momentum residuals were below
+4e-19 in that synthetic setup. The experimental AoS face input occupied
+21.1 MB and the RHS 5.74 MB.
+
+This is a short GPU-event measurement with a shared device, not an isolated
+benchmark. It excludes construction of unique faces, zeroing, host/device
+transfer, EOS/density reconstruction, RK stages, topology changes, MPI,
+pressure work and a native full-step baseline. A regular synthetic grid
+does not reproduce actual Kepler face contention or nonuniform states. It
+therefore cannot establish an AREPO-comparable evolution rate or production
+overhead; it only rules out an obvious cost explosion in this one kernel
+under the stated setup. The concurrent native process was confirmed live
+afterward.
