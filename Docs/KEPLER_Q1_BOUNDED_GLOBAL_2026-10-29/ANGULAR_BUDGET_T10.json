@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "checks": {
+    "complete_accepted_interval": true,
+    "fixed_mass_W0": true,
+    "wall_budget_matches_logged_integrator_residual": true
+  },
+  "initial_time": 0.0,
+  "time": 10.0,
+  "accepted_prefixes": 20789,
+  "impacts": 0,
+  "total_L_initial": 15.230499802375586,
+  "total_L_final": 15.23049976955409,
+  "total_fluid_L_change": -3.282149663164091e-08,
+  "disk_L_initial": 13.861374607680391,
+  "disk_L_final": 13.861374607658613,
+  "disk_L_change": -2.177813485104707e-11,
+  "disk_L_relative_change": -1.5711876244495215e-12,
+  "non_disk_L_change": -3.2799718496789865e-08,
+  "pressure_wall_impulse_and_torque": [
+    -2.2640505412679543e-13,
+    1.1777445886230828e-13,
+    -8.485254696479354e-14
+  ],
+  "collision_wall_impulse_and_torque": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "wall_angular_impulse_over_initial_disk_L": -6.121510266216884e-15,
+  "fluid_plus_wall_angular_balance": -3.282158148418788e-08,
+  "sum_logged_integrator_angular_residual": -3.28215814842231e-08,
+  "budget_minus_sum_residual": 3.522465920495813e-20,
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0/khout.020790.dat": "58afbe3ab219ddef0b8dbb9b032789236ec01815bcf80457a5d73e6b90bd6c28",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/log": "f40dbaf992c9c6a7ef8237c0579dc5001e21d4d23a309a8a7a01d3237770faf1",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/log": "e132dd757a7cc244bc7090165b275c3e0af7b308bd06cb6f0b6ada878804f6cc",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to3p0/log": "534718e8bdc8fed650de24283086614e754ae52a3120ef9ce7da4624fba0ee3c",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to6p5/log": "6215ada15fb2a22fdf76128a617cf878e54df00f6d6762ae74ecba9494871429",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to10p0/log": "a609ba3650bfb9cb7ea4ec00d03d41d79259c637664e3d625dc1aa295cb74b9a"
+  },
+  "scope": "Wall torque itself and actual disk/non-disk angular changes are reported separately. Small corrected balance does not establish an isolated disk or GIZMO boundary equivalence. Non-disk is initial core plus exterior, not a measured pairwise inter-region flux."
+}

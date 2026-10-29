@@ -1,5 +1,7 @@
 # One dependent accepted-restart bundle after t=10
 
+Update: job 439375 actually started on H200 after the exact t10 parent finished. Its four ABBA qualification runs passed full state/ledger parity and measured 1.9743x median step speedup; the native coarse/half/quarter controls are in progress. See the bounded Q1 `RESULT_T10.md` and the actual bundle outputs for current completion, not the earlier submission forecast.
+
 Slurm job **439375** (`KepQ1RestartDt`) requests one H200, eight CPUs/OpenMP threads, 32 GiB and two hours. Its actual dependency is **afterok:439333**, with automatic cancellation if that dependency becomes invalid. The parent native chain is unchanged. This is one finite computational allocation, not a polling daemon.
 
 The worker additionally requires the exact accepted t=10 endpoint, all original 28 physical checks, matching parent job/parameters/executable, complete native IDs and fixed masses, and matching snapshot hashes. It refuses an incomplete parent or an earlier green checkpoint. The local preflight correctly reported NOT READY and created no native execution claim or case directory. Slurm `--test-only` accepted the request; its hypothetical job/start prediction was not an actual submitted run or an allocation guarantee. The actual job was confirmed PENDING for Dependency with StartTime unknown.

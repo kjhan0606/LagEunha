@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "checks": {
+    "full_restart_and_footer": true,
+    "printed_numerical_ledgers": true,
+    "both_native_exits_zero": true,
+    "no_full_particle_tsv": true,
+    "candidate_matches_isolated_build": true
+  },
+  "different_printed_fields": {},
+  "candidate_binary_sha256": "beca93e14e2e090b7f6c69926474f88070ec7ecbe19a3bafa147488643573a93",
+  "baseline_checkpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/khout.000022.dat",
+  "candidate_checkpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_thermalonly_ada/khout.000022.dat",
+  "restart_parity": {
+    "passed": true,
+    "checks": {
+      "native_headers_exact": true,
+      "all_record_bytes_after_next_pointer_exact": true,
+      "full_precision_restart_footer_exact": true
+    },
+    "paths": [
+      "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/khout.000022.dat",
+      "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_thermalonly_ada/khout.000022.dat"
+    ],
+    "sha256": [
+      "0f60d80dec2668a7e53a6e99ec84760af824ed70fb7a868ddd605fe53ffe11bc",
+      "41f456a70ad584f2a668b0f226615aa3b6874f62e3527d5c36c928a661aa2f4f"
+    ],
+    "records": 90352,
+    "stride": 576,
+    "changed_records_excluding_pointer": 0,
+    "first_changed_record_indices": [],
+    "differing_body_byte_columns": {},
+    "records_with_different_next_pointer": 84560,
+    "footer_fields": [
+      [
+        0.0015284035789018555,
+        4.336808689942018e-19,
+        4.336808689942018e-19,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0015284035789018555,
+        4.336808689942018e-19,
+        4.336808689942018e-19,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+  },
+  "eta": 0.06,
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/log": "050a889a55c7dca847302f1e9665d95f4a19da3abea15799dd1385529ac5d70d",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_thermalonly_ada/log": "cd3170d5653e9955a9877d080a1d41a87468989f35e370b57ae06a84258a89d2",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_ada/preflight.json": "b5dc11655889874903e6f6d071f0f529bd9698989ee4c22ea0f2bd7aa91f5afb",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/gravity_cap_preflight_v1/native_eta006_thermalonly_ada/preflight.json": "ad14b9b41e2b24af9aab556ed4bb32bb12440b0046c75afd4387cf8b88afd9e5"
+  },
+  "scope": "Actual eta=.06 native baseline/thermal-cache-only pair from the same t0 IC. Complete stored records/footer and printed numeric ledgers are compared without loosening criteria. Both Ada GPU and CPU were shared with a separate native simulation; timing is not a valid speed comparison. Collision, MPI scaling, and long-time physics remain unqualified."
+}
