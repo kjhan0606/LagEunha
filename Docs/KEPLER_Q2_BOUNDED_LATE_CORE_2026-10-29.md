@@ -91,3 +91,15 @@ For separation d=|x_j-x_i|, the instantaneous identity is `d_ddot = n dot (a_j-a
 | Sum of these three terms | -1.24010e-4 |
 
 The gravity and velocity-curvature terms nearly cancel, but their residual is negative. The positive pressure term offsets about a quarter of that residual at this saved instant. The modeled sum is negative for all 244 selected sites; all are already approaching. As a check, applying the gravity-plus-curvature expression to the same IDs on exact circular orbits yields a mass-mean absolute separation acceleration of 1.90e-16. The result describes the instantaneous stored state, not why the velocity or position perturbation appeared. Pressure may have helped generate the earlier velocity deviations even though its current projection resists them. The reconstructed pressure has not been checked against native Q2 RHS, and the sum does not claim to include any other native acceleration terms. See [receipt](KEPLER_Q2_PAIR_KINEMATICS_2026-10-29.json) and [script](audit_kepler_q2_pair_kinematics_20261029.py).
+
+## Native CUDA check on three close pairs
+
+The six cells of the three closest distinct pairs were then checked with an actual native CUDA K1 evaluation on Ada, using the untouched saved t47.50031653561342 checkpoint and the already-tested wall-event v2 executable. The latter is not the historical Q2 executable, so this directly validates this candidate on the stored state, not every historical execution path. The diagnostic log explicitly reports no accepted evolution. The independent polygon reconstruction matches the six native pressure accelerations to at worst 6.51e-18 absolute; its pressure-work comparison and geometry checks also pass. See [native audit](KEPLER_Q2_NATIVE_PAIR_RHS_2026-10-29/AUDIT.json), [input](KEPLER_Q2_NATIVE_PAIR_RHS_2026-10-29/INPUT.json), and [staging script](stage_kepler_q2_pair_rhs_20261029.py).
+
+| IDs | Relative speed along pair | Native pressure relative acceleration along pair |
+|---|---:|---:|
+| 31088, 30249 | -1.47331e-3 | +1.26833e-4 |
+| 29637, 23949 | -1.45954e-3 | +1.25256e-4 |
+| 25319, 23161 | -1.06536e-3 | +9.03788e-5 |
+
+The [projection receipt](KEPLER_Q2_NATIVE_PAIR_RHS_2026-10-29/PAIR_PROJECTION.json) confirms that these selected pairs approach while native total pressure accelerations oppose their approach at that instant. The six selected cells are an extreme sample, not a population-wide native RHS validation. The test neither establishes the perturbation's cause nor checks the time history, AV behavior in older configurations, intrinsic spin, or long-time stability.
