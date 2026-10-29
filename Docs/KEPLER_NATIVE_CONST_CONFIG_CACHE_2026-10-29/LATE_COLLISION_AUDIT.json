@@ -1,0 +1,100 @@
+{
+  "passed": true,
+  "physical_audit": {
+    "initial": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/const_config_cache_bench_v1/gapped_late_crossing/khout.011580.dat",
+    "initial_sha256": "5946fad7b92ac439a51e01ad469ada3b9055d95d540be70f3c9c5c0b49ccee9c",
+    "initial_time": 48.37534965270793,
+    "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/const_config_cache_bench_v1/gapped_late_crossing/khout.011597.dat",
+    "endpoint_sha256": "09995765422383dcf243ccf8c9728b1824f0f9f23ec103f0e0ce94892eeb26d8",
+    "time": 48.4,
+    "checks": {
+      "native_exit_zero": true,
+      "native_binary_and_initial_hashes": true,
+      "complete_owned_IDs": true,
+      "same_fixed_masses": true,
+      "W0_exact": true,
+      "finite_positive_state": true,
+      "all_endpoints_inside_polygon_to_roundoff": true,
+      "no_energy_injection": true,
+      "expected_collision_reached": true,
+      "all_impact_gaps_within_tolerance": true,
+      "one_permanent_ledger_per_accepted_prefix": true,
+      "positive_physical_time_prefixes": true,
+      "prefix_times_close": true,
+      "wall_momentum_and_torque_balance": true,
+      "restart_total_energy": true,
+      "no_failed_rollback": true,
+      "no_stop_or_original_crossing_abort": true
+    },
+    "passed": true,
+    "impacts": [
+      {
+        "step": 11583,
+        "time": 48.37702401924956,
+        "id": 110573,
+        "side": 543,
+        "gap": 8.007483565108942e-15,
+        "tolerance": 2.2969636658409617e-14,
+        "vn_before": 0.015025811828778868,
+        "kinetic_roundoff": 0.0
+      }
+    ],
+    "accepted_prefixes": 17,
+    "rollbacks": 13,
+    "minimum_accepted_h": 3.997988249319552e-05,
+    "maximum_momentum_residual": 1.0846701233826454e-17,
+    "maximum_angular_residual": 2.528151526e-13,
+    "restart_relative_total_energy_change": -1.4758864729905232e-11,
+    "minimum_internal_energy": 8.228641379393054e-11,
+    "maximum_endpoint_plane_penetration": -0.0003027469728138499,
+    "scope": "Late bounded Q2 event replay past original failure. Validates local collision/rollback/ledger behavior only; not Q1 boundary IC, full event-order convergence, long-time stability or GIZMO reproduction."
+  },
+  "full_native_restart_parity": {
+    "passed": true,
+    "checks": {
+      "native_headers_exact": true,
+      "all_record_bytes_after_next_pointer_exact": true,
+      "full_precision_restart_footer_exact": true
+    },
+    "paths": [
+      "/gpfs/kjhan/LagForce/Kepler_Q2_WallCrossing_Replay_20261029/native_events_v2/gapped_crossing/khout.011597.dat",
+      "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/const_config_cache_bench_v1/gapped_late_crossing/khout.011597.dat"
+    ],
+    "sha256": [
+      "ecf10e89200b00a1cdc9a8048d239c320131ffdc6b219bf46d85df982122d63c",
+      "09995765422383dcf243ccf8c9728b1824f0f9f23ec103f0e0ce94892eeb26d8"
+    ],
+    "records": 55351,
+    "stride": 576,
+    "changed_records_excluding_pointer": 0,
+    "first_changed_record_indices": [],
+    "differing_body_byte_columns": {},
+    "records_with_different_next_pointer": 51151,
+    "footer_fields": [
+      [
+        48.4,
+        0.0005390234229665225,
+        0.0005390234291553497,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ],
+      [
+        48.4,
+        0.0005390234229665225,
+        0.0005390234291553497,
+        384,
+        384,
+        6.0,
+        6.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "scope": "Same native ABI and record order; excludes only byte 0:8, the next pointer declared first in treevorostressrk4particletype. All remaining record bytes, including auxiliary/gradient/RK fields, and all 52 footer bytes are exact. This compares stored data; it is not an executed restart bridge or long-time proof."
+  },
+  "scope": "Actual gapped late wall collision with the config cache enabled; same stored state and footer as frozen v2 after original failure. No long-time stability claim."
+}

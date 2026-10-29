@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "checks": {
+    "complete_accepted_interval": true,
+    "fixed_mass_W0": true,
+    "wall_budget_matches_logged_integrator_residual": true
+  },
+  "initial_time": 0.0,
+  "time": 0.825,
+  "accepted_prefixes": 1217,
+  "impacts": 0,
+  "total_L_initial": 15.230499802375586,
+  "total_L_final": 15.230499797105093,
+  "total_fluid_L_change": -5.270493375064689e-09,
+  "disk_L_initial": 13.861374607680391,
+  "disk_L_final": 13.861374607667365,
+  "disk_L_change": -1.3026024703322037e-11,
+  "disk_L_relative_change": -9.396927680427325e-13,
+  "non_disk_L_change": -5.257467350361367e-09,
+  "pressure_wall_impulse_and_torque": [
+    1.4352010742893287e-18,
+    3.9070753374063876e-18,
+    4.896367216505244e-14
+  ],
+  "collision_wall_impulse_and_torque": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "wall_angular_impulse_over_initial_disk_L": 3.53238214469165e-15,
+  "fluid_plus_wall_angular_balance": -5.270444411392524e-09,
+  "sum_logged_integrator_angular_residual": -5.270444411388446e-09,
+  "budget_minus_sum_residual": -4.0780004198864264e-21,
+  "source_hashes": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat": "e5fa9be0d2f596e1940afb08f9c03afcf2e1a19801ee31990842e808e6c9f6c1",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/log": "f40dbaf992c9c6a7ef8237c0579dc5001e21d4d23a309a8a7a01d3237770faf1"
+  },
+  "scope": "Wall torque itself and actual disk/non-disk angular changes are reported separately. Small corrected balance does not establish an isolated disk or GIZMO boundary equivalence. Non-disk is initial core plus exterior, not a measured pairwise inter-region flux."
+}

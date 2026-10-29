@@ -1,5 +1,7 @@
 # Q1 bounded-domain experiment, 2026-10-29
 
+Update: exact t=.825 passed all 28 checkpoint checks and continued from its accepted restart to t=2.5. [The first-checkpoint report](RESULT_T0825.md) includes common-scale density fields, core accuracy caveats, a gravity-only timestep control and the actual cumulative wall angular impulse. The earlier startup notes below remain preserved.
+
 The failed periodic Q1 t=3 state showed exterior sites entering disk support. This experiment changes the boundary model, using the native fixed 1024-gon at R=2.75 and retaining original t=0 generators with r<2.65. It starts a new physical IC at t=0; it does not modify the contaminated t=3 state or discard any previous checkpoints/results. The model's ultimate equivalence to the GIZMO long-time test still requires boundary studies.
 
 ## Initial-state evidence

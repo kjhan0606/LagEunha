@@ -1,0 +1,32 @@
+{
+  "candidate_manifest": {
+    "Exam/exam.c": "f109ec53217cb85e686fced302af2ff9128a4b9b4907cc1e27bf501d6b8946d1",
+    "Exam/exam_gpu.cu": "09a2d6a16d44f03534d38ea6fdfbaa556736d62fad7504981258a11ffbf6f5a3",
+    "Exam/gfs_wall_events.inc": "719b59918cdfad5e8a041eb32090aefe523c8a208039da8f6ea559ed4f3bd450",
+    "Exam/gfs_wall_dense.h": "01ca236d0eb731b43c26679b84509bef3e92cfc5872adadb4f304dfba5adb323",
+    "Exam/kepler_slip_wall.h": "4032460b4631bb430dea0c61d36de51118918fa120efb826242b38fbf942cc25",
+    "Exam/gfs_thermal64.h": "d51aca8f82aa6345e181ff37d574e8224e206fe364d0c71bf6efe861537950c9",
+    "Exam/Makefile": "fd4d388ed6e533eb56e553f52d440cec4de4cd32f74761f9b9841745c5265dac",
+    "eunha2.exe": "7364a05c09eeb393d4e8528f01a82efb7f6d9c6fba9b394d2d1e62e6bd78345f"
+  },
+  "initial": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat",
+  "initial_sha256": "e5fa9be0d2f596e1940afb08f9c03afcf2e1a19801ee31990842e808e6c9f6c1",
+  "start_time": 0.825,
+  "target_time": 0.82845,
+  "order": [
+    "A1",
+    "B1",
+    "B2",
+    "A2",
+    "candidate_flag_off"
+  ],
+  "num_threads": 8,
+  "output_policy": "Five complete final checkpoints, ~52MB each; one shared existing accepted input; no periodic/face/tess/full-particle TSV dumps",
+  "predeclared_gates": {
+    "all_full_restart_record_and_footer_bytes_exact_except_runtime_next_pointer": true,
+    "all_complete_ledger_numeric_values_exact": true,
+    "zero_injections": true,
+    "ABBA_median_wall_per_step_speedup_min": 1.05
+  },
+  "scope": "Independent restart comparison and bounded performance measurement; no modification of running Q1 chain"
+}

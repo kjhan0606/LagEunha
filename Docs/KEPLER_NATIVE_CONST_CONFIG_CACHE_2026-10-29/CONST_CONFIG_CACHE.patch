@@ -1,0 +1,62 @@
+--- a/Exam/exam.c
++++ b/Exam/exam.c
+@@ -4626,8 +4626,27 @@
+-	const char *e = getenv("EUNHA_IC");
+-	if(!e || strcmp(e, "kepler") != 0) return 0;
+-	const char *cxe = getenv("EUNHA_KEPLER_CX");
+-	const char *cye = getenv("EUNHA_KEPLER_CY");
+-	const char *ee = getenv("EUNHA_KEPLER_EPS");
+-	postype cx = cxe && cxe[0] ? atof(cxe) : (postype)2.0;
+-	postype cy = cye && cye[0] ? atof(cye) : (postype)2.0;
+-	postype eps = ee && ee[0] ? atof(ee) : (postype)0.0;
++    postype cx,cy,eps;
++    if(gfs_native_const_config_on()){
++        static int state=0,active=0;
++        static postype cached_cx,cached_cy,cached_eps;
++        if(__atomic_load_n(&state,__ATOMIC_ACQUIRE)!=2){
++            int expected=0;
++            if(__atomic_compare_exchange_n(&state,&expected,1,0,__ATOMIC_ACQ_REL,__ATOMIC_ACQUIRE)){
++                const char *e=getenv("EUNHA_IC");active=e && strcmp(e,"kepler")==0;
++                if(active){
++                    const char *cxe=getenv("EUNHA_KEPLER_CX"),*cye=getenv("EUNHA_KEPLER_CY"),*ee=getenv("EUNHA_KEPLER_EPS");
++                    cached_cx=cxe && cxe[0]?atof(cxe):(postype)2.0;
++                    cached_cy=cye && cye[0]?atof(cye):(postype)2.0;
++                    cached_eps=ee && ee[0]?atof(ee):(postype)0.0;
++                }
++                __atomic_store_n(&state,2,__ATOMIC_RELEASE);
++            }else{while(__atomic_load_n(&state,__ATOMIC_ACQUIRE)!=2){}}
++        }
++        if(!active)return 0;
++        cx=cached_cx;cy=cached_cy;eps=cached_eps;
++    }else{
++        const char *e=getenv("EUNHA_IC");
++        if(!e || strcmp(e,"kepler")!=0)return 0;
++        const char *cxe=getenv("EUNHA_KEPLER_CX"),*cye=getenv("EUNHA_KEPLER_CY"),*ee=getenv("EUNHA_KEPLER_EPS");
++        cx=cxe && cxe[0]?atof(cxe):(postype)2.0;
++        cy=cye && cye[0]?atof(cye):(postype)2.0;
++        eps=ee && ee[0]?atof(ee):(postype)0.0;
++    }
+--- a/Exam/gfs_thermal64.h
++++ b/Exam/gfs_thermal64.h
+@@ -15,0 +16,11 @@
++/* Opt-in process-constant configuration. Default-off retains the legacy
++ * dynamic environment reads. Atomic publication permits concurrent host callers.
++ * When enabled, callers must keep these environment settings fixed for the run.
++ */
++static inline int gfs_native_const_config_on(void){
++    static int mode=-1;
++    int value=__atomic_load_n(&mode,__ATOMIC_RELAXED);
++    if(value<0){const char *s=getenv("GFS_NATIVE_CONST_CONFIG");value=s && atoi(s)>0;
++        __atomic_store_n(&mode,value,__ATOMIC_RELAXED);}
++    return value;
++}
+@@ -17 +28,8 @@
+-    const char *s=getenv("GFS_THERMAL64");return s && atoi(s)>0;
++    if(!gfs_native_const_config_on()){
++        const char *s=getenv("GFS_THERMAL64");return s && atoi(s)>0;
++    }
++    static int cached=-1;
++    int value=__atomic_load_n(&cached,__ATOMIC_RELAXED);
++    if(value<0){const char *s=getenv("GFS_THERMAL64");value=s && atoi(s)>0;
++        __atomic_store_n(&cached,value,__ATOMIC_RELAXED);}
++    return value;

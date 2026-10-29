@@ -13,7 +13,7 @@
     "/gpfs/kjhan/LagForce/Kepler_GPUStreamCandidates_H200_20261020/snapshot_offsets.json": "c9be19a29148fdd8991050f97a7ac189248eedeb2494997bdcda42e1c3785d03",
     "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/run.sh": "65fa491a31bcbe25b582c0778f024c93f2f559abc6990237449eb2a12d13c7ed",
     "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
-    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/run.sh": "22036782ee614db76c970f06f364e3c28670af67d962660cda3043ecbb57792e",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/run.sh": "ae1100b4c76f5a1b2f1c020056075d0aef96e9ffefb76d260eb4703dbc208757",
     "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to2p5/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
     "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to3p0/run.sh": "c0146337fc1572dcef52f06d56243b0195cf7dc14571c960ece2b6031c4702d4",
     "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to3p0/params.dat": "2898a04490002a24b766f0525426bfb41911e5733f54997b60673a5b5b69ef43",
@@ -81,5 +81,16 @@
         "note": "Atomic file replacement preserves the current shell open inode; native process already corrected separately and is not restarted."
       }
     ]
+  },
+  "aggregate_timing": {
+    "observed_at": "2026-10-29T09:00:44.548665",
+    "stage": "to2p5",
+    "before_sha256": "22036782ee614db76c970f06f364e3c28670af67d962660cda3043ecbb57792e",
+    "after_sha256": "ae1100b4c76f5a1b2f1c020056075d0aef96e9ffefb76d260eb4703dbc208757",
+    "change": "GFS_RK4_GAP_PROFILE=1; whole RK4 wall/tracked/gap timing, one small line per accepted prefix",
+    "physics_changed": false,
+    "extra_simulation": false,
+    "full_particle_audit_disabled": true,
+    "scope": "Existing source reads this flag only to emit aggregate timings. The preceding run is neither interrupted nor restarted."
   }
 }

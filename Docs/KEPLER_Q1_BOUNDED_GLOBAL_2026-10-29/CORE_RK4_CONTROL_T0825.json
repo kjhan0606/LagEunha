@@ -1,0 +1,40 @@
+{
+  "passed": false,
+  "checks": {
+    "same_accepted_time_sequence": true,
+    "all_control_states_finite": true,
+    "native_core_error_explained_to_5pct_by_gravity_RK4": false,
+    "half_step_error_reduces_by_more_than_8": true,
+    "quarter_step_error_reduces_again_by_more_than_8": true
+  },
+  "cells": 134,
+  "time": 0.825,
+  "sources": {
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/ic_v1/khout.000001.dat": "0b7ccf1999a5ec6d22b8b77aeb5935abdda5e442c74aef8daee1fcfdc809f0ca",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/khout.001218.dat": "e5fa9be0d2f596e1940afb08f9c03afcf2e1a19801ee31990842e808e6c9f6c1",
+    "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/chain_h200_v2/to0p825/log": "f40dbaf992c9c6a7ef8237c0579dc5001e21d4d23a309a8a7a01d3237770faf1"
+  },
+  "native_accepted_steps": 1217,
+  "native_core_position_error": 0.0003278625277284968,
+  "native_minus_gravity_control_position_residual": 3.307911211377367e-05,
+  "residual_over_native_orbit_error": 0.10089323822076582,
+  "gravity_only_RK4_controls": [
+    {
+      "subdivision": 1,
+      "mass_weighted_position_error": 0.00029880179506793024,
+      "native_position_residual": 3.307911211377367e-05
+    },
+    {
+      "subdivision": 2,
+      "mass_weighted_position_error": 9.5705723182233e-06,
+      "native_position_residual": 0.000318665944302901
+    },
+    {
+      "subdivision": 4,
+      "mass_weighted_position_error": 3.0656286665112866e-07,
+      "native_position_residual": 0.0003275685486988123
+    }
+  ],
+  "analysis_seconds": 0.6644098329707049,
+  "scope": "Only gravity ODE trajectories, with native accepted h and smaller h controls. An agreement attributes position error, not thermal entropy, density error, boundary effects, shocks or long-time gas stability. The native run is untouched."
+}
