@@ -67,3 +67,9 @@ The analogous aligned job **437386** completed `0:0`; its
 [corrected audit](aligned_437386_corrected_audit.json) passes, and its same
 ten physical endpoint arrays are bitwise identical to **437384**. This is
 also a duplicate trajectory, not a new independent physical case.
+
+## Inner-disk pair torque follow-up
+
+The saved aligned W0 and weighted t10 endpoints were re-read using the **same** 3,931 original r0=.5–.75 sites and the W0 endpoint's nearest-neighbor IDs in both cases. Fixed masses and independent power-cell areas were checked. The RMS specific angular-momentum difference is **4.28e-8** for W0 and **3.52e-8** for the weighted case; the mass-mean absolute density change in this region is 3.91e-4 and 2.86e-4. However, the RMS difference of independently reconstructed specific pressure torques is **7.52e-9** for W0 and **1.97e-8** for the weighted case. The instantaneous projection `mean(DeltaL*DeltaTau)/mean(DeltaL^2)` is +0.140 and +0.406 per time unit, respectively. See [receipt](../KEPLER_Q2_WEIGHTED_T10_PAIR_TORQUE_2026-10-29.json) and [reader](../audit_kepler_q2_weight_pair_torque_20261029.py).
+
+This is one time sample with initially small L differences; ratios can be sensitive to the small denominator, and pairs are fixed by the W0 endpoint. It does **not** demonstrate that the weighted trajectory subsequently grows faster or that weights repair or worsen the t47.5 Q2 instability. Weighted evolution was enabled only after t6.501. The weighted reconstruction has not been independently compared to native weighted RHS, and global projected work is not a local first-law proof. The result motivates a matched, time-resolved torque/weight-energy audit before selecting this weight law as a remedy.
