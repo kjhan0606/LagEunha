@@ -1,0 +1,20 @@
+{
+  "role": "Experimental thermal64 collision replay from accepted Q2 checkpoint; no Q1 stability claim",
+  "start_time": 48.37534965270793,
+  "target_time": 48.378,
+  "input_sha256": "c4b11f1996349f5ce8ab664569fa4415cd91b5f836fe9579c98f7dcd51aff758",
+  "binary_sha256": "ff3ae9b86c65e86a28dfe246a33186e9387361ee54c83439bb17bc52f85e317a",
+  "numerical_policy": "Original RK4 RHS/CFL with event-limited accepted prefixes; no floors, steering, viscosity or weights",
+  "output_policy": "One final snapshot (~32 MB), no particle TSV",
+  "predeclared_gates": {
+    "all_owned_fixed_mass_W0_positive": true,
+    "zero_floor_dual_entropy_injection": true,
+    "collision_ID_side": [
+      55283,
+      543
+    ],
+    "impact_gap_within_logged_tolerance": true,
+    "max_step_momentum_and_angular_residual": 1e-10,
+    "restart_relative_total_energy_change_max": 1e-07
+  }
+}
