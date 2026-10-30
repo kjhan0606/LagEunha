@@ -260,7 +260,7 @@ constraints across four RK stages, rejection of non-finite stage data, and
 rollback/retry behavior. It passes strict C99 compilation and execution. The
 startup geometry mode was submitted as isolated H200 job `442508`; no runtime
 result has yet been recorded. The scheduler-check interval has been extended
-from 14 to 28 days, so do not query its state before 2026-11-27 12:13 UTC.
+from 28 to 56 days, so do not query its state before 2026-12-25 12:13 UTC.
 It is one-rank only and
 does not test ALE evolution, MPI decomposition, or boundary fluxes.
 
