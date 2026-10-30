@@ -284,8 +284,9 @@ tolerance. Compilation and helper tests do not establish simulation stability.
    density, and circular velocity.
 2. Run the gated CPU ALE path with `GFS_VOL_AUDIT=1`. Verify all 1,280
    boundary faces per stage, small face-speed residuals, and small
-   `[VAUD] res_abs/V` and `unbooked_PdV_abs` values; abort on missing or extra
-   faces or unsupported topology.
+   `[VAUD] res_abs/V` and `P_end_abs_dV_res` values; the latter is an
+   endpoint-pressure scale for the volume residual, not time-integrated work.
+   Abort on missing or extra faces or unsupported topology.
 3. Qualify a planar expansion into vacuum: front position, rarefaction
    profile, total energy, and face-volume/geometric-conservation residual.
 4. Only after those gates, use a coarse annular Kepler test with both

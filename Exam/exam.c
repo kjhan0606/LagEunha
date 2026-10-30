@@ -540,7 +540,8 @@ static inline double dyn_wdot(treevorork4particletype *p){
  * n+1 minus that at the start of step n, so end-of-step weight jumps are
  * included) with the volume change booked by the face velocities used in
  * the energy equation (RK4-weighted sum of face u·dS). Prints [VAUD] with
- * sum|res|/sumV and the unbooked work sum P|res| per step and cumulative. */
+ * sum|res|/sumV and the endpoint-pressure scale sum P_(n+1)|res|. The latter
+ * is not the time-integrated PdV error when pressure varies during a step. */
 static int gfs_vaud_on(void){
 	static int on = -1;
 	if(on < 0){
@@ -10898,8 +10899,8 @@ static void vaud_stage(treevorostressrk4particletype *sbp, int np, postype wdt){
 /* GFS_VOL_AUDIT: close the previous step against the current tessellation. */
 static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp, int np,
 		int (*targetBP)(treevorork4particletype*, postype, postype), postype Lx, postype Ly){
-	static int st = 0; static double pw_cum = 0, pws_cum = 0;
-	double ra = 0, vs = 0, pw = 0, pws = 0, wb = 0; int i, nres = 0;
+	static int st = 0; static double p_end_abs_cum = 0, p_end_signed_cum = 0;
+	double ra = 0, vs = 0, p_end_abs = 0, p_end_signed = 0, wb = 0; int i, nres = 0;
 	size_t max_id = 0;
 	for(i=0;i<np;i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id > max_id) max_id = id; }
 	if(!vaud_ensure(max_id)){
@@ -10913,16 +10914,17 @@ static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp
 		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly) && vaud_have[id]){
 			double r = V - vaud_vprev[id] - vaud_book[id];
 			ra += fabs(r); vs += V; nres++;
-			pw += (double)sbp[i].pressure*fabs(r);
-			pws += (double)sbp[i].pressure*r;
+			p_end_abs += (double)sbp[i].pressure*fabs(r);
+			p_end_signed += (double)sbp[i].pressure*r;
 			wb += fabs(vaud_book[id]);
 		}
 		vaud_vprev[id] = V; vaud_book[id] = 0; vaud_have[id] = 1;
 	}
 	if(nres > 0 && MYID(simpar) == 0){
-		st++; pw_cum += pw; pws_cum += pws;
-		fprintf(stderr, "[VAUD] step=%d n=%d res_abs/V=%.3e booked_abs/V=%.3e unbooked_PdV_abs=%.3e signed=%.3e cum_abs=%.3e cum_signed=%.3e w2clip=%ld\n",
-			st, nres, ra/vs, wb/vs, pw, pws, pw_cum, pws_cum, gfs_w2lin_nclip);
+		st++; p_end_abs_cum += p_end_abs; p_end_signed_cum += p_end_signed;
+		fprintf(stderr, "[VAUD] step=%d n=%d res_abs/V=%.3e booked_abs/V=%.3e P_end_abs_dV_res=%.3e P_end_signed_dV_res=%.3e cum_P_end_abs_dV_res=%.3e cum_P_end_signed_dV_res=%.3e w2clip=%ld\n",
+			st, nres, ra/vs, wb/vs, p_end_abs, p_end_signed,
+			p_end_abs_cum, p_end_signed_cum, gfs_w2lin_nclip);
 	}
 }
 
