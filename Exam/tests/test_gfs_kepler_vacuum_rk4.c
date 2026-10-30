@@ -71,6 +71,87 @@ int main(void)
             break;
         }
     }
+
+    /* Exercise the off-center geometric face-speed equations used by the
+     * solver. Each synthetic target velocity determines the exact required
+     * face speed; one-face sites choose a minimum-change velocity, while
+     * two-face sites recover both independent constraints. */
+    assert(gfs_kepler_vacuum_rk4_begin(&state));
+    for (int stage = 0; stage < 4; ++stage) {
+        assert(gfs_kepler_vacuum_rk4_stage_positions(&state, stage, x, y));
+        gfs_kepler_vacuum_rk4_begin_force(&state);
+        for (size_t s = 0; s < state.count; ++s) {
+            const GfsKeplerVacuumSite *site = &stencil.sites[s];
+            const GfsKeplerVacuumIncidence *inc =
+                &stencil.incidences[4 * s];
+            const double target_vx = 0.37 + 0.0001 * (double)s;
+            const double target_vy = -0.29 + 0.0002 * (double)s;
+            for (size_t q = 0; q < site->incidence_count; ++q) {
+                const double nx = (double)inc[q].nx;
+                const double ny = (double)inc[q].ny;
+                const double xj[2] = {x[s], y[s]};
+                const double xi[2] = {x[s] - nx * stencil.dx,
+                                      y[s] - ny * stencil.dx};
+                const double tangent = (q == 0 ? 0.17 : -0.13) * stencil.dx;
+                const double face[2] = {
+                    0.5 * (xi[0] + xj[0]) - ny * tangent,
+                    0.5 * (xi[1] + xj[1]) + nx * tangent
+                };
+                const double vi[2] = {
+                    -0.21 + 0.00003 * (double)s + 0.02 * (double)q,
+                    0.16 - 0.00002 * (double)s - 0.01 * (double)q
+                };
+                const double distance = hypot(xj[0] - xi[0],
+                                              xj[1] - xi[1]);
+                const double w = ((face[0] - xi[0]) * vi[0] +
+                                  (face[1] - xi[1]) * vi[1] -
+                                  (face[0] - xj[0]) * target_vx -
+                                  (face[1] - xj[1]) * target_vy) / distance;
+                edge_speed[4 * s + q] = w;
+                assert(gfs_kepler_vacuum_rk4_add_face(
+                    &state, s, xi, xj, face, vi, w));
+            }
+        }
+        assert(gfs_kepler_vacuum_rk4_solve_faces(&state));
+        for (size_t s = 0; s < state.count; ++s) {
+            const GfsKeplerVacuumSite *site = &stencil.sites[s];
+            const GfsKeplerVacuumIncidence *inc =
+                &stencil.incidences[4 * s];
+            const double target_vx = 0.37 + 0.0001 * (double)s;
+            const double target_vy = -0.29 + 0.0002 * (double)s;
+            for (size_t q = 0; q < site->incidence_count; ++q) {
+                const double nx = (double)inc[q].nx;
+                const double ny = (double)inc[q].ny;
+                const double xj[2] = {x[s], y[s]};
+                const double xi[2] = {x[s] - nx * stencil.dx,
+                                      y[s] - ny * stencil.dx};
+                const double tangent = (q == 0 ? 0.17 : -0.13) * stencil.dx;
+                const double face[2] = {
+                    0.5 * (xi[0] + xj[0]) - ny * tangent,
+                    0.5 * (xi[1] + xj[1]) + nx * tangent
+                };
+                const double vi[2] = {
+                    -0.21 + 0.00003 * (double)s + 0.02 * (double)q,
+                    0.16 - 0.00002 * (double)s - 0.01 * (double)q
+                };
+                const double distance = hypot(xj[0] - xi[0],
+                                              xj[1] - xi[1]);
+                const double calculated =
+                    ((face[0] - xi[0]) * vi[0] +
+                     (face[1] - xi[1]) * vi[1] -
+                     (face[0] - xj[0]) * state.sites[s].vx -
+                     (face[1] - xj[1]) * state.sites[s].vy) / distance;
+                assert(fabs(calculated - edge_speed[4 * s + q]) < 1e-11);
+            }
+            if (site->incidence_count == 2) {
+                assert(fabs(state.sites[s].vx - target_vx) < 1e-11);
+                assert(fabs(state.sites[s].vy - target_vy) < 1e-11);
+            }
+        }
+        assert(gfs_kepler_vacuum_rk4_record_solved_rates(
+            &state, stage, dt));
+    }
+    assert(gfs_kepler_vacuum_rk4_rollback(&state));
     gfs_kepler_vacuum_stencil_destroy(&stencil);
 
     /* Integrate dx/dt=x, dy/dt=3 with the same stage abscissae as the fluid
@@ -84,6 +165,15 @@ int main(void)
         }
         assert(gfs_kepler_vacuum_rk4_record_rates(
             &state, stage, dt, vx, vy));
+    }
+    /* The fluid RK4 path undoes the K4 input shift before its final blend.
+     * Mirror sites must return to x_n for that gap without losing K1..K4. */
+    assert(state.next_stage == 4 && state.active);
+    assert(gfs_kepler_vacuum_rk4_stage_positions(&state, 0, x, y));
+    assert(state.next_stage == 4 && state.active);
+    for (size_t s = 0; s < state.count; ++s) {
+        assert(fabs(x[s] - x0[s]) < 1e-14);
+        assert(fabs(y[s] - y0[s]) < 1e-14);
     }
     assert(gfs_kepler_vacuum_rk4_accept(&state));
     for (size_t s = 0; s < state.count; ++s) {

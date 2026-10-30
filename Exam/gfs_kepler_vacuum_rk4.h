@@ -8,20 +8,26 @@ typedef struct {
     double rho, pressure, vx, vy;
 } GfsKeplerVacuumFaceTrace;
 
-/* RK4 trial coordinates for the geometry-only vacuum generators. The array
+/* RK4 trial coordinates and face constraints for zero-mass vacuum generators. The array
  * is deliberately separate from VORO_TBP/TBPP: those buffers are rebuilt at
- * every stage and include MPI halos. This helper manages kinematics only; it
- * does not determine boundary velocities, migrate ownership, or checkpoint
- * the state. The caller must provide one consistent velocity per stable ID. */
+ * every stage and include MPI halos. */
 typedef struct {
     int stable_id;
     double x, y;
+    double stage_x, stage_y;
     double kx[4], ky[4];
+    double row[2][2], rhs[2], distance[2], edge_speed[2], vi[2][2];
+    size_t nface;
+    double vx, vy;
+    int rhs_valid, invalid;
 } GfsKeplerVacuumRK4Site;
 
 typedef struct {
     GfsKeplerVacuumRK4Site *sites;
     size_t count;
+    size_t n_single, n_pair;
+    double max_face_speed_residual;
+    double max_face_speed_relative_residual;
     int active;
     int next_stage;
 } GfsKeplerVacuumRK4;
@@ -116,6 +122,8 @@ static inline int gfs_kepler_vacuum_rk4_init(
         result.sites[s].stable_id = source->stable_id;
         result.sites[s].x = source->x;
         result.sites[s].y = source->y;
+        result.sites[s].stage_x = source->x;
+        result.sites[s].stage_y = source->y;
     }
     *out = result;
     return 1;
@@ -139,19 +147,128 @@ static inline int gfs_kepler_vacuum_rk4_begin(GfsKeplerVacuumRK4 *state)
     }
     state->active = 1;
     state->next_stage = 0;
+    for (size_t s = 0; s < state->count; ++s) {
+        GfsKeplerVacuumRK4Site *site = state->sites + s;
+        site->stage_x = site->x;
+        site->stage_y = site->y;
+    }
+    return 1;
+}
+
+static inline void gfs_kepler_vacuum_rk4_begin_force(
+    GfsKeplerVacuumRK4 *state)
+{
+    if (!state) return;
+    state->n_single = state->n_pair = 0;
+    state->max_face_speed_residual = 0.0;
+    state->max_face_speed_relative_residual = 0.0;
+    for (size_t s = 0; s < state->count; ++s) {
+        state->sites[s].nface = 0;
+        state->sites[s].rhs_valid = 0;
+        state->sites[s].invalid = 0;
+    }
+}
+
+/* Add the exact zero-weight face-speed equation at the face centroid `c`:
+ *   ((c-x_i)·v_i - (c-x_j)·v_j)/|x_j-x_i| = w_edge.
+ * This includes the off-center term, so shear/face rotation is represented.
+ * Each site accepts one face (minimum-change velocity) or two independent
+ * faces (exact 2x2 solve); missing, singular, or over-subscribed topology fails. */
+static inline int gfs_kepler_vacuum_rk4_add_face(
+    GfsKeplerVacuumRK4 *state, size_t site_id,
+    const double xi[2], const double xj[2], const double c[2],
+    const double vi[2], double w_edge)
+{
+    if (!state || !state->active || site_id >= state->count ||
+        !xi || !xj || !c || !vi || !isfinite(w_edge)) return 0;
+    GfsKeplerVacuumRK4Site *site = state->sites + site_id;
+    const double dx = xj[0]-xi[0], dy = xj[1]-xi[1];
+    const double dist = hypot(dx,dy);
+    const double qx = c[0]-xj[0], qy = c[1]-xj[1];
+    const double ax = c[0]-xi[0], ay = c[1]-xi[1];
+    if (!(dist > 0.0) || !(qx*qx+qy*qy > 0.0) ||
+        !isfinite(dist) || !isfinite(qx) || !isfinite(qy) ||
+        !isfinite(ax) || !isfinite(ay) ||
+        !isfinite(vi[0]) || !isfinite(vi[1]) || site->nface >= 2) {
+        site->invalid = 1;
+        return 0;
+    }
+    const size_t f = site->nface++;
+    site->row[f][0] = qx;
+    site->row[f][1] = qy;
+    site->rhs[f] = ax*vi[0] + ay*vi[1] - dist*w_edge;
+    site->distance[f] = dist;
+    site->edge_speed[f] = w_edge;
+    site->vi[f][0] = vi[0];
+    site->vi[f][1] = vi[1];
+    if (!isfinite(site->rhs[f])) {
+        site->invalid = 1;
+        return 0;
+    }
+    return 1;
+}
+
+static inline int gfs_kepler_vacuum_rk4_solve_faces(
+    GfsKeplerVacuumRK4 *state)
+{
+    if (!state || !state->active) return 0;
+    state->n_single = state->n_pair = 0;
+    state->max_face_speed_residual = 0.0;
+    state->max_face_speed_relative_residual = 0.0;
+    for (size_t s = 0; s < state->count; ++s) {
+        GfsKeplerVacuumRK4Site *site = state->sites+s;
+        if (site->invalid || site->nface == 0 || site->nface > 2) return 0;
+        if (site->nface == 1) {
+            state->n_single++;
+            const double qx=site->row[0][0], qy=site->row[0][1];
+            const double q2=qx*qx+qy*qy;
+            const double residual=site->rhs[0]-qx*site->vi[0][0]-qy*site->vi[0][1];
+            if (!(q2>0.0) || !isfinite(q2)) return 0;
+            site->vx=site->vi[0][0]+residual*qx/q2;
+            site->vy=site->vi[0][1]+residual*qy/q2;
+        } else {
+            state->n_pair++;
+            const double a=site->row[0][0], b=site->row[0][1];
+            const double c=site->row[1][0], d=site->row[1][1];
+            const double det=a*d-b*c;
+            const double scale=hypot(a,b)*hypot(c,d);
+            if (!(scale>0.0) || fabs(det)<=1.0e-12*scale || !isfinite(det))
+                return 0;
+            site->vx=(site->rhs[0]*d-b*site->rhs[1])/det;
+            site->vy=(a*site->rhs[1]-site->rhs[0]*c)/det;
+        }
+        if (!isfinite(site->vx) || !isfinite(site->vy)) return 0;
+        for (size_t f=0; f<site->nface; ++f) {
+            const double residual=fabs(
+                (site->row[f][0]*site->vx+site->row[f][1]*site->vy-site->rhs[f]) /
+                site->distance[f]);
+            const double relative=residual/fmax(fabs(site->edge_speed[f]),1.0e-12);
+            if (!isfinite(residual) || !isfinite(relative)) return 0;
+            if (residual>state->max_face_speed_residual)
+                state->max_face_speed_residual=residual;
+            if (relative>state->max_face_speed_relative_residual)
+                state->max_face_speed_relative_residual=relative;
+        }
+        site->rhs_valid=1;
+    }
     return 1;
 }
 
 /* Return the generator positions at the current RK stage (0..3):
- * x_n, x_n+k1/2, x_n+k2/2, x_n+k3. */
+ * x_n, x_n+k1/2, x_n+k2/2, x_n+k3. After K4 is recorded, stage 0 restores
+ * the coordinates to x_n before the fluid solver's final weighted blend;
+ * next_stage remains 4 so the complete trial can still be accepted. */
 static inline int gfs_kepler_vacuum_rk4_stage_positions(
-    const GfsKeplerVacuumRK4 *state, int stage, double *x, double *y)
+    GfsKeplerVacuumRK4 *state, int stage, double *x, double *y)
 {
-    if (!state || !state->active || stage != state->next_stage ||
-        stage < 0 || stage > 3 || !x || !y)
+    const int k4_coordinate_rewind =
+        stage == 0 && state && state->active && state->next_stage == 4;
+    if (!state || !state->active ||
+        (stage != state->next_stage && !k4_coordinate_rewind) ||
+        stage < 0 || stage > 3 || ((x == NULL) != (y == NULL)))
         return 0;
     for (size_t s = 0; s < state->count; ++s) {
-        const GfsKeplerVacuumRK4Site *site = &state->sites[s];
+        GfsKeplerVacuumRK4Site *site = &state->sites[s];
         double dx = 0.0, dy = 0.0;
         if (stage == 1) {
             dx = 0.5 * site->kx[0];
@@ -163,9 +280,10 @@ static inline int gfs_kepler_vacuum_rk4_stage_positions(
             dx = site->kx[2];
             dy = site->ky[2];
         }
-        x[s] = site->x + dx;
-        y[s] = site->y + dy;
-        if (!isfinite(x[s]) || !isfinite(y[s])) return 0;
+        site->stage_x = site->x + dx;
+        site->stage_y = site->y + dy;
+        if (!isfinite(site->stage_x) || !isfinite(site->stage_y)) return 0;
+        if (x) { x[s] = site->stage_x; y[s] = site->stage_y; }
     }
     return 1;
 }
@@ -193,6 +311,25 @@ static inline int gfs_kepler_vacuum_rk4_record_rates(
     return 1;
 }
 
+static inline int gfs_kepler_vacuum_rk4_record_solved_rates(
+    GfsKeplerVacuumRK4 *state, int stage, double dt)
+{
+    if (!state || !state->active || stage != state->next_stage ||
+        stage < 0 || stage > 3 || !(dt > 0.0) || !isfinite(dt)) return 0;
+    for (size_t s=0; s<state->count; ++s) {
+        GfsKeplerVacuumRK4Site *site=state->sites+s;
+        if (!site->rhs_valid || !isfinite(site->vx*dt) || !isfinite(site->vy*dt))
+            return 0;
+    }
+    for (size_t s=0; s<state->count; ++s) {
+        GfsKeplerVacuumRK4Site *site=state->sites+s;
+        site->kx[stage]=site->vx*dt;
+        site->ky[stage]=site->vy*dt;
+    }
+    ++state->next_stage;
+    return 1;
+}
+
 /* Commit only after all four derivatives have been recorded. */
 static inline int gfs_kepler_vacuum_rk4_accept(GfsKeplerVacuumRK4 *state)
 {
@@ -211,6 +348,8 @@ static inline int gfs_kepler_vacuum_rk4_accept(GfsKeplerVacuumRK4 *state)
                     2.0 * site->kx[2] + site->kx[3]) / 6.0;
         site->y += (site->ky[0] + 2.0 * site->ky[1] +
                     2.0 * site->ky[2] + site->ky[3]) / 6.0;
+        site->stage_x=site->x;
+        site->stage_y=site->y;
     }
     state->active = 0;
     state->next_stage = 0;
@@ -221,6 +360,10 @@ static inline int gfs_kepler_vacuum_rk4_rollback(
     GfsKeplerVacuumRK4 *state)
 {
     if (!state || !state->active) return 0;
+    for (size_t s=0; s<state->count; ++s) {
+        state->sites[s].stage_x=state->sites[s].x;
+        state->sites[s].stage_y=state->sites[s].y;
+    }
     state->active = 0;
     state->next_stage = 0;
     return 1;

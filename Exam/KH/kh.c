@@ -210,13 +210,25 @@ int RunKH(SimParameters *simpar, int icont){
 	int iflag,jflag;
 	const char *vacuum_geometry_env = getenv("EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY");
 	int vacuum_geometry_only = vacuum_geometry_env != NULL;
+	const char *vacuum_ale_env = getenv("EUNHA_KEPLER_VACUUM_ALE");
+	int vacuum_ale = vacuum_ale_env != NULL;
 	if(vacuum_geometry_only && strcmp(vacuum_geometry_env, "1") != 0){
 		fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY must equal 1\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return 0;
 	}
-	if(vacuum_geometry_only && icont != 0){
-		fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] geometry audit only supports a fresh IC (icont=0)\n");
+	if(vacuum_ale && strcmp(vacuum_ale_env, "1") != 0){
+		fprintf(stderr, "[KEPLER_VACUUM_ALE] EUNHA_KEPLER_VACUUM_ALE must equal 1\n");
+		MPI_Abort(MPI_COMM(simpar), 97);
+		return 0;
+	}
+	if(vacuum_geometry_only && vacuum_ale){
+		fprintf(stderr, "[KEPLER_VACUUM] choose geometry-only or ALE mode, not both\n");
+		MPI_Abort(MPI_COMM(simpar), 97);
+		return 0;
+	}
+	if((vacuum_geometry_only || vacuum_ale) && icont != 0){
+		fprintf(stderr, "[KEPLER_VACUUM] first boundary implementation supports fresh IC only (icont=0)\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return 0;
 	}

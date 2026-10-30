@@ -8,10 +8,12 @@ Base: `745e7391cbf8388ec6f905ffb9ba1bbe2b18a38c`
 
 This isolated candidate records the sharp annular benchmark contract and
 develops an exact gas-to-vacuum Riemann helper. It does not alter the bounded
-W=0 reference branch or job `442401`. It now includes host/device
-boundary-kind plumbing and a standalone constructor for the initial lattice
-stencil. Neither is connected to solver-side generator insertion or
-free-surface flux evolution.
+W=0 reference branch or job `442401`. It includes host/device boundary-kind
+plumbing, a constructor for the initial lattice stencil, and an exploratory
+one-rank CPU stress-RK4 ALE path. That path inserts stage-positioned vacuum
+generators, solves face-speed constraints, and applies zero flux at vacuum
+edges. It has not passed a simulation run, geometric-conservation check, or
+Kepler evolution test.
 
 ## Source findings
 
@@ -151,20 +153,22 @@ is a candidate for that study, not a qualified domain or physical boundary
 condition. Disable the active fixed polygon and check periodic-image isolation
 and domain convergence before any long run.
 
-The current change is metadata plumbing, a fail-closed guard, and a
-geometry-only startup insertion path, not an evolving free surface. The sparse
-glass loader still treats each loaded coordinate as a fluid site. The new
-sharp-annulus mode bypasses it, retains only fluid generators, and appends the
-missing cardinal sites after periodic MPI padding for the initial volume
-measurement. It exits before any force evaluation or time evolution. The exact
-Riemann helper is not called by the force kernel, and no per-stage generator
-motion, gas-side face reconstruction, ALE flux, or cell-volume geometric
-conservation check is implemented. A shared generator may only be used while
-its incident-face kinematics are mutually satisfiable; the tested pair helper
-covers two independent planar constraints, not later topology changes,
-curvature, or nonzero Laguerre weight rates. The current GPU path emits NaN on a
-vacuum face and the CPU path aborts, so it cannot silently treat vacuum as a
-reflecting wall. No MPI/GPU run has validated the boundary representation.
+The geometry-only mode still exits after the initial volume measurement. The
+separate `EUNHA_KEPLER_VACUUM_ALE=1` mode connects the lattice stencil to the
+CPU one-rank stress-RK4 loop: it appends stage-position copies after each fresh
+periodic halo build, reconstructs gas-side face traces, and sets generator
+speed from the full off-center Voronoi face-speed equation. At each vacuum
+face, the finite-volume mass, momentum, and energy fluxes are set to zero at
+the gas-to-vacuum rarefaction edge; its swept-volume rate uses that same
+rarefaction edge speed directly. Missing, singular, or over-subscribed site
+constraints fail closed. This implementation is still unverified in an
+evolution run, and it has no independent geometric-conservation residual
+check. The stencil does not reclassify topology as the boundary
+deforms, and there is no geometric-conservation ledger or restart
+serialization. A shared generator is supported only for one or two
+independent planar faces; curvature, topology change, nonzero Laguerre weight
+rates, MPI ownership, and GPU evolution remain unsupported. The H200 job
+checks startup geometry only, not this CPU ALE path.
 
 ### Verified RK-stage lifecycle
 
@@ -188,25 +192,23 @@ Consequences for the next implementation:
   conserved output, and migration. A stage-local buffer must distinguish
   vacuum generators from ordinary MPI halo copies and be released before the
   next stage rebuild.
-- The linked-list callback now appends the audited static stencil after each
-  fresh halo build only while `EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY=1` is active.
-  The mode is restricted to a one-rank 320² initialization on `[0,5]²` and
-  returns before RK4. It cannot infer a deformed annular boundary from the
-  static lattice mask. Boundary incidence and site motion still need a
-  stage-aware construction rule; the 908-site stencil audit proves only the
-  initial grid topology.
+- The linked-list callback appends the audited stencil after each fresh halo
+  build in geometry-only and ALE modes. ALE mode uses persistent RK4 site
+  coordinates for all four stages. The static lattice mask still supplies
+  fixed incidence records, so boundary deformation and topology changes are
+  not tracked; any site with unsupported incidence aborts.
 
 The reproducible count and guard-width audits are
 `Exam/tests/audit_kepler_annulus_vacuum_stencil.py` and
 `Exam/tests/test_gfs_kepler_vacuum_stencil.c`. The C constructor records stable
 guarded-grid IDs, initial positions, incident fluid IDs, and cardinal normals;
 its test reproduces the 48,240 / 908 / 1,280 counts and the 536 / 372 incidence
-split. `kh_mkinitial` and `mkLinkedList2D_oExam` now connect that geometry to a
-startup-only mesh build. A separate RK4 sidecar utility now holds accepted
-generator coordinates, constructs the four stage coordinates, evaluates
-single- and shared-two-face planar rarefaction kinematics from face traces, and
-supports atomic accept/rollback. The main solver does not call this utility;
-moving-boundary evolution remains unimplemented.
+split. `kh_mkinitial` and `mkLinkedList2D_oExam` connect that geometry to both
+the startup-only mesh build and the gated ALE trial path. The RK4 state utility
+holds accepted generator coordinates, constructs the four stage coordinates,
+solves single- and shared-two-face planar constraints, and supports accept or
+rollback. The solver calls it from the stress-RK4 force and integration loop.
+Only standalone tests have run so far; no moving-boundary simulation has run.
 
 The original `n=256`, `box=4`, `Rout=2` sample places the outer support on the
 periodic seam: 88 first-layer vacuum sites lie outside the fundamental box.
@@ -251,48 +253,40 @@ in `../../../vacuum_face_reference_20261030/reference_result.json`. These
 verify local analytic fluxes only; no CUDA runtime integration, mesh motion,
 conservation in the finite-volume solver, or Kepler stability is established.
 The new `Exam/tests/test_gfs_kepler_vacuum_rk4.c` checks stage coordinates
-against an RK4-integrated ODE, shared-face edge-speed constraints from distinct
-gas traces, rejection of non-finite stage data, and rollback/retry behavior.
-It passes strict C99 with AddressSanitizer and UndefinedBehaviorSanitizer. The
+against an RK4-integrated ODE, off-center one- and two-face geometric speed
+constraints across four RK stages, rejection of non-finite stage data, and
+rollback/retry behavior. It passes strict C99 compilation and execution. The
 startup geometry mode was submitted as isolated H200 job `442508`; no runtime
 result has yet been recorded. The 14-day scheduler-check interval applies, so
 do not query its state before 2026-11-13 12:13 UTC. It is one-rank only and
-does not test MPI decomposition or boundary fluxes.
+does not test ALE evolution, MPI decomposition, or boundary fluxes.
 
 ## RK4 sidecar status
 
 `Exam/gfs_kepler_vacuum_rk4.h` stores per-site coordinates outside the
-ephemeral `VORO_TBPP` padding buffer. It advances virtual coordinates using
-the same RK4 stage abscissae and weighted accept formula as the fluid loop.
-The planar mirror-velocity builder consumes one gas-side primitive trace for
-each stencil incidence; a shared orthogonal site can use different states on
-its two faces. A rejected stage can be rolled back without changing accepted
-positions. These helpers are standalone and currently have no solver call
-site, MPI ownership/reduction, restart serialization, moving-face flux, or GCL
-accounting. Production traces must be reconstructed from the current stage
-mesh; using cell-centered values would be first order.
+ephemeral `VORO_TBPP` padding buffer. The CPU stress-RK4 path advances these
+coordinates at the same stage abscissae and weighted accept point as the fluid
+loop. Each force evaluation uses gas-side MUSCL traces when enabled, solves the
+full off-center one- or two-face equations, and records the maximum face-speed
+residual. The branch is restricted to one rank, CPU, W=0, `av_mode=5`, and
+fresh 320² annular ICs. It has no MPI ownership/reduction, restart
+serialization, topology updates, or geometric-conservation accounting.
+Compilation and helper tests do not establish simulation stability.
 
 ## Integration gates
 
-1. Run the startup-only H200 geometry gate and verify the realized mesh area,
-   equal fixed masses, density, and circular velocity. Wire the RK4 sidecar
-   into the material RK loop and append stage-position copies after each fresh
-   MPI halo build. Keep reflecting ghosts separate; define deterministic
-   ownership/reduction for shared sites and serialize accepted coordinates on
-   restart.
-2. At each stage, associate generators with current gas boundary faces and
-   pass reconstructed gas-side traces to the kinematics helper. The initial
-   mask has shared sites with two orthogonal face constraints; the helper
-   handles distinct states on those planar faces. Rebuild or reclassify
-   incidence after mesh distortion and fail visibly on incompatible or
-   over-subscribed sites. Check face speeds and geometric conservation.
-3. Add a vacuum-face flux branch that bypasses positive HLLC floors and applies
-   the exact gas-to-vacuum state. Keep real-cell mass fixed and account for
-   moving-face pressure work consistently.
-4. Qualify a planar expansion into vacuum first: front position, rarefaction
-   profile, total energy, and face-volume/GCL residual. Then use a coarse
-   annular Kepler test with both boundaries before attempting 256^2 or a long
-   continuation.
+1. Complete and inspect H200 startup geometry job `442508` after the recorded
+   scheduler-check time; verify realized mesh area, equal fixed masses,
+   density, and circular velocity.
+2. Run the gated CPU ALE path for one stage and verify all 1,280 boundary
+   faces are represented, constraint residuals are small, and no unsupported
+   topology occurs. Then measure per-cell volume and global volume change.
+3. Qualify a planar expansion into vacuum: front position, rarefaction
+   profile, total energy, and face-volume/geometric-conservation residual.
+4. Only after those gates, use a coarse annular Kepler test with both
+   boundaries; test domain and resolution convergence before attempting 256²
+   or a long continuation. MPI/GPU support and restart state require separate
+   design and validation.
 
 The smallest missing solver contract is boundary-face geometry and flux
 consistency together. A vacuum state alone or a pressure floor alone does not

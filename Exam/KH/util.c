@@ -241,10 +241,13 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
     float Ly = KH_SIMBOX(simpar).y.max - KH_SIMBOX(simpar).y.min;
 	const char *vacuum_geometry_env = getenv("EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY");
 	int vacuum_geometry_only = vacuum_geometry_env != NULL;
+	const char *vacuum_ale_env = getenv("EUNHA_KEPLER_VACUUM_ALE");
+	int vacuum_ale = vacuum_ale_env != NULL;
+	int vacuum_boundary_mode = vacuum_geometry_only || vacuum_ale;
 	postype vacuum_cx = (postype)0.5*Lx, vacuum_cy = (postype)0.5*Ly;
 	postype vacuum_rin = (postype)0.5, vacuum_rout = (postype)2.0;
 	postype vacuum_eps = (postype)0.01175;
-	if(vacuum_geometry_only){
+	if(vacuum_boundary_mode){
 		const char *ic = getenv("EUNHA_IC");
 		const char *cxs = getenv("EUNHA_KEPLER_CX");
 		const char *cys = getenv("EUNHA_KEPLER_CY");
@@ -253,15 +256,23 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		const char *epss = getenv("EUNHA_KEPLER_EPS");
 		int ranks = 0;
 		MPI_Comm_size(MPI_COMM(simpar), &ranks);
-		if(strcmp(vacuum_geometry_env, "1") != 0 || !ic || strcmp(ic, "kepler") != 0 ||
+		if((vacuum_geometry_only && strcmp(vacuum_geometry_env, "1") != 0) ||
+		   (vacuum_ale && strcmp(vacuum_ale_env, "1") != 0) ||
+		   (vacuum_geometry_only && vacuum_ale) || !ic || strcmp(ic, "kepler") != 0 ||
 		   ranks != 1 || nx != 320 || ny != 320 ||
 		   fabs((double)Lx-5.0) > 1.e-12 || fabs((double)Ly-5.0) > 1.e-12 ||
 		   fabs((double)KH_SIMBOX(simpar).x.min) > 1.e-12 ||
 		   fabs((double)KH_SIMBOX(simpar).y.min) > 1.e-12 || GAS_Kappa(simpar) != 0 ||
 		   (getenv("GFS_KEPLER_FIXED_POLYGON") &&
 		    strcmp(getenv("GFS_KEPLER_FIXED_POLYGON"), "0") != 0)){
-			fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] requires EUNHA_IC=kepler, one rank, a 320^2 grid over [0,5]^2, W=0, and no fixed polygon\n");
+			fprintf(stderr, "[KEPLER_VACUUM] requires EUNHA_IC=kepler, one rank, a 320^2 grid over [0,5]^2, W=0, and no fixed polygon\n");
 			MPI_Abort(MPI_COMM(simpar), 96);
+			return NULL;
+		}
+		if(vacuum_ale && (GAS_GPU_ENABLED(simpar) ||
+		   GAS_AVMODE(simpar)!=5 || GAS_EVOLMETHOD(simpar)!=1)){
+			fprintf(stderr, "[KEPLER_VACUUM_ALE] first moving-boundary gate requires CPU av_mode=5 stress RK4; GPU/MPI support follows after this physics gate\n");
+			MPI_Abort(MPI_COMM(simpar), 97);
 			return NULL;
 		}
 		if(cxs && cxs[0]) vacuum_cx = atof(cxs);
@@ -319,7 +330,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	int use_glass = 0;
 	size_t glass_count = (size_t)nx*(size_t)ny;
 	const char *sparse_env = getenv("EUNHA_ALLOW_SPARSE_GLASS");
-	int allow_sparse_glass = !vacuum_geometry_only && sparse_env && strcmp(sparse_env, "1") == 0;
+	int allow_sparse_glass = !vacuum_boundary_mode && sparse_env && strcmp(sparse_env, "1") == 0;
 	{
 		char path[512];
 		const char *env = getenv("LAGMFM_GLASS_FILE");
@@ -331,7 +342,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		 * then create tiny Voronoi cells → density spikes. */
 		FILE *fp = NULL;
 #else
-		FILE *fp = vacuum_geometry_only ? NULL : fopen(path, "rb");
+		FILE *fp = vacuum_boundary_mode ? NULL : fopen(path, "rb");
 #endif
 		if(fp){
 			int np_file;
@@ -523,12 +534,12 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             /* Annulus Sigma falls as 1/R. Pressure is spatially constant and
              * tiny, as in the GIZMO cold Keplerian disk, so dP/dR = 0 and the
              * circular speed below is the radial equilibrium. */
-			postype Rin = vacuum_geometry_only ? vacuum_rin :
+			postype Rin = vacuum_boundary_mode ? vacuum_rin :
 				((rins && rins[0]) ? atof(rins) : (postype)2.0);
-			postype Rout = vacuum_geometry_only ? vacuum_rout :
+			postype Rout = vacuum_boundary_mode ? vacuum_rout :
 				((routs && routs[0]) ? atof(routs) : (postype)8.0);
             const char *profs = getenv("EUNHA_KEPLER_PROFILE");
-			if(vacuum_geometry_only){
+			if(vacuum_boundary_mode){
 				if(R < Rin || R > Rout) continue;
 				rho = 1.0;
 			} else if(profs && strcmp(profs, "hopkins") == 0){
@@ -558,7 +569,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             rho = floor + (Rin / (R + (postype)1e-6)) * inner * outer;
             }
 			postype Rsafe = (R > (postype)1e-8) ? R : (postype)1e-8;
-			if(vacuum_geometry_only) eps = vacuum_eps;
+			if(vacuum_boundary_mode) eps = vacuum_eps;
 			postype vamp = (eps > 0)
                 ? R * pow(R*R + eps*eps, (postype)-0.75)
                 : (postype)1.0 / sqrt(Rsafe);

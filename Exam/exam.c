@@ -22,13 +22,27 @@
 #include "gfs_velocity_limiter.h"
 #include "gfs_boundary_kind.h"
 #include "gfs_kepler_vacuum_stencil.h"
+#include "gfs_kepler_vacuum_rk4.h"
+#include "gfs_vacuum_riemann.h"
 
 static GfsKeplerVacuumStencil gfs_kepler_vacuum_stencil = {0};
+static GfsKeplerVacuumRK4 gfs_kepler_vacuum_rk4 = {0};
+static ptrdiff_t *gfs_kepler_vacuum_pad_sites = NULL;
+static ptrdiff_t gfs_kepler_vacuum_pad_site_count = 0;
+static size_t gfs_kepler_vacuum_pad_particle_size = 0;
 static int gfs_kepler_vacuum_stencil_enabled = 0;
+static int gfs_kepler_vacuum_capture_error = 0;
+static int gfs_kepler_vacuum_rk_stage = 0;
+static size_t gfs_kepler_vacuum_step_index = 0;
 
 int gfs_kepler_vacuum_geometry_only_requested(void){
 	const char *s = getenv("EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY");
 	return s != NULL;
+}
+
+int gfs_kepler_vacuum_ale_requested(void){
+	const char *s = getenv("EUNHA_KEPLER_VACUUM_ALE");
+	return s && strcmp(s, "1") == 0;
 }
 
 int gfs_kepler_vacuum_stencil_configure(int n, double box, double r_in,
@@ -37,10 +51,15 @@ int gfs_kepler_vacuum_stencil_configure(int n, double box, double r_in,
 	GfsKeplerVacuumStencil candidate = {0};
 	if(gfs_kepler_vacuum_stencil_enabled){
 		gfs_kepler_vacuum_stencil_destroy(&gfs_kepler_vacuum_stencil);
+		gfs_kepler_vacuum_rk4_destroy(&gfs_kepler_vacuum_rk4);
 		gfs_kepler_vacuum_stencil_enabled = 0;
 	}
 	if(!gfs_kepler_vacuum_stencil_build_periodic(n, box, r_in, r_out, guard,
 			cx, cy, &candidate)) return 0;
+	if(!gfs_kepler_vacuum_rk4_init(&candidate,&gfs_kepler_vacuum_rk4)){
+		gfs_kepler_vacuum_stencil_destroy(&candidate);
+		return 0;
+	}
 	gfs_kepler_vacuum_stencil = candidate;
 	gfs_kepler_vacuum_stencil_enabled = 1;
 	if(n_fluid) *n_fluid = candidate.n_fluid;
@@ -54,13 +73,14 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 	unsigned char *seen = NULL;
 	unsigned char *selected = NULL;
 	size_t n_grid, nselected = 0, p_size;
-	int i;
+	ptrdiff_t i;
 	ptrdiff_t old_npad;
 	ptrdiff_t dst;
 	char *grown;
 	if(!gfs_kepler_vacuum_stencil_enabled) return;
-	if(!gfs_kepler_vacuum_geometry_only_requested()){
-		fprintf(stderr, "[KEPLER_VACUUM] stencil insertion is geometry-only until ALE motion is implemented\n");
+	if(!gfs_kepler_vacuum_geometry_only_requested() &&
+	   !gfs_kepler_vacuum_ale_requested()){
+		fprintf(stderr, "[KEPLER_VACUUM] stencil insertion requires geometry-only or ALE mode\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
 	}
@@ -111,7 +131,14 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 			}
 		}
 	}
-	if(nselected==0){ free(seen); free(selected); return; }
+	if(nselected==0){
+		free(seen); free(selected);
+		free(gfs_kepler_vacuum_pad_sites);
+		gfs_kepler_vacuum_pad_sites = NULL;
+		gfs_kepler_vacuum_pad_site_count = 0;
+		gfs_kepler_vacuum_pad_particle_size = 0;
+		return;
+	}
 	old_npad=VORO_NPAD(simpar);
 	if(old_npad<0 || nselected>(size_t)(PTRDIFF_MAX-old_npad)){
 		free(seen); free(selected);
@@ -119,16 +146,25 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
 	}
-	if((size_t)old_npad+nselected>SIZE_MAX/p_size){
+	if((size_t)old_npad+nselected>SIZE_MAX/p_size ||
+	   (size_t)old_npad+nselected>SIZE_MAX/sizeof(*gfs_kepler_vacuum_pad_sites)){
 		free(seen); free(selected);
 		fprintf(stderr, "[KEPLER_VACUUM] invalid padded particle stride/count\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
 	}
+	ptrdiff_t *pad_sites=(ptrdiff_t*)malloc(((size_t)old_npad+nselected)*sizeof(*pad_sites));
+	if(!pad_sites){
+		free(seen); free(selected);
+		fprintf(stderr, "[KEPLER_VACUUM] cannot allocate padded site map\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	for(ptrdiff_t q=0;q<old_npad;q++) pad_sites[q]=-1;
 	grown=(char *)realloc(VORORK4_TBPP(simpar),
 		((size_t)old_npad+nselected)*p_size);
 	if(!grown){
-		free(seen); free(selected);
+		free(seen); free(selected); free(pad_sites);
 		fprintf(stderr, "[KEPLER_VACUUM] cannot grow MPI padding buffer\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
@@ -145,18 +181,171 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 		SET_FLAG(p,BoundaryGhostflag);
 		SET_FLAG(p,VOROflag);
 		SET_FLAG(p,Wallflag);
-		p->x=(postype)site->x;
-		p->y=(postype)site->y;
+		if(gfs_kepler_vacuum_ale_requested()){
+			p->x=(postype)gfs_kepler_vacuum_rk4.sites[s].stage_x;
+			p->y=(postype)gfs_kepler_vacuum_rk4.sites[s].stage_y;
+			p->vx=(postype)gfs_kepler_vacuum_rk4.sites[s].vx;
+			p->vy=(postype)gfs_kepler_vacuum_rk4.sites[s].vy;
+		}else{
+			p->x=(postype)site->x;
+			p->y=(postype)site->y;
+		}
+		pad_sites[dst]= (ptrdiff_t)s;
 		++dst;
 	}
 	free(seen);
 	free(selected);
 	if(dst-old_npad!=(ptrdiff_t)nselected){
+		free(pad_sites);
 		fprintf(stderr, "[KEPLER_VACUUM] local generator selection changed during append\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
 	}
 	VORO_NPAD(simpar)=dst;
+	free(gfs_kepler_vacuum_pad_sites);
+	gfs_kepler_vacuum_pad_sites=pad_sites;
+	gfs_kepler_vacuum_pad_site_count=dst;
+	gfs_kepler_vacuum_pad_particle_size=p_size;
+}
+
+static ptrdiff_t gfs_kepler_vacuum_site_for_particle(
+		SimParameters *simpar, treevorork4particletype *particle){
+	if(!particle || !VORORK4_TBPP(simpar) || !gfs_kepler_vacuum_pad_sites ||
+	   gfs_kepler_vacuum_pad_particle_size==0) return -1;
+	uintptr_t base=(uintptr_t)VORORK4_TBPP(simpar);
+	uintptr_t addr=(uintptr_t)particle;
+	if(addr<base) return -1;
+	uintptr_t offset=addr-base;
+	if(offset%gfs_kepler_vacuum_pad_particle_size!=0) return -1;
+	size_t pad=(size_t)(offset/gfs_kepler_vacuum_pad_particle_size);
+	if(pad >= (size_t)gfs_kepler_vacuum_pad_site_count ||
+	   pad >= (size_t)VORO_NPAD(simpar)) return -1;
+	return gfs_kepler_vacuum_pad_sites[pad];
+}
+
+static void gfs_kepler_vacuum_force_begin(void){
+	if(!gfs_kepler_vacuum_ale_requested()) return;
+	gfs_kepler_vacuum_capture_error=0;
+	gfs_kepler_vacuum_rk4_begin_force(&gfs_kepler_vacuum_rk4);
+}
+
+static void gfs_kepler_vacuum_mark_capture_error(void){
+#ifdef _OPENMP
+#pragma omp critical(gfs_kepler_vacuum_error)
+#endif
+	{
+		gfs_kepler_vacuum_capture_error=1;
+	}
+}
+
+static int gfs_kepler_vacuum_record_face(
+		SimParameters *simpar, treevorork4particletype *particle,
+		const double xi[2], const double xj[2], const double face[2],
+		const double vi[2], double rho_face, double pressure_face,
+		double velocity_face_x, double velocity_face_y, double gamma,
+		double *edge_speed_out){
+	if(!gfs_kepler_vacuum_ale_requested()) return 1;
+	ptrdiff_t site=gfs_kepler_vacuum_site_for_particle(simpar,particle);
+	if(site<0 || (size_t)site>=gfs_kepler_vacuum_rk4.count ||
+	   !(rho_face>0.0) || !(pressure_face>=0.0) || !(gamma>1.0) ||
+	   !isfinite(rho_face) || !isfinite(pressure_face) ||
+	   !isfinite(velocity_face_x) || !isfinite(velocity_face_y) ||
+	   !isfinite(gamma) || !edge_speed_out){
+		gfs_kepler_vacuum_mark_capture_error();
+		return 0;
+	}
+	double c=sqrt(gamma*pressure_face/rho_face);
+	double un=velocity_face_x*(xj[0]-xi[0]) +
+		velocity_face_y*(xj[1]-xi[1]);
+	double d=hypot(xj[0]-xi[0],xj[1]-xi[1]);
+	if(!(c>=0.0) || !(d>0.0) || !isfinite(c) || !isfinite(un)){
+		gfs_kepler_vacuum_mark_capture_error();
+		return 0;
+	}
+	un/=d;
+	double w_edge=un+2.0*c/(gamma-1.0);
+	int ok=0;
+#ifdef _OPENMP
+#pragma omp critical(gfs_kepler_vacuum_constraint)
+#endif
+	{
+		ok=gfs_kepler_vacuum_rk4_add_face(&gfs_kepler_vacuum_rk4,
+			(size_t)site,xi,xj,face,vi,w_edge);
+	}
+	if(ok) *edge_speed_out=w_edge;
+	if(!ok) gfs_kepler_vacuum_mark_capture_error();
+	return ok;
+}
+
+static void gfs_kepler_vacuum_force_end(SimParameters *simpar){
+	if(!gfs_kepler_vacuum_ale_requested()) return;
+	if(gfs_kepler_vacuum_capture_error ||
+	   !gfs_kepler_vacuum_rk4_solve_faces(&gfs_kepler_vacuum_rk4)){
+		fprintf(stderr,
+			"[KEPLER_VACUUM_ALE] boundary velocity constraints failed; "
+			"site topology is incompatible or incomplete\n");
+		fflush(stderr);
+		MPI_Abort(MPI_COMM(simpar), 97);
+		return;
+	}
+	if(MYID(simpar)==0 && gfs_kepler_vacuum_step_index==1){
+		fprintf(stderr,
+			"[KEPLER_VACUUM_ALE] step=%zu rhs stage=%d sites=%zu one_face=%zu "
+			"two_face=%zu face_speed_residual_max=%.6e "
+			"relative_max=%.6e\n",
+			gfs_kepler_vacuum_step_index,
+			gfs_kepler_vacuum_rk_stage+1,
+			gfs_kepler_vacuum_rk4.count,
+			gfs_kepler_vacuum_rk4.n_single,
+			gfs_kepler_vacuum_rk4.n_pair,
+			gfs_kepler_vacuum_rk4.max_face_speed_residual,
+			gfs_kepler_vacuum_rk4.max_face_speed_relative_residual);
+		fflush(stderr);
+	}
+}
+
+void gfs_kepler_vacuum_begin_step(SimParameters *simpar){
+	if(!gfs_kepler_vacuum_ale_requested()) return;
+	if(!gfs_kepler_vacuum_stencil_enabled ||
+	   NID(simpar)!=1 || GAS_GPU_ENABLED(simpar) ||
+	   GAS_Kappa(simpar)!=0 || GAS_EVOLMETHOD(simpar)!=1){
+		fprintf(stderr,
+			"[KEPLER_VACUUM_ALE] first moving-boundary gate requires "
+			"the configured one-rank CPU W=0 stress-RK4 path\n");
+		MPI_Abort(MPI_COMM(simpar), 97);
+		return;
+	}
+	if(!gfs_kepler_vacuum_rk4_begin(&gfs_kepler_vacuum_rk4) ||
+	   !gfs_kepler_vacuum_rk4_stage_positions(&gfs_kepler_vacuum_rk4,0,NULL,NULL)){
+		fprintf(stderr,"[KEPLER_VACUUM_ALE] failed to begin RK4 boundary trial\n");
+		MPI_Abort(MPI_COMM(simpar),97);
+		return;
+	}
+	gfs_kepler_vacuum_rk_stage=0;
+	++gfs_kepler_vacuum_step_index;
+}
+
+void gfs_kepler_vacuum_capture_stage(SimParameters *simpar,
+		int stage, postype dt){
+	if(!gfs_kepler_vacuum_ale_requested()) return;
+	if(!gfs_kepler_vacuum_rk4_record_solved_rates(&gfs_kepler_vacuum_rk4,
+			stage,(double)dt)){
+		fprintf(stderr,"[KEPLER_VACUUM_ALE] failed to capture RK stage %d\n",stage+1);
+		MPI_Abort(MPI_COMM(simpar), 97);
+	}
+	gfs_kepler_vacuum_rk_stage=stage+1;
+}
+
+void gfs_kepler_vacuum_set_stage(SimParameters *simpar, int stage){
+	if(!gfs_kepler_vacuum_ale_requested()) return;
+	int ok = stage==4
+		? gfs_kepler_vacuum_rk4_accept(&gfs_kepler_vacuum_rk4)
+		: gfs_kepler_vacuum_rk4_stage_positions(
+			&gfs_kepler_vacuum_rk4,stage,NULL,NULL);
+	if(!ok){
+		fprintf(stderr,"[KEPLER_VACUUM_ALE] invalid RK stage position %d\n",stage);
+		MPI_Abort(MPI_COMM(simpar), 97);
+	}
 }
 
 /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
@@ -5673,14 +5862,6 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						}
 						int jbp_is_ghost = (PINDX((treevorork4particletype*)jbp) == MAX_INDEX);
 						int jbp_is_vacuum = jbp_is_ghost && IS_FLAG_ON(jbp, Wallflag);
-						if(jbp_is_vacuum){
-							fprintf(stderr,
-								"[GFS_BOUNDARY] CPU force path cannot evolve a vacuum generator yet: "
-								"rank=%d call=%d cell=(%d,%d) i=%d\n",
-								MYID(simpar), s_force_call, ix, iy, i);
-							fflush(stderr);
-							exit(1);
-						}
 						postype jbp_vx = jbp->vx;
 						postype jbp_vy = jbp->vy;
 						postype jbp_csound = jbp->csound;
@@ -5727,6 +5908,14 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							biharm_vx_acc += invd_bh * (jbp->stress.lap_vx - ibp->stress.lap_vx);
 							biharm_vy_acc += invd_bh * (jbp->stress.lap_vy - ibp->stress.lap_vy);
 						}
+						if(jbp_is_vacuum && !gfs_kepler_vacuum_ale_requested()){
+							fprintf(stderr,
+								"[GFS_BOUNDARY] CPU force path cannot evolve a vacuum generator outside the gated Kepler ALE mode: "
+								"rank=%d call=%d cell=(%d,%d) i=%d\n",
+								MYID(simpar), s_force_call, ix, iy, i);
+							fflush(stderr);
+							exit(1);
+						}
 
 						postype pi_total;
 						postype tau_dot_dS_x = 0, tau_dot_dS_y = 0;
@@ -5742,8 +5931,43 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						 * Sum of (Monaghan AV + CD10 + HLLC-jump-excess) ≥ 0 when active.
 						 * Used downstream to compute pair-symmetric ε_AV ≥ 0 heating. */
 						postype p_av_for_heat = 0;
+						double vacuum_edge_speed = 0;
 
-						if(av_mode == 0 && nu_phys <= 0){
+						if(jbp_is_vacuum){
+							/* Exact moving-vacuum-edge flux is zero. The generator
+							 * velocity is solved from the gas-side rarefaction trace
+							 * and the full off-center Voronoi face-speed equation. */
+							pi_total = 0;
+							tau_dot_dS_x = tau_dot_dS_y = 0;
+							p_av_for_heat = 0;
+							tmp2 = tmp->upperlink;
+							if(!tmp2){
+								gfs_kepler_vacuum_mark_capture_error();
+							}else if(gfs_kepler_vacuum_ale_requested()){
+								postype dxF=(postype)0.5*(tmp->x+tmp2->x);
+								postype dyF=(postype)0.5*(tmp->y+tmp2->y);
+								postype rhoF=ibp_den, pressureF=ibp_pressure;
+								postype vxF=ibp_vx, vyF=ibp_vy;
+								if(use_muscl){
+									rhoF += ibp->stress.dRhodx*dxF + ibp->stress.dRhody*dyF;
+									pressureF += ibp->stress.dPdx*dxF + ibp->stress.dPdy*dyF;
+									vxF += ibp->stress.gUxx*dxF + ibp->stress.gUxy*dyF;
+									vyF += ibp->stress.gUyx*dxF + ibp->stress.gUyy*dyF;
+								}
+								double xi[2]={(double)ibp->x,(double)ibp->y};
+								double xj[2]={(double)jbp->x,(double)jbp->y};
+								double face[2]={(double)ibp->x+(double)dxF,
+									(double)ibp->y+(double)dyF};
+								double vi[2]={(double)ibp_vx,(double)ibp_vy};
+								if(!gfs_kepler_vacuum_record_face(simpar,
+									(treevorork4particletype*)jbp,xi,xj,face,vi,
+									(double)rhoF,(double)pressureF,(double)vxF,
+									(double)vyF,(double)Gamma,
+									&vacuum_edge_speed)){
+									gfs_kepler_vacuum_mark_capture_error();
+								}
+							}
+						} else if(av_mode == 0 && nu_phys <= 0){
 							/* Original Monaghan AV path (no NS stress) */
 							postype pi = VoroRK4_Pressure2D(
 									ibp_pressure, jbp_pressure, tmp, neighwork, simpar, RT);
@@ -6549,7 +6773,13 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 						}
 						dte += -pi_total * Vec2DDotP(&ua, &dS)
 						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
-						dvb += Vec2DDotP(&ua, &dS);
+						/* The vacuum-edge mesh speed is the rarefaction speed solved
+						 * from this face trace. Use it directly for swept volume;
+						 * the ghost velocity is finalized only after all faces solve. */
+						if(jbp_is_vacuum)
+							dvb += vacuum_edge_speed * facearea;
+						else
+							dvb += Vec2DDotP(&ua, &dS);
 						if(gfs_dynw2_active && riemann_vstar && !jbp_is_ghost){
 							/* realised face speed minus HLL v* (independent check) */
 							double dv = (double)(ua.x*riemann_nx + ua.y*riemann_ny) - (double)riemann_vn;
@@ -7090,6 +7320,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 	BASICCELL_MX(simpar) = mx = ceil((xmax-xmin)/cellsize);
 	BASICCELL_MY(simpar) = my = ceil((ymax-ymin)/cellsize);
 	VORO_BASICCELL(simpar) = (CellType*)my_malloc(sizeof(CellType)*mx*my);
+	gfs_kepler_vacuum_force_begin();
 	mkLinkedList2D(simpar, cellsize, xmin, ymin, xmax, ymax, paddingAllTreeParticles);
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d beta after mkLinkedList2D\n", MYID(simpar)); fflush(stderr); }
 	/* GFS_DYN_W2: solve Wdot for this stage on the linked list just built. */
@@ -7100,6 +7331,7 @@ double getAccVoro2DBlend(SimParameters *simpar, postype xmin, postype ymin,
 	postype Dtime = getAccVoro2DBlend_impl(simpar, xmin, ymin, xmax, ymax,
 		OrderOfAccuracy, Courant, Gamma,
 		find2DNeighboringBP, find2DCellBP);
+	gfs_kepler_vacuum_force_end(simpar);
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d eta wrapper after impl\n", MYID(simpar)); fflush(stderr); }
 
 	if(MYID(simpar)<=1){ fprintf(stderr,"[FORCE_DBG] r%d theta-A before BASICCELL free\n", MYID(simpar)); fflush(stderr); }
@@ -8428,7 +8660,7 @@ void exam2dUpdateVol(
 	// building the linked list with "paddingAllTreeParticles()" which pads the domain
 	// with the tree voro particles defined in ../Exam/mpirks.exam2d.c.
 	mkLinkedList2D(simpar, cellsize,xmin,ymin,xmax,ymax, paddingAllTreeParticles);
-	fprintf(stderr,"[UPDV] P%d after mkLinkedList2D npad=%d\n", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);
+	fprintf(stderr,"[UPDV] P%d after mkLinkedList2D npad=%td\n", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);
 
 #ifdef USE_CUDA
     const char *gpu_final = getenv("GFS_GPU_FINAL_VOLUME");
@@ -11060,6 +11292,7 @@ gfs_rk4_trial_restart:
 #endif
 	if(gfs_eaud_on()) gfs_eaud_start(sbp, VORO_NP(simpar), targetBP, Lx, Ly);
 	/* === K1 evaluation === */
+	gfs_kepler_vacuum_begin_step(simpar);
 #ifdef USE_CUDA
     if(wall.on && !gfs_wall_valid(simpar,&wall,0)) goto gfs_wall_trial_rejected;
 #endif
@@ -11150,6 +11383,7 @@ gfs_rk4_trial_restart:
     if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k1_rhs",Dtime,1,&_t_stage_diag);
+	gfs_kepler_vacuum_capture_stage(simpar,0,Dtime);
 #ifdef USE_CUDA
     /* Diagnostic-only local extension probe. Serialize the computed K1
      * arrays and stop before any position predictor or accepted evolution. */
@@ -11214,6 +11448,7 @@ gfs_rk4_trial_restart:
 		else sbp[i].ie += sbp[i].rk4.k1ie*0.5;
 		sbp[i].stress.K += sbp[i].rk4.k1K*0.5;
 	}
+	gfs_kepler_vacuum_set_stage(simpar,1);
 #ifdef USE_CUDA
     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
 #endif
@@ -11279,6 +11514,7 @@ gfs_rk4_trial_restart:
     if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k2_rhs",Dtime,1,&_t_stage_diag);
+	gfs_kepler_vacuum_capture_stage(simpar,1,Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static)
@@ -11317,6 +11553,7 @@ gfs_rk4_trial_restart:
 		else sbp[i].ie += (sbp[i].rk4.k2ie-sbp[i].rk4.k1ie)*0.5;
 		sbp[i].stress.K += (sbp[i].rk4.k2K-sbp[i].rk4.k1K)*0.5;
 	}
+	gfs_kepler_vacuum_set_stage(simpar,2);
 #ifdef USE_CUDA
     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
 #endif
@@ -11382,6 +11619,7 @@ gfs_rk4_trial_restart:
     if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k3_rhs",Dtime,1,&_t_stage_diag);
+	gfs_kepler_vacuum_capture_stage(simpar,2,Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static)
@@ -11420,6 +11658,7 @@ gfs_rk4_trial_restart:
 		else sbp[i].ie += sbp[i].rk4.k3ie - sbp[i].rk4.k2ie*0.5;
 		sbp[i].stress.K += sbp[i].rk4.k3K - sbp[i].rk4.k2K*0.5;
 	}
+	gfs_kepler_vacuum_set_stage(simpar,3);
 #ifdef USE_CUDA
     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
 #endif
@@ -11485,6 +11724,7 @@ gfs_rk4_trial_restart:
     if(wall.on && !gfs_wall_valid(simpar,&wall,1)) goto gfs_wall_trial_rejected;
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k4_rhs",Dtime,1,&_t_stage_diag);
+	gfs_kepler_vacuum_capture_stage(simpar,3,Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static)
@@ -11557,6 +11797,7 @@ gfs_rk4_trial_restart:
 			}
 		}
 	}
+	gfs_kepler_vacuum_set_stage(simpar,4);
 #ifdef USE_CUDA
     if(tx.on && !gfs_rk4_tx_valid(simpar,&tx,0)) goto gfs_rk4_trial_rejected;
 #endif
