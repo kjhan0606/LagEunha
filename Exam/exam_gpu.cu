@@ -2156,6 +2156,9 @@ long long gpu_take_pair_hits(void)
 
 /* Bounded, read-only force-input capture. Actual face fluxes are still written
  * by the production force kernel. No branch or force arithmetic is changed. */
+#define GFS_FACE_DUMP_CAPTURE_VERSION 3
+#define GFS_FACE_DUMP_STRINGIFY_INNER(value) #value
+#define GFS_FACE_DUMP_STRINGIFY(value) GFS_FACE_DUMP_STRINGIFY_INNER(value)
 static int gfs_face_dump_selected(long long id, const long long *ids, int n)
 {
     if (!n) return 1;
@@ -2232,8 +2235,8 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
 #ifdef GFS_VARPRESS_W0
     varpress_w0=1;
 #endif
-    fprintf(out,"{\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"n_particles\":%d,\"n_total\":%d,\"av_mode\":%d,\"use_muscl\":%d,\"OoA\":%.17g,\"Courant\":%.17g,\"Gamma\":%.17g,\"alphavis\":%.17g,\"betavis\":%.17g,\"etavis\":%.17g,\"epsvis\":%.17g,\"nu_phys\":%.17g,\"prandtl\":%.17g,\"cd_amax\":%.17g,\"blend_theta\":%.17g,\"dtold\":%.17g,\"hyperv_alpha\":%.17g,\"hyperv_force_cap\":%.17g,\"phase1\":%d,\"laguerre_rot\":%d,\"face_charge\":%d,\"geom_fv\":%d,\"w2lin\":%d,\"thermal64\":%d,\"var_geom_cfl\":%.17g,\"var_geom_audit\":%d,\"GFS_VARPRESS_W0\":%d}\n",
-        rank,call,all_inputs,nids,nrows,n_particles,n_total,params->av_mode,params->use_muscl,
+    fprintf(out,"{\"capture_version\":%d,\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"n_particles\":%d,\"n_total\":%d,\"av_mode\":%d,\"use_muscl\":%d,\"OoA\":%.17g,\"Courant\":%.17g,\"Gamma\":%.17g,\"alphavis\":%.17g,\"betavis\":%.17g,\"etavis\":%.17g,\"epsvis\":%.17g,\"nu_phys\":%.17g,\"prandtl\":%.17g,\"cd_amax\":%.17g,\"blend_theta\":%.17g,\"dtold\":%.17g,\"hyperv_alpha\":%.17g,\"hyperv_force_cap\":%.17g,\"phase1\":%d,\"laguerre_rot\":%d,\"face_charge\":%d,\"geom_fv\":%d,\"w2lin\":%d,\"thermal64\":%d,\"var_geom_cfl\":%.17g,\"var_geom_audit\":%d,\"GFS_VARPRESS_W0\":%d}\n",
+        GFS_FACE_DUMP_CAPTURE_VERSION,rank,call,all_inputs,nids,nrows,n_particles,n_total,params->av_mode,params->use_muscl,
         params->OoA,params->Courant,params->Gamma,params->alphavis,params->betavis,
         params->etavis,params->epsvis,params->nu_phys,params->prandtl,params->cd_amax,
         params->blend_theta,params->dtold,params->hyperv_alpha,params->hyperv_force_cap,
@@ -2241,6 +2244,7 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
         params->face_charge,params->geom_fv,params->w2lin,thermal64,var_geom_cfl,
         var_geom_audit,varpress_w0);
     if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] meta write failed\n"); exit(1); }
+    fprintf(stderr,"[FACE_INPUT] capture_version=" GFS_FACE_DUMP_STRINGIFY(GFS_FACE_DUMP_CAPTURE_VERSION) "\n");
     fprintf(stderr,"[FACE_INPUT] rank=%d call=%d mode=%s ids=%d rows=%d file=face_input_r%d_call%d.tsv\n",
         rank,call,all_inputs?"all":"selected",nids,nrows,rank,call);
 }

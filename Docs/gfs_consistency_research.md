@@ -82,7 +82,7 @@ dU_i/dt + P dV_i/dt
 
 `408609`는 결국 `t=6.80660`에서 `|dE|=1.229×10^-3`으로 문턱을 넘었고 `t=6.94659`에서 `3.519×10^-3`에 이르러 중지했다(`code_review_grok.md` §27). 그러므로 `t=17.8` 판정 계획은 **실패로 종료**됐으며, 방식 (1)의 256² 생산 기준선도 아직 없다. 후속 진단 잡 `408623`은 요청된 GPU 힘 호출 `34188`에 도달하기 전에 `HYDRO_TSTOP=5.39`로 종료되어 면별 자료를 만들지 못했다. 호출 번호를 실제 관측값 `33788`로 고친 재실행은 2026-10-30 현재 scheduler에 H200 GRES가 없어 제출되지 않았다(`code_review_grok.md` §28).
 
-후속 재생용 계측을 검토하다가 기존 all-input 덤프에도 누락이 있음을 찾았다. GPU force kernel은 점성/고차 옵션에 따라 stress, divergence, velocity-Laplacian 배열을 읽고, `GFS_THERMAL64=1`이면 float `ie/volume` 대신 `E_inv_xx/xy`에 담긴 64비트 내부에너지와 부피를 EOS에 사용한다. ghost-face 분기에서는 face의 `kp/km` 압력도 읽는다. 이전 덤프는 이 배열·stencil과 전체 force-launch 설정을 저장하지 않아 rank 복제 상태가 같아 보여도 실제 force 입력 차이를 배제할 수 없었다. 계측 코드는 이제 해당 배열과 `kp/km` stencil 셀 상태를 입력 집합에 포함하고 force kernel에 전달되는 전체 scalar 설정 및 `kp/km` 전역 ID를 저장하며, 감사기는 rank별 파라미터 불일치와 예상 rank 누락을 보고한다. 이 소스는 아직 CUDA 바이너리로 재빌드되지 않았고, H200 재생도 없으므로 새로운 물리 결론은 없다.
+후속 재생용 계측을 검토하다가 기존 all-input 덤프에도 누락이 있음을 찾았다. GPU force kernel은 점성/고차 옵션에 따라 stress, divergence, velocity-Laplacian 배열을 읽고, `GFS_THERMAL64=1`이면 float `ie/volume` 대신 `E_inv_xx/xy`에 담긴 64비트 내부에너지와 부피를 EOS에 사용한다. ghost-face 분기에서는 face의 `kp/km` 압력도 읽는다. 이전 덤프는 이 배열·stencil과 전체 force-launch 설정을 저장하지 않아 rank 복제 상태가 같아 보여도 실제 force 입력 차이를 배제할 수 없었다. capture v3는 해당 배열과 `kp/km` stencil 셀 상태를 입력 집합에 포함하고, force kernel의 scalar 설정 및 stencil 전역 ID를 저장한다. 감사기는 rank별 파라미터 불일치와 예상 rank 누락을 보고하며, 재생 스크립트는 v3 marker가 없는 바이너리와 기존 출력 파일 덮어쓰기를 거부하고 실행 후 두 감사기를 자동 호출한다. 이 소스는 아직 CUDA 바이너리로 재빌드되지 않았고, H200 재생도 없으므로 새로운 물리 결론은 없다.
 
 ## 5. (3)의 해 존재 문제를 정확히 나누기
 

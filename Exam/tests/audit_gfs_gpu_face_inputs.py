@@ -13,6 +13,7 @@ from pathlib import Path
 
 
 NAME = re.compile(r"face_input_r(\d+)_call(\d+)\.tsv$")
+CAPTURE_VERSION = 3
 FIELDS = (
     "x", "y", "vx", "vy", "mass", "V", "rho", "P", "cs", "U", "W", "Wold",
     "Bxx", "Bxy", "Byx", "Byy", "dPdx", "dPdy", "dRhodx", "dRhody",
@@ -46,6 +47,8 @@ def read_files(paths):
         meta = json.loads(meta_path.read_text())
         if meta.get("rank") != rank or meta.get("call") != call or meta.get("all_inputs") != 1:
             raise ValueError(f"{meta_path}: capture is not a matching all-input dump")
+        if meta.get("capture_version") != CAPTURE_VERSION:
+            raise ValueError(f"{meta_path}: expected capture version {CAPTURE_VERSION}")
         if rank in params_by_rank:
             raise ValueError(f"multiple input files supplied for rank {rank}")
         missing_params = set(PARAM_FIELDS) - set(meta)
@@ -125,6 +128,7 @@ def audit(copies, ranks, call, total_rows, params_by_rank, top):
         if len({params_by_rank[rank][field] for rank in ranks}) > 1
     }
     return {
+        "capture_version": CAPTURE_VERSION,
         "force_call": call,
         "ranks": ranks,
         "input_rows": total_rows,
