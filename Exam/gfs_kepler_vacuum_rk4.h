@@ -17,7 +17,7 @@ typedef struct {
     double stage_x, stage_y;
     double kx[4], ky[4];
     double row[2][2], rhs[2], distance[2], edge_speed[2], vi[2][2];
-    size_t nface;
+    size_t nface, expected_faces;
     double vx, vy;
     int rhs_valid, invalid;
 } GfsKeplerVacuumRK4Site;
@@ -115,7 +115,8 @@ static inline int gfs_kepler_vacuum_rk4_init(
     for (size_t s = 0; s < result.count; ++s) {
         const GfsKeplerVacuumSite *source = &stencil->sites[s];
         if (source->stable_id < 0 || !isfinite(source->x) ||
-            !isfinite(source->y)) {
+            !isfinite(source->y) || source->incidence_count == 0 ||
+            source->incidence_count > 2) {
             gfs_kepler_vacuum_rk4_destroy(&result);
             return 0;
         }
@@ -124,6 +125,7 @@ static inline int gfs_kepler_vacuum_rk4_init(
         result.sites[s].y = source->y;
         result.sites[s].stage_x = source->x;
         result.sites[s].stage_y = source->y;
+        result.sites[s].expected_faces = source->incidence_count;
     }
     *out = result;
     return 1;
@@ -189,7 +191,8 @@ static inline int gfs_kepler_vacuum_rk4_add_face(
     if (!(dist > 0.0) || !(qx*qx+qy*qy > 0.0) ||
         !isfinite(dist) || !isfinite(qx) || !isfinite(qy) ||
         !isfinite(ax) || !isfinite(ay) ||
-        !isfinite(vi[0]) || !isfinite(vi[1]) || site->nface >= 2) {
+        !isfinite(vi[0]) || !isfinite(vi[1]) ||
+        site->nface >= site->expected_faces) {
         site->invalid = 1;
         return 0;
     }
@@ -217,7 +220,8 @@ static inline int gfs_kepler_vacuum_rk4_solve_faces(
     state->max_face_speed_relative_residual = 0.0;
     for (size_t s = 0; s < state->count; ++s) {
         GfsKeplerVacuumRK4Site *site = state->sites+s;
-        if (site->invalid || site->nface == 0 || site->nface > 2) return 0;
+        if (site->invalid || site->expected_faces == 0 ||
+            site->nface != site->expected_faces) return 0;
         if (site->nface == 1) {
             state->n_single++;
             const double qx=site->row[0][0], qy=site->row[0][1];

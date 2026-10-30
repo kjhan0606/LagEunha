@@ -195,8 +195,10 @@ Consequences for the next implementation:
 - The linked-list callback appends the audited stencil after each fresh halo
   build in geometry-only and ALE modes. ALE mode uses persistent RK4 site
   coordinates for all four stages. The static lattice mask still supplies
-  fixed incidence records, so boundary deformation and topology changes are
-  not tracked; any site with unsupported incidence aborts.
+  fixed incidence records. Each force stage now requires every site to receive
+  exactly its initial count of one or two boundary faces; a missing or extra
+  face aborts. Neighbor-identity changes that preserve those counts are not
+  yet detected or updated.
 
 The reproducible count and guard-width audits are
 `Exam/tests/audit_kepler_annulus_vacuum_stencil.py` and

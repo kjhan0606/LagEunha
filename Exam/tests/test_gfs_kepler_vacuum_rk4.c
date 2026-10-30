@@ -77,6 +77,7 @@ int main(void)
      * face speed; one-face sites choose a minimum-change velocity, while
      * two-face sites recover both independent constraints. */
     assert(gfs_kepler_vacuum_rk4_begin(&state));
+    int checked_incomplete_topology = 0;
     for (int stage = 0; stage < 4; ++stage) {
         assert(gfs_kepler_vacuum_rk4_stage_positions(&state, stage, x, y));
         gfs_kepler_vacuum_rk4_begin_force(&state);
@@ -111,6 +112,18 @@ int main(void)
                 assert(gfs_kepler_vacuum_rk4_add_face(
                     &state, s, xi, xj, face, vi, w));
             }
+        }
+        if (!checked_incomplete_topology) {
+            for (size_t s = 0; s < state.count; ++s) {
+                if (state.sites[s].expected_faces == 2) {
+                    --state.sites[s].nface;
+                    assert(!gfs_kepler_vacuum_rk4_solve_faces(&state));
+                    ++state.sites[s].nface;
+                    checked_incomplete_topology = 1;
+                    break;
+                }
+            }
+            assert(checked_incomplete_topology);
         }
         assert(gfs_kepler_vacuum_rk4_solve_faces(&state));
         for (size_t s = 0; s < state.count; ++s) {
