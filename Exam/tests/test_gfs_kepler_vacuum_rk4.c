@@ -88,6 +88,17 @@ int main(void)
             const double target_vx = 0.37 + 0.0001 * (double)s;
             const double target_vy = -0.29 + 0.0002 * (double)s;
             for (size_t q = 0; q < site->incidence_count; ++q) {
+                const size_t guarded_id = (size_t)inc[q].fluid_id;
+                const size_t ci = guarded_id % (size_t)stencil.computational_n;
+                const size_t cj = guarded_id / (size_t)stencil.computational_n;
+                const size_t fluid_id =
+                    (cj - (size_t)stencil.guard) *
+                        (size_t)stencil.target_n +
+                    ci - (size_t)stencil.guard;
+                size_t mapped_slot = SIZE_MAX;
+                assert(gfs_kepler_vacuum_stencil_incidence_slot_for_particle(
+                    &stencil, s, fluid_id, &mapped_slot));
+                assert(mapped_slot == q);
                 const double nx = (double)inc[q].nx;
                 const double ny = (double)inc[q].ny;
                 const double xj[2] = {x[s], y[s]};
@@ -110,7 +121,7 @@ int main(void)
                                   (face[1] - xj[1]) * target_vy) / distance;
                 edge_speed[4 * s + q] = w;
                 assert(gfs_kepler_vacuum_rk4_add_face(
-                    &state, s, xi, xj, face, vi, w));
+                    &state, s, q, xi, xj, face, vi, w));
             }
         }
         if (!checked_incomplete_topology) {
@@ -165,6 +176,42 @@ int main(void)
             &state, stage, dt));
     }
     assert(gfs_kepler_vacuum_rk4_rollback(&state));
+
+    /* A repeated incidence slot is rejected even if the site would still
+     * receive the expected number of faces. */
+    {
+        GfsKeplerVacuumRK4 duplicate = {0};
+        assert(gfs_kepler_vacuum_rk4_init(&stencil, &duplicate));
+        assert(gfs_kepler_vacuum_rk4_begin(&duplicate));
+        gfs_kepler_vacuum_rk4_begin_force(&duplicate);
+        int checked_duplicate = 0;
+        for (size_t s = 0; s < stencil.n_sites; ++s) {
+            if (stencil.sites[s].incidence_count != 2) continue;
+            const GfsKeplerVacuumIncidence *inc =
+                &stencil.incidences[4 * s];
+            const double xj[2] = {
+                duplicate.sites[s].x, duplicate.sites[s].y};
+            const double xi[2] = {
+                xj[0] - (double)inc[0].nx * stencil.dx,
+                xj[1] - (double)inc[0].ny * stencil.dx};
+            const double face[2] = {
+                0.5 * (xi[0] + xj[0]), 0.5 * (xi[1] + xj[1])};
+            const double vi[2] = {0.0, 0.0};
+            assert(gfs_kepler_vacuum_rk4_add_face(
+                &duplicate, s, 0, xi, xj, face, vi, 0.0));
+            assert(!gfs_kepler_vacuum_rk4_add_face(
+                &duplicate, s, 0, xi, xj, face, vi, 0.0));
+            checked_duplicate = 1;
+            break;
+        }
+        assert(checked_duplicate);
+        gfs_kepler_vacuum_rk4_destroy(&duplicate);
+    }
+    {
+        size_t slot = 0;
+        assert(!gfs_kepler_vacuum_stencil_incidence_slot_for_particle(
+            &stencil, 0, SIZE_MAX, &slot));
+    }
     gfs_kepler_vacuum_stencil_destroy(&stencil);
 
     /* Integrate dx/dt=x, dy/dt=3 with the same stage abscissae as the fluid

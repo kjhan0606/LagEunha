@@ -240,6 +240,7 @@ static void gfs_kepler_vacuum_mark_capture_error(void){
 
 static int gfs_kepler_vacuum_record_face(
 		SimParameters *simpar, treevorork4particletype *particle,
+		size_t fluid_particle_id,
 		const double xi[2], const double xj[2], const double face[2],
 		const double vi[2], double rho_face, double pressure_face,
 		double velocity_face_x, double velocity_face_y, double gamma,
@@ -251,6 +252,13 @@ static int gfs_kepler_vacuum_record_face(
 	   !isfinite(rho_face) || !isfinite(pressure_face) ||
 	   !isfinite(velocity_face_x) || !isfinite(velocity_face_y) ||
 	   !isfinite(gamma) || !edge_speed_out){
+		gfs_kepler_vacuum_mark_capture_error();
+		return 0;
+	}
+	size_t face_slot = 0;
+	if(!gfs_kepler_vacuum_stencil_incidence_slot_for_particle(
+			&gfs_kepler_vacuum_stencil,(size_t)site,fluid_particle_id,
+			&face_slot)){
 		gfs_kepler_vacuum_mark_capture_error();
 		return 0;
 	}
@@ -270,7 +278,7 @@ static int gfs_kepler_vacuum_record_face(
 #endif
 	{
 		ok=gfs_kepler_vacuum_rk4_add_face(&gfs_kepler_vacuum_rk4,
-			(size_t)site,xi,xj,face,vi,w_edge);
+			(size_t)site,face_slot,xi,xj,face,vi,w_edge);
 	}
 	if(ok) *edge_speed_out=w_edge;
 	if(!ok) gfs_kepler_vacuum_mark_capture_error();
@@ -5960,7 +5968,9 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 									(double)ibp->y+(double)dyF};
 								double vi[2]={(double)ibp_vx,(double)ibp_vy};
 								if(!gfs_kepler_vacuum_record_face(simpar,
-									(treevorork4particletype*)jbp,xi,xj,face,vi,
+									(treevorork4particletype*)jbp,
+									(size_t)PINDX((treevorork4particletype*)ibp),
+									xi,xj,face,vi,
 									(double)rhoF,(double)pressureF,(double)vxF,
 									(double)vyF,(double)Gamma,
 									&vacuum_edge_speed)){

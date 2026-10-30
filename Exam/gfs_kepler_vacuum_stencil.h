@@ -28,6 +28,43 @@ typedef struct {
     GfsKeplerVacuumIncidence *incidences;
 } GfsKeplerVacuumStencil;
 
+/* Map an unguarded row-major particle ID to this site's stencil incidence.
+ * The persistent stencil stores guarded computational-grid IDs instead. */
+static inline int gfs_kepler_vacuum_stencil_incidence_slot_for_particle(
+    const GfsKeplerVacuumStencil *stencil, size_t site_id,
+    size_t particle_id, size_t *slot)
+{
+    if (!stencil || !stencil->sites || !stencil->incidences || !slot ||
+        site_id >= stencil->n_sites || stencil->target_n <= 0 ||
+        stencil->guard < 0 || stencil->computational_n <= 0)
+        return 0;
+
+    const GfsKeplerVacuumSite *site = &stencil->sites[site_id];
+    size_t found = 0, found_slot = 0;
+    for (size_t q = 0; q < site->incidence_count; ++q) {
+        const size_t id = stencil->incidences[4 * site_id + q].fluid_id;
+        const size_t nc = (size_t)stencil->computational_n;
+        if (id >= nc * nc) return 0;
+        const size_t ci = id % nc;
+        const size_t cj = id / nc;
+        if (ci < (size_t)stencil->guard || cj < (size_t)stencil->guard)
+            continue;
+        const size_t ti = ci - (size_t)stencil->guard;
+        const size_t tj = cj - (size_t)stencil->guard;
+        if (ti >= (size_t)stencil->target_n ||
+            tj >= (size_t)stencil->target_n)
+            continue;
+        if (tj * (size_t)stencil->target_n + ti == particle_id) {
+            if (found) return 0;
+            found = 1;
+            found_slot = q;
+        }
+    }
+    if (!found) return 0;
+    *slot = found_slot;
+    return 1;
+}
+
 static inline void gfs_kepler_vacuum_stencil_destroy(
     GfsKeplerVacuumStencil *stencil)
 {

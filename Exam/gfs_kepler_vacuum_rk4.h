@@ -18,6 +18,7 @@ typedef struct {
     double kx[4], ky[4];
     double row[2][2], rhs[2], distance[2], edge_speed[2], vi[2][2];
     size_t nface, expected_faces;
+    unsigned char face_seen[2];
     double vx, vy;
     int rhs_valid, invalid;
 } GfsKeplerVacuumRK4Site;
@@ -166,6 +167,8 @@ static inline void gfs_kepler_vacuum_rk4_begin_force(
     state->max_face_speed_relative_residual = 0.0;
     for (size_t s = 0; s < state->count; ++s) {
         state->sites[s].nface = 0;
+        state->sites[s].face_seen[0] = 0;
+        state->sites[s].face_seen[1] = 0;
         state->sites[s].rhs_valid = 0;
         state->sites[s].invalid = 0;
     }
@@ -177,7 +180,7 @@ static inline void gfs_kepler_vacuum_rk4_begin_force(
  * Each site accepts one face (minimum-change velocity) or two independent
  * faces (exact 2x2 solve); missing, singular, or over-subscribed topology fails. */
 static inline int gfs_kepler_vacuum_rk4_add_face(
-    GfsKeplerVacuumRK4 *state, size_t site_id,
+    GfsKeplerVacuumRK4 *state, size_t site_id, size_t face_slot,
     const double xi[2], const double xj[2], const double c[2],
     const double vi[2], double w_edge)
 {
@@ -192,11 +195,12 @@ static inline int gfs_kepler_vacuum_rk4_add_face(
         !isfinite(dist) || !isfinite(qx) || !isfinite(qy) ||
         !isfinite(ax) || !isfinite(ay) ||
         !isfinite(vi[0]) || !isfinite(vi[1]) ||
-        site->nface >= site->expected_faces) {
+        face_slot >= site->expected_faces || face_slot >= 2 ||
+        site->face_seen[face_slot]) {
         site->invalid = 1;
         return 0;
     }
-    const size_t f = site->nface++;
+    const size_t f = face_slot;
     site->row[f][0] = qx;
     site->row[f][1] = qy;
     site->rhs[f] = ax*vi[0] + ay*vi[1] - dist*w_edge;
@@ -204,6 +208,8 @@ static inline int gfs_kepler_vacuum_rk4_add_face(
     site->edge_speed[f] = w_edge;
     site->vi[f][0] = vi[0];
     site->vi[f][1] = vi[1];
+    site->face_seen[f] = 1;
+    ++site->nface;
     if (!isfinite(site->rhs[f])) {
         site->invalid = 1;
         return 0;
@@ -222,6 +228,8 @@ static inline int gfs_kepler_vacuum_rk4_solve_faces(
         GfsKeplerVacuumRK4Site *site = state->sites+s;
         if (site->invalid || site->expected_faces == 0 ||
             site->nface != site->expected_faces) return 0;
+        for (size_t f = 0; f < site->expected_faces; ++f)
+            if (!site->face_seen[f]) return 0;
         if (site->nface == 1) {
             state->n_single++;
             const double qx=site->row[0][0], qy=site->row[0][1];
