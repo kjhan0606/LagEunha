@@ -634,3 +634,13 @@ An internal-energy rule after the step has now been tried four times. The pressu
 **[RUN]** `408609`의 `|dE|`가 처음 `10^-3`을 넘은 것은 `t=6.80660`, 11171단계로, `dE=1.229e-3`, `floor_cum=6.035e-3`, `hyd_cum=3.919e-3`, `rkh_cum=8.508e-4`였다. 이후 오차가 계속 증가해 마지막 완전한 `[RK4E]` 기록 `t=6.94659`, 11422단계에서 `dE=3.519e-3`, `floor_cum=1.146e-2`, `hyd_cum=1.842e-2`, `rkh_cum=1.062e-3`이었다. 따라서 목표 `t=17.8` 이전에 에너지 문턱을 크게 넘었고, 실행을 계속해 생산 해법으로 인정할 근거가 없어 내가 제출한 `408609`만 `scancel`로 중지했다. 로그, 바이너리 및 잡 스크립트는 `/gpfs/kjhan/LagForce/Kepler_gfs_rk4_S1_Nx256_H200_halosync_950e545/`에 보존했다. 이 실험은 **실패**이며 방식 (1)의 256² 검증도 아직 통과하지 못했다.
 
 **[NEXT/RUN]** 큰 면 일 잔차가 나타나기 시작한 `t≈5.38`, 8547단계의 GPU 힘 호출 번호 `4×8547=34188`을 골랐다. 같은 SHA256 `563713e6c7be3b519a97b305319e7d4ef33fb9480c11e77d92d9944ba9f8752e` 바이너리, 같은 H200 2장/4랭크 입력으로 `GFS_GPU_FACE_DUMP_CALL=34188`, `HYDRO_TSTOP=5.39`를 설정한 별도 잡 `408623`을 제출했다. 위치는 `/gpfs/kjhan/LagForce/Kepler_face_dump_Nx256_H200_halosync_call34188/`이다. 그 호출에서 전역 입자 ID로 면 양끝을 맞춰 랭크 경계/내부, `P*`, 면 기하, `u·dS`, 에너지 일의 차이를 분리할 계획이다. 256² B1/B2나 과거 취소된 생산 잡은 제출하지 않았다.
+
+---
+
+## 28. 256² 면별 덤프 호출 불일치와 재실행 대기 (2026-10-30)
+
+**[AUDIT]** 보존된 `408623` 로그는 `t=5.39029`, step `8447`까지 진행했으며 마지막 네 GPU 힘 호출은 `33785–33788`이다. 입력은 `HYDRO_TSTOP=5.39`였지만 요청 덤프 호출은 `34188`이어서 해당 호출에 도달하지 못했다. 네 `face_dump_r*_call34188.tsv` 파일이 없고 사후 파일 검사도 완료 표식을 만들지 않았다. `mpirun` 자체의 `EXIT:0`은 면별 캡처 성공을 뜻하지 않으므로 `408623`은 진단 실패로 분류한다.
+
+**[TOOL]** `Exam/tests/audit_gfs_gpu_face_dump.py`를 추가해 전역 입자 ID 쌍으로 양방향 면 기록을 묶고 `P*`, `u·dS`, 법선 면적벡터, 면 에너지 일의 상쇄를 랭크 내부/경계별로 출력한다. 64² 보존 덤프 `408597`에 실행해 24,500행/12,250면 쌍을 읽었으며, 같은 랭크 11,724면의 부호 잔차 `-8.74212e-9`, 경계 526면의 `+7.292345e-5`, 경계 중앙 `P*` 상대차 `1.06645e-4`, 최대 `0.25969`를 기존 기록과 재현했다. 면별 최대 잔차도 ID 쌍과 랭크로 확인할 수 있다.
+
+**[RETRY/PENDING]** 같은 바이너리 SHA256과 입력을 보존한 새 디렉터리 `/gpfs/kjhan/LagForce/Kepler_face_dump_Nx256_H200_halosync_call33788_retry20261030/`를 준비했다. 캡처 목표를 실제 끝 호출 `33788`로 고치고 tessellation 진단 파일은 끄며, 네 rank별 TSV 및 로그의 실제 `[FACE_DUMP]` 호출 표시를 사후 검사하도록 했다. 단, 2026-10-30 현재 `sbatch`는 `gpu:H200:2` 요청을 `Invalid generic resource specification`으로 거부했다. `sinfo`에는 `debug`, `normal`, `normal1`, `normal2`만 있고 GRES가 `(null)`이며 `scontrol show config`는 `GresTypes=(null)`이다. 따라서 재실행은 제출되지 않았고 256² 면별 원인은 여전히 미확정이다. H200 GRES가 scheduler에 다시 등록되면 이 준비된 호출 정합 스크립트를 제출한다.
