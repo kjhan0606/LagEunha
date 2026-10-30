@@ -130,6 +130,12 @@ static void gfs_wall_new_generation(GfsWallEventStep *w){
         w->generation=1;
     }
 }
+static int gfs_wall_trial_state_valid(treevorostressrk4particletype *p,int rhs){
+    return p->ie>0 && p->volume>0 && isfinite(p->mass) && p->mass>0 && p->w2==0 &&
+        isfinite(p->ie) && isfinite(p->volume) && isfinite(p->x) && isfinite(p->y) &&
+        isfinite(p->vx) && isfinite(p->vy) &&
+        (!rhs || (isfinite(p->ax) && isfinite(p->ay) && isfinite(p->die)));
+}
 static int gfs_wall_identity(GfsWallEventStep *w,treevorostressrk4particletype *p){
     size_t id=(size_t)PINDX((treevorork4particletype*)p);
     if(id>=w->extent || !w->base[id].present || w->base[id].seen==w->generation || p->mass!=w->base[id].m){
@@ -150,15 +156,31 @@ static int gfs_wall_valid(SimParameters *s,GfsWallEventStep *w,int rhs){
     if(VORO_NP(s)!=w->np){w->reason="owned_count";return 0;}
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
     gfs_wall_new_generation(w);
+    const char *parallel=getenv("GFS_WALL_PARALLEL_VALIDATION");
+    if(parallel && strcmp(parallel,"1")==0){
+        int invalid=0;unsigned int generation=w->generation;
+        /* Each accepted ID is unique, so its marker is the only shared write.
+         * If any check fails, re-run the existing serial decision below to
+         * retain its first-failure reason and exact rejection behavior.
+         */
+        #pragma omp parallel for schedule(static) reduction(|:invalid)
+        for(ptrdiff_t i=0;i<w->np;i++){
+            size_t id=(size_t)PINDX((treevorork4particletype*)(p+i));
+            if(id>=w->extent || !w->base[id].present || p[i].mass!=w->base[id].m){invalid=1;continue;}
+            unsigned int previous;
+            #pragma omp atomic capture
+            {previous=w->base[id].seen;w->base[id].seen=generation;}
+            if(previous==generation || !gfs_wall_trial_state_valid(p+i,rhs))invalid=1;
+        }
+        if(!invalid)return 1;
+        gfs_wall_new_generation(w);
+    }
     for(ptrdiff_t i=0;i<w->np;i++){
         /* N distinct members of the immutable N-member initial ID set imply
          * exact set equality, even after native particle reordering.
          */
         if(!gfs_wall_identity(w,p+i))return 0;
-        if(!(p[i].ie>0) || !(p[i].volume>0) || !isfinite(p[i].mass) || !(p[i].mass>0) || p[i].w2!=0 ||
-           !isfinite(p[i].ie) || !isfinite(p[i].volume) || !isfinite(p[i].x) || !isfinite(p[i].y) ||
-           !isfinite(p[i].vx) || !isfinite(p[i].vy) ||
-           (rhs && (!isfinite(p[i].ax) || !isfinite(p[i].ay) || !isfinite(p[i].die)))){
+        if(!gfs_wall_trial_state_valid(p+i,rhs)){
             w->reason="nonpositive_or_nonfinite_trial";return 0;
         }
     }
