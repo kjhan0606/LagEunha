@@ -160,12 +160,13 @@ periodic halo build, reconstructs gas-side face traces, and sets generator
 speed from the full off-center Voronoi face-speed equation. At each vacuum
 face, the finite-volume mass, momentum, and energy fluxes are set to zero at
 the gas-to-vacuum rarefaction edge; its swept-volume rate uses that same
-rarefaction edge speed directly. Missing, singular, or over-subscribed site
-constraints fail closed. This implementation is still unverified in an
-evolution run, and it has no independent geometric-conservation residual
-check. The stencil does not reclassify topology as the boundary
-deforms, and there is no geometric-conservation ledger or restart
-serialization. A shared generator is supported only for one or two
+rarefaction edge speed directly. `GFS_VOL_AUDIT=1` is required and compares
+RK4-integrated face-swept volume against the next tessellation's measured
+volume change. Missing, singular, or over-subscribed site constraints fail
+closed. This implementation is still unverified in an evolution run, so no
+GCL tolerance has yet been qualified. The stencil does not reclassify topology
+as the boundary deforms, and restart serialization is absent. A shared
+generator is supported only for one or two
 independent planar faces; curvature, topology change, nonzero Laguerre weight
 rates, MPI ownership, and GPU evolution remain unsupported. The H200 job
 checks startup geometry only, not this CPU ALE path.
@@ -195,10 +196,9 @@ Consequences for the next implementation:
 - The linked-list callback appends the audited stencil after each fresh halo
   build in geometry-only and ALE modes. ALE mode uses persistent RK4 site
   coordinates for all four stages. The static lattice mask still supplies
-  fixed incidence records. Each force stage now requires every site to receive
-  exactly its initial count of one or two boundary faces; a missing or extra
-  face aborts. Neighbor-identity changes that preserve those counts are not
-  yet detected or updated.
+  fixed incidence records. Each force stage requires the exact initial fluid
+  neighbor at each incidence slot; missing, duplicate, extra, or changed
+  neighbors abort even when the face count still matches.
 
 The reproducible count and guard-width audits are
 `Exam/tests/audit_kepler_annulus_vacuum_stencil.py` and
@@ -259,8 +259,9 @@ against an RK4-integrated ODE, off-center one- and two-face geometric speed
 constraints across four RK stages, rejection of non-finite stage data, and
 rollback/retry behavior. It passes strict C99 compilation and execution. The
 startup geometry mode was submitted as isolated H200 job `442508`; no runtime
-result has yet been recorded. The 14-day scheduler-check interval applies, so
-do not query its state before 2026-11-13 12:13 UTC. It is one-rank only and
+result has yet been recorded. The scheduler-check interval has been extended
+from 14 to 28 days, so do not query its state before 2026-11-27 12:13 UTC.
+It is one-rank only and
 does not test ALE evolution, MPI decomposition, or boundary fluxes.
 
 ## RK4 sidecar status
@@ -272,17 +273,19 @@ loop. Each force evaluation uses gas-side MUSCL traces when enabled, solves the
 full off-center one- or two-face equations, and records the maximum face-speed
 residual. The branch is restricted to one rank, CPU, W=0, `av_mode=5`, and
 fresh 320² annular ICs. It has no MPI ownership/reduction, restart
-serialization, topology updates, or geometric-conservation accounting.
-Compilation and helper tests do not establish simulation stability.
+serialization or topology updates. Its required `GFS_VOL_AUDIT` reports the
+geometric-conservation residual, but no run has established an acceptable
+tolerance. Compilation and helper tests do not establish simulation stability.
 
 ## Integration gates
 
 1. Complete and inspect H200 startup geometry job `442508` after the recorded
    scheduler-check time; verify realized mesh area, equal fixed masses,
    density, and circular velocity.
-2. Run the gated CPU ALE path for one stage and verify all 1,280 boundary
-   faces are represented, constraint residuals are small, and no unsupported
-   topology occurs. Then measure per-cell volume and global volume change.
+2. Run the gated CPU ALE path with `GFS_VOL_AUDIT=1`. Verify all 1,280
+   boundary faces per stage, small face-speed residuals, and small
+   `[VAUD] res_abs/V` and `unbooked_PdV_abs` values; abort on missing or extra
+   faces or unsupported topology.
 3. Qualify a planar expansion into vacuum: front position, rarefaction
    profile, total energy, and face-volume/geometric-conservation residual.
 4. Only after those gates, use a coarse annular Kepler test with both

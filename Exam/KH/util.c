@@ -243,6 +243,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	int vacuum_geometry_only = vacuum_geometry_env != NULL;
 	const char *vacuum_ale_env = getenv("EUNHA_KEPLER_VACUUM_ALE");
 	int vacuum_ale = vacuum_ale_env != NULL;
+	const char *volume_audit_env = getenv("GFS_VOL_AUDIT");
 	int vacuum_boundary_mode = vacuum_geometry_only || vacuum_ale;
 	postype vacuum_cx = (postype)0.5*Lx, vacuum_cy = (postype)0.5*Ly;
 	postype vacuum_rin = (postype)0.5, vacuum_rout = (postype)2.0;
@@ -272,6 +273,11 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		if(vacuum_ale && (GAS_GPU_ENABLED(simpar) ||
 		   GAS_AVMODE(simpar)!=5 || GAS_EVOLMETHOD(simpar)!=1)){
 			fprintf(stderr, "[KEPLER_VACUUM_ALE] first moving-boundary gate requires CPU av_mode=5 stress RK4; GPU/MPI support follows after this physics gate\n");
+			MPI_Abort(MPI_COMM(simpar), 97);
+			return NULL;
+		}
+		if(vacuum_ale && (!volume_audit_env || atoi(volume_audit_env)<=0)){
+			fprintf(stderr, "[KEPLER_VACUUM_ALE] require GFS_VOL_AUDIT=1 to compare RK4 face-swept volume with the next tessellation\n");
 			MPI_Abort(MPI_COMM(simpar), 97);
 			return NULL;
 		}
