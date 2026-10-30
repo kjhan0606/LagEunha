@@ -1487,6 +1487,83 @@ long long gpu_take_pair_hits(void)
     return h_gfs_pair_hits;
 }
 
+/* Diagnostic-only capture for reproducing the 950e545 Kepler baseline.
+ * The face kernel inputs are copied back after the force launch; the kernel
+ * leaves these state arrays read-only. Include each owner's neighbor and
+ * M(n,m) stencil cells so MPI copies can be compared by global particle ID. */
+#define GFS_FACE_DUMP_CAPTURE_VERSION 3
+#define GFS_FACE_CAPTURE_STRINGIFY_INNER(x) #x
+#define GFS_FACE_CAPTURE_STRINGIFY(x) GFS_FACE_CAPTURE_STRINGIFY_INNER(x)
+static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
+    int rank, int call, const GPUPhysicsParams *params)
+{
+    unsigned char *needed=(unsigned char *)calloc((size_t)n_total,1);
+    if (!needed) { fprintf(stderr,"[FACE_INPUT] allocation failed\n"); exit(1); }
+    for (int i=0; i<n_particles; i++) {
+        needed[i]=1;
+        for (int f=ctx->h_faces.face_offset[i]; f<ctx->h_faces.face_offset[i+1]; f++) {
+            int j=ctx->h_faces.neighbor_idx[f];
+            int kp=ctx->h_faces.kp_idx[f], km=ctx->h_faces.km_idx[f];
+            if (j>=0 && j<n_total) needed[j]=1;
+            if (kp>=0 && kp<n_total) needed[kp]=1;
+            if (km>=0 && km<n_total) needed[km]=1;
+        }
+    }
+#define GFS_CAPTURE_FIELD(field,type) CUDA_CHECK(cudaMemcpy(ctx->h_parts.field,ctx->d_parts.field,(size_t)n_total*sizeof(type),cudaMemcpyDeviceToHost))
+    GFS_CAPTURE_FIELD(vx,double); GFS_CAPTURE_FIELD(vy,double);
+    GFS_CAPTURE_FIELD(mass,double);
+    GFS_CAPTURE_FIELD(den,float); GFS_CAPTURE_FIELD(pressure,float);
+    GFS_CAPTURE_FIELD(csound,float); GFS_CAPTURE_FIELD(volume,float);
+    GFS_CAPTURE_FIELD(ie,float); GFS_CAPTURE_FIELD(w2,float); GFS_CAPTURE_FIELD(w2old,float);
+    GFS_CAPTURE_FIELD(gUxx,double); GFS_CAPTURE_FIELD(gUxy,double);
+    GFS_CAPTURE_FIELD(gUyx,double); GFS_CAPTURE_FIELD(gUyy,double);
+    GFS_CAPTURE_FIELD(dPdx,double); GFS_CAPTURE_FIELD(dPdy,double);
+    GFS_CAPTURE_FIELD(dRhodx,double); GFS_CAPTURE_FIELD(dRhody,double);
+    GFS_CAPTURE_FIELD(tauxx,double); GFS_CAPTURE_FIELD(tauxy,double);
+    GFS_CAPTURE_FIELD(tauyy,double); GFS_CAPTURE_FIELD(alpha_cd,double);
+    GFS_CAPTURE_FIELD(divv,double); GFS_CAPTURE_FIELD(lap_vx,double);
+    GFS_CAPTURE_FIELD(lap_vy,double);
+#undef GFS_CAPTURE_FIELD
+
+    char path[160]; snprintf(path,sizeof(path),"face_input_r%d_call%d.tsv",rank,call);
+    FILE *out=fopen(path,"wx");
+    if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); free(needed); exit(1); }
+    fprintf(out,"index\tid\tx\ty\tvx\tvy\tmass\tV\trho\tP\tcs\tU\tW\tWold\tBxx\tBxy\tByx\tByy\tdPdx\tdPdy\tdRhodx\tdRhody\ttauxx\ttauxy\ttauyy\talpha_cd\tdivv\tlap_vx\tlap_vy\tU64\tV64\n");
+    int nrows=0;
+    for (int i=0; i<n_total; i++) if (needed[i]) {
+        const ParticleSoA *h=&ctx->h_parts;
+        fprintf(out,"%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t0\t0\n",
+            i,h->indx[i],h->x[i],h->y[i],h->vx[i],h->vy[i],h->mass[i],
+            (double)h->volume[i],(double)h->den[i],(double)h->pressure[i],
+            (double)h->csound[i],(double)h->ie[i],(double)h->w2[i],(double)h->w2old[i],
+            h->gUxx[i],h->gUxy[i],h->gUyx[i],h->gUyy[i],h->dPdx[i],h->dPdy[i],
+            h->dRhodx[i],h->dRhody[i],h->tauxx[i],h->tauxy[i],h->tauyy[i],
+            h->alpha_cd[i],h->divv[i],h->lap_vx[i],h->lap_vy[i]);
+        nrows++;
+    }
+    if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] write failed\n"); free(needed); exit(1); }
+    free(needed);
+
+    snprintf(path,sizeof(path),"face_input_meta_r%d_call%d.json",rank,call);
+    out=fopen(path,"wx");
+    if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
+    int varpress_w0=0;
+#ifdef GFS_VARPRESS_W0
+    varpress_w0=1;
+#endif
+    fprintf(out,"{\"capture_version\":%d,\"rank\":%d,\"call\":%d,\"all_inputs\":1,\"selected_ids\":0,\"rows\":%d,\"n_particles\":%d,\"n_total\":%d,\"av_mode\":%d,\"use_muscl\":%d,\"OoA\":%.17g,\"Courant\":%.17g,\"Gamma\":%.17g,\"alphavis\":%.17g,\"betavis\":%.17g,\"etavis\":%.17g,\"epsvis\":%.17g,\"nu_phys\":%.17g,\"prandtl\":%.17g,\"cd_amax\":%.17g,\"blend_theta\":%.17g,\"dtold\":%.17g,\"hyperv_alpha\":%.17g,\"hyperv_force_cap\":%.17g,\"phase1\":%d,\"laguerre_rot\":%d,\"face_charge\":%d,\"geom_fv\":%d,\"w2lin\":%d,\"thermal64\":0,\"var_geom_cfl\":0,\"var_geom_audit\":0,\"GFS_VARPRESS_W0\":%d}\n",
+        GFS_FACE_DUMP_CAPTURE_VERSION,rank,call,nrows,n_particles,n_total,params->av_mode,params->use_muscl,
+        params->OoA,params->Courant,params->Gamma,params->alphavis,params->betavis,
+        params->etavis,params->epsvis,params->nu_phys,params->prandtl,params->cd_amax,
+        params->blend_theta,params->dtold,params->hyperv_alpha,params->hyperv_force_cap,
+        params->phase1,params->laguerre_rot,params->face_charge,params->geom_fv,
+        params->w2lin,varpress_w0);
+    if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] metadata write failed\n"); exit(1); }
+    fprintf(stderr,"[FACE_INPUT] capture_version=" GFS_FACE_CAPTURE_STRINGIFY(GFS_FACE_DUMP_CAPTURE_VERSION)
+        " rank=%d call=%d mode=all ids=0 rows=%d file=face_input_r%d_call%d.tsv\n",
+        rank,call,nrows,rank,call);
+}
+
 extern "C"
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                int n_total, int mpi_rank,
@@ -1597,6 +1674,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaMemcpy(ctx->h_parts.y, ctx->d_parts.y,
             (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
+        gfs_dump_force_inputs(ctx,n_particles,n_total,mpi_rank,force_call,params);
 
         char path[128];
         snprintf(path, sizeof(path), "face_dump_r%d_call%d.tsv", mpi_rank, force_call);
@@ -1605,7 +1683,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             fprintf(stderr, "[FACE_DUMP] rank=%d could not open %s\n", mpi_rank, path);
             exit(1);
         }
-        fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\n");
+        fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\tkp_idx\tkm_idx\tid_kp\tid_km\n");
         long long nrows = 0;
         for (int i = 0; i < n_particles; i++) {
             for (int f = ctx->h_faces.face_offset[i];
@@ -1615,13 +1693,17 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                 double x0 = ctx->h_parts.x[i], y0 = ctx->h_parts.y[i];
                 double c1x = ctx->h_faces.c1x[f], c1y = ctx->h_faces.c1y[f];
                 double c2x = ctx->h_faces.c2x[f], c2y = ctx->h_faces.c2y[f];
-                fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
+                int kp=ctx->h_faces.kp_idx[f], km=ctx->h_faces.km_idx[f];
+                long long id_kp=(kp>=0 && kp<n_total)?ctx->h_parts.indx[kp]:-1;
+                long long id_km=(km>=0 && km<n_total)?ctx->h_parts.indx[km]:-1;
+                fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%d\t%d\t%lld\t%lld\n",
                     mpi_rank, force_call, i, j,
                     ctx->h_parts.indx[i], ctx->h_parts.indx[j],
                     ctx->h_faces.is_ghost[f],
                     h_pressure[f], h_udotds[f], h_work[f],
                     c2y-c1y, -(c2x-c1x),
-                    x0+c1x, y0+c1y, x0+c2x, y0+c2y);
+                    x0+c1x, y0+c1y, x0+c2x, y0+c2y,
+                    kp,km,id_kp,id_km);
                 nrows++;
             }
         }
