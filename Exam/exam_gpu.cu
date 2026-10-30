@@ -2182,6 +2182,9 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
         for (int f=ctx->h_faces.face_offset[i]; f<ctx->h_faces.face_offset[i+1]; f++) {
             int j=ctx->h_faces.neighbor_idx[f];
             if (j>=0 && j<n_total) needed[j]=1;
+            int kp=ctx->h_faces.kp_idx[f], km=ctx->h_faces.km_idx[f];
+            if (kp>=0 && kp<n_total) needed[kp]=1;
+            if (km>=0 && km<n_total) needed[km]=1;
         }
     }
     /* CUDA arrays contain the exact EOS/reconstruction inputs consumed by the
@@ -2229,12 +2232,12 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
 #ifdef GFS_VARPRESS_W0
     varpress_w0=1;
 #endif
-    fprintf(out,"{\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"n_particles\":%d,\"n_total\":%d,\"av_mode\":%d,\"use_muscl\":%d,\"OoA\":%.17g,\"Courant\":%.17g,\"Gamma\":%.17g,\"alphavis\":%.17g,\"betavis\":%.17g,\"etavis\":%.17g,\"epsvis\":%.17g,\"nu_phys\":%.17g,\"prandtl\":%.17g,\"cd_amax\":%.17g,\"blend_theta\":%.17g,\"dtold\":%.17g,\"hyperv_alpha\":%.17g,\"hyperv_force_cap\":%.17g,\"entropy_mode\":%d,\"K_floor\":%.17g,\"phase1\":%d,\"laguerre_rot\":%d,\"face_charge\":%d,\"geom_fv\":%d,\"w2lin\":%d,\"thermal64\":%d,\"var_geom_cfl\":%.17g,\"var_geom_audit\":%d,\"GFS_VARPRESS_W0\":%d}\n",
+    fprintf(out,"{\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"n_particles\":%d,\"n_total\":%d,\"av_mode\":%d,\"use_muscl\":%d,\"OoA\":%.17g,\"Courant\":%.17g,\"Gamma\":%.17g,\"alphavis\":%.17g,\"betavis\":%.17g,\"etavis\":%.17g,\"epsvis\":%.17g,\"nu_phys\":%.17g,\"prandtl\":%.17g,\"cd_amax\":%.17g,\"blend_theta\":%.17g,\"dtold\":%.17g,\"hyperv_alpha\":%.17g,\"hyperv_force_cap\":%.17g,\"phase1\":%d,\"laguerre_rot\":%d,\"face_charge\":%d,\"geom_fv\":%d,\"w2lin\":%d,\"thermal64\":%d,\"var_geom_cfl\":%.17g,\"var_geom_audit\":%d,\"GFS_VARPRESS_W0\":%d}\n",
         rank,call,all_inputs,nids,nrows,n_particles,n_total,params->av_mode,params->use_muscl,
         params->OoA,params->Courant,params->Gamma,params->alphavis,params->betavis,
         params->etavis,params->epsvis,params->nu_phys,params->prandtl,params->cd_amax,
         params->blend_theta,params->dtold,params->hyperv_alpha,params->hyperv_force_cap,
-        params->entropy_mode,params->K_floor,params->phase1,params->laguerre_rot,
+        params->phase1,params->laguerre_rot,
         params->face_charge,params->geom_fv,params->w2lin,thermal64,var_geom_cfl,
         var_geom_audit,varpress_w0);
     if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] meta write failed\n"); exit(1); }
@@ -2452,7 +2455,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             fprintf(stderr, "[FACE_DUMP] rank=%d could not open %s\n", mpi_rank, path);
             exit(1);
         }
-        fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\n");
+        fprintf(out, "rank\tcall\ti\tj\tid_i\tid_j\twall\tpstar\tudotds\twork\tdSx\tdSy\tx1\ty1\tx2\ty2\tkp_idx\tkm_idx\tid_kp\tid_km\n");
         /* Opt-in compact wall budget: avoid writing every interior face. */
         const char *wall_only_env = getenv("GFS_GPU_FACE_DUMP_WALL_ONLY");
         const int wall_only = wall_only_env && atoi(wall_only_env) > 0;
@@ -2467,14 +2470,18 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                 double x0 = ctx->h_parts.x[i], y0 = ctx->h_parts.y[i];
                 double c1x = ctx->h_faces.c1x[f], c1y = ctx->h_faces.c1y[f];
                 double c2x = ctx->h_faces.c2x[f], c2y = ctx->h_faces.c2y[f];
-                fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
+                int kp=ctx->h_faces.kp_idx[f], km=ctx->h_faces.km_idx[f];
+                long long id_kp=(kp>=0 && kp<n_total)?ctx->h_parts.indx[kp]:-1;
+                long long id_km=(km>=0 && km<n_total)?ctx->h_parts.indx[km]:-1;
+                fprintf(out, "%d\t%d\t%d\t%d\t%lld\t%lld\t%d\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%d\t%d\t%lld\t%lld\n",
                     mpi_rank, force_call, i, j,
                     ctx->h_parts.indx[i],
                     j <= -1000 ? (long long)j : ctx->h_parts.indx[j],
                     j <= -1000 ? GFS_FACE_FIXED_WALL : ctx->h_faces.boundary_kind[f],
                     h_pressure[f], h_udotds[f], h_work[f],
                     c2y-c1y, -(c2x-c1x),
-                    x0+c1x, y0+c1y, x0+c2x, y0+c2y);
+                    x0+c1x, y0+c1y, x0+c2x, y0+c2y,
+                    kp,km,id_kp,id_km);
                 nrows++;
             }
         }

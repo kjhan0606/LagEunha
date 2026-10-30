@@ -21,7 +21,7 @@ FIELDS = (
 PARAM_FIELDS = (
     "av_mode", "use_muscl", "OoA", "Courant", "Gamma", "alphavis", "betavis",
     "etavis", "epsvis", "nu_phys", "prandtl", "cd_amax", "blend_theta", "dtold",
-    "hyperv_alpha", "hyperv_force_cap", "entropy_mode", "K_floor", "phase1",
+    "hyperv_alpha", "hyperv_force_cap", "phase1",
     "laguerre_rot", "face_charge", "geom_fv", "w2lin", "thermal64",
     "var_geom_cfl", "var_geom_audit", "GFS_VARPRESS_W0",
 )

@@ -16,20 +16,28 @@ FIELDS = (
     "rank", "call", "id_i", "id_j", "wall", "pstar", "udotds", "work",
     "dSx", "dSy", "x1", "y1", "x2", "y2",
 )
+STENCIL_FIELDS = ("kp_idx", "km_idx", "id_kp", "id_km")
 
 
 def read_rows(paths):
     rows = []
+    stencil_schemas = set()
     for path in paths:
         with path.open(newline="") as stream:
             reader = csv.DictReader(stream, delimiter="\t")
             missing = set(FIELDS) - set(reader.fieldnames or ())
             if missing:
                 raise ValueError(f"{path}: missing columns {sorted(missing)}")
+            present_stencil = set(STENCIL_FIELDS) & set(reader.fieldnames or ())
+            if present_stencil and present_stencil != set(STENCIL_FIELDS):
+                raise ValueError(f"{path}: incomplete face-stencil metadata")
+            stencil_schemas.add(bool(present_stencil))
             for line, raw in enumerate(reader, start=2):
                 try:
                     row = {key: int(raw[key]) for key in ("rank", "call", "id_i", "id_j", "wall")}
                     row.update({key: float(raw[key]) for key in FIELDS[5:]})
+                    if present_stencil:
+                        row.update({key: int(raw[key]) for key in STENCIL_FIELDS})
                 except (TypeError, ValueError) as exc:
                     raise ValueError(f"{path}:{line}: invalid row") from exc
                 if not all(math.isfinite(row[key]) for key in FIELDS[5:]):
@@ -40,6 +48,8 @@ def read_rows(paths):
     calls = {row["call"] for row in rows}
     if len(calls) != 1:
         raise ValueError(f"mixed force-call numbers: {sorted(calls)}")
+    if len(stencil_schemas) > 1:
+        raise ValueError("mixed face-dump schemas: some ranks lack stencil metadata")
     return rows
 
 
@@ -96,10 +106,16 @@ def audit(rows, top):
         relation = "same_rank" if first["rank"] == second["rank"] else "rank_boundary"
         paired[relation].append(pair)
 
+    stencil_available = all(field in rows[0] for field in STENCIL_FIELDS)
     return {
         "force_call": rows[0]["call"],
         "ranks": sorted({row["rank"] for row in rows}),
         "face_rows": len(rows),
+        "stencil_metadata_available": stencil_available,
+        "faces_with_missing_stencil_neighbor": (
+            sum(row["kp_idx"] < 0 or row["km_idx"] < 0 for row in rows)
+            if stencil_available else None
+        ),
         "unique_interior_pairs": len(groups),
         "unpaired_wall_rows": unpaired_boundaries,
         "malformed_interior_pairs": malformed,
