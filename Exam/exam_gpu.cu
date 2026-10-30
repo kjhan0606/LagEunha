@@ -427,6 +427,11 @@ void getAccVoro2DBlend_kernel(
     double *__restrict__ ax_out, double *__restrict__ ay_out,
     float *__restrict__ die_out, float *__restrict__ dK_out,
     float *__restrict__ dt_out,
+    int *__restrict__ dt_limit_kind_out,
+    int *__restrict__ dt_limit_neighbor_out,
+    double *__restrict__ dt_limit_aux0_out,
+    double *__restrict__ dt_limit_aux1_out,
+    double *__restrict__ dt_limit_aux2_out,
     double *__restrict__ vsig_max_out,
     double *__restrict__ vsmoothx_out, double *__restrict__ vsmoothy_out,
     /* Optional per-face audit output, NULL in ordinary runs. */
@@ -448,6 +453,11 @@ void getAccVoro2DBlend_kernel(
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n_particles) return;
+    if (dt_limit_kind_out) dt_limit_kind_out[i] = 0;
+    if (dt_limit_neighbor_out) dt_limit_neighbor_out[i] = -1;
+    if (dt_limit_aux0_out) dt_limit_aux0_out[i] = 0.0;
+    if (dt_limit_aux1_out) dt_limit_aux1_out[i] = 0.0;
+    if (dt_limit_aux2_out) dt_limit_aux2_out[i] = 0.0;
 
     /* Load owner particle to registers */
     double ibp_x  = px[i],  ibp_y  = py[i];
@@ -1243,7 +1253,16 @@ void getAccVoro2DBlend_kernel(
         double heff = 0.25 * sqrt(ibp_volume);
         double dramp_cfl = jbp_is_ghost ? fmax(dramp, heff) : dramp;
         float dt_face = (float)(2.0 * Courant * dramp_cfl / vsig);
-        if (dt_face < my_dt) my_dt = dt_face;
+        if (dt_face < my_dt) {
+            my_dt = dt_face;
+            if (dt_limit_kind_out) {
+                dt_limit_kind_out[i] = 1;
+                dt_limit_neighbor_out[i] = j;
+                dt_limit_aux0_out[i] = dramp_cfl;
+                dt_limit_aux1_out[i] = vsig;
+                dt_limit_aux2_out[i] = facearea;
+            }
+        }
 
         /* Track vsig_max for CD10 */
         if (av_mode >= 1) {
@@ -1259,7 +1278,17 @@ void getAccVoro2DBlend_kernel(
      * of the normal acoustic signal speed. No force or heat is changed. */
     if (var_sweep_abs>0 && ibp_volume>0) {
         double rate=var_sweep_abs/ibp_volume;
-        if (var_geom_cfl>0) my_dt=fmin((double)my_dt,var_geom_cfl/rate);
+        if (var_geom_cfl>0) {
+            double dt_geom=var_geom_cfl/rate;
+            if (dt_limit_kind_out && dt_geom < (double)my_dt) {
+                my_dt=(float)dt_geom;
+                dt_limit_kind_out[i] = 2;
+                dt_limit_neighbor_out[i] = -1;
+                dt_limit_aux0_out[i] = rate;
+                dt_limit_aux1_out[i] = var_geom_cfl;
+                dt_limit_aux2_out[i] = ibp_volume;
+            } else if (!dt_limit_kind_out) my_dt=fmin((double)my_dt,dt_geom);
+        }
         if (var_geom_audit) {
             unsigned long long key=((unsigned long long)__float_as_uint((float)rate)<<32)
                                   |(unsigned int)i;
@@ -1277,7 +1306,16 @@ void getAccVoro2DBlend_kernel(
         double nu_eff = fmax(fmax(nu_phys, nu_cd_i), chi);
         if (nu_eff > 0) {
             float dt_visc = (float)(0.5 * h_i * h_i / nu_eff);
-            if (dt_visc < my_dt) my_dt = dt_visc;
+            if (dt_visc < my_dt) {
+                my_dt=dt_visc;
+                if (dt_limit_kind_out) {
+                    dt_limit_kind_out[i] = 3;
+                    dt_limit_neighbor_out[i] = -1;
+                    dt_limit_aux0_out[i] = nu_eff;
+                    dt_limit_aux1_out[i] = h_i;
+                    dt_limit_aux2_out[i] = 0.0;
+                }
+            }
         }
     }
 
@@ -1316,7 +1354,16 @@ void getAccVoro2DBlend_kernel(
             double amag = sqrt(amag2);
             double h_i = sqrt(ibp_volume);
             double dt_acc = ACC_CFL_FRAC * sqrt(h_i / amag);
-            if (dt_acc < (double)my_dt) my_dt = (float)dt_acc;
+            if (dt_acc < (double)my_dt) {
+                my_dt=(float)dt_acc;
+                if (dt_limit_kind_out) {
+                    dt_limit_kind_out[i] = 4;
+                    dt_limit_neighbor_out[i] = -1;
+                    dt_limit_aux0_out[i] = amag;
+                    dt_limit_aux1_out[i] = h_i;
+                    dt_limit_aux2_out[i] = 0.0;
+                }
+            }
         }
     }
 
@@ -1351,7 +1398,16 @@ void getAccVoro2DBlend_kernel(
             double K_eff = ibp_pressure / rho_pow_K;
             if (K_eff < DKCFL_KFLOOR) K_eff = DKCFL_KFLOOR;
             double dt_dK = DKCFL_FRAC * K_eff / dK_abs;
-            if (dt_dK < (double)my_dt) my_dt = (float)dt_dK;
+            if (dt_dK < (double)my_dt) {
+                my_dt=(float)dt_dK;
+                if (dt_limit_kind_out) {
+                    dt_limit_kind_out[i] = 5;
+                    dt_limit_neighbor_out[i] = -1;
+                    dt_limit_aux0_out[i] = dK_abs;
+                    dt_limit_aux1_out[i] = K_eff;
+                    dt_limit_aux2_out[i] = 0.0;
+                }
+            }
         }
     }
 
@@ -1380,11 +1436,13 @@ void getAccVoro2DBlend_kernel(
  * ================================================================ */
 
 /* Helper: allocate pinned host + device arrays for SoA */
-static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n)
+static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n,
+                               int dt_limit_diag_enabled)
 {
     size_t sd = n * sizeof(double);
     size_t sf = n * sizeof(float);
     size_t sl = n * sizeof(long long);
+    size_t si = n * sizeof(int);
 
 #define ALLOC_PAIR_D(field) \
     CUDA_CHECK(cudaMallocHost(&h->field, sd)); \
@@ -1392,6 +1450,9 @@ static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n)
 #define ALLOC_PAIR_F(field) \
     CUDA_CHECK(cudaMallocHost(&h->field, sf)); \
     CUDA_CHECK(cudaMalloc(&d->field, sf))
+#define ALLOC_PAIR_I(field) \
+    CUDA_CHECK(cudaMallocHost(&h->field, si)); \
+    CUDA_CHECK(cudaMalloc(&d->field, si))
 
     ALLOC_PAIR_D(x);       ALLOC_PAIR_D(y);
     ALLOC_PAIR_D(vx);      ALLOC_PAIR_D(vy);
@@ -1417,12 +1478,18 @@ static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n)
 
     ALLOC_PAIR_D(ax_out);   ALLOC_PAIR_D(ay_out);
     ALLOC_PAIR_F(die_out);  ALLOC_PAIR_F(dK_out);  ALLOC_PAIR_F(dt_out);
+    if (dt_limit_diag_enabled) {
+        ALLOC_PAIR_I(dt_limit_kind_out); ALLOC_PAIR_I(dt_limit_neighbor_out);
+        ALLOC_PAIR_D(dt_limit_aux0_out); ALLOC_PAIR_D(dt_limit_aux1_out);
+        ALLOC_PAIR_D(dt_limit_aux2_out);
+    }
     ALLOC_PAIR_D(vsig_max_out);
     ALLOC_PAIR_D(vsmoothx_out); ALLOC_PAIR_D(vsmoothy_out);
     ALLOC_PAIR_D(lap_vx);       ALLOC_PAIR_D(lap_vy);
 
 #undef ALLOC_PAIR_D
 #undef ALLOC_PAIR_F
+#undef ALLOC_PAIR_I
 }
 
 static void free_particle_soa(ParticleSoA *h, ParticleSoA *d)
@@ -1452,6 +1519,9 @@ static void free_particle_soa(ParticleSoA *h, ParticleSoA *d)
 
     FREE_PAIR(ax_out);   FREE_PAIR(ay_out);
     FREE_PAIR(die_out);  FREE_PAIR(dK_out);  FREE_PAIR(dt_out);
+    FREE_PAIR(dt_limit_kind_out); FREE_PAIR(dt_limit_neighbor_out);
+    FREE_PAIR(dt_limit_aux0_out); FREE_PAIR(dt_limit_aux1_out);
+    FREE_PAIR(dt_limit_aux2_out);
     FREE_PAIR(vsig_max_out);
     FREE_PAIR(vsmoothx_out); FREE_PAIR(vsmoothy_out);
     FREE_PAIR(lap_vx);       FREE_PAIR(lap_vy);
@@ -1505,6 +1575,8 @@ void gpu_init(GPUContext *ctx, int max_particles, int max_faces, int mpi_rank)
     memset(ctx, 0, sizeof(GPUContext));
     ctx->max_particles = max_particles;
     ctx->max_faces     = max_faces;
+    const char *dt_diag_env=getenv("GFS_DT_LIMIT_DIAG");
+    ctx->dt_limit_diag_enabled=dt_diag_env && atoi(dt_diag_env)>0;
 
     /* --- Select GPU device: rank % n_devices --- */
     {
@@ -1524,7 +1596,8 @@ void gpu_init(GPUContext *ctx, int max_particles, int max_faces, int mpi_rank)
                 prop.totalGlobalMem / 1048576.0);
     }
 
-    alloc_particle_soa(&ctx->h_parts, &ctx->d_parts, max_particles);
+    alloc_particle_soa(&ctx->h_parts, &ctx->d_parts, max_particles,
+                       ctx->dt_limit_diag_enabled);
     alloc_face_csr(&ctx->h_faces, &ctx->d_faces, max_particles, max_faces);
     CUDA_CHECK(cudaMalloc(&ctx->d_tess_den_input, max_particles * sizeof(float)));
 
@@ -1554,6 +1627,8 @@ void gpu_init(GPUContext *ctx, int max_particles, int max_faces, int mpi_rank)
     ctx->initialized = 1;
     fprintf(stderr, "[GPU] Initialized: max_particles=%d, max_faces=%d\n",
             max_particles, max_faces);
+    if (ctx->dt_limit_diag_enabled)
+        fprintf(stderr, "[DT_LIMIT_DIAG] provenance arrays enabled\n");
 }
 
 extern "C"
@@ -1669,6 +1744,26 @@ void gpu_download_results(GPUContext *ctx, int n)
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.vsmoothy_out, ctx->d_parts.vsmoothy_out, sd, cudaMemcpyDeviceToHost, s));
     if (gfs_thermal64_requested())
         CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.E_inv_yx, ctx->d_parts.E_inv_yx, sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaStreamSynchronize(s));
+}
+
+extern "C"
+void gpu_download_dt_limit_diagnostics(GPUContext *ctx, int n)
+{
+    if (!ctx->dt_limit_diag_enabled) return;
+    cudaStream_t s = (cudaStream_t)ctx->stream;
+    size_t si = (size_t)n * sizeof(int);
+    size_t sd = (size_t)n * sizeof(double);
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dt_limit_kind_out,
+        ctx->d_parts.dt_limit_kind_out, si, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dt_limit_neighbor_out,
+        ctx->d_parts.dt_limit_neighbor_out, si, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dt_limit_aux0_out,
+        ctx->d_parts.dt_limit_aux0_out, sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dt_limit_aux1_out,
+        ctx->d_parts.dt_limit_aux1_out, sd, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.dt_limit_aux2_out,
+        ctx->d_parts.dt_limit_aux2_out, sd, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaStreamSynchronize(s));
 }
 
@@ -2232,6 +2327,11 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         ctx->d_parts.ax_out, ctx->d_parts.ay_out,
         ctx->d_parts.die_out, ctx->d_parts.dK_out,
         ctx->d_parts.dt_out,
+        ctx->d_parts.dt_limit_kind_out,
+        ctx->d_parts.dt_limit_neighbor_out,
+        ctx->d_parts.dt_limit_aux0_out,
+        ctx->d_parts.dt_limit_aux1_out,
+        ctx->d_parts.dt_limit_aux2_out,
         ctx->d_parts.vsig_max_out,
         ctx->d_parts.vsmoothx_out, ctx->d_parts.vsmoothy_out,
         d_audit_work, d_audit_pressure, d_audit_udotds,

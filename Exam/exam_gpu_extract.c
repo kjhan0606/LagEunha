@@ -679,6 +679,91 @@ GPUContext *gpu_get_context(void) { return &g_gpu_ctx; }
 
 static int gpu_call_count = 0;
 
+static void gfs_dt_limit_diag_report(GPUContext *ctx, int nbp, int n_total,
+    MPI_Comm comm, int rank, int call, double global_dt)
+{
+    static int config_read=0, reported=0, last_call=-1;
+    static double below=1.0e-6, abort_below=0.0;
+    static int every=64;
+    if (!ctx->dt_limit_diag_enabled) return;
+    if (!config_read) {
+        const char *s=getenv("GFS_DT_LIMIT_DIAG_BELOW");
+        if (s && s[0]) {
+            char *end=NULL; below=strtod(s,&end);
+            if (end==s || *end || !isfinite(below) || below<=0) {
+                fprintf(stderr,"[DT_LIMIT_DIAG] invalid GFS_DT_LIMIT_DIAG_BELOW\n");
+                MPI_Abort(comm,93);
+            }
+        }
+        s=getenv("GFS_DT_LIMIT_DIAG_EVERY");
+        if (s && s[0]) {
+            char *end=NULL; long v=strtol(s,&end,10);
+            if (end==s || *end || v<1 || v>1000000) {
+                fprintf(stderr,"[DT_LIMIT_DIAG] invalid GFS_DT_LIMIT_DIAG_EVERY\n");
+                MPI_Abort(comm,93);
+            }
+            every=(int)v;
+        }
+        s=getenv("GFS_DT_LIMIT_DIAG_ABORT_BELOW");
+        if (s && s[0]) {
+            char *end=NULL; abort_below=strtod(s,&end);
+            if (end==s || *end || !isfinite(abort_below) || abort_below<0) {
+                fprintf(stderr,"[DT_LIMIT_DIAG] invalid GFS_DT_LIMIT_DIAG_ABORT_BELOW\n");
+                MPI_Abort(comm,93);
+            }
+        }
+        fprintf(stderr,"[DT_LIMIT_DIAG] below=%.9e every=%d abort_below=%.9e\n",
+            below,every,abort_below);
+        config_read=1;
+    }
+
+    float local_min=INFINITY;
+    int owner=-1;
+    for (int i=0;i<nbp;i++) {
+        float dt=ctx->h_parts.dt_out[i];
+        if (isfinite(dt) && dt<local_min) { local_min=dt; owner=i; }
+    }
+    int abort_now=abort_below>0 && global_dt<=abort_below;
+    int local_below=owner>=0 && (double)local_min<=below;
+    int should_report=local_below && (abort_now || !reported || call-last_call>=every);
+    if (should_report) {
+        gpu_download_dt_limit_diagnostics(ctx,nbp);
+        int kind=ctx->h_parts.dt_limit_kind_out[owner];
+        int neighbor=ctx->h_parts.dt_limit_neighbor_out[owner];
+        long long id_i=ctx->h_parts.indx[owner];
+        long long id_j=(neighbor>=0 && neighbor<n_total) ? ctx->h_parts.indx[neighbor] : -1;
+        int has_neighbor=neighbor>=0 && neighbor<n_total;
+        const char *name=kind==1 ? "face" : kind==2 ? "sweep" :
+            kind==3 ? "viscous" : kind==4 ? "accel" : kind==5 ? "entropy" : "unknown";
+        fprintf(stderr,"[DT_LIMIT] rank=%d call=%d global_dt=%.9e local_dt=%.9e kind=%s id_i=%lld id_j=%lld "
+            "pos_i=(%.9e,%.9e) vel_i=(%.9e,%.9e) pos_j=(%.9e,%.9e) vel_j=(%.9e,%.9e) "
+            "V=%.9e aux=(%.9e,%.9e,%.9e)\n",
+            rank,call,global_dt,(double)local_min,name,id_i,id_j,
+            ctx->h_parts.x[owner],ctx->h_parts.y[owner],
+            ctx->h_parts.vx[owner],ctx->h_parts.vy[owner],
+            has_neighbor ? ctx->h_parts.x[neighbor] : NAN,
+            has_neighbor ? ctx->h_parts.y[neighbor] : NAN,
+            has_neighbor ? ctx->h_parts.vx[neighbor] : NAN,
+            has_neighbor ? ctx->h_parts.vy[neighbor] : NAN,
+            (double)ctx->h_parts.volume[owner],
+            ctx->h_parts.dt_limit_aux0_out[owner],
+            ctx->h_parts.dt_limit_aux1_out[owner],
+            ctx->h_parts.dt_limit_aux2_out[owner]);
+        fflush(stderr);
+        reported=1;
+        last_call=call;
+    }
+    if (abort_now) {
+        MPI_Barrier(comm);
+        if (rank==0) {
+            fprintf(stderr,"[DT_LIMIT_ABORT] call=%d global_dt=%.9e threshold=%.9e\n",
+                call,global_dt,abort_below);
+            fflush(stderr);
+        }
+        MPI_Abort(comm,94);
+    }
+}
+
 double getAccVoro2DBlend_GPU(
     SimParameters *simpar,
     postype xmin, postype ymin, postype xmax, postype ymax,
@@ -923,6 +1008,9 @@ double getAccVoro2DBlend_GPU(
     double Dtime;
     MPI_Allreduce(&Dtime_local, &Dtime, 1, MPI_DOUBLE, MPI_MIN,
                   MPI_COMM(simpar));
+
+    gfs_dt_limit_diag_report(&g_gpu_ctx,nbp,n_total,MPI_COMM(simpar),
+        MYID(simpar),gpu_call_count,Dtime);
 
     double t7_done = MPI_Wtime();
 

@@ -104,6 +104,12 @@ typedef struct {
     float  *die_out;
     float  *dK_out;                         /* entropy rate (always computed; used iff entropy_mode==1) */
     float  *dt_out;
+    /* Optional local CFL limiter provenance, allocated only when
+     * GFS_DT_LIMIT_DIAG=1. kind: 1 face, 2 swept-volume, 3 viscous,
+     * 4 acceleration, 5 entropy-rate. For kind 1, aux=(dramp,vsig,Aface);
+     * kind 2, aux=(sweep_rate,cfl_coefficient,volume). */
+    int    *dt_limit_kind_out, *dt_limit_neighbor_out;
+    double *dt_limit_aux0_out, *dt_limit_aux1_out, *dt_limit_aux2_out;
     double *vsig_max_out;                   /* for CD10 */
 
     /* XSPH (Monaghan 1989) face-area-weighted velocity offset
@@ -185,6 +191,7 @@ typedef struct {
     float *h_tree_size;
 
     int initialized;
+    int dt_limit_diag_enabled;
     /* Immutable input for neighbor density gradients in the tessellation
      * kernel. d_parts.den is also an output of that kernel. */
     float *d_tess_den_input;
@@ -263,6 +270,7 @@ void gpu_free(GPUContext *ctx);
 void gpu_upload_particles(GPUContext *ctx, int n_total, int has_stress);
 void gpu_upload_faces(GPUContext *ctx, int n_particles, int n_faces);
 void gpu_download_results(GPUContext *ctx, int n_particles);
+void gpu_download_dt_limit_diagnostics(GPUContext *ctx, int n_particles);
 /* W0/MPI1 periodic aliases only; 0 requests the ordinary host refresh. */
 int gpu_refresh_local_periodic_fields(GPUContext *ctx, int nbp, int n_total, double boxsize);
 
