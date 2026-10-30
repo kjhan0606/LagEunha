@@ -552,15 +552,33 @@ static int gfs_vaud_on(void){
 static size_t vaud_cap = 0;
 static double *vaud_rate = NULL, *vaud_book = NULL, *vaud_vprev = NULL;
 static char *vaud_have = NULL;
-static void vaud_ensure(size_t id){
-	if(id < vaud_cap) return;
+static int vaud_ensure(size_t id){
+	if(id < vaud_cap) return 1;
+	/* MAX_INDEX is the ghost/sentinel ID, never a material particle index. */
+	if(id >= (size_t)MAX_INDEX) return 0;
+	size_t max_size = (size_t)-1;
+	if(id > max_size - id/4 - 64) return 0;
 	size_t nc = id + id/4 + 64, k;
-	vaud_rate  = (double*)realloc(vaud_rate,  nc*sizeof(double));
-	vaud_book  = (double*)realloc(vaud_book,  nc*sizeof(double));
-	vaud_vprev = (double*)realloc(vaud_vprev, nc*sizeof(double));
-	vaud_have  = (char*)realloc(vaud_have, nc);
-	for(k=vaud_cap;k<nc;k++){ vaud_rate[k] = vaud_book[k] = vaud_vprev[k] = 0; vaud_have[k] = 0; }
+	if(nc > max_size/sizeof(double)) return 0;
+	double *rate = (double*)malloc(nc*sizeof(double));
+	double *book = (double*)malloc(nc*sizeof(double));
+	double *vprev = (double*)malloc(nc*sizeof(double));
+	char *have = (char*)malloc(nc);
+	if(!rate || !book || !vprev || !have){
+		free(rate); free(book); free(vprev); free(have);
+		return 0;
+	}
+	for(k=0;k<vaud_cap;k++){
+		rate[k]=vaud_rate[k]; book[k]=vaud_book[k];
+		vprev[k]=vaud_vprev[k]; have[k]=vaud_have[k];
+	}
+	for(k=vaud_cap;k<nc;k++){
+		rate[k]=book[k]=vprev[k]=0; have[k]=0;
+	}
+	free(vaud_rate); free(vaud_book); free(vaud_vprev); free(vaud_have);
+	vaud_rate=rate; vaud_book=book; vaud_vprev=vprev; vaud_have=have;
 	vaud_cap = nc;
+	return 1;
 }
 
 #ifdef USE_CUDA
@@ -5686,7 +5704,11 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 			size_t id = (size_t)PINDX(bp+ii);
 			if(id > max_id) max_id = id;
 		}
-		vaud_ensure(max_id);
+		if(!vaud_ensure(max_id)){
+			fprintf(stderr,"[VAUD] invalid particle index or allocation failure (max_id=%zu)\n", max_id);
+			MPI_Abort(MPI_COMM(simpar), 97);
+			return Dtime;
+		}
 		for(int ii=0; ii<nbp; ii++) vaud_rate[(size_t)PINDX(bp+ii)] = 0;
 	}
 	if(sedov_lagvol_on() && sedov_phase1_on() && use_muscl){
@@ -10880,7 +10902,11 @@ static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp
 	double ra = 0, vs = 0, pw = 0, pws = 0, wb = 0; int i, nres = 0;
 	size_t max_id = 0;
 	for(i=0;i<np;i++){ size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i)); if(id > max_id) max_id = id; }
-	vaud_ensure(max_id);
+	if(!vaud_ensure(max_id)){
+		fprintf(stderr,"[VAUD] invalid particle index or allocation failure while closing step (max_id=%zu)\n", max_id);
+		MPI_Abort(MPI_COMM(simpar), 97);
+		return;
+	}
 	for(i=0;i<np;i++){
 		size_t id = (size_t)PINDX((treevorork4particletype*)(sbp+i));
 		double V = (double)sbp[i].volume;
