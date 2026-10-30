@@ -11011,6 +11011,18 @@ gfs_rk4_trial_restart:
     }
 #endif
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	/* Resolve process-constant settings on this rank's calling thread before
+	 * entering the per-cell OpenMP loops.  sedov_phase1_on() and kepler_accel()
+	 * use legacy non-atomic first-call caches. */
+	if(VORO_NP(simpar) > 0){
+		postype warm_gx = 0, warm_gy = 0;
+		(void)sedov_phase1_on();
+		(void)gfs_thermal64_requested();
+		kepler_accel(sbp[0].x, sbp[0].y, &warm_gx, &warm_gy);
+	}
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k1x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k1y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
@@ -11032,6 +11044,9 @@ gfs_rk4_trial_restart:
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(1.0/6.0));
 
 	/* === K2 evaluation === */
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].x  += sbp[i].rk4.k1x*0.5;
 		sbp[i].y  += sbp[i].rk4.k1y*0.5;
@@ -11108,6 +11123,9 @@ gfs_rk4_trial_restart:
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k2_rhs",Dtime,1,&_t_stage_diag);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k2x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k2y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
@@ -11129,6 +11147,9 @@ gfs_rk4_trial_restart:
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(2.0/6.0));
 
 	/* === K3 evaluation === */
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].x  += (sbp[i].rk4.k2x -sbp[i].rk4.k1x )*0.5;
 		sbp[i].y  += (sbp[i].rk4.k2y -sbp[i].rk4.k1y )*0.5;
@@ -11205,6 +11226,9 @@ gfs_rk4_trial_restart:
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k3_rhs",Dtime,1,&_t_stage_diag);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k3x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k3y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
@@ -11226,6 +11250,9 @@ gfs_rk4_trial_restart:
 	if(gfs_vaud_on()) vaud_stage(sbp, VORO_NP(simpar), Dtime*(2.0/6.0));
 
 	/* === K4 evaluation === */
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].x  += sbp[i].rk4.k3x  - sbp[i].rk4.k2x*0.5;
 		sbp[i].y  += sbp[i].rk4.k3y  - sbp[i].rk4.k2y*0.5;
@@ -11302,6 +11329,9 @@ gfs_rk4_trial_restart:
 #endif
 	gfs_rk4_stage_diagnostic_profiled(simpar,"k4_rhs",Dtime,1,&_t_stage_diag);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].rk4.k4x  = (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x)*Dtime;
 		sbp[i].rk4.k4y  = (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y)*Dtime;
@@ -11324,6 +11354,9 @@ gfs_rk4_trial_restart:
 	/* The K4 undo arithmetic belongs to the following untracked gap. */
 
 	/* === Undo K4 shift and prepare for final combination === */
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		sbp[i].x  -= sbp[i].rk4.k3x;
 		sbp[i].y  -= sbp[i].rk4.k3y;
