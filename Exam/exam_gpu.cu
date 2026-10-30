@@ -404,7 +404,7 @@ void getAccVoro2DBlend_kernel(
     const double *__restrict__ c2x, const double *__restrict__ c2y,
     const int *__restrict__ neighbor_idx,
     const int *__restrict__ kp_idx, const int *__restrict__ km_idx,
-    const int *__restrict__ is_ghost,
+    const int *__restrict__ boundary_kind,
     /* Particle SoA — read */
     const double *__restrict__ px, const double *__restrict__ py,
     const double *__restrict__ pvx, const double *__restrict__ pvy,
@@ -531,7 +531,14 @@ void getAccVoro2DBlend_kernel(
         }
         if (j < 0) continue;
 
-        int jbp_is_ghost = is_ghost[f];
+        int jbp_face_kind = boundary_kind[f];
+        if (jbp_face_kind == GFS_FACE_VACUUM) {
+            /* Fail closed until vacuum geometry, ALE flux, and GCL closure
+             * are integrated together. Never route vacuum through wall HLLC. */
+            ax_out[i] = NAN; ay_out[i] = NAN; die_out[i] = NAN; dt_out[i] = NAN;
+            return;
+        }
+        int jbp_is_ghost = (jbp_face_kind != GFS_FACE_INTERIOR);
 #ifdef GFS_VARPRESS_W0
         /* This experimental variational branch is defined only for a
          * smooth, unweighted, interior material cell. Fail visibly if an
@@ -1459,6 +1466,7 @@ static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n,
     ALLOC_PAIR_D(x);       ALLOC_PAIR_D(y);
     ALLOC_PAIR_D(vx);      ALLOC_PAIR_D(vy);
     ALLOC_PAIR_D(mass);
+    ALLOC_PAIR_I(kind);
     /* indx for ghost detection */
     CUDA_CHECK(cudaMallocHost(&h->indx, sl));
     CUDA_CHECK(cudaMalloc(&d->indx, sl));
@@ -1503,6 +1511,7 @@ static void free_particle_soa(ParticleSoA *h, ParticleSoA *d)
     FREE_PAIR(x);       FREE_PAIR(y);
     FREE_PAIR(vx);      FREE_PAIR(vy);
     FREE_PAIR(mass);
+    FREE_PAIR(kind);
     FREE_PAIR(indx);
     FREE_PAIR(den);      FREE_PAIR(pressure);
     FREE_PAIR(csound);   FREE_PAIR(volume);
@@ -1549,7 +1558,7 @@ static void alloc_face_csr(FaceCSR *h, FaceCSR *d, int max_p, int max_f)
     ALLOC_F_D(c2x);  ALLOC_F_D(c2y);
     ALLOC_F_I(neighbor_idx);
     ALLOC_F_I(kp_idx);  ALLOC_F_I(km_idx);
-    ALLOC_F_I(is_ghost);
+    ALLOC_F_I(boundary_kind);
 
 #undef ALLOC_F_D
 #undef ALLOC_F_I
@@ -1566,7 +1575,7 @@ static void free_face_csr(FaceCSR *h, FaceCSR *d)
     FREE_CSR(c2x);  FREE_CSR(c2y);
     FREE_CSR(neighbor_idx);
     FREE_CSR(kp_idx);  FREE_CSR(km_idx);
-    FREE_CSR(is_ghost);
+    FREE_CSR(boundary_kind);
 
 #undef FREE_CSR
 }
@@ -1664,12 +1673,14 @@ void gpu_upload_particles(GPUContext *ctx, int n, int has_stress)
     size_t sd = n * sizeof(double);
     size_t sf = n * sizeof(float);
     size_t sl = n * sizeof(long long);
+    size_t si = n * sizeof(int);
 
 #define UP_D(field) CUDA_CHECK(cudaMemcpyAsync(ctx->d_parts.field, ctx->h_parts.field, sd, cudaMemcpyHostToDevice, s))
 #define UP_F(field) CUDA_CHECK(cudaMemcpyAsync(ctx->d_parts.field, ctx->h_parts.field, sf, cudaMemcpyHostToDevice, s))
 
     UP_D(x);  UP_D(y);  UP_D(vx);  UP_D(vy);  UP_D(mass);
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_parts.indx, ctx->h_parts.indx, sl, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_parts.kind, ctx->h_parts.kind, si, cudaMemcpyHostToDevice, s));
     UP_F(den);  UP_F(pressure);  UP_F(csound);  UP_F(volume);
     UP_F(ie);  UP_F(w2);  UP_F(w2old);
 
@@ -1705,13 +1716,13 @@ void gpu_upload_faces(GPUContext *ctx, int n_particles, int n_faces)
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_faces.neighbor_idx, ctx->h_faces.neighbor_idx, si, cudaMemcpyHostToDevice, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_faces.kp_idx, ctx->h_faces.kp_idx, si, cudaMemcpyHostToDevice, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_faces.km_idx, ctx->h_faces.km_idx, si, cudaMemcpyHostToDevice, s));
-    CUDA_CHECK(cudaMemcpyAsync(ctx->d_faces.is_ghost, ctx->h_faces.is_ghost, si, cudaMemcpyHostToDevice, s));
+    CUDA_CHECK(cudaMemcpyAsync(ctx->d_faces.boundary_kind, ctx->h_faces.boundary_kind, si, cudaMemcpyHostToDevice, s));
 }
 
 extern "C"
 void gpu_download_face_csr(GPUContext *ctx, int n_particles, int n_faces,
     int *h_face_offset, double *h_c1x, double *h_c1y, double *h_c2x, double *h_c2y,
-    int *h_neighbor_idx, int *h_kp_idx, int *h_km_idx, int *h_is_ghost)
+    int *h_neighbor_idx, int *h_kp_idx, int *h_km_idx, int *h_boundary_kind)
 {
     cudaStream_t s = (cudaStream_t)ctx->stream;
     size_t si = n_faces * sizeof(int);
@@ -1725,7 +1736,7 @@ void gpu_download_face_csr(GPUContext *ctx, int n_particles, int n_faces,
     CUDA_CHECK(cudaMemcpyAsync(h_neighbor_idx, ctx->d_faces.neighbor_idx, si, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(h_kp_idx, ctx->d_faces.kp_idx, si, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaMemcpyAsync(h_km_idx, ctx->d_faces.km_idx, si, cudaMemcpyDeviceToHost, s));
-    CUDA_CHECK(cudaMemcpyAsync(h_is_ghost, ctx->d_faces.is_ghost, si, cudaMemcpyDeviceToHost, s));
+    CUDA_CHECK(cudaMemcpyAsync(h_boundary_kind, ctx->d_faces.boundary_kind, si, cudaMemcpyDeviceToHost, s));
     CUDA_CHECK(cudaStreamSynchronize(s));
 }
 
@@ -2308,7 +2319,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
         ctx->d_faces.c2x, ctx->d_faces.c2y,
         ctx->d_faces.neighbor_idx,
         ctx->d_faces.kp_idx, ctx->d_faces.km_idx,
-        ctx->d_faces.is_ghost,
+        ctx->d_faces.boundary_kind,
         /* Particle SoA */
         ctx->d_parts.x, ctx->d_parts.y,
         ctx->d_parts.vx, ctx->d_parts.vy,
@@ -2392,7 +2403,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             ctx->h_faces.c2x, ctx->h_faces.c2y,
             ctx->h_faces.neighbor_idx,
             ctx->h_faces.kp_idx, ctx->h_faces.km_idx,
-            ctx->h_faces.is_ghost);
+            ctx->h_faces.boundary_kind);
         CUDA_CHECK(cudaMemcpy(ctx->h_parts.indx, ctx->d_parts.indx,
             (size_t)n_total * sizeof(long long), cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaMemcpy(ctx->h_parts.x, ctx->d_parts.x,
@@ -2435,7 +2446,7 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                     mpi_rank, force_call, i, j,
                     ctx->h_parts.indx[i],
                     j <= -1000 ? (long long)j : ctx->h_parts.indx[j],
-                    j <= -1000 ? 2 : ctx->h_faces.is_ghost[f],
+                    j <= -1000 ? GFS_FACE_FIXED_WALL : ctx->h_faces.boundary_kind[f],
                     h_pressure[f], h_udotds[f], h_work[f],
                     c2y-c1y, -(c2x-c1x),
                     x0+c1x, y0+c1y, x0+c2x, y0+c2y);
@@ -3663,13 +3674,13 @@ __global__
 void scatter_faces_kernel(
     const PolygonOut *__restrict__ polygons,
     const int *__restrict__ face_offset,
-    const long long *__restrict__ pindx,
     /* FaceCSR output arrays */
     double *__restrict__ f_c1x, double *__restrict__ f_c1y,
     double *__restrict__ f_c2x, double *__restrict__ f_c2y,
     int *__restrict__ f_neighbor_idx,
     int *__restrict__ f_kp_idx, int *__restrict__ f_km_idx,
-    int *__restrict__ f_is_ghost,
+    int *__restrict__ f_boundary_kind,
+    const int *__restrict__ particle_kind,
     int nbp, int omit_zero_edges)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -3701,7 +3712,11 @@ void scatter_faces_kernel(
         f_kp_idx[dst] = (kp >= 0) ? kp : -1;
         f_km_idx[dst] = (km >= 0) ? km : -1;
 
-        f_is_ghost[dst] = (j_neigh >= 0 && pindx[j_neigh] == MAX_INDEX_GPU) ? 1 : 0;
+        f_boundary_kind[dst] = j_neigh <= -1000
+            ? GFS_FACE_FIXED_WALL
+            : (j_neigh >= 0
+                ? gfs_face_kind_from_particle_kind(particle_kind[j_neigh])
+                : GFS_FACE_INTERIOR);
         local_f++;
     }
 }
@@ -3904,12 +3919,13 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     if (tess_profile) CUDA_CHECK(cudaEventRecord(tess_events[4], s));
     /* Kernel C: Scatter faces → FaceCSR */
     scatter_faces_kernel<<<gridSize, blockSize, 0, s>>>(
-        ctx->d_polygons, ctx->d_face_offset, ctx->d_parts.indx,
+        ctx->d_polygons, ctx->d_face_offset,
         ctx->d_faces.c1x, ctx->d_faces.c1y,
         ctx->d_faces.c2x, ctx->d_faces.c2y,
         ctx->d_faces.neighbor_idx,
         ctx->d_faces.kp_idx, ctx->d_faces.km_idx,
-        ctx->d_faces.is_ghost,
+        ctx->d_faces.boundary_kind,
+        ctx->d_parts.kind,
         nbp, raw_geometry >= 2);
     CUDA_CHECK(cudaGetLastError());
 

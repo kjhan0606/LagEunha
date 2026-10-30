@@ -4,6 +4,7 @@
 #ifdef USE_CUDA
 
 #include <stddef.h>
+#include "gfs_boundary_kind.h"
 
 /* ================================================================
  *  GPU Data Structures for Voronoi Force Loop + GPU Tessellation
@@ -64,8 +65,8 @@ typedef struct {
     int *kp_idx;            /* (tmp->upperlink)->upperrelated neighbor index (-1 if invalid) */
     int *km_idx;            /* tmp->lowerrelated neighbor index (-1 if invalid) */
 
-    /* Ghost flag: 1 = wall mirror (PINDX == MAX_INDEX) */
-    int *is_ghost;
+    /* GfsFaceKind: distinguishes material, mirror, vacuum, and fixed-wall faces. */
+    int *boundary_kind;
 } FaceCSR;
 
 /* ---- Structure-of-Arrays particle layout for GPU ---- */
@@ -79,6 +80,8 @@ typedef struct {
 
     /* Particle index for ghost detection (PINDX) */
     long long *indx;
+    /* GfsParticleKind; padding ghosts do not all have the same physics. */
+    int *kind;
 
     /* VoroQ fields (always float in CPU struct) */
     float *den, *pressure, *csound, *volume;
@@ -334,7 +337,7 @@ void gpu_fused_begin(int nbp, int npad, size_t p_size, int nthreads,
                      const char *real_base, const char *pad_base);
 void gpu_fused_add_face(int tid, int owner_idx,
     double c1x, double c1y, double c2x, double c2y,
-    int neighbor_idx, int kp_idx, int km_idx, int is_ghost);
+    int neighbor_idx, int kp_idx, int km_idx, int boundary_kind);
 void gpu_fused_end(void);
 int  gpu_fused_ready(void);
 
@@ -345,7 +348,7 @@ int gpu_ptr_to_soa_index(const void *bp,
 /* --- Download GPU face CSR to host for comparison --- */
 void gpu_download_face_csr(GPUContext *ctx, int n_particles, int n_faces,
     int *h_face_offset, double *h_c1x, double *h_c1y, double *h_c2x, double *h_c2y,
-    int *h_neighbor_idx, int *h_kp_idx, int *h_km_idx, int *h_is_ghost);
+    int *h_neighbor_idx, int *h_kp_idx, int *h_km_idx, int *h_boundary_kind);
 
 /* --- GPU nearest-neighbor (replaces det2d_dpqRK4) --- */
 void gpu_launch_nearest_neighbor(GPUContext *ctx, int n_particles, int n_total,

@@ -3305,7 +3305,7 @@ void updateDenW2Pressure2DBlend(
 		/* Allocate host buffers for GPU face CSR */
 		int *_gf_offset = NULL;
 		double *_gf_c1x=NULL, *_gf_c1y=NULL, *_gf_c2x=NULL, *_gf_c2y=NULL;
-		int *_gf_neigh=NULL, *_gf_kp=NULL, *_gf_km=NULL, *_gf_ghost=NULL;
+		int *_gf_neigh=NULL, *_gf_kp=NULL, *_gf_km=NULL, *_gf_kind=NULL;
 
 		if (_face_cmp_call <= 2 && MYID(simpar) == 0) {
 			_gf_offset = (int*)malloc((nbp+1)*sizeof(int));
@@ -3316,10 +3316,10 @@ void updateDenW2Pressure2DBlend(
 			_gf_neigh = (int*)malloc(_fc_nfaces*sizeof(int));
 			_gf_kp = (int*)malloc(_fc_nfaces*sizeof(int));
 			_gf_km = (int*)malloc(_fc_nfaces*sizeof(int));
-			_gf_ghost = (int*)malloc(_fc_nfaces*sizeof(int));
+			_gf_kind = (int*)malloc(_fc_nfaces*sizeof(int));
 			gpu_download_face_csr(_fcctx, nbp, _fc_nfaces,
 				_gf_offset, _gf_c1x, _gf_c1y, _gf_c2x, _gf_c2y,
-				_gf_neigh, _gf_kp, _gf_km, _gf_ghost);
+				_gf_neigh, _gf_kp, _gf_km, _gf_kind);
 			fprintf(stderr, "[FACE_CMP] call=%d gpu_nfaces=%d\n", _face_cmp_call, _fc_nfaces);
 		}
 		/* Reset tess_faces_on_device so CPU fused path and force use CPU faces */
@@ -3391,7 +3391,11 @@ void updateDenW2Pressure2DBlend(
 								void *_jptr = neighwork[_et->upperrelated].bp;
 								int _fj = gpu_ptr_to_soa_index(_jptr, _fused_real_base,
 								            _fused_pad_base, nbp, _fused_npad, _fused_p_size);
-								int _ghost = (PINDX((treevorork4particletype*)_jptr) == MAX_INDEX);
+								treevorork4particletype *_jbp = (treevorork4particletype*)_jptr;
+								int _ghost = (PINDX(_jbp) == MAX_INDEX);
+								int _vacuum = _ghost && IS_FLAG_ON(_jbp, Wallflag);
+								int _particle_kind = gfs_particle_kind_from_flags(_ghost, _vacuum);
+								int _face_kind = gfs_face_kind_from_particle_kind(_particle_kind);
 								int _fkp = -1, _fkm = -1;
 								if(_et2->upperrelated >= 0)
 									_fkp = gpu_ptr_to_soa_index(neighwork[_et2->upperrelated].bp,
@@ -3401,7 +3405,7 @@ void updateDenW2Pressure2DBlend(
 									         _fused_real_base, _fused_pad_base, nbp, _fused_npad, _fused_p_size);
 								gpu_fused_add_face(_fused_tid, _fi,
 									_et->x, _et->y, _et2->x, _et2->y,
-									_fj, _fkp, _fkm, _ghost);
+									_fj, _fkp, _fkm, _face_kind);
 							}
 							_et = _et->upperlink;
 						} while(_et != vorocorner);
@@ -3442,6 +3446,9 @@ void updateDenW2Pressure2DBlend(
 						if(tmp->upperrelated >= 0){
 							treevorostressrk4particletype *jbp = (treevorostressrk4particletype*)(neighwork[tmp->upperrelated].bp);
 							int jbp_grad_ghost = (PINDX((treevorork4particletype*)jbp) == MAX_INDEX);
+							int jbp_grad_vacuum = jbp_grad_ghost && IS_FLAG_ON(jbp, Wallflag);
+							int jbp_particle_kind = gfs_particle_kind_from_flags(jbp_grad_ghost, jbp_grad_vacuum);
+							int jbp_face_kind = gfs_face_kind_from_particle_kind(jbp_particle_kind);
 							Voro2D_Corner *tmp2 = tmp->upperlink;
 							/* Face area vector dS (outward normal * area) */
 							postype dSx = tmp2->y - tmp->y;
@@ -3537,7 +3544,7 @@ void updateDenW2Pressure2DBlend(
 										         _fused_real_base, _fused_pad_base, nbp, _fused_npad, _fused_p_size);
 									gpu_fused_add_face(_fused_tid, _fi,
 										tmp->x, tmp->y, tmp2->x, tmp2->y,
-										_fj, _fkp, _fkm, jbp_grad_ghost);
+										_fj, _fkp, _fkm, jbp_face_kind);
 								}
 							}
 #endif
@@ -3817,7 +3824,7 @@ void updateDenW2Pressure2DBlend(
 			count_mismatch, nbp, first_mm);
 
 		/* For each particle, compare faces by matching neighbor_idx */
-		int n_neigh_err=0, n_kp_err=0, n_km_err=0, n_ghost_err=0;
+		int n_neigh_err=0, n_kp_err=0, n_km_err=0, n_kind_err=0;
 		int n_c1_err=0, n_c2_err=0;
 		int first_neigh_err=-1;
 		for(int ii=0; ii<nbp && ii<nbp; ii++){
@@ -3837,7 +3844,7 @@ void updateDenW2Pressure2DBlend(
 						/* Compare kp/km */
 						if(_gf_kp[gi] != cf->kp_idx[ci]) n_kp_err++;
 						if(_gf_km[gi] != cf->km_idx[ci]) n_km_err++;
-						if(_gf_ghost[gi] != cf->is_ghost[ci]) n_ghost_err++;
+						if(_gf_kind[gi] != cf->boundary_kind[ci]) n_kind_err++;
 						/* Compare corners (relative, should be close) */
 						double dc1 = fabs(_gf_c1x[gi]-cf->c1x[ci])+fabs(_gf_c1y[gi]-cf->c1y[ci]);
 						double dc2 = fabs(_gf_c2x[gi]-cf->c2x[ci])+fabs(_gf_c2y[gi]-cf->c2y[ci]);
@@ -3864,8 +3871,8 @@ void updateDenW2Pressure2DBlend(
 				}
 			}
 		}
-		fprintf(stderr, "[FACE_CMP] neigh_unmatched=%d kp_err=%d km_err=%d ghost_err=%d c1_err=%d c2_err=%d\n",
-			n_neigh_err, n_kp_err, n_km_err, n_ghost_err, n_c1_err, n_c2_err);
+		fprintf(stderr, "[FACE_CMP] neigh_unmatched=%d kp_err=%d km_err=%d kind_err=%d c1_err=%d c2_err=%d\n",
+			n_neigh_err, n_kp_err, n_km_err, n_kind_err, n_c1_err, n_c2_err);
 		if(first_neigh_err>=0)
 			fprintf(stderr, "[FACE_CMP] first_neigh_unmatched at particle %d\n", first_neigh_err);
 
@@ -3875,17 +3882,17 @@ void updateDenW2Pressure2DBlend(
 			int cbase = cf->face_offset[0], cend = cf->face_offset[1];
 			fprintf(stderr, "[FACE_CMP] particle 0: gpu_nf=%d cpu_nf=%d\n", gend-gbase, cend-cbase);
 			for(int f=gbase;f<gend && f<gbase+4;f++)
-				fprintf(stderr, "[FACE_CMP]   gpu f=%d: neigh=%d kp=%d km=%d ghost=%d c1=(%g,%g) c2=(%g,%g)\n",
-					f-gbase, _gf_neigh[f], _gf_kp[f], _gf_km[f], _gf_ghost[f],
+				fprintf(stderr, "[FACE_CMP]   gpu f=%d: neigh=%d kp=%d km=%d kind=%d c1=(%g,%g) c2=(%g,%g)\n",
+					f-gbase, _gf_neigh[f], _gf_kp[f], _gf_km[f], _gf_kind[f],
 					_gf_c1x[f], _gf_c1y[f], _gf_c2x[f], _gf_c2y[f]);
 			for(int f=cbase;f<cend && f<cbase+4;f++)
-				fprintf(stderr, "[FACE_CMP]   cpu f=%d: neigh=%d kp=%d km=%d ghost=%d c1=(%g,%g) c2=(%g,%g)\n",
-					f-cbase, cf->neighbor_idx[f], cf->kp_idx[f], cf->km_idx[f], cf->is_ghost[f],
+				fprintf(stderr, "[FACE_CMP]   cpu f=%d: neigh=%d kp=%d km=%d kind=%d c1=(%g,%g) c2=(%g,%g)\n",
+					f-cbase, cf->neighbor_idx[f], cf->kp_idx[f], cf->km_idx[f], cf->boundary_kind[f],
 					cf->c1x[f], cf->c1y[f], cf->c2x[f], cf->c2y[f]);
 		}
 
 		free(_gf_offset); free(_gf_c1x); free(_gf_c1y); free(_gf_c2x); free(_gf_c2y);
-		free(_gf_neigh); free(_gf_kp); free(_gf_km); free(_gf_ghost);
+		free(_gf_neigh); free(_gf_kp); free(_gf_km); free(_gf_kind);
 	}
 	} /* close GPU_TESS_COMPARE block */
 #endif
@@ -5524,6 +5531,15 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 								MYID(simpar), s_force_call, corner_n, (void*)jbp, tmp->upperrelated); fflush(stderr); }
 						}
 						int jbp_is_ghost = (PINDX((treevorork4particletype*)jbp) == MAX_INDEX);
+						int jbp_is_vacuum = jbp_is_ghost && IS_FLAG_ON(jbp, Wallflag);
+						if(jbp_is_vacuum){
+							fprintf(stderr,
+								"[GFS_BOUNDARY] CPU force path cannot evolve a vacuum generator yet: "
+								"rank=%d call=%d cell=(%d,%d) i=%d\n",
+								MYID(simpar), s_force_call, ix, iy, i);
+							fflush(stderr);
+							exit(1);
+						}
 						postype jbp_vx = jbp->vx;
 						postype jbp_vy = jbp->vy;
 						postype jbp_csound = jbp->csound;

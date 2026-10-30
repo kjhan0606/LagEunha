@@ -72,7 +72,7 @@ int gpu_ptr_to_soa_index(
 typedef struct {
     int count, capacity;
     double *c1x, *c1y, *c2x, *c2y;
-    int *neighbor, *kp, *km, *is_ghost, *owner;
+    int *neighbor, *kp, *km, *boundary_kind, *owner;
 } ThreadFaceBuf;
 
 /* exam.c: 1 while GFS_W2_LINEAR drives the weights of the current RK4 step. */
@@ -89,7 +89,7 @@ static void tfb_init(ThreadFaceBuf *b, int cap)
     b->neighbor  = (int *)malloc(cap * sizeof(int));
     b->kp        = (int *)malloc(cap * sizeof(int));
     b->km        = (int *)malloc(cap * sizeof(int));
-    b->is_ghost  = (int *)malloc(cap * sizeof(int));
+    b->boundary_kind = (int *)malloc(cap * sizeof(int));
     b->owner     = (int *)malloc(cap * sizeof(int));
 }
 
@@ -103,7 +103,8 @@ static void tfb_grow(ThreadFaceBuf *b)
     b->neighbor  = (int *)realloc(b->neighbor,    b->capacity * sizeof(int));
     b->kp        = (int *)realloc(b->kp,          b->capacity * sizeof(int));
     b->km        = (int *)realloc(b->km,          b->capacity * sizeof(int));
-    b->is_ghost  = (int *)realloc(b->is_ghost,    b->capacity * sizeof(int));
+    b->boundary_kind = (int *)realloc(b->boundary_kind,
+                                      b->capacity * sizeof(int));
     b->owner     = (int *)realloc(b->owner,       b->capacity * sizeof(int));
 }
 
@@ -113,7 +114,7 @@ static void tfb_free(ThreadFaceBuf *b)
     free(b->c2x);  free(b->c2y);
     free(b->neighbor);
     free(b->kp);   free(b->km);
-    free(b->is_ghost);
+    free(b->boundary_kind);
     free(b->owner);
 }
 
@@ -166,7 +167,7 @@ void gpu_fused_begin(int nbp, int npad, size_t p_size, int nthreads,
 
 void gpu_fused_add_face(int tid, int owner_idx,
     double c1x, double c1y, double c2x, double c2y,
-    int neighbor_idx, int kp_idx, int km_idx, int is_ghost)
+    int neighbor_idx, int kp_idx, int km_idx, int boundary_kind)
 {
     ThreadFaceBuf *mybuf = &g_fused.tbufs[tid];
     if (mybuf->count >= mybuf->capacity)
@@ -179,7 +180,7 @@ void gpu_fused_add_face(int tid, int owner_idx,
     mybuf->neighbor[f] = neighbor_idx;
     mybuf->kp[f]       = kp_idx;
     mybuf->km[f]       = km_idx;
-    mybuf->is_ghost[f] = is_ghost;
+    mybuf->boundary_kind[f] = boundary_kind;
     mybuf->owner[f]    = owner_idx;
     g_fused.face_count[owner_idx]++;
 }
@@ -242,7 +243,7 @@ static void gpu_fused_scatter(FaceCSR *faces, int max_capacity)
                 faces->neighbor_idx[dst] = b->neighbor[f];
                 faces->kp_idx[dst]       = b->kp[f];
                 faces->km_idx[dst]       = b->km[f];
-                faces->is_ghost[dst]     = b->is_ghost[f];
+                faces->boundary_kind[dst] = b->boundary_kind[f];
             }
         }
         free(write_pos);
@@ -294,6 +295,12 @@ static void fillParticleSoA(
         h_parts->vy[i]       = bp->vy;
         h_parts->mass[i]     = bp->mass;
         h_parts->indx[i]     = (long long)PINDX(bp);
+        {
+            int is_ghost = PINDX(bp) == MAX_INDEX;
+            int is_vacuum = is_ghost && IS_FLAG_ON(bp, Wallflag);
+            h_parts->kind[i] =
+                gfs_particle_kind_from_flags(is_ghost, is_vacuum);
+        }
         h_parts->den[i]      = bp->den;
         h_parts->pressure[i] = bp->pressure;
         h_parts->csound[i]   = bp->csound;
@@ -442,9 +449,14 @@ int extractFaceCSR_2D(
                                 jbp_ptr, real_base, pad_base,
                                 nbp, npad, p_size);
 
-                            int ghost =
-                                (PINDX((treevorork4particletype *)jbp_ptr)
-                                 == MAX_INDEX);
+                            treevorork4particletype *jbp =
+                                (treevorork4particletype *)jbp_ptr;
+                            int is_ghost = (PINDX(jbp) == MAX_INDEX);
+                            int is_vacuum = is_ghost && IS_FLAG_ON(jbp, Wallflag);
+                            int neighbor_kind =
+                                gfs_particle_kind_from_flags(is_ghost, is_vacuum);
+                            int face_kind =
+                                gfs_face_kind_from_particle_kind(neighbor_kind);
 
                             Voro2D_Corner *tmp2 = tmp->upperlink;
 
@@ -476,7 +488,7 @@ int extractFaceCSR_2D(
                                 mybuf->neighbor[f] = idx_j;
                                 mybuf->kp[f]       = idx_kp;
                                 mybuf->km[f]       = idx_km;
-                                mybuf->is_ghost[f] = ghost;
+                                mybuf->boundary_kind[f] = face_kind;
                                 mybuf->owner[f]    = idx_i;
                             }
 
@@ -540,7 +552,7 @@ int extractFaceCSR_2D(
                 faces->neighbor_idx[dst] = b->neighbor[f];
                 faces->kp_idx[dst]       = b->kp[f];
                 faces->km_idx[dst]       = b->km[f];
-                faces->is_ghost[dst]     = b->is_ghost[f];
+                faces->boundary_kind[dst] = b->boundary_kind[f];
             }
         }
         free(write_pos);
@@ -593,7 +605,7 @@ static void extractFaceCSR_2D_scatter_cached(FaceCSR *faces)
                 faces->neighbor_idx[dst] = b->neighbor[f];
                 faces->kp_idx[dst]       = b->kp[f];
                 faces->km_idx[dst]       = b->km[f];
-                faces->is_ghost[dst]     = b->is_ghost[f];
+                faces->boundary_kind[dst] = b->boundary_kind[f];
             }
         }
         free(write_pos);
@@ -1225,11 +1237,17 @@ static void cpu_reference_force_csr(
         int f_begin = faces->face_offset[i];
         int f_end = faces->face_offset[i + 1];
         int f;
+        int unsupported_vacuum = 0;
 
         for (f = f_begin; f < f_end; f++) {
             int j = faces->neighbor_idx[f];
             if (j < 0) continue;
-            int jbp_is_ghost = faces->is_ghost[f];
+            int face_kind = faces->boundary_kind[f];
+            if (face_kind == GFS_FACE_VACUUM) {
+                unsupported_vacuum = 1;
+                break;
+            }
+            int jbp_is_ghost = (face_kind == GFS_FACE_MIRROR_GHOST);
 
             double jbp_x = parts->x[j], jbp_y = parts->y[j];
             double jbp_vx = parts->vx[j], jbp_vy = parts->vy[j];
@@ -1693,6 +1711,15 @@ static void cpu_reference_force_csr(
                 if (vsig_cd > my_vsig_max) my_vsig_max = vsig_cd;
             }
         } /* end face loop */
+
+        if (unsupported_vacuum) {
+            ref_ax[i] = NAN;
+            ref_ay[i] = NAN;
+            ref_die[i] = NAN;
+            ref_dt[i] = NAN;
+            ref_vsig[i] = NAN;
+            continue;
+        }
 
         if (P->av_mode >= 1 || P->nu_phys > 0) {
             double h_i = sqrt(ibp_volume);

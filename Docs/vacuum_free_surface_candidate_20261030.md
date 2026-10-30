@@ -8,8 +8,9 @@ Base: `745e7391cbf8388ec6f905ffb9ba1bbe2b18a38c`
 
 This isolated candidate records the sharp annular benchmark contract and
 develops an exact gas-to-vacuum Riemann helper. It does not alter the bounded
-W=0 reference branch or job `442401`. The helper is not connected to the
-tessellator, force kernel, or active Kepler initializer.
+W=0 reference branch or job `442401`. The working tree now also has
+host/device boundary-kind plumbing, but it still has no vacuum-generator
+construction or free-surface flux evolution.
 
 ## Source findings
 
@@ -20,11 +21,13 @@ tessellator, force kernel, or active Kepler initializer.
   need a Kepler-specific stage hook, separate from generic MPI padding.
 - `Exam/exam_gpu.cu::voronoi_tessellate_kernel` clips real cells by the optional
   fixed polygon. Such support edges are tagged separately from generator faces.
-- `Exam/exam.c` packs each local or padding AoS record into `ParticleSoA`, but
-  currently transfers only the sentinel particle ID for ghost detection, not
-  its flag byte. The GPU `scatter_faces_kernel` reduces `MAX_INDEX` to the
-  single `FaceCSR.is_ghost` bit; the CPU fallback `gpu_fused_add_face` does the
-  same. An explicit vacuum kind must propagate through both paths.
+- The current working-tree patch adds `ParticleSoA.kind` and
+  `FaceCSR.boundary_kind`. Both fused and ordinary CPU face extraction classify
+  a ghost carrying `Wallflag` as a vacuum generator; GPU tessellation maps that
+  particle kind to a face kind and handles fixed-polygon sentinels separately.
+  The direct CPU force path, GPU force kernel, and CPU reference fallback now
+  fail closed on a vacuum face. Host-side integration is syntax-checked, but
+  the CUDA kernel has not been compiled.
 - Fixed polygon supports arrive at `getAccVoro2DBlend_kernel` as
   `neighbor_idx <= -1000`. They use zero laboratory-frame face speed and a
   wall-work correction, so they cannot represent an expanding vacuum edge.
@@ -34,10 +37,6 @@ tessellator, force kernel, or active Kepler initializer.
   aborts as unsupported.
 - The HLLC path floors both reconstructed pressure and density at `1e-10`, so a
   literal zero-pressure/zero-density state cannot be passed through unchanged.
-- `ParticleSoA` currently carries particle IDs but no boundary-kind array.
-  `is_ghost` is derived from the single `MAX_INDEX` sentinel; a vacuum mirror
-  therefore needs explicit boundary-kind metadata rather than overloading the
-  reflecting-wall behavior.
 - The active `EUNHA_IC=kepler` path is `Exam/KH/util.c::kh_mkinitial`, not
   `Exam/Kepler/util.c::kp_mkinitial`. It assigns the positive Hopkins floor
   and tapers, then constructs mass and internal energy from that profile. A
@@ -135,23 +134,27 @@ is a candidate for that study, not a qualified domain or physical boundary
 condition. Disable the active fixed polygon and check periodic-image isolation
 and domain convergence before any long run.
 
-The source path still needs a distinct vacuum-geometry kind: the current sparse
-glass loader treats every loaded coordinate as a fluid site, and the force
-kernel derives ghost identity from the generic `MAX_INDEX` sentinel. Vacuum
-generators must constrain real-cell tessellation without receiving fluid mass,
-pressure evolution, or a real-cell update. Each fluid-vacuum face needs its
-own boundary kind and a per-stage normal speed from the gas-to-vacuum
-Riemann state. A shared generator may only be used while its incident-face
-kinematics are mutually satisfiable; split it or use face-local geometry if
-later topology creates incompatible constraints. The exact rarefaction helper
-provides the planar W=0 speed, but the generator motion must still make the
-GPU-derived face speed agree and pass the cell-volume geometric-conservation
-law. No solver or MPI/GPU run has yet validated this representation.
+The current change is metadata plumbing and a fail-closed guard, not a free
+surface. The sparse glass loader still treats each loaded coordinate as a fluid
+site; no Kepler stage hook constructs zero-mass vacuum generators. The exact
+Riemann helper is not called by the force kernel, and no per-stage generator
+motion, gas-side face reconstruction, ALE flux, or cell-volume geometric
+conservation check is implemented. A shared generator may only be used while
+its incident-face kinematics are mutually satisfiable; the tested pair helper
+covers two independent planar constraints, not later topology changes,
+curvature, or nonzero Laguerre weight rates. The current GPU path emits NaN on a
+vacuum face and the CPU path aborts, so it cannot silently treat vacuum as a
+reflecting wall. No MPI/GPU run has validated the boundary representation.
 
 The reproducible count and guard-width audit is
 `Exam/tests/audit_kepler_annulus_vacuum_stencil.py`.
 
 ## Verification performed
+
+`Exam/tests/test_gfs_boundary_kind.c` passes strict C99 compilation and
+execution. `mpiicx -fsyntax-only` passes for `exam.c` and
+`exam_gpu_extract.c` with `USE_CUDA` enabled, covering the host-side paths; it
+reports two unrelated existing warnings in `exam.c`.
 
 `Exam/tests/test_gfs_vacuum_riemann.c` checks the fan head, the analytic
 `gamma=5/3` midpoint `(c,rho,p)=(0.5,0.125,0.01875)`, entropy preservation,
@@ -165,9 +168,10 @@ rejected. The stencil audit checks the initial lattice counts above. Strict C99
 compilation and execution pass; the derived outer and inner edge speeds also
 yield zero ALE mass, momentum, and energy flux. A standalone CUDA kernel
 including an earlier header revision was reported to compile for `sm_90`; this
-was compile-only, not a GPU runtime result. The current login
-environment has no `nvcc` or CUDA module, so the new mirror-kinematics helper
-has only strict C99 CPU verification. Its test checks an oblique,
+was compile-only, not a GPU runtime result. The current login environment has
+no `nvcc` or CUDA module, and its Slurm node inventory exposes no GPU GRES, so
+the current CUDA source changes have not been compiled or run. The new
+mirror-kinematics helper has only strict C99 CPU verification. Its test checks an oblique,
 unnormalized normal. An independent Python reference checks the same fan,
 Galilean shifting, zero front flux, and mass integral; its recorded result is
 in `../../../vacuum_face_reference_20261030/reference_result.json`. These
@@ -177,8 +181,9 @@ No sharp-annulus initializer has passed an MPI or runtime test.
 
 ## Integration gates
 
-1. Add an explicit boundary-kind field to the host-to-device particle/face
-   path. Keep MPI halo copies and reflecting walls on their existing behavior.
+1. Add a Kepler-specific RK-stage hook that generates inner and outer
+   zero-mass vacuum sites from current real boundary faces. Keep MPI halo
+   copies and reflecting walls on their existing behavior.
 2. Generate inner and outer mirror sites from current real boundary faces at
    each RK stage. The initial Cartesian mask needs one site per missing lattice
    coordinate: shared sites each have two orthogonal face constraints, which
