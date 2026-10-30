@@ -149,6 +149,39 @@ static void test_vacuum_mirror_kinematics(void)
                                         &ghost_vx, &ghost_vy));
 }
 
+static void test_shared_orthogonal_vacuum_mirror(void)
+{
+    const double gamma = 5.0 / 3.0;
+    double edge0, edge1, ghost_vx, ghost_vy;
+    double fm, fp, fe;
+
+    /* One geometry generator closes two orthogonal faces with different
+     * local fluid states; the site velocity satisfies both constraints. */
+    assert(gfs_vacuum_mirror_kinematics_pair(
+        0.4, 1.0, 2.0, 0.0,
+        -0.1, 0.5, 0.0, -3.0,
+        gamma, &edge0, &edge1, &ghost_vx, &ghost_vy));
+    assert(close_rel(edge0, 3.4, 1e-14));
+    assert(close_rel(edge1, 1.4, 1e-14));
+    assert(close_rel(0.5 * (0.4 + ghost_vx), edge0, 1e-14));
+    assert(close_rel(0.5 * (-0.1 - ghost_vy), edge1, 1e-14));
+    assert(close_rel(ghost_vx, 6.4, 1e-14));
+    assert(close_rel(ghost_vy, -2.9, 1e-14));
+
+    assert(gfs_vacuum_fan_ale_flux(1.0, 0.6, 0.4, gamma, edge0, 0.2,
+                                   &fm, &fp, &fe));
+    assert(fm == 0.0 && fp == 0.0 && fe == 0.0);
+    assert(gfs_vacuum_fan_ale_flux(4.0, 0.6, -0.1, gamma, edge1, 0.3,
+                                   &fm, &fp, &fe));
+    assert(fm == 0.0 && fp == 0.0 && fe == 0.0);
+
+    /* Parallel constraints cannot prescribe independent edge speeds. */
+    assert(!gfs_vacuum_mirror_kinematics_pair(
+        0.4, 1.0, 1.0, 0.0,
+        -0.1, 0.5, 2.0, 0.0,
+        gamma, &edge0, &edge1, &ghost_vx, &ghost_vy));
+}
+
 static void test_shifted_state_and_ale_flux(void)
 {
     const double gamma = 1.4;
@@ -194,6 +227,7 @@ int main(void)
     test_fan_mass_integral();
     test_nonzero_ale_flux_inside_fan();
     test_vacuum_mirror_kinematics();
+    test_shared_orthogonal_vacuum_mirror();
     test_shifted_state_and_ale_flux();
     test_reject_invalid_input();
     puts("gfs_vacuum_riemann: PASS");

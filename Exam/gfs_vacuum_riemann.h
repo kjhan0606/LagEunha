@@ -121,6 +121,55 @@ GFS_VAC_HD int gfs_vacuum_mirror_kinematics(
     return 1;
 }
 
+/* Resolve one mirror-site velocity shared by two planar vacuum faces. Each
+ * face supplies its gas-side normal velocity and sound speed. The two normal
+ * constraints are independent only when the normals are not parallel; a
+ * singular pair must be split into separate ghost sites or handled by a
+ * compatible-boundary rule. */
+GFS_VAC_HD int gfs_vacuum_mirror_kinematics_pair(
+    double un0, double c0, double nx0, double ny0,
+    double un1, double c1, double nx1, double ny1, double gamma,
+    double *edge_speed0, double *edge_speed1,
+    double *ghost_vx, double *ghost_vy)
+{
+    if (!edge_speed0 || !edge_speed1 || !ghost_vx || !ghost_vy
+        || !gfs_vacuum_finite(un0) || !gfs_vacuum_finite(un1)
+        || !gfs_vacuum_finite(c0) || !gfs_vacuum_finite(c1)
+        || !gfs_vacuum_finite(nx0) || !gfs_vacuum_finite(ny0)
+        || !gfs_vacuum_finite(nx1) || !gfs_vacuum_finite(ny1)
+        || !gfs_vacuum_finite(gamma) || !(c0 > 0.0) || !(c1 > 0.0)
+        || !(gamma > 1.0))
+        return 0;
+
+    const double nmag0 = sqrt(nx0 * nx0 + ny0 * ny0);
+    const double nmag1 = sqrt(nx1 * nx1 + ny1 * ny1);
+    if (!(nmag0 > 0.0) || !(nmag1 > 0.0)
+        || !gfs_vacuum_finite(nmag0) || !gfs_vacuum_finite(nmag1))
+        return 0;
+    nx0 /= nmag0; ny0 /= nmag0;
+    nx1 /= nmag1; ny1 /= nmag1;
+
+    const double det = nx0 * ny1 - ny0 * nx1;
+    if (!gfs_vacuum_finite(det) || !(fabs(det) > 1.0e-12))
+        return 0;
+
+    const double w0 = un0 + 2.0 * c0 / (gamma - 1.0);
+    const double w1 = un1 + 2.0 * c1 / (gamma - 1.0);
+    const double b0 = 2.0 * w0 - un0;
+    const double b1 = 2.0 * w1 - un1;
+    const double vgx = (b0 * ny1 - ny0 * b1) / det;
+    const double vgy = (nx0 * b1 - b0 * nx1) / det;
+    if (!gfs_vacuum_finite(w0) || !gfs_vacuum_finite(w1)
+        || !gfs_vacuum_finite(vgx) || !gfs_vacuum_finite(vgy))
+        return 0;
+
+    *edge_speed0 = w0;
+    *edge_speed1 = w1;
+    *ghost_vx = vgx;
+    *ghost_vy = vgy;
+    return 1;
+}
+
 /* Euler flux through a face moving at face_speed, in the face-normal frame.
  * tangential_velocity is retained in total energy for a multidimensional
  * application.  At the physical vacuum edge all three fluxes are zero. */

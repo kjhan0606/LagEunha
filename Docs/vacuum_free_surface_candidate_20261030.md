@@ -73,9 +73,11 @@ mirror site across a locally planar vacuum edge, the face speed is
 `w=(u_n+u_ghost,n)/2`. Therefore use `w_edge=u_n+2c/(gamma-1)` and
 `u_ghost,n=2w_edge-u_n`; the helper returns this edge speed and ghost velocity,
 copying the tangential component. Its primitive input must be a gas-side face
-trace; cell-center values are only first-order. This is a local W=0 closure
-only. Curvature, multiple faces sharing one ghost site, and nonzero Laguerre
-weight rates need additional treatment.
+trace; cell-center values are only first-order. A second helper solves two
+independent face-normal constraints for one shared ghost site, allowing each
+adjacent fluid cell to supply a different state. Singular parallel constraints
+fail closed. Three or more incident faces, curvature, and nonzero Laguerre
+weight rates still need additional treatment.
 
 ## GIZMO particle-method initial-condition contract
 
@@ -124,13 +126,14 @@ the original 4-by-4 target lattice. The active initializer's default
 `EUNHA_KEPLER_CX=0.5*Lx` would shift the center by half the guard width when
 `Lx=4.03125`; that default must not be used for this guarded setup. This is
 only a startup-geometry minimum, not a long-run box choice. The independent
-planar vacuum-fan reference places the outer front near `r=4.31` at `t=600`;
-it is not a 2D disk prediction, but it rules out a box ending near `r=2`. A
-width-10 box with `NX=NY=640` would preserve `dx=1/64` and mean area `1/4096`
-while providing a plausible `r=5` computational margin. This larger box is a
-candidate to qualify, not an approved physical boundary condition; the active
-fixed polygon must be disabled, and periodic-image isolation/domain convergence
-must be checked before a long run.
+planar vacuum-fan reference places the outer front near `r=4.31` at `t=600`.
+That no-gravity planar estimate omits Kepler acceleration, rotation, and radial
+curvature, so it cannot set the two-dimensional disk's required domain size; it
+motivates a domain-sensitivity study. A width-10 box with `NX=NY=640` would
+preserve `dx=1/64` and mean area `1/4096` while providing an `r=5` margin. This
+is a candidate for that study, not a qualified domain or physical boundary
+condition. Disable the active fixed polygon and check periodic-image isolation
+and domain convergence before any long run.
 
 The source path still needs a distinct vacuum-geometry kind: the current sparse
 glass loader treats every loaded coordinate as a fluid site, and the force
@@ -155,9 +158,12 @@ The reproducible count and guard-width audit is
 the vacuum edge and zero ALE flux, a shifted `gamma=1.4` state, and invalid
 input rejection, including NaN and infinity rejection. It now also checks the
 Simpson-integrated fan mass and the nonzero mass, momentum, and energy ALE flux
-inside the fan, plus outer, inner, and oblique-normal mirror kinematics. Strict
-C99 compilation and execution pass; the derived outer and inner edge speeds
-also yield zero ALE mass, momentum, and energy flux. A standalone CUDA kernel
+inside the fan, plus outer, inner, and oblique-normal mirror kinematics. It
+also solves a shared orthogonal generator from two different gas states and
+confirms both edge speeds give zero ALE flux; parallel constraints are
+rejected. The stencil audit checks the initial lattice counts above. Strict C99
+compilation and execution pass; the derived outer and inner edge speeds also
+yield zero ALE mass, momentum, and energy flux. A standalone CUDA kernel
 including an earlier header revision was reported to compile for `sm_90`; this
 was compile-only, not a GPU runtime result. The current login
 environment has no `nvcc` or CUDA module, so the new mirror-kinematics helper
@@ -173,11 +179,13 @@ No sharp-annulus initializer has passed an MPI or runtime test.
 
 1. Add an explicit boundary-kind field to the host-to-device particle/face
    path. Keep MPI halo copies and reflecting walls on their existing behavior.
-2. Generate distinct inner and outer mirror sites from the current real
-   boundary faces at each RK stage. The planar W=0 helper supplies the target
-   normal edge speed and mirror velocity; ensure each ghost site serves only a
-   compatible face. Verify the resulting face speed and geometric
-   conservation law instead of assuming the reflection gives it.
+2. Generate inner and outer mirror sites from current real boundary faces at
+   each RK stage. The initial Cartesian mask needs one site per missing lattice
+   coordinate: shared sites each have two orthogonal face constraints, which
+   the pair helper can satisfy from separate gas traces. Rebuild or reclassify
+   this incidence after the mesh distorts; fail visibly for incompatible or
+   over-subscribed sites. Verify actual face speeds and the geometric
+   conservation law instead of assuming the mirror construction gives them.
 3. Add a vacuum-face flux branch that bypasses positive HLLC floors and applies
    the exact gas-to-vacuum state. Keep real-cell mass fixed and account for
    moving-face pressure work consistently.
