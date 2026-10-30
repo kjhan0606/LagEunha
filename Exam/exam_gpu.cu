@@ -1247,11 +1247,13 @@ void getAccVoro2DBlend_kernel(
         double VdotR = dvx * erx + dvy * ery;
         double vsig = jbp_csound + ibp_csound - fmin(0.0, VdotR);
 
-        /* Real faces use the true separation. Flooring dramp up to the
-         * cell radius lets a flattened pair step across each other.
-         * Ghost mirrors keep the floor. */
+        /* The face flux uses the true generator separation above, but the
+         * CFL length must remain cell-scaled when two generators approach
+         * coincidence while their Voronoi cells still have finite volume.
+         * This lower bound changes only the timestep, not the face geometry
+         * or flux. */
         double heff = 0.25 * sqrt(ibp_volume);
-        double dramp_cfl = jbp_is_ghost ? fmax(dramp, heff) : dramp;
+        double dramp_cfl = fmax(dramp, heff);
         float dt_face = (float)(2.0 * Courant * dramp_cfl / vsig);
         if (dt_face < my_dt) {
             my_dt = dt_face;
