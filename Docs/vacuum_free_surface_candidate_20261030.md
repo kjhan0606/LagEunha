@@ -151,9 +151,12 @@ is a candidate for that study, not a qualified domain or physical boundary
 condition. Disable the active fixed polygon and check periodic-image isolation
 and domain convergence before any long run.
 
-The current change is metadata plumbing and a fail-closed guard, not a free
-surface. The sparse glass loader still treats each loaded coordinate as a fluid
-site; no Kepler stage hook constructs zero-mass vacuum generators. The exact
+The current change is metadata plumbing, a fail-closed guard, and a
+geometry-only startup insertion path, not an evolving free surface. The sparse
+glass loader still treats each loaded coordinate as a fluid site. The new
+sharp-annulus mode bypasses it, retains only fluid generators, and appends the
+missing cardinal sites after periodic MPI padding for the initial volume
+measurement. It exits before any force evaluation or time evolution. The exact
 Riemann helper is not called by the force kernel, and no per-stage generator
 motion, gas-side face reconstruction, ALE flux, or cell-volume geometric
 conservation check is implemented. A shared generator may only be used while
@@ -185,18 +188,22 @@ Consequences for the next implementation:
   conserved output, and migration. A stage-local buffer must distinguish
   vacuum generators from ordinary MPI halo copies and be released before the
   next stage rebuild.
-- The linked-list callback is a convenient insertion point for already-known
-  virtual sites, but it cannot infer a deformed annular boundary from a static
-  lattice mask. Boundary incidence and site motion still need a stage-aware
-  construction rule; the 908-site stencil audit proves only the initial grid
-  topology.
+- The linked-list callback now appends the audited static stencil after each
+  fresh halo build only while `EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY=1` is active.
+  The mode is restricted to a one-rank 320² initialization on `[0,5]²` and
+  returns before RK4. It cannot infer a deformed annular boundary from the
+  static lattice mask. Boundary incidence and site motion still need a
+  stage-aware construction rule; the 908-site stencil audit proves only the
+  initial grid topology.
 
 The reproducible count and guard-width audits are
 `Exam/tests/audit_kepler_annulus_vacuum_stencil.py` and
 `Exam/tests/test_gfs_kepler_vacuum_stencil.c`. The C constructor records stable
 guarded-grid IDs, initial positions, incident fluid IDs, and cardinal normals;
 its test reproduces the 48,240 / 908 / 1,280 counts and the 536 / 372 incidence
-split. It remains a geometry utility, not a solver hook.
+split. `kh_mkinitial` and `mkLinkedList2D_oExam` now connect that geometry to a
+startup-only mesh build, while the persistent moving-boundary solver remains
+unimplemented.
 
 The original `n=256`, `box=4`, `Rout=2` sample places the outer support on the
 periodic seam: 88 first-layer vacuum sites lie outside the fundamental box.
@@ -240,15 +247,19 @@ Galilean shifting, zero front flux, and mass integral; its recorded result is
 in `../../../vacuum_face_reference_20261030/reference_result.json`. These
 verify local analytic fluxes only; no CUDA runtime integration, mesh motion,
 conservation in the finite-volume solver, or Kepler stability is established.
-No sharp-annulus initializer has passed an MPI or runtime test.
+The new startup geometry mode was submitted as isolated H200 job `442508`; no
+runtime result has yet been recorded. The weekly scheduler-check interval
+applies, so do not query its state before 2026-11-06 12:13 UTC. It is one-rank
+only and does not test MPI decomposition or boundary fluxes.
 
 ## Integration gates
 
-1. Connect the deterministic stencil to an opt-in sharp-annulus initializer and
-   persistent Kepler boundary-generator state keyed by its missing lattice-site
-   IDs. Advance this state with the same RK4 stage abscissae and coefficients
-   as the material cells, while appending transient generator copies after
-   each fresh MPI halo build. Keep reflecting ghosts separate.
+1. Run the startup-only H200 geometry gate and verify the realized mesh area,
+   equal fixed masses, density, and circular velocity. Then add persistent
+   Kepler boundary-generator state keyed by missing lattice-site IDs. Advance
+   that state with the same RK4 stage abscissae and coefficients as material
+   cells, while appending transient generator copies after each fresh MPI halo
+   build. Keep reflecting ghosts separate.
 2. At each stage, associate generators with current gas boundary faces and
    impose their normal face speeds from gas-side traces. The initial mask has
    shared sites with two orthogonal face constraints; the pair helper handles

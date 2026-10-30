@@ -55,7 +55,8 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 	unsigned char *selected = NULL;
 	size_t n_grid, nselected = 0, p_size;
 	int i;
-	int old_npad;
+	ptrdiff_t old_npad;
+	ptrdiff_t dst;
 	char *grown;
 	if(!gfs_kepler_vacuum_stencil_enabled) return;
 	if(!gfs_kepler_vacuum_geometry_only_requested()){
@@ -112,20 +113,20 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 	}
 	if(nselected==0){ free(seen); free(selected); return; }
 	old_npad=VORO_NPAD(simpar);
-	if(old_npad<0 || nselected>(size_t)(INT_MAX-old_npad)){
+	if(old_npad<0 || nselected>(size_t)(PTRDIFF_MAX-old_npad)){
 		free(seen); free(selected);
-		fprintf(stderr, "[KEPLER_VACUUM] padded generator count overflows int\n");
+		fprintf(stderr, "[KEPLER_VACUUM] padded generator count overflows ptrdiff_t\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
 	}
-	if((size_t)(old_npad+nselected)>SIZE_MAX/p_size){
+	if((size_t)old_npad+nselected>SIZE_MAX/p_size){
 		free(seen); free(selected);
 		fprintf(stderr, "[KEPLER_VACUUM] invalid padded particle stride/count\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
 	}
 	grown=(char *)realloc(VORORK4_TBPP(simpar),
-		(size_t)(old_npad+nselected)*p_size);
+		((size_t)old_npad+nselected)*p_size);
 	if(!grown){
 		free(seen); free(selected);
 		fprintf(stderr, "[KEPLER_VACUUM] cannot grow MPI padding buffer\n");
@@ -133,7 +134,7 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 		return;
 	}
 	VORORK4_TBPP(simpar)=(treevorork4particletype*)grown;
-	int dst=old_npad;
+	dst=old_npad;
 	for(size_t s=0;s<st->n_sites;s++){
 		const GfsKeplerVacuumSite *site=&st->sites[s];
 		if(!selected[s]) continue;
@@ -150,7 +151,7 @@ void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
 	}
 	free(seen);
 	free(selected);
-	if(dst-old_npad!=(int)nselected){
+	if(dst-old_npad!=(ptrdiff_t)nselected){
 		fprintf(stderr, "[KEPLER_VACUUM] local generator selection changed during append\n");
 		MPI_Abort(MPI_COMM(simpar), 96);
 		return;
