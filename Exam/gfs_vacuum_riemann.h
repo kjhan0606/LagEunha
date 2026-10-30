@@ -1,6 +1,7 @@
 #ifndef GFS_VACUUM_RIEMANN_H
 #define GFS_VACUUM_RIEMANN_H
 
+#include <float.h>
 #include <math.h>
 
 #if defined(__CUDACC__)
@@ -20,6 +21,13 @@ typedef struct {
     int vacuum;
 } GfsVacuumFanState;
 
+/* CUDA-safe finite check: NaNs fail self-equality and infinities exceed the
+ * largest finite double. */
+GFS_VAC_HD int gfs_vacuum_finite(double value)
+{
+    return value == value && value <= DBL_MAX && value >= -DBL_MAX;
+}
+
 /* Solve the isentropic rarefaction fan for gas on the left and vacuum on the
  * right.  The returned state is the exact Euler solution at similarity speed
  * xi.  A return value of zero means the input state is not physical. */
@@ -27,15 +35,20 @@ GFS_VAC_HD int gfs_vacuum_fan_state(
     double rho0, double pressure0, double velocity0, double gamma,
     double xi, GfsVacuumFanState *state)
 {
-    if (!state || !(rho0 > 0.0) || !(pressure0 > 0.0) || !(gamma > 1.0))
+    if (!state || !gfs_vacuum_finite(rho0) || !gfs_vacuum_finite(pressure0)
+        || !gfs_vacuum_finite(velocity0) || !gfs_vacuum_finite(gamma)
+        || !gfs_vacuum_finite(xi) || !(rho0 > 0.0)
+        || !(pressure0 > 0.0) || !(gamma > 1.0))
         return 0;
 
     const double c0 = sqrt(gamma * pressure0 / rho0);
-    if (!(c0 > 0.0))
+    if (!(c0 > 0.0) || !gfs_vacuum_finite(c0))
         return 0;
 
     const double head = velocity0 - c0;
     const double tail = velocity0 + 2.0 * c0 / (gamma - 1.0);
+    if (!gfs_vacuum_finite(head) || !gfs_vacuum_finite(tail))
+        return 0;
     if (xi <= head) {
         state->rho = rho0;
         state->pressure = pressure0;
@@ -63,6 +76,51 @@ GFS_VAC_HD int gfs_vacuum_fan_state(
     return 1;
 }
 
+/* Kinematics for an equal-weight Voronoi mirror site across a planar
+ * gas-vacuum edge. The primitive state is the gas-side trace at that face;
+ * using cell-center values is only a first-order approximation. n is oriented
+ * from gas into vacuum and may be unnormalized.
+ * The physical vacuum edge moves at u_n + 2 c/(gamma-1). Choosing the mirror
+ * site's normal velocity as 2*w_edge-u_n makes the Voronoi face speed
+ * (u_n+u_ghost,n)/2 exactly w_edge. Tangential velocity is copied from gas;
+ * curvature and Laguerre weight-rate terms are outside this planar W=0 rule. */
+GFS_VAC_HD int gfs_vacuum_mirror_kinematics(
+    double rho, double pressure, double vx, double vy, double gamma,
+    double nx, double ny, double *edge_speed,
+    double *ghost_vx, double *ghost_vy)
+{
+    if (!edge_speed || !ghost_vx || !ghost_vy
+        || !gfs_vacuum_finite(rho) || !gfs_vacuum_finite(pressure)
+        || !gfs_vacuum_finite(vx) || !gfs_vacuum_finite(vy)
+        || !gfs_vacuum_finite(gamma) || !gfs_vacuum_finite(nx)
+        || !gfs_vacuum_finite(ny) || !(rho > 0.0)
+        || !(pressure > 0.0) || !(gamma > 1.0))
+        return 0;
+
+    const double nmag = sqrt(nx * nx + ny * ny);
+    if (!(nmag > 0.0) || !gfs_vacuum_finite(nmag))
+        return 0;
+
+    const double nxhat = nx / nmag;
+    const double nyhat = ny / nmag;
+    const double un = vx * nxhat + vy * nyhat;
+    const double c = sqrt(gamma * pressure / rho);
+    if (!(c > 0.0) || !gfs_vacuum_finite(un) || !gfs_vacuum_finite(c))
+        return 0;
+
+    const double w = un + 2.0 * c / (gamma - 1.0);
+    const double delta_vn = 2.0 * (w - un);
+    const double vgx = vx + delta_vn * nxhat;
+    const double vgy = vy + delta_vn * nyhat;
+    if (!gfs_vacuum_finite(w) || !gfs_vacuum_finite(vgx)
+        || !gfs_vacuum_finite(vgy))
+        return 0;
+    *edge_speed = w;
+    *ghost_vx = vgx;
+    *ghost_vy = vgy;
+    return 1;
+}
+
 /* Euler flux through a face moving at face_speed, in the face-normal frame.
  * tangential_velocity is retained in total energy for a multidimensional
  * application.  At the physical vacuum edge all three fluxes are zero. */
@@ -71,7 +129,9 @@ GFS_VAC_HD int gfs_vacuum_fan_ale_flux(
     double face_speed, double tangential_velocity,
     double *mass_flux, double *momentum_flux, double *energy_flux)
 {
-    if (!mass_flux || !momentum_flux || !energy_flux)
+    if (!mass_flux || !momentum_flux || !energy_flux
+        || !gfs_vacuum_finite(face_speed)
+        || !gfs_vacuum_finite(tangential_velocity))
         return 0;
 
     GfsVacuumFanState state;

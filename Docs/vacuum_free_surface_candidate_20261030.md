@@ -57,7 +57,14 @@ The new header `Exam/gfs_vacuum_riemann.h` evaluates this state and its ALE
 Euler flux. In the face-normal coordinate, use the same equations at the
 normal face speed. At the vacuum edge, the mass, momentum, and energy fluxes all
 vanish. For an inner annulus boundary, orient the normal from gas into the hole
-before applying the same right-going solution.
+before applying the same right-going solution. For an equal-weight Voronoi
+mirror site across a locally planar vacuum edge, the face speed is
+`w=(u_n+u_ghost,n)/2`. Therefore use `w_edge=u_n+2c/(gamma-1)` and
+`u_ghost,n=2w_edge-u_n`; the helper returns this edge speed and ghost velocity,
+copying the tangential component. Its primitive input must be a gas-side face
+trace; cell-center values are only first-order. This is a local W=0 closure
+only. Curvature, multiple faces sharing one ghost site, and nonzero Laguerre
+weight rates need additional treatment.
 
 ## GIZMO particle-method initial-condition contract
 
@@ -79,19 +86,30 @@ enabled before the free-surface geometry and flux closure pass their gates.
 `Exam/tests/test_gfs_vacuum_riemann.c` checks the fan head, the analytic
 `gamma=5/3` midpoint `(c,rho,p)=(0.5,0.125,0.01875)`, entropy preservation,
 the vacuum edge and zero ALE flux, a shifted `gamma=1.4` state, and invalid
-input rejection. It compiled with strict C99 warnings and passed on the CPU.
-This verifies the local analytic helper only; it does not qualify CUDA
-compilation, mesh motion, conservation in the finite-volume solver, or Kepler
-stability. No sharp-annulus initializer has passed an MPI or runtime test.
+input rejection, including NaN and infinity rejection. It now also checks the
+Simpson-integrated fan mass and the nonzero mass, momentum, and energy ALE flux
+inside the fan, and the outer- and inner-normal mirror kinematics. Strict C99
+compilation and execution pass. A standalone CUDA kernel including the header
+kernel including the earlier header revision was reported to compile for
+`sm_90`; this was compile-only, not a GPU runtime result. The current login
+environment has no `nvcc` or CUDA module, so the new mirror-kinematics helper
+has only strict C99 CPU verification. Its test checks an oblique,
+unnormalized normal. An independent Python reference checks the same fan,
+Galilean shifting, zero front flux, and mass integral; its recorded result is
+in `../../../vacuum_face_reference_20261030/reference_result.json`. These
+verify local analytic fluxes only; no CUDA runtime integration, mesh motion,
+conservation in the finite-volume solver, or Kepler stability is established.
+No sharp-annulus initializer has passed an MPI or runtime test.
 
 ## Integration gates
 
 1. Add an explicit boundary-kind field to the host-to-device particle/face
    path. Keep MPI halo copies and reflecting walls on their existing behavior.
-2. Generate inner and outer mirror sites from the current real boundary cells
-   at each RK stage. Set their normal kinematics so the represented boundary
-   follows the local vacuum-edge speed; verify the resulting face speed and
-   geometric conservation law instead of assuming the reflection gives it.
+2. Generate distinct inner and outer mirror sites from the current real
+   boundary faces at each RK stage. The planar W=0 helper supplies the target
+   normal edge speed and mirror velocity; ensure each ghost site serves only a
+   compatible face. Verify the resulting face speed and geometric
+   conservation law instead of assuming the reflection gives it.
 3. Add a vacuum-face flux branch that bypasses positive HLLC floors and applies
    the exact gas-to-vacuum state. Keep real-cell mass fixed and account for
    moving-face pressure work consistently.
