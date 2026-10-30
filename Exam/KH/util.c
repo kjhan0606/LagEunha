@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
+#include<limits.h>
 #include<string.h>
 #include<math.h>
 #include<mpi.h>
@@ -31,7 +32,6 @@ int kh_makemap(SimParameters *simpar, int icount){
 	int nyimg = NY(simpar);
 	float *map = (float*)malloc(sizeof(float)*nximg*nyimg);
 	float *img = (float*)malloc(sizeof(float)*nximg*nyimg);
-	postype meanvol = Lx*Ly/nximg/nyimg;
 //	float *ndist = (float*)malloc(sizeof(float)*nximg*nyimg);
 	int i,j;
 	int ii,jj;
@@ -90,8 +90,8 @@ int kh_makemap(SimParameters *simpar, int icount){
 							postype dist2 = distx*distx + disty*disty;
 							if(dist2 < idist) {
 								idist = dist2;
+								/* Cell density, including refined cells and evolved volumes. */
 								nearden = tt->den;
-								nearden = tt->mass/meanvol;
 							}
 						}
 						tmp = tmp->next;
@@ -260,11 +260,14 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	postype z1 = 0.5, z2 = 1.5;      // interface positions (fixed for [0,2] domain)
 	postype sigma = 0.2;              // Gaussian envelope width for vy perturbation
 
-	// Glass IC loading.  If a binary file at ./glass_NxxNy.bin (or pointed to
-	// by env var LAGMFM_GLASS_FILE) exists with matching np=nx*ny, Lx, Ly,
-	// use its positions; else fall back to regular grid + per-row McNally.
+	// Glass IC loading.  A deliberately selected Kepler profile can contain
+	// fewer sites than nx*ny while retaining nx,ny as the nominal disk-grid
+	// resolution. Keep the old exact-count behavior unless explicitly enabled.
 	double *glass_x = NULL, *glass_y = NULL;
 	int use_glass = 0;
+	size_t glass_count = (size_t)nx*(size_t)ny;
+	const char *sparse_env = getenv("EUNHA_ALLOW_SPARSE_GLASS");
+	int allow_sparse_glass = sparse_env && strcmp(sparse_env, "1") == 0;
 	{
 		char path[512];
 		const char *env = getenv("LAGMFM_GLASS_FILE");
@@ -284,13 +287,14 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 			if(fread(&np_file, sizeof(int), 1, fp)==1 &&
 			   fread(&Lx_file, sizeof(double), 1, fp)==1 &&
 			   fread(&Ly_file, sizeof(double), 1, fp)==1 &&
-			   np_file == nx*ny &&
+			   (np_file == nx*ny || (allow_sparse_glass && np_file > 0 && np_file < nx*ny)) &&
 			   fabs(Lx_file-Lx) < 1e-9 && fabs(Ly_file-Ly) < 1e-9){
 				glass_x = (double*)malloc(sizeof(double)*np_file);
 				glass_y = (double*)malloc(sizeof(double)*np_file);
 				if(fread(glass_x, sizeof(double), np_file, fp)==(size_t)np_file &&
 				   fread(glass_y, sizeof(double), np_file, fp)==(size_t)np_file){
 					use_glass = 1;
+					glass_count = (size_t)np_file;
 					DEBUGPRINT("KH: loaded glass IC from %s (np=%d)\n", path, np_file);
 				} else {
 					free(glass_x); free(glass_y); glass_x=glass_y=NULL;
@@ -302,9 +306,13 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		} else {
 			DEBUGPRINT("KH: glass file %s not found, using regular grid\n", path);
 		}
+		if(allow_sparse_glass && !use_glass){
+			fprintf(stderr,"KH: EUNHA_ALLOW_SPARSE_GLASS requires a readable, valid glass file\n");
+			MPI_Abort(MPI_COMM(simpar),98);
+		}
 	}
 
-	size_t n_particles_total = (size_t)nx*(size_t)ny;
+	size_t n_particles_total = use_glass ? glass_count : (size_t)nx*(size_t)ny;
 	for(size_t p=0; p<n_particles_total; p++){
 		postype x, y;
 		if(use_glass){
@@ -619,14 +627,103 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	nbp = VORO_NP(simpar);
 
 	{
+		/* A non-Cartesian Kepler generator file has unequal initial cell areas.
+		 * The profile above assigned m = rho(x_i) * meanvol before tessellation.
+		 * Rebase that mass once to the measured initial Voronoi area, so the
+		 * prescribed density and constant pressure are both true at t=0.
+		 * Subsequent W=0 evolution keeps this cell mass fixed. This opt-in is
+		 * limited to the glass-fed Kepler IC and never changes the original grid.
+		 */
+		const char *rebase_env = getenv("EUNHA_KEPLER_MASS_FROM_CELL_VOLUME");
+		const char *ic_env = getenv("EUNHA_IC");
+		int rebase_kepler_mass = use_glass && rebase_env && strcmp(rebase_env, "1") == 0
+			&& ic_env && strcmp(ic_env, "kepler") == 0 && GAS_Kappa(simpar) == 0;
+		const char *area_path = getenv("EUNHA_KEPLER_INITIAL_AREAS_FILE");
+		double *periodic_areas = NULL;
+		if(allow_sparse_glass && use_glass && ic_env && strcmp(ic_env, "kepler") == 0 &&
+		   (!rebase_kepler_mass || !(area_path && area_path[0]))){
+			fprintf(stderr, "[KEPLER_IC_AREA] sparse Kepler glass requires mass rebase and periodic-area sidecar\n");
+			MPI_Abort(MPI_COMM(simpar), 94);
+		}
+		if(area_path && area_path[0]){
+			if(!rebase_kepler_mass || glass_count > (size_t)INT_MAX){
+				fprintf(stderr, "[KEPLER_IC_AREA] sidecar requires Kepler glass mass rebase\n");
+				MPI_Abort(MPI_COMM(simpar), 94);
+			}
+			FILE *af = fopen(area_path, "rb");
+			int area_count = 0;
+			double area_lx = 0, area_ly = 0;
+			if(!af || fread(&area_count, sizeof(int), 1, af) != 1 ||
+			   fread(&area_lx, sizeof(double), 1, af) != 1 ||
+			   fread(&area_ly, sizeof(double), 1, af) != 1 ||
+			   area_count != (int)glass_count || area_lx != (double)Lx ||
+			   area_ly != (double)Ly){
+				fprintf(stderr, "[KEPLER_IC_AREA] invalid sidecar header: %s\n", area_path);
+				MPI_Abort(MPI_COMM(simpar), 94);
+			}
+			periodic_areas = (double*)malloc(glass_count * sizeof(double));
+			if(!periodic_areas ||
+			   fread(periodic_areas, sizeof(double), glass_count, af) != glass_count ||
+			   fgetc(af) != EOF){
+				fprintf(stderr, "[KEPLER_IC_AREA] invalid sidecar payload: %s\n", area_path);
+				MPI_Abort(MPI_COMM(simpar), 94);
+			}
+			fclose(af);
+			long double area_sum = 0;
+			for(size_t k=0;k<glass_count;k++){
+				if(!(periodic_areas[k] > 0) || !isfinite(periodic_areas[k])){
+					fprintf(stderr, "[KEPLER_IC_AREA] nonpositive area at site=%zu\n", k);
+					MPI_Abort(MPI_COMM(simpar), 94);
+				}
+				area_sum += periodic_areas[k];
+			}
+			const char *fixed_poly_env=getenv("GFS_KEPLER_FIXED_POLYGON");
+			int fixed_poly=fixed_poly_env && strcmp(fixed_poly_env,"1")==0;
+			long double expected_area=fixed_poly
+				? 0.5L*1024.L*2.75L*2.75L*sinl(2.L*acosl(-1.L)/1024.L)
+				: (long double)Lx*(long double)Ly;
+			if(fixed_poly && glass_count!=55351){
+				fprintf(stderr,"[KEPLER_IC_AREA] fixed polygon requires 55351-site bounded glass\n");
+				MPI_Abort(MPI_COMM(simpar),94);
+			}
+			if(fabsl(area_sum - expected_area) > 1.e-8L){
+				fprintf(stderr, "[KEPLER_IC_AREA] areas fail domain tiling: sum=%.17Lg expected=%.17Lg\n",
+					area_sum, expected_area);
+				MPI_Abort(MPI_COMM(simpar), 94);
+			}
+			DEBUGPRINT("[KEPLER_IC_AREA] rank=%d sidecar=%s sites=%zu sum=%.17Lg\n",
+				MYID(simpar), area_path, glass_count, area_sum);
+		}
 		size_t p_size = (use_stress) ? sizeof(treevorostressrk4particletype)
 		                             : sizeof(treevorork4particletype);
 		char *bp_raw = (char*)res;
 		for(i=0;i<nbp;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+			if(rebase_kepler_mass){
+				postype target_rho = bpi->mass/meanvol;
+				if(periodic_areas){
+					size_t id = (size_t)PINDX(bpi);
+					if(id >= glass_count){
+						fprintf(stderr, "[KEPLER_IC_AREA] site id out of range: %zu\n", id);
+						MPI_Abort(MPI_COMM(simpar), 94);
+					}
+					bpi->volume = periodic_areas[id];
+				}
+				if(!(bpi->volume > 0) || !isfinite(bpi->volume) || !(target_rho > 0)){
+					fprintf(stderr, "[KEPLER_IC_MASS_REBASE] invalid initial cell id=%zu V=%g rho=%g\n",
+						(size_t)PINDX(bpi), (double)bpi->volume, (double)target_rho);
+					MPI_Abort(MPI_COMM_WORLD, 93);
+				}
+				bpi->mass = target_rho*bpi->volume;
+				bpi->den = target_rho;
+			}
 			bpi->ie = bpi->pressure*bpi->volume/(Gamma-1);
 			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
 		}
+		if(rebase_kepler_mass)
+			DEBUGPRINT("[KEPLER_IC_MASS_REBASE] rank=%d cells=%d, m=rho_target*VoronoiVolume\n",
+				MYID(simpar), nbp);
+		free(periodic_areas);
 	}
 	VORO_NPAD(simpar) = 0;
 
@@ -817,10 +914,11 @@ void kh_findVol(SimParameters *simpar){
     postype xmin,ymin,zmin,xmax,ymax,zmax, cellsize;
     cellsize = BASICCELL_CELLWIDTH(simpar) = KH_GridSize(simpar);
     // xmin,ymin,xmax,ymax are the boundaries of the local domain.
-    xmin = KH_XMIN(simpar)-cellsize;
-    ymin = KH_YMIN(simpar)-cellsize;
-    xmax = KH_XMAX(simpar)+cellsize;
-    ymax = KH_YMAX(simpar)+cellsize;
+    postype halo_width = gfs_kepler_halo_width(cellsize);
+    xmin = KH_XMIN(simpar)-halo_width;
+    ymin = KH_YMIN(simpar)-halo_width;
+    xmax = KH_XMAX(simpar)+halo_width;
+    ymax = KH_YMAX(simpar)+halo_width;
 
 //  DEBUGPRINT("P%d has cell info. %g : %g %g %g %g\n", MYID(simpar), cellsize, xmin,ymin,xmax,ymax);
 

@@ -100,6 +100,7 @@ void paddingVorork4Particles(SimParameters *simpar, postype width){
 void paddingTreeVorork4Particles(SimParameters *simpar, postype width){
 	int ndim = 2;
 	int i;
+	width = gfs_kepler_halo_width(width);
 /*	DEBUGPRINT("P%d paddingTreeVoro: ENTER np=%d width=%g NDDINFO=%d\n",
 		MYID(simpar), VORO_NP(simpar), width, NDDINFO(simpar)); fflush(stderr); */
 	VORORK4_TBPP(simpar) = NULL;

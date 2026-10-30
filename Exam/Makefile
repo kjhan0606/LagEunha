@@ -90,6 +90,12 @@ NVCCFLAGS   = -O3 --use_fast_math -DXYZDBL -DGOTPM -DUSE_CUDA \
               -I.. -I../../Voro
 CCFLAGS    += -DUSE_CUDA
 EXOBJ      += exam_gpu.o exam_gpu_extract.o
+ifdef GFS_FAST_SEED3
+NVCCFLAGS  += -DGFS_FAST_SEED3
+endif
+ifdef GFS_VARPRESS_W0
+NVCCFLAGS  += -DGFS_VARPRESS_W0
+endif
 ifdef GPU_VALIDATE
 CCFLAGS    += -DGPU_VALIDATE
 NVCCFLAGS  += -DGPU_VALIDATE
@@ -121,6 +127,9 @@ new:
 $(EXLIB): $(EXOBJ)
 	ar -rcv $@ $?
 	ranlib $@
+
+# The experimental integrator is included by exam.c.
+exam.o: gfs_wall_events.inc gfs_wall_dense.h kepler_slip_wall.h gfs_thermal64.h gfs_thermal64_native.inc gfs_rk4_direct_u.inc gfs_rk4_transaction.inc gfs_ssprk3.inc gfs_moment_native.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_native.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_native.inc gfs_enriched_coupling.h gfs_enriched_coupling_native.inc
 
 
 %.c: 
@@ -156,10 +165,10 @@ lag3d.exe: exam3d_main.c exam3d_gfs.c exam3d_gfs.h gfs_riemann.h gfs_pair.h $(VO
 	$(CC) $(CCFLAGS) -I. -I.. -I$(VORO) -o $@ exam3d_main.c exam3d_gfs.c $(VORO)/voro.c -lm
 
 ifdef USE_CUDA
-exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_pair.h
+exam_gpu.o: exam_gpu.cu exam_gpu.h gfs_thermal64.h gfs_pair.h gfs_ale_flux.h gfs_ale_shadow.inc gfs_moment_gpu.inc gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_gpu.inc gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_gpu.inc gfs_enriched_coupling.h gfs_enriched_coupling_gpu.inc gfs_ale_fan.h
 	$(NVCC) $(NVCCFLAGS) $(INCLUDES) -c $< -o $@
 
-exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_pair.h
+exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_thermal64.h gfs_pair.h gfs_moment.h gfs_moment_density.h gfs_moment_initial.h gfs_dg_euler.h gfs_enriched_euler.h gfs_enriched_coupling.h
 	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 endif
 

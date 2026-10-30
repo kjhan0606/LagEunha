@@ -18,9 +18,11 @@
  *  CPU Voronoi + CPU→GPU face transfer.
  * ================================================================ */
 
-/* Maximum polygon corners per particle (box starts with 4,
-   each neighbor adds at most 1 → 48 handles ~44 neighbors) */
-#define GPU_MAX_CORNERS 48
+/* Capacity for intermediate clipped polygons. The bounded Kepler cell has
+ * <=30 final corners at accepted t=.045616, but ordering real and physical
+ * halfplanes can temporarily require more than 48. Keep an explicit abort
+ * on overflow; never truncate a geometric cell silently. */
+#define GPU_MAX_CORNERS 64
 
 /* MAX_INDEX for ghost detection (must match eunha.h) */
 #define MAX_INDEX_GPU 72057594037927935LL
@@ -39,6 +41,8 @@ typedef struct {
     int    edge_neigh[GPU_MAX_CORNERS];  /* SoA index of face neighbor, <0 = box edge */
     int    n_corners;
     int    n_real_faces;                  /* count of edges with edge_neigh >= 0 */
+    int    stencil_pad;                   /* adaptive linked-cell search half-width */
+    int    halo_clipped;                  /* final influence bound crosses the local grid */
 } PolygonOut;
 
 /* ---- CSR (Compressed Sparse Row) face topology ---- */
@@ -181,6 +185,9 @@ typedef struct {
     float *h_tree_size;
 
     int initialized;
+    /* Immutable input for neighbor density gradients in the tessellation
+     * kernel. d_parts.den is also an output of that kernel. */
+    float *d_tess_den_input;
 } GPUContext;
 
 /* ---- Physics parameters passed to GPU kernel ---- */
@@ -237,6 +244,17 @@ typedef struct {
 extern "C" {
 #endif
 
+#include "gfs_moment_initial.h"
+#include "gfs_dg_euler.h"
+#include "gfs_enriched_euler.h"
+#include "gfs_enriched_coupling.h"
+int gpu_enriched_project_initial(GPUContext *ctx,int np,
+    const GfsEnrichConfig cfg[2],GfsEnrichAudit *audit);
+int gpu_dg_project_initial(GPUContext *ctx,int np,int rank,const GfsDgConfig *cfg,
+    GfsDgProjectionAudit *audit);
+int gpu_moment_initialize(GPUContext *ctx,int np,const GfsMomentIC *ic,
+    const GfsMomentPayload *input,GfsMomentInitialAudit *audit);
+
 /* --- GPU memory management (exam_gpu.cu) --- */
 void gpu_init(GPUContext *ctx, int max_particles, int max_faces, int mpi_rank);
 void gpu_free(GPUContext *ctx);
@@ -245,6 +263,8 @@ void gpu_free(GPUContext *ctx);
 void gpu_upload_particles(GPUContext *ctx, int n_total, int has_stress);
 void gpu_upload_faces(GPUContext *ctx, int n_particles, int n_faces);
 void gpu_download_results(GPUContext *ctx, int n_particles);
+/* W0/MPI1 periodic aliases only; 0 requests the ordinary host refresh. */
+int gpu_refresh_local_periodic_fields(GPUContext *ctx, int nbp, int n_total, double boxsize);
 
 /* --- Force kernel launch (exam_gpu.cu) --- */
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
@@ -252,6 +272,17 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                const GPUPhysicsParams *params);
 /* Face-ends inside the pair cutoff on the latest launch. */
 long long gpu_take_pair_hits(void);
+/* Local-rank geometric sweep diagnostics on the latest force launch. */
+int gpu_varpress_w0_enabled(void);
+double gpu_varpress_geom_max_rate(void);
+long long gpu_varpress_geom_max_id(void);
+/* Opt-in stage transactions: return invalid trial geometry to the integrator
+ * instead of terminating. Ordinary callers retain the fatal checks. */
+void gpu_geometry_trial_begin(void);
+void gpu_geometry_trial_end(void);
+int gpu_geometry_trial_active(void);
+int gpu_geometry_trial_failed(void);
+void gpu_geometry_trial_mark_failed(void);
 
 /* --- GPU tessellation (exam_gpu.cu) --- */
 void gpu_alloc_tess_buffers(GPUContext *ctx, int max_particles,
@@ -260,11 +291,18 @@ void gpu_free_tess_buffers(GPUContext *ctx);
 void gpu_upload_cells(GPUContext *ctx, int n_cells, int n_entries);
 void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     int mx, int my, double cellsize, double xmin, double ymin,
-    double boxsize, double OoA, int av_mode, double Gamma,
+    double boxsize, double global_w2_max, double OoA, int av_mode, double Gamma,
     double nu_phys, double prandtl, double cd_amax,
     int gradient_method,
     int entropy_mode, double K_floor);
 void gpu_download_tess_results(GPUContext *ctx, int nbp, int has_stress);
+/* Raw geometric area for the end-of-step volume refresh; no EOS or force. */
+int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
+    int mx, int my, double cellsize, double xmin, double ymin,
+    double boxsize, double global_w2_max, double OoA, int av_mode,
+    int gradient_method);
+void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
+    double cellsize, double xmin, double ymin, double boxsize, double OoA);
 
 /* --- CPU-side helpers for GPU tessellation (exam_gpu_extract.c) --- */
 GPUContext *gpu_get_context(void);
