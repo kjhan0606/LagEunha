@@ -25,6 +25,11 @@ int nearest2dOpen(void *, TStruct *, postype );
 int nearest3dOpen(void *, TStruct *, postype );
 
 typedef HydroTreeLinkedCell CellType;
+int gfs_kepler_vacuum_geometry_only_requested(void);
+int gfs_kepler_vacuum_stencil_configure(int n, double box, double r_in,
+        double r_out, int guard, double cx, double cy,
+        size_t *n_fluid, size_t *n_sites, size_t *n_faces);
+void gfs_kepler_vacuum_append_generators(SimParameters *);
 void mkLinkedList2D_oExam(SimParameters *, postype , 
 		postype , postype , postype , postype , 
 		void (*)(SimParameters *, postype)); 

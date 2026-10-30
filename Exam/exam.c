@@ -20,6 +20,143 @@
 #include "exam2d.h"
 #include "gfs_pair.h"
 #include "gfs_velocity_limiter.h"
+#include "gfs_boundary_kind.h"
+#include "gfs_kepler_vacuum_stencil.h"
+
+static GfsKeplerVacuumStencil gfs_kepler_vacuum_stencil = {0};
+static int gfs_kepler_vacuum_stencil_enabled = 0;
+
+int gfs_kepler_vacuum_geometry_only_requested(void){
+	const char *s = getenv("EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY");
+	return s != NULL;
+}
+
+int gfs_kepler_vacuum_stencil_configure(int n, double box, double r_in,
+		double r_out, int guard, double cx, double cy,
+		size_t *n_fluid, size_t *n_sites, size_t *n_faces){
+	GfsKeplerVacuumStencil candidate = {0};
+	if(gfs_kepler_vacuum_stencil_enabled){
+		gfs_kepler_vacuum_stencil_destroy(&gfs_kepler_vacuum_stencil);
+		gfs_kepler_vacuum_stencil_enabled = 0;
+	}
+	if(!gfs_kepler_vacuum_stencil_build_periodic(n, box, r_in, r_out, guard,
+			cx, cy, &candidate)) return 0;
+	gfs_kepler_vacuum_stencil = candidate;
+	gfs_kepler_vacuum_stencil_enabled = 1;
+	if(n_fluid) *n_fluid = candidate.n_fluid;
+	if(n_sites) *n_sites = candidate.n_sites;
+	if(n_faces) *n_faces = candidate.n_faces;
+	return 1;
+}
+
+void gfs_kepler_vacuum_append_generators(SimParameters *simpar){
+	GfsKeplerVacuumStencil *st = &gfs_kepler_vacuum_stencil;
+	unsigned char *seen = NULL;
+	unsigned char *selected = NULL;
+	size_t n_grid, nselected = 0, p_size;
+	int i;
+	int old_npad;
+	char *grown;
+	if(!gfs_kepler_vacuum_stencil_enabled) return;
+	if(!gfs_kepler_vacuum_geometry_only_requested()){
+		fprintf(stderr, "[KEPLER_VACUUM] stencil insertion is geometry-only until ALE motion is implemented\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	/* PINDX in kh_mkinitial is the unguarded row-major target-grid ID.
+	 * Incidence IDs in the stencil include the guard, so translate them
+	 * before matching local owned/halo material particles. */
+	n_grid = (size_t)st->target_n * (size_t)st->target_n;
+	seen = (unsigned char *)calloc(n_grid, sizeof(*seen));
+	selected = (unsigned char *)calloc(st->n_sites, sizeof(*selected));
+	if(!seen || !selected){
+		free(seen);
+		free(selected);
+		fprintf(stderr, "[KEPLER_VACUUM] cannot allocate local-ID incidence map\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	p_size=TVORORK4_DDINFO(simpar)[0].n_size;
+	if(p_size<sizeof(treevorork4particletype)){
+		free(seen); free(selected);
+		fprintf(stderr, "[KEPLER_VACUUM] invalid local particle stride\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	char *bp_raw=(char *)VORORK4_TBP(simpar);
+	for(i=0;i<VORO_NP(simpar);i++){
+		treevorork4particletype *p=(treevorork4particletype *)
+			(bp_raw+(size_t)i*p_size);
+		size_t id=(size_t)PINDX(p);
+		if(id != (size_t)MAX_INDEX && id < n_grid) seen[id]=1;
+	}
+	for(i=0;i<VORO_NPAD(simpar);i++){
+		treevorork4particletype *p=(treevorork4particletype *)
+			((char *)VORORK4_TBPP(simpar)+i*TVORORK4_DDINFO(simpar)[0].n_size);
+		size_t id=(size_t)PINDX(p);
+		if(id != (size_t)MAX_INDEX && id < n_grid) seen[id]=1;
+	}
+	for(size_t s=0;s<st->n_sites;s++){
+		const GfsKeplerVacuumSite *site=&st->sites[s];
+		for(size_t q=0;q<site->incidence_count;q++){
+			const GfsKeplerVacuumIncidence *f=&st->incidences[4*s+q];
+			int fi=f->fluid_id%st->computational_n-st->guard;
+			int fj=f->fluid_id/st->computational_n-st->guard;
+			if(fi>=0 && fi<st->target_n && fj>=0 && fj<st->target_n &&
+			   seen[(size_t)fj*(size_t)st->target_n+(size_t)fi]){
+				selected[s]=1;
+				++nselected;
+				break;
+			}
+		}
+	}
+	if(nselected==0){ free(seen); free(selected); return; }
+	old_npad=VORO_NPAD(simpar);
+	if(old_npad<0 || nselected>(size_t)(INT_MAX-old_npad)){
+		free(seen); free(selected);
+		fprintf(stderr, "[KEPLER_VACUUM] padded generator count overflows int\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	if((size_t)(old_npad+nselected)>SIZE_MAX/p_size){
+		free(seen); free(selected);
+		fprintf(stderr, "[KEPLER_VACUUM] invalid padded particle stride/count\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	grown=(char *)realloc(VORORK4_TBPP(simpar),
+		(size_t)(old_npad+nselected)*p_size);
+	if(!grown){
+		free(seen); free(selected);
+		fprintf(stderr, "[KEPLER_VACUUM] cannot grow MPI padding buffer\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	VORORK4_TBPP(simpar)=(treevorork4particletype*)grown;
+	int dst=old_npad;
+	for(size_t s=0;s<st->n_sites;s++){
+		const GfsKeplerVacuumSite *site=&st->sites[s];
+		if(!selected[s]) continue;
+		char *raw=grown+(size_t)dst*p_size;
+		memset(raw,0,p_size);
+		treevorork4particletype *p=(treevorork4particletype *)raw;
+		p->u4if.indx=(size_t)MAX_INDEX;
+		SET_FLAG(p,BoundaryGhostflag);
+		SET_FLAG(p,VOROflag);
+		SET_FLAG(p,Wallflag);
+		p->x=(postype)site->x;
+		p->y=(postype)site->y;
+		++dst;
+	}
+	free(seen);
+	free(selected);
+	if(dst-old_npad!=(int)nselected){
+		fprintf(stderr, "[KEPLER_VACUUM] local generator selection changed during append\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return;
+	}
+	VORO_NPAD(simpar)=dst;
+}
 
 /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
  * on (default off). The entropy K = P/rho^gamma is stress.K. It is set from
@@ -2024,6 +2161,9 @@ void mkLinkedList2D_oExam(
     }
 	// now for the particle padding from other ranks
 	paddingTreeAllParticle(simpar, cellsize);
+	/* An opt-in geometry-only Kepler gate appends transient vacuum generators
+	 * after the fresh MPI halo. Their persistent stencil lives outside TBPP. */
+	gfs_kepler_vacuum_append_generators(simpar);
     char *bpp_raw = (char*)VORORK4_TBPP(simpar);
     for(i=0;i<VORO_NPAD(simpar);i++){
         treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);

@@ -239,6 +239,58 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
     int ny = NY(simpar);
     float Lx = KH_SIMBOX(simpar).x.max - KH_SIMBOX(simpar).x.min;
     float Ly = KH_SIMBOX(simpar).y.max - KH_SIMBOX(simpar).y.min;
+	const char *vacuum_geometry_env = getenv("EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY");
+	int vacuum_geometry_only = vacuum_geometry_env != NULL;
+	postype vacuum_cx = (postype)0.5*Lx, vacuum_cy = (postype)0.5*Ly;
+	postype vacuum_rin = (postype)0.5, vacuum_rout = (postype)2.0;
+	postype vacuum_eps = (postype)0.01175;
+	if(vacuum_geometry_only){
+		const char *ic = getenv("EUNHA_IC");
+		const char *cxs = getenv("EUNHA_KEPLER_CX");
+		const char *cys = getenv("EUNHA_KEPLER_CY");
+		const char *rins = getenv("EUNHA_KEPLER_RIN");
+		const char *routs = getenv("EUNHA_KEPLER_ROUT");
+		const char *epss = getenv("EUNHA_KEPLER_EPS");
+		int ranks = 0;
+		MPI_Comm_size(MPI_COMM(simpar), &ranks);
+		if(strcmp(vacuum_geometry_env, "1") != 0 || !ic || strcmp(ic, "kepler") != 0 ||
+		   ranks != 1 || nx != 320 || ny != 320 ||
+		   fabs((double)Lx-5.0) > 1.e-12 || fabs((double)Ly-5.0) > 1.e-12 ||
+		   fabs((double)KH_SIMBOX(simpar).x.min) > 1.e-12 ||
+		   fabs((double)KH_SIMBOX(simpar).y.min) > 1.e-12 || GAS_Kappa(simpar) != 0 ||
+		   (getenv("GFS_KEPLER_FIXED_POLYGON") &&
+		    strcmp(getenv("GFS_KEPLER_FIXED_POLYGON"), "0") != 0)){
+			fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] requires EUNHA_IC=kepler, one rank, a 320^2 grid over [0,5]^2, W=0, and no fixed polygon\n");
+			MPI_Abort(MPI_COMM(simpar), 96);
+			return NULL;
+		}
+		if(cxs && cxs[0]) vacuum_cx = atof(cxs);
+		if(cys && cys[0]) vacuum_cy = atof(cys);
+		if(rins && rins[0]) vacuum_rin = atof(rins);
+		if(routs && routs[0]) vacuum_rout = atof(routs);
+		if(epss && epss[0]) vacuum_eps = atof(epss);
+		if(fabs((double)vacuum_cx-2.5) > 1.e-12 ||
+		   fabs((double)vacuum_cy-2.5) > 1.e-12 ||
+		   fabs((double)vacuum_rin-0.5) > 1.e-12 ||
+		   fabs((double)vacuum_rout-2.0) > 1.e-12 ||
+		   !(vacuum_eps >= 0) || !isfinite((double)vacuum_eps)){
+			fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] requires center=(2.5,2.5), Rin=0.5, Rout=2, and finite eps>=0\n");
+			MPI_Abort(MPI_COMM(simpar), 96);
+			return NULL;
+		}
+		size_t expected_fluid = 0, expected_sites = 0, expected_faces = 0;
+		if(!gfs_kepler_vacuum_stencil_configure(nx, (double)Lx,
+				vacuum_rin, vacuum_rout, 1, vacuum_cx, vacuum_cy,
+				&expected_fluid, &expected_sites, &expected_faces) ||
+		   expected_fluid != 48240 || expected_sites != 908 || expected_faces != 1280){
+			fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] failed audited annulus stencil construction\n");
+			MPI_Abort(MPI_COMM(simpar), 96);
+			return NULL;
+		}
+		if(MYID(simpar)==0)
+			printf("[KEPLER_VACUUM_GEOMETRY] stencil fluid=%zu generators=%zu faces=%zu dx=%.12g\n",
+				expected_fluid, expected_sites, expected_faces, (double)Lx/nx);
+	}
 	postype dmean = Lx/nx;
 	GAS_dMean(simpar) = dmean;
 	int av_mode = GAS_AVMODE(simpar);
@@ -267,7 +319,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 	int use_glass = 0;
 	size_t glass_count = (size_t)nx*(size_t)ny;
 	const char *sparse_env = getenv("EUNHA_ALLOW_SPARSE_GLASS");
-	int allow_sparse_glass = sparse_env && strcmp(sparse_env, "1") == 0;
+	int allow_sparse_glass = !vacuum_geometry_only && sparse_env && strcmp(sparse_env, "1") == 0;
 	{
 		char path[512];
 		const char *env = getenv("LAGMFM_GLASS_FILE");
@@ -279,7 +331,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		 * then create tiny Voronoi cells → density spikes. */
 		FILE *fp = NULL;
 #else
-		FILE *fp = fopen(path, "rb");
+		FILE *fp = vacuum_geometry_only ? NULL : fopen(path, "rb");
 #endif
 		if(fp){
 			int np_file;
@@ -457,7 +509,7 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             postype r = sqrt(dx_c*dx_c + dy_c*dy_c) + 1e-30;
             vx = -dx_c / r;
             vy_seed = -dy_c / r;
-        } else if(eic && strcmp(eic, "kepler") == 0){
+		} else if(eic && strcmp(eic, "kepler") == 0){
             const char *cxs = getenv("EUNHA_KEPLER_CX");
             const char *cys = getenv("EUNHA_KEPLER_CY");
             postype cx = (cxs && cxs[0]) ? atof(cxs) : (postype)0.5*Lx;
@@ -467,14 +519,19 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             const char *es = getenv("EUNHA_KEPLER_EPS");
             const char *rins = getenv("EUNHA_KEPLER_RIN");
             const char *routs = getenv("EUNHA_KEPLER_ROUT");
-            postype eps = (es && es[0]) ? atof(es) : (postype)0.0;
+			postype eps = (es && es[0]) ? atof(es) : (postype)0.0;
             /* Annulus Sigma falls as 1/R. Pressure is spatially constant and
              * tiny, as in the GIZMO cold Keplerian disk, so dP/dR = 0 and the
              * circular speed below is the radial equilibrium. */
-            postype Rin = (rins && rins[0]) ? atof(rins) : (postype)2.0;
-            postype Rout = (routs && routs[0]) ? atof(routs) : (postype)8.0;
+			postype Rin = vacuum_geometry_only ? vacuum_rin :
+				((rins && rins[0]) ? atof(rins) : (postype)2.0);
+			postype Rout = vacuum_geometry_only ? vacuum_rout :
+				((routs && routs[0]) ? atof(routs) : (postype)8.0);
             const char *profs = getenv("EUNHA_KEPLER_PROFILE");
-            if(profs && strcmp(profs, "hopkins") == 0){
+			if(vacuum_geometry_only){
+				if(R < Rin || R > Rout) continue;
+				rho = 1.0;
+			} else if(profs && strcmp(profs, "hopkins") == 0){
                 /* Hopkins (2015, arXiv:1409.7395) Eq. 34, the mesh-code
                  * version of the cold Keplerian disk, scaled from his
                  * (0.5, 2) to (Rin, Rout):
@@ -500,8 +557,9 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
             postype floor = (postype)1.0e-3;
             rho = floor + (Rin / (R + (postype)1e-6)) * inner * outer;
             }
-            postype Rsafe = (R > (postype)1e-8) ? R : (postype)1e-8;
-            postype vamp = (eps > 0)
+			postype Rsafe = (R > (postype)1e-8) ? R : (postype)1e-8;
+			if(vacuum_geometry_only) eps = vacuum_eps;
+			postype vamp = (eps > 0)
                 ? R * pow(R*R + eps*eps, (postype)-0.75)
                 : (postype)1.0 / sqrt(Rsafe);
             press = (postype)1.0e-6;
@@ -726,6 +784,49 @@ treevorork4particletype *kh_mkinitial(SimParameters *simpar, int *mp){
 		free(periodic_areas);
 	}
 	VORO_NPAD(simpar) = 0;
+	if(vacuum_geometry_only){
+		const size_t expected_n = 48240;
+		const double dx = (double)Lx/(double)nx;
+		const double expected_volume = dx*dx;
+		double volume_sum = 0.0, max_area_rel = 0.0, max_rho_rel = 0.0;
+		double max_orbit_rel = 0.0, max_mass_rel = 0.0;
+		if((size_t)nbp != expected_n){
+			fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] local fluid count %d != %zu\n", nbp, expected_n);
+			MPI_Abort(MPI_COMM(simpar), 96);
+			return res;
+		}
+		size_t p_size = use_stress ? sizeof(treevorostressrk4particletype)
+		                           : sizeof(treevorork4particletype);
+		char *bp_raw = (char*)res;
+		for(i=0;i<nbp;i++){
+			treevorork4particletype *p = (treevorork4particletype*)(bp_raw+(size_t)i*p_size);
+			double area_rel = fabs((double)p->volume-expected_volume)/expected_volume;
+			double rho_rel = fabs((double)p->den-1.0);
+			double mass_rel = fabs((double)p->mass-expected_volume)/expected_volume;
+			double dxp=(double)p->x-(double)vacuum_cx, dyp=(double)p->y-(double)vacuum_cy;
+			double radius=hypot(dxp,dyp);
+			double vc=radius*pow(radius*radius+(double)vacuum_eps*vacuum_eps,-0.75);
+			double v=hypot((double)p->vx,(double)p->vy);
+			double orbit_rel=fabs(v-vc)/(vc>0?vc:1.0);
+			volume_sum += (double)p->volume;
+			if(area_rel>max_area_rel) max_area_rel=area_rel;
+			if(rho_rel>max_rho_rel) max_rho_rel=rho_rel;
+			if(mass_rel>max_mass_rel) max_mass_rel=mass_rel;
+			if(orbit_rel>max_orbit_rel) max_orbit_rel=orbit_rel;
+		}
+		if(fabs(volume_sum-expected_n*expected_volume)>1.e-8 ||
+		   max_area_rel>1.e-6 || max_rho_rel>1.e-6 ||
+		   max_mass_rel>1.e-12 || max_orbit_rel>1.e-6){
+			fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] failed area/mass/density/orbit audit: Vsum=%.17g area_rel=%.3e rho_rel=%.3e mass_rel=%.3e orbit_rel=%.3e\n",
+				volume_sum, max_area_rel, max_rho_rel, max_mass_rel, max_orbit_rel);
+			MPI_Abort(MPI_COMM(simpar), 96);
+			return res;
+		}
+		if(MYID(simpar)==0)
+			printf("[KEPLER_VACUUM_GEOMETRY] PASS cells=%zu volume_sum=%.12g expected=%.12g max_area_rel=%.3e max_rho_rel=%.3e max_mass_rel=%.3e max_orbit_rel=%.3e fixed_mass=%.12g\n",
+				expected_n, volume_sum, expected_n*expected_volume,
+				max_area_rel, max_rho_rel, max_mass_rel, max_orbit_rel, expected_volume);
+	}
 
 	DEBUGPRINT("P%d has w2 values P= %g w2= %g w2ceil = %g den= %g meanV= %g vol= %g Cs= %g\n", 
 			MYID(simpar), res[0].pressure, res[0].w2, res[0].w2ceil, res[0].den,

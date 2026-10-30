@@ -208,6 +208,18 @@ int RunKH(SimParameters *simpar, int icont){
 	treevorork4particletype *bp;
 	int icount = 0;;
 	int iflag,jflag;
+	const char *vacuum_geometry_env = getenv("EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY");
+	int vacuum_geometry_only = vacuum_geometry_env != NULL;
+	if(vacuum_geometry_only && strcmp(vacuum_geometry_env, "1") != 0){
+		fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] EUNHA_KEPLER_VACUUM_GEOMETRY_ONLY must equal 1\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return 0;
+	}
+	if(vacuum_geometry_only && icont != 0){
+		fprintf(stderr, "[KEPLER_VACUUM_GEOMETRY] geometry audit only supports a fresh IC (icont=0)\n");
+		MPI_Abort(MPI_COMM(simpar), 96);
+		return 0;
+	}
 
 
 	{
@@ -270,6 +282,7 @@ int RunKH(SimParameters *simpar, int icont){
 		t = 0;
 		dt=1.e-7;
 		bp = kh_mkinitial(simpar, &np);
+		if(vacuum_geometry_only) return 0;
 		printf("made initial conditions\n");
 		GAS_dtold(simpar) = dt;
 		/* Save an exact IC receipt when requested, before any RK4 stage. This

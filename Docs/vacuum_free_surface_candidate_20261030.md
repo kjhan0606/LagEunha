@@ -8,9 +8,10 @@ Base: `745e7391cbf8388ec6f905ffb9ba1bbe2b18a38c`
 
 This isolated candidate records the sharp annular benchmark contract and
 develops an exact gas-to-vacuum Riemann helper. It does not alter the bounded
-W=0 reference branch or job `442401`. The working tree now also has
-host/device boundary-kind plumbing, but it still has no vacuum-generator
-construction or free-surface flux evolution.
+W=0 reference branch or job `442401`. It now includes host/device
+boundary-kind plumbing and a standalone constructor for the initial lattice
+stencil. Neither is connected to solver-side generator insertion or
+free-surface flux evolution.
 
 ## Source findings
 
@@ -21,13 +22,13 @@ construction or free-surface flux evolution.
   need a Kepler-specific stage hook, separate from generic MPI padding.
 - `Exam/exam_gpu.cu::voronoi_tessellate_kernel` clips real cells by the optional
   fixed polygon. Such support edges are tagged separately from generator faces.
-- The current working-tree patch adds `ParticleSoA.kind` and
+- Candidate commit `45c71c5` adds `ParticleSoA.kind` and
   `FaceCSR.boundary_kind`. Both fused and ordinary CPU face extraction classify
   a ghost carrying `Wallflag` as a vacuum generator; GPU tessellation maps that
   particle kind to a face kind and handles fixed-polygon sentinels separately.
   The direct CPU force path, GPU force kernel, and CPU reference fallback now
-  fail closed on a vacuum face. Host-side integration is syntax-checked, but
-  the CUDA kernel has not been compiled.
+  fail closed on a vacuum face. The read-only `gfs_ale_shadow.inc` diagnostic
+  also consumes the new face kind and rejects vacuum faces explicitly.
 - Fixed polygon supports arrive at `getAccVoro2DBlend_kernel` as
   `neighbor_idx <= -1000`. They use zero laboratory-frame face speed and a
   wall-work correction, so they cannot represent an expanding vacuum edge.
@@ -42,6 +43,22 @@ construction or free-surface flux evolution.
   and tapers, then constructs mass and internal energy from that profile. A
   first annulus prototype was mistakenly attached to the legacy Kepler driver
   and has been removed; no sharp-annulus mode is currently implemented.
+
+## RK-stage and MPI padding ownership
+
+For the stress-enabled Kepler RK4 configuration, `Exam/KH/kh.c` dispatches to
+`exam2d_vph_rk4_int_blend`. Its RK stages update only the `VORO_NP` material
+particles. `paddingTreeVorork4Particles` resets `VORO_TBPP` and `VORO_NPAD`
+then builds a fresh MPI halo with `ppadding`; the linked-list builder inserts
+these padded particles for tessellation, and the force/volume paths free the
+padding allocation after each evaluation. Consequently a vacuum generator
+cannot keep its trajectory or RK increments in `VORO_TBPP`: that buffer is
+ephemeral and the main RK loops never advance its entries. A correct
+implementation needs persistent generator state keyed by stable boundary-site
+IDs, synchronized with the four fluid RK stages, and temporary per-stage copies
+appended after MPI halo construction. Multi-rank ownership and duplicate halo
+handling must be explicit. Merely appending zero-mass ghosts once or treating
+them as material `VORO_NP` cells would violate this lifecycle.
 
 ## Exact local gas-to-vacuum state
 
@@ -174,15 +191,31 @@ Consequences for the next implementation:
   construction rule; the 908-site stencil audit proves only the initial grid
   topology.
 
-The reproducible count and guard-width audit is
-`Exam/tests/audit_kepler_annulus_vacuum_stencil.py`.
+The reproducible count and guard-width audits are
+`Exam/tests/audit_kepler_annulus_vacuum_stencil.py` and
+`Exam/tests/test_gfs_kepler_vacuum_stencil.c`. The C constructor records stable
+guarded-grid IDs, initial positions, incident fluid IDs, and cardinal normals;
+its test reproduces the 48,240 / 908 / 1,280 counts and the 536 / 372 incidence
+split. It remains a geometry utility, not a solver hook.
+
+The original `n=256`, `box=4`, `Rout=2` sample places the outer support on the
+periodic seam: 88 first-layer vacuum sites lie outside the fundamental box.
+That geometry is unsafe for the periodic KH driver because material halo
+images can occupy those coordinates. The periodic stencil constructor now
+rejects it and requires at least one cell-width between the support radius and
+the seam. Increasing to `n=320`, `box=5` preserves the original `dx=1/64` and
+the same annulus counts, while all 908 vacuum sites lie inside the box. This is
+an initial-condition geometry gate only; it does not establish moving-boundary
+or RK-stage correctness.
 
 ## Verification performed
 
 `Exam/tests/test_gfs_boundary_kind.c` passes strict C99 compilation and
 execution. `mpiicx -fsyntax-only` passes for `exam.c` and
-`exam_gpu_extract.c` with `USE_CUDA` enabled, covering the host-side paths; it
-reports two unrelated existing warnings in `exam.c`.
+`exam_gpu_extract.c` with `USE_CUDA` and `GFS_VARPRESS_W0` enabled. The current
+`exam.c` compile reports two existing warnings: one format mismatch and one
+pointer-type mismatch. The `exam_gpu_extract.c` compile reports only unused
+MPI linker arguments from the compiler wrapper.
 
 `Exam/tests/test_gfs_vacuum_riemann.c` checks the fan head, the analytic
 `gamma=5/3` midpoint `(c,rho,p)=(0.5,0.125,0.01875)`, entropy preservation,
@@ -192,15 +225,17 @@ Simpson-integrated fan mass and the nonzero mass, momentum, and energy ALE flux
 inside the fan, plus outer, inner, and oblique-normal mirror kinematics. It
 also solves a shared orthogonal generator from two different gas states and
 confirms both edge speeds give zero ALE flux; parallel constraints are
-rejected. The stencil audit checks the initial lattice counts above. Strict C99
-compilation and execution pass; the derived outer and inner edge speeds also
-yield zero ALE mass, momentum, and energy flux. A standalone CUDA kernel
-including an earlier header revision was reported to compile for `sm_90`; this
-was compile-only, not a GPU runtime result. The current login environment has
-no `nvcc` or CUDA module, and its Slurm node inventory exposes no GPU GRES, so
-the current CUDA source changes have not been compiled or run. The new
-mirror-kinematics helper has only strict C99 CPU verification. Its test checks an oblique,
-unnormalized normal. An independent Python reference checks the same fan,
+rejected. The Python audit and the new C stencil test check the initial lattice
+counts above; the C test also verifies stable guarded-grid IDs and each
+fluid-to-generator cardinal incidence. Strict C99 compilation and execution
+pass, including AddressSanitizer and UndefinedBehaviorSanitizer; the derived
+outer and inner edge speeds also
+yield zero ALE mass, momentum, and energy flux. The current `exam_gpu.cu`
+translation unit compiles to `sm_90` both with and without
+`GFS_VARPRESS_W0`; this caught and led to fixing two stale `is_ghost` reads in
+`gfs_ale_shadow.inc`. These are compile-only checks, with no CUDA runtime or
+GPU face evolution. The mirror-kinematics helper has strict C99 CPU
+verification only. Its test checks an oblique, unnormalized normal. An independent Python reference checks the same fan,
 Galilean shifting, zero front flux, and mass integral; its recorded result is
 in `../../../vacuum_face_reference_20261030/reference_result.json`. These
 verify local analytic fluxes only; no CUDA runtime integration, mesh motion,
@@ -209,16 +244,17 @@ No sharp-annulus initializer has passed an MPI or runtime test.
 
 ## Integration gates
 
-1. Add a Kepler-specific RK-stage hook that generates inner and outer
-   zero-mass vacuum sites from current real boundary faces. Keep MPI halo
-   copies and reflecting walls on their existing behavior.
-2. Generate inner and outer mirror sites from current real boundary faces at
-   each RK stage. The initial Cartesian mask needs one site per missing lattice
-   coordinate: shared sites each have two orthogonal face constraints, which
-   the pair helper can satisfy from separate gas traces. Rebuild or reclassify
-   this incidence after the mesh distorts; fail visibly for incompatible or
-   over-subscribed sites. Verify actual face speeds and the geometric
-   conservation law instead of assuming the mirror construction gives them.
+1. Connect the deterministic stencil to an opt-in sharp-annulus initializer and
+   persistent Kepler boundary-generator state keyed by its missing lattice-site
+   IDs. Advance this state with the same RK4 stage abscissae and coefficients
+   as the material cells, while appending transient generator copies after
+   each fresh MPI halo build. Keep reflecting ghosts separate.
+2. At each stage, associate generators with current gas boundary faces and
+   impose their normal face speeds from gas-side traces. The initial mask has
+   shared sites with two orthogonal face constraints; the pair helper handles
+   those planar constraints. Rebuild or reclassify incidence after mesh
+   distortion and fail visibly on incompatible or over-subscribed sites. Check
+   the resulting face speeds and geometric conservation residual.
 3. Add a vacuum-face flux branch that bypasses positive HLLC floors and applies
    the exact gas-to-vacuum state. Keep real-cell mass fixed and account for
    moving-face pressure work consistently.

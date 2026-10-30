@@ -88,7 +88,7 @@ static void gfs_ale_shadow_capture(GPUContext *ctx,int np,int nt,int rank,int ca
     gpu_download_face_csr(ctx,np,ctx->d_faces.n_faces_total,
         ctx->h_faces.face_offset,ctx->h_faces.c1x,ctx->h_faces.c1y,
         ctx->h_faces.c2x,ctx->h_faces.c2y,ctx->h_faces.neighbor_idx,
-        ctx->h_faces.kp_idx,ctx->h_faces.km_idx,ctx->h_faces.is_ghost);
+        ctx->h_faces.kp_idx,ctx->h_faces.km_idx,ctx->h_faces.boundary_kind);
 #define GFS_ALE_COPY(field,type) CUDA_CHECK(cudaMemcpy(ctx->h_parts.field,ctx->d_parts.field,(size_t)nt*sizeof(type),cudaMemcpyDeviceToHost))
     GFS_ALE_COPY(indx,long long);GFS_ALE_COPY(x,double);GFS_ALE_COPY(y,double);
     GFS_ALE_COPY(vx,double);GFS_ALE_COPY(vy,double);GFS_ALE_COPY(mass,double);
@@ -102,7 +102,11 @@ static void gfs_ale_shadow_capture(GPUContext *ctx,int np,int nt,int rank,int ca
         if(ctx->h_parts.w2[i]!=0){fprintf(stderr,"[ALE_SHADOW] requires W0\n");exit(1);}
         for(int f=ctx->h_faces.face_offset[i];f<ctx->h_faces.face_offset[i+1];f++){
             int j=ctx->h_faces.neighbor_idx[f];
-            if(j<0 || j>=nt || ctx->h_faces.is_ghost[f]){skipped_walls++;continue;}
+            int kind=ctx->h_faces.boundary_kind[f];
+            if(kind==GFS_FACE_VACUUM){
+                fprintf(stderr,"[ALE_SHADOW] vacuum faces are outside this diagnostic contract\n");exit(1);
+            }
+            if(j<0 || j>=nt || kind!=GFS_FACE_INTERIOR){skipped_walls++;continue;}
             long long a=ctx->h_parts.indx[i],b=ctx->h_parts.indx[j];
             if(a>=b)continue;
             if(ctx->h_parts.w2[j]!=0){fprintf(stderr,"[ALE_SHADOW] nonzero neighbor W\n");exit(1);}
