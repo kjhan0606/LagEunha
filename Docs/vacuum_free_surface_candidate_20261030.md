@@ -146,6 +146,34 @@ curvature, or nonzero Laguerre weight rates. The current GPU path emits NaN on a
 vacuum face and the CPU path aborts, so it cannot silently treat vacuum as a
 reflecting wall. No MPI/GPU run has validated the boundary representation.
 
+### Verified RK-stage lifecycle
+
+`kh_mkinitial` calls `kh_findVol` to measure the initial volumes. That is only
+the initial-condition path. During evolution, `exam2d_vph_rk4_int_blend`
+recomputes density/pressure and then force at each RK stage. The update path
+calls `mkLinkedList2D` before its cell-volume pass; the force path builds the
+linked list again before extracting faces. Both calls use the same current
+fluid stage state, but they currently have separate geometry builds.
+
+Consequences for the next implementation:
+
+- Do not create vacuum sites only in `kh_mkinitial` or `kh_findVol`; RK
+  predictor stages would then use stale geometry.
+- Construct virtual sites from each current RK stage after particle migration
+  and MPI padding, and use identical coordinates, IDs, and weights in the
+  volume and force builds for that stage. Otherwise the volume used in the
+  state update can disagree with the faces used in the flux, invalidating the
+  geometric conservation check.
+- Keep virtual sites outside `VORO_NP`: that count drives fluid updates,
+  conserved output, and migration. A stage-local buffer must distinguish
+  vacuum generators from ordinary MPI halo copies and be released before the
+  next stage rebuild.
+- The linked-list callback is a convenient insertion point for already-known
+  virtual sites, but it cannot infer a deformed annular boundary from a static
+  lattice mask. Boundary incidence and site motion still need a stage-aware
+  construction rule; the 908-site stencil audit proves only the initial grid
+  topology.
+
 The reproducible count and guard-width audit is
 `Exam/tests/audit_kepler_annulus_vacuum_stencil.py`.
 
