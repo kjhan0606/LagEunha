@@ -2167,14 +2167,16 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
     int rank, int call, const GPUPhysicsParams *params,
     const long long *ids, int nids)
 {
-    if (!nids) return;
+    const char *all_env=getenv("GFS_GPU_FACE_DUMP_ALL_INPUTS");
+    const int all_inputs=all_env && atoi(all_env)>0;
+    if (!nids && !all_inputs) return;
     if (params->av_mode!=5 || !params->use_muscl || !params->phase1) {
-        fprintf(stderr,"[FACE_INPUT] selected input capture requires phase1 MUSCL av_mode5\n"); exit(1);
+        fprintf(stderr,"[FACE_INPUT] input capture requires phase1 MUSCL av_mode5\n"); exit(1);
     }
     unsigned char *needed=(unsigned char *)calloc((size_t)n_total,1);
     if (!needed) { fprintf(stderr,"[FACE_INPUT] allocation failed\n"); exit(1); }
     for (int i=0; i<n_particles; i++) {
-        if (!gfs_face_dump_selected(ctx->h_parts.indx[i],ids,nids)) continue;
+        if (!all_inputs && !gfs_face_dump_selected(ctx->h_parts.indx[i],ids,nids)) continue;
         needed[i]=1;
         for (int f=ctx->h_faces.face_offset[i]; f<ctx->h_faces.face_offset[i+1]; f++) {
             int j=ctx->h_faces.neighbor_idx[f];
@@ -2198,6 +2200,7 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
     FILE *out=fopen(path,"wx");
     if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
     fprintf(out,"index\tid\tx\ty\tvx\tvy\tmass\tV\trho\tP\tcs\tU\tW\tWold\tBxx\tBxy\tByx\tByy\tdPdx\tdPdy\tdRhodx\tdRhody\n");
+    int nrows=0;
     for (int i=0; i<n_total; i++) if (needed[i]) {
         const ParticleSoA *h=&ctx->h_parts;
         fprintf(out,"%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
@@ -2205,17 +2208,20 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
             (double)h->volume[i],(double)h->den[i],(double)h->pressure[i],
             (double)h->csound[i],(double)h->ie[i],(double)h->w2[i],(double)h->w2old[i],
             h->gUxx[i],h->gUxy[i],h->gUyx[i],h->gUyy[i],h->dPdx[i],h->dPdy[i],h->dRhodx[i],h->dRhody[i]);
+        nrows++;
     }
     if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] write failed\n"); exit(1); }
     free(needed);
     snprintf(path,sizeof(path),"face_input_meta_r%d_call%d.json",rank,call);
     out=fopen(path,"wx");
     if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
-    fprintf(out,"{\"rank\":%d,\"call\":%d,\"Gamma\":%.17g,\"dtold\":%.17g,\"av_mode\":%d,\"use_muscl\":%d,\"phase1\":%d,\"geom_fv\":%d,\"face_charge\":%d,\"w2lin\":%d,\"alphavis\":%.17g,\"betavis\":%.17g,\"nu_phys\":%.17g,\"cd_amax\":%.17g,\"hyperv_alpha\":%.17g}\n",
-        rank,call,params->Gamma,params->dtold,params->av_mode,params->use_muscl,
+    fprintf(out,"{\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"Gamma\":%.17g,\"dtold\":%.17g,\"av_mode\":%d,\"use_muscl\":%d,\"phase1\":%d,\"geom_fv\":%d,\"face_charge\":%d,\"w2lin\":%d,\"alphavis\":%.17g,\"betavis\":%.17g,\"nu_phys\":%.17g,\"cd_amax\":%.17g,\"hyperv_alpha\":%.17g}\n",
+        rank,call,all_inputs,nids,nrows,params->Gamma,params->dtold,params->av_mode,params->use_muscl,
         params->phase1,params->geom_fv,params->face_charge,params->w2lin,
         params->alphavis,params->betavis,params->nu_phys,params->cd_amax,params->hyperv_alpha);
     if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] meta write failed\n"); exit(1); }
+    fprintf(stderr,"[FACE_INPUT] rank=%d call=%d mode=%s ids=%d rows=%d file=face_input_r%d_call%d.tsv\n",
+        rank,call,all_inputs?"all":"selected",nids,nrows,rank,call);
 }
 
 #include "gfs_ale_shadow.inc"
