@@ -16,6 +16,14 @@ NAME = re.compile(r"face_input_r(\d+)_call(\d+)\.tsv$")
 FIELDS = (
     "x", "y", "vx", "vy", "mass", "V", "rho", "P", "cs", "U", "W", "Wold",
     "Bxx", "Bxy", "Byx", "Byy", "dPdx", "dPdy", "dRhodx", "dRhody",
+    "tauxx", "tauxy", "tauyy", "alpha_cd", "divv", "lap_vx", "lap_vy", "U64", "V64",
+)
+PARAM_FIELDS = (
+    "av_mode", "use_muscl", "OoA", "Courant", "Gamma", "alphavis", "betavis",
+    "etavis", "epsvis", "nu_phys", "prandtl", "cd_amax", "blend_theta", "dtold",
+    "hyperv_alpha", "hyperv_force_cap", "entropy_mode", "K_floor", "phase1",
+    "laguerre_rot", "face_charge", "geom_fv", "w2lin", "thermal64",
+    "var_geom_cfl", "var_geom_audit", "GFS_VARPRESS_W0",
 )
 
 
@@ -23,6 +31,7 @@ def read_files(paths):
     copies = defaultdict(lambda: defaultdict(list))
     calls = set()
     ranks = set()
+    params_by_rank = {}
     total_rows = 0
     for path in paths:
         match = NAME.search(path.name)
@@ -37,6 +46,16 @@ def read_files(paths):
         meta = json.loads(meta_path.read_text())
         if meta.get("rank") != rank or meta.get("call") != call or meta.get("all_inputs") != 1:
             raise ValueError(f"{meta_path}: capture is not a matching all-input dump")
+        if rank in params_by_rank:
+            raise ValueError(f"multiple input files supplied for rank {rank}")
+        missing_params = set(PARAM_FIELDS) - set(meta)
+        if missing_params:
+            raise ValueError(f"{meta_path}: missing force parameters {sorted(missing_params)}")
+        params = {field: meta[field] for field in PARAM_FIELDS}
+        if any(not isinstance(value, (int, float)) or not math.isfinite(float(value))
+               for value in params.values()):
+            raise ValueError(f"{meta_path}: non-finite or non-numeric force parameter")
+        params_by_rank[rank] = params
         file_rows = 0
         with path.open(newline="") as stream:
             reader = csv.DictReader(stream, delimiter="\t")
@@ -62,10 +81,10 @@ def read_files(paths):
         raise ValueError("at least two MPI-rank input files are required")
     if len(calls) != 1:
         raise ValueError(f"mixed force-call numbers: {sorted(calls)}")
-    return copies, sorted(ranks), calls.pop(), total_rows
+    return copies, sorted(ranks), calls.pop(), total_rows, params_by_rank
 
 
-def audit(copies, ranks, call, total_rows, top):
+def audit(copies, ranks, call, total_rows, params_by_rank, top):
     duplicate_ids = {
         particle_id: {rank: rows for rank, rows in by_rank.items() if len(rows) != 1}
         for particle_id, by_rank in copies.items()
@@ -100,6 +119,11 @@ def audit(copies, ranks, call, total_rows, top):
             "max_relative_span": max_rel,
             "largest_mismatches": mismatches[:top],
         }
+    parameter_mismatches = {
+        field: {str(rank): params_by_rank[rank][field] for rank in ranks}
+        for field in PARAM_FIELDS
+        if len({params_by_rank[rank][field] for rank in ranks}) > 1
+    }
     return {
         "force_call": call,
         "ranks": ranks,
@@ -107,6 +131,7 @@ def audit(copies, ranks, call, total_rows, top):
         "unique_global_ids": len(copies),
         "ids_present_on_multiple_ranks": len(shared),
         "ids_duplicated_within_a_rank": len(duplicate_ids),
+        "rank_parameter_mismatches": parameter_mismatches,
         "field_copy_differences": differences,
     }
 
@@ -116,10 +141,19 @@ def main():
     parser.add_argument("files", nargs="+", type=Path,
                         help="face_input_r*_call*.tsv files and matching metadata")
     parser.add_argument("--top", type=int, default=10)
+    parser.add_argument("--expected-ranks", type=int,
+                        help="require exactly ranks 0 through N-1")
     args = parser.parse_args()
     if args.top < 0:
         parser.error("--top must be nonnegative")
-    print(json.dumps(audit(*read_files(args.files), args.top), indent=2, sort_keys=True))
+    if args.expected_ranks is not None and args.expected_ranks < 1:
+        parser.error("--expected-ranks must be positive")
+    data = read_files(args.files)
+    if args.expected_ranks is not None:
+        expected = list(range(args.expected_ranks))
+        if data[1] != expected:
+            parser.error(f"expected ranks {expected}, found {data[1]}")
+    print(json.dumps(audit(*data, args.top), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":

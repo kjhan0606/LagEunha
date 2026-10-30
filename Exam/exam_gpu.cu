@@ -2165,7 +2165,8 @@ static int gfs_face_dump_selected(long long id, const long long *ids, int n)
 
 static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
     int rank, int call, const GPUPhysicsParams *params,
-    const long long *ids, int nids)
+    const long long *ids, int nids, int thermal64,
+    double var_geom_cfl, int var_geom_audit)
 {
     const char *all_env=getenv("GFS_GPU_FACE_DUMP_ALL_INPUTS");
     const int all_inputs=all_env && atoi(all_env)>0;
@@ -2195,19 +2196,28 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
     GFS_CAPTURE_FIELD(gUyx,double); GFS_CAPTURE_FIELD(gUyy,double);
     GFS_CAPTURE_FIELD(dPdx,double); GFS_CAPTURE_FIELD(dPdy,double);
     GFS_CAPTURE_FIELD(dRhodx,double); GFS_CAPTURE_FIELD(dRhody,double);
+    GFS_CAPTURE_FIELD(tauxx,double); GFS_CAPTURE_FIELD(tauxy,double);
+    GFS_CAPTURE_FIELD(tauyy,double); GFS_CAPTURE_FIELD(alpha_cd,double);
+    GFS_CAPTURE_FIELD(divv,double); GFS_CAPTURE_FIELD(lap_vx,double);
+    GFS_CAPTURE_FIELD(lap_vy,double);
+    if (thermal64) {
+        GFS_CAPTURE_FIELD(E_inv_xx,double); GFS_CAPTURE_FIELD(E_inv_xy,double);
+    }
 #undef GFS_CAPTURE_FIELD
     char path[160]; snprintf(path,sizeof(path),"face_input_r%d_call%d.tsv",rank,call);
     FILE *out=fopen(path,"wx");
     if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
-    fprintf(out,"index\tid\tx\ty\tvx\tvy\tmass\tV\trho\tP\tcs\tU\tW\tWold\tBxx\tBxy\tByx\tByy\tdPdx\tdPdy\tdRhodx\tdRhody\n");
+    fprintf(out,"index\tid\tx\ty\tvx\tvy\tmass\tV\trho\tP\tcs\tU\tW\tWold\tBxx\tBxy\tByx\tByy\tdPdx\tdPdy\tdRhodx\tdRhody\ttauxx\ttauxy\ttauyy\talpha_cd\tdivv\tlap_vx\tlap_vy\tU64\tV64\n");
     int nrows=0;
     for (int i=0; i<n_total; i++) if (needed[i]) {
         const ParticleSoA *h=&ctx->h_parts;
-        fprintf(out,"%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
+        fprintf(out,"%d\t%lld\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t%.17g\n",
             i,h->indx[i],h->x[i],h->y[i],h->vx[i],h->vy[i],h->mass[i],
             (double)h->volume[i],(double)h->den[i],(double)h->pressure[i],
             (double)h->csound[i],(double)h->ie[i],(double)h->w2[i],(double)h->w2old[i],
-            h->gUxx[i],h->gUxy[i],h->gUyx[i],h->gUyy[i],h->dPdx[i],h->dPdy[i],h->dRhodx[i],h->dRhody[i]);
+            h->gUxx[i],h->gUxy[i],h->gUyx[i],h->gUyy[i],h->dPdx[i],h->dPdy[i],h->dRhodx[i],h->dRhody[i],
+            h->tauxx[i],h->tauxy[i],h->tauyy[i],h->alpha_cd[i],h->divv[i],h->lap_vx[i],h->lap_vy[i],
+            thermal64?(double)h->E_inv_xx[i]:0.0,thermal64?(double)h->E_inv_xy[i]:0.0);
         nrows++;
     }
     if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] write failed\n"); exit(1); }
@@ -2215,10 +2225,18 @@ static void gfs_dump_force_inputs(GPUContext *ctx, int n_particles, int n_total,
     snprintf(path,sizeof(path),"face_input_meta_r%d_call%d.json",rank,call);
     out=fopen(path,"wx");
     if (!out) { fprintf(stderr,"[FACE_INPUT] cannot create %s\n",path); exit(1); }
-    fprintf(out,"{\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"Gamma\":%.17g,\"dtold\":%.17g,\"av_mode\":%d,\"use_muscl\":%d,\"phase1\":%d,\"geom_fv\":%d,\"face_charge\":%d,\"w2lin\":%d,\"alphavis\":%.17g,\"betavis\":%.17g,\"nu_phys\":%.17g,\"cd_amax\":%.17g,\"hyperv_alpha\":%.17g}\n",
-        rank,call,all_inputs,nids,nrows,params->Gamma,params->dtold,params->av_mode,params->use_muscl,
-        params->phase1,params->geom_fv,params->face_charge,params->w2lin,
-        params->alphavis,params->betavis,params->nu_phys,params->cd_amax,params->hyperv_alpha);
+    int varpress_w0=0;
+#ifdef GFS_VARPRESS_W0
+    varpress_w0=1;
+#endif
+    fprintf(out,"{\"rank\":%d,\"call\":%d,\"all_inputs\":%d,\"selected_ids\":%d,\"rows\":%d,\"n_particles\":%d,\"n_total\":%d,\"av_mode\":%d,\"use_muscl\":%d,\"OoA\":%.17g,\"Courant\":%.17g,\"Gamma\":%.17g,\"alphavis\":%.17g,\"betavis\":%.17g,\"etavis\":%.17g,\"epsvis\":%.17g,\"nu_phys\":%.17g,\"prandtl\":%.17g,\"cd_amax\":%.17g,\"blend_theta\":%.17g,\"dtold\":%.17g,\"hyperv_alpha\":%.17g,\"hyperv_force_cap\":%.17g,\"entropy_mode\":%d,\"K_floor\":%.17g,\"phase1\":%d,\"laguerre_rot\":%d,\"face_charge\":%d,\"geom_fv\":%d,\"w2lin\":%d,\"thermal64\":%d,\"var_geom_cfl\":%.17g,\"var_geom_audit\":%d,\"GFS_VARPRESS_W0\":%d}\n",
+        rank,call,all_inputs,nids,nrows,n_particles,n_total,params->av_mode,params->use_muscl,
+        params->OoA,params->Courant,params->Gamma,params->alphavis,params->betavis,
+        params->etavis,params->epsvis,params->nu_phys,params->prandtl,params->cd_amax,
+        params->blend_theta,params->dtold,params->hyperv_alpha,params->hyperv_force_cap,
+        params->entropy_mode,params->K_floor,params->phase1,params->laguerre_rot,
+        params->face_charge,params->geom_fv,params->w2lin,thermal64,var_geom_cfl,
+        var_geom_audit,varpress_w0);
     if (ferror(out) || fclose(out)) { fprintf(stderr,"[FACE_INPUT] meta write failed\n"); exit(1); }
     fprintf(stderr,"[FACE_INPUT] rank=%d call=%d mode=%s ids=%d rows=%d file=face_input_r%d_call%d.tsv\n",
         rank,call,all_inputs?"all":"selected",nids,nrows,rank,call);
@@ -2416,7 +2434,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
             (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaMemcpy(ctx->h_parts.y, ctx->d_parts.y,
             (size_t)n_total * sizeof(double), cudaMemcpyDeviceToHost));
-        gfs_dump_force_inputs(ctx,n_particles,n_total,mpi_rank,force_call,params,dump_ids,dump_nids);
+        gfs_dump_force_inputs(ctx,n_particles,n_total,mpi_rank,force_call,params,
+                              dump_ids,dump_nids,thermal64,var_geom_cfl,var_geom_audit);
         /* Face flux/geometry diagnostics do not require the much larger
          * all-candidate structural dump on a locally refined mesh. */
         const char *tess_dump = getenv("GFS_GPU_TESS_DUMP");
