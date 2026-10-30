@@ -102,6 +102,7 @@ static void test_vacuum_mirror_kinematics(void)
     const double vx = 0.4;
     const double vy = -0.2;
     double edge_speed, ghost_vx, ghost_vy;
+    double mass_flux, momentum_flux, energy_flux;
 
     /* Outer edge: n points along +x and c=1. */
     assert(gfs_vacuum_mirror_kinematics(rho, pressure, vx, vy, gamma,
@@ -110,6 +111,9 @@ static void test_vacuum_mirror_kinematics(void)
     assert(close_rel(edge_speed, 3.4, 1e-14));
     assert(close_rel(0.5 * (vx + ghost_vx), edge_speed, 1e-14));
     assert(close_rel(ghost_vy, vy, 1e-14));
+    assert(gfs_vacuum_fan_ale_flux(rho, pressure, vx, gamma, edge_speed, vy,
+                                   &mass_flux, &momentum_flux, &energy_flux));
+    assert(mass_flux == 0.0 && momentum_flux == 0.0 && energy_flux == 0.0);
 
     /* Inner edge: orient n into the hole, along -x. */
     assert(gfs_vacuum_mirror_kinematics(rho, pressure, vx, vy, gamma,
@@ -119,6 +123,9 @@ static void test_vacuum_mirror_kinematics(void)
     assert(close_rel(0.5 * (vx + ghost_vx) * -1.0,
                      edge_speed, 1e-14));
     assert(close_rel(ghost_vy, vy, 1e-14));
+    assert(gfs_vacuum_fan_ale_flux(rho, pressure, -vx, gamma, edge_speed, -vy,
+                                   &mass_flux, &momentum_flux, &energy_flux));
+    assert(mass_flux == 0.0 && momentum_flux == 0.0 && energy_flux == 0.0);
 
     /* An oblique, unnormalized normal checks projection and normalization. */
     assert(gfs_vacuum_mirror_kinematics(rho, pressure, vx, vy, gamma,

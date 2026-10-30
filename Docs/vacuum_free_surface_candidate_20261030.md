@@ -88,10 +88,11 @@ enabled before the free-surface geometry and flux closure pass their gates.
 the vacuum edge and zero ALE flux, a shifted `gamma=1.4` state, and invalid
 input rejection, including NaN and infinity rejection. It now also checks the
 Simpson-integrated fan mass and the nonzero mass, momentum, and energy ALE flux
-inside the fan, and the outer- and inner-normal mirror kinematics. Strict C99
-compilation and execution pass. A standalone CUDA kernel including the header
-kernel including the earlier header revision was reported to compile for
-`sm_90`; this was compile-only, not a GPU runtime result. The current login
+inside the fan, plus outer, inner, and oblique-normal mirror kinematics. Strict
+C99 compilation and execution pass; the derived outer and inner edge speeds
+also yield zero ALE mass, momentum, and energy flux. A standalone CUDA kernel
+including an earlier header revision was reported to compile for `sm_90`; this
+was compile-only, not a GPU runtime result. The current login
 environment has no `nvcc` or CUDA module, so the new mirror-kinematics helper
 has only strict C99 CPU verification. Its test checks an oblique,
 unnormalized normal. An independent Python reference checks the same fan,
