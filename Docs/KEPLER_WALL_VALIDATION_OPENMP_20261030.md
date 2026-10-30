@@ -14,6 +14,7 @@ The optimization is limited to the one-rank W0 wall-event path. It does not remo
 - Host object compile with Intel MPI C compiler and `-qopenmp`: passed on 2026-10-30.
 - OpenMP scan harness: `Exam/tests/run_gfs_wall_validation_scan.sh` passed with 1, 4, and 8 threads. Cases cover unique shuffled IDs, duplicates, out-of-range and missing IDs, changed mass, invalid thermal and RHS state, nonzero W0 weight, and a valid new generation after rejected cases.
 - The harness tests the shared scan loop, but not the RK4 caller's serial fallback reason or a full simulation run.
+- A CPU-only synthetic scan microbenchmark at 90,352 cells measured 2.86x speedup for increasing IDs and 2.81x for reversed IDs, but only 0.45x for randomly shuffled IDs. The initial native input is 99.62% consecutive increasing IDs; the t=14 restart ordering remains to be measured. These timings are only a locality-sensitive screening result, not an end-to-end simulation speedup. Detailed measurements are in /gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/wall_validation_same_binary_ab_t14_t15_20261030_v1/cpu_microbench_20261030.json.
 - Linked GPU executable: `/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/wall_validation_omp_build_20261030_v2/eunha2_wall_validation_omp.exe`.
 - Executable SHA256: `594dd70b39830ee953e38ae38ad99d5fe0d26ba08e3df9af483dcefcbcd2d07c`. Link receipt and dependency check are in the same build directory; `ldd` found no unresolved shared libraries.
 - The build reused the exact-hash-matched `exam_gpu.o` and `exam_gpu_extract.o` artifacts from the existing OpenMP build. Source comparison confirms neither GPU source file changed between the base commit and this candidate.
@@ -23,6 +24,11 @@ The optimization is limited to the one-rank W0 wall-event path. It does not remo
 
 ## Required qualification
 
-1. From the same accepted t=14 checkpoint, compare the serial validator (`ded504a`) and this candidate through the same exact endpoint. Keep identical `OMP_NUM_THREADS`, wall-event checks, and all physics settings.
-2. Require bitwise equality of every stored particle field after sorting by global ID, successful boundary/rollback/conservation gates, and a measured reduction in median and p95 wall time per accepted RK4 step.
+1. Compare the base executable and candidate's default serial path from the same accepted t=14 checkpoint through exact t=15. Require all physics gates and bitwise equality of every saved field after matching global IDs.
+2. Compare this candidate with GFS_WALL_PARALLEL_VALIDATION unset and set to 1, using the same executable, t=14 checkpoint, parameters, environment, and H200 allocation. Record the input global-ID ordering; require bitwise endpoint equality and passing physics gates, then measure median and p95 RK4 wall time. The candidate qualifies as a speed optimization only if this end-to-end measurement shows a benefit.
 3. Exercise an invalid-state or duplicate-ID rejection fixture and confirm the serial fallback reports the same first-failure reason. Do not enable this path for the long run before these gates pass.
+
+
+## Continuation verification (2026-10-30)
+
+Reran Exam/tests/run_gfs_wall_validation_scan.sh with OMP_NUM_THREADS=1, 4, and 8. All three invocations returned PASS: OpenMP wall-validation scan cases. This revalidates the shared scan kernel and its rejection fixtures; it does not establish integrated RK4 parity or an end-to-end speedup. Those still require an H200 run.
