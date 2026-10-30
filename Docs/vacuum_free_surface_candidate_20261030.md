@@ -202,8 +202,11 @@ The reproducible count and guard-width audits are
 guarded-grid IDs, initial positions, incident fluid IDs, and cardinal normals;
 its test reproduces the 48,240 / 908 / 1,280 counts and the 536 / 372 incidence
 split. `kh_mkinitial` and `mkLinkedList2D_oExam` now connect that geometry to a
-startup-only mesh build, while the persistent moving-boundary solver remains
-unimplemented.
+startup-only mesh build. A separate RK4 sidecar utility now holds accepted
+generator coordinates, constructs the four stage coordinates, evaluates
+single- and shared-two-face planar rarefaction kinematics from face traces, and
+supports atomic accept/rollback. The main solver does not call this utility;
+moving-boundary evolution remains unimplemented.
 
 The original `n=256`, `box=4`, `Rout=2` sample places the outer support on the
 periodic seam: 88 first-layer vacuum sites lie outside the fundamental box.
@@ -247,25 +250,42 @@ Galilean shifting, zero front flux, and mass integral; its recorded result is
 in `../../../vacuum_face_reference_20261030/reference_result.json`. These
 verify local analytic fluxes only; no CUDA runtime integration, mesh motion,
 conservation in the finite-volume solver, or Kepler stability is established.
-The new startup geometry mode was submitted as isolated H200 job `442508`; no
-runtime result has yet been recorded. The weekly scheduler-check interval
-applies, so do not query its state before 2026-11-06 12:13 UTC. It is one-rank
-only and does not test MPI decomposition or boundary fluxes.
+The new `Exam/tests/test_gfs_kepler_vacuum_rk4.c` checks stage coordinates
+against an RK4-integrated ODE, shared-face edge-speed constraints from distinct
+gas traces, rejection of non-finite stage data, and rollback/retry behavior.
+It passes strict C99 with AddressSanitizer and UndefinedBehaviorSanitizer. The
+startup geometry mode was submitted as isolated H200 job `442508`; no runtime
+result has yet been recorded. The 14-day scheduler-check interval applies, so
+do not query its state before 2026-11-13 12:13 UTC. It is one-rank only and
+does not test MPI decomposition or boundary fluxes.
+
+## RK4 sidecar status
+
+`Exam/gfs_kepler_vacuum_rk4.h` stores per-site coordinates outside the
+ephemeral `VORO_TBPP` padding buffer. It advances virtual coordinates using
+the same RK4 stage abscissae and weighted accept formula as the fluid loop.
+The planar mirror-velocity builder consumes one gas-side primitive trace for
+each stencil incidence; a shared orthogonal site can use different states on
+its two faces. A rejected stage can be rolled back without changing accepted
+positions. These helpers are standalone and currently have no solver call
+site, MPI ownership/reduction, restart serialization, moving-face flux, or GCL
+accounting. Production traces must be reconstructed from the current stage
+mesh; using cell-centered values would be first order.
 
 ## Integration gates
 
 1. Run the startup-only H200 geometry gate and verify the realized mesh area,
-   equal fixed masses, density, and circular velocity. Then add persistent
-   Kepler boundary-generator state keyed by missing lattice-site IDs. Advance
-   that state with the same RK4 stage abscissae and coefficients as material
-   cells, while appending transient generator copies after each fresh MPI halo
-   build. Keep reflecting ghosts separate.
+   equal fixed masses, density, and circular velocity. Wire the RK4 sidecar
+   into the material RK loop and append stage-position copies after each fresh
+   MPI halo build. Keep reflecting ghosts separate; define deterministic
+   ownership/reduction for shared sites and serialize accepted coordinates on
+   restart.
 2. At each stage, associate generators with current gas boundary faces and
-   impose their normal face speeds from gas-side traces. The initial mask has
-   shared sites with two orthogonal face constraints; the pair helper handles
-   those planar constraints. Rebuild or reclassify incidence after mesh
-   distortion and fail visibly on incompatible or over-subscribed sites. Check
-   the resulting face speeds and geometric conservation residual.
+   pass reconstructed gas-side traces to the kinematics helper. The initial
+   mask has shared sites with two orthogonal face constraints; the helper
+   handles distinct states on those planar faces. Rebuild or reclassify
+   incidence after mesh distortion and fail visibly on incompatible or
+   over-subscribed sites. Check face speeds and geometric conservation.
 3. Add a vacuum-face flux branch that bypasses positive HLLC floors and applies
    the exact gas-to-vacuum state. Keep real-cell mass fixed and account for
    moving-face pressure work consistently.
