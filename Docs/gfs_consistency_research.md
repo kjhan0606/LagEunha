@@ -146,3 +146,33 @@ September diagnosis. It is useful for isolating the historical four-rank
 conservation error, but it is not the current box-6, GIZMO-effective-spacing
 initial condition. The primary long-run objective still requires the current
 setup to reach t=600.
+
+## 9. RK4 OpenMP loop candidate: recovered ABBA audit (2026-10-31)
+
+The retained `omp_rk4_stage_loops_candidate_20261030/perf_abba_t0_to0p01_v1`
+calculations completed, but the original auditor stopped on a parser bug: it
+read `[RK4 gap] wall=...s` as a bare float. The parser was corrected and the
+existing outputs were audited without rerunning any simulation.
+
+All four runs reached exactly `t=0.01` in 131 accepted steps, with no floor or
+energy injection. The two baseline runs match exactly in named particle
+fields; the two OpenMP runs also match exactly. Against the baseline, the
+candidate preserves mass, density, pressure, volume, weight, and internal
+energy exactly. Position differences are at most `3.11e-14`, and velocity
+differences at most `3.76e-12`. However, the cached gradients differ by as much
+as `2.59e-4` in `dRhodx`, `5.75e-3` in `gUyx`, and `2.96e-2` in `gUyy`; exact
+field parity therefore fails, and those gradients are inputs to later force
+evaluations.
+
+The exploratory median RK4 step time is `0.30636 s` for the baseline and
+`0.31797 s` for the candidate, a baseline/candidate ratio of `0.9635`; the
+candidate did not reach the 5% speedup gate. The first baseline was job
+`440950`, while the other cases were job `442066`. They ran on the same H200
+node but used different GPU UUIDs, so the timing is not a controlled same-GPU
+ABBA result. The OpenMP candidate is not selected for long-time Kepler runs.
+
+The repaired `audit.json`, fieldwise `fieldwise_delta.json`, and interpretation
+are retained in
+`/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/omp_rk4_stage_loops_candidate_20261030/perf_abba_t0_to0p01_v1/`.
+This is only a short implementation/performance preflight, not a Kepler
+stability result.
