@@ -326,8 +326,11 @@ int RunKH(SimParameters *simpar, int icont){
 		if(fixed_poly){
 			int ranks=0;
 			MPI_Comm_size(MPI_COMM(simpar),&ranks);
-			if(ranks!=1 || GAS_Kappa(simpar)!=0 || GAS_EVOLMETHOD(simpar)!=1 || !use_stress){
-				fprintf(stderr,"[FIXED_POLYGON] first native gate requires one rank, W=0, stress RK4\n");
+			const char *mpi_env=getenv("GFS_KEPLER_WALL_EVENTS_MPI");
+			int mpi_optin=mpi_env && strcmp(mpi_env,"1")==0;
+			if((ranks!=1 && !mpi_optin) || (ranks==1 && mpi_optin) ||
+			   GAS_Kappa(simpar)!=0 || GAS_EVOLMETHOD(simpar)!=1 || !use_stress){
+				fprintf(stderr,"[FIXED_POLYGON] native gate requires W=0, stress RK4, and explicit MPI event opt-in for multiple ranks\n");
 				MPI_Abort(MPI_COMM(simpar),98);
 			}
 		}

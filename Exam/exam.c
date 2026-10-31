@@ -10260,6 +10260,9 @@ void periodic_postStage_blend(SimParameters *simpar){
  * 1024-gon. An attempted wall crossing fails visibly until a tested
  * specular impact and wall impulse/torque ledger are installed. */
 static int gfs_wall_runtime_active=0,gfs_wall_stage_failed=0;
+#ifdef USE_CUDA
+static void gfs_wall_mpi_after_migration(SimParameters *);
+#endif
 void fixed_polygon_postStage_blend(SimParameters *simpar){
 	const double apothem=2.75*cos(M_PI/1024.0);
 	const double step=2.0*M_PI/1024.0;
@@ -10272,7 +10275,7 @@ void fixed_polygon_postStage_blend(SimParameters *simpar){
 			const double angle=((double)k+0.5)*step;
 			const double penetration=cx*cos(angle)+cy*sin(angle)-apothem;
 			if(penetration>=0 && gfs_wall_runtime_active){
-                if(!isfinite(penetration) || penetration>1.e-6){gfs_wall_stage_failed=1;return;}
+                if(!isfinite(penetration) || penetration>1.e-6){gfs_wall_stage_failed=1;break;}
                 continue; /* trial predictor only; final domain checked before commit */
             }
 			if(penetration>=0){
@@ -10283,6 +10286,9 @@ void fixed_polygon_postStage_blend(SimParameters *simpar){
 		}
 	}
 	migrateTreeVorork4Particles(simpar);
+#ifdef USE_CUDA
+	gfs_wall_mpi_after_migration(simpar);
+#endif
 }
 
 /* walls_xy_postStage_blend: reflecting walls on all four sides.
@@ -11415,6 +11421,9 @@ gfs_rk4_trial_restart:
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	migrateTreeVorork4Particles(simpar);
+#ifdef USE_CUDA
+	gfs_wall_mpi_after_migration(simpar);
+#endif
 
 	/* Arepo-Laguerre (av_mode=5): optional centroidal steering for
 	   mesh regularization.  Nudges each generator toward its Voronoi

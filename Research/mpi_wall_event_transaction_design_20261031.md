@@ -12,12 +12,12 @@ candidate passes the gates below.
 
 ## Current source contract
 
-`Exam/gfs_wall_events.inc:gfs_wall_begin` rejects `NID(s) != 1`. The reason is
-broader than the event-time loop: the transaction snapshots owned particle
-payloads, builds an ID-indexed accepted-state table, scans RK4 dense paths for
-the earliest polygon crossing, retries at a refined event time, applies slip
-impulses, and closes global momentum, angular-momentum, and energy ledgers.
-The current helpers treat all owned particles as one globally complete set.
+`Exam/gfs_wall_events.inc:gfs_wall_begin` permits multiple ranks only with
+`GFS_KEPLER_WALL_EVENTS_MPI=1`. The ordinary path rejects a multi-rank run
+without that explicit opt-in. The event transaction snapshots each rank's
+owned particle payload, scans RK4 dense paths, retries at a refined event time,
+applies slip impulses, and closes global momentum, angular-momentum, and
+energy ledgers.
 
 The existing `GFS_WALL_PARALLEL_VALIDATION` option can parallelize one local
 state scan, but it does not make the event transaction MPI-safe. The
@@ -50,10 +50,17 @@ trial. Add collectives at these boundaries:
    ledgers, then collectively verify that all ranks restored the same driver
    time, timestep, global owned count, and transaction decision before retry.
 
-The particle partition must remain fixed throughout one RK4 trial, or the
-snapshot/identity transaction must be redesigned to follow stable IDs across
-rank migration. Verify this from the actual sorting and migration call sites;
-do not assume it from the fixed local `VORO_NP` check.
+The particle partition changes during RK4 predictor calls to
+`migrateTreeVorork4Particles()`. Rank-local snapshots remain valid for rollback
+because `gfs_ssp_restore` reinstates each rank's saved pre-trial payload and
+count. The MPI candidate now allows accepted ownership changes, builds a
+replicated immutable global-ID/mass map once, checks local particle validity
+and global cell count at each stage, and reconstructs accepted start positions
+from RK4 weighted displacements when scanning the final dense path.
+`GFS_WALL_MPI_VERIFY_IDS=1` adds an exact global ID-set reduction immediately
+after each fixed-polygon migration; it is intended for short qualification
+runs because it communicates a dense ID vector per migration. These are
+source changes only; ownership migration has not yet passed a runtime test.
 
 ## Candidate implementation order
 
@@ -63,8 +70,8 @@ do not assume it from the fixed local `VORO_NP` check.
 2. Factor local scans from global decisions. Keep snapshots and geometry
    caches rank-local; reduce only compact event and conservation records.
 3. Add deterministic minimum-event selection and broadcasted root state.
-   Fail closed on duplicate IDs, ties that cannot be resolved, rank migration,
-   or a missing event owner.
+   Keep failing closed on wall contacts until this path and the distributed
+   impulse/ledger behavior are qualified.
 4. Add rank-wide fault injection for one retry. A single-rank forced rejection
    is insufficient: every rank must restore and retry the identical interval.
 5. Build a source-pinned binary and run from the same t=17.8 restart used by
@@ -90,23 +97,22 @@ not a substitute for these transaction and conservation gates.
 
 ## No-impact MPI prototype in progress
 
-The source worktree now has an opt-in first prototype using
+The source worktree now has an opt-in no-impact prototype using
 `GFS_KEPLER_WALL_EVENTS_MPI=1`. It synchronizes event-mode settings once,
-keeps snapshots rank-local, reduces stage validity and endpoint violations,
-and globally sums start/end conservation totals and wall ledgers. Its first
-event policy is deliberately fail-closed: if any rank predicts a polygon-wall
-crossing, the trial is restored and the MPI run aborts with a message that no
-global event snapshot was written. It does not yet select a global owner,
-refine a distributed event root, or apply impacts across ranks.
+keeps rollback snapshots rank-local, allows `pmigrate` to change local cell
+counts, checks global cell count and replicated ID/mass membership, reduces
+stage validity and endpoint violations, and globally sums start/end
+conservation totals and wall ledgers. `GFS_WALL_MPI_VERIFY_IDS=1` additionally
+checks the complete global ID set after each migration. If any rank predicts a
+polygon-wall crossing, the trial still fails closed; the prototype does not
+select a global owner, refine a distributed event root, or apply impacts across
+ranks.
 
 This candidate is only suitable for a short no-impact parity/performance
 comparison. It is not a production wall-event implementation and must not be
 used for a long segment until an MPI event owner/root/impulse path is added and
-the controlled-contact gates pass. On 2026-10-31, the CUDA-enabled host
-translation unit `Exam/exam.c` compiled successfully with `USE_CUDA=1` and
-`GFS_VARPRESS_W0=1` under the pinned Intel MPI/CUDA modules. The first compile
-found a `ptrdiff_t` format mismatch and a missing stress-record layout guard
-in the diagnostic-only one-rank RHS probe. Both were corrected, and the
-translation unit then compiled with no warnings. This was not a full
-executable link or runtime parity test; those gates remain pending and the
-active baseline executable is unaffected.
+the controlled-contact gates pass. On 2026-10-31, the updated CUDA-enabled host
+translation units `Exam/exam.c` and `Exam/KH/kh.c` compiled successfully with
+the pinned Intel MPI/CUDA modules and no warnings. This was not a full
+executable link or runtime migration/parity test; those gates remain pending
+and the active baseline executable is unaffected.
