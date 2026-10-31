@@ -176,3 +176,36 @@ are retained in
 `/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/omp_rk4_stage_loops_candidate_20261030/perf_abba_t0_to0p01_v1/`.
 This is only a short implementation/performance preflight, not a Kepler
 stability result.
+
+## 10. Intermediate W0 checkpoint at t=20 (2026-10-31)
+
+The active bounded Q1 continuation (`444183`, a 384^2 grid with the same
+effective spacing as the 256^2 GIZMO disk over `[-2,2]`) produced checkpoint
+`khout.064217.dat` at `t=20.00004536605029`. The same checkpoint
+gate used for the planned `t=62.831853071796` endpoint was run on this
+intermediate snapshot. All 28 registered checks passed: fixed mass and exact
+`W=0`, positive internal energy and cell volume, polygon area/containment,
+`rho=m/V`, no floor or dual-energy injection, the registered GIZMO annulus
+checks, disk density/entropy/orbit/energy thresholds, preserved disk
+population, a complete wall prefix, and no unresolved rollback/event errors.
+
+Key checkpoint values are disk mass-weighted relative density change
+`6.1207e-4`, absolute entropy-log change `2.7016e-4`, orbital position error
+`2.7377e-6`, disk angular-momentum change `-9.1543e-12`, and checkpoint
+total-energy change `-2.3134e-6`. The annulus velocity L1 error is
+`2.6852e-8`; its density L1 error relative to the initial `1.01` plateau is
+`7.9197e-4` (the literal comparison to `1.0` is `1.00006e-2`). Cell mass is
+unchanged exactly, and the latest native RK4 ledger at `t=20.142` reported
+`dEtot/|Etot0|=-1.257e-8`; its `floor_cum`, `de_cum`, and `sfl_cum` fields were
+all zero. The native energy ledger and checkpoint energy calculation are
+separate diagnostics and should not be conflated.
+
+The density image is
+`/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/t17p8_to20pi_w0_20261031_v1/density_t0_t20_intermediate_w0_20261031.png`.
+It uses the existing nearest-generator Voronoi rasterizer, a common logarithmic
+scale, and the same `[-2,2]^2` comparison window intended for `t=120`. The
+physical annulus remains smooth at this checkpoint; visible cell-scale noise
+is concentrated in the low-density central cavity and outside the disk. The
+image is an intermediate visualization, not a substitute for the GIZMO
+`t=120` and `t=600` comparisons. The parent job was still advancing toward
+`t=62.831853071796` at `t=20.142`; the long-time objective remains open.
