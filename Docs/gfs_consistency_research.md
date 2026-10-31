@@ -217,3 +217,25 @@ is concentrated in the low-density central cavity and outside the disk. The
 image is an intermediate visualization, not a substitute for the GIZMO
 `t=120` and `t=600` comparisons. The parent job was still advancing toward
 `t=62.831853071796` at `t=20.142`; the long-time objective remains open.
+
+## 11. Primary GIZMO endpoint reference: Kepler disk at t=600
+
+The endpoint comparison is Hopkins (2015), §4.2.4 and Figure 7
+([arXiv:1409.7395](https://arxiv.org/abs/1409.7395)), not a generic claim that
+the disk merely survives past a few orbits. The reference is a 2D, `gamma=5/3`
+disk with the Eq. 34 surface-density profile (`Sigma=0.01` plus a unit plateau
+on `0.5 <= r <= 2` and softened outer edge), constant `P=1e-6`, softened
+external Kepler potential, circular-orbit initialization, and no self-gravity.
+The paper specifies an effective `256^2` particle resolution over
+`[-2,2]^2`. Its Figure 6 shows `t=120`; Figure 7 shows `t=600` and states that
+the `r ~ 0.5` disk has completed more than 250 orbits without decaying or
+disrupting. Figure 8 defines the accompanying quantitative velocity and
+density L1 norms and their resolution trends.
+
+For the present project, reaching `t=120` or passing the registered checkpoint
+gate is intermediate evidence only. The endpoint claim requires an exact
+`t=600` snapshot, a density-field comparison to Figure 7 using a stated common
+scale and domain, and quantitative disk/orbit/angular-momentum diagnostics.
+The paper's Figure 7 is a qualitative survival reference; it does not itself
+provide a numerical pass threshold. Keep the existing explicit checkpoint
+thresholds identified as project gates rather than attributing them to GIZMO.
