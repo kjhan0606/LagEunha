@@ -119,3 +119,30 @@ min_{Wdot} (1/2) || A^(1/2) (D Wdot - b) ||²
 모델의 `Re→∞` 조건에서는 임의 감쇠 `-S_i/τ`를 넣지 않는다. 그런 감쇠는 회전 점도/미세구조 완화라는 새 소산 물리다. 우선 검증할 수 있는 것은 토크에 의한 궤도-스핀 사이의 보존적 교환이며, 감쇠를 원한다면 계수와 내부에너지 환산을 별도 구성식으로 정당화해야 한다. 이 구분은 내부 스핀과 회전 점도를 함께 다루는 micropolar balance-law 문헌에 따른 모델링 판단이다.
 
 구현 전 판정 순서는 (i) 균일 압력의 이동·고체 회전에서 총 `L_orb+S` 및 `E+E_spin` 보존, (ii) 선형 전단 패치에서 스핀과 재구성 속도장 각운동량의 일치 및 대칭 변형 에너지 누락량 측정, (iii) Kepler에서 같은 질량·초기조건의 spin-off/on 비교, 셀별 토크 일과 에너지 교환 확인, (iv) GPU 1/4/8 rank에서 전역 보존 장부 일치, (v) t=17.8, 62.8, 600까지의 밀도장 및 GIZMO 기준 비교다. 앞 단계가 닫히기 전에는 장시간 케플러에 임의 spin relaxation을 넣지 않는다.
+
+## 8. Corrected retry of the historical MPI face audit (2026-10-31)
+
+Re-inspection of the retained Slurm record shows that diagnostic job `408623`
+was not a physics failure. The executable completed with `EXIT:0` at `t=5.39029`,
+step 8447; its force-call log reached 33788, while the requested dump was call
+34188 (step 8547). The job script had `HYDRO_TSTOP=5.39` and then required one
+face-dump file from each rank, so its post-run guard returned exit 1 when those
+files were absent. The diagnostic never captured the intended call.
+
+A corrected, non-overwriting retry was submitted as Slurm job `444191` in
+`/gpfs/kjhan/LagForce/Kepler_face_dump_Nx256_H200_halosync_call34188_retry_20261031/`.
+It pins the same executable SHA-256
+`563713e6c7be3b519a97b305319e7d4ef33fb9480c11e77d92d9944ba9f8752e` and
+`params.dat` SHA-256
+`853afb3bf712a3424cc293d8ef7c442ce697587a35603d4668f6a61955e6d718`, retains
+four MPI ranks on two H200 GPUs, and extends `HYDRO_TSTOP` to 5.50. The target
+call is then reachable with margin. `GFS_GPU_TESS_DUMP=0` suppresses the much
+larger structural snapshot while retaining the requested face-flux dumps. The
+retry is separate from the present t=17.8→20π long-run job; its scheduler state
+must be checked before treating any diagnostic as captured.
+
+This is the older box-24, `Nx=Ny=256`, `Rin=2`, `Rout=8` MPI setup from the
+September diagnosis. It is useful for isolating the historical four-rank
+conservation error, but it is not the current box-6, GIZMO-effective-spacing
+initial condition. The primary long-run objective still requires the current
+setup to reach t=600.
