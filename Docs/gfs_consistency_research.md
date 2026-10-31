@@ -239,3 +239,23 @@ scale and domain, and quantitative disk/orbit/angular-momentum diagnostics.
 The paper's Figure 7 is a qualitative survival reference; it does not itself
 provide a numerical pass threshold. Keep the existing explicit checkpoint
 thresholds identified as project gates rather than attributing them to GIZMO.
+
+## 12. GPU profile from the active long-run binary
+
+The existing H200 W=0 long-run log records tessellation profiles at calls
+1024, 2048, ..., 8192 for 90,352 particles. Across those samples, the outer
+GPU tessellation stage took 33.8–38.5 ms. Its internal CUDA-event interval
+labelled `density_copy_A` took 24.7–29.3 ms; that interval includes the frozen
+density copy and Kernel A (`voronoi_tessellate_kernel`), so it does not isolate
+the kernel alone. In the host profile, CSR construction took 3.0–4.0 ms and
+packing 3.1–3.8 ms, while `weight_mpi` took 0.15–0.18 ms. Upload, download,
+and writeback were each below 1.7 ms in these samples.
+
+This is a single-MPI-rank profile, so it cannot characterize multi-rank
+scaling. It does show that, for the present W=0 production path, optimizing
+weight exchange or adding OpenMP around the RK4 loops is not the first likely
+speedup: the dominant measured interval is the GPU tessellation/gradient
+kernel path. Treat this as bottleneck localization, not an A/B speedup claim.
+Any specialized W=0 fast path must retain the complete candidate search and
+polygon checks and be compared against this pinned baseline on the same H200
+with the same restart before replacing it in a long run.
