@@ -102,5 +102,11 @@ refine a distributed event root, or apply impacts across ranks.
 This candidate is only suitable for a short no-impact parity/performance
 comparison. It is not a production wall-event implementation and must not be
 used for a long segment until an MPI event owner/root/impulse path is added and
-the controlled-contact gates pass. Source compilation and runtime parity are
-still pending; the active baseline is unaffected.
+the controlled-contact gates pass. On 2026-10-31, the CUDA-enabled host
+translation unit `Exam/exam.c` compiled successfully with `USE_CUDA=1` and
+`GFS_VARPRESS_W0=1` under the pinned Intel MPI/CUDA modules. The first compile
+found a `ptrdiff_t` format mismatch and a missing stress-record layout guard
+in the diagnostic-only one-rank RHS probe. Both were corrected, and the
+translation unit then compiled with no warnings. This was not a full
+executable link or runtime parity test; those gates remain pending and the
+active baseline executable is unaffected.

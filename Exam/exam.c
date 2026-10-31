@@ -8271,7 +8271,7 @@ void exam2dUpdateVol(
 	// building the linked list with "paddingAllTreeParticles()" which pads the domain
 	// with the tree voro particles defined in ../Exam/mpirks.exam2d.c.
 	mkLinkedList2D(simpar, cellsize,xmin,ymin,xmax,ymax, paddingAllTreeParticles);
-	fprintf(stderr,"[UPDV] P%d after mkLinkedList2D npad=%d\n", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);
+	fprintf(stderr,"[UPDV] P%d after mkLinkedList2D npad=%td\n", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);
 
 #ifdef USE_CUDA
     const char *gpu_final = getenv("GFS_GPU_FINAL_VOLUME");
@@ -11001,10 +11001,11 @@ gfs_rk4_trial_restart:
         if(NID(simpar)!=1 || postStage!=fixed_polygon_postStage_blend ||
            GAS_AVMODE(simpar)!=5 || GAS_Kappa(simpar)!=0 ||
            !GAS_GPU_ENABLED(simpar) || !gpu_varpress_w0_enabled() ||
+           TVORORK4_DDINFO(simpar)[0].n_size!=sizeof(treevorostressrk4particletype) ||
            tx.on || thermal64 || w2lin || dynw2){
             fprintf(stderr,"[WALL_RHS_PROBE] unsupported native probe contract\n");MPI_Abort(MPI_COMM(simpar),99);
         }
-        gfs_rk4_failure_snapshot(simpar,VORORK4_TBP(simpar),VORO_NP(simpar),
+        gfs_rk4_failure_snapshot(simpar,(const treevorostressrk4particletype*)(const void*)VORORK4_TBP(simpar),VORO_NP(simpar),
             "wall_rhs_probe",Dtime,GAS_dtold(simpar));
         fprintf(stderr,"[WALL_RHS_PROBE] computed K1 for all %td owned sites; diagnostic only, no accepted evolution\n",VORO_NP(simpar));
         fflush(stderr);exit(0);
