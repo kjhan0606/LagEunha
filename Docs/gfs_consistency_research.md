@@ -200,6 +200,14 @@ unchanged exactly, and the latest native RK4 ledger at `t=20.142` reported
 all zero. The native energy ledger and checkpoint energy calculation are
 separate diagnostics and should not be conflated.
 
+The innermost physical disk bin (`0.5 <= r < 0.75`, 4049 cells) had
+mass-weighted density change `1.4521e-3`, entropy-log change `4.4661e-5`,
+radial speed `6.6682e-8`, position error `8.3030e-6`, and Lz change
+`-1.5176e-10`. Thus the visible cell-scale noise in the t=20 image is not
+accompanied by a comparable error in this inner annulus at this checkpoint;
+the low-density cavity (`r < 0.5`) must be kept separate from the physical
+disk when deciding whether inner refinement is needed.
+
 The density image is
 `/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/t17p8_to20pi_w0_20261031_v1/density_t0_t20_intermediate_w0_20261031.png`.
 It uses the existing nearest-generator Voronoi rasterizer, a common logarithmic
