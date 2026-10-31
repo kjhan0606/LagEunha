@@ -87,3 +87,20 @@ do not assume it from the fixed local `VORO_NP` check.
 
 The separate multi-rank face diagnostic is evidence about GPU face exchange,
 not a substitute for these transaction and conservation gates.
+
+## No-impact MPI prototype in progress
+
+The source worktree now has an opt-in first prototype using
+`GFS_KEPLER_WALL_EVENTS_MPI=1`. It synchronizes event-mode settings once,
+keeps snapshots rank-local, reduces stage validity and endpoint violations,
+and globally sums start/end conservation totals and wall ledgers. Its first
+event policy is deliberately fail-closed: if any rank predicts a polygon-wall
+crossing, the trial is restored and the MPI run aborts with a message that no
+global event snapshot was written. It does not yet select a global owner,
+refine a distributed event root, or apply impacts across ranks.
+
+This candidate is only suitable for a short no-impact parity/performance
+comparison. It is not a production wall-event implementation and must not be
+used for a long segment until an MPI event owner/root/impulse path is added and
+the controlled-contact gates pass. Source compilation and runtime parity are
+still pending; the active baseline is unaffected.

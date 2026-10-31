@@ -8,20 +8,52 @@
 #include "gfs_wall_dense.h"
 typedef struct { double x,y,m; unsigned int present,seen; } GfsWallBase;
 typedef struct {
-    int on,tries,maxtries,search,id,side,hits;
+    int on,mpi,tries,maxtries,search,id,side,hits;
     ptrdiff_t np,total;size_t bytes,extent;unsigned int generation;void *backup;GfsWallBase *base;
     float dtold;double floors;int nfloors;long long pairs;
     double audit[5],external,ceiling,lo,hi,glo,ghi;
     double pressure[3],gravity[2],collision[3],roundoff;
     double start[7];const char *reason;
 } GfsWallEventStep;
+static int gfs_wall_mode_checked=0,gfs_wall_mode_on=0,gfs_wall_mpi_active=0;
 static double gfs_wall_nx[1024],gfs_wall_ny[1024];
 static const double gfs_wall_band=1.e-6;
 static double gfs_wall_apothem(void){return 2.75*cos(M_PI/1024.);}
 static double gfs_wall_tolerance(double x,double y){
     return 32.*DBL_EPSILON*fmax(2.75,fabs(x-3.)+fabs(y-3.));
 }
-static void gfs_wall_totals(SimParameters *s,double z[7]){
+static void gfs_wall_mode_init(SimParameters *s,GfsWallEventStep *w){
+    const char *events=getenv("GFS_KEPLER_WALL_EVENTS");
+    const char *mpi=getenv("GFS_KEPLER_WALL_EVENTS_MPI");
+    int local[2]={events && strcmp(events,"1")==0,
+                  mpi && strcmp(mpi,"1")==0};
+    if(!gfs_wall_mode_checked){
+        if(NID(s)>1){
+            int lo[2],hi[2];
+            MPI_Allreduce(local,lo,2,MPI_INT,MPI_MIN,MPI_COMM(s));
+            MPI_Allreduce(local,hi,2,MPI_INT,MPI_MAX,MPI_COMM(s));
+            if(lo[0]!=hi[0] || lo[1]!=hi[1] || (hi[1] && !hi[0])){
+                fprintf(stderr,"[WALL_EVENTS] inconsistent rank-wide event mode\n");
+                MPI_Abort(MPI_COMM(s),99);
+            }
+        }else if(local[1]){
+            fprintf(stderr,"[WALL_EVENTS] MPI event mode requires multiple ranks\n");
+            MPI_Abort(MPI_COMM(s),99);
+        }
+        gfs_wall_mode_on=local[0];
+        gfs_wall_mpi_active=NID(s)>1 && local[0] && local[1];
+        gfs_wall_mode_checked=1;
+    }
+    w->on=gfs_wall_mode_on;
+    w->mpi=gfs_wall_mpi_active;
+}
+static int gfs_wall_any(SimParameters *s,int local){
+    if(!gfs_wall_mpi_active)return local;
+    int global=0;
+    MPI_Allreduce(&local,&global,1,MPI_INT,MPI_MAX,MPI_COMM(s));
+    return global;
+}
+static void gfs_wall_totals(SimParameters *s,GfsWallEventStep *w,double z[7]){
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
     long double a[7]={0,0,0,0,0,0,0};
     for(ptrdiff_t i=0;i<VORO_NP(s);i++){
@@ -30,7 +62,10 @@ static void gfs_wall_totals(SimParameters *s,double z[7]){
         a[3]+=p[i].ie+.5*m*(vx*vx+vy*vy)+m*kepler_phi(p[i].x,p[i].y);
         a[4]+=m;a[5]+=p[i].ie;a[6]+=.5*m*(vx*vx+vy*vy);
     }
-    for(int k=0;k<7;k++)z[k]=(double)a[k];
+    double local[7];
+    for(int k=0;k<7;k++)local[k]=(double)a[k];
+    if(w->mpi)MPI_Allreduce(local,z,7,MPI_DOUBLE,MPI_SUM,MPI_COMM(s));
+    else memcpy(z,local,sizeof(local));
 }
 static void gfs_wall_restore(SimParameters *s,GfsWallEventStep *w){
     gpu_geometry_trial_end();
@@ -45,24 +80,27 @@ static void gfs_wall_restore(SimParameters *s,GfsWallEventStep *w){
         memcmp(restored_audit,w->audit,sizeof(restored_audit))==0 &&
         gfs_stage_floor_l==w->floors && gfs_stage_floor_n_l==w->nfloors &&
         gfs_pair_face_ends==w->pairs;
-    fprintf(stderr,"[WALL_ROLLBACK] step=%d attempt=%d reason=%s payload_counts_dtold_ledgers_exact=%d device_cache_invalidated=%d\n",
+    if(MYID(s)==0)fprintf(stderr,"[WALL_ROLLBACK] step=%d attempt=%d reason=%s payload_counts_dtold_ledgers_exact=%d device_cache_invalidated=%d\n",
         gfs_rk4_context_step,w->tries+1,w->reason?w->reason:"trial",exact,cache_invalidated);
     if(!exact)MPI_Abort(MPI_COMM(s),99);
 }
 static void gfs_wall_stop(SimParameters *s,GfsWallEventStep *w,const char *reason){
     w->reason=reason;gfs_wall_restore(s,w);
-    gfs_rk4_failure_snapshot(s,w->backup,(int)w->np,"wall_event_start",w->dtold,w->dtold);
-    fprintf(stderr,"[WALL_EVENT_STOP] step=%d t=%.17g reason=%s accepted start preserved\n",
-        gfs_rk4_context_step,gfs_rk4_context_time,reason);fflush(stderr);
+    if(MYID(s)==0){
+        if(!w->mpi)
+            gfs_rk4_failure_snapshot(s,w->backup,(int)w->np,"wall_event_start",w->dtold,w->dtold);
+        fprintf(stderr,"[WALL_EVENT_STOP] step=%d t=%.17g reason=%s accepted start preserved%s\n",
+            gfs_rk4_context_step,gfs_rk4_context_time,reason,
+            w->mpi?"; global snapshot omitted":"");fflush(stderr);
+    }
     gfs_wall_runtime_active=0;MPI_Abort(MPI_COMM(s),99);
 }
 static void gfs_wall_begin(SimParameters *s,GfsWallEventStep *w,
                            void (*post)(SimParameters *)){
     memset(w,0,sizeof(*w));w->id=w->side=-1;
-    const char *setting=getenv("GFS_KEPLER_WALL_EVENTS");
-    w->on=setting && strcmp(setting,"1")==0;if(!w->on)return;
+    gfs_wall_mode_init(s,w);if(!w->on)return;
     gfs_es_config();
-    if(NID(s)!=1 || post!=fixed_polygon_postStage_blend || !GAS_GPU_ENABLED(s) ||
+    if((NID(s)!=1 && !w->mpi) || post!=fixed_polygon_postStage_blend || !GAS_GPU_ENABLED(s) ||
        !gpu_varpress_w0_enabled() || GAS_AVMODE(s)!=5 || GAS_Kappa(s)!=0 ||
        GAS_ENTROPY_MODE(s)!=0 || !sedov_phase1_on() || GAS_XSPHEPS(s)!=0 ||
        GAS_FCENTROID(s)!=0 || GAS_VISCOSITY(s)!=0 || GAS_AlphaVis(s)!=0 ||
@@ -75,13 +113,14 @@ static void gfs_wall_begin(SimParameters *s,GfsWallEventStep *w,
        !getenv("GFS_GPU_RAW_FACES") || atoi(getenv("GFS_GPU_RAW_FACES"))!=1 ||
        !getenv("GFS_GPU_FINAL_VOLUME") || atoi(getenv("GFS_GPU_FINAL_VOLUME"))!=1 ||
        TVORORK4_DDINFO(s)[0].n_size!=sizeof(treevorostressrk4particletype)){
-        fprintf(stderr,"[WALL_EVENTS] requires one-rank native bounded smooth W0, fixed mass, Re=inf and legacy thermal RK4\n");
+        fprintf(stderr,"[WALL_EVENTS] requires native bounded smooth W0, fixed mass, Re=inf and legacy thermal RK4; multi-rank mode is experimental\n");
         MPI_Abort(MPI_COMM(s),99);
     }
     static int ready=0;
     if(!ready){for(int k=0;k<1024;k++){double a=(k+.5)*2.*M_PI/1024.;gfs_wall_nx[k]=cos(a);gfs_wall_ny[k]=sin(a);}ready=1;}
     w->np=VORO_NP(s);w->total=VORO_TNP(s);
-    if(w->np<=0 || w->np>INT_MAX || (size_t)w->np>SIZE_MAX/sizeof(treevorostressrk4particletype)){
+    if(w->np<=0 || w->np>INT_MAX || w->total<w->np ||
+       (size_t)w->np>SIZE_MAX/sizeof(treevorostressrk4particletype)){
         fprintf(stderr,"[WALL_EVENTS] invalid owned count for bounded event transaction\n");MPI_Abort(MPI_COMM(s),99);
     }
     w->bytes=(size_t)w->np*sizeof(treevorostressrk4particletype);
@@ -98,7 +137,8 @@ static void gfs_wall_begin(SimParameters *s,GfsWallEventStep *w,
     /* Preserve global IDs. Bound the direct lookup allocation before indexing;
      * the intended truncated Q1 and remapped Q2 fixtures use less than 3*N.
      */
-    size_t id_limit=(size_t)w->np<=(SIZE_MAX-1024)/8?(size_t)w->np*8+1024:SIZE_MAX;
+    size_t id_basis=w->mpi?(size_t)w->total:(size_t)w->np;
+    size_t id_limit=id_basis<=(SIZE_MAX-1024)/8?id_basis*8+1024:SIZE_MAX;
     for(ptrdiff_t i=0;i<w->np;i++){
         size_t id=(size_t)PINDX((treevorork4particletype*)(p+i));
         if(id>(size_t)INT_MAX || id>=id_limit)gfs_wall_stop(s,w,"unsupported_accepted_ID_range");
@@ -119,8 +159,12 @@ static void gfs_wall_begin(SimParameters *s,GfsWallEventStep *w,
             if(rx*gfs_wall_nx[k]+ry*gfs_wall_ny[k]-gfs_wall_apothem()>tol)
                 gfs_wall_stop(s,w,"accepted_start_outside_domain");
     }
-    gfs_wall_totals(s,w->start);
+    gfs_wall_totals(s,w,w->start);
     const char *dump=getenv("GFS_WALL_DUMP_ACCEPTED_START");
+    if(dump && atoi(dump)>0 && w->mpi){
+        if(MYID(s)==0)fprintf(stderr,"[WALL_EVENTS] accepted-start dump is not yet rank-aggregated\n");
+        MPI_Abort(MPI_COMM(s),99);
+    }
     if(dump && atoi(dump)>0)
         gfs_rk4_failure_snapshot(s,w->backup,(int)w->np,"wall_event_baseline",w->dtold,w->dtold);
 }
@@ -161,6 +205,24 @@ static void gfs_wall_restart(GfsWallEventStep *w){
 }
 static int gfs_wall_valid(SimParameters *s,GfsWallEventStep *w,int rhs){
     if(!w->on)return 1;
+    if(w->mpi){
+        int bad=gpu_geometry_trial_failed() || gfs_wall_stage_failed ||
+                VORO_NP(s)!=w->np;
+        treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
+        if(!bad){
+            gfs_wall_new_generation(w);
+            for(ptrdiff_t i=0;i<w->np;i++)
+                if(!gfs_wall_identity(w,p+i) ||
+                   !gfs_wall_trial_state_valid(p+i,rhs)){
+                    bad=1;break;
+                }
+        }
+        if(gfs_wall_any(s,bad)){
+            w->reason="mpi_rank_validation_failure";
+            return 0;
+        }
+        return 1;
+    }
     if(gpu_geometry_trial_failed() || gfs_wall_stage_failed){w->reason="geometry_or_band";return 0;}
     if(VORO_NP(s)!=w->np){w->reason="owned_count";return 0;}
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
@@ -183,13 +245,21 @@ static int gfs_wall_valid(SimParameters *s,GfsWallEventStep *w,int rhs){
 }
 static int gfs_wall_endpoint_inside(SimParameters *s,GfsWallEventStep *w,double h){
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(s);
+    int outside=0;
     for(ptrdiff_t i=0;i<w->np;i++){
         double x=p[i].x-3.,y=p[i].y-3.,tol=gfs_wall_tolerance(p[i].x,p[i].y);
         if(hypot(x,y)<gfs_wall_apothem()-tol)continue;
         for(int k=0;k<1024;k++)if(x*gfs_wall_nx[k]+y*gfs_wall_ny[k]-gfs_wall_apothem()>tol){
-            w->reason="unresolved_outside_endpoint";w->ceiling=.5*h;w->search=0;return 0;
+            outside=1;break;
         }
     }
+    if(w->mpi){
+        if(gfs_wall_any(s,outside)){
+            w->reason="unresolved_outside_endpoint";w->ceiling=.5*h;w->search=0;return 0;
+        }
+        return 1;
+    }
+    if(outside){w->reason="unresolved_outside_endpoint";w->ceiling=.5*h;w->search=0;return 0;}
     return 1;
 }
 static void gfs_wall_pressure_stage(SimParameters *s,GfsWallEventStep *w,double h,double weight){
@@ -304,6 +374,14 @@ static int gfs_wall_decide(SimParameters *s,GfsWallEventStep *w,double h){
         }
         w->search=0;
     }
+    if(w->mpi){
+        /* This first MPI candidate is valid only while no particle reaches
+         * the wall. Until event ownership and root refinement are global,
+         * fail closed instead of letting a rank-local event mutate state. */
+        if(gfs_wall_any(s,first_id>=0))
+            gfs_wall_stop(s,w,"mpi_wall_contact_not_supported");
+        return gfs_wall_endpoint_inside(s,w,h);
+    }
     if(first_id<0)return gfs_wall_endpoint_inside(s,w,h);
     ptrdiff_t index=-1;
     for(ptrdiff_t i=0;i<w->np;i++)if((int)PINDX((treevorork4particletype*)(p+i))==first_id){index=i;break;}
@@ -326,14 +404,30 @@ static void gfs_wall_reject(SimParameters *s,GfsWallEventStep *w,double h){
 }
 static void gfs_wall_commit(SimParameters *s,GfsWallEventStep *w,double h){
     if(!w->on)return;
-    double end[7];gfs_wall_totals(s,end);
-    double px=end[0]-w->start[0]+w->pressure[0]+w->collision[0]-w->gravity[0];
-    double py=end[1]-w->start[1]+w->pressure[1]+w->collision[1]-w->gravity[1];
-    double angular=end[2]-w->start[2]+w->pressure[2]+w->collision[2];
-    fprintf(stderr,"[WALL_ACCEPT] step=%d t_start=%.17g h=%.17g attempts=%d impacts=%d wall_pressure_J=(%.17g,%.17g,%.17g) wall_collision_J=(%.17g,%.17g,%.17g) momentum_residual=(%.9e,%.9e) angular_residual=%.9e energy_change=%.9e kinetic_roundoff=%.9e\n",
-        gfs_rk4_context_step,gfs_rk4_context_time,h,w->tries+1,w->hits,
-        w->pressure[0],w->pressure[1],w->pressure[2],w->collision[0],w->collision[1],w->collision[2],
-        px,py,angular,end[3]-w->start[3],w->roundoff);
+    double end[7],pressure[3],gravity[2],collision[3],roundoff=w->roundoff;
+    int hits=w->hits;
+    gfs_wall_totals(s,w,end);
+    memcpy(pressure,w->pressure,sizeof(pressure));
+    memcpy(gravity,w->gravity,sizeof(gravity));
+    memcpy(collision,w->collision,sizeof(collision));
+    if(w->mpi){
+        double local[9]={pressure[0],pressure[1],pressure[2],
+            gravity[0],gravity[1],collision[0],collision[1],collision[2],roundoff};
+        double global[9];int global_hits=0;
+        MPI_Allreduce(local,global,9,MPI_DOUBLE,MPI_SUM,MPI_COMM(s));
+        MPI_Allreduce(&hits,&global_hits,1,MPI_INT,MPI_SUM,MPI_COMM(s));
+        pressure[0]=global[0];pressure[1]=global[1];pressure[2]=global[2];
+        gravity[0]=global[3];gravity[1]=global[4];
+        collision[0]=global[5];collision[1]=global[6];collision[2]=global[7];
+        roundoff=global[8];hits=global_hits;
+    }
+    double px=end[0]-w->start[0]+pressure[0]+collision[0]-gravity[0];
+    double py=end[1]-w->start[1]+pressure[1]+collision[1]-gravity[1];
+    double angular=end[2]-w->start[2]+pressure[2]+collision[2];
+    if(MYID(s)==0)fprintf(stderr,"[WALL_ACCEPT] step=%d t_start=%.17g h=%.17g attempts=%d impacts=%d wall_pressure_J=(%.17g,%.17g,%.17g) wall_collision_J=(%.17g,%.17g,%.17g) momentum_residual=(%.9e,%.9e) angular_residual=%.9e energy_change=%.9e kinetic_roundoff=%.9e\n",
+        gfs_rk4_context_step,gfs_rk4_context_time,h,w->tries+1,hits,
+        pressure[0],pressure[1],pressure[2],collision[0],collision[1],collision[2],
+        px,py,angular,end[3]-w->start[3],roundoff);
     gpu_geometry_trial_end();gfs_rk4_step_ceiling=w->external;gfs_wall_runtime_active=0;
     free(w->backup);free(w->base);
 }
