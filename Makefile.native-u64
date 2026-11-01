@@ -1,0 +1,7 @@
+# Optional full native Kepler U64 build. Run in its own checkout on a compute node.
+# All program/library sources use the same explicit 696-byte particle ABI.
+# The ordinary Makefile and default 576-byte build are unchanged.
+.PHONY: all
+all:
+	@test -n "$(SLURM_JOB_ID)" || { echo 'Use a Slurm compute allocation.' >&2; exit 2; }
+	bash Exam/NativeU64/build.sh

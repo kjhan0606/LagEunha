@@ -41,6 +41,11 @@ typedef float DenType;
 #ifndef EUNHA_H
 #define EUNHA_H
 
+#ifdef GFS_WEIGHT_DYNAMICS
+#include "Exam/gfs_weight_state.h"
+typedef struct {double U,Udot,V;} GfsWeightThermal;
+#endif
+
 #ifndef FFTW3_H
 #include "fftw3.h"
 #include "fftw3-mpi.h"
@@ -629,6 +634,11 @@ typedef struct vorostressrk4particletype{
     RK4 rk4;
 	Stress stress;
     struct treevorostressrk4particletype *bp;
+#ifdef GFS_WEIGHT_DYNAMICS
+    GfsWeightState weight;
+    GfsWeightRK4 weight_rk4;
+    GfsWeightThermal weight_thermal;
+#endif
 }vorostressrk4particletype;
 
 typedef struct treevorostressrk4particletype{
@@ -643,6 +653,11 @@ typedef struct treevorostressrk4particletype{
     RK4 rk4;
 	Stress stress;
     struct treevorostressrk4particletype *bp;
+#ifdef GFS_WEIGHT_DYNAMICS
+    GfsWeightState weight;
+    GfsWeightRK4 weight_rk4;
+    GfsWeightThermal weight_thermal;
+#endif
 }treevorostressrk4particletype;
 
 typedef struct vorork4particletype{
