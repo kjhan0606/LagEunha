@@ -1,0 +1,184 @@
+{
+  "original_IC_checks": [
+    {
+      "problem": "sod",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 200,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        2.289834988289333e-14,
+        0.0,
+        2.2898349882893317e-14,
+        1.9676568067202774e-14
+      ],
+      "pass": true
+    },
+    {
+      "problem": "blast",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 200,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        2.237793284010129e-14,
+        0.0,
+        2.22044604925036e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "collision",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 628,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        8.893019044394193e-14,
+        7.646335748525856e-14,
+        8.871158044994698e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "shu",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 538,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        4.2144338815267884e-14,
+        2.585419167660201e-14,
+        3.560273165385522e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "noh",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 325,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        4.45823933326049e-14,
+        2.229119666630245e-14,
+        4.4582259585826146e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "lax",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 418,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        4.45823933326049e-14,
+        9.125773635880884e-15,
+        4.447697318441505e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "doublefan",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 374,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        4.45823933326049e-14,
+        2.9721595555069936e-14,
+        4.4524569216739e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "contact_open",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 544,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        4.45823933326049e-14,
+        0.0,
+        4.4408920985007196e-14,
+        0.0
+      ],
+      "pass": true
+    },
+    {
+      "problem": "moving_contact_open",
+      "scope": "Original legacy setup plus independent split-Gauss actual-cell IC integration; no PDE endpoint",
+      "cells": 644,
+      "maximum_normalized_mass_momentum_energy_mu_errors": [
+        8.899131431761212e-14,
+        4.449565715880606e-14,
+        8.881784197001439e-14,
+        0.0
+      ],
+      "pass": true
+    }
+  ],
+  "contact_boundary_evolution": [
+    {
+      "case": "contact_open_guard1",
+      "density_L1_on_original_ROI": 5.082739784612045e-16,
+      "pressure_L1_on_original_ROI": 1.0541567618815866e-15,
+      "velocity_L1_on_original_ROI": 5.299616404403094e-15,
+      "boundary_ledger_error": 1.594166394333558e-15,
+      "mass_weight_with_residual": 7.626189799469526e-14,
+      "pass": true
+    },
+    {
+      "case": "contact_open_guard2",
+      "density_L1_on_original_ROI": 5.074066167232161e-16,
+      "pressure_L1_on_original_ROI": 1.1629586182948514e-15,
+      "velocity_L1_on_original_ROI": 4.498164912518699e-15,
+      "boundary_ledger_error": 1.0276444525455994e-15,
+      "mass_weight_with_residual": 1.513097680236444e-13,
+      "pass": true
+    },
+    {
+      "case": "moving_contact_open_guard1",
+      "density_L1_on_original_ROI": 2.985600048438517e-14,
+      "pressure_L1_on_original_ROI": 3.6071146070072034e-14,
+      "velocity_L1_on_original_ROI": 4.80432360561191e-14,
+      "boundary_ledger_error": 1.7842745577502674e-16,
+      "mass_weight_with_residual": 1.542389438207506e-12,
+      "pass": true
+    },
+    {
+      "case": "moving_contact_open_guard2",
+      "density_L1_on_original_ROI": 3.815817019997564e-14,
+      "pressure_L1_on_original_ROI": 4.1594505617581184e-14,
+      "velocity_L1_on_original_ROI": 5.918932011184088e-14,
+      "boundary_ledger_error": 2.2025503278366401e-16,
+      "mass_weight_with_residual": 1.702092722164304e-12,
+      "pass": true
+    }
+  ],
+  "contact_padding_controls": [
+    {
+      "cases": [
+        "contact_open_guard1",
+        "contact_open_guard2"
+      ],
+      "ROI_density_pressure_velocity_linked_mass_weight_over_h0square_L1_differences": [
+        1.1102230246284123e-18,
+        5.706546346573339e-16,
+        5.284190613440599e-15,
+        0.0,
+        0.0
+      ],
+      "scope": "Contact boundary control only; not proof of shock ROI padding independence",
+      "pass": true
+    },
+    {
+      "cases": [
+        "moving_contact_open_guard1",
+        "moving_contact_open_guard2"
+      ],
+      "ROI_density_pressure_velocity_linked_mass_weight_over_h0square_L1_differences": [
+        4.7003928527188645e-14,
+        5.0696113973459457e-14,
+        7.409683977499774e-14,
+        0.0,
+        0.0
+      ],
+      "scope": "Contact boundary control only; not proof of shock ROI padding independence",
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "unqualified": "Strong-shock endpoint, shock guard independence, full original nine-test evolution and general multidimensional open boundaries"
+}

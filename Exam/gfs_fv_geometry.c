@@ -73,8 +73,13 @@ static int fv_intervals(GfsFvMesh *m){
         for(int sign=-1;sign<=1;sign+=2){
             int j=i+sign;double xj,point[3]={0};int wall=0;
             if(j<0||j>=n){
-                if(m->bc[0]==GFS_FV_PERIODIC){j=(j+n)%n;xj=m->cell[j].q[0]+sign*m->L[0];}
-                else{j=i;wall=1;xj=2*(m->lo[0]+(sign>0?m->L[0]:0))-m->cell[i].q[0];}
+                int bc=gfs_fv_boundary_type(m->bc[0],sign>0);
+                if(bc==GFS_FV_PERIODIC){j=(j+n)%n;xj=m->cell[j].q[0]+sign*m->L[0];}
+                else{
+                    j=i;wall=sign>0?8:1;
+                    if(bc==GFS_FV_MOVING_TRANSMIT)xj=2*m->cell[i].q[0]-m->cell[sign>0?n-2:1].q[0];
+                    else xj=2*(m->lo[0]+(sign>0?m->L[0]:0))-m->cell[i].q[0];
+                }
             }else xj=m->cell[j].q[0];
             double r=xj-m->cell[i].q[0];if(!(sign*r>0))return 1;
             point[0]=.5*r+(m->cell[i].W-m->cell[j].W)/(2*r);
@@ -183,8 +188,13 @@ static int fv_native_cell(GfsFvMesh *m,int i,NativeWork *w,const int nc[3],
 int gfs_fv_geometry(GfsFvMesh *m){
     double start=omp_get_wtime();int bad=0,d=m->dim,n=m->n;
     if(d<1||d>3||n<2)return 1;
-    for(int i=0;i<n;i++)for(int a=0;a<d;a++)if(!isfinite(m->cell[i].q[a])||!isfinite(m->cell[i].W)||
-        (m->bc[a]!=GFS_FV_PERIODIC&&!(m->cell[i].q[a]>m->lo[a]&&m->cell[i].q[a]<m->lo[a]+m->L[a])))return 1;
+    for(int i=0;i<n;i++)for(int a=0;a<d;a++){
+        int lower=gfs_fv_boundary_type(m->bc[a],0),upper=gfs_fv_boundary_type(m->bc[a],1);
+        if(!isfinite(m->cell[i].q[a])||!isfinite(m->cell[i].W))return 1;
+        if(d>1&&(lower==GFS_FV_MOVING_TRANSMIT||upper==GFS_FV_MOVING_TRANSMIT))return 1;
+        if(lower!=GFS_FV_PERIODIC&&lower!=GFS_FV_MOVING_TRANSMIT&&!(m->cell[i].q[a]>m->lo[a]))return 1;
+        if(upper!=GFS_FV_PERIODIC&&upper!=GFS_FV_MOVING_TRANSMIT&&!(m->cell[i].q[a]<m->lo[a]+m->L[a]))return 1;
+    }
     if(!m->geometry)m->geometry=calloc(n,sizeof(*m->geometry));
     if(d==1)bad=fv_intervals(m);
     else{
@@ -211,6 +221,12 @@ int gfs_fv_geometry(GfsFvMesh *m){
     }
     if(!bad){
         long double volume=0;double box=1;for(int a=0;a<d;a++)box*=m->L[a];
+        if(d==1){
+            double left=m->lo[0],right=m->lo[0]+m->L[0];
+            if(gfs_fv_boundary_type(m->bc[0],0)==GFS_FV_MOVING_TRANSMIT)left=1.5*m->cell[0].q[0]-.5*m->cell[1].q[0];
+            if(gfs_fv_boundary_type(m->bc[0],1)==GFS_FV_MOVING_TRANSMIT)right=1.5*m->cell[n-1].q[0]-.5*m->cell[n-2].q[0];
+            box=right-left;
+        }
         for(int i=0;i<n;i++)volume+=m->geometry[i].V;
         double error=fabs((double)volume/box-1);m->maximum_volume_closure=fmax(m->maximum_volume_closure,error);if(error>5e-10)bad=1;
     }

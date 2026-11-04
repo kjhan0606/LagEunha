@@ -23,18 +23,26 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, allow_nan=False)+"\n")
 
 
-def execute(root, binary, specification, cpus=None):
+def execute(root, binary, specification, cpus=None, extra_env=None, restart=None):
     name, dim, side, problem, target, *control = specification
     case = root/name
     case.mkdir(exist_ok=False)
     command = [str(binary), str(dim), str(side), problem, str(target)]
     if control:
         command.append(str(control[0]))
+    if restart is not None:
+        if not control:
+            command.append("1")
+        command.append(str(restart))
     if cpus is not None:
         command = [shutil.which("taskset"), "-c", ",".join(map(str, cpus))]+command
     save(case/"command.json", command)
     env = dict(os.environ, TMPDIR=str(root), OMP_NUM_THREADS="8", OMP_DYNAMIC="FALSE",
                OMP_WAIT_POLICY="ACTIVE", OMP_PLACES="cores", OMP_PROC_BIND="spread")
+    if extra_env:
+        env.update(extra_env)
+    save(case/"resources.json", {"CPU_set": cpus, "OMP_NUM_THREADS": 8,
+                                 "explicit_environment": extra_env or {}})
     start = time.monotonic()
     with (case/"stdout.log").open("x") as out, (case/"stderr.log").open("x") as err:
         process = subprocess.Popen(command, cwd=case, env=env, stdout=out, stderr=err)
@@ -42,12 +50,19 @@ def execute(root, binary, specification, cpus=None):
         code = process.wait()
     record = {"case": name, "exit_code": code, "wall_seconds": time.monotonic()-start}
     save(case/"process.json", record)
+    return assess(case, specification, record)
+
+
+def assess(case, specification, record):
+    """Read saved output; also recovers analysis after a controller error."""
+    name, dim, side, problem, target, *control = specification
+    code = record["exit_code"]
     if not (case/"result.json").exists():
         return dict(record, endpoint_pass=False, reason="Native result missing; inspect stderr")
     result = json.loads((case/"result.json").read_text())
     initial = np.loadtxt(case/"initial.dat")
     final = np.loadtxt(case/"final.dat")
-    endpoint = code == 0 and not result["failed"] and abs(result["time"]-target) < 1e-13
+    endpoint = bool(code == 0 and not result["failed"] and abs(result["time"]-target) < 1e-13)
     positive = np.isfinite(final).all() and bool(np.all(final[:, [5, 10, 11, 12]] > 0))
     metrics = {"endpoint_pass": endpoint, "positive_final_state": positive,
                "new_steps": result["new_steps"], "max_ledger": result["maximum_ledger_error"],

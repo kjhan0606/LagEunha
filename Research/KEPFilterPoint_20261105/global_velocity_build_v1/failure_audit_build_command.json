@@ -1,0 +1,21 @@
+[
+  "mpiicx",
+  "-O2",
+  "-qopenmp",
+  "-std=gnu11",
+  "-DXYZDBL",
+  "-DGOTPM",
+  "-DGFS_NATIVE_KEP",
+  "-DGFS_NATIVE_KEP_FILTER",
+  "-DGFS_NATIVE_GLOBAL_VELOCITY",
+  "-Wall",
+  "-Wextra",
+  "-DGFS_KEP_STRESS_DIAGNOSTICS",
+  "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_build_v1/frozen_source/Exam/HydroCore/kep_failure_audit.c",
+  "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_build_v1/frozen_source/Exam/gfs_fv_geometry.c",
+  "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_build_v1/frozen_source/Exam/gfs_fv_point.c",
+  "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_build_v1/frozen_source/Voro/voro.c",
+  "-lm",
+  "-o",
+  "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_build_v1/failure_audit"
+]

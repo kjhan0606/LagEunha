@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/kjhan/miniconda3/bin/python",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/kep_filter_launch_v2/run_kep_filter_gates.py",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/kep_filter_gates_v2",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/kep_filter_build_v2/filtered",
+    "--select",
+    "blast",
+    "collision",
+    "cold",
+    "gresho",
+    "--restart-blast",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/kep_filter_gates_v1/D1_blast_N200/final.fv"
+  ],
+  "same_physical_model_as": "kep_filter_build_v1",
+  "numerical_fix": "True PCG stopping, unchanged tolerance/cap. Existing accepted blast checkpoint is continued; completed Sod/alternating are not rerun.",
+  "source_checkpoint_sha256": "ac5030a8207d84df854e097d791ba7ad9a83e67d1e12d456ea70e84cbe54db18",
+  "binary_sha256": "46403a2777fb3ee4ea04132e25e12a5a039b612bd2981011a90e0eb78ffbeeac",
+  "pid": 3722142
+}

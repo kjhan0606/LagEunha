@@ -2,7 +2,13 @@
 #define GFS_FV_NATIVE_H
 #include <stdint.h>
 #include "gfs_fv_ale.h"
-enum {GFS_FV_PERIODIC=0,GFS_FV_REFLECT=1,GFS_FV_OUTFLOW=2};
+enum {GFS_FV_PERIODIC=0,GFS_FV_REFLECT=1,GFS_FV_OUTFLOW=2,GFS_FV_MOVING_TRANSMIT=3};
+/* Existing values apply to both sides. Packed side values fit the existing
+ * checkpoint bc[] field and permit a reflecting Noh wall plus open inflow. */
+static inline int gfs_fv_boundary_type(int flags,int upper){
+    return flags&0x10000?(flags>>(upper?8:0))&255:flags;
+}
+static inline int gfs_fv_boundary_pair(int lower,int upper){return 0x10000|lower|(upper<<8);}
 typedef struct {
     double q[3],W,Q[5],mu,m0,W0,residual_integral;
     uint64_t id;
@@ -30,11 +36,16 @@ typedef struct {
     int newton,cg,backtracks,hll_points,points;
     double wave_dt,admissible_dt,root_residual,mass_link_defect;
     double boundary_flux[5],reconstruction_seconds,fan_seconds,solve_seconds,flux_seconds;
-    double kinetic_rate,kinetic_pressure_work,stress_thermal_rate,viscous_dt;
+    double kinetic_rate,kinetic_pressure_work,kinetic_boundary_flux,stress_thermal_rate,viscous_dt;
     double entropy_rate,entropy_boundary_flux,entropy_dissipation,entropy_balance_defect;
+    double velocity_query_seconds;
+    int velocity_owner_changed,velocity_owner_switches,maximum_query_hops;
+    long long total_query_hops;
 } GfsFvRhsStats;
 typedef struct GfsFvWorkspace GfsFvWorkspace;
 int gfs_fv_geometry(GfsFvMesh *mesh);
+int gfs_fv_point_owner(const GfsFvMesh*,int seed,const double point[3],
+        int *owner,double relative[3],int *hops);
 void gfs_fv_geometry_free(GfsFvMesh *mesh);
 GfsFvWorkspace *gfs_fv_workspace_create(void);
 void gfs_fv_workspace_free(GfsFvWorkspace *workspace);

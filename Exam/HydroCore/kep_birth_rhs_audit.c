@@ -15,7 +15,7 @@ int main(int argc,char **argv){
         for(int a=0;a<2;a++){udot-=p.u[a]*rates[i].dQ[a+1];v2+=p.u[a]*p.u[a];}udot+=.5*v2*rates[i].dQ[0];thermal_rate+=udot;
         pressure_rate_L1+=(m.gamma-1)*fabs(udot-internal*rates[i].Vdot/m.geometry[i].V)/1e-6;
     }
-    double pair=fabs(stats.kinetic_rate-stats.kinetic_pressure_work);
+    double pair=fabs(stats.kinetic_rate-stats.kinetic_pressure_work+stats.kinetic_boundary_flux);
     int pass=fabs(thermal_rate)<1e-12&&pressure_rate_L1<1e-6&&pair<1e-12&&stats.stress_thermal_rate<1e-12&&fabs(stats.entropy_balance_defect)<1e-10;
     printf("{\"scope\":\"native KEP cold birth RHS, no PDE time update\",\"side\":%d,\"thermal_rate\":%.17g,\"relative_pressure_rate_L1\":%.17g,\"kinetic_pair_defect\":%.17g,\"compression_thermal_rate\":%.17g,\"true_weight_residual\":%.17g,\"PCG\":%d,\"actual_geometry_entropy_balance\":%.17g,\"pass\":%s}\n",side,thermal_rate,pressure_rate_L1,pair,stats.stress_thermal_rate,stats.root_residual,stats.cg,stats.entropy_balance_defect,pass?"true":"false");
     gfs_fv_workspace_free(w);gfs_fv_geometry_free(&m);free(m.cell);free(rates);return pass?0:1;

@@ -1,0 +1,70 @@
+{
+  "scope": "Exact unaccepted failed collision trial. Read-only solver audit, no PDE trajectory.",
+  "same_operator_rhs_scales_state_bytes": {
+    "matrix.csv": true,
+    "rhs.csv": true,
+    "cells.csv": true
+  },
+  "positive_mu": true,
+  "nonnegative_edge_coefficients": true,
+  "PCG_cap": 64,
+  "recursive_relative_tolerance": 1e-12,
+  "true_scaled_tolerance": 1e-12,
+  "diagonal": {
+    "scope": "readonly same-state point ownership and matrix audit; global-field velocities are NOT evolved",
+    "time": 0.00863295605606791,
+    "cells": 628,
+    "diagnostic_trial_not_restartable": true,
+    "preconditioner": "diagonal_Jacobi",
+    "paired_cells": 0,
+    "generators_outside_own_cell": 3,
+    "closest_pair": [
+      323,
+      324
+    ],
+    "minimum_generator_gap": 0.0004514225057035137,
+    "pair_mean_velocity_difference": 1.9721245923067166,
+    "pair_own_extrapolated_qdot_difference": 1.2329655144007372,
+    "pair_selected_qdot_difference": 1.2329655144007372,
+    "pair_global_physical_qdot_difference": 1.2329655144007372,
+    "pair_point_owners": [
+      323,
+      324
+    ],
+    "maximum_diagonal_over_mu": 45.54490726626116,
+    "screened_solve_status": 3,
+    "actual_PCG_iterations": 64,
+    "PCG_failure_reason": 4,
+    "recursive_preconditioned_relative_residual": 1.018402735718415e-12,
+    "true_residual": 1.0253373184972475e-13
+  },
+  "block": {
+    "scope": "readonly same-state point ownership and matrix audit; global-field velocities are NOT evolved",
+    "time": 0.00863295605606791,
+    "cells": 628,
+    "diagnostic_trial_not_restartable": true,
+    "preconditioner": "mutual_strongest_edge_2x2_block_Jacobi",
+    "paired_cells": 416,
+    "generators_outside_own_cell": 3,
+    "closest_pair": [
+      323,
+      324
+    ],
+    "minimum_generator_gap": 0.0004514225057035137,
+    "pair_mean_velocity_difference": 1.9721245923067166,
+    "pair_own_extrapolated_qdot_difference": 1.2329655144007372,
+    "pair_selected_qdot_difference": 1.2329655144007372,
+    "pair_global_physical_qdot_difference": 1.2329655144007372,
+    "pair_point_owners": [
+      323,
+      324
+    ],
+    "maximum_diagonal_over_mu": 45.54490726626116,
+    "screened_solve_status": 0,
+    "actual_PCG_iterations": 49,
+    "PCG_failure_reason": 0,
+    "recursive_preconditioned_relative_residual": 6.567553297725162e-13,
+    "true_residual": 4.203537373482561e-14
+  },
+  "conditional_test_pass": true
+}

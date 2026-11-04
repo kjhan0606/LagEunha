@@ -1,0 +1,89 @@
+{
+  "core": "cell-mean KEP/EC ALE; checkpoint version3",
+  "binary_sha256": "e00886748e20e66e6c17e285c62135c7d74d15dd8ce7b1e3d5f85b85e60144dd",
+  "cases": [
+    [
+      "D1_alternating_N16",
+      1,
+      16,
+      "alternating",
+      0.052822140920532286
+    ],
+    [
+      "D1_sod_N200",
+      1,
+      200,
+      "sod",
+      0.2
+    ],
+    [
+      "D1_blast_N200",
+      1,
+      200,
+      "blast",
+      0.038
+    ],
+    [
+      "D1_collision_N200",
+      1,
+      200,
+      "collision",
+      0.035
+    ],
+    [
+      "D2_cold_N64",
+      2,
+      64,
+      "cold",
+      0.25
+    ],
+    [
+      "D2_gresho_N64",
+      2,
+      64,
+      "gresho",
+      1.0
+    ]
+  ],
+  "detector": "chi=(Eperp+c*Eparallel)/(Eperp+Eparallel), c=min(1,max(0,-trG)^2/Frobenius(G)^2); original unlimited centroid LSQ weights A/r^(d+1)",
+  "pair_fraction": "max(chi_i,chi_j)",
+  "unchanged_stress_coefficients": [
+    1,
+    2
+  ],
+  "wave_CFL": 0.4,
+  "cone_safety": 0.9,
+  "PCG_cap": 64,
+  "true_root_tolerance": 1e-12,
+  "step_halving_cap": 8,
+  "minimum_dt": 1e-14,
+  "GFS_TEST_GUARD_MULTIPLIER": 1,
+  "CPU_sets": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  ],
+  "threads_each": 8,
+  "cold_pressure_relative_L1_limit": 0.01,
+  "Gresho64_physical_node_error_must_improve": 0.036911931828247264,
+  "alternating_final_kinetic_fraction_limit": 0.99,
+  "strong_failure_control": "If a strong shock fails, run the existing-stress (chi=1) binary once for the FIRST failed case in blast/collision order, under the same new IC/boundary.",
+  "not_yet_qualified": "Original nine full tests/refinement, guard-doubling equivalence, higher-resolution/3D suite, native GPU/MPI and matched GIZMO timing"
+}
