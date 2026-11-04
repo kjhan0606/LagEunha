@@ -6,6 +6,7 @@
 #include "../gfs_variational_core.h"
 #include "gfs_unified_planar_audit.inc"
 #include "gfs_unified_flow_audit.inc"
+#include "gfs_unified_hessian_probe.inc"
 typedef struct {unsigned long long id;double V,U;} GfsUnifiedDriftState;
 static int gfs_unified_saved_compare(const void *a,const void *b){
     unsigned long long x=((const GfsUnifiedDriftState*)a)->id,y=((const GfsUnifiedDriftState*)b)->id;
@@ -71,6 +72,12 @@ static double gfs_unified_kdk(
             paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D);
     }
     pressure_seconds+=MPI_Wtime()-mark;
+    const char *acoustic_cfl=getenv("GFS_UNIFIED_ACOUSTIC_CFL");
+    if(acoustic_cfl&&!strcmp(acoustic_cfl,"1")){
+        double limit=gpu_unified_acoustic_timestep(simpar,gamma,courant);
+        if(!(limit>0)||!isfinite(limit))MPI_Abort(MPI_COMM(simpar),99);
+        dt=fmin(dt,limit);
+    }
     const char *factor_env=getenv("GFS_UNIFIED_DT_FACTOR");
     double dt_factor=factor_env?atof(factor_env):1;
     if(!(dt_factor>0)||dt_factor>1||!isfinite(dt_factor))MPI_Abort(MPI_COMM(simpar),99);
@@ -88,7 +95,13 @@ static double gfs_unified_kdk(
         initial_audit_done=1;
         fprintf(stderr,"[UNIFIED_INITIAL_AUDIT] t=%.17g accepted_steps_this_process=0 pressure_only_acceleration=1\n",gfs_rk4_context_time);
         const char *only=getenv("GFS_UNIFIED_INITIAL_ONLY");
-        if(only&&!strcmp(only,"1")){MPI_Finalize();exit(0);}
+        if(only&&!strcmp(only,"1")){
+            const char *hessian=getenv("GFS_UNIFIED_FULL_HESSIAN_AUDIT");
+            if(hessian&&!strcmp(hessian,"1")&&gfs_unified_hessian_probe(simpar,gamma,
+                    xmin,ymin,xmax,ymax,OoA,courant,paddingAllTreeParticles,
+                    find2DNeighborBP,find2DCellBP,mkLinkedList2D,postStage))MPI_Abort(MPI_COMM(simpar),99);
+            MPI_Finalize();exit(0);
+        }
     }
     static double E_reference=0;static int reference_ready=0;
     if(!reference_ready){

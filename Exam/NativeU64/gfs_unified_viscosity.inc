@@ -330,3 +330,4 @@ double gpu_unified_pressure_refresh(void *opaque)
     writeBackResults_range(simpar,&ctx->h_parts,1,0,n);
     return dt;
 }
+#include "gfs_unified_acoustic_cfl.inc"

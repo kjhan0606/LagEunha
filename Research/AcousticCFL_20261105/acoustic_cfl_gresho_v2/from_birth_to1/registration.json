@@ -1,0 +1,21 @@
+{
+  "name": "from_birth_to1",
+  "problem": "gresho",
+  "Nx": 64,
+  "Ny": 64,
+  "target": 1.0,
+  "backend": "local_Ada",
+  "command": [
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/acoustic_cfl_candidate_build_v2/unified_native_general.exe",
+    "params.dat",
+    "1"
+  ],
+  "birth_initial": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/smooth_initial_v1/gresho_64x64.bin",
+  "start_state": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/smooth_initial_v1/gresho_64x64.bin",
+  "restart_step": 1,
+  "binary_sha256": "b27c2735b342ae9bff47c4c5716402250f4516d7270e8571bd29bc98430327cd",
+  "birth_initial_sha256": "6e6efcfb2bf98276583e9229eaa79c90472bfeb85a9d1d966c88acbba39b4bbe",
+  "output_policy": "exact .25 Gresho or .5 KH final checkpoints, sparse flow CSV, one initial RHS/heat CSV",
+  "expected_new_bytes": 28087936,
+  "retains_preflight": false
+}
