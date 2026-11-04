@@ -1,0 +1,39 @@
+{
+  "scope": "Independent Athena++ Euler reference for existing 1D Shu--Osher accuracy; native C++ PDE, Python orchestration only. Not the new production algorithm.",
+  "reference_source_repository": "https://github.com/PrincetonUniversity/athena",
+  "reference_source_commit": "37869da22cd357c2fbdd056fbb3781cdd4f430da",
+  "upstream_uncommitted_changes_used": false,
+  "domain": [
+    -5,
+    5
+  ],
+  "shock_position": -4,
+  "density_wave": "1+0.2 sin(5 pi x), actual LagForce problem, not canonical sin(5 x)",
+  "exact_cell_integral_initial_density": true,
+  "gamma": 1.4,
+  "target_time": 1.8,
+  "N": [
+    1600,
+    3200,
+    6400,
+    12800
+  ],
+  "method": "native PPM (xorder3), RK3, HLLC; CFL0.3",
+  "outputs": "initial and final primitive table only; matching history",
+  "all_eos_floor_sites_abort_instead": 8,
+  "new_own_solver_PDE_runs": 0,
+  "comparison_scope": "New common native sin(5*pi*x) runs, implicit KDK N200/400/800/1600/3200 to t1.8; original sin(5*x) accepted states excluded. Eight unchanged problems compare parent/current accepted data byte-for-byte.",
+  "stop": "fail on nonterminal endpoint, negative state, floor activation, omitted domain, or invalid input metadata",
+  "success_not_claimed": "Reference convergence and independent solver comparison are not the full common-method/speed objective.",
+  "reference_convergence_registration": "Two successive factor-two comparisons; finite numerical reference uncertainty is reported, never exact-solution claim.",
+  "native_integrator": "Same common implicit BE-viscosity/global KDK, no new coefficients or operator",
+  "native_endpoints": {
+    "200": 1.8,
+    "400": 1.8,
+    "800": 1.8,
+    "1600": 1.8,
+    "3200": 1.8
+  },
+  "native_other_problem_gate": "Eight native parent/current N200 final data files byte-identical; all endpoints, no floors or retries",
+  "additional_reference_reason": "After fixed three-level result: native finest density L1=0.1764 while reference N3200/N6400 difference=0.1098. One additional N12800 reference measures unresolved reference uncertainty; no native restart or coefficient change."
+}

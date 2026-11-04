@@ -1,0 +1,127 @@
+{
+  "scope": "Independent Euler reference comparison; no native checkpoints rewritten",
+  "reference": "Athena++ HLLC/PPM/RK3 at t=1.8, same sin(5 pi x) initial condition",
+  "norm": "Integral of absolute piecewise-constant cell-state differences over [-4.9,4.9]",
+  "fields": "rho, mean velocity, mean-state pressure; no subcell kinetic recovery",
+  "reference_processes": [
+    {
+      "N": 1600,
+      "exit_code": 0,
+      "wall_seconds": 3.4054122710367665,
+      "binary_sha256": "c4c1c5a543f0d92c054e698296e431022e23c6b53d30adb794fff81e1af4043b",
+      "final_time": 1.8,
+      "final_density_min": 0.8003211213928721,
+      "final_pressure_min": 1.0,
+      "upstream_pressure_max_error": 0.0,
+      "exact_density_projection_max_error": 1.199040866595169e-14,
+      "floor_or_reset_count": 0,
+      "final_table": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N1600/ShuReference.block0.out1.00001.tab"
+    },
+    {
+      "N": 3200,
+      "exit_code": 0,
+      "wall_seconds": 13.498869821080007,
+      "binary_sha256": "c4c1c5a543f0d92c054e698296e431022e23c6b53d30adb794fff81e1af4043b",
+      "final_time": 1.8,
+      "final_density_min": 0.8000803093700316,
+      "final_pressure_min": 1.0,
+      "upstream_pressure_max_error": 0.0,
+      "exact_density_projection_max_error": 4.6629367034256575e-14,
+      "floor_or_reset_count": 0,
+      "final_table": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N3200/ShuReference.block0.out1.00001.tab"
+    },
+    {
+      "N": 6400,
+      "exit_code": 0,
+      "wall_seconds": 54.86197794089094,
+      "binary_sha256": "c4c1c5a543f0d92c054e698296e431022e23c6b53d30adb794fff81e1af4043b",
+      "final_time": 1.8,
+      "final_density_min": 0.8000200791567381,
+      "final_pressure_min": 1.0,
+      "upstream_pressure_max_error": 0.0,
+      "exact_density_projection_max_error": 6.394884621840902e-14,
+      "floor_or_reset_count": 0,
+      "final_table": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N6400/ShuReference.block0.out1.00001.tab"
+    }
+  ],
+  "reference_self_convergence": [
+    {
+      "coarse": 1600,
+      "fine": 3200,
+      "density_L1": 0.21740474643898033,
+      "velocity_L1": 0.038828282307102314,
+      "pressure_L1": 0.275631154690999,
+      "covered_length": 9.8
+    },
+    {
+      "coarse": 3200,
+      "fine": 6400,
+      "density_L1": 0.10983851464765439,
+      "velocity_L1": 0.022766345046952213,
+      "pressure_L1": 0.15269485877635847,
+      "covered_length": 9.8
+    }
+  ],
+  "saved_native_vs_reference": [
+    {
+      "method": "explicit_KDK",
+      "initial_N": 400,
+      "saved_cells": 589,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strain_resolution/shuosher_N400/unified_shuosher.dat",
+      "native_sha256": "ac49d3f3ae245d0e0aba089ee7fd64c4e2e268a3aaea5f6ecf84fdc3cf21ab41",
+      "density_L1": 1.679899427839459,
+      "velocity_L1": 0.4509778587423202,
+      "pressure_L1": 2.848875901286041,
+      "covered_length": 9.799999999999947
+    },
+    {
+      "method": "explicit_KDK",
+      "initial_N": 800,
+      "saved_cells": 1178,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strain_resolution/shuosher_N800/unified_shuosher.dat",
+      "native_sha256": "07a8aee3e83a50fe2f19cde7e83e53d03d93e7d41edbfc7dbe492c3ad9d70f99",
+      "density_L1": 1.7118818594668412,
+      "velocity_L1": 0.440543845703828,
+      "pressure_L1": 2.951751794003073,
+      "covered_length": 9.79999999999996
+    },
+    {
+      "method": "explicit_KDK",
+      "initial_N": 1600,
+      "saved_cells": 2357,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strain_resolution/shuosher_N1600/unified_shuosher.dat",
+      "native_sha256": "54f54f36e91e633512dca164cb7762628b85584c4fedeec9d8ca884fdb986bb6",
+      "density_L1": 1.7451708024377361,
+      "velocity_L1": 0.4433984653402957,
+      "pressure_L1": 3.075017102970106,
+      "covered_length": 9.79999999999981
+    },
+    {
+      "method": "explicit_KDK",
+      "initial_N": 3200,
+      "saved_cells": 4714,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strain_resolution/shuosher_N3200/unified_shuosher.dat",
+      "native_sha256": "9f782db525cb04033fa4be93251c6902155e00ed23c27c0b8528a975bb316aea",
+      "density_L1": 1.7709674307862082,
+      "velocity_L1": 0.44915994927202335,
+      "pressure_L1": 3.170767472553257,
+      "covered_length": 9.799999999999745
+    },
+    {
+      "method": "implicit_KDK",
+      "initial_N": 200,
+      "saved_cells": 294,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/implicit_1d_v1/shuosher_N200/unified_shuosher.dat",
+      "native_sha256": "4d8b16ebfec02a2952ee12f7434dc537990542e1a51ad5c694c8aee30794f585",
+      "density_L1": 1.6429071495716032,
+      "velocity_L1": 0.4813985636562352,
+      "pressure_L1": 2.7400629505335927,
+      "covered_length": 9.799999999999986
+    }
+  ],
+  "limits": [
+    "Reference is a converged numerical approximation, not an analytic solution.",
+    "Explicit resolution series and implicit N200 are distinct registered integrators.",
+    "This does not qualify the new multidimensional method or matched GIZMO cost."
+  ]
+}

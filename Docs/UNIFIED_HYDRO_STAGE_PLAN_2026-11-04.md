@@ -32,7 +32,7 @@ rho=m/V, P=(gamma-1)U/V와 실제 기하 미분 B=dV/dx를 사용한다.
 | 2 | 1D/2D/3D 공통 기하·힘·열 연산자의 C/CUDA 공유 함수와 감사 | 기본 대수·실제 Voro·Ada device 감사 통과, 경계/생산 진화 미완 |
 | 3 | 같은 초기화·연산자로 정지/이동 contact, 음파, 교대모드, 접근 pair | contact 및 영모드 감사 완료, 나머지 미완 |
 | 4 | 하나의 충격 소산을 선택해 Sod, Noh, blast, Lax 등 동일 계수 검증 | explicit 9종 종점 및 일부 수렴 확인, implicit 9종 첫 종점 확인 |
-| 5 | 동일 공통 연산자를 생산 2D CPU/CUDA 및 3D에 연결, 평면 삽입 검증 | 기본 차원 연결 확인. 전단/압력 위치 표현은 미해결. psi_i G_i와 midpoint D는 제외. 순질량 ALE의 수송 장부는 통과했으나 물리적 열 복구는 미정이며 무제한 LSQ 복구도 음압 반례로 제외. MPI/3D GPU 미검증 |
+| 5 | 동일 공통 연산자를 생산 2D CPU/CUDA 및 3D에 연결, 평면 삽입 검증 | 기존 B의 기본 차원 연결 확인. psi_i G_i, midpoint D, 무제한 kinetic 복구는 제외. 후속 FV--ALE 상태/완화 가중치 법칙을 선정하고 1D/2D/3D 공통 팬·양압 시간구간 함수를 C/C++/Ada로 검사했다. 새 기하·가중치·PDE 연결 및 MPI/3D GPU 생산 검증은 미완 |
 | 6 | contact, KH, RT, Gresho, Sedov, Noh, cylinder, Kepler 2D 재실행 | 기본 contact·정상 전단·Sod 완료, Gresho 64²/128² t=1 및 KH 세 해상도 t=2 도달; 압력 CFL 후보는 에너지 오차를 줄이나 회전 유동의 공간 오차·소산 및 전체 suite는 미완 |
 | 7 | GIZMO와 동등 IC·장비·자원·정확도·출력량의 처리량 비교 | 대기, 과거 약 3.339배 시간으로 목표 미달 |
 
@@ -60,6 +60,13 @@ Re=infinity는 물리점성 0이며 Euler shock의 수치적 엔트로피 생성
 초기 공통 적분은 global KDK를 목표로 한다. 기존 block2는 한 랭크,
 Kepler 고정 polygon 조건과 비동기 교환 한계를 갖는 별도 기준선이다.
 충격 검증 없이 같은 block2를 새 공통 solver로 부르지 않는다.
+
+이후 기획된 별도 보존적 FV--ALE 후보는 전체 Q,q,W를 SSPRK2로
+갱신한다. 기존 W0 변분 KDK와 구분하며, 동일 새 후보를 contact,
+9종 1D, 2D/3D Sod, Gresho, cold shear, KH 종점까지 검증하는 묶음은
+UNIFIED_HYDRO_FV_ALE_PLAN_2026-11-05.md에 고정했다. 아직 이 후보의
+PDE 궤적은 없다. Shu 초기조건 파수 회귀를 수정한 기존 KDK 결과와
+새 독립 기준해는 UNIFIED_HYDRO_SHU_REFERENCE_2026-11-05.md에 기록했다.
 
 ## 속도 및 실행 규칙
 

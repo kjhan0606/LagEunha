@@ -89,3 +89,18 @@ face moments. `strict_intersection_audit.c` checks bounded endpoint clamps,
 explicit rejection of finite invalid intersections, and the float-entry guard.
 The strict 3D geometry entry retains the existing clipping algorithm with
 roundoff-based predicates, without a guarantee for every degenerate topology.
+
+The Shu IC/reference repair is documented in
+`../../Docs/UNIFIED_HYDRO_SHU_REFERENCE_2026-11-05.md`. The common initializer
+now matches the original sin(5*pi*x) problem; earlier sin(5*x) states are
+preserved as another variant. `shu_initial_condition_audit.c` includes the
+native initializer and independently integrates the original analytic field.
+`shu_independent_reference.py` orchestrates the separately built native
+Athena++ reference and compares actual-cell overlaps; it is not a Python PDE.
+
+The next FV--ALE candidate is specified in
+`../../Docs/UNIFIED_HYDRO_FV_ALE_PLAN_2026-11-05.md`. Its experimental shared
+header is `../gfs_fv_ale.h`; `fv_flux_audit.c` and `fv_device_audit.cu` check
+the C/C++/CUDA primitives. The fixed payload has E in slot four and exactly
+zero unused momenta. Do not infer a production FV solver, weight update,
+SSPRK2/GCL qualification, or new PDE trajectory from those primitive checks.

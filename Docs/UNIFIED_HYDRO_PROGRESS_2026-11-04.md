@@ -108,6 +108,13 @@ L1rho를 비교하면 N=200/400/800/1600에서
 shu_reference_audit.json에 계산 방법과 범위가 있다.
 이는 self-convergence이며 독립 Euler/GIZMO 기준해 검증은 남아 있다.
 
+2026-11-05 후속 검사에서는 공통 초기화가 sin(5x), 원래 시험이
+sin(5*pi*x)라는 추가 불일치도 확인했다. 위 self-convergence 수열은
+보존한 sin(5x) 변형 시험의 결과다. 원래 시험의 독립 Euler 비교로
+해석하지 않는다. 공통 초기화를 원래 파수로 수정하고 실제 native
+implicit KDK를 N200--3200에서 t=1.8까지 새로 수행한 결과와 독립
+Athena++ N12800 비교는 UNIFIED_HYDRO_SHU_REFERENCE_2026-11-05.md에 있다.
+
 ## 속도와 남은 구현
 
 불필요한 RHS 재평가를 제거해 한 step의 RHS를 7회에서 4회로 줄였다.
@@ -318,3 +325,42 @@ cell means와 geometry Q에서 이웃 LSQ 기울기로 Kvar를 추정해 E에서
 복구식은 제외했으며 limiter·floor·E reset으로 바꾸어 통과시키지 않았다.
 이는 모든 reconstruction이나 FV 방법의 불가능성 주장이 아니다. 새 PDE,
 large weight solve, Gdot/Qdot 구현으로 진행하지 않았고 전체 목표는 유지한다.
+
+## 2026-11-05: Shu 초기조건 파수 회귀 수정과 독립 Euler 기준 비교
+
+이전 self-convergence 수열은 common 초기화의 sin(5x) 변형 시험이었다.
+원래 시험의 sin(5*pi*x)와 다르다는 누락을 찾아 초기 적분을 수정했다.
+N200 초기 밀도 오차는 독립 Gauss 적분 대비 L1=1.45458에서 5.29e-14로
+줄었고, 나머지 8종 native N200 최종 데이터는 parent/current가 byte-identical이다.
+기존 sin(5x) accepted 파일과 잘못 맞춘 첫 비교값은 삭제하지 않고 구분했다.
+
+별도 pristine Athena++ native C++ HLLC/PPM/RK3 N1600/3200/6400/12800은
+모두 같은 원래 IC에서 t=1.8을 완료했다. 8개 EOS floor 지점에는 활성화시
+abort를 넣었다. 수정된 기존 implicit KDK N200/400/800/1600/3200도 모두
+양의 상태, floor/retry 0으로 t=1.8을 완료했다. 실제 셀 구간 [-4.9,4.9]
+적분의 Athena N12800 대비 밀도 L1은 0.960836/0.717536/0.499689/
+0.313848/0.183202다. 기준해 마지막 두 해상도 차이 0.0491761도 공개한다.
+독립 비교에서 세 물리량의 오차가 줄었으나 참조 오차를 0으로 간주하거나
+전체 물리 정확도 완료로 판정하지 않는다. 상세는
+UNIFIED_HYDRO_SHU_REFERENCE_2026-11-05.md다.
+
+## 2026-11-05: 공통 FV--ALE 묶음 선정과 native C/CUDA 기초 구현
+
+Astra의 한 번의 묶음 기획으로 4/5-state FV 근사, 완전한 ALE face flux,
+고정 birth mu의 mass--weight 연동, SSPRK2 및 실제 기하/GCL 검사를 선정했다.
+UNIFIED_HYDRO_FV_ALE_PLAN_2026-11-05.md에 shock/Gresho/cold shear/KH의
+원래 종점, 양압/보존/수렴/비용 기준과 중단 조건을 고정했다.
+
+새 gfs_fv_ale.h의 1D/2D/3D 공통 팬과 forward-ray 양압성 함수를 구현했다.
+C/C++ 120개 팬 상태, 해석적 cone 경계 및 2D 기존 HLLC 비교가 통과했다.
+초기 packed 배열 CUDA 경로는 최적화 빌드에서 실패했고 debug와 작은
+호출 분리 대조를 보존했다. 물리식을 바꾸지 않고 고정 5-slot 배열과
+성분 순회로 정리한 뒤 실제 Ada의 최적화 빌드 96개 입력이 CPU와
+최대 정규화 3.21e-15로 일치하고 memory check도 통과했다.
+UNIFIED_HYDRO_FV_PRIMITIVES_2026-11-05.md에 실패와 통과 범위를 함께 적었다.
+
+새 FV 기하 adapter, centroid 재구성/limiter, screened weight solve,
+restart birth state, 시간 적분 및 새 PDE 시험은 아직 연결하지 않았다.
+이번 Shu 결과는 기존 변분 KDK의 초기조건 정정이며 새 FV 성과로 부르지
+않는다. 기존 장기 Kepler/원고 기준선은 유지한다. 전체 차원 공통 물리,
+남은 2D suite 및 GIZMO 실행시간 2배 목표는 미완료이며 계속 진행한다.

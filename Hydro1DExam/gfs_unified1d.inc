@@ -127,7 +127,12 @@ static void gfs_u1_integrate(double a,double b,double rho,double v,double p,
 {
     if(!(b>a))return;
     double m=rho*(b-a);
-    if(sine)m+=.04*(cos(5*a)-cos(5*b));
+    /* Match init_shuosher(): rho=1+0.2 sin(5*pi*x). The former
+     * cos(5*x) integral silently selected a different test problem. */
+    if(sine){
+        const double wave=5*M_PI;
+        m+=.2*(cos(wave*a)-cos(wave*b))/wave;
+    }
     *mass+=m;*mom+=m*v;*energy+=p*(b-a)/GM1+.5*m*v*v;
 }
 static void gfs_unified1d_init(int n)

@@ -1,0 +1,143 @@
+{
+  "scope": "Independent Euler reference comparison; no native checkpoints rewritten",
+  "reference": "Athena++ HLLC/PPM/RK3 at t=1.8, same sin(5 pi x) initial condition",
+  "norm": "Integral of absolute piecewise-constant cell-state differences over [-4.9,4.9]",
+  "fields": "rho, mean velocity, mean-state pressure; no subcell kinetic recovery",
+  "reference_processes": [
+    {
+      "N": 1600,
+      "exit_code": 0,
+      "wall_seconds": 3.4054122710367665,
+      "binary_sha256": "c4c1c5a543f0d92c054e698296e431022e23c6b53d30adb794fff81e1af4043b",
+      "final_time": 1.8,
+      "final_density_min": 0.8003211213928721,
+      "final_pressure_min": 1.0,
+      "upstream_pressure_max_error": 0.0,
+      "exact_density_projection_max_error": 1.199040866595169e-14,
+      "floor_or_reset_count": 0,
+      "final_table": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N1600/ShuReference.block0.out1.00001.tab"
+    },
+    {
+      "N": 3200,
+      "exit_code": 0,
+      "wall_seconds": 13.498869821080007,
+      "binary_sha256": "c4c1c5a543f0d92c054e698296e431022e23c6b53d30adb794fff81e1af4043b",
+      "final_time": 1.8,
+      "final_density_min": 0.8000803093700316,
+      "final_pressure_min": 1.0,
+      "upstream_pressure_max_error": 0.0,
+      "exact_density_projection_max_error": 4.6629367034256575e-14,
+      "floor_or_reset_count": 0,
+      "final_table": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N3200/ShuReference.block0.out1.00001.tab"
+    },
+    {
+      "N": 6400,
+      "exit_code": 0,
+      "wall_seconds": 54.86197794089094,
+      "binary_sha256": "c4c1c5a543f0d92c054e698296e431022e23c6b53d30adb794fff81e1af4043b",
+      "final_time": 1.8,
+      "final_density_min": 0.8000200791567381,
+      "final_pressure_min": 1.0,
+      "upstream_pressure_max_error": 0.0,
+      "exact_density_projection_max_error": 6.394884621840902e-14,
+      "floor_or_reset_count": 0,
+      "final_table": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N6400/ShuReference.block0.out1.00001.tab"
+    }
+  ],
+  "reference_self_convergence": [
+    {
+      "coarse": 1600,
+      "fine": 3200,
+      "density_L1": 0.21740474643898033,
+      "velocity_L1": 0.038828282307102314,
+      "pressure_L1": 0.275631154690999,
+      "covered_length": 9.8
+    },
+    {
+      "coarse": 3200,
+      "fine": 6400,
+      "density_L1": 0.10983851464765439,
+      "velocity_L1": 0.022766345046952213,
+      "pressure_L1": 0.15269485877635847,
+      "covered_length": 9.8
+    }
+  ],
+  "saved_native_vs_reference": [
+    {
+      "method": "implicit_KDK_corrected_IC",
+      "initial_N": 200,
+      "saved_cells": 294,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/native_corrected/N200/unified_shuosher.dat",
+      "native_sha256": "a8b5d1c6de8b6cf283449fc3b4d319ae6ca12d0726665ee6a2cfa1f602318ef6",
+      "density_L1": 0.9451537275686259,
+      "velocity_L1": 0.36921345499988123,
+      "pressure_L1": 2.0077955555901754,
+      "covered_length": 9.799999999999983
+    },
+    {
+      "method": "implicit_KDK_corrected_IC",
+      "initial_N": 400,
+      "saved_cells": 589,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/native_corrected/N400/unified_shuosher.dat",
+      "native_sha256": "b07e701f7c75d5fb131e795c4757021149af8ddf83cf22a186f66db7645cb94f",
+      "density_L1": 0.6996485657761937,
+      "velocity_L1": 0.2656579502293859,
+      "pressure_L1": 1.5984274766448878,
+      "covered_length": 9.799999999999962
+    },
+    {
+      "method": "implicit_KDK_corrected_IC",
+      "initial_N": 800,
+      "saved_cells": 1178,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/native_corrected/N800/unified_shuosher.dat",
+      "native_sha256": "d5cf555cdf9d4d4e3e4657deb31346d29a89029d7bd684484846c9cd9efd0f87",
+      "density_L1": 0.48042301087412126,
+      "velocity_L1": 0.18736467324305128,
+      "pressure_L1": 1.1779710581568492,
+      "covered_length": 9.799999999999942
+    },
+    {
+      "method": "implicit_KDK_corrected_IC",
+      "initial_N": 1600,
+      "saved_cells": 2357,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/native_corrected/N1600/unified_shuosher.dat",
+      "native_sha256": "763846ae9cb7ffe30e271b61602e4365b8f12c294d4c3d35647d93eb0e9359ce",
+      "density_L1": 0.297534280182403,
+      "velocity_L1": 0.12197382513987226,
+      "pressure_L1": 0.7916776153262142,
+      "covered_length": 9.799999999999786
+    },
+    {
+      "method": "implicit_KDK_corrected_IC",
+      "initial_N": 3200,
+      "saved_cells": 4714,
+      "native_file": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/native_corrected/N3200/unified_shuosher.dat",
+      "native_sha256": "07ce4255b1ecfd06121b3be251084dc668e52215e8c3fa828736b06111a68462",
+      "density_L1": 0.17643543126635897,
+      "velocity_L1": 0.07467041909587226,
+      "pressure_L1": 0.4976566015517781,
+      "covered_length": 9.799999999999745
+    }
+  ],
+  "native_provenance": {
+    "parent_commit": "90679f279813e61cd4b69f8f763fdc948c2828dc",
+    "density_wavenumber": "5*pi",
+    "source_sha256": {
+      "Hydro1DExam/laguerre_sod.c": "5f6dfb080eb14f59c14e924e0e1a55ac315b3613af8ccd071ae9c3eb36491fcf",
+      "Hydro1DExam/gfs_unified1d.inc": "556dd9269afa9d21871dabd6817e8eaf6984f2b441117964556dcfa58a0a7508",
+      "Hydro1DExam/gfs_unified1d_implicit.inc": "22f34491cd15191edf89fdff9b4c2ae9bfbe8609b270a34e0f19b16b639777e0",
+      "Exam/gfs_velocity_fit.h": "c5e5fbef9dfc34bd294029fd5ff6a4a95f9671c298d5b536584b69682b1bd000",
+      "Exam/gfs_variational_core.h": "79b1011a8c9b66e0ceb1d966a908790cf16c96717c0ddcb9b206ed252904390b",
+      "Exam/gfs_pair.h": "debffcce81a82ee5bba01362241453c7cba01dfa303a48fd33e22b9fa28aac05",
+      "Exam/HydroCore/shu_initial_condition_audit.c": "b9b4815d1d16acea86c9d2a50feb05941a47cdebc5532c3a0502ab07489d8414"
+    },
+    "corrected_solver_sha256": "c74b871eeb009dfc1d1972cff7787860aae362ec927b77edcc9ab78e4d67889f",
+    "parent_solver_sha256": "c8cf820035404cd9babda2a9178ed9c9db97dbf55451b9a4d251a2c49aa20b4b",
+    "change": "Only common Shu initial density integral restored to original sin(5*pi*x); operator/viscosity/time integration unchanged."
+  },
+  "limits": [
+    "Reference is a refined numerical approximation with reported uncertainty, not an analytic solution.",
+    "Previous sin(5*x) common runs are different ICs, excluded from this comparison.",
+    "This does not qualify the new multidimensional method or matched GIZMO cost."
+  ]
+}

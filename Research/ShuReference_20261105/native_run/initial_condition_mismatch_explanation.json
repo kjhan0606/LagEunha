@@ -1,0 +1,7 @@
+{
+  "status": "EXCLUDED FROM ACCURACY CLAIMS",
+  "reason": "Old common native initializer integrates sin(5*x); Athena reference uses original legacy sin(5*pi*x). These are different initial conditions.",
+  "raw_file": "initial_condition_mismatch_raw.json",
+  "reference_trajectories": "Valid original sin(5*pi*x) problem; kept without restart.",
+  "native_trajectories": "Old sin(5*x) variant kept unchanged. Corrected IC runs will be new trajectories under native_corrected."
+}

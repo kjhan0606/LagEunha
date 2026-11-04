@@ -1,0 +1,26 @@
+{
+  "scope": "Astra-selected four/five-state FV candidate foundation only, no native geometry, weight solve or PDE enabled.",
+  "dimensions": [
+    1,
+    2,
+    3
+  ],
+  "HLLC": "Original Davis primary bounds and positive star-state check",
+  "fallback": "Full HLL with symmetric local-LF outer bounds in normal mean frame",
+  "tests": [
+    "120 deterministic multi-D fan states, including strong expansion and HLL fallback",
+    "face reversal and Galilean transformed complete flux",
+    "uniform-state exact ALE Euler flux",
+    "dFm/dwn=-rho within each fan region",
+    "1D Riemann dimensional embedding",
+    "five analytic forward-ray admissible-cone boundaries in every D plus boost",
+    "C++ comparison to original 2D HLLC nonfallback fan"
+  ],
+  "pass_limits": {
+    "flux_normalized": 1e-12,
+    "mass_derivative_normalized": 2e-08,
+    "cone_normalized": 1e-12
+  },
+  "production_physics_changed": false,
+  "PDE_steps": 0
+}
