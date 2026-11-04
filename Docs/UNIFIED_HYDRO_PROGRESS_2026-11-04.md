@@ -364,3 +364,27 @@ restart birth state, 시간 적분 및 새 PDE 시험은 아직 연결하지 않
 이번 Shu 결과는 기존 변분 KDK의 초기조건 정정이며 새 FV 성과로 부르지
 않는다. 기존 장기 Kepler/원고 기준선은 유지한다. 전체 차원 공통 물리,
 남은 2D suite 및 GIZMO 실행시간 2배 목표는 미완료이며 계속 진행한다.
+
+## 2026-11-05: 공통 native FV 실제 진화와 power 기하 수정
+
+이후 같은 묶음 계획의 native C/OpenMP FV 연산자에 실제 1D/2D/3D 기하,
+centroid 재구성, 완전한 ALE flux, birth mu의 screened weight solve,
+SSPRK2/rollback, 경계 보존 장부 및 별도 restart 저장 형식을 연결했다.
+Python은 실행과 분석만 한다. 생산 CUDA/MPI 연산자나 기존 restart ABI를
+교체한 것은 아니다. replay 검증은 남아 있다.
+
+첫 결합 시험에서 기존 power 면 위치의 [0.05,0.95] 제한과 2D 교점 inset이
+새 실제 power 면 속도와 불일치함을 찾았다. 명시적 PowerStrict 진입점으로
+원래 면 위치를 사용하고, 기존 진입점 정책은 유지했다. parent/current의
+기존 W=0 기하 감사 출력은 byte-identical이다. 초기 실패 자료도 보존했다.
+
+수정된 동일 binary로 contact/Sod 작은 10건과 큰 Sod 3건이 종점을 완료했다.
+2D Sod 64²→128²의 밀도 L1은 0.00818823→0.00421618, 3D 8³→16³은
+0.0315495→0.0232731이다. 실제 셀 구간의 exact Riemann 적분으로 비교했고
+속도·물리 압력 오차도 감소했다. 여섯 contact 잡음 검사도 통과했다.
+
+UNIFIED_HYDRO_FV_NATIVE_2026-11-05.md 및 Research/FVNative_20261105에
+결과·실패 이력·기하 유한차분 원래 실패와 후속 외삽 검사·소스 hash를 기록했다.
+Gresho/cold shear, 새 연산자로 원래 1D 9종과 나머지 2D suite, 시간/GCL 수렴,
+새 장기 Kepler, 완전한 GPU/MPI 및 동등 조건 GIZMO 속도는 미검증이다.
+기존 원고·장기 궤도 결과를 새 후보의 성과로 옮기지 않는다. 전체 목표는 진행 중이다.

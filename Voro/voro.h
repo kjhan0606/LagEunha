@@ -135,6 +135,9 @@ Voro3D_Vertex Voro3D_FindIntersection(
 		Voro3D_point *,
 		postype );
 int Voro2D_FindVC(Voro2D_point *, Voro2D_point *, Voro2D_point *, int , Voro2D_Corner *, int , postype);
+/* Opt-in true power cells: no [0.05,0.95] fraction clamp or finite edge
+ * inset/removal. The capacity argument is the actual corner allocation. */
+int Voro2D_FindVCPowerStrict(Voro2D_point *, Voro2D_point *, Voro2D_point *, int, Voro2D_Corner *, int, postype);
 int Voro2D_InitializeCorner(Voro2D_Corner *,int , postype );
 int Voro2D_CutOrStay(Voro2D_point *, Voro2D_Corner *, postype);
 Voro2D_Corner *FindingLowerLimit(Voro2D_point *, Voro2D_Corner *, postype);
@@ -151,6 +154,7 @@ int Voro3D_FindVC(Voro3D_point *, Voro3D_point *, Voro3D_point *, int , Voro3D_V
 /* Double-precision geometry only. Roundoff-bounded plane predicates are
  * not exact arithmetic and do not guarantee every degenerate topology. */
 int Voro3D_FindVCStrict(Voro3D_point *, Voro3D_point *, Voro3D_point *, int , Voro3D_Vertex *, int , postype, int , int *);
+int Voro3D_FindVCPowerStrict(Voro3D_point *, Voro3D_point *, Voro3D_point *, int, Voro3D_Vertex *, int, postype, int, int *);
 typedef struct {
     long long endpoint_clamps,rejected_intersections;
     double max_endpoint_residual_over_bound;

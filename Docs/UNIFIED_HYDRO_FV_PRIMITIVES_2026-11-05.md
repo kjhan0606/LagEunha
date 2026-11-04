@@ -1,5 +1,9 @@
 # Dimensional conservative FV primitives: C/C++ and actual Ada checks
 
+This records the primitive-only checkpoint. The subsequent native CPU
+evolution implementation and its limits are reported separately in
+`UNIFIED_HYDRO_FV_NATIVE_2026-11-05.md`.
+
 This implements the first native pieces of the grouped Astra plan in
 `UNIFIED_HYDRO_FV_ALE_PLAN_2026-11-05.md`. It does not release a new fluid
 solver. `Exam/gfs_fv_ale.h` is included only by its native audit programs;

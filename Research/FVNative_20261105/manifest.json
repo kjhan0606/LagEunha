@@ -1,0 +1,3691 @@
+{
+  "scope": "Native CPU/OpenMP FV prototype; completed contact/Sod endpoints and retained failures, not complete physical/CUDA/MPI/GIZMO qualification",
+  "parent_commit": "05c51747262098e74a1856c987eb605769cd2b46",
+  "authoritative_root": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1",
+  "archived_groups": [
+    "fv_native_build_v2",
+    "fv_native_build_v3",
+    "fv_native_coupling_v1",
+    "fv_native_coupling_v2",
+    "fv_native_sod_large_v1",
+    "fv_power_geometry_gate_v1",
+    "fv_power_geometry_gate_v2",
+    "fv_sod_reference_v1",
+    "fv_push_default_geometry_regression_v1"
+  ],
+  "excluded": "Native executables; preserve their build/source manifests and hashes, not compiled binaries",
+  "files": [
+    {
+      "file": "fv_native_build_v2/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/build.log",
+      "source_bytes": 1122,
+      "source_sha256": "8f476e00e28c7b18f6ee162e5c117cd203d72bfa7a33e05486a2801f03ca271a",
+      "stored_bytes": 395,
+      "stored_sha256": "4a6eb133d2eb0b8434eaa22b7b9260d265bf046aeb59542fecfc9fd6c33995e1",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/build_command.json",
+      "source_bytes": 631,
+      "source_sha256": "9b0b47528da4b5abd94422f66d827ef4e8b5b5cf2e586a15e3937260bee352fe",
+      "stored_bytes": 631,
+      "stored_sha256": "9b0b47528da4b5abd94422f66d827ef4e8b5b5cf2e586a15e3937260bee352fe",
+      "compression": null
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Exam/HydroCore/fv_native_evolution.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Exam/HydroCore/fv_native_evolution.c",
+      "source_bytes": 14797,
+      "source_sha256": "89e8064ac64f712ed9fcefc301b97ae30d19514a2bbe81fa86f1504a174104e2",
+      "stored_bytes": 4968,
+      "stored_sha256": "443939779590f67afd150549aa31d05ee7e015afc452b9b4eae3e177c24fb533",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Exam/gfs_fv_ale.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Exam/gfs_fv_ale.h",
+      "source_bytes": 7243,
+      "source_sha256": "1213ed9b5d462a810bbeb8b92a9860c76c9228160a206b1fc857bbe21f045667",
+      "stored_bytes": 2582,
+      "stored_sha256": "8b3694f6dd1cbbb3ad74dc4c3d73ecfac8b33edd78d97026184f64bf7b9095ab",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Exam/gfs_fv_geometry.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Exam/gfs_fv_geometry.c",
+      "source_bytes": 12807,
+      "source_sha256": "f98d04f5fb15bd129e0e141951a61a670075791a4e41e1f5053dca4665b81b9c",
+      "stored_bytes": 4100,
+      "stored_sha256": "e789abb06399c37ef1383b3bcfd9a21d2a24d5b4101a9b789d08d6cf67eb4d09",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Exam/gfs_fv_native.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Exam/gfs_fv_native.c",
+      "source_bytes": 15338,
+      "source_sha256": "8d8858ccac19fac3cf747462a0ea7f0ca75129d00ca02effa5ada0f5c8ce6868",
+      "stored_bytes": 4541,
+      "stored_sha256": "121de830fa582e9595d7906f12aa064e8fa397323a9dc910c536eaf733c7c932",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Exam/gfs_fv_native.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Exam/gfs_fv_native.h",
+      "source_bytes": 1517,
+      "source_sha256": "07d69c656e6661cd09b99071300942020b055e1383525cfe09525e234b230ba3",
+      "stored_bytes": 667,
+      "stored_sha256": "c45436baa1a619bc2f3fd285c925a405fe22f0978c75cb929df89504744ea801",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Exam/gfs_velocity_fit.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Exam/gfs_velocity_fit.h",
+      "source_bytes": 3818,
+      "source_sha256": "c5e5fbef9dfc34bd294029fd5ff6a4a95f9671c298d5b536584b69682b1bd000",
+      "stored_bytes": 1350,
+      "stored_sha256": "3b52c77b4e4003ce6557a5e15a2821d3db7972e466a73902f9dfbd4dc379881d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Voro/voro.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Voro/voro.c",
+      "source_bytes": 43730,
+      "source_sha256": "3513f77b5b603986b4b57364fe69eca4f97cbadab5715ead0b44ba8c4c212a87",
+      "stored_bytes": 10239,
+      "stored_sha256": "727a7468a2f5bec1abe40ef58effc69e13afae8b7a1325ccd0f2a3cf23df9c5c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/Voro/voro.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/Voro/voro.h",
+      "source_bytes": 10039,
+      "source_sha256": "660af81c238eba5b4e754098de489e63d9a390761305b60880e825400f8549dc",
+      "stored_bytes": 2699,
+      "stored_sha256": "24890073898bb093ab74e38c83688b7e3e1af4f1d494fc432ab8a04d78ed0314",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/frozen_source/indxflag.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/frozen_source/indxflag.h",
+      "source_bytes": 84,
+      "source_sha256": "5b679b66f652752cce5f24029c409e234f7ebbb95fa3b442e9ab05b8a7d2c5f3",
+      "stored_bytes": 91,
+      "stored_sha256": "69c90bf696408830c3fe290bfc4fe541f8b48c2999717ccb631eee08759ab63d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/manifest.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/manifest.json",
+      "source_bytes": 1043,
+      "source_sha256": "ff0d53226a6562b0d9b9d7dd0031c9aac436c9105da83e260ed36a8c5689261a",
+      "stored_bytes": 1043,
+      "stored_sha256": "ff0d53226a6562b0d9b9d7dd0031c9aac436c9105da83e260ed36a8c5689261a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_build_v2/run_fv_native_suite.py.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/run_fv_native_suite.py",
+      "source_bytes": 5960,
+      "source_sha256": "a4e67587aaf1ef81e73191d7836981193a40af9ff20da3327375054764fb64a5",
+      "stored_bytes": 2367,
+      "stored_sha256": "145993ea7bd587cd10d3ec16844aff38d82bca93215c2d7b1d8d70e2e85e6a87",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/suite_stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/suite_stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v2/suite_stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v2/suite_stdout.log",
+      "source_bytes": 14709,
+      "source_sha256": "09b573b7879ad42fad2a4f4baffe08ad1dfddd3ab0cc525ee2193376c1ab1a7f",
+      "stored_bytes": 2830,
+      "stored_sha256": "ff70e299166a9751c55db8a33fb0b687c6636ecc6af99fd01af8f14d634d9544",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/build.log",
+      "source_bytes": 1122,
+      "source_sha256": "00d23a06ed883ebd5fde7b526ee2f3f0e5576d2a11d1775b9cc525565b2eb83f",
+      "stored_bytes": 394,
+      "stored_sha256": "9bc1a61359ab5fd2ccf1f0a4878e0e8d17078e69fffc8bcafff3249247cdebeb",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/build_command.json",
+      "source_bytes": 631,
+      "source_sha256": "2c56e8870abf809acc3b6e9a597403e59e8aae93212a488b165010d107a9b4f0",
+      "stored_bytes": 631,
+      "stored_sha256": "2c56e8870abf809acc3b6e9a597403e59e8aae93212a488b165010d107a9b4f0",
+      "compression": null
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Exam/HydroCore/fv_native_evolution.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Exam/HydroCore/fv_native_evolution.c",
+      "source_bytes": 14797,
+      "source_sha256": "89e8064ac64f712ed9fcefc301b97ae30d19514a2bbe81fa86f1504a174104e2",
+      "stored_bytes": 4968,
+      "stored_sha256": "443939779590f67afd150549aa31d05ee7e015afc452b9b4eae3e177c24fb533",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Exam/gfs_fv_ale.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Exam/gfs_fv_ale.h",
+      "source_bytes": 7243,
+      "source_sha256": "1213ed9b5d462a810bbeb8b92a9860c76c9228160a206b1fc857bbe21f045667",
+      "stored_bytes": 2582,
+      "stored_sha256": "8b3694f6dd1cbbb3ad74dc4c3d73ecfac8b33edd78d97026184f64bf7b9095ab",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Exam/gfs_fv_geometry.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Exam/gfs_fv_geometry.c",
+      "source_bytes": 12845,
+      "source_sha256": "61689bfa3d2f1c13bea50464694edc094eaa5a6404d356fe3a629828c4754141",
+      "stored_bytes": 4103,
+      "stored_sha256": "aeaa39ca69bc54c6ab400db71798cfcd52b75bb3fe2a506d06e2d6b782e6213f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Exam/gfs_fv_native.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Exam/gfs_fv_native.c",
+      "source_bytes": 15628,
+      "source_sha256": "b96f7633eb45697cfc59205b87084bd900ebd5fb2fd9be45c92f9ffa8c0a71fa",
+      "stored_bytes": 4657,
+      "stored_sha256": "29db1c07c72dc6f9caa1c4523adc1fc882a986c75f087e5f769b90af05f87124",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Exam/gfs_fv_native.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Exam/gfs_fv_native.h",
+      "source_bytes": 1517,
+      "source_sha256": "07d69c656e6661cd09b99071300942020b055e1383525cfe09525e234b230ba3",
+      "stored_bytes": 667,
+      "stored_sha256": "c45436baa1a619bc2f3fd285c925a405fe22f0978c75cb929df89504744ea801",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Exam/gfs_velocity_fit.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Exam/gfs_velocity_fit.h",
+      "source_bytes": 3818,
+      "source_sha256": "c5e5fbef9dfc34bd294029fd5ff6a4a95f9671c298d5b536584b69682b1bd000",
+      "stored_bytes": 1350,
+      "stored_sha256": "3b52c77b4e4003ce6557a5e15a2821d3db7972e466a73902f9dfbd4dc379881d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Voro/voro.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Voro/voro.c",
+      "source_bytes": 47703,
+      "source_sha256": "0e4db11c3de07bf271f555effe136a5066e478cd2311e0add2412cfa68729382",
+      "stored_bytes": 10915,
+      "stored_sha256": "591cfdff2c5b4cee04871ab1ef305db351c12a4f7a8202804a7be375e631bd46",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/Voro/voro.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/Voro/voro.h",
+      "source_bytes": 10428,
+      "source_sha256": "1b981eb321e10ec08fa68f4e2c04f3f7c2a9c0ee14e49a3f5572d59987aeaacc",
+      "stored_bytes": 2817,
+      "stored_sha256": "a8d56a29bf71990dafde633b3696ccc5e48078f59bba6b31328901e62c7d8a8c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/frozen_source/indxflag.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/frozen_source/indxflag.h",
+      "source_bytes": 84,
+      "source_sha256": "5b679b66f652752cce5f24029c409e234f7ebbb95fa3b442e9ab05b8a7d2c5f3",
+      "stored_bytes": 91,
+      "stored_sha256": "69c90bf696408830c3fe290bfc4fe541f8b48c2999717ccb631eee08759ab63d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/manifest.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/manifest.json",
+      "source_bytes": 1043,
+      "source_sha256": "4f2ab060067bab03ce1fe0e912384ebca672682c6f7be247848e1e966a9bf1e0",
+      "stored_bytes": 1043,
+      "stored_sha256": "4f2ab060067bab03ce1fe0e912384ebca672682c6f7be247848e1e966a9bf1e0",
+      "compression": null
+    },
+    {
+      "file": "fv_native_build_v3/run_fv_native_suite.py.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/run_fv_native_suite.py",
+      "source_bytes": 5960,
+      "source_sha256": "a4e67587aaf1ef81e73191d7836981193a40af9ff20da3327375054764fb64a5",
+      "stored_bytes": 2367,
+      "stored_sha256": "145993ea7bd587cd10d3ec16844aff38d82bca93215c2d7b1d8d70e2e85e6a87",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/run_fv_native_suite_phases.py.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/run_fv_native_suite_phases.py",
+      "source_bytes": 6661,
+      "source_sha256": "3b16a7ce0edb4be35c260874c5c0634e71f7a79585fb724b1fb2e3c9326c1fed",
+      "stored_bytes": 2549,
+      "stored_sha256": "f398b6c600af4f5fe385c1982bc56dbdb1c9e2dfc34e4e9dd60bfb8c1eb73009",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/sod_large_stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/sod_large_stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/sod_large_stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/sod_large_stdout.log",
+      "source_bytes": 4184,
+      "source_sha256": "d07d48e5e26593667789de583199bb2585381b73bfeb9cf57f3aca8e8e7a9bcb",
+      "stored_bytes": 1214,
+      "stored_sha256": "800343203bd344be935853ed37dff4ca1c78f3ff8163f66f64059ead5bcedda7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/suite_stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/suite_stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_build_v3/suite_stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_build_v3/suite_stdout.log",
+      "source_bytes": 14733,
+      "source_sha256": "23c6680cd705d9b508e2bb2dee118734555491132aa61c6ecee27cb2bfdaa2b3",
+      "stored_bytes": 2757,
+      "stored_sha256": "ad61c73906fb80d167d60a5f4a62c898b361c1ad37795d11d9321e1050e8f95f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/assessment.json",
+      "source_bytes": 1512,
+      "source_sha256": "c70897e09dc8b35557e2c58d3d9055b1d7d473b316255282ed92bbe5ae2ecc09",
+      "stored_bytes": 1512,
+      "stored_sha256": "c70897e09dc8b35557e2c58d3d9055b1d7d473b316255282ed92bbe5ae2ecc09",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/command.json",
+      "source_bytes": 122,
+      "source_sha256": "636f140846d9f4d042d8f0267a08150355a67a4c4d48db7a149c1ed583a0397b",
+      "stored_bytes": 122,
+      "stored_sha256": "636f140846d9f4d042d8f0267a08150355a67a4c4d48db7a149c1ed583a0397b",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/final.dat",
+      "source_bytes": 48900,
+      "source_sha256": "9fa72d5f2da47fd136c32c7a29ca42bd26254751fcc11dbf075aecf5ebd941cf",
+      "stored_bytes": 9574,
+      "stored_sha256": "6aef9698c1b927025aa66a0ca4892038706174c50e18eb42663f81cd0b0b97d7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/final.fv",
+      "source_bytes": 22608,
+      "source_sha256": "88f0fedb1ff5f1d187358dbcce328d493ed0b209c81b1815730af6e4c1aab94c",
+      "stored_bytes": 4990,
+      "stored_sha256": "518b86b198e75d2abb3b52cd1e2a9dad96900972704087de247cd31f58bbbdcc",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/final_velocity.dat",
+      "source_bytes": 6219,
+      "source_sha256": "4183bfa2aa9739c9e3faec8d69ca52b558e0145b9158669a7e0db3b52ef4450b",
+      "stored_bytes": 2500,
+      "stored_sha256": "7933f67f97cb2e55dd3753fa3b0f10743cdd6a3ea06e54bb47a173aeb2411454",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/history.csv",
+      "source_bytes": 9472,
+      "source_sha256": "66822811784a7efd771e68df82cc1afd9f1d2c34829d064461b1ddd5994adf8d",
+      "stored_bytes": 2982,
+      "stored_sha256": "3b6b1c78528364a1267e6815e45a1f61b37ddc563ec6fdf6dbaf57b103ca4a26",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/initial.dat",
+      "source_bytes": 36498,
+      "source_sha256": "e963993973f19b67b575bd2e5989b40c343333cfe445563748638150709c1ef7",
+      "stored_bytes": 1761,
+      "stored_sha256": "270b074fa5dac485c2fff5cd11e34cbcc675339cbf6792d64bc01acaf25203e8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/initial.fv",
+      "source_bytes": 22608,
+      "source_sha256": "f56aeccff2eca315aae62e9f27efe12d98768ccebc0ac0997f4f5be8e7c6de0a",
+      "stored_bytes": 1285,
+      "stored_sha256": "d7daa2746d63f950af754d3c3ffba82af55d4e45d99d534dabc54fa5d530d05e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/process.json",
+      "source_bytes": 89,
+      "source_sha256": "052a030d44fb26a4186a39962ab37861de728facced05b08180cf743f99fe923",
+      "stored_bytes": 89,
+      "stored_sha256": "052a030d44fb26a4186a39962ab37861de728facced05b08180cf743f99fe923",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/result.json",
+      "source_bytes": 846,
+      "source_sha256": "582750aeffba6730fd7f6d33196e61dacb2b3a4afc23137eb41749d064452d91",
+      "stored_bytes": 846,
+      "stored_sha256": "582750aeffba6730fd7f6d33196e61dacb2b3a4afc23137eb41749d064452d91",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/running.json",
+      "source_bytes": 169,
+      "source_sha256": "c862a4ad409ba1024507cbdd81d3839c5669823b5e91c08d032bf9cdbd4961f1",
+      "stored_bytes": 169,
+      "stored_sha256": "c862a4ad409ba1024507cbdd81d3839c5669823b5e91c08d032bf9cdbd4961f1",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/stderr.log",
+      "source_bytes": 2932,
+      "source_sha256": "b3b53c0956eec4ebd17edf905f9ab2525ca2ff4fc041c6f8c75bad8f5db652d3",
+      "stored_bytes": 582,
+      "stored_sha256": "a1612ad1480698174bbdf3739d3090810ecc26f4ec59f9d38834edfe72f1540c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_contact_N200/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_contact_N200/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/assessment.json",
+      "source_bytes": 1510,
+      "source_sha256": "8d81c325b3c9383fd7987a58203e6c12385e6fa483be14f2dbe6b92b80e017f5",
+      "stored_bytes": 1510,
+      "stored_sha256": "8d81c325b3c9383fd7987a58203e6c12385e6fa483be14f2dbe6b92b80e017f5",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/command.json",
+      "source_bytes": 129,
+      "source_sha256": "faddea723054d681e9ad510db6c581977426f1169e785794b400c5d333d9050c",
+      "stored_bytes": 129,
+      "stored_sha256": "faddea723054d681e9ad510db6c581977426f1169e785794b400c5d333d9050c",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/final.dat",
+      "source_bytes": 51349,
+      "source_sha256": "1dd296636a4266bb14b0d83415fb0c53ad5544fcff52ac7830eebbcef97fece4",
+      "stored_bytes": 9810,
+      "stored_sha256": "5c5afff341ea73cdfcaacf062c76734f2de78be3ab414cb954dc75ba82776ef9",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/final.fv",
+      "source_bytes": 22608,
+      "source_sha256": "7bdd448d2c4c2570c34add359b8e649ced0112848755dff4b7cfa74db4af3018",
+      "stored_bytes": 5138,
+      "stored_sha256": "a748e2305339def9a345875a3b6365fd4b08f94f5a4e07a1d84e5906c90a298f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/final_velocity.dat",
+      "source_bytes": 5385,
+      "source_sha256": "532a2f175432c39891cdca332d3ef0522359e8d002a3b3a5191e06e8aa9a4a74",
+      "stored_bytes": 1064,
+      "stored_sha256": "3aa208b802a05661bba8b1e008b080d8ca489295566dcbb33c5a45a89a8059de",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/history.csv",
+      "source_bytes": 8987,
+      "source_sha256": "371bb7d5d939906f240d0fd92439431da2f3dcd2338b4f634043f77d21432636",
+      "stored_bytes": 2923,
+      "stored_sha256": "d7a59eddfbf6efdd4214c359680d2e1bf7ddff331a9ae350f6b297b8fedcd2cc",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/initial.dat",
+      "source_bytes": 40598,
+      "source_sha256": "79120e83eac35acf8d8b50e68753e9d80bb168faac1d18bee26d0945560cf3f1",
+      "stored_bytes": 1781,
+      "stored_sha256": "7c9561328b400b152384c7c389eb8f07aabaa5755f6ef73ddc3da1129a9f96c2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/initial.fv",
+      "source_bytes": 22608,
+      "source_sha256": "68d4b79cde12bbe909f67d8267d2116ba8d50a51289582aca2f40427af4de10a",
+      "stored_bytes": 1304,
+      "stored_sha256": "d4e4ea40817df112fc8aa81188d5382a00ebab4d36c21e4eaa9bd62f77d7b83b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/process.json",
+      "source_bytes": 105,
+      "source_sha256": "6b643a3b623d93e2baae622e18797e015a801f071ac709c17ecb43f27a8123e2",
+      "stored_bytes": 105,
+      "stored_sha256": "6b643a3b623d93e2baae622e18797e015a801f071ac709c17ecb43f27a8123e2",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/result.json",
+      "source_bytes": 858,
+      "source_sha256": "c7f9bfc9e1d4520843d1f121c3eb8b186aa203ab8e4ebb7491a8cccc4658655f",
+      "stored_bytes": 858,
+      "stored_sha256": "c7f9bfc9e1d4520843d1f121c3eb8b186aa203ab8e4ebb7491a8cccc4658655f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/running.json",
+      "source_bytes": 176,
+      "source_sha256": "d3b49e9f3f37f9ea568ed10e3f0b01bf3ba76b1b427a811c05ba6e21a76cd604",
+      "stored_bytes": 176,
+      "stored_sha256": "d3b49e9f3f37f9ea568ed10e3f0b01bf3ba76b1b427a811c05ba6e21a76cd604",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/stderr.log",
+      "source_bytes": 2930,
+      "source_sha256": "3e0e79c9ba9ad5057fa65258f016fa5a4bc93e5878ae631bf119752f370d6339",
+      "stored_bytes": 575,
+      "stored_sha256": "b7b55ed3ccb2c9e8ae8bfe3fbd2e55dc4531d98d3fb0dc4a43d1f87f751386ca",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_periodic_moving_contact_N200/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_periodic_moving_contact_N200/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/assessment.json",
+      "source_bytes": 1257,
+      "source_sha256": "f24a66e433f8f277b698d567b419853c0244ad3082541ca74b1aace7b5ea0728",
+      "stored_bytes": 1257,
+      "stored_sha256": "f24a66e433f8f277b698d567b419853c0244ad3082541ca74b1aace7b5ea0728",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/command.json",
+      "source_bytes": 117,
+      "source_sha256": "403e628f79f26772a4193eb0ce96f46675e259b9002ffb74db5756393451cecd",
+      "stored_bytes": 117,
+      "stored_sha256": "403e628f79f26772a4193eb0ce96f46675e259b9002ffb74db5756393451cecd",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/final.dat",
+      "source_bytes": 57137,
+      "source_sha256": "533fb1a5c3220213e938b04649130ef96d188ddaf2e6015570731c7270587b4b",
+      "stored_bytes": 22404,
+      "stored_sha256": "176b88b12ffaae699fcc0c940f8cd495c31234e6ab7d8c84f5c07d369d85fdb5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/final.fv",
+      "source_bytes": 22608,
+      "source_sha256": "24a134c793bb87881933a8b6f3dcfe71e32b18c9b281e2ae1a651ccc1276e870",
+      "stored_bytes": 9919,
+      "stored_sha256": "0b54074c030ee52ff9cfe76960d01fc94daf1198d435a1a77f76ebd1962f45fd",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/final_velocity.dat",
+      "source_bytes": 5792,
+      "source_sha256": "ef0b95690bdbf9fc4c8f9aef9ee488e7ef3ba857d1acebe8a205b4819d759353",
+      "stored_bytes": 2571,
+      "stored_sha256": "a23884180c4a5a541fbf3b6d14ae4f781908261032ddc9813f18ce6474cb8841",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/history.csv",
+      "source_bytes": 7350,
+      "source_sha256": "84aa83e3984407418f50374562b9bc9befeb47f37ff06eb26269ffe4d575a893",
+      "stored_bytes": 3289,
+      "stored_sha256": "f2080042d250ccef494e0b6a790ef124c42204d716fe9ac62a0728211163cece",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/initial.dat",
+      "source_bytes": 36699,
+      "source_sha256": "868a6343752cb59500ce6d26b08b74068c5081c9b7263d2f19f7b44136b0abed",
+      "stored_bytes": 1755,
+      "stored_sha256": "924a234402474ce1c3b40a7217226496e07b4732af2591c914ed6aea2eb31829",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/initial.fv",
+      "source_bytes": 22608,
+      "source_sha256": "35b4e1b1730763b4a72d0256b050a659933c159c440f2986ec80abe5ef672e6b",
+      "stored_bytes": 1293,
+      "stored_sha256": "63c4f546a009ac1ec1a9b045c26121dce7eb89d8ccf14032b65404aedf0fe78b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/process.json",
+      "source_bytes": 84,
+      "source_sha256": "d3777f0429f295d8616a792f5b1e094c18be466b0c6830c235a2c7aac80cc94b",
+      "stored_bytes": 84,
+      "stored_sha256": "d3777f0429f295d8616a792f5b1e094c18be466b0c6830c235a2c7aac80cc94b",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/result.json",
+      "source_bytes": 877,
+      "source_sha256": "0040d59fb4445d5a4cdf15613b46bd451ea89a4b30164572f09d6d64e8a2e459",
+      "stored_bytes": 877,
+      "stored_sha256": "0040d59fb4445d5a4cdf15613b46bd451ea89a4b30164572f09d6d64e8a2e459",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/running.json",
+      "source_bytes": 164,
+      "source_sha256": "88c7db566b25ed8f4eccc132b91356c3e30f910ed4a40c820f18404a18b563e4",
+      "stored_bytes": 164,
+      "stored_sha256": "88c7db566b25ed8f4eccc132b91356c3e30f910ed4a40c820f18404a18b563e4",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/stderr.log",
+      "source_bytes": 2283,
+      "source_sha256": "7872ea63e00d852abd2cbab7ffc2490dc2b5a5ea059ccd623853326bde7a0ece",
+      "stored_bytes": 528,
+      "stored_sha256": "e2cde43c1e6fe1562618ecc8bcc34be1832c6338feb908ce753f101b15083f06",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N200/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N200/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/assessment.json",
+      "source_bytes": 1311,
+      "source_sha256": "6d7de5fd31a4695807276211cfaa413e6896c45bfa9c3645a108f346bee83ea9",
+      "stored_bytes": 1311,
+      "stored_sha256": "6d7de5fd31a4695807276211cfaa413e6896c45bfa9c3645a108f346bee83ea9",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/command.json",
+      "source_bytes": 117,
+      "source_sha256": "166b43f436fa40bfd3764dcceba341b351b546228748b0d1d4a79032a1c94754",
+      "stored_bytes": 117,
+      "stored_sha256": "166b43f436fa40bfd3764dcceba341b351b546228748b0d1d4a79032a1c94754",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/final.dat",
+      "source_bytes": 113999,
+      "source_sha256": "c002c35dfabd9b89c958d10d93eb2612e23436eb6e35e8e7de80e85c5c71ea8f",
+      "stored_bytes": 40979,
+      "stored_sha256": "029125e2fe004ec608f95ece844012af798982cfc6c1c45adc13feaecaab77f5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/final.fv",
+      "source_bytes": 45008,
+      "source_sha256": "6108a6d7a3e63c4661abaee48b0c49806114773551d85a8ea337069eac0ba5f4",
+      "stored_bytes": 18668,
+      "stored_sha256": "3abb6398464ba617f6d478e6ef7c074092137443dda6aee146ad9d798cfbca4b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/final_velocity.dat",
+      "source_bytes": 11666,
+      "source_sha256": "afa1c1fcc60998eba7b2a7a25e1b080deb6bded80ea0517d40aa04339627f298",
+      "stored_bytes": 4945,
+      "stored_sha256": "0514913f792a54e64d0a669cc70a6452f72fd663e9abfad715f0b120c60e8705",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/history.csv",
+      "source_bytes": 7726,
+      "source_sha256": "bd16617b973a4bd2914f0689dd2e1a12b0ad93a8d260bb65ecba3ad92db48ac6",
+      "stored_bytes": 3301,
+      "stored_sha256": "c0fa36b7ce1236adfcd11a3f9b9bd1f94b356b7cbec80452f463d69d186b483f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/initial.dat",
+      "source_bytes": 77207,
+      "source_sha256": "6752822d30c059550ba6644a0a4ecb7708d9342309e31dde393473c2e5de86e9",
+      "stored_bytes": 3161,
+      "stored_sha256": "52c0a93e8877ee3a713902f9f7489a177b9b69ebec8a4186fdf9e85d7d9b90c3",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/initial.fv",
+      "source_bytes": 45008,
+      "source_sha256": "59ccdc7bf64d8c69e6fb4adf20531308e9652872048d6408f206d374c8b72b50",
+      "stored_bytes": 2274,
+      "stored_sha256": "4aa788a6a367b38fe481e48b6198d225300e99a29f7e3ccbb2960e4aacc9079f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/process.json",
+      "source_bytes": 83,
+      "source_sha256": "23d8406210f53d0a77d73c02aec5efe272b88731aced1c719af7bf964aa9f590",
+      "stored_bytes": 83,
+      "stored_sha256": "23d8406210f53d0a77d73c02aec5efe272b88731aced1c719af7bf964aa9f590",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/result.json",
+      "source_bytes": 875,
+      "source_sha256": "d7ff257995b4fad0b900e004be67cac360fb823c5d2a40c888617f9bd519e7cf",
+      "stored_bytes": 875,
+      "stored_sha256": "d7ff257995b4fad0b900e004be67cac360fb823c5d2a40c888617f9bd519e7cf",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/running.json",
+      "source_bytes": 164,
+      "source_sha256": "e9aab1626aeabeb0727fed5b4fd4c25cea338d3eb8b99ecd3c229ad4a32ae576",
+      "stored_bytes": 164,
+      "stored_sha256": "e9aab1626aeabeb0727fed5b4fd4c25cea338d3eb8b99ecd3c229ad4a32ae576",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/stderr.log",
+      "source_bytes": 2288,
+      "source_sha256": "e85ed52fcdeaffdc5f7c3b5711205a720690953c0ce36da345d86c0a2479fadb",
+      "stored_bytes": 500,
+      "stored_sha256": "331cc830be948040ca29245a818a074d79efa8a22590c5d1a29b6cb648318c8b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D1_sod_N400/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D1_sod_N400/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/assessment.json",
+      "source_bytes": 1264,
+      "source_sha256": "b4ef0b05725066e4ca3a5e47cc6203bd6abeeec564de350ccde13a7bb8fd330e",
+      "stored_bytes": 1264,
+      "stored_sha256": "b4ef0b05725066e4ca3a5e47cc6203bd6abeeec564de350ccde13a7bb8fd330e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/command.json",
+      "source_bytes": 120,
+      "source_sha256": "84404da141ecaa958171b3a4a31f1fa595262ffc9acf4c3007478a646bcedccd",
+      "stored_bytes": 120,
+      "stored_sha256": "84404da141ecaa958171b3a4a31f1fa595262ffc9acf4c3007478a646bcedccd",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/final.dat",
+      "source_bytes": 13945,
+      "source_sha256": "dad4d28e116f4edb7a0e9804b77257742b668d7d2de2e77fc5422f5469defa40",
+      "stored_bytes": 607,
+      "stored_sha256": "af0d3eb906b87cf4a4fe8bf8975340f34ddac3839ea39aac8de607a5102aa784",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "7b98a3d9a9c99fc86b84ac24e8b84f8e7b705cc016356af916408fb01592bb90",
+      "stored_bytes": 453,
+      "stored_sha256": "1b3030a2090fcfc98ef94c71ebf894b0fe7065b83c1f3fd119fc19ca8346b180",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/final_velocity.dat",
+      "source_bytes": 618,
+      "source_sha256": "08cb242ef269a0887a1bbdeb310334a7357d5f46b2e078d9d198d03070e96d21",
+      "stored_bytes": 189,
+      "stored_sha256": "ac43c1a945dbf18c70e22dafb06f2484049a5c520f5cb0172ae0d4641a085577",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/history.csv",
+      "source_bytes": 3657,
+      "source_sha256": "0b9191c3533a1ac17514b7b4e5e515922459a5c8d291d63b59955c429207beed",
+      "stored_bytes": 570,
+      "stored_sha256": "cd92d9fe3eb992736ab81f86a4201d16846c5ace128a678926dac8f0e1915c9b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/initial.dat",
+      "source_bytes": 13945,
+      "source_sha256": "dad4d28e116f4edb7a0e9804b77257742b668d7d2de2e77fc5422f5469defa40",
+      "stored_bytes": 607,
+      "stored_sha256": "af0d3eb906b87cf4a4fe8bf8975340f34ddac3839ea39aac8de607a5102aa784",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "fca65072b927fc1d416fe010ed7ac852db068563feae04122731efa6dffa876b",
+      "stored_bytes": 448,
+      "stored_sha256": "e345f7b8fcb6261694fb5a3f8f55eca763e110c9969b66482a60bbe47ba8d0e7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/process.json",
+      "source_bytes": 88,
+      "source_sha256": "c6db7bf90dbf65adaf3342ed2a950914ebf40abeaa65469446cd4bd17f9d8b3e",
+      "stored_bytes": 88,
+      "stored_sha256": "c6db7bf90dbf65adaf3342ed2a950914ebf40abeaa65469446cd4bd17f9d8b3e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/result.json",
+      "source_bytes": 763,
+      "source_sha256": "aaef64fe64bb1b2460694ae94cadd5f0946d1b087e62b70c50b6f4e5e12678b5",
+      "stored_bytes": 763,
+      "stored_sha256": "aaef64fe64bb1b2460694ae94cadd5f0946d1b087e62b70c50b6f4e5e12678b5",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/running.json",
+      "source_bytes": 167,
+      "source_sha256": "51525a2ca28511d2daec389333132a978815f0ea7014b319e3d7d557e59433e0",
+      "stored_bytes": 167,
+      "stored_sha256": "51525a2ca28511d2daec389333132a978815f0ea7014b319e3d7d557e59433e0",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/stderr.log",
+      "source_bytes": 1847,
+      "source_sha256": "f233bb62ddd0fdb171d67042ad5830858e1a54956e86fb923021b4b423f1fff7",
+      "stored_bytes": 285,
+      "stored_sha256": "511050b5df5b1a5cf7dbfe146976c5744994adcd0713926a972cd8c2d97a7f88",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_contact_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_contact_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/assessment.json",
+      "source_bytes": 1583,
+      "source_sha256": "a5010b2100be4fa5b77a48fffee4fca04fac63d63a290f75f9c96ea067e1f88f",
+      "stored_bytes": 1583,
+      "stored_sha256": "a5010b2100be4fa5b77a48fffee4fca04fac63d63a290f75f9c96ea067e1f88f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/command.json",
+      "source_bytes": 127,
+      "source_sha256": "7150523f9b419905ace42a671157c193c5795abc00441b7b7161d81d11f99d1e",
+      "stored_bytes": 127,
+      "stored_sha256": "7150523f9b419905ace42a671157c193c5795abc00441b7b7161d81d11f99d1e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/final.dat",
+      "source_bytes": 24143,
+      "source_sha256": "76015d555b3d8220c4b9bd9007f93880225b1bc71d705f017a65d0597623c5ba",
+      "stored_bytes": 8339,
+      "stored_sha256": "271e3894deb9b8d609bfd8d0ba20a4d665346d7698fe6fe9d191e81bfcc407b3",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "089fceaf8aa698ac2837d1496056be48e045415b1ef610c6c0035d318d97d1b2",
+      "stored_bytes": 3519,
+      "stored_sha256": "eaf432afc8324db1a9f495d9717d479b6b4f3d6103a9ecf12c30e9113c29cea2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/final_velocity.dat",
+      "source_bytes": 3102,
+      "source_sha256": "b03fd3c08fdfaf10bdcb4b772cd450ec737346dc28ac1e047488db1a4fad1afc",
+      "stored_bytes": 1299,
+      "stored_sha256": "4e4a236b82159ffde5ab311a97b99be59cf6ad20c3eb583f5167469c7faf7af5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/history.csv",
+      "source_bytes": 8503,
+      "source_sha256": "68c2f69a52ce8b819ed7e47bdd38d093a9289106a8167e3534e71d6bb0f760cf",
+      "stored_bytes": 3109,
+      "stored_sha256": "d80bbd7e78efc9b263695c2f80a1d911bbdf74268852b8e5e57eedfeb1116cfb",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/initial.dat",
+      "source_bytes": 15193,
+      "source_sha256": "b1ae35fff80202e609c781130d5da941041f5532323acf26ae9312b98e8bb740",
+      "stored_bytes": 619,
+      "stored_sha256": "d623309373e43a5a8086ce341e4723660daa0e181e1f8ea111b8b22007462281",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "95dbddc74776da04a94af67c91e35708c8f61b10885b3a2cd8c9ff196720af73",
+      "stored_bytes": 470,
+      "stored_sha256": "ff5b9f03ad2159564e6be0ffec36246f26ecf441aec511cada9ede0cbe27a735",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/process.json",
+      "source_bytes": 103,
+      "source_sha256": "ef6107238002ac1b16c350e5005476857a6ebcfdd6f8aafe149c3a7199128cdf",
+      "stored_bytes": 103,
+      "stored_sha256": "ef6107238002ac1b16c350e5005476857a6ebcfdd6f8aafe149c3a7199128cdf",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/result.json",
+      "source_bytes": 878,
+      "source_sha256": "80615930b5d6500e12bc829d46ed0cf44a6153e34f9d8ff0a7b7e9c3ef44ca11",
+      "stored_bytes": 878,
+      "stored_sha256": "80615930b5d6500e12bc829d46ed0cf44a6153e34f9d8ff0a7b7e9c3ef44ca11",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/running.json",
+      "source_bytes": 174,
+      "source_sha256": "70ecb9025269811631b9c4e409c1b0a24143ca31a4c27b7714d6966efba3495a",
+      "stored_bytes": 174,
+      "stored_sha256": "70ecb9025269811631b9c4e409c1b0a24143ca31a4c27b7714d6966efba3495a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/stderr.log",
+      "source_bytes": 2411,
+      "source_sha256": "19d7493755b4cca7346d49e3d1f52b05a814090714be2cb15d58259d100e6ca3",
+      "stored_bytes": 501,
+      "stored_sha256": "93dae8d9808b044be2a8a29022447888d26a500b4318219a77f7f118aa7cb8e0",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_periodic_moving_contact_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_periodic_moving_contact_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/assessment.json",
+      "source_bytes": 1289,
+      "source_sha256": "b4405e2726e9532b67d1f7f66e587b97a0ee41afc96e70db640324389baa95b2",
+      "stored_bytes": 1289,
+      "stored_sha256": "b4405e2726e9532b67d1f7f66e587b97a0ee41afc96e70db640324389baa95b2",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/command.json",
+      "source_bytes": 115,
+      "source_sha256": "f22ae2a350d1b5df132eca009334c0bfd307a86ece86bfda2a542f761dd427fd",
+      "stored_bytes": 115,
+      "stored_sha256": "f22ae2a350d1b5df132eca009334c0bfd307a86ece86bfda2a542f761dd427fd",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/final.dat",
+      "source_bytes": 22175,
+      "source_sha256": "64354e5d086bb5cce07f488d70397f1c6682f2b47fd710b219a6651d2d9cb4be",
+      "stored_bytes": 5673,
+      "stored_sha256": "2d45146951060908011582d2bb0d45dd6056b63b25ec6cb2b1283cbdc9fb0053",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "68cb1d9c408a000a3c055902aa3188e4e20b2314e494cfc6ec65298133bacfe4",
+      "stored_bytes": 2200,
+      "stored_sha256": "4215ce15172ff221dbfb6aa9213353326b54085cdcf793045ca8bcb56d26b785",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/final_velocity.dat",
+      "source_bytes": 3316,
+      "source_sha256": "91c6d1d400ae908bceaf8fc16fa57a4b1251b2dd53dc3e0be36abd42f7e5dabf",
+      "stored_bytes": 1124,
+      "stored_sha256": "48891689e36da904a1318cadd5625427f047e52dcfc91fac0e70da530cd27a32",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/history.csv",
+      "source_bytes": 704,
+      "source_sha256": "c893e6a2cb97798e324cfa554644233b85d9eac294ae1c9c9eee1bb52ffcde60",
+      "stored_bytes": 408,
+      "stored_sha256": "d4c5875f17bde2db889da569435fd5cf54de80c520fa1a415238141ea8b319d1",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/initial.dat",
+      "source_bytes": 13689,
+      "source_sha256": "b723c8956ce5f39369456bd09805bb4badd23ac7a2724e9ff5b80dd30db29dfd",
+      "stored_bytes": 612,
+      "stored_sha256": "695897e419c3b49df48001c31bd2f2fba198cd95858ec7741e44244a35f503d6",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "24d3494e0278f175e0c4612e4154159b0076cd25ffc6461fe776025f2e37b72d",
+      "stored_bytes": 454,
+      "stored_sha256": "2a52db783a7d115d483f565c6f83bdc127139aea84e990641fe25a43a1ab83fb",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/process.json",
+      "source_bytes": 84,
+      "source_sha256": "4f62f2adaaaa5b486e9b94ce91390370d9f19a69f0534ae1ce9fa3053cefe6ba",
+      "stored_bytes": 84,
+      "stored_sha256": "4f62f2adaaaa5b486e9b94ce91390370d9f19a69f0534ae1ce9fa3053cefe6ba",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/result.json",
+      "source_bytes": 905,
+      "source_sha256": "498b2d7971a496f44f1d006c822fa275386e1c38d6fc71306af9083f77e1f41b",
+      "stored_bytes": 905,
+      "stored_sha256": "498b2d7971a496f44f1d006c822fa275386e1c38d6fc71306af9083f77e1f41b",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/running.json",
+      "source_bytes": 162,
+      "source_sha256": "691f19d51a3c8e36282330743703fcff5ae757145bb21deeff5b70e252c40ff3",
+      "stored_bytes": 162,
+      "stored_sha256": "691f19d51a3c8e36282330743703fcff5ae757145bb21deeff5b70e252c40ff3",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/stderr.log",
+      "source_bytes": 157,
+      "source_sha256": "e79fe007f044da6e475255a73ca19644a872d58af45eb77ef80896456fff3f4e",
+      "stored_bytes": 144,
+      "stored_sha256": "f00c69f3326b3c63d2e627b9415fd3232144f473ff7a40c6f434e79f912a2e13",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D2_sod_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D2_sod_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/assessment.json",
+      "source_bytes": 1276,
+      "source_sha256": "a2cccf0ec8602117c7f56acd1dec0f21634d1cbbb5cb1db286054e9fa594df91",
+      "stored_bytes": 1276,
+      "stored_sha256": "a2cccf0ec8602117c7f56acd1dec0f21634d1cbbb5cb1db286054e9fa594df91",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/command.json",
+      "source_bytes": 120,
+      "source_sha256": "03944af946920899a93fa8896af2cd5a4c7ceb7d55497e5c1c94888ce4c5988b",
+      "stored_bytes": 120,
+      "stored_sha256": "03944af946920899a93fa8896af2cd5a4c7ceb7d55497e5c1c94888ce4c5988b",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/final.dat",
+      "source_bytes": 16243,
+      "source_sha256": "be16b1d5d331e17dd674ee5d92bd2ba53eba745a43a60fbccf70a1ef02e6f1c8",
+      "stored_bytes": 1004,
+      "stored_sha256": "7437e0c388ed18691e09e5e09ee0a280288691b6681c573f5ffa420ee4274593",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "dccc7204f763e42f6ed20fa3b8b3d453e8296b38cdb7f6cdf02e291b0a7c6aec",
+      "stored_bytes": 477,
+      "stored_sha256": "72b8958c85a86bd8d42665fd7a13f895d331dea2f089f6cd071d7b1bcb2819b4",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/final_velocity.dat",
+      "source_bytes": 618,
+      "source_sha256": "08cb242ef269a0887a1bbdeb310334a7357d5f46b2e078d9d198d03070e96d21",
+      "stored_bytes": 189,
+      "stored_sha256": "ac43c1a945dbf18c70e22dafb06f2484049a5c520f5cb0172ae0d4641a085577",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/history.csv",
+      "source_bytes": 3068,
+      "source_sha256": "f269e259142614da4204b5a6ad5f52a9b102ac45c87639413fb2ff682c150634",
+      "stored_bytes": 510,
+      "stored_sha256": "04caf736c7316fb930a4da672dcd898e990598d69a70f62e20f9e60c39d3efa5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/initial.dat",
+      "source_bytes": 16243,
+      "source_sha256": "be16b1d5d331e17dd674ee5d92bd2ba53eba745a43a60fbccf70a1ef02e6f1c8",
+      "stored_bytes": 1004,
+      "stored_sha256": "7437e0c388ed18691e09e5e09ee0a280288691b6681c573f5ffa420ee4274593",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "229cc9c90bd4ed6de110119bc0a3aa99ba9f095db14d854a50e908c58b15ac8e",
+      "stored_bytes": 472,
+      "stored_sha256": "8bdc2dc1380830c2f7b7884d75815d9103e1d3c03fd86f6287d8e22375d8bf58",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/process.json",
+      "source_bytes": 86,
+      "source_sha256": "05d0b544735a2180a01f2c4e49d727e57290a1b6ba620373313d472ec002f678",
+      "stored_bytes": 86,
+      "stored_sha256": "05d0b544735a2180a01f2c4e49d727e57290a1b6ba620373313d472ec002f678",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/result.json",
+      "source_bytes": 787,
+      "source_sha256": "c33f7851ec7c3a1ae0f32f96460e2da2870848bc4b3055914e0bdb0db685c4d3",
+      "stored_bytes": 787,
+      "stored_sha256": "c33f7851ec7c3a1ae0f32f96460e2da2870848bc4b3055914e0bdb0db685c4d3",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/running.json",
+      "source_bytes": 167,
+      "source_sha256": "cbfdc7e99adcd66594553449b6e1225d840269afddee20cfb5e82d8949a41d9e",
+      "stored_bytes": 167,
+      "stored_sha256": "cbfdc7e99adcd66594553449b6e1225d840269afddee20cfb5e82d8949a41d9e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/stderr.log",
+      "source_bytes": 1435,
+      "source_sha256": "8cbec15d1bc1e628ce36cdc72217995bf51319e54916820f11d14e3fee99fa40",
+      "stored_bytes": 245,
+      "stored_sha256": "fe441cfc70c72e10da66cf2faf6fcc587d02b81f1ec2099627e043e7383461d2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_contact_N4/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_contact_N4/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/assessment.json",
+      "source_bytes": 1572,
+      "source_sha256": "6fb3f50e0381b7d7dfc5218c4b7c0962b390a4a90d53c19e38c8f954ca8254ec",
+      "stored_bytes": 1572,
+      "stored_sha256": "6fb3f50e0381b7d7dfc5218c4b7c0962b390a4a90d53c19e38c8f954ca8254ec",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/command.json",
+      "source_bytes": 127,
+      "source_sha256": "5bb02a7dfd60f537daa89222ce99002bfadd1a7b5985ae27be432d5b20a8ece8",
+      "stored_bytes": 127,
+      "stored_sha256": "5bb02a7dfd60f537daa89222ce99002bfadd1a7b5985ae27be432d5b20a8ece8",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/final.dat",
+      "source_bytes": 26200,
+      "source_sha256": "c7d9a423b5aaff26ac4749a5928abaeae7459a46b892965da48dc934361a2899",
+      "stored_bytes": 6701,
+      "stored_sha256": "f65341352f71836f2c9877354725c9fa27e95eaf5c4896f57986d677dc1e0df3",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "07ec16f7b07564fe8042758a9bfa17f34d2923ffcb3c8cb7404e89035814bc8b",
+      "stored_bytes": 2398,
+      "stored_sha256": "50990d1f69e28882e400f979f0b0416f0a90c5176641e357668ca7c6ff17a70f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/final_velocity.dat",
+      "source_bytes": 4395,
+      "source_sha256": "2cb7b9b09a0b20861751033d29093311ceeda96b8f83421fbfeaf0b2667f9c00",
+      "stored_bytes": 1756,
+      "stored_sha256": "ba303c1782e7cec9d1635b9d967bbf38f84218476d5e735124bb97b2ad418de6",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/history.csv",
+      "source_bytes": 5629,
+      "source_sha256": "0b91a9ce5f70ab7dc563d666bed384061d85901215bf17c71c5e35f9fe65c5dd",
+      "stored_bytes": 1871,
+      "stored_sha256": "22c9ed01e645823d96350952d9177b25219d897548189680a7a2eed8bf3ea8c8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/initial.dat",
+      "source_bytes": 17491,
+      "source_sha256": "9bf61ffee51a2ac63a8f66f7cef9d3d0dd362f3807e262e70225d4c900eeda19",
+      "stored_bytes": 1043,
+      "stored_sha256": "daa67e7af2e08b14f8b5f75c72ac486c7b55572ed9639aa694d7b0eb6328f1b2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "d4fdaa9ce42603680bef9499e5906d0fa177e3100778e3934179c903f5f7646f",
+      "stored_bytes": 491,
+      "stored_sha256": "30c0ef20f64b5131a3c18729c32209d2362ead4fafc48bcb9010771e96c6b61c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/process.json",
+      "source_bytes": 102,
+      "source_sha256": "d703c09d9c9c3b4f5aabc31881ea5cfa7bbddddc430f956cb22f31a0a19e3d4e",
+      "stored_bytes": 102,
+      "stored_sha256": "d703c09d9c9c3b4f5aabc31881ea5cfa7bbddddc430f956cb22f31a0a19e3d4e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/result.json",
+      "source_bytes": 900,
+      "source_sha256": "3c7266eef7a19c3adf4a556af40887e1db6d5e14107f8949df28cd647238c347",
+      "stored_bytes": 900,
+      "stored_sha256": "3c7266eef7a19c3adf4a556af40887e1db6d5e14107f8949df28cd647238c347",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/running.json",
+      "source_bytes": 174,
+      "source_sha256": "c3b3cd16b318b2883ff559579c68d566bb714198b816aeec3af5378547be1b4b",
+      "stored_bytes": 174,
+      "stored_sha256": "c3b3cd16b318b2883ff559579c68d566bb714198b816aeec3af5378547be1b4b",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/stderr.log",
+      "source_bytes": 1528,
+      "source_sha256": "f49777471587bae3ba6d7310450f45d61131e867f7ad4c8ea5f6c9a1cbe6422c",
+      "stored_bytes": 319,
+      "stored_sha256": "feddae8ede33f2ba6e3dbdad180d4a1ad9c414b82e2cdefa4d661fda5cd388f8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_periodic_moving_contact_N4/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_periodic_moving_contact_N4/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/assessment.json",
+      "source_bytes": 1302,
+      "source_sha256": "146af1c6e5501c2a597841c0c2478583660263c357f793100fcd225dfca7c17c",
+      "stored_bytes": 1302,
+      "stored_sha256": "146af1c6e5501c2a597841c0c2478583660263c357f793100fcd225dfca7c17c",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/command.json",
+      "source_bytes": 115,
+      "source_sha256": "1979e81791add52b6ba68f1ce15fa6eec7299a4f5c6e6d291579c5f9cb8681a5",
+      "stored_bytes": 115,
+      "stored_sha256": "1979e81791add52b6ba68f1ce15fa6eec7299a4f5c6e6d291579c5f9cb8681a5",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/final.dat",
+      "source_bytes": 229323,
+      "source_sha256": "df835b259cfb546ee7a17f6a16bb1bc50cf8931b6b42d7788e18eddf69332fcd",
+      "stored_bytes": 67601,
+      "stored_sha256": "5a4ada662a522be5f22c1dec502dcdc0d1692eceb33b2c4bc796f5b4926dec8c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/final.fv",
+      "source_bytes": 57552,
+      "source_sha256": "3641172d2e0622137f8c7e753cddd4e9fbaa11a3bcfe15923036868cf5457bb2",
+      "stored_bytes": 24113,
+      "stored_sha256": "28c591764d5601ee4db92ef0cfa96aa89743938ce0bec117e502c9784491fb02",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/final_velocity.dat",
+      "source_bytes": 36492,
+      "source_sha256": "7d7bb88a01721142d25bf5af60a886e17fdc8e345ee72c2af9777902f8cace2d",
+      "stored_bytes": 14209,
+      "stored_sha256": "267319ba20fe7400872dffa377293ed590e377980ee08abfe112b4a43e7a2b17",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/history.csv",
+      "source_bytes": 6918,
+      "source_sha256": "417e2718cae58ac225e3d9185e3e17bf6566f2f34f33219d805f6ef1df66bb16",
+      "stored_bytes": 3150,
+      "stored_sha256": "39f919fc68d43eadfb74a80d920596f484643fa20aa9d1fad76a9cb76e7e4e94",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/initial.dat",
+      "source_bytes": 133867,
+      "source_sha256": "d18cd62a25b28c34ae24a8c308d991ce72c97bfd8d48bf0244bb582b67856193",
+      "stored_bytes": 4469,
+      "stored_sha256": "f57bda9c60862da1344a7e0f49c4afe85466bd5cb0149c5d487f3d9c2cee42ef",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/initial.fv",
+      "source_bytes": 57552,
+      "source_sha256": "d88f4098683b975491fb41b85d35ad818359aaecf677ecf05920925a718af2f2",
+      "stored_bytes": 2847,
+      "stored_sha256": "71f0b3463c338782a232665a865d32f432a86be55d0682cbfc15d167ae314b6a",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/process.json",
+      "source_bytes": 82,
+      "source_sha256": "106774a0a286629513d29142dc5fa4af0ad1de9941a603340af2a5df540bcc67",
+      "stored_bytes": 82,
+      "stored_sha256": "106774a0a286629513d29142dc5fa4af0ad1de9941a603340af2a5df540bcc67",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/result.json",
+      "source_bytes": 890,
+      "source_sha256": "984f218372dac67424b43a4ab99d4af19bb6602b266aab29110c6f6282794e6d",
+      "stored_bytes": 890,
+      "stored_sha256": "984f218372dac67424b43a4ab99d4af19bb6602b266aab29110c6f6282794e6d",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/running.json",
+      "source_bytes": 162,
+      "source_sha256": "0b7b6352cd3dbaec18303d7a6c6128457a3c1c568b34b36e16f8368ffe518468",
+      "stored_bytes": 162,
+      "stored_sha256": "0b7b6352cd3dbaec18303d7a6c6128457a3c1c568b34b36e16f8368ffe518468",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/stderr.log",
+      "source_bytes": 1885,
+      "source_sha256": "fb5752dde5a9418a49a10b71322e35d6368e9b3586af0e3e24e1fba939a161ff",
+      "stored_bytes": 504,
+      "stored_sha256": "ff7e61b8a954bb549af94e6921737b2c762cc6477bbf10b106bb5d43b64e120a",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/D3_sod_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/D3_sod_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v1/processes.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/processes.json",
+      "source_bytes": 14709,
+      "source_sha256": "09b573b7879ad42fad2a4f4baffe08ad1dfddd3ab0cc525ee2193376c1ab1a7f",
+      "stored_bytes": 14709,
+      "stored_sha256": "09b573b7879ad42fad2a4f4baffe08ad1dfddd3ab0cc525ee2193376c1ab1a7f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v1/registration.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v1/registration.json",
+      "source_bytes": 2062,
+      "source_sha256": "9c6083489b780577fed6d6107d51ce8dabf5ce42fa645d06d125b4dc4c3a26f0",
+      "stored_bytes": 2062,
+      "stored_sha256": "9c6083489b780577fed6d6107d51ce8dabf5ce42fa645d06d125b4dc4c3a26f0",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/assessment.json",
+      "source_bytes": 1512,
+      "source_sha256": "2a9f811fcb6fed5c4573e692d17815e0511f3009252ba7d69d5cb80b0005888a",
+      "stored_bytes": 1512,
+      "stored_sha256": "2a9f811fcb6fed5c4573e692d17815e0511f3009252ba7d69d5cb80b0005888a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/command.json",
+      "source_bytes": 122,
+      "source_sha256": "b65d2158e0f8ce406a3fb97874763c9a905ba39f1e556fe06b5e85427fec987c",
+      "stored_bytes": 122,
+      "stored_sha256": "b65d2158e0f8ce406a3fb97874763c9a905ba39f1e556fe06b5e85427fec987c",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/final.dat",
+      "source_bytes": 48900,
+      "source_sha256": "9fa72d5f2da47fd136c32c7a29ca42bd26254751fcc11dbf075aecf5ebd941cf",
+      "stored_bytes": 9574,
+      "stored_sha256": "6aef9698c1b927025aa66a0ca4892038706174c50e18eb42663f81cd0b0b97d7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/final.fv",
+      "source_bytes": 22608,
+      "source_sha256": "88f0fedb1ff5f1d187358dbcce328d493ed0b209c81b1815730af6e4c1aab94c",
+      "stored_bytes": 4990,
+      "stored_sha256": "518b86b198e75d2abb3b52cd1e2a9dad96900972704087de247cd31f58bbbdcc",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/final_velocity.dat",
+      "source_bytes": 6219,
+      "source_sha256": "4183bfa2aa9739c9e3faec8d69ca52b558e0145b9158669a7e0db3b52ef4450b",
+      "stored_bytes": 2500,
+      "stored_sha256": "7933f67f97cb2e55dd3753fa3b0f10743cdd6a3ea06e54bb47a173aeb2411454",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/history.csv",
+      "source_bytes": 9472,
+      "source_sha256": "66822811784a7efd771e68df82cc1afd9f1d2c34829d064461b1ddd5994adf8d",
+      "stored_bytes": 2982,
+      "stored_sha256": "3b6b1c78528364a1267e6815e45a1f61b37ddc563ec6fdf6dbaf57b103ca4a26",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/initial.dat",
+      "source_bytes": 36498,
+      "source_sha256": "e963993973f19b67b575bd2e5989b40c343333cfe445563748638150709c1ef7",
+      "stored_bytes": 1761,
+      "stored_sha256": "270b074fa5dac485c2fff5cd11e34cbcc675339cbf6792d64bc01acaf25203e8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/initial.fv",
+      "source_bytes": 22608,
+      "source_sha256": "f56aeccff2eca315aae62e9f27efe12d98768ccebc0ac0997f4f5be8e7c6de0a",
+      "stored_bytes": 1285,
+      "stored_sha256": "d7daa2746d63f950af754d3c3ffba82af55d4e45d99d534dabc54fa5d530d05e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/process.json",
+      "source_bytes": 89,
+      "source_sha256": "9f1d6dd66ec1672aa230fc7c662f1f2d452417a8fde502ed22b0238fe719e46d",
+      "stored_bytes": 89,
+      "stored_sha256": "9f1d6dd66ec1672aa230fc7c662f1f2d452417a8fde502ed22b0238fe719e46d",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/result.json",
+      "source_bytes": 849,
+      "source_sha256": "dc255d7772b1d6da48b3c78b0e2269adfa457b708a80f83686b2d013f5538cd5",
+      "stored_bytes": 849,
+      "stored_sha256": "dc255d7772b1d6da48b3c78b0e2269adfa457b708a80f83686b2d013f5538cd5",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/running.json",
+      "source_bytes": 169,
+      "source_sha256": "fe0f5007355dbf6ceef6b2266ce6223bfd25a494a28a52fe30c5560ac65c671e",
+      "stored_bytes": 169,
+      "stored_sha256": "fe0f5007355dbf6ceef6b2266ce6223bfd25a494a28a52fe30c5560ac65c671e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/stderr.log",
+      "source_bytes": 2932,
+      "source_sha256": "b3b53c0956eec4ebd17edf905f9ab2525ca2ff4fc041c6f8c75bad8f5db652d3",
+      "stored_bytes": 582,
+      "stored_sha256": "a1612ad1480698174bbdf3739d3090810ecc26f4ec59f9d38834edfe72f1540c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_contact_N200/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_contact_N200/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/assessment.json",
+      "source_bytes": 1510,
+      "source_sha256": "f615fdc56ba29bc021a2703a3ace13ad9cf17e6efbcc3e456559ebac937f0f0a",
+      "stored_bytes": 1510,
+      "stored_sha256": "f615fdc56ba29bc021a2703a3ace13ad9cf17e6efbcc3e456559ebac937f0f0a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/command.json",
+      "source_bytes": 129,
+      "source_sha256": "c7fcd0ecf0e41fb6281b43e010c68763056b9acd24c84e1824b057ff4080a248",
+      "stored_bytes": 129,
+      "stored_sha256": "c7fcd0ecf0e41fb6281b43e010c68763056b9acd24c84e1824b057ff4080a248",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/final.dat",
+      "source_bytes": 51349,
+      "source_sha256": "1dd296636a4266bb14b0d83415fb0c53ad5544fcff52ac7830eebbcef97fece4",
+      "stored_bytes": 9810,
+      "stored_sha256": "5c5afff341ea73cdfcaacf062c76734f2de78be3ab414cb954dc75ba82776ef9",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/final.fv",
+      "source_bytes": 22608,
+      "source_sha256": "7bdd448d2c4c2570c34add359b8e649ced0112848755dff4b7cfa74db4af3018",
+      "stored_bytes": 5138,
+      "stored_sha256": "a748e2305339def9a345875a3b6365fd4b08f94f5a4e07a1d84e5906c90a298f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/final_velocity.dat",
+      "source_bytes": 5385,
+      "source_sha256": "532a2f175432c39891cdca332d3ef0522359e8d002a3b3a5191e06e8aa9a4a74",
+      "stored_bytes": 1064,
+      "stored_sha256": "3aa208b802a05661bba8b1e008b080d8ca489295566dcbb33c5a45a89a8059de",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/history.csv",
+      "source_bytes": 8987,
+      "source_sha256": "371bb7d5d939906f240d0fd92439431da2f3dcd2338b4f634043f77d21432636",
+      "stored_bytes": 2923,
+      "stored_sha256": "d7a59eddfbf6efdd4214c359680d2e1bf7ddff331a9ae350f6b297b8fedcd2cc",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/initial.dat",
+      "source_bytes": 40598,
+      "source_sha256": "79120e83eac35acf8d8b50e68753e9d80bb168faac1d18bee26d0945560cf3f1",
+      "stored_bytes": 1781,
+      "stored_sha256": "7c9561328b400b152384c7c389eb8f07aabaa5755f6ef73ddc3da1129a9f96c2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/initial.fv",
+      "source_bytes": 22608,
+      "source_sha256": "68d4b79cde12bbe909f67d8267d2116ba8d50a51289582aca2f40427af4de10a",
+      "stored_bytes": 1304,
+      "stored_sha256": "d4e4ea40817df112fc8aa81188d5382a00ebab4d36c21e4eaa9bd62f77d7b83b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/process.json",
+      "source_bytes": 105,
+      "source_sha256": "e4f136783e48148d67ce87a4b9e21282fd53d105e0f112762c676ac557e954a8",
+      "stored_bytes": 105,
+      "stored_sha256": "e4f136783e48148d67ce87a4b9e21282fd53d105e0f112762c676ac557e954a8",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/result.json",
+      "source_bytes": 856,
+      "source_sha256": "806efab3c614e175ade06a365cbd7c10e0dc11458aaa0b231dd2b0844f231a50",
+      "stored_bytes": 856,
+      "stored_sha256": "806efab3c614e175ade06a365cbd7c10e0dc11458aaa0b231dd2b0844f231a50",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/running.json",
+      "source_bytes": 176,
+      "source_sha256": "472ae92a608abfe62b4d2ce79e4c715a68cfa6bf5c066e4b95d03b2133a7590e",
+      "stored_bytes": 176,
+      "stored_sha256": "472ae92a608abfe62b4d2ce79e4c715a68cfa6bf5c066e4b95d03b2133a7590e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/stderr.log",
+      "source_bytes": 2930,
+      "source_sha256": "3e0e79c9ba9ad5057fa65258f016fa5a4bc93e5878ae631bf119752f370d6339",
+      "stored_bytes": 575,
+      "stored_sha256": "b7b55ed3ccb2c9e8ae8bfe3fbd2e55dc4531d98d3fb0dc4a43d1f87f751386ca",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_periodic_moving_contact_N200/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_periodic_moving_contact_N200/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/assessment.json",
+      "source_bytes": 1257,
+      "source_sha256": "8304a93ac5d7b2b765ddf05a4c993029dc3e63e93b63aadbda588a076975b6b3",
+      "stored_bytes": 1257,
+      "stored_sha256": "8304a93ac5d7b2b765ddf05a4c993029dc3e63e93b63aadbda588a076975b6b3",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/command.json",
+      "source_bytes": 117,
+      "source_sha256": "ab71f2f2ccf5e388ce35650ba1d1a84a55ed14ca4dc32872ad5a509d0ba4a487",
+      "stored_bytes": 117,
+      "stored_sha256": "ab71f2f2ccf5e388ce35650ba1d1a84a55ed14ca4dc32872ad5a509d0ba4a487",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/exact_cell_reference.csv",
+      "source_bytes": 11784,
+      "source_sha256": "1336b2a639baa4fefa3aeaae733d1843ab4cbecc3846dec8e21084e9f0b71e2b",
+      "stored_bytes": 1985,
+      "stored_sha256": "3cbf4c1501eab840cfdecb2d997faa080f56a5267113275e7f4e03aa195306ed",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/final.dat",
+      "source_bytes": 57137,
+      "source_sha256": "533fb1a5c3220213e938b04649130ef96d188ddaf2e6015570731c7270587b4b",
+      "stored_bytes": 22404,
+      "stored_sha256": "176b88b12ffaae699fcc0c940f8cd495c31234e6ab7d8c84f5c07d369d85fdb5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/final.fv",
+      "source_bytes": 22608,
+      "source_sha256": "24a134c793bb87881933a8b6f3dcfe71e32b18c9b281e2ae1a651ccc1276e870",
+      "stored_bytes": 9919,
+      "stored_sha256": "0b54074c030ee52ff9cfe76960d01fc94daf1198d435a1a77f76ebd1962f45fd",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/final_velocity.dat",
+      "source_bytes": 5792,
+      "source_sha256": "ef0b95690bdbf9fc4c8f9aef9ee488e7ef3ba857d1acebe8a205b4819d759353",
+      "stored_bytes": 2571,
+      "stored_sha256": "a23884180c4a5a541fbf3b6d14ae4f781908261032ddc9813f18ce6474cb8841",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/history.csv",
+      "source_bytes": 7350,
+      "source_sha256": "84aa83e3984407418f50374562b9bc9befeb47f37ff06eb26269ffe4d575a893",
+      "stored_bytes": 3289,
+      "stored_sha256": "f2080042d250ccef494e0b6a790ef124c42204d716fe9ac62a0728211163cece",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/initial.dat",
+      "source_bytes": 36699,
+      "source_sha256": "868a6343752cb59500ce6d26b08b74068c5081c9b7263d2f19f7b44136b0abed",
+      "stored_bytes": 1755,
+      "stored_sha256": "924a234402474ce1c3b40a7217226496e07b4732af2591c914ed6aea2eb31829",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/initial.fv",
+      "source_bytes": 22608,
+      "source_sha256": "35b4e1b1730763b4a72d0256b050a659933c159c440f2986ec80abe5ef672e6b",
+      "stored_bytes": 1293,
+      "stored_sha256": "63c4f546a009ac1ec1a9b045c26121dce7eb89d8ccf14032b65404aedf0fe78b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/process.json",
+      "source_bytes": 84,
+      "source_sha256": "68c1819181889fb2bc230355b40a82e5ba107d8f3f9e17e86e1875fcf5045e31",
+      "stored_bytes": 84,
+      "stored_sha256": "68c1819181889fb2bc230355b40a82e5ba107d8f3f9e17e86e1875fcf5045e31",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/result.json",
+      "source_bytes": 877,
+      "source_sha256": "a727816678e8bdd01bc836a91f1c8975301fea83faf26bacd526b9a2dc531154",
+      "stored_bytes": 877,
+      "stored_sha256": "a727816678e8bdd01bc836a91f1c8975301fea83faf26bacd526b9a2dc531154",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/running.json",
+      "source_bytes": 164,
+      "source_sha256": "29d884309a05288b5e007437c3611d570ac1200a9037289c2aa43aeb2df0b818",
+      "stored_bytes": 164,
+      "stored_sha256": "29d884309a05288b5e007437c3611d570ac1200a9037289c2aa43aeb2df0b818",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/sod_accuracy.json",
+      "source_bytes": 479,
+      "source_sha256": "52791ccfef7f43f6a6244840c71cf308a92f5197a80e3225a118dc847b708f6f",
+      "stored_bytes": 479,
+      "stored_sha256": "52791ccfef7f43f6a6244840c71cf308a92f5197a80e3225a118dc847b708f6f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/stderr.log",
+      "source_bytes": 2283,
+      "source_sha256": "7872ea63e00d852abd2cbab7ffc2490dc2b5a5ea059ccd623853326bde7a0ece",
+      "stored_bytes": 528,
+      "stored_sha256": "e2cde43c1e6fe1562618ecc8bcc34be1832c6338feb908ce753f101b15083f06",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N200/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N200/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/assessment.json",
+      "source_bytes": 1311,
+      "source_sha256": "dd15d71fa6b6a12d4c2f1146034c1ca418a3a610fdef9720b68c7c03df86395f",
+      "stored_bytes": 1311,
+      "stored_sha256": "dd15d71fa6b6a12d4c2f1146034c1ca418a3a610fdef9720b68c7c03df86395f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/command.json",
+      "source_bytes": 117,
+      "source_sha256": "ab969d768a657d78c0380744f97df1e2411925b35d7c7990d54bb56cc560fa32",
+      "stored_bytes": 117,
+      "stored_sha256": "ab969d768a657d78c0380744f97df1e2411925b35d7c7990d54bb56cc560fa32",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/exact_cell_reference.csv",
+      "source_bytes": 24054,
+      "source_sha256": "47ad5ff082a772842850329002713591cf7d02739efb96890fb4eb240356cd28",
+      "stored_bytes": 3465,
+      "stored_sha256": "7368471b583d4fad34ace6f511433d23d47de52adbd8dc134a73c9eaa6bc89b5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/final.dat",
+      "source_bytes": 113999,
+      "source_sha256": "c002c35dfabd9b89c958d10d93eb2612e23436eb6e35e8e7de80e85c5c71ea8f",
+      "stored_bytes": 40979,
+      "stored_sha256": "029125e2fe004ec608f95ece844012af798982cfc6c1c45adc13feaecaab77f5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/final.fv",
+      "source_bytes": 45008,
+      "source_sha256": "6108a6d7a3e63c4661abaee48b0c49806114773551d85a8ea337069eac0ba5f4",
+      "stored_bytes": 18668,
+      "stored_sha256": "3abb6398464ba617f6d478e6ef7c074092137443dda6aee146ad9d798cfbca4b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/final_velocity.dat",
+      "source_bytes": 11666,
+      "source_sha256": "afa1c1fcc60998eba7b2a7a25e1b080deb6bded80ea0517d40aa04339627f298",
+      "stored_bytes": 4945,
+      "stored_sha256": "0514913f792a54e64d0a669cc70a6452f72fd663e9abfad715f0b120c60e8705",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/history.csv",
+      "source_bytes": 7726,
+      "source_sha256": "bd16617b973a4bd2914f0689dd2e1a12b0ad93a8d260bb65ecba3ad92db48ac6",
+      "stored_bytes": 3301,
+      "stored_sha256": "c0fa36b7ce1236adfcd11a3f9b9bd1f94b356b7cbec80452f463d69d186b483f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/initial.dat",
+      "source_bytes": 77207,
+      "source_sha256": "6752822d30c059550ba6644a0a4ecb7708d9342309e31dde393473c2e5de86e9",
+      "stored_bytes": 3161,
+      "stored_sha256": "52c0a93e8877ee3a713902f9f7489a177b9b69ebec8a4186fdf9e85d7d9b90c3",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/initial.fv",
+      "source_bytes": 45008,
+      "source_sha256": "59ccdc7bf64d8c69e6fb4adf20531308e9652872048d6408f206d374c8b72b50",
+      "stored_bytes": 2274,
+      "stored_sha256": "4aa788a6a367b38fe481e48b6198d225300e99a29f7e3ccbb2960e4aacc9079f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/process.json",
+      "source_bytes": 83,
+      "source_sha256": "56dc8009a9a2fe227f518a6f0300709740d0b32b71158e7261c86c41256ae0ac",
+      "stored_bytes": 83,
+      "stored_sha256": "56dc8009a9a2fe227f518a6f0300709740d0b32b71158e7261c86c41256ae0ac",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/result.json",
+      "source_bytes": 875,
+      "source_sha256": "bdfde3b3da4bd9bc6708772e04892c16816d5648647fe94a662ed6ed575bfb5e",
+      "stored_bytes": 875,
+      "stored_sha256": "bdfde3b3da4bd9bc6708772e04892c16816d5648647fe94a662ed6ed575bfb5e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/running.json",
+      "source_bytes": 164,
+      "source_sha256": "d6adbdde10e9af9a9bb244a0dd604ee427bb2299f11ac4d161b3f7b62332a4cc",
+      "stored_bytes": 164,
+      "stored_sha256": "d6adbdde10e9af9a9bb244a0dd604ee427bb2299f11ac4d161b3f7b62332a4cc",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/sod_accuracy.json",
+      "source_bytes": 477,
+      "source_sha256": "4b907cf54cf4063f20a0d13b4fd0a1292c3f0f1f5067891712f0ce04f4d5910a",
+      "stored_bytes": 477,
+      "stored_sha256": "4b907cf54cf4063f20a0d13b4fd0a1292c3f0f1f5067891712f0ce04f4d5910a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/stderr.log",
+      "source_bytes": 2288,
+      "source_sha256": "e85ed52fcdeaffdc5f7c3b5711205a720690953c0ce36da345d86c0a2479fadb",
+      "stored_bytes": 500,
+      "stored_sha256": "331cc830be948040ca29245a818a074d79efa8a22590c5d1a29b6cb648318c8b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D1_sod_N400/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D1_sod_N400/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/assessment.json",
+      "source_bytes": 1263,
+      "source_sha256": "58645a34b66ebc7b333db77714d765e0d7055ca821aedba37ed4292cc107e79e",
+      "stored_bytes": 1263,
+      "stored_sha256": "58645a34b66ebc7b333db77714d765e0d7055ca821aedba37ed4292cc107e79e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/command.json",
+      "source_bytes": 120,
+      "source_sha256": "ff39ae0038c47b78b89b858c844bc8edcd20b89ff663753ba86e0d21f8c0cc93",
+      "stored_bytes": 120,
+      "stored_sha256": "ff39ae0038c47b78b89b858c844bc8edcd20b89ff663753ba86e0d21f8c0cc93",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/final.dat",
+      "source_bytes": 13945,
+      "source_sha256": "dad4d28e116f4edb7a0e9804b77257742b668d7d2de2e77fc5422f5469defa40",
+      "stored_bytes": 607,
+      "stored_sha256": "af0d3eb906b87cf4a4fe8bf8975340f34ddac3839ea39aac8de607a5102aa784",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "7b98a3d9a9c99fc86b84ac24e8b84f8e7b705cc016356af916408fb01592bb90",
+      "stored_bytes": 453,
+      "stored_sha256": "1b3030a2090fcfc98ef94c71ebf894b0fe7065b83c1f3fd119fc19ca8346b180",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/final_velocity.dat",
+      "source_bytes": 618,
+      "source_sha256": "08cb242ef269a0887a1bbdeb310334a7357d5f46b2e078d9d198d03070e96d21",
+      "stored_bytes": 189,
+      "stored_sha256": "ac43c1a945dbf18c70e22dafb06f2484049a5c520f5cb0172ae0d4641a085577",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/history.csv",
+      "source_bytes": 3657,
+      "source_sha256": "0b9191c3533a1ac17514b7b4e5e515922459a5c8d291d63b59955c429207beed",
+      "stored_bytes": 570,
+      "stored_sha256": "cd92d9fe3eb992736ab81f86a4201d16846c5ace128a678926dac8f0e1915c9b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/initial.dat",
+      "source_bytes": 13945,
+      "source_sha256": "dad4d28e116f4edb7a0e9804b77257742b668d7d2de2e77fc5422f5469defa40",
+      "stored_bytes": 607,
+      "stored_sha256": "af0d3eb906b87cf4a4fe8bf8975340f34ddac3839ea39aac8de607a5102aa784",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "fca65072b927fc1d416fe010ed7ac852db068563feae04122731efa6dffa876b",
+      "stored_bytes": 448,
+      "stored_sha256": "e345f7b8fcb6261694fb5a3f8f55eca763e110c9969b66482a60bbe47ba8d0e7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/process.json",
+      "source_bytes": 87,
+      "source_sha256": "2748b6bebd9c2bb817839c560e7c5fb18017d493505258fbb6b2e1e8f4ccc908",
+      "stored_bytes": 87,
+      "stored_sha256": "2748b6bebd9c2bb817839c560e7c5fb18017d493505258fbb6b2e1e8f4ccc908",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/result.json",
+      "source_bytes": 768,
+      "source_sha256": "bea60eeaf58597e879ef08d1369e73be4d2f35a588280f36138804c7eaede003",
+      "stored_bytes": 768,
+      "stored_sha256": "bea60eeaf58597e879ef08d1369e73be4d2f35a588280f36138804c7eaede003",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/running.json",
+      "source_bytes": 167,
+      "source_sha256": "a256ee812ddec731b105fefefff8b7e8e12b09b450c2142ec099f79a2758f458",
+      "stored_bytes": 167,
+      "stored_sha256": "a256ee812ddec731b105fefefff8b7e8e12b09b450c2142ec099f79a2758f458",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/stderr.log",
+      "source_bytes": 1847,
+      "source_sha256": "f233bb62ddd0fdb171d67042ad5830858e1a54956e86fb923021b4b423f1fff7",
+      "stored_bytes": 285,
+      "stored_sha256": "511050b5df5b1a5cf7dbfe146976c5744994adcd0713926a972cd8c2d97a7f88",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_contact_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_contact_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/assessment.json",
+      "source_bytes": 1573,
+      "source_sha256": "1bfe60781b97ad55e3da2051f1400f7d924cc0be72ecffc08009b85db71287fa",
+      "stored_bytes": 1573,
+      "stored_sha256": "1bfe60781b97ad55e3da2051f1400f7d924cc0be72ecffc08009b85db71287fa",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/command.json",
+      "source_bytes": 127,
+      "source_sha256": "82862356cbd8c667a606f2eff76ff4956f6a185f4cc1b30df9fbf4c836d6aad9",
+      "stored_bytes": 127,
+      "stored_sha256": "82862356cbd8c667a606f2eff76ff4956f6a185f4cc1b30df9fbf4c836d6aad9",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/final.dat",
+      "source_bytes": 22088,
+      "source_sha256": "d40f0dc625ee57aab0739bdeca1bf9ca5c89d04ea3971e3e825e5b91abcc37e4",
+      "stored_bytes": 5938,
+      "stored_sha256": "16614411e1374b063d33e0b8c721e4f0825a77d429480babd7b42f66adcc31c0",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "2d2281ffff3e8472bf63457f34b946336a9ae14404f05d28818793a94299c716",
+      "stored_bytes": 2302,
+      "stored_sha256": "1c9ffcd474e03bdf0a6159da3294437d0ab0b98240c08c8382afc0048d3b0a7f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/final_velocity.dat",
+      "source_bytes": 3083,
+      "source_sha256": "127fd63ed73ac877b59cf48f19cc6f988fc5a39c385ce3862eb55e5f09995cf9",
+      "stored_bytes": 1147,
+      "stored_sha256": "891741ff1875e8dd001f5c4b6603df89add6e04e129a5f202095d06c3b3215e7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/history.csv",
+      "source_bytes": 7044,
+      "source_sha256": "c010f0bbc303717483e6e80c324935235ed20c7d40ba3b4577aa7590361c0fbb",
+      "stored_bytes": 2272,
+      "stored_sha256": "179e0b0b4ada04d45054a7f98eea93da26e978f00c766105c2b45e0e3519c32e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/initial.dat",
+      "source_bytes": 15193,
+      "source_sha256": "b1ae35fff80202e609c781130d5da941041f5532323acf26ae9312b98e8bb740",
+      "stored_bytes": 619,
+      "stored_sha256": "d623309373e43a5a8086ce341e4723660daa0e181e1f8ea111b8b22007462281",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "95dbddc74776da04a94af67c91e35708c8f61b10885b3a2cd8c9ff196720af73",
+      "stored_bytes": 470,
+      "stored_sha256": "ff5b9f03ad2159564e6be0ffec36246f26ecf441aec511cada9ede0cbe27a735",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/process.json",
+      "source_bytes": 103,
+      "source_sha256": "2a0d72e589296bba4f4bfdea98c79b5d29dae54df020d0c469185c442aa8164a",
+      "stored_bytes": 103,
+      "stored_sha256": "2a0d72e589296bba4f4bfdea98c79b5d29dae54df020d0c469185c442aa8164a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/result.json",
+      "source_bytes": 880,
+      "source_sha256": "c56265d57011cdf0dd81b98bfa87e4f2a9279ca965c6f1643fc49ac1de84fd45",
+      "stored_bytes": 880,
+      "stored_sha256": "c56265d57011cdf0dd81b98bfa87e4f2a9279ca965c6f1643fc49ac1de84fd45",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/running.json",
+      "source_bytes": 174,
+      "source_sha256": "f4525eb71ab182f15876c721db45ebf1c0114add42f15524b2b85944fd0f8a88",
+      "stored_bytes": 174,
+      "stored_sha256": "f4525eb71ab182f15876c721db45ebf1c0114add42f15524b2b85944fd0f8a88",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/stderr.log",
+      "source_bytes": 1964,
+      "source_sha256": "ec758bedc6d382b99e4b4a90781ddb0af2a8c333cc1f115bb640be01e75c98c9",
+      "stored_bytes": 429,
+      "stored_sha256": "3c045d87c241f9fb36d990781254d83062836ff4a6709ee332d70973dff35722",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_periodic_moving_contact_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_periodic_moving_contact_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/assessment.json",
+      "source_bytes": 1326,
+      "source_sha256": "bda5d07483e14a754885861b3f0ae1d768c9d05f2eb8bcbe32165e41d28155cd",
+      "stored_bytes": 1326,
+      "stored_sha256": "bda5d07483e14a754885861b3f0ae1d768c9d05f2eb8bcbe32165e41d28155cd",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/command.json",
+      "source_bytes": 115,
+      "source_sha256": "2242ea300adeb1812e8f4fd8c4ba77de7f9d8e1ebcb63359b0aaedff94c9f074",
+      "stored_bytes": 115,
+      "stored_sha256": "2242ea300adeb1812e8f4fd8c4ba77de7f9d8e1ebcb63359b0aaedff94c9f074",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/exact_cell_reference.csv",
+      "source_bytes": 4161,
+      "source_sha256": "e27e1527bd0f36ddc3c45357a7a55f510d2dc59c69b1d971e713e60c36e3e53c",
+      "stored_bytes": 427,
+      "stored_sha256": "3286c426bcf7eecb97bdf061ef0fc226d1bd01efd0490a30de18d3f3341a2109",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/final.dat",
+      "source_bytes": 23109,
+      "source_sha256": "5fe4353d5701cf9ec827b9edbfacc493f4cc5983ff710e7a8f2d8557de466a82",
+      "stored_bytes": 5843,
+      "stored_sha256": "e9f49836ddcb5eb9a21b5453c568a4a20f187a0f1d4a34414451f09d59f5db0d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "5283595e6ce4a3db0a531c769b0e8d7c7446e01fa9f1fa05da2acfae52a65155",
+      "stored_bytes": 2500,
+      "stored_sha256": "27db959c25cd2d9de969dc7d3907343ea1b2bca31e5353e717f7fd99aa4763ae",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/final_velocity.dat",
+      "source_bytes": 3173,
+      "source_sha256": "02a25815471e8df54ef55874fba5d926dc9ea4bc786e63007d3ab1f10212fca2",
+      "stored_bytes": 1197,
+      "stored_sha256": "6d442cdaa91c86ba1f56823880f9207102466339cde4b956f12a3a183907ae85",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/history.csv",
+      "source_bytes": 5580,
+      "source_sha256": "f0c0f43680893f7abff499bbb3f2847f320dad0a0c5fbcf72bb3325afa4795a3",
+      "stored_bytes": 2474,
+      "stored_sha256": "cf580f47a4224a9626ac816a867afe33d7459f235edf744d732a55b4a3d7e4fe",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/initial.dat",
+      "source_bytes": 13689,
+      "source_sha256": "b723c8956ce5f39369456bd09805bb4badd23ac7a2724e9ff5b80dd30db29dfd",
+      "stored_bytes": 612,
+      "stored_sha256": "695897e419c3b49df48001c31bd2f2fba198cd95858ec7741e44244a35f503d6",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "24d3494e0278f175e0c4612e4154159b0076cd25ffc6461fe776025f2e37b72d",
+      "stored_bytes": 454,
+      "stored_sha256": "2a52db783a7d115d483f565c6f83bdc127139aea84e990641fe25a43a1ab83fb",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/process.json",
+      "source_bytes": 83,
+      "source_sha256": "a817436cd27ad6fa78d826b64cd5cd83439b75766833d764272a5d71eb792243",
+      "stored_bytes": 83,
+      "stored_sha256": "a817436cd27ad6fa78d826b64cd5cd83439b75766833d764272a5d71eb792243",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/result.json",
+      "source_bytes": 901,
+      "source_sha256": "76bfc9cf9b5df5f8d3af4ab8285c998b5f979bc54e587bfe84bd7de3ffd3f069",
+      "stored_bytes": 901,
+      "stored_sha256": "76bfc9cf9b5df5f8d3af4ab8285c998b5f979bc54e587bfe84bd7de3ffd3f069",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/running.json",
+      "source_bytes": 162,
+      "source_sha256": "b46b8a5c84eb6305f7d59b981282b4477ce3695539e91dfc5df7016dca562e5a",
+      "stored_bytes": 162,
+      "stored_sha256": "b46b8a5c84eb6305f7d59b981282b4477ce3695539e91dfc5df7016dca562e5a",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/sod_accuracy.json",
+      "source_bytes": 491,
+      "source_sha256": "a955fec590554e8002b9a11a3ba8c72679dbc6a5300ff9247bc55e5633ad57d8",
+      "stored_bytes": 491,
+      "stored_sha256": "a955fec590554e8002b9a11a3ba8c72679dbc6a5300ff9247bc55e5633ad57d8",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/stderr.log",
+      "source_bytes": 1469,
+      "source_sha256": "ed20cf23eadb00c3390cbb07802b1eaece7e74cc9bdb87367c10334f4bca2686",
+      "stored_bytes": 384,
+      "stored_sha256": "51b7d28ccf1fcc8100fd1ecac3113826d4f7aad4dab2b0631f6719d1d1914885",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D2_sod_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D2_sod_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/assessment.json",
+      "source_bytes": 1276,
+      "source_sha256": "c9d892ab7f4c84466421d1097b75e4a7027e5f103d047f9206bcd2093152a142",
+      "stored_bytes": 1276,
+      "stored_sha256": "c9d892ab7f4c84466421d1097b75e4a7027e5f103d047f9206bcd2093152a142",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/command.json",
+      "source_bytes": 120,
+      "source_sha256": "f4fbedda3988598e5928e787d69b094dc5197dabf74a61a2d720c3c5e301ff35",
+      "stored_bytes": 120,
+      "stored_sha256": "f4fbedda3988598e5928e787d69b094dc5197dabf74a61a2d720c3c5e301ff35",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/final.dat",
+      "source_bytes": 16243,
+      "source_sha256": "be16b1d5d331e17dd674ee5d92bd2ba53eba745a43a60fbccf70a1ef02e6f1c8",
+      "stored_bytes": 1004,
+      "stored_sha256": "7437e0c388ed18691e09e5e09ee0a280288691b6681c573f5ffa420ee4274593",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "dccc7204f763e42f6ed20fa3b8b3d453e8296b38cdb7f6cdf02e291b0a7c6aec",
+      "stored_bytes": 477,
+      "stored_sha256": "72b8958c85a86bd8d42665fd7a13f895d331dea2f089f6cd071d7b1bcb2819b4",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/final_velocity.dat",
+      "source_bytes": 618,
+      "source_sha256": "08cb242ef269a0887a1bbdeb310334a7357d5f46b2e078d9d198d03070e96d21",
+      "stored_bytes": 189,
+      "stored_sha256": "ac43c1a945dbf18c70e22dafb06f2484049a5c520f5cb0172ae0d4641a085577",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/history.csv",
+      "source_bytes": 3068,
+      "source_sha256": "f269e259142614da4204b5a6ad5f52a9b102ac45c87639413fb2ff682c150634",
+      "stored_bytes": 510,
+      "stored_sha256": "04caf736c7316fb930a4da672dcd898e990598d69a70f62e20f9e60c39d3efa5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/initial.dat",
+      "source_bytes": 16243,
+      "source_sha256": "be16b1d5d331e17dd674ee5d92bd2ba53eba745a43a60fbccf70a1ef02e6f1c8",
+      "stored_bytes": 1004,
+      "stored_sha256": "7437e0c388ed18691e09e5e09ee0a280288691b6681c573f5ffa420ee4274593",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "229cc9c90bd4ed6de110119bc0a3aa99ba9f095db14d854a50e908c58b15ac8e",
+      "stored_bytes": 472,
+      "stored_sha256": "8bdc2dc1380830c2f7b7884d75815d9103e1d3c03fd86f6287d8e22375d8bf58",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/process.json",
+      "source_bytes": 86,
+      "source_sha256": "ba29e97a6781d1de5efc93959276ce532cb79859c9710d16157012511420652f",
+      "stored_bytes": 86,
+      "stored_sha256": "ba29e97a6781d1de5efc93959276ce532cb79859c9710d16157012511420652f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/result.json",
+      "source_bytes": 787,
+      "source_sha256": "6dcebee6395eb28777c5afd80dabd1778dba7c621c406395a7f02c7f581e9067",
+      "stored_bytes": 787,
+      "stored_sha256": "6dcebee6395eb28777c5afd80dabd1778dba7c621c406395a7f02c7f581e9067",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/running.json",
+      "source_bytes": 167,
+      "source_sha256": "c66c434cde6f9894995b5254b0849141813b0a26959e591aaf5d21ce8ab4536f",
+      "stored_bytes": 167,
+      "stored_sha256": "c66c434cde6f9894995b5254b0849141813b0a26959e591aaf5d21ce8ab4536f",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/stderr.log",
+      "source_bytes": 1435,
+      "source_sha256": "8cbec15d1bc1e628ce36cdc72217995bf51319e54916820f11d14e3fee99fa40",
+      "stored_bytes": 245,
+      "stored_sha256": "fe441cfc70c72e10da66cf2faf6fcc587d02b81f1ec2099627e043e7383461d2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_contact_N4/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_contact_N4/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/assessment.json",
+      "source_bytes": 1572,
+      "source_sha256": "905deda0845e9c65228f32e89c81c041495776d87822dd503ef99c74e1c76254",
+      "stored_bytes": 1572,
+      "stored_sha256": "905deda0845e9c65228f32e89c81c041495776d87822dd503ef99c74e1c76254",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/command.json",
+      "source_bytes": 127,
+      "source_sha256": "c46c550fd385e0a74e0acc35c2119bceaf8e7be7ced678810f340d8fa74f5557",
+      "stored_bytes": 127,
+      "stored_sha256": "c46c550fd385e0a74e0acc35c2119bceaf8e7be7ced678810f340d8fa74f5557",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/final.dat",
+      "source_bytes": 26200,
+      "source_sha256": "c7d9a423b5aaff26ac4749a5928abaeae7459a46b892965da48dc934361a2899",
+      "stored_bytes": 6701,
+      "stored_sha256": "f65341352f71836f2c9877354725c9fa27e95eaf5c4896f57986d677dc1e0df3",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/final.fv",
+      "source_bytes": 7376,
+      "source_sha256": "07ec16f7b07564fe8042758a9bfa17f34d2923ffcb3c8cb7404e89035814bc8b",
+      "stored_bytes": 2398,
+      "stored_sha256": "50990d1f69e28882e400f979f0b0416f0a90c5176641e357668ca7c6ff17a70f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/final_velocity.dat",
+      "source_bytes": 4395,
+      "source_sha256": "2cb7b9b09a0b20861751033d29093311ceeda96b8f83421fbfeaf0b2667f9c00",
+      "stored_bytes": 1756,
+      "stored_sha256": "ba303c1782e7cec9d1635b9d967bbf38f84218476d5e735124bb97b2ad418de6",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/history.csv",
+      "source_bytes": 5629,
+      "source_sha256": "0b91a9ce5f70ab7dc563d666bed384061d85901215bf17c71c5e35f9fe65c5dd",
+      "stored_bytes": 1871,
+      "stored_sha256": "22c9ed01e645823d96350952d9177b25219d897548189680a7a2eed8bf3ea8c8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/initial.dat",
+      "source_bytes": 17491,
+      "source_sha256": "9bf61ffee51a2ac63a8f66f7cef9d3d0dd362f3807e262e70225d4c900eeda19",
+      "stored_bytes": 1043,
+      "stored_sha256": "daa67e7af2e08b14f8b5f75c72ac486c7b55572ed9639aa694d7b0eb6328f1b2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/initial.fv",
+      "source_bytes": 7376,
+      "source_sha256": "d4fdaa9ce42603680bef9499e5906d0fa177e3100778e3934179c903f5f7646f",
+      "stored_bytes": 491,
+      "stored_sha256": "30c0ef20f64b5131a3c18729c32209d2362ead4fafc48bcb9010771e96c6b61c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/process.json",
+      "source_bytes": 102,
+      "source_sha256": "9afb3c99194c943684488d58b81b37fd87969e71a4a8b5f5f3857cd1430e0de9",
+      "stored_bytes": 102,
+      "stored_sha256": "9afb3c99194c943684488d58b81b37fd87969e71a4a8b5f5f3857cd1430e0de9",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/result.json",
+      "source_bytes": 900,
+      "source_sha256": "979573950c0c743c3f111f7e2ec8a067bc212c60a388062e36339f5e6fe2f9b8",
+      "stored_bytes": 900,
+      "stored_sha256": "979573950c0c743c3f111f7e2ec8a067bc212c60a388062e36339f5e6fe2f9b8",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/running.json",
+      "source_bytes": 174,
+      "source_sha256": "484bdc750c109e9f2ba096f1ad283e38fec9a007f11dfb2f86594049a0d58c32",
+      "stored_bytes": 174,
+      "stored_sha256": "484bdc750c109e9f2ba096f1ad283e38fec9a007f11dfb2f86594049a0d58c32",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/stderr.log",
+      "source_bytes": 1528,
+      "source_sha256": "f49777471587bae3ba6d7310450f45d61131e867f7ad4c8ea5f6c9a1cbe6422c",
+      "stored_bytes": 319,
+      "stored_sha256": "feddae8ede33f2ba6e3dbdad180d4a1ad9c414b82e2cdefa4d661fda5cd388f8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_periodic_moving_contact_N4/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_periodic_moving_contact_N4/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/assessment.json",
+      "source_bytes": 1300,
+      "source_sha256": "fb6ff39d6e0f34e77fb00d03d7a651a0250f201f9f9a586fb65cf8d61b7485a6",
+      "stored_bytes": 1300,
+      "stored_sha256": "fb6ff39d6e0f34e77fb00d03d7a651a0250f201f9f9a586fb65cf8d61b7485a6",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/command.json",
+      "source_bytes": 115,
+      "source_sha256": "a631efab6b2c0b2c51b608dfac2d98b5f5ab9fa24270f0910fedac16488184c9",
+      "stored_bytes": 115,
+      "stored_sha256": "a631efab6b2c0b2c51b608dfac2d98b5f5ab9fa24270f0910fedac16488184c9",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/exact_cell_reference.csv",
+      "source_bytes": 32592,
+      "source_sha256": "a003108b9300f6c1fdad228409e9f0c46ac8325ff5f5c5625e1222921691c408",
+      "stored_bytes": 1677,
+      "stored_sha256": "f0fa9005fbddacf9a79758aaa92d8d8873c69df97cb014c4fd2a76a4221b961f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/final.dat",
+      "source_bytes": 225066,
+      "source_sha256": "04d9ed7b9e45dd2b6a1d7153ddda845846c397ee71d1927c82ed5a076a666b91",
+      "stored_bytes": 60829,
+      "stored_sha256": "8ebf510d7380a6e3c1c99857ab8d2d8dfa14113de98ff27fcf2011554d007e91",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/final.fv",
+      "source_bytes": 57552,
+      "source_sha256": "e694f182201bb022e7a5ff441fc053e75622d215162aa8e5ab7b6ca1059bb2d0",
+      "stored_bytes": 21093,
+      "stored_sha256": "3a4d26be3d4277d5dfd46595196adc73739ad1dd8c9e2a65331c53467de7b41e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/final_velocity.dat",
+      "source_bytes": 36430,
+      "source_sha256": "f934f286077971f6bcbddb08b2304edec75363ce48c8d1fa808ef7395b847df6",
+      "stored_bytes": 14205,
+      "stored_sha256": "ed91b01949ee2059de7468715a3530c170b06a20c7fdecb128027a32f05f10f4",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/history.csv",
+      "source_bytes": 7294,
+      "source_sha256": "d4c746f7ce19fdb674f8ce478ef514e9e076132239f80b0ed37669d5a194db6a",
+      "stored_bytes": 3305,
+      "stored_sha256": "d18b44aaeb78251e54212a0351325290bded2f7b4d9fa3d6fe31c37486086903",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/initial.dat",
+      "source_bytes": 133867,
+      "source_sha256": "d18cd62a25b28c34ae24a8c308d991ce72c97bfd8d48bf0244bb582b67856193",
+      "stored_bytes": 4469,
+      "stored_sha256": "f57bda9c60862da1344a7e0f49c4afe85466bd5cb0149c5d487f3d9c2cee42ef",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/initial.fv",
+      "source_bytes": 57552,
+      "source_sha256": "d88f4098683b975491fb41b85d35ad818359aaecf677ecf05920925a718af2f2",
+      "stored_bytes": 2847,
+      "stored_sha256": "71f0b3463c338782a232665a865d32f432a86be55d0682cbfc15d167ae314b6a",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/process.json",
+      "source_bytes": 82,
+      "source_sha256": "a522fead616d47e223f4df12d154fdd43fde52fb8fdb2d209767ed5c7713f588",
+      "stored_bytes": 82,
+      "stored_sha256": "a522fead616d47e223f4df12d154fdd43fde52fb8fdb2d209767ed5c7713f588",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/result.json",
+      "source_bytes": 892,
+      "source_sha256": "326cdd8d4fca2108223b9a8eec39c1fb50ca49e2049db4a23b91c20bd821ca2b",
+      "stored_bytes": 892,
+      "stored_sha256": "326cdd8d4fca2108223b9a8eec39c1fb50ca49e2049db4a23b91c20bd821ca2b",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/running.json",
+      "source_bytes": 162,
+      "source_sha256": "b570263d9cababd3f6352de5041f3a52aed05f3b116ed52eb8e3cf11923faabb",
+      "stored_bytes": 162,
+      "stored_sha256": "b570263d9cababd3f6352de5041f3a52aed05f3b116ed52eb8e3cf11923faabb",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/sod_accuracy.json",
+      "source_bytes": 490,
+      "source_sha256": "a34309e27e58bb27f9ca3e2f0075788cf1dd034c7bcf82884f84a66ad2d3294e",
+      "stored_bytes": 490,
+      "stored_sha256": "a34309e27e58bb27f9ca3e2f0075788cf1dd034c7bcf82884f84a66ad2d3294e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/stderr.log",
+      "source_bytes": 1908,
+      "source_sha256": "e3d56d159992b9807f010454941f645e4c0382b1de62205e7f5fad133a4ee682",
+      "stored_bytes": 474,
+      "stored_sha256": "aba667dfcca3e3780d909155ba281ecbd90b9217d152e6a8d6aff4a919143358",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/D3_sod_N8/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/D3_sod_N8/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_coupling_v2/processes.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/processes.json",
+      "source_bytes": 14733,
+      "source_sha256": "23c6680cd705d9b508e2bb2dee118734555491132aa61c6ecee27cb2bfdaa2b3",
+      "stored_bytes": 14733,
+      "stored_sha256": "23c6680cd705d9b508e2bb2dee118734555491132aa61c6ecee27cb2bfdaa2b3",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/registration.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/registration.json",
+      "source_bytes": 2062,
+      "source_sha256": "15971abbd9f53e47a663fb1be296875ed442d233c99fd889a89a7c4aa4ae74ac",
+      "stored_bytes": 2062,
+      "stored_sha256": "15971abbd9f53e47a663fb1be296875ed442d233c99fd889a89a7c4aa4ae74ac",
+      "compression": null
+    },
+    {
+      "file": "fv_native_coupling_v2/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_coupling_v2/sod_accuracy.json",
+      "source_bytes": 2032,
+      "source_sha256": "6174ad755b34cb0b42187f5cbf35d372b3e9fcc2a0330cda81b959673be2f09e",
+      "stored_bytes": 2032,
+      "stored_sha256": "6174ad755b34cb0b42187f5cbf35d372b3e9fcc2a0330cda81b959673be2f09e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/assessment.json",
+      "source_bytes": 1314,
+      "source_sha256": "336811b4da110cae7cb7e2ab864506497f52d05f4406249711d55b5b504134d3",
+      "stored_bytes": 1314,
+      "stored_sha256": "336811b4da110cae7cb7e2ab864506497f52d05f4406249711d55b5b504134d3",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/command.json",
+      "source_bytes": 117,
+      "source_sha256": "6b419c0ac4441949f37e94fdfcdb0ffa9e25de989b336699cb1c46e9a30db315",
+      "stored_bytes": 117,
+      "stored_sha256": "6b419c0ac4441949f37e94fdfcdb0ffa9e25de989b336699cb1c46e9a30db315",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/exact_cell_reference.csv",
+      "source_bytes": 996263,
+      "source_sha256": "e4705968cb65e67b3d598027398d48ce3c7cc2c98e3c9fa5df6f3e28343212f3",
+      "stored_bytes": 70854,
+      "stored_sha256": "c0e1853b0e3690ad8039ac2c9d6a51aa3836363a40b22e3e81b4730c346a94fd",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/final.dat",
+      "source_bytes": 6239576,
+      "source_sha256": "a944d7d1e493cdb79120a47c37fac05315e7a2a8e5618017ecdb33fd6daae1e8",
+      "stored_bytes": 2377385,
+      "stored_sha256": "2f26b0fdd8f38f2683fa60b014b13ad43e1f4759d81d0ac9da9b5b65a0f6add9",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/final.fv",
+      "source_bytes": 1835216,
+      "source_sha256": "aa9c285be313ea8899cdef39ee6387a9e6f3564c53d4fb936637c869cb9f55f7",
+      "stored_bytes": 718956,
+      "stored_sha256": "8833e5e1161fc6b487e5aec35534e385e0fdd053537b947b62778f614d2d996e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/final_velocity.dat",
+      "source_bytes": 849688,
+      "source_sha256": "d5b0fb2b86722abcaef715277de2385b6256d00f0fcfe499fbcbef261a8d05e4",
+      "stored_bytes": 313688,
+      "stored_sha256": "528e725c95a9dd2c735ad090b33b598c350c4fc284abb433c9deaf3c81b2b5bc",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/history.csv",
+      "source_bytes": 8359,
+      "source_sha256": "21ab04cb2cdad74da1df024bab615eb1167785f3a6646878acb3feb9b2dbe37b",
+      "stored_bytes": 3622,
+      "stored_sha256": "ba9688c37941ec0e3a4e41502d4bd0ea98fbba05ff66cdfeaa8c3cccfab6f0cb",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/initial.dat",
+      "source_bytes": 3884301,
+      "source_sha256": "c970af8508bfbd47ed99796e1dcb326ddac576e826fc96dc138c0f977a1f8bf2",
+      "stored_bytes": 94942,
+      "stored_sha256": "838f35d21066908d211adb1885c340b90cd9106589eb771c81e94921f7cebc5b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/initial.fv",
+      "source_bytes": 1835216,
+      "source_sha256": "22df87299595c83eb0bc404a5fcadcbfa20ede822abf25d975bfaa8df25f1234",
+      "stored_bytes": 82462,
+      "stored_sha256": "e1082906af9caab3fbef07b140f0053664c1184d3a51b6d7bd2f84fee2610a2e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/process.json",
+      "source_bytes": 83,
+      "source_sha256": "fb5051835f615bd93ddbdf84e25b6594915da5c8f86e59b258912f815e50861c",
+      "stored_bytes": 83,
+      "stored_sha256": "fb5051835f615bd93ddbdf84e25b6594915da5c8f86e59b258912f815e50861c",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/result.json",
+      "source_bytes": 895,
+      "source_sha256": "720736980765b1565aae6e90fdab9b484bc1ebecc1ca3c1cd82e63df5c514a57",
+      "stored_bytes": 895,
+      "stored_sha256": "720736980765b1565aae6e90fdab9b484bc1ebecc1ca3c1cd82e63df5c514a57",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/running.json",
+      "source_bytes": 164,
+      "source_sha256": "fe9e2b43a5f900923e81748a8dbb0deb54954300dd0219f2f864a9f1bece53cd",
+      "stored_bytes": 164,
+      "stored_sha256": "fe9e2b43a5f900923e81748a8dbb0deb54954300dd0219f2f864a9f1bece53cd",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/sod_accuracy.json",
+      "source_bytes": 546,
+      "source_sha256": "55ad8c47704a1e448ca67cc552bcdf1aedfed5eccfcfd6619665c30e37573755",
+      "stored_bytes": 546,
+      "stored_sha256": "55ad8c47704a1e448ca67cc552bcdf1aedfed5eccfcfd6619665c30e37573755",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/stderr.log",
+      "source_bytes": 2319,
+      "source_sha256": "385b9e1959258cba9ac3a2fa7111514d19b6c820aeec18b369dd6dec70aee81b",
+      "stored_bytes": 523,
+      "stored_sha256": "584c485c2694a433f95f6af9593d9cfcbba2cbb54030df5ceb59aba8a4bcaa15",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N128/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N128/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/assessment.json",
+      "source_bytes": 1332,
+      "source_sha256": "e788bbb303c89e0c2873dcd52154530086ee51976cdc993ad0b494ebf6c602f7",
+      "stored_bytes": 1332,
+      "stored_sha256": "e788bbb303c89e0c2873dcd52154530086ee51976cdc993ad0b494ebf6c602f7",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/command.json",
+      "source_bytes": 116,
+      "source_sha256": "2a3d1b376576f5fd9e23233d95b37c20aecf60a753fbf96d1d518f4a7ee7e016",
+      "stored_bytes": 116,
+      "stored_sha256": "2a3d1b376576f5fd9e23233d95b37c20aecf60a753fbf96d1d518f4a7ee7e016",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/exact_cell_reference.csv",
+      "source_bytes": 252197,
+      "source_sha256": "0119c7c0a499621e30f0f0c28cd00f97619427e41fbf482eec6265f756c05b65",
+      "stored_bytes": 17442,
+      "stored_sha256": "75027019fbb48b3c237760c7ffafd8e0ceba9170b286171a66031256cdac2b98",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/final.dat",
+      "source_bytes": 1554501,
+      "source_sha256": "f9fc637914f8e92d0389860eead92631d14ab7021c9ced593859c18620be9eea",
+      "stored_bytes": 435616,
+      "stored_sha256": "74544f82284d3e13e2a186896a11aeeb76985b8d138642a422d65849f1ddc8e6",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/final.fv",
+      "source_bytes": 458960,
+      "source_sha256": "50154dcf207c4b4a1673e7efadc644dc502cc266eb1b27b11c5e0a2c4e15bb10",
+      "stored_bytes": 169442,
+      "stored_sha256": "d3d6c9fb4edfe3b89edb5731f7076f0af7e26bd7ba932effefb07875fbe3b5d1",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/final_velocity.dat",
+      "source_bytes": 209621,
+      "source_sha256": "11d2e605161245c76e25876f74f5a958193a4fcccedd116c62013116da4be138",
+      "stored_bytes": 73828,
+      "stored_sha256": "e786e143cc70ef1b19bc23c8788bcac7d0c019dd70031fa534e417c3ab6f869f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/history.csv",
+      "source_bytes": 8142,
+      "source_sha256": "a74a065dfe242a7f8a7464c6e70cea15644385ceedef47cd7dcc455303fb304e",
+      "stored_bytes": 3456,
+      "stored_sha256": "6a3914d67156071cb985b4b9ec8f6613e46fd8bacfaa21e4ae3e108e9fa6f5b1",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/initial.dat",
+      "source_bytes": 952349,
+      "source_sha256": "c438f0e69e64e77539bdb99329f9cf340872ff96e9501386b0dcedb2c339c6e2",
+      "stored_bytes": 23065,
+      "stored_sha256": "f98d550b971d9ab8a0a4bb34ff6a4baafb3104cdeb5cf05421e301e4c1190ff7",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/initial.fv",
+      "source_bytes": 458960,
+      "source_sha256": "b1ab5d73072486b392ff73e50e95ec55b65cfe5f3db8e045792c9a398bd5926b",
+      "stored_bytes": 20885,
+      "stored_sha256": "19e17f1bfe6f8a0d0aa959d8981f1563e7fa74ae49d4ccd80a2525b44683cce2",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/process.json",
+      "source_bytes": 82,
+      "source_sha256": "922f5a8a6a5a81eee86caef0e0873c1a6e5fb75616619652bc70c2cc73065e93",
+      "stored_bytes": 82,
+      "stored_sha256": "922f5a8a6a5a81eee86caef0e0873c1a6e5fb75616619652bc70c2cc73065e93",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/result.json",
+      "source_bytes": 893,
+      "source_sha256": "c02c69be414718dad25701bb8723598204b5e7831b9a6a6d2d8a2ed4e5860878",
+      "stored_bytes": 893,
+      "stored_sha256": "c02c69be414718dad25701bb8723598204b5e7831b9a6a6d2d8a2ed4e5860878",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/running.json",
+      "source_bytes": 163,
+      "source_sha256": "ac1a30e6260f9bad263accbb27102ce12505f8a5402ab544935f63fea1a74d43",
+      "stored_bytes": 163,
+      "stored_sha256": "ac1a30e6260f9bad263accbb27102ce12505f8a5402ab544935f63fea1a74d43",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/sod_accuracy.json",
+      "source_bytes": 544,
+      "source_sha256": "1a21d815dba4dc802d4c800a06cc1db720c4d1a585d39f614b4b2294c8e68fb7",
+      "stored_bytes": 544,
+      "stored_sha256": "1a21d815dba4dc802d4c800a06cc1db720c4d1a585d39f614b4b2294c8e68fb7",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/stderr.log",
+      "source_bytes": 2181,
+      "source_sha256": "c97e939ce9f89c3c5de6802dd7a55b69cefa41add21a6389fb4250515f596e36",
+      "stored_bytes": 494,
+      "stored_sha256": "38d3eb8864719f584e4a3621f5ca88bf5c95b0bc82e6dc0c96359ab0c7c514fa",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D2_sod_N64/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D2_sod_N64/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/assessment.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/assessment.json",
+      "source_bytes": 1304,
+      "source_sha256": "f7d6588a20a9738ae08271dd0cbb5f49b913ddc0c2ea3a1b319f5d3b649a2a1e",
+      "stored_bytes": 1304,
+      "stored_sha256": "f7d6588a20a9738ae08271dd0cbb5f49b913ddc0c2ea3a1b319f5d3b649a2a1e",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/command.json",
+      "source_bytes": 116,
+      "source_sha256": "61006db94f9931cedc6f472c4d8a0dae210a836090bdf7d8e94f0685fd384af3",
+      "stored_bytes": 116,
+      "stored_sha256": "61006db94f9931cedc6f472c4d8a0dae210a836090bdf7d8e94f0685fd384af3",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/exact_cell_reference.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/exact_cell_reference.csv",
+      "source_bytes": 253827,
+      "source_sha256": "6566b4eb23641c15a3c1ffbd5d4aad734bd14384f02d7d5a2c7e75336f37c2ad",
+      "stored_bytes": 13989,
+      "stored_sha256": "0caf7ee6a63a63fc789815c028fae2f54a4aa95cb780b0d0b3cab8c4670e2692",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/final.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/final.dat",
+      "source_bytes": 1834345,
+      "source_sha256": "3254d406f6ca36cbff33fc45f7cad978306e4a848de51aa7252236b739a31dad",
+      "stored_bytes": 512010,
+      "stored_sha256": "61aef0cc0c574e12f3b2fc664eec030bba133f72baf2e1309b0ae8de648ef603",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/final.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/final.fv",
+      "source_bytes": 458960,
+      "source_sha256": "cb8fd2ac4c2795e608ab09a35fd5b3a1df37da53fdb3fca59248489911ca6239",
+      "stored_bytes": 173233,
+      "stored_sha256": "9b6fa75323f2d27e5944ad518406309a33c0419c7c09f274877d4930fb8c3fc5",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/final_velocity.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/final_velocity.dat",
+      "source_bytes": 295409,
+      "source_sha256": "cd944825d35c5ccbc5d191d61bb92d647855f0b4a6340788878f6279ee20d421",
+      "stored_bytes": 111686,
+      "stored_sha256": "6d970338390db53174acf46d67a6b68978b8a793cde75a64a09b69032358e513",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/history.csv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/history.csv",
+      "source_bytes": 7663,
+      "source_sha256": "61424c33b7eee8b59bbbe7f5393c10bdc748603769e6af6caafeb7afa242418b",
+      "stored_bytes": 3510,
+      "stored_sha256": "683a66dba27167379d5d4a4bced27537a974560dede6e908679d6c2e8adabc6d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/initial.dat.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/initial.dat",
+      "source_bytes": 1099179,
+      "source_sha256": "3f6f62a6d2c07a06081162175c13710d7fa7681c095a3c3fb972e5976d50d7f0",
+      "stored_bytes": 27332,
+      "stored_sha256": "5863cc2894fb5914db9367460dbb831bdaacafe2ef2fed1691709042c9cf23de",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/initial.fv.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/initial.fv",
+      "source_bytes": 458960,
+      "source_sha256": "a8a1da2aa6731a5cfceeeebf4e0a5981ca6a542049326fefea19e7aaa5aefc10",
+      "stored_bytes": 19834,
+      "stored_sha256": "a99f3a17e651815745e2773827276ef832830dc5db423b3028c396d60847ecbe",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/process.json",
+      "source_bytes": 81,
+      "source_sha256": "2cc799f7080546740ea3f01de5bdbb12503091ccb6e75950ac3b8eecebbf2c51",
+      "stored_bytes": 81,
+      "stored_sha256": "2cc799f7080546740ea3f01de5bdbb12503091ccb6e75950ac3b8eecebbf2c51",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/result.json",
+      "source_bytes": 891,
+      "source_sha256": "5db2ec91d382aa6513d3766d80a75cfe9171cb088c7b6cef5cee301493d4ba91",
+      "stored_bytes": 891,
+      "stored_sha256": "5db2ec91d382aa6513d3766d80a75cfe9171cb088c7b6cef5cee301493d4ba91",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/running.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/running.json",
+      "source_bytes": 163,
+      "source_sha256": "4026b883e0ab39ef7f9ae9e7c65a0364f0abe91fe48255d2de512e0121053f88",
+      "stored_bytes": 163,
+      "stored_sha256": "4026b883e0ab39ef7f9ae9e7c65a0364f0abe91fe48255d2de512e0121053f88",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/sod_accuracy.json",
+      "source_bytes": 540,
+      "source_sha256": "d7045c3a2a9eb240af952f7d31e6c635aae7ae4afc09dc57c5ff31968067aa77",
+      "stored_bytes": 540,
+      "stored_sha256": "d7045c3a2a9eb240af952f7d31e6c635aae7ae4afc09dc57c5ff31968067aa77",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/stderr.log",
+      "source_bytes": 2049,
+      "source_sha256": "48afbd4d0bd2088c9ffa07b93529bd1067a6f6a27fa0a0b2dcb4dfe567c2fa47",
+      "stored_bytes": 473,
+      "stored_sha256": "f8990d585a8e6ea4ed8551987a646b33b45491bb8c0544048d8db388883e95f0",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/D3_sod_N16/stdout.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/D3_sod_N16/stdout.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_native_sod_large_v1/processes.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/processes.json",
+      "source_bytes": 4184,
+      "source_sha256": "d07d48e5e26593667789de583199bb2585381b73bfeb9cf57f3aca8e8e7a9bcb",
+      "stored_bytes": 4184,
+      "stored_sha256": "d07d48e5e26593667789de583199bb2585381b73bfeb9cf57f3aca8e8e7a9bcb",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/registration.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/registration.json",
+      "source_bytes": 1444,
+      "source_sha256": "346dc71a637e6fb3b422d1cdaa4bf20079654b82b5bd28b16ec3819d8a07e3e4",
+      "stored_bytes": 1444,
+      "stored_sha256": "346dc71a637e6fb3b422d1cdaa4bf20079654b82b5bd28b16ec3819d8a07e3e4",
+      "compression": null
+    },
+    {
+      "file": "fv_native_sod_large_v1/sod_accuracy.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_native_sod_large_v1/sod_accuracy.json",
+      "source_bytes": 1708,
+      "source_sha256": "d92eb27e3ba1bb48021d3169df06cf200700ec14b84c99ae6c50f267874b9296",
+      "stored_bytes": 1708,
+      "stored_sha256": "d92eb27e3ba1bb48021d3169df06cf200700ec14b84c99ae6c50f267874b9296",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/build.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/build_command.json",
+      "source_bytes": 530,
+      "source_sha256": "4b2d054ad43951fe7ef02778272bf43787c8bd5e1fcc698ee835384ae96ef274",
+      "stored_bytes": 530,
+      "stored_sha256": "4b2d054ad43951fe7ef02778272bf43787c8bd5e1fcc698ee835384ae96ef274",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/Exam/HydroCore/fv_power_geometry_audit.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/Exam/HydroCore/fv_power_geometry_audit.c",
+      "source_bytes": 4551,
+      "source_sha256": "814e6a60d94776d5386b2a9cfc11bc9e4fbf2f5d271772fab079442c5b9319b7",
+      "stored_bytes": 1719,
+      "stored_sha256": "3d540a3309054b8a92dc412d96a6bd8b625662e97a3d05ff5547b57a570172e8",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/Exam/gfs_fv_ale.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/Exam/gfs_fv_ale.h",
+      "source_bytes": 7243,
+      "source_sha256": "1213ed9b5d462a810bbeb8b92a9860c76c9228160a206b1fc857bbe21f045667",
+      "stored_bytes": 2582,
+      "stored_sha256": "8b3694f6dd1cbbb3ad74dc4c3d73ecfac8b33edd78d97026184f64bf7b9095ab",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/Exam/gfs_fv_geometry.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/Exam/gfs_fv_geometry.c",
+      "source_bytes": 12845,
+      "source_sha256": "61689bfa3d2f1c13bea50464694edc094eaa5a6404d356fe3a629828c4754141",
+      "stored_bytes": 4103,
+      "stored_sha256": "aeaa39ca69bc54c6ab400db71798cfcd52b75bb3fe2a506d06e2d6b782e6213f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/Exam/gfs_fv_native.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/Exam/gfs_fv_native.h",
+      "source_bytes": 1517,
+      "source_sha256": "07d69c656e6661cd09b99071300942020b055e1383525cfe09525e234b230ba3",
+      "stored_bytes": 667,
+      "stored_sha256": "c45436baa1a619bc2f3fd285c925a405fe22f0978c75cb929df89504744ea801",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/Voro/voro.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/Voro/voro.c",
+      "source_bytes": 47703,
+      "source_sha256": "0e4db11c3de07bf271f555effe136a5066e478cd2311e0add2412cfa68729382",
+      "stored_bytes": 10915,
+      "stored_sha256": "591cfdff2c5b4cee04871ab1ef305db351c12a4f7a8202804a7be375e631bd46",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/Voro/voro.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/Voro/voro.h",
+      "source_bytes": 10428,
+      "source_sha256": "1b981eb321e10ec08fa68f4e2c04f3f7c2a9c0ee14e49a3f5572d59987aeaacc",
+      "stored_bytes": 2817,
+      "stored_sha256": "a8d56a29bf71990dafde633b3696ccc5e48078f59bba6b31328901e62c7d8a8c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/frozen_source/indxflag.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/frozen_source/indxflag.h",
+      "source_bytes": 84,
+      "source_sha256": "5b679b66f652752cce5f24029c409e234f7ebbb95fa3b442e9ab05b8a7d2c5f3",
+      "stored_bytes": 91,
+      "stored_sha256": "69c90bf696408830c3fe290bfc4fe541f8b48c2999717ccb631eee08759ab63d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/process.json",
+      "source_bytes": 102,
+      "source_sha256": "7fef573a5ed5bd9676c855b21fb37641a8f41fc8ee50a091cd169f8de2520ea7",
+      "stored_bytes": 102,
+      "stored_sha256": "7fef573a5ed5bd9676c855b21fb37641a8f41fc8ee50a091cd169f8de2520ea7",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v1/stdout.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v1/stdout.json",
+      "source_bytes": 419,
+      "source_sha256": "f39baf55612e26d01722e49751ea210b9678c9b3db3f7594e8a3420159b9ae49",
+      "stored_bytes": 419,
+      "stored_sha256": "f39baf55612e26d01722e49751ea210b9678c9b3db3f7594e8a3420159b9ae49",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/build.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/build_command.json",
+      "source_bytes": 530,
+      "source_sha256": "f1852dfc84c44c2dc0e6f4835eb481de27f7e7eb593fe6f369e240b4929aebf6",
+      "stored_bytes": 530,
+      "stored_sha256": "f1852dfc84c44c2dc0e6f4835eb481de27f7e7eb593fe6f369e240b4929aebf6",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/Exam/HydroCore/fv_power_geometry_audit.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/Exam/HydroCore/fv_power_geometry_audit.c",
+      "source_bytes": 5653,
+      "source_sha256": "bf77e8620226354a84e1a517c407e2a72931ddcaf4d2b7f03a598f301a6ab7c4",
+      "stored_bytes": 2120,
+      "stored_sha256": "e087214a0d41d29086ed0cf3280423531e15e7315185a299e1c50b5ef0d978ef",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/Exam/gfs_fv_ale.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/Exam/gfs_fv_ale.h",
+      "source_bytes": 7243,
+      "source_sha256": "1213ed9b5d462a810bbeb8b92a9860c76c9228160a206b1fc857bbe21f045667",
+      "stored_bytes": 2582,
+      "stored_sha256": "8b3694f6dd1cbbb3ad74dc4c3d73ecfac8b33edd78d97026184f64bf7b9095ab",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/Exam/gfs_fv_geometry.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/Exam/gfs_fv_geometry.c",
+      "source_bytes": 12845,
+      "source_sha256": "61689bfa3d2f1c13bea50464694edc094eaa5a6404d356fe3a629828c4754141",
+      "stored_bytes": 4103,
+      "stored_sha256": "aeaa39ca69bc54c6ab400db71798cfcd52b75bb3fe2a506d06e2d6b782e6213f",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/Exam/gfs_fv_native.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/Exam/gfs_fv_native.h",
+      "source_bytes": 1517,
+      "source_sha256": "07d69c656e6661cd09b99071300942020b055e1383525cfe09525e234b230ba3",
+      "stored_bytes": 667,
+      "stored_sha256": "c45436baa1a619bc2f3fd285c925a405fe22f0978c75cb929df89504744ea801",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/Voro/voro.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/Voro/voro.c",
+      "source_bytes": 47703,
+      "source_sha256": "0e4db11c3de07bf271f555effe136a5066e478cd2311e0add2412cfa68729382",
+      "stored_bytes": 10915,
+      "stored_sha256": "591cfdff2c5b4cee04871ab1ef305db351c12a4f7a8202804a7be375e631bd46",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/Voro/voro.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/Voro/voro.h",
+      "source_bytes": 10428,
+      "source_sha256": "1b981eb321e10ec08fa68f4e2c04f3f7c2a9c0ee14e49a3f5572d59987aeaacc",
+      "stored_bytes": 2817,
+      "stored_sha256": "a8d56a29bf71990dafde633b3696ccc5e48078f59bba6b31328901e62c7d8a8c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/frozen_source/indxflag.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/frozen_source/indxflag.h",
+      "source_bytes": 84,
+      "source_sha256": "5b679b66f652752cce5f24029c409e234f7ebbb95fa3b442e9ab05b8a7d2c5f3",
+      "stored_bytes": 91,
+      "stored_sha256": "69c90bf696408830c3fe290bfc4fe541f8b48c2999717ccb631eee08759ab63d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/process.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/process.json",
+      "source_bytes": 102,
+      "source_sha256": "1c6f1ceeb061b7655294a4ead059659c9fb6f1ef93c6b1d86681b959a5e1fc64",
+      "stored_bytes": 102,
+      "stored_sha256": "1c6f1ceeb061b7655294a4ead059659c9fb6f1ef93c6b1d86681b959a5e1fc64",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/registration.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/registration.json",
+      "source_bytes": 435,
+      "source_sha256": "ef7cf296de2f5b78ab857eaa498ac58a056c9adcc22f532d62b149b0da730ab7",
+      "stored_bytes": 435,
+      "stored_sha256": "ef7cf296de2f5b78ab857eaa498ac58a056c9adcc22f532d62b149b0da730ab7",
+      "compression": null
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/stderr.log",
+      "source_bytes": 906,
+      "source_sha256": "a33fdad1edc09a0c086cf9c8bbbab8797ff689c74e04d401ebd104dde684fae6",
+      "stored_bytes": 252,
+      "stored_sha256": "1a2f5211ca8b95929140844468dd2a508ab12c9928e3ceab72c8cd938478d361",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_power_geometry_gate_v2/stdout.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_power_geometry_gate_v2/stdout.json",
+      "source_bytes": 562,
+      "source_sha256": "5edd78c7bc573d137580e12e8f27086d2b65221a8cc8c1ccf4a12b019e183e3b",
+      "stored_bytes": 562,
+      "stored_sha256": "5edd78c7bc573d137580e12e8f27086d2b65221a8cc8c1ccf4a12b019e183e3b",
+      "compression": null
+    },
+    {
+      "file": "fv_sod_reference_v1/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/build.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/build_command.json",
+      "source_bytes": 262,
+      "source_sha256": "12b24bc8d70e2188e0c0e1d316e4ff790f005ccb94fee83df534fe361ccc1eec",
+      "stored_bytes": 262,
+      "stored_sha256": "12b24bc8d70e2188e0c0e1d316e4ff790f005ccb94fee83df534fe361ccc1eec",
+      "compression": null
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Exam/HydroCore/exact_sod_cell_reference.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Exam/HydroCore/exact_sod_cell_reference.c",
+      "source_bytes": 1856,
+      "source_sha256": "78f62907801123e5f4c37fd2649f364cc83748443151c86307710a8856fb3533",
+      "stored_bytes": 949,
+      "stored_sha256": "9dd2233f4d96469d277026f233d948d2ade267a6300d07af047db0f656ad9a6b",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Exam/gfs_pair.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Exam/gfs_pair.h",
+      "source_bytes": 5410,
+      "source_sha256": "debffcce81a82ee5bba01362241453c7cba01dfa303a48fd33e22b9fa28aac05",
+      "stored_bytes": 2228,
+      "stored_sha256": "6b1d4fd86e372da42d412e3b5d4b946ed6f3533ea571e0fe7a8ce2c5e148a903",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Exam/gfs_variational_core.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Exam/gfs_variational_core.h",
+      "source_bytes": 4535,
+      "source_sha256": "79b1011a8c9b66e0ceb1d966a908790cf16c96717c0ddcb9b206ed252904390b",
+      "stored_bytes": 1712,
+      "stored_sha256": "9402f0bd16a50754b7630accae1325d12b8f0bdd2a76639f8487d55ae8c8b404",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Exam/gfs_velocity_fit.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Exam/gfs_velocity_fit.h",
+      "source_bytes": 3818,
+      "source_sha256": "c5e5fbef9dfc34bd294029fd5ff6a4a95f9671c298d5b536584b69682b1bd000",
+      "stored_bytes": 1350,
+      "stored_sha256": "3b52c77b4e4003ce6557a5e15a2821d3db7972e466a73902f9dfbd4dc379881d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Hydro1DExam/gfs_unified1d.inc.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Hydro1DExam/gfs_unified1d.inc",
+      "source_bytes": 8461,
+      "source_sha256": "556dd9269afa9d21871dabd6817e8eaf6984f2b441117964556dcfa58a0a7508",
+      "stored_bytes": 2451,
+      "stored_sha256": "fc9dd840054b2e8fc0e4f0dfb5ad839d04d91bfd34a8c22c4f0ea74f30ea5a04",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Hydro1DExam/gfs_unified1d_implicit.inc.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Hydro1DExam/gfs_unified1d_implicit.inc",
+      "source_bytes": 4063,
+      "source_sha256": "22f34491cd15191edf89fdff9b4c2ae9bfbe8609b270a34e0f19b16b639777e0",
+      "stored_bytes": 1320,
+      "stored_sha256": "82237ee78b03f126f54353e393ab28fc97795ab7110e86f6da5f1aea53654502",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/frozen_source/Hydro1DExam/laguerre_sod.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/frozen_source/Hydro1DExam/laguerre_sod.c",
+      "source_bytes": 118552,
+      "source_sha256": "5f6dfb080eb14f59c14e924e0e1a55ac315b3613af8ccd071ae9c3eb36491fcf",
+      "stored_bytes": 28807,
+      "stored_sha256": "fe0d8c29f4ab89e229de65b81928137e9ac49877fadadc702e66b4c6488f570e",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_sod_reference_v1/manifest.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_sod_reference_v1/manifest.json",
+      "source_bytes": 838,
+      "source_sha256": "4d80ac245b6563a1e5605575827f86707f64e0ce969f9c76bc92b7d080d8919d",
+      "stored_bytes": 838,
+      "stored_sha256": "4d80ac245b6563a1e5605575827f86707f64e0ce969f9c76bc92b7d080d8919d",
+      "compression": null
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/Exam/HydroCore/geometry_audit.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/Exam/HydroCore/geometry_audit.c",
+      "source_bytes": 9453,
+      "source_sha256": "ac093dafbab96144b4dcbf85562b0aeea4a7466377e44efc65552b82cec133fe",
+      "stored_bytes": 2897,
+      "stored_sha256": "ec30454212232706ac71228e97df5b6e44b62e7f7f71b37ee32f05deaf6bfa38",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/Exam/gfs_variational_core.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/Exam/gfs_variational_core.h",
+      "source_bytes": 4535,
+      "source_sha256": "79b1011a8c9b66e0ceb1d966a908790cf16c96717c0ddcb9b206ed252904390b",
+      "stored_bytes": 1712,
+      "stored_sha256": "9402f0bd16a50754b7630accae1325d12b8f0bdd2a76639f8487d55ae8c8b404",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/Voro/voro.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/Voro/voro.c",
+      "source_bytes": 47703,
+      "source_sha256": "0e4db11c3de07bf271f555effe136a5066e478cd2311e0add2412cfa68729382",
+      "stored_bytes": 10915,
+      "stored_sha256": "591cfdff2c5b4cee04871ab1ef305db351c12a4f7a8202804a7be375e631bd46",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/Voro/voro.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/Voro/voro.h",
+      "source_bytes": 10428,
+      "source_sha256": "1b981eb321e10ec08fa68f4e2c04f3f7c2a9c0ee14e49a3f5572d59987aeaacc",
+      "stored_bytes": 2817,
+      "stored_sha256": "a8d56a29bf71990dafde633b3696ccc5e48078f59bba6b31328901e62c7d8a8c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/build.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/build_command.json",
+      "source_bytes": 442,
+      "source_sha256": "965b0694e4d9322b95e1aa9092f5afe0e541b6037702b0a7751475c61dd6e48b",
+      "stored_bytes": 442,
+      "stored_sha256": "965b0694e4d9322b95e1aa9092f5afe0e541b6037702b0a7751475c61dd6e48b",
+      "compression": null
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/indxflag.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/indxflag.h",
+      "source_bytes": 84,
+      "source_sha256": "5b679b66f652752cce5f24029c409e234f7ebbb95fa3b442e9ab05b8a7d2c5f3",
+      "stored_bytes": 91,
+      "stored_sha256": "69c90bf696408830c3fe290bfc4fe541f8b48c2999717ccb631eee08759ab63d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/current/stdout.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/current/stdout.json",
+      "source_bytes": 918,
+      "source_sha256": "610ae8cf81effe819077164ac54f887d75cdea0f5cf02efc6099b8187f0db3d9",
+      "stored_bytes": 918,
+      "stored_sha256": "610ae8cf81effe819077164ac54f887d75cdea0f5cf02efc6099b8187f0db3d9",
+      "compression": null
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/Exam/HydroCore/geometry_audit.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/Exam/HydroCore/geometry_audit.c",
+      "source_bytes": 9453,
+      "source_sha256": "ac093dafbab96144b4dcbf85562b0aeea4a7466377e44efc65552b82cec133fe",
+      "stored_bytes": 2897,
+      "stored_sha256": "ec30454212232706ac71228e97df5b6e44b62e7f7f71b37ee32f05deaf6bfa38",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/Exam/gfs_variational_core.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/Exam/gfs_variational_core.h",
+      "source_bytes": 4535,
+      "source_sha256": "79b1011a8c9b66e0ceb1d966a908790cf16c96717c0ddcb9b206ed252904390b",
+      "stored_bytes": 1712,
+      "stored_sha256": "9402f0bd16a50754b7630accae1325d12b8f0bdd2a76639f8487d55ae8c8b404",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/Voro/voro.c.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/Voro/voro.c",
+      "source_bytes": 43730,
+      "source_sha256": "3513f77b5b603986b4b57364fe69eca4f97cbadab5715ead0b44ba8c4c212a87",
+      "stored_bytes": 10239,
+      "stored_sha256": "727a7468a2f5bec1abe40ef58effc69e13afae8b7a1325ccd0f2a3cf23df9c5c",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/Voro/voro.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/Voro/voro.h",
+      "source_bytes": 10039,
+      "source_sha256": "660af81c238eba5b4e754098de489e63d9a390761305b60880e825400f8549dc",
+      "stored_bytes": 2699,
+      "stored_sha256": "24890073898bb093ab74e38c83688b7e3e1af4f1d494fc432ab8a04d78ed0314",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/build.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/build.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/build_command.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/build_command.json",
+      "source_bytes": 439,
+      "source_sha256": "5754a7e56912075e415bc58bee3ec7ca38b9b9da52f8a9e242e130ba43c6dab1",
+      "stored_bytes": 439,
+      "stored_sha256": "5754a7e56912075e415bc58bee3ec7ca38b9b9da52f8a9e242e130ba43c6dab1",
+      "compression": null
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/indxflag.h.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/indxflag.h",
+      "source_bytes": 84,
+      "source_sha256": "5b679b66f652752cce5f24029c409e234f7ebbb95fa3b442e9ab05b8a7d2c5f3",
+      "stored_bytes": 91,
+      "stored_sha256": "69c90bf696408830c3fe290bfc4fe541f8b48c2999717ccb631eee08759ab63d",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/stderr.log.gz",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "compression": "gzip"
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/parent/stdout.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/parent/stdout.json",
+      "source_bytes": 918,
+      "source_sha256": "610ae8cf81effe819077164ac54f887d75cdea0f5cf02efc6099b8187f0db3d9",
+      "stored_bytes": 918,
+      "stored_sha256": "610ae8cf81effe819077164ac54f887d75cdea0f5cf02efc6099b8187f0db3d9",
+      "compression": null
+    },
+    {
+      "file": "fv_push_default_geometry_regression_v1/result.json",
+      "source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/fv_push_default_geometry_regression_v1/result.json",
+      "source_bytes": 1635,
+      "source_sha256": "34f15e1f64a28cedcc0e08a59abc6dbc8a194b486ed17f6b0f6c69d6131b147b",
+      "stored_bytes": 1635,
+      "stored_sha256": "34f15e1f64a28cedcc0e08a59abc6dbc8a194b486ed17f6b0f6c69d6131b147b",
+      "compression": null
+    }
+  ]
+}

@@ -136,12 +136,13 @@ user target. A CPU prototype is not qualified by speculative GPU speedup.
 
 ## Current implementation boundary
 
-`Exam/gfs_fv_ale.h` begins the dimension-common primitive/frozen fan and
-forward-ray cone calculation. Its fixed five-slot payload embeds d+2
-independent variables with zero unused momenta; energy is always slot four.
-`fv_flux_audit.c` checks these native pieces. Optimized native C/C++ and
-actual Ada audits pass in `UNIFIED_HYDRO_FV_PRIMITIVES_2026-11-05.md`.
-No production geometry, weight solve, time update, restart ABI, or FV
-trajectory is enabled by that header. The separate Shu IC repair retains
-the existing W0 variational operator and implicit KDK; it is not a result
-for the new FV candidate. The complete objective is unfinished.
+The initial primitive checkpoint is documented in
+`UNIFIED_HYDRO_FV_PRIMITIVES_2026-11-05.md`. Subsequent actual native
+C/OpenMP geometry, weight solve, SSPRK2 and experimental restart storage
+are documented in `UNIFIED_HYDRO_FV_NATIVE_2026-11-05.md`. Thirteen
+corrected contact/Sod endpoints are complete, including 2D64/128 and
+3D8/16 Sod refinement; the remaining physical and performance gates are
+pending. Historical production entry points and accepted restart ABI are
+retained. The separate Shu IC repair uses the existing W0 variational
+operator and implicit KDK; it is not a result for the new FV candidate.
+The complete objective is unfinished.

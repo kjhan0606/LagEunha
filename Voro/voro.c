@@ -9,6 +9,12 @@
 static _Thread_local int voro3d_strict_geometry;
 static _Thread_local int voro3d_strict_failure;
 static _Thread_local Voro3D_StrictStats voro3d_strict_stats,voro3d_last_strict_stats;
+/* New FV callers explicitly request the mathematical power diagram.
+ * Historical entry points keep their fraction clamp and topology policy. */
+static _Thread_local int voro_true_power,voro_power_capacity,voro2d_power_failure;
+static postype voro_fraction(postype wi,postype wj,postype d2){
+	return voro_true_power ? .5+.5*(wi-wj)/d2 : getwfrac(wi,wj,d2);
+}
 
 void voro3D_EulerRot(Voro3D_point *rin, int np, postype theta, postype phi, postype psi){
 	Voro3D_point res,*r;
@@ -207,6 +213,23 @@ Voro2D_Corner Voro2D_FindIntersection(
 		postype wfrac,
 		postype *tt
 		){
+	if(voro_true_power){
+		Voro2D_Corner result=*a;*tt=0;
+		long double ax=a->x,ay=a->y,nx=neigh->x,ny=neigh->y;
+		long double dx=(long double)b->x-ax,dy=(long double)b->y-ay;
+		long double denominator=dx*nx+dy*ny,plane=(long double)wfrac*(nx*nx+ny*ny);
+		long double numerator=plane-(ax*nx+ay*ny);
+		if(denominator==0||!isfinite(denominator)||!isfinite(numerator)){voro2d_power_failure=1;return result;}
+		long double t=numerator/denominator;
+		if(!isfinite(t)){voro2d_power_failure=1;return result;}
+		if(t<0||t>1){
+			long double ex=t<0?ax:b->x,ey=t<0?ay:b->y,x=ex*nx,y=ey*ny;
+			long double bound=64*DBL_EPSILON*(fabsl(x)+fabsl(y)+fabsl(plane));
+			if(fabsl(x+y-plane)>bound){voro2d_power_failure=1;return result;}
+			t=t<0?0:1;
+		}
+		result.x=(postype)(ax+t*dx);result.y=(postype)(ay+t*dy);*tt=(postype)t;return result;
+	}
 //	Voro2D_Corner res;
 	Voro2D_point ba = Vec2DSub(b,a);
 	Voro2D_point *pba = &ba;
@@ -306,6 +329,12 @@ int Voro2D_CutOrStay(
 		Voro2D_Corner *a,     // corner whether it will be cut away or not
 		postype wfrac         // Laguerre fraction of distance from the center toward *a
 		){
+	if(voro_true_power){
+		long double x=(long double)a->x*neigh->x,y=(long double)a->y*neigh->y;
+		long double plane=(long double)wfrac*((long double)neigh->x*neigh->x+(long double)neigh->y*neigh->y);
+		long double bound=64*DBL_EPSILON*(fabsl(x)+fabsl(y)+fabsl(plane));
+		return x+y-plane>bound?Outside:Inside;
+	}
 	// This is for Voronoi. It compares the lengths between 0-a and neigh-a.
 	/*
 	postype dist = Vec2DInnP(a,a);
@@ -470,6 +499,7 @@ int Voro3D_CreateOneVertex(
 		int pp, 
 		postype wfrac
 		){
+	if(voro_true_power&&ip>=voro_power_capacity){voro3d_strict_failure=1;return -1;}
 	int k;
 	voroVertex[ip] = Voro3D_FindIntersection(now, target, neighbor+pp, wfrac);
 	voroVertex[ip].link[0] = target;
@@ -605,7 +635,7 @@ int CreateNewCorner(
 		postype dist = sqrt(neighbor->x*neighbor->x + neighbor->y*neighbor->y)*0.5;
 		Voro2D_Corner line  = Vec2DSubCorner(old,new);
 		postype linelength = sqrt(Vec2DInnP(&line,&line));
-		if(linelength < EPS*dist )
+		if(voro_true_power ? linelength==0 : linelength < EPS*dist)
 		{
 			if(old == lower->lowerlink){
 				Voro2D_Corner *upperalive = lower->upperlink;
@@ -1250,6 +1280,7 @@ int Voro2D_FindVC(
 			neighbors[j].csound = inputneighbors[i].csound;
 			neighbors[j].pressure = inputneighbors[i].pressure;
 			neighbors[j].dist2 = (Vec2DInnP(neighbors+j, neighbors+j));
+			if(voro_true_power&&!(neighbors[j].dist2>0))return -1;
 			mindist2 = MIN(mindist2, neighbors[j].dist2);
 			neighbors[j].bp = inputneighbors[i].bp;
 			neighbors[j].w2 = inputneighbors[i].w2;
@@ -1265,13 +1296,22 @@ int Voro2D_FindVC(
 	qsort(neighbors, np, sizeof(Voro2D_point), sort2Ddrad2);
 
 
-	ip = Voro2D_InitializeCorner(voroCorner,mp,boxsize);
+	ip = Voro2D_InitializeCorner(voroCorner,voro_true_power?MIN(mp,16):mp,boxsize);
+	int last_negative=-1;
+	if(voro_true_power){
+		maxdist2=0;for(j=0;j<ip;j++)maxdist2=MAX(maxdist2,Vec2DInnP(voroCorner+j,voroCorner+j));
+		for(j=0;j<np;j++)if(voro_fraction(w2p,neighbors[j].w2,neighbors[j].dist2)<0)last_negative=j;
+	}
 	for(i=0;i<np;i++){
 //		if(neighbors[i].dist2>4*maxdist2) break;
-		if(neighbors[i].drad2>maxdist2) break;
+		if(neighbors[i].drad2>maxdist2&&(!voro_true_power||i>last_negative)) break;
 		postype dist12 = Vec2DInnP(neighbors+i, neighbors+i);
 		postype w2q = neighbors[i].w2;
-		postype wfrac = getwfrac(w2p, w2q, dist12);
+		postype wfrac = voro_fraction(w2p, w2q, dist12);
+		if(voro_true_power){
+			int inside=0;for(j=0;j<ip;j++)if(voroCorner[j].status==Active&&Voro2D_CutOrStay(neighbors+i,voroCorner+j,wfrac)!=Outside){inside=1;break;}
+			if(!inside)return -1;
+		}
 		j = 0;
 		while(j<ip){
 			if(voroCorner[j].status==Active && Voro2D_CutOrStay(neighbors+i,voroCorner+j,wfrac) == Outside){
@@ -1281,13 +1321,15 @@ int Voro2D_FindVC(
 				Voro2D_Corner *upper = voroCorner+j;
 				upper = FindingUpperLimit(neighbors+i,upper, wfrac);
 				InactivateLowerAndUpper(lower,upper);
-				if(ip + 4 > mp){
+				if(ip + 4 > (voro_true_power?voro_power_capacity:mp)){
+					if(voro_true_power)return -1;
 					fprintf(stderr,"[VORO_OVF] Voro2D_FindVC: ip=%d would exceed mp=%d (need +2). i=%d/%d ctrCenter=(%g,%g)\n",
 						ip, mp, i, np, (double)ctrCenter->x, (double)ctrCenter->y);
 					fflush(stderr);
 					return ip;  /* abort cell — will leave partial corners */
 				}
 				ip = CreateNewCorner(lower,upper, voroCorner,ip,neighbors+i,i, wfrac);
+				if(voro_true_power&&voro2d_power_failure)return -1;
 				ip = Voro2D_Trim_Corner(voroCorner,ip, &maxdist2);
 				j = ip;
 				break;
@@ -1299,6 +1341,16 @@ int Voro2D_FindVC(
 	}
 	ctrCenter->w2ceil = get2Dw2pCeil(voroCorner, neighbors);
 	return ip;
+}
+
+int Voro2D_FindVCPowerStrict(Voro2D_point *center,Voro2D_point *input,
+		Voro2D_point *neighbors,int np,Voro2D_Corner *corner,int capacity,postype boxsize){
+	if(sizeof(postype)!=sizeof(double)||capacity<16)return -1;
+	int previous=voro_true_power,previous_capacity=voro_power_capacity,previous_failure=voro2d_power_failure;
+	voro_true_power=1;voro_power_capacity=capacity;voro2d_power_failure=0;
+	int result=Voro2D_FindVC(center,input,neighbors,np,corner,16,boxsize);
+	if(voro2d_power_failure)result=-1;
+	voro_true_power=previous;voro_power_capacity=previous_capacity;voro2d_power_failure=previous_failure;return result;
 }
 
 int InactivateOutsideVertex(
@@ -1405,6 +1457,7 @@ int Voro3D_FindVC(
 			neighbors[j].csound = inputneighbors[i].csound;
 			neighbors[j].pressure = inputneighbors[i].pressure;
 			neighbors[j].dist2 = (Vec3DInnP(neighbors+j,neighbors+j));
+			if(voro_true_power&&!(neighbors[j].dist2>0))return -1;
 			mindist2 = MIN(mindist2, neighbors[j].dist2);
 			neighbors[j].w2 = inputneighbors[i].w2;
 			postype w2q = neighbors[j].w2;
@@ -1418,14 +1471,24 @@ int Voro3D_FindVC(
 	qsort(neighbors, np, sizeof(Voro3D_point), sort3Ddrad2);
 
 	ip = Voro3D_InitializeVertex(voroVertex,mp,boxsize);
+	int last_negative=-1;
+	if(voro_true_power){
+		maxdist2=0;for(j=0;j<ip;j++)maxdist2=MAX(maxdist2,Vec3DInnP(voroVertex+j,voroVertex+j));
+		for(j=0;j<np;j++)if(voro_fraction(w2p,neighbors[j].w2,neighbors[j].dist2)<0)last_negative=j;
+	}
 
 
 	for(i=0;i<np;i++){
 //		if(neighbors[i].dist2>4*maxdist2) break;
-		if(neighbors[i].drad2>maxdist2) break;
+		if(neighbors[i].drad2>maxdist2&&(!voro_true_power||i>last_negative)) break;
 		postype dist12 = Vec3DInnP(neighbors+i, neighbors+i);
 		postype w2q = neighbors[i].w2;
-		postype wfrac = getwfrac(w2p, w2q, dist12);
+		postype wfrac = voro_fraction(w2p, w2q, dist12);
+		if(voro_true_power){
+			int inside=0;postype offset;
+			for(j=0;j<ip;j++)if(voroVertex[j].status==Active&&Voro3D_CutOrStay(neighbors+i,voroVertex+j,wfrac,&offset)!=Outside){inside=1;break;}
+			if(!inside)return -1;
+		}
 		j = 0;
 		while(j<ip){
 			postype offset;
@@ -1469,6 +1532,16 @@ int Voro3D_FindVCStrict(Voro3D_point *center,Voro3D_point *input,
 	return result;
 }
 void Voro3D_LastStrictStats(Voro3D_StrictStats *stats){if(stats)*stats=voro3d_last_strict_stats;}
+
+int Voro3D_FindVCPowerStrict(Voro3D_point *center,Voro3D_point *input,
+		Voro3D_point *neighbors,int np,Voro3D_Vertex *vertex,int capacity,
+		postype boxsize,int shrink,int *work){
+	if(capacity<16)return -1;
+	int previous=voro_true_power,previous_capacity=voro_power_capacity;
+	voro_true_power=1;voro_power_capacity=capacity;
+	int result=Voro3D_FindVCStrict(center,input,neighbors,np,vertex,16,boxsize,shrink,work);
+	voro_true_power=previous;voro_power_capacity=previous_capacity;return result;
+}
 
 int Voro3D_FaceExtract(Voro3D_Vertex *Vertex, int mp,int fid, Voro3D_point *outcorner){
 	int i,j,k;
