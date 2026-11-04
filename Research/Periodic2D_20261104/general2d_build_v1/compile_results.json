@@ -1,0 +1,22 @@
+[
+  {
+    "name": "exam",
+    "exit": 0,
+    "stderr": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/exam.c:8298:76: warning: format specifies type 'int' but the argument has type 'ptrdiff_t' (aka 'long') [-Wformat]\n 8298 |         fprintf(stderr,\"[UPDV] P%d after mkLinkedList2D npad=%d\\n\", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);\n      |                                                              ~~                   ^~~~~~~~~~~~~~~~~\n      |                                                              %td\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/eunha.h:1220:27: note: expanded from macro 'VORO_NPAD'\n 1220 | #define VORO_NPAD(simpar) ((simpar)->bp.voro.npad)\n      |                           ^~~~~~~~~~~~~~~~~~~~~~~~\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/exam.c:11200:41: warning: incompatible pointer types passing 'treevorork4particletype *' (aka 'struct treevorork4particletype *') to parameter of type 'const treevorostressrk4particletype *' (aka 'const struct treevorostressrk4particletype *') [-Wincompatible-pointer-types]\n 11200 |         gfs_rk4_failure_snapshot(simpar,VORORK4_TBP(simpar),VORO_NP(simpar),\n       |                                         ^~~~~~~~~~~~~~~~~~~\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/eunha.h:1231:29: note: expanded from macro 'VORORK4_TBP'\n 1231 | #define VORORK4_TBP(simpar) ((simpar)->bp.voro.p.tbprk4)\n      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/exam.c:10573:40: note: passing argument to parameter 'data' here\n 10573 |                 const treevorostressrk4particletype *data, int np,\n       |                                                      ^\n2 warnings generated.\n"
+  },
+  {
+    "name": "exam_gpu_extract",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "name": "gfs_viscosity_implicit",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "name": "gfs_unified_gpu",
+    "exit": 0,
+    "stderr": ""
+  }
+]

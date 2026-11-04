@@ -1,0 +1,353 @@
+{
+  "status": "experimental; basic periodic 2D evolution completed, axis-shock transverse mode unresolved; full goal incomplete",
+  "parent_commit": "899ee11acd9b39b8ab4507f42151d3220d7969b0",
+  "site_source": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1",
+  "run_root": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1",
+  "source_snapshot_sha256": {
+    "Docs/UNIFIED_HYDRO_PERIODIC_2D_2026-11-04.md": "6541fe17ffda14d947b82801a33b10dee89181f9e344bc7f719d840975b80035",
+    "Docs/UNIFIED_HYDRO_PROGRESS_2026-11-04.md": "9ff813f47ed271d7df0cf59bce9f76e448329b7af3956a94387e1e4aca947f4e",
+    "Docs/UNIFIED_HYDRO_STAGE_PLAN_2026-11-04.md": "34989868da473a67011086c2432cefabfb58f2459cea40dea53f229e51a0ea60",
+    "Exam/HydroCore/README.md": "8843c75e48f2d1c98bc7033bc9dd0a9a2ad81fa735ed12fe740b9a508ca7de15",
+    "Exam/HydroCore/exact_sod_sample.c": "31b8f5e976fb240bd79b31eb1ba47017b5c566b35aad9706428cfbeb1d407fc7",
+    "Exam/HydroCore/periodic_viscosity_audit.c": "ceb078b5560a5b9af715b6cf3d1d9f3760973074f692b7fe9edcbb330bdf7a58",
+    "Exam/HydroCore/viscosity_failure_replay.c": "7fe3e126635050beca99defade3bb4b98093d2deccd697e48631eb8c36f19620",
+    "Exam/NativeU64/exam.c": "bb12280268ac9d53c948a53c7a55c20f1f3ebe4ffade4a6d1d52eac29dec6219",
+    "Exam/NativeU64/exam_gpu.h": "7b7d3c455062c532440c24c29ce8c88baf46a848c6a47d3dcc8e829573db44d4",
+    "Exam/NativeU64/exam_gpu_extract.c": "0c5a78a95204821f69d9d5f96db83e3b14075972e4992ed8290d5c0f2c1d7abc",
+    "Exam/NativeU64/gfs_unified_gpu.cu": "5290b86ddeb763c1a50cb5a6de81215d418f6cae39163fa4fe42efca32a07767",
+    "Exam/NativeU64/gfs_unified_gpu.inc": "d7ca7126e5c67b83b79bbcd274afa50a4633055fc2f41aaf0c185ab13785cdc8",
+    "Exam/NativeU64/gfs_unified_kdk.inc": "1977956960fb2943fd6d77652d58d5af11b770e1282cceee49ff755c183f739f",
+    "Exam/NativeU64/gfs_unified_viscosity.inc": "23492ed70bb66bfd1d17c1476745a04500e59aa3c0ca9aa41f590005b0d35045",
+    "Exam/NativeU64/unified_initial.c": "c36a9af9ee180837c6afa34d1faf99476f641ab3e53f1854e8e10bf4ec1d9ddf",
+    "Exam/gfs_unified_runtime.h": "be8cc5523943502ffc393835e53c0d57d5f628addeeed6286f7f70525b134c5f",
+    "Exam/gfs_viscosity_implicit.c": "30bed4d6db8898f5c1c2094b2bb6ff1f127875ef479dc96f95f1e6b16bf09c0f",
+    "Exam/gfs_viscosity_implicit.h": "bd4722ab959cae91324016730e1b011c879ac6b4826ea16a2fd187c28244e50d",
+    "Hydro1DExam/gfs_unified1d_implicit.inc": "22f34491cd15191edf89fdff9b4c2ae9bfbe8609b270a34e0f19b16b639777e0"
+  },
+  "build_scope": "changed C/CUDA translation units recompiled; existing main GPU object and other libraries reused; no clean full-source or MPI qualification",
+  "manuscript_commit": "6cb0e1a471aa46aad65496a30ec23c5da5158dfa",
+  "retained_gpfs_files": [
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_build_v1/unified_native_general.exe",
+      "bytes": 12871976,
+      "sha256": "e4a855f1ed24ab5f9ae87aceafc0c184bd89da3a3bf647c738973e8fac4a0668"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_build_v2/unified_native_general.exe",
+      "bytes": 12875632,
+      "sha256": "779108984d4c7cde0b5b31b9eb399167bfad740a89e6f242b1a33d5c2fd039d3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_build_v3/unified_native_general.exe",
+      "bytes": 12876000,
+      "sha256": "baa4924d2fa9600c7ece994d5d824a939fd10cacc21092253dc3af841b24ce5e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_initial_v1/sod.bin",
+      "bytes": 178292,
+      "sha256": "82ffb9ca09e7cf631ada41b8558d3ad9744e519ca3573750098e3c14fd2fb297"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_initial_v1/moving_contact.bin",
+      "bytes": 178292,
+      "sha256": "964a70c382e739fccff760b93b2a8962ce5101454c928ba1857a7951fbcb6eb6"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_initial_v1/contact.bin",
+      "bytes": 178292,
+      "sha256": "6a7593f826e873061f448a653e1007a2fae2ee16c49c38e87beb46f92a688dc0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_initial_v1/shear.bin",
+      "bytes": 178292,
+      "sha256": "9a2342931bf6e0507b0d644edb0f93a152023ad91651bad111d2ad5993db0a30"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_contact_preflight_v1/khout.000003.dat",
+      "bytes": 712820,
+      "sha256": "5cd40d08e40ca5285bcdb8b07a83ce92da25d26659bdf2bc78af05ecf4e027d0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_contact_preflight_v1/initial.bin",
+      "bytes": 712820,
+      "sha256": "6e1295ac895d7b6106122c71ca3bac38418b6c912ed1a732b98c959f5b20d0ad"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/contact_N64_axis/initial.bin",
+      "bytes": 2850932,
+      "sha256": "547ce7e4d91bf6ff24c623a49f3b166bf3b42f5ba627ff459a1b731764c7cf80"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/contact_N64_axis/khout.000068.dat",
+      "bytes": 2850932,
+      "sha256": "b9bc8d7218224c77bad683ad89bc76e0fe32ac45a52879f6d351ac831ee33d67"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N128_axis/initial.bin",
+      "bytes": 11403380,
+      "sha256": "525d086f64502b1144f3e56b9460f5e4e17e4583684f1f1af5c80143ba70e384"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N128_axis/khout.000068.dat",
+      "bytes": 11403380,
+      "sha256": "f8b82cafe99a3480820c712840cab7f31e218f0226c7d58a5315db045786f582"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_axis/khout.000036.dat",
+      "bytes": 2850932,
+      "sha256": "3cdc5a4ccd884cb85bfa453e691a7ff009ff8bcedd2c729c2123dd2261379ce4"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_axis/initial.bin",
+      "bytes": 2850932,
+      "sha256": "7d7f05f06ff45884f8217111db45ff3d8eaea8bb4b8d0b588f3cbf2c689613d3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/shear_N32_axis/initial.bin",
+      "bytes": 712820,
+      "sha256": "3598d88d3cc6d27425af644dd14d44604380d5441b143bb170fefaf806c6608c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/shear_N64_axis/initial.bin",
+      "bytes": 2850932,
+      "sha256": "01a9c41156274fb788f7cdfef6a16517ddaa8abf446e93a141e3787079626af2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/contact_N32_axis/khout.000036.dat",
+      "bytes": 712820,
+      "sha256": "f574f951a9771eebeb5def595d686ddb9201d8c5dbf6c0bad42d210427e44444"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N64_diagonal/khout.000135.dat",
+      "bytes": 2850932,
+      "sha256": "467c03cb9358503bd5dfdf6ca76a18e05dd84fb2ce0ef170e07902d91f315a77"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N64_diagonal/initial.bin",
+      "bytes": 2850932,
+      "sha256": "617b0dbd31b781f863cc4aaeec2680512bb923eb6f7f002676dc16c676c3e8c5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N64_axis/khout.000135.dat",
+      "bytes": 2850932,
+      "sha256": "341932916769dbe2c06c937cb52f47f253d1044277c97a4325598ff7fb9a6ffe"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N64_axis/initial.bin",
+      "bytes": 2850932,
+      "sha256": "2e099d2dd2c48bc41b94a7216fab239821e565aa50a3955ec329a2e5ace156bd"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N32_diagonal/initial.bin",
+      "bytes": 712820,
+      "sha256": "57985b0d5e865bde3a637a3d29c1175c3a18e240696f8a32376fe6a3ad20a9b0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N32_diagonal/khout.000068.dat",
+      "bytes": 712820,
+      "sha256": "6d1bdf71b2fb9e14e79164d0deee03bd9629ac98e527b833bae0b688bec90559"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N32_axis/initial.bin",
+      "bytes": 712820,
+      "sha256": "2b39018f676eed8facedb19c6b0029993b05eb6c8aa93e37e6c0f05eeb06eb8e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N32_axis/khout.000068.dat",
+      "bytes": 712820,
+      "sha256": "a653ad45826298747c287d74a9917e773c64e8d04085cf2f241d634140dc7eed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_diagonal/khout.000025.dat",
+      "bytes": 2850932,
+      "sha256": "c1b522f1e3d4d0837477e246230a0a71f8e4a87b8374c3617cb6f115278deb74"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_diagonal/initial.bin",
+      "bytes": 2850932,
+      "sha256": "2fb5a6f220fcd5ff7bcb9a6e925c8d4ffbccc4159d6308adeea2d12be0961dbf"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_shear_fail_capture_v1/unified_viscosity_failure.bin",
+      "bytes": 122088,
+      "sha256": "7f5ec893437e37dd6b10454b7304fe1c041d5040421da39ad956f4be9484df8c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_shear_corrected_v1/N128/khout.000050.dat",
+      "bytes": 11403380,
+      "sha256": "3dd3ea66c749f7a2755925abb798bebd03476d47c692e5afc451fbbd344c44bf"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_shear_corrected_v1/N128/initial.bin",
+      "bytes": 11403380,
+      "sha256": "ddd8987ab48cbc4a9f35280d134e79809423ae0cc386aacc1473247167a419eb"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_shear_corrected_v1/N32/khout.000014.dat",
+      "bytes": 712820,
+      "sha256": "315971f612fee3800c3064ae2fcbcea44839be96543b72fb87db5ee8f4c4c55a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_shear_corrected_v1/N64/khout.000026.dat",
+      "bytes": 2850932,
+      "sha256": "ae2cd7a6421cae6e2f03f8d2c888765a96a633d5d936410c48d9970fd269034f"
+    }
+  ],
+  "archive_sha256": {
+    "Research/Periodic2D_20261104/README.md": "a93c784f066a6f9139b42650668155cef66fd25320d145ff11eddb807a74d775",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/blast/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/blast/stdout.log": "9248ba9772393e91e4240d09827324e8d4089fa291dd29213e7c40eaf8e600eb",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/collision/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/collision/stdout.log": "d45b7bfbf0797bea7205126276c242beb07db8ec273c3c7930756aa2044045d6",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/contact/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/contact/stdout.log": "a62ac7ec3abd882a9560b210342cc369fea901efb7b53e65cb12c33ba53f0f54",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/dblfan/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/dblfan/stdout.log": "10f24fb4a825b82136897263148dff2344b86e0d6725a63b2a4bc49c9afc1544",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/implicit_graph_audit.jsonl": "9234ab637b60e2520c3213de2eba3985dc7b2231c2bd8586b9e4ffe4fec08f55",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/lax/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/lax/stdout.log": "1dd1c86396dfda1e78616891500b15349ec9d4ee7eff7c7d0adbb94944b28e54",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/moving_contact/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/moving_contact/stdout.log": "5797c617f3408bee52e488d605a71c4b50d47176a04235159cd53f9a89e9a8db",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/noh/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/noh/stdout.log": "4d572b292227cd3fea5c114b9bc6bd844a49d458f40b36f10849028a3bf64504",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/periodic_viscosity_audit.jsonl": "d3a80170d398e9a20e3c95be41abbfae902872f3f986ea2bfdd24b4ff4c5f91e",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/results.json": "96e3ba2d0cdde201ec92a1427bcfa757fbf2f642c325848a92791b8f47be783b",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/shuosher/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/shuosher/stdout.log": "c23bf43729c9833befd19ebadb5da3b9bd70d0887deec64da99614d19c41074e",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/sod/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/correction_activation_regression_v1/sod/stdout.log": "f5fa77ec4e1038e30b1d3e7378b720a8054100fd1172f3308a5b897336189b05",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N128/final.csv": "a8eb45893571f2099e0ac008e20fbab0294bbd76c60ae50e55c1abaa809ea4d0",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N128/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N128/stdout.log": "452e2a64ca24723b26ac75cacc2f11c786b4bd5f50a035b4b3735ac93dbd637c",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N32/final.csv": "90bc6a8485fdd6794e20b21e562942a4c13d59ea55b94582dc1bf60267851a6a",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N32/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N32/stdout.log": "a0f22e9e8c890c4535a73388392e74853ceade01d6ec1dd30b965b1343669fcc",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N64/final.csv": "868225a1a0c51680cea1ea6bba6a41259e6192a429ddb966ac87820627275bd4",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N64/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/N64/stdout.log": "2477ed75f9d74be5cbe2dfa1ebbfc6bb30601b5155d5ff936842672f156a39bf",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/exact_build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_1d_references_v1/results.json": "41dee647c98dec9c1f564c8f5aa39bcac67fa61403b3e10a4d550ed452d16e05",
+    "Research/Periodic2D_20261104/general2d_build_v1/commands.json": "ee7a0d32e6824cfa25160f0507c83f99f977a70c135db5477cc4ec59152d6e26",
+    "Research/Periodic2D_20261104/general2d_build_v1/compile_results.json": "ec152cf2161d5f17de2e3154affa0dabcea91da2c7e1d172487b5201484fc9e5",
+    "Research/Periodic2D_20261104/general2d_build_v1/exam.log": "023bf3b48f11ea74000b9f87226d7c4c292913aa0456273d0b39ffae4ab31f4e",
+    "Research/Periodic2D_20261104/general2d_build_v1/exam_gpu_extract.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v1/gfs_unified_gpu.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v1/gfs_viscosity_implicit.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v1/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v1/link_command.json": "bd368afbbc468e505cfab0819251c84e64df4c477760585d1b71cd4f56067aab",
+    "Research/Periodic2D_20261104/general2d_build_v1/link_corrected.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v2/exam_gpu_extract.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v2/gfs_viscosity_implicit.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v2/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v2/link_command.json": "c04179a6609db094f0e36b4f0ead0297489b0ac1b0d984bb927918290bada5dd",
+    "Research/Periodic2D_20261104/general2d_build_v3/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v3/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_build_v3/link_command.json": "c7d86625039c2a7c17dac31ab607fd20b9a7ca6160ca1806d03803869fb6bbfb",
+    "Research/Periodic2D_20261104/general2d_contact_preflight_v1/environment.json": "48fd1ebcb9580319e68d11a3dbdcf599a7a4e204544247acb975403326e70221",
+    "Research/Periodic2D_20261104/general2d_contact_preflight_v1/initial.json": "602705aba1e8679cd70d5d752250453f656d8f8978e631ec4cf17dd534f3d8aa",
+    "Research/Periodic2D_20261104/general2d_contact_preflight_v1/log": "ac5a9a9a9d73f5d09939da202a9519f57e89c7e1c992e1a673945b6396401dbf",
+    "Research/Periodic2D_20261104/general2d_contact_preflight_v1/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_contact_preflight_v1/registration.json": "f827c5ec706eddd66479270edf808d055e85268d3be81da9f2213460613fa161",
+    "Research/Periodic2D_20261104/general2d_contact_preflight_v1/result.json": "d8ed113a20f448c23ab8bcf4c39500024eabdb72bb09a2491e4bc566de666962",
+    "Research/Periodic2D_20261104/general2d_initial_v1/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/general2d_initial_v1/command.json": "72ce3f45dd28d82c7cbcea10ab39b5ee829b0991769f13cb2658278fa81887ef",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N128/environment.json": "088f6d793866ba3910107ae0792f4bdcc7466ebc1838a2e37b828fbb2b92efc9",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N128/initial.json": "fa196b494a3f29b4632d004f367dee7c1d99bd79d089403241c57093e759c893",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N128/log": "bc65a3ee91e128eaa3bbda52238ff621e5278126bd0947efdbe5b13557494230",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N128/params.dat": "0b230a34d89a3226b4b4e1e6989952e71672528e6963ab42bf9b81c52522a3a2",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N128/result.json": "1f49e132a19010acea858e3b528186eaff2c1aa0cd37bf6f8c2c26736ecf9aa3",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N32/environment.json": "088f6d793866ba3910107ae0792f4bdcc7466ebc1838a2e37b828fbb2b92efc9",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N32/log": "34675c5317b8865b803b3bbc4aa60a7b347a47e47cee5dee8f3c34ac5572544d",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N32/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N32/result.json": "67650ea7ba33b082a9491897db7affbdd468befce365d715da467d986a377235",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N64/environment.json": "088f6d793866ba3910107ae0792f4bdcc7466ebc1838a2e37b828fbb2b92efc9",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N64/log": "bd64731e4d9d6406192a4e45d01fbd911408480264bed5bdb503e2f298f2297f",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N64/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/N64/result.json": "c2e988ff700ed346952f351fff48717b1b1b274a220adff72c542a4b8b29087d",
+    "Research/Periodic2D_20261104/general2d_shear_corrected_v1/results.json": "d7eb560e21336ad2fdaa8602f10da6a7fd120a949de96e10d68acc1855ed7324",
+    "Research/Periodic2D_20261104/general2d_shear_fail_capture_v1/environment.json": "454f683a870722ba740e8fa308e219057fb9f3584609daf8c4a4f87505bbe2f5",
+    "Research/Periodic2D_20261104/general2d_shear_fail_capture_v1/log": "37da44b9cb603822cd427c93b5f88675c6907ad8541a2adf67d674f1fb9bdec7",
+    "Research/Periodic2D_20261104/general2d_shear_fail_capture_v1/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_trial_v1/analyse.py": "ccb97cd040016de571542f92f8cdcfff500a37bf06d23687ce26b673b11bfd8f",
+    "Research/Periodic2D_20261104/general2d_trial_v1/assessment.json": "e89c950a7417331b4a4ee1ab06544eabfcca5746cdfd176b4b921d1c3098fa9b",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N32_axis/environment.json": "2f62d82a7d165b984dd6a433fae5ea0a154cab0df2bbdabdc7b20bf6fe5034cc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N32_axis/log": "26d0d87717efcca29a740d26ce8ee16ec7a7b42ab4f48c35db8576bf8e8ae023",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N32_axis/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N32_axis/process.json": "a1499b59eee75731b83809c9e13e690a614dcb93712f894a21750fbeaeb0e7b7",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N32_axis/result.json": "3252f28d7183ffa3da82874d2ea8907cbfeab486cc9aa2a307e8e21832154662",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N64_axis/environment.json": "2f62d82a7d165b984dd6a433fae5ea0a154cab0df2bbdabdc7b20bf6fe5034cc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N64_axis/initial.json": "351ee855528dfb0395f6d408e63ca9ed50d39411deab744d053ceb819bfb3354",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N64_axis/log": "368a90f02f6f3cfc86b1ae5a37d0fa7dc47c2464bdbb6572f6c8ec107a6690fa",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N64_axis/process.json": "9524df46c1afbee51848216dc796dd6d61ae334f9aabca3e90441f2fe9f65d36",
+    "Research/Periodic2D_20261104/general2d_trial_v1/contact_N64_axis/result.json": "513e729bb98f11596370951353e87dc1e987e7255bfe23ca43c5971ab4d6bf73",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_axis/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_axis/initial.json": "79555a649f7afd1169dff96163b66bbec8e871cfa6c67dbc16d096de2d7f73ca",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_axis/log": "095df2584c2f4b60d4be86f6013312f15552de1eea22f5980ae1f5a19cb29f98",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_axis/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_axis/process.json": "0b521def6bee761674317b3fa4cb62fe7bedbc0273a517c017829b1d086da8cf",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_axis/result.json": "646221cb4483c4da63e69145e821965bd08d2ad00343c4a8139e2c56b424e260",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_diagonal/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_diagonal/initial.json": "7d9f97288505782addd68eb4f6dc912635fad226045f92d5bb32c39ecfc306ed",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_diagonal/log": "faa226bc6cac0b55847a990c02fd5da5fa83618b9242b58eb0054e55c681149a",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_diagonal/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_diagonal/process.json": "452c2104df8f7ec02bb1141ad9edc69475fa3c5e1cbd52d8ea32ba5a45b567f0",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N32_diagonal/result.json": "38de7a6f3571326afde73aaf61c7ff4efc3751062a03fc93087be02ff67f069c",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_axis/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_axis/initial.json": "87c89faaf47d0e642fe5c1dd90782535bcee717991aeeba257ef38708050c300",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_axis/log": "026f9439ae8003edd0c617cbccaa759a4b49e840e1eb56a5e66a3b958cd4e8f9",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_axis/process.json": "28c7dd56c9a6b38adbf0389300149edcf1f4b07f31725ec14947d6f472902b72",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_axis/result.json": "66c5c906abac5cc6177e9e1bf9dd8221d32c9ed854efebba9eb797028a457c90",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_diagonal/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_diagonal/initial.json": "c306818e618a013a9e9ae58417fcab3476bf0d944779de48620e61e603827f19",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_diagonal/log": "e23856f7fa27de7f237fb9fbe9a7eeba21d63bb3c31f5a40bfa310a4b96684cc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_diagonal/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_diagonal/process.json": "be600b92db5ee982abea6fc11033f4e4429cdf851aa3e0fc9a710c79cf6d4e10",
+    "Research/Periodic2D_20261104/general2d_trial_v1/moving_contact_N64_diagonal/result.json": "a91a0402a9aca322c96b3b6cdf7d94d589711befc7e999b16d410b6b90ad08cc",
+    "Research/Periodic2D_20261104/general2d_trial_v1/registration.json": "47a850c8901d4b2ff59fa0a47f45239d3dbb1147c54785f7f66ee22da92bafc8",
+    "Research/Periodic2D_20261104/general2d_trial_v1/results.json": "3adac3fe1795fb5d34e6fc410c3ce304ec4581b574fb84f8745f9c75f5c83d4c",
+    "Research/Periodic2D_20261104/general2d_trial_v1/run.py": "1267456f9d85f75b20a69c720e1d2f415b34287be415bbab478b0d809054dd55",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N32_axis/environment.json": "b3037c4f6b75b83571d22c5c1894d0b63c9cb45fa0766762d500706d96cca0d2",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N32_axis/initial.json": "11b3f14875f626aa3cb9e352941605a928378bf34796c1ed30cd433f935eea82",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N32_axis/log": "19ccaa5fcbe41be5d45ff33ff0ceea4b9fcb1ac6bd425d50d17cfae6a58ac603",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N32_axis/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N32_axis/process.json": "34ad80a5f3e51f376b6019dbbb5a3478df8c892615c2a5d7d1932c65030dc1f3",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N32_axis/result.json": "cd6a11247aa45030cb36106892a64d93055673999cbd077e34761224b0e9f496",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N64_axis/environment.json": "b3037c4f6b75b83571d22c5c1894d0b63c9cb45fa0766762d500706d96cca0d2",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N64_axis/initial.json": "274058f6727413819ffc4a5661604f7bc977d5617e97f8528bd2cfff138a774d",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N64_axis/log": "d269fc26ef8a8e041feb0a59c5b33eb71be25e0d82f691362942f841becb26ac",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N64_axis/process.json": "9628d5f43b786330d7cf72cebbba429e3bc893e41d806767c88e5f9095164202",
+    "Research/Periodic2D_20261104/general2d_trial_v1/shear_N64_axis/result.json": "a953ed4b7870484defaf5d5f9a40eb300809a4e6f07607dbada38cd01e003c6f",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/column_profile.csv": "3aacc9e82d9e0d90b76041591942b3689b1aa1a7c25d15019f3d51ed28842d3d",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/environment.json": "e12e6c6a2dd07b2d6d7e89ff156539c587b3fd1010ba0685698fd2247b10cc23",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/initial.json": "4a611911388a5cca5e826cfb83db73f2a0fa3da3c4ff23c18ba1d0a64dbe3a1a",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/log": "f6eeee9674bc8b79f0e2297471c7030d2af0ec5d564574af8fb6f09abef0c15d",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/params.dat": "0b230a34d89a3226b4b4e1e6989952e71672528e6963ab42bf9b81c52522a3a2",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/process.json": "4fd1a74641036875e255155d530e53cb634eff3f0c82b6e41c47ad191943cefa",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N128_axis/result.json": "959364b87722398c0397c95ef35822a910efde728259f6a5eb619cf66e15b99a",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/column_profile.csv": "1125a8395e789d393834387b28b6f59b2a11872e093a6ee7884e412350231e99",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/environment.json": "e12e6c6a2dd07b2d6d7e89ff156539c587b3fd1010ba0685698fd2247b10cc23",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/initial.json": "170b5000cd51bda3b1f60ac3908f50bc13848863031142046845c203031f29c6",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/log": "aebde9882596369e4b4bfc9d0c91f9fd50d96a61347e0f4f7d489fc845a5c0a7",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/process.json": "b9f072fa1cdea7327201b71f08ad1053555586adacacd17578943ff6b2219d2f",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_axis/result.json": "bf464b66306e9a49b37e79130e4de734a87c3c5f03f242ae0d3e88c3f80cff27",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_diagonal/environment.json": "b61ef866b61de4de77480a9a09028f7d9ccb526e899d62dad4d5c4038d805a61",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_diagonal/initial.json": "00e1af924a318c86daa4c6730041375590a0c9b0dbd672a4ab2f830b3f82f69c",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_diagonal/log": "7bd9338c398c2d4375c3a64f519c59fb04559fdb26ae1a7a112ca6d5ce049ab8",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_diagonal/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_diagonal/process.json": "dbe501b767f422594b750d2700d33e6d82af920a02be1e56808c392d28e8d91a",
+    "Research/Periodic2D_20261104/general2d_trial_v1/sod_N64_diagonal/result.json": "30676049e35e777c0d0f15c80431961382d0c21266c2e585cc7b662ba6328f76",
+    "Research/Periodic2D_20261104/periodic_graph_audit_v1/build.log": "22d92033d03c4c7457c3e4475e00428090c95a42956ff9f4089c07bdb729a4a5",
+    "Research/Periodic2D_20261104/periodic_graph_audit_v1/old_graph_cases.jsonl": "74a2b60b82cc194799427a4cedf545ca44735aaa16bf1eebc4b386fae96c0183",
+    "Research/Periodic2D_20261104/periodic_graph_audit_v1/periodic_build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/periodic_graph_audit_v1/periodic_results.jsonl": "d3a80170d398e9a20e3c95be41abbfae902872f3f986ea2bfdd24b4ff4c5f91e",
+    "Research/Periodic2D_20261104/shear_active_replay_v1/correction.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/Periodic2D_20261104/shear_active_replay_v1/correction.stdout": "7ec7bbb58c58cce87714df9580cf74d0b8e572426ab973872edcedf1c0255b53",
+    "Research/Periodic2D_20261104/shear_active_replay_v1/strict.stderr": "a1c9fa6d75b3176c5355f43e173ec182089f32e15418b78421fec1f7c8f60ca7",
+    "Research/Periodic2D_20261104/shear_active_replay_v1/strict.stdout": "e0ee23b307db69ae92bf0cda349214113817c99b97964a61e588f5d4798a269a",
+    "Research/Periodic2D_20261104/shear_active_replay_v1/strict_fullstate.c": "3163f532797910e24f1854a31dd2e417b03c64971a072a3881b755c86d5c3a0d"
+  }
+}

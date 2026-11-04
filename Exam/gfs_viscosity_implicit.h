@@ -3,7 +3,8 @@
 /* Positive central viscosity on a canonical undirected graph. Coefficients
  * are lagged; endpoint compression signs are solved. BE is first order.
  * x and v use interleaved dim*n doubles. Walls have j=-1 and outward n.
- * Internal n points from i to j and must be parallel to x_j-x_i.
+ * Internal n points from i to the selected image of j and must be parallel
+ * to x_j + image_shift - x_i. Zero image_shift gives the ordinary domain.
  */
 #ifdef __cplusplus
 extern "C" {
@@ -11,6 +12,7 @@ extern "C" {
 typedef struct {
     int i,j;
     double normal[3],coefficient;
+    double image_shift[3]; /* fixed periodic translation, no velocity shift */
 } GfsViscosityEdge;
 typedef struct GfsViscosityWorkspace GfsViscosityWorkspace;
 typedef struct {
@@ -19,6 +21,7 @@ typedef struct {
     double energy_defect,heat,min_heat,max_heat_over_U;
     double momentum_defect[3],angular_defect[3];
     double wall_impulse[3],wall_torque[3];
+    double periodic_torque[3]; /* angular-momentum flux across periodic cuts */
     double solve_seconds;
 } GfsViscosityStats;
 GfsViscosityWorkspace *gfs_viscosity_workspace_create(void);

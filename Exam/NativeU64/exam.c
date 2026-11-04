@@ -1,3 +1,4 @@
+#include "../gfs_unified_runtime.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
@@ -3209,7 +3210,7 @@ void updateDenW2Pressure2DBlend(
 			char *pad_base  = _fused_pad_base;
 			ParticleSoA *h = &gctx->h_parts;
             const int pack_weight_active=gfs_weight_native_active();
-            if(p_size!=sizeof(treevorostressrk4particletype) || _fused_npad!=0 || NID(simpar)!=1){
+            if(p_size!=sizeof(treevorostressrk4particletype) || (_fused_npad!=0&&!gfs_unified_periodic_mode()) || NID(simpar)!=1){
                 fprintf(stderr,"[WEIGHT_NATIVE] geometry requires explicit696-byte fully owned one-rank state\n");
                 MPI_Abort(MPI_COMM(simpar),99);
             }

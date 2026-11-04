@@ -1,0 +1,41 @@
+In file included from /gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:7:
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../../Hydro1DExam/laguerre_sod.c: In function ‘archived_hydro1d_main’:
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../../Hydro1DExam/laguerre_sod.c:2609:17: warning: variable ‘any_failed’ set but not used [-Wunused-but-set-variable]
+ 2609 |             int any_failed = 0;
+      |                 ^~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../../Hydro1DExam/laguerre_sod.c:2901:17: warning: variable ‘any_fail’ set but not used [-Wunused-but-set-variable]
+ 2901 |             int any_fail = 0;
+      |                 ^~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c: In function ‘one_dimensional_match’:
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:19:9: warning: missing initializer for field ‘image_shift’ of ‘GfsViscosityEdge’ [-Wmissing-field-initializers]
+   19 |         if(i<N-1)edges[ne++]=(GfsViscosityEdge){i,i+1,{1,0,0},gfs_u1_D[i]};
+      |         ^~
+In file included from /gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:5:
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../gfs_viscosity_implicit.h:15:12: note: ‘image_shift’ declared here
+   15 |     double image_shift[3]; /* fixed periodic translation, no velocity shift */
+      |            ^~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:22:9: warning: missing initializer for field ‘image_shift’ of ‘GfsViscosityEdge’ [-Wmissing-field-initializers]
+   22 |         edges[ne++]=(GfsViscosityEdge){0,-1,{-1,0,0},gfs_u1_Dwall[0]};
+      |         ^~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../gfs_viscosity_implicit.h:15:12: note: ‘image_shift’ declared here
+   15 |     double image_shift[3]; /* fixed periodic translation, no velocity shift */
+      |            ^~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:23:9: warning: missing initializer for field ‘image_shift’ of ‘GfsViscosityEdge’ [-Wmissing-field-initializers]
+   23 |         edges[ne++]=(GfsViscosityEdge){N-1,-1,{1,0,0},gfs_u1_Dwall[1]};
+      |         ^~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../gfs_viscosity_implicit.h:15:12: note: ‘image_shift’ declared here
+   15 |     double image_shift[3]; /* fixed periodic translation, no velocity shift */
+      |            ^~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c: In function ‘multidimensional’:
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:51:9: warning: missing initializer for field ‘image_shift’ of ‘GfsViscosityEdge’ [-Wmissing-field-initializers]
+   51 |         edges[ne]=(GfsViscosityEdge){i,j,{r[0],r[1],r[2]},.2+.01*(ne%13)};ne++;
+      |         ^~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../gfs_viscosity_implicit.h:15:12: note: ‘image_shift’ declared here
+   15 |     double image_shift[3]; /* fixed periodic translation, no velocity shift */
+      |            ^~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/implicit_graph_audit.c:55:9: warning: missing initializer for field ‘image_shift’ of ‘GfsViscosityEdge’ [-Wmissing-field-initializers]
+   55 |         edges[ne]=(GfsViscosityEdge){i,-1,{0,0,0},.5};edges[ne].normal[a]=side?1:-1;ne++;
+      |         ^~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/../gfs_viscosity_implicit.h:15:12: note: ‘image_shift’ declared here
+   15 |     double image_shift[3]; /* fixed periodic translation, no velocity shift */
+      |            ^~~~~~~~~~~

@@ -249,6 +249,7 @@ typedef struct {
      * (0 = off, default). */
     int    w2lin;
     int weight_active;
+    double domain_x,domain_y; /* common operator periodic image translations */
 } GPUPhysicsParams;
 
 /* ================================================================
@@ -328,6 +329,8 @@ GPUContext *gpu_get_context(void);
 int gpu_unified_viscosity_half_step(void *simpar,double gamma,double interval,
                                   GfsViscosityStats *stats);
 double gpu_unified_pressure_refresh(void *simpar);
+const int *gpu_unified_owner_aliases(GPUContext *ctx,int owned,int total,
+                                    double domain_x,double domain_y);
 void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
                         int mx, int my, size_t p_size);
 void gpu_writeback_tess_results(void *simpar_opaque, GPUContext *ctx,

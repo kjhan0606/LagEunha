@@ -3,6 +3,9 @@
 #include <cmath>
 #include <cuda_runtime.h>
 #include <cub/cub.cuh>
+#include <vector>
+#include <cstdint>
+#include <algorithm>
 extern "C" {
 #include "exam_gpu.h"
 }

@@ -32,8 +32,8 @@ rho=m/V, P=(gamma-1)U/V와 실제 기하 미분 B=dV/dx를 사용한다.
 | 2 | 1D/2D/3D 공통 기하·힘·열 연산자의 C/CUDA 공유 함수와 감사 | 기본 대수·실제 Voro·Ada device 감사 통과, 경계/생산 진화 미완 |
 | 3 | 같은 초기화·연산자로 정지/이동 contact, 음파, 교대모드, 접근 pair | contact 및 영모드 감사 완료, 나머지 미완 |
 | 4 | 하나의 충격 소산을 선택해 Sod, Noh, blast, Lax 등 동일 계수 검증 | explicit 9종 종점 및 일부 수렴 확인, implicit 9종 첫 종점 확인 |
-| 5 | 동일 공통 연산자를 생산 2D CPU/CUDA 및 3D에 연결, 평면 삽입 검증 | 2D CUDA RHS만 연결·검사, 다차원 진화 미완 |
-| 6 | contact, KH, RT, Gresho, Sedov, Noh, cylinder, Kepler 2D 재실행 | 대기 |
+| 5 | 동일 공통 연산자를 생산 2D CPU/CUDA 및 3D에 연결, 평면 삽입 검증 | 2D 주기 실제 진화 완료, 축 shock 횡속도 원인과 실제 3D 미완 |
+| 6 | contact, KH, RT, Gresho, Sedov, Noh, cylinder, Kepler 2D 재실행 | 기본 contact·정상 전단·Sod 수행, 전체 suite 대기 |
 | 7 | GIZMO와 동등 IC·장비·자원·정확도·출력량의 처리량 비교 | 대기, 과거 약 3.339배 시간으로 목표 미달 |
 
 단계 2 감사에는 실제 기하의 delta V와 B delta x, adjoint 내적,

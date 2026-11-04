@@ -5,15 +5,60 @@
  */
 #include "../gfs_variational_core.h"
 #include "../gfs_velocity_fit.h"
+/* ID mapping is independent of the permutation introduced by migration. */
+extern "C" const int *gpu_unified_owner_aliases(GPUContext *ctx,int n,int nt,
+        double lx,double ly)
+{
+    static std::vector<int> alias,values;
+    static std::vector<long long> keys;
+    if(n<1||nt<n){fprintf(stderr,"[UNIFIED_ALIAS] invalid counts\n");exit(99);}
+    alias.resize(nt);
+    for(int i=0;i<n;i++)alias[i]=i;
+    if(nt==n)return alias.data();
+    if(!(lx>0)||!(ly>0)){fprintf(stderr,"[UNIFIED_ALIAS] periodic lengths required\n");exit(99);}
+    size_t cap=1;while(cap<2*(size_t)n)cap*=2;
+    keys.assign(cap,-1);values.resize(cap);
+    ParticleSoA &p=ctx->h_parts;
+    for(int i=0;i<n;i++){
+        long long id=p.indx[i];size_t k=(uint64_t(id)*UINT64_C(11400714819323198485))&(cap-1);
+        if(id<0){fprintf(stderr,"[UNIFIED_ALIAS] invalid owned ID\n");exit(99);}
+        while(keys[k]>=0){if(keys[k]==id){fprintf(stderr,"[UNIFIED_ALIAS] duplicate owned ID\n");exit(99);}k=(k+1)&(cap-1);}
+        keys[k]=id;values[k]=i;
+    }
+    for(int i=n;i<nt;i++){
+        long long id=p.indx[i];size_t k=(uint64_t(id)*UINT64_C(11400714819323198485))&(cap-1);
+        while(keys[k]>=0&&keys[k]!=id)k=(k+1)&(cap-1);
+        if(keys[k]!=id){fprintf(stderr,"[UNIFIED_ALIAS] padding ID has no local owner\n");exit(99);}
+        int j=values[k];double dx=p.x[i]-p.x[j],dy=p.y[i]-p.y[j];
+        double tol=128*DBL_EPSILON*(lx+ly+fabs(p.x[i])+fabs(p.y[i])+fabs(p.x[j])+fabs(p.y[j]));
+        if(fabs(dx-lx*nearbyint(dx/lx))>tol||fabs(dy-ly*nearbyint(dy/ly))>tol){
+            fprintf(stderr,"[UNIFIED_ALIAS] padding is not a periodic translation\n");exit(99);
+        }
+        alias[i]=j;
+    }
+    return alias.data();
+}
+static __global__ void gfs_unified_alias_kernel(ParticleSoA p,const int *owner,
+        int n,int nt,int gradients)
+{
+    int i=n+blockIdx.x*blockDim.x+threadIdx.x;if(i>=nt)return;int j=owner[i];
+    if(!gradients){
+        p.mass[i]=p.mass[j];p.vx[i]=p.vx[j];p.vy[i]=p.vy[j];
+        p.weight_U64[i]=p.weight_U64[j];p.weight_volume64[i]=p.weight_volume64[j];
+        p.weight_W[i]=p.weight_W[j];
+    }else{
+        p.gUxx[i]=p.gUxx[j];p.gUxy[i]=p.gUxy[j];p.gUyx[i]=p.gUyx[j];p.gUyy[i]=p.gUyy[j];
+    }
+}
 static __device__ unsigned long long gfs_unified_fit_failures;
 
-__global__ void gfs_unified_fit_kernel(ParticleSoA p,FaceCSR f,int n)
+__global__ void gfs_unified_fit_kernel(ParticleSoA p,FaceCSR f,int n,int nt)
 {
     int i=blockIdx.x*blockDim.x+threadIdx.x;if(i>=n)return;
     GfsVelocityFit fit;gfs_velocity_fit_init(&fit,2);int valid=1;
     for(int k=f.face_offset[i];k<f.face_offset[i+1];k++){
         int j=f.neighbor_idx[k];double r[3]={0},dv[3]={0};
-        if(j>=0){
+        if(j>=0&&j<nt&&!f.is_ghost[k]){
             r[0]=p.x[j]-p.x[i];r[1]=p.y[j]-p.y[i];
             dv[0]=p.vx[j]-p.vx[i];dv[1]=p.vy[j]-p.vy[i];
         }else if(j<=-1000){
@@ -36,7 +81,7 @@ __global__ void gfs_unified_fit_kernel(ParticleSoA p,FaceCSR f,int n)
 }
 
 __global__ void gfs_unified_force_kernel(ParticleSoA p,FaceCSR f,int n,
-        double gamma,double courant,int implicit)
+        double gamma,double courant,int implicit,int nt)
 {
     int i=blockIdx.x*blockDim.x+threadIdx.x;if(i>=n)return;
     double mass=p.mass[i],V=p.weight_volume64[i],U=p.weight_U64[i];
@@ -68,7 +113,7 @@ __global__ void gfs_unified_force_kernel(ParticleSoA p,FaceCSR f,int n,
             if(q>0&&vn>0)damping+=2*q*area/(vn*mass);
             continue;
         }
-        if(j<0||j>=n||f.is_ghost[k])goto invalid;
+        if(j<0||j>=nt||f.is_ghost[k])goto invalid;
         double r[3]={p.x[j]-p.x[i],p.y[j]-p.y[i],0};
         double vj[3]={p.vx[j],p.vy[j],0},jump[3];
         jump[0]=vj[0]-vi[0]-.5*((p.gUxx[i]+p.gUxx[j])*r[0]+(p.gUxy[i]+p.gUxy[j])*r[1]);
@@ -110,22 +155,32 @@ invalid:
 static double gfs_unified_gpu_launch(GPUContext *ctx,int n,int nt,
         const GPUPhysicsParams *params)
 {
-    if(nt!=n||params->weight_active||
+    if(nt<n||params->weight_active||
        !params->phase1||params->nu_phys!=0||params->alphavis!=0||
        params->betavis!=0||params->cd_amax!=0||params->hyperv_alpha!=0){
-        fprintf(stderr,"[UNIFIED_GPU] first gate requires fully owned U64 W0, one numerical viscosity, no extra stress\n");exit(99);
+        fprintf(stderr,"[UNIFIED_GPU] requires one-rank U64 W0 with explicit local aliases, one numerical viscosity, no extra stress\n");exit(99);
+    }
+    if(ctx->weight_geometry_count!=nt||memcmp(ctx->weight_geometry_snapshot,
+            ctx->h_parts.weight_W,(size_t)nt*sizeof(double))){
+        fprintf(stderr,"[UNIFIED_GPU] immutable geometry/weight snapshot mismatch\n");exit(99);
     }
     for(int i=0;i<nt;i++)if(ctx->h_parts.weight_W[i]!=0){
         fprintf(stderr,"[UNIFIED_GPU] nonzero weight is unsupported\n");exit(99);
     }
     cudaStream_t stream=(cudaStream_t)ctx->stream;
+    const int *alias=gpu_unified_owner_aliases(ctx,n,nt,params->domain_x,params->domain_y);
+    static int *device_alias=NULL;static int alias_capacity=0;
+    if(nt>alias_capacity){if(device_alias)CUDA_CHECK(cudaFree(device_alias));CUDA_CHECK(cudaMalloc(&device_alias,(size_t)nt*sizeof(int)));alias_capacity=nt;}
+    CUDA_CHECK(cudaMemcpyAsync(device_alias,alias,(size_t)nt*sizeof(int),cudaMemcpyHostToDevice,stream));
+    if(nt>n){gfs_unified_alias_kernel<<<(nt-n+127)/128,128,0,stream>>>(ctx->d_parts,device_alias,n,nt,0);CUDA_CHECK(cudaGetLastError());}
     unsigned long long zero=0,failures=0;
     CUDA_CHECK(cudaMemcpyToSymbolAsync(gfs_unified_fit_failures,&zero,sizeof(zero),0,cudaMemcpyHostToDevice,stream));
-    gfs_unified_fit_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n);
+    gfs_unified_fit_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n,nt);
+    if(nt>n){gfs_unified_alias_kernel<<<(nt-n+127)/128,128,0,stream>>>(ctx->d_parts,device_alias,n,nt,1);CUDA_CHECK(cudaGetLastError());}
     CUDA_CHECK(cudaGetLastError());
     const char *implicit_env=getenv("GFS_UNIFIED_IMPLICIT");
     int implicit=implicit_env&&!strcmp(implicit_env,"1");
-    gfs_unified_force_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n,params->Gamma,params->Courant,implicit);
+    gfs_unified_force_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n,params->Gamma,params->Courant,implicit,nt);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cub::DeviceReduce::Min(ctx->d_cub_temp,ctx->cub_temp_bytes,
         ctx->d_parts.dt_out,(float*)ctx->d_cub_min_out,n,stream));

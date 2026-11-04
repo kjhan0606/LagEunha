@@ -4,6 +4,7 @@
 #include <math.h>
 #include <float.h>
 #include <time.h>
+#include <stdio.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -141,7 +142,7 @@ int gfs_viscosity_be(GfsViscosityWorkspace *w,int dim,int n,int ne,
         double norm=0,dist2=0,projection=0;
         for(int a=0;a<dim;a++){
             norm+=e->normal[a]*e->normal[a];
-            if(e->j>=0){double r=x[dim*e->j+a]-x[dim*e->i+a];dist2+=r*r;projection+=r*e->normal[a];}
+            if(e->j>=0){double r=x[dim*e->j+a]+e->image_shift[a]-x[dim*e->i+a];dist2+=r*r;projection+=r*e->normal[a];}
         }
         if(fabs(norm-1)>256*DBL_EPSILON||!isfinite(norm))return 1;
         if(e->j>=0&&(!(projection>0)||fabs(dist2-projection*projection)>1024*DBL_EPSILON*dist2))return 1;
@@ -154,7 +155,7 @@ int gfs_viscosity_be(GfsViscosityWorkspace *w,int dim,int n,int ne,
         w->adj[w->cursor[edges[k].i]++]=k;
         if(edges[k].j>=0)w->adj[w->cursor[edges[k].j]++]=k;
     }
-    int converged=0;
+    int converged=0,last_changed=0;double last_max_g=0,last_max_roundoff_ratio=0;
     for(int outer=0;outer<32;outer++){
         s.active_iterations=outer+1;
         if(!preconditioner(w))return 2;
@@ -191,15 +192,29 @@ int gfs_viscosity_be(GfsViscosityWorkspace *w,int dim,int n,int ne,
         s.iterations+=iteration;
         if(iteration>=2000||!isfinite(normr2))return 2;
         for(int k=0;k<count;k++)w->trial[k]=w->v0[k]+w->dv[k];
-        int changed=0;
+        int changed=0;last_max_g=0;last_max_roundoff_ratio=0;
         for(int k=0;k<ne;k++){
-            w->next[k]=edges[k].coefficient>0&&edge_closing(w,k,w->trial)>0;
-            if(w->next[k]!=w->active[k])changed++;
+            /* Evaluate the linear normal jump from the correction form.
+             * Rounding v0+dv first can discard a sub-ulp correction and
+             * make an otherwise converged active set alternate forever. */
+            double jump=edge_closing(w,k,w->v0)+edge_closing(w,k,w->dv);
+            w->next[k]=edges[k].coefficient>0&&jump>0;
+            if(w->next[k]!=w->active[k]){
+                changed++;double g=edge_closing(w,k,w->trial),scale=0;
+                const GfsViscosityEdge *e=edges+k;
+                for(int a=0;a<dim;a++)scale+=fabs(e->normal[a])*(fabs(w->trial[dim*e->i+a])+(e->j>=0?fabs(w->trial[dim*e->j+a]):0));
+                last_max_g=fmax(last_max_g,fabs(g));
+                if(scale>0)last_max_roundoff_ratio=fmax(last_max_roundoff_ratio,fabs(g)/(DBL_EPSILON*scale));
+            }
         }
+        last_changed=changed;
         if(!changed){converged=1;break;}
         memcpy(w->active,w->next,ne);
     }
-    if(!converged)return 3;
+    if(!converged){
+        fprintf(stderr,"[VISCOSITY_ACTIVE_FAILURE] changed=%d max_changed_closing=%.17g max_closing_over_input_roundoff=%.17g\n",last_changed,last_max_g,last_max_roundoff_ratio);
+        return 3;
+    }
     /* Measure the equation after storing v0+dv, including addition roundoff. */
     for(int k=0;k<count;k++)w->dv[k]=w->trial[k]-w->v0[k];
     multiply(w,w->dv,w->Ap);
@@ -217,8 +232,13 @@ int gfs_viscosity_be(GfsViscosityWorkspace *w,int dim,int n,int ne,
     for(int k=0;k<ne;k++)if(w->active[k]){
         const GfsViscosityEdge *e=edges+k;double g=edge_closing(w,k,w->trial),Q=h*e->coefficient*g*g;
         s.active_edges++;w->heat[e->i]+=e->j>=0?.5*Q:Q;
-        if(e->j>=0)w->heat[e->j]+=.5*Q;
-        else{
+        if(e->j>=0){
+            w->heat[e->j]+=.5*Q;
+            double impulse[3]={0},torque[3];
+            for(int a=0;a<dim;a++)impulse[a]=-h*e->coefficient*g*e->normal[a];
+            cross(e->image_shift,impulse,dim,torque);
+            for(int a=0;a<3;a++)s.periodic_torque[a]+=torque[a];
+        }else{
             double impulse[3]={0},torque[3];
             for(int a=0;a<dim;a++){impulse[a]=-h*e->coefficient*g*e->normal[a];s.wall_impulse[a]+=impulse[a];}
             cross(x+dim*e->i,impulse,dim,torque);
@@ -237,7 +257,7 @@ int gfs_viscosity_be(GfsViscosityWorkspace *w,int dim,int n,int ne,
         cross(x+dim*i,momentum,dim,torque);for(int a=0;a<3;a++)dJ[a]+=torque[a];
     }
     s.heat=(double)heat;s.energy_defect=(double)energy_defect;
-    for(int a=0;a<3;a++){s.momentum_defect[a]=(double)dp[a]-s.wall_impulse[a];s.angular_defect[a]=(double)dJ[a]-s.wall_torque[a];}
+    for(int a=0;a<3;a++){s.momentum_defect[a]=(double)dp[a]-s.wall_impulse[a];s.angular_defect[a]=(double)dJ[a]-s.wall_torque[a]-s.periodic_torque[a];}
     for(int i=0;i<n;i++)U[i]+=w->heat[i];
     memcpy(v,w->trial,count*sizeof(double));s.solve_seconds=clock_seconds()-start;*stats=s;
     return 0;

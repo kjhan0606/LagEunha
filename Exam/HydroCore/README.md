@@ -45,21 +45,31 @@ signs. The binary input layout is explicitly declared by the source structs.
 The archived native build invocations and results are in
 `../../Research/UnifiedHydro_20261104/results`.
 
-The native CUDA module is `../NativeU64/gfs_unified_gpu.cu`. The current
-adapter requires fully owned cells, W=0, and static wall faces. Enabling
-`GFS_UNIFIED_HYDRO=1` does not qualify the surrounding time integrator,
-periodic images, MPI decomposition, or 3D evolution.
+The native CUDA module is `../NativeU64/gfs_unified_gpu.cu`. The adapter
+supports one-rank W=0 fixed-wall or explicitly selected periodic domains.
+Periodic images are aliases of owned cells rather than independent unknowns.
+Enabling `GFS_UNIFIED_HYDRO=1` alone does not qualify an arbitrary boundary,
+MPI decomposition, or 3D evolution.
 
 
 Later bounded native coupling is recorded in
 `../../Docs/UNIFIED_HYDRO_NATIVE_IMPLICIT_GATE_2026-11-04.md`.
-The persistent heating remains unresolved. The native KDK prototype retains
-one-rank fixed-wall Kepler scope. Complete periodic and 3D evolution are pending.
+The persistent Kepler heating remains unresolved. Subsequent actual periodic
+2D contact, steady shear, and planar shock runs are documented in
+`../../Docs/UNIFIED_HYDRO_PERIODIC_2D_2026-11-04.md` with compact evidence in
+`../../Research/Periodic2D_20261104`. Axis-aligned Sod has unresolved transverse
+velocity growth. Full 2D benchmarks, actual 3D evolution, and matched GIZMO
+performance remain incomplete.
 
 The actual 1D stage and time-refinement checks are `implicit1d_audit.c`.
 `implicit_graph_audit.c` compares the common graph solve against the 1D
 tridiagonal solve and checks conservation in dimensions 2 and 3. Link the
 latter with `../gfs_viscosity_implicit.c` and OpenMP.
+`periodic_viscosity_audit.c` checks the same solve across a periodic cut,
+including angular-momentum flux, in dimensions 2 and 3.
+`viscosity_failure_replay.c` reads a captured half-step graph input. The input
+is a diagnostic record, not an accepted hydrodynamic restart.
+`exact_sod_sample.c` samples the analytic Sod solution for point-based norms.
 `closure_channel_audit.c` reads the frozen native binary format from
 `implicit_probe.c`. Named circular-gradient and area-fit alternatives are
 causal diagnostics only. `scale_separation_audit.c` links the actual

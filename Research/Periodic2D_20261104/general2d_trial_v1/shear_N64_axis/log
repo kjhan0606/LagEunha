@@ -1,0 +1,50 @@
+WMAP5 is detected
+[DBG] after mk_default_param simmodel=0 NWGROUP=4
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after Mpi_Basic_Set myid=0
+###############################################
+EUNHA2: compiled at 07:46:24 Oct 29 2026 
+###############################################
+[DBG] after HAMB
+Kelvin Helmholtz Instability Test is set
+box size nx/ny/nz= 64 64 1
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after ReadSimulationParameters simmodel=3
+[BSRMS] myid=0 nid=1 enter
+[BSRMS] myid=0 nid=1 nsubgroup=1
+[BSRMS] myid=0 returning early NDDINFO=0
+DEBUG: gpu_enabled=1 av_mode=5 use_stress=1 w2_mode=0
+P0: is now reading starting file: khout.000001.dat
+[WEIGHT_KDK_VALIDATE] accepted window=0.25 max_window=1
+[DPQ_SKIP] nearest-neighbor tree not needed for fixed/zero Kappa
+[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)
+[GPU] Initialized: max_particles=7244, max_faces=144880
+[GPU] Tessellation buffers: max_cells=324, max_entries=10368, PolygonOut=9.0 MB
+[GPU tess] nbp=4096 npad=1088 faces=20480 time=10.398 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=4096 max_relative_area=7.850462293e-17 max_area_mismatch=2.453269467e-18 max_roundoff_bound_ratio=2.762135864e-04
+[GPU tess] nbp=4096 npad=1088 faces=24320 time=4.349 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=2.574980160e-17 max_roundoff_bound_ratio=1.172137870e-03
+[UNIFIED_KDK] step=1 t=0.0099791781976819038 dt=0.0099791781976819038 N=4096 Etot=11.000000596046483 dErel=0.000000000e+00 Umin=2.441406396e-03 Vmin=9.765625000e-04 heat=1.220742643e-07 viscosity_energy_defect=-9.579421406e-18 CG=2/5 active=1/1 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.150998 pressure_s=0.004375 viscosity_s=0.006806 drift_s=0.000239 total_s=0.163523
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(0,5.0433560755642721e-13) viscosity_equation_residual=(0.70710678118654868,2.9799080396506759e-10)
+Time= 0.00997918  step= 2  dt= 0.00997918
+[GPU tess] nbp=4096 npad=1088 faces=24320 time=4.416 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=2.574980160e-17 max_roundoff_bound_ratio=1.172137870e-03
+[GPU tess] nbp=4096 npad=1088 faces=24440 time=4.841 ms
+[GPU step 1] np=4096 faces=24440 (full) | extract=0.0ms SoA=0.0ms upload=0.0ms kernel=0.2ms download=0.1ms writeback=0.3ms | total=1.2ms dt=9.997e-03
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=120 max_relative_area=3.140184912e-16 max_area_mismatch=3.187554387e-17 max_roundoff_bound_ratio=1.675746610e-03
+[UNIFIED_KDK] step=2 t=0.019967233762145042 dt=0.0099880555644631386 N=4096 Etot=11.000000596046484 dErel=0.000000000e+00 Umin=2.441406387e-03 Vmin=9.765624608e-04 heat=3.600103474e-07 viscosity_energy_defect=-2.770013784e-18 CG=10/13 active=1/1 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.011037 pressure_s=0.002850 viscosity_s=0.012372 drift_s=0.000365 total_s=0.027416
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(5.047308308115675e-13,7.2070768133976315e-14) viscosity_equation_residual=(2.8390470581585604e-10,1.7213926737136393e-10)
+Time= 0.0199672  step= 3  dt= 0.00998806
+[GPU tess] nbp=4096 npad=1088 faces=24440 time=3.975 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=120 max_relative_area=3.140184912e-16 max_area_mismatch=3.187554387e-17 max_roundoff_bound_ratio=1.675746610e-03
+[UNIFIED_VISCOSITY] common solve failed rc=3 edges=4640 h=0.0049986927770078182
+[UNIFIED_KDK] first viscosity failed rc=3
+Abort(99) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 99) - process 0

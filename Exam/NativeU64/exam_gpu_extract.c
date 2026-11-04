@@ -20,6 +20,7 @@
 #include <omp.h>
 #endif
 #include "exam_gpu.h"
+#include "../gfs_unified_runtime.h"
 #include "gfs_pair.h"
 #include "eunha.h"
 #include "gfs_thermal64.h"
@@ -276,7 +277,7 @@ static void fillParticleSoA(
     int n_total = nbp + npad;
     int i;
     int w2lin_soa = gfs_w2lin_is_active();
-    if(p_size!=sizeof(treevorostressrk4particletype) || npad!=0 || NID(simpar)!=1){
+    if(p_size!=sizeof(treevorostressrk4particletype) || (npad!=0&&!gfs_unified_periodic_mode()) || NID(simpar)!=1){
         fprintf(stderr,"[WEIGHT_NATIVE] force path requires actual696-byte fully owned one-rank payload\n");MPI_Abort(MPI_COMM(simpar),99);
     }
     int weight_active=gfs_weight_native_active();
@@ -981,6 +982,8 @@ double getAccVoro2DBlend_GPU(
     params.OoA         = OrderOfAccuracy;
     params.Courant     = Courant;
     params.Gamma       = Gamma;
+    params.domain_x=SIMBOX(simpar).x.max-SIMBOX(simpar).x.min;
+    params.domain_y=SIMBOX(simpar).y.max-SIMBOX(simpar).y.min;
     params.alphavis    = GAS_AlphaVis(simpar);
     params.betavis     = GAS_BetaVis(simpar);
     params.etavis      = GAS_ETAVIS(simpar) * Lx / NX(simpar);
@@ -1007,8 +1010,10 @@ double getAccVoro2DBlend_GPU(
     }
 
     /* --- Launch GPU kernel (all particles) --- */
-    double Dtime_gpu = gpu_launch_force_kernel(&g_gpu_ctx, nbp, n_total,
-                                               MYID(simpar), &params);
+    const char *unified_force=getenv("GFS_UNIFIED_HYDRO");
+    double Dtime_gpu = unified_force&&!strcmp(unified_force,"1")
+        ? gpu_launch_unified_force_kernel(&g_gpu_ctx,nbp,n_total,&params)
+        : gpu_launch_force_kernel(&g_gpu_ctx,nbp,n_total,MYID(simpar),&params);
     gfs_pair_face_ends = gpu_take_pair_hits();
 
     double t5_download = MPI_Wtime();
@@ -1821,6 +1826,8 @@ double getAccVoro2DBlend_GPU_validate(
     params.OoA         = OrderOfAccuracy;
     params.Courant     = Courant;
     params.Gamma       = Gamma;
+    params.domain_x=SIMBOX(simpar).x.max-SIMBOX(simpar).x.min;
+    params.domain_y=SIMBOX(simpar).y.max-SIMBOX(simpar).y.min;
     params.alphavis    = GAS_AlphaVis(simpar);
     params.betavis     = GAS_BetaVis(simpar);
     params.etavis      = GAS_ETAVIS(simpar) * Lx / NX(simpar);

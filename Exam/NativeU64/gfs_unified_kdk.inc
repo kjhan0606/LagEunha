@@ -21,15 +21,18 @@ static double gfs_unified_kdk(
     const char *implicit=getenv("GFS_UNIFIED_IMPLICIT"),*ic=getenv("EUNHA_IC");
     const char *raw=getenv("GFS_GPU_RAW_FACES"),*finalv=getenv("GFS_GPU_FINAL_VOLUME");
     const char *wall=getenv("GFS_KEPLER_KDK_FIXEDPOLY_WALL_EVENTS");
-    if(NID(simpar)!=1||!implicit||strcmp(implicit,"1")||!ic||strcmp(ic,"kepler")||
+    int periodic=gfs_unified_periodic_mode();
+    int boundary_valid=periodic
+        ? postStage==periodic_postStage_blend&&ic&&strcmp(ic,"kepler")
+        : ic&&!strcmp(ic,"kepler")&&wall&&!strcmp(wall,"1")&&postStage==fixed_polygon_postStage_blend;
+    if(NID(simpar)!=1||!implicit||strcmp(implicit,"1")||!boundary_valid||
        !raw||strcmp(raw,"1")||!finalv||strcmp(finalv,"1")||
-       !wall||strcmp(wall,"1")||postStage!=fixed_polygon_postStage_blend||
        !gfs_native_u64_w0_kdk_mode()||GAS_EVOLMETHOD(simpar)!=3||
        !GAS_GPU_ENABLED(simpar)||GAS_Kappa(simpar)!=0||gfs_weight_native_active()||
        GAS_ENTROPY_MODE(simpar)!=0||GAS_FCENTROID(simpar)!=0||GAS_XSPHEPS(simpar)!=0||
        GAS_VISCOSITY(simpar)!=0||GAS_AlphaVis(simpar)!=0||GAS_BetaVis(simpar)!=0||
        GAS_ACCX(simpar)!=0||GAS_ACCY(simpar)!=0){
-        fprintf(stderr,"[UNIFIED_KDK] requires saved one-rank W0 Kepler, implicit common viscosity, raw final geometry, fixed wall and no extra forces/stress/steering\n");
+        fprintf(stderr,"[UNIFIED_KDK] requires one-rank W0, implicit common viscosity, raw final geometry, explicit supported boundary and no extra forces/stress/steering\n");
         MPI_Abort(MPI_COMM(simpar),99);
     }
     double begin=MPI_Wtime(),geometry_seconds=0,pressure_seconds=0,viscosity_seconds=0,drift_seconds=0;
@@ -42,7 +45,7 @@ static double gfs_unified_kdk(
     if((env=getenv("EUNHA_KEPLER_CY")))cy=atof(env);
     if((env=getenv("EUNHA_KEPLER_EPS")))eps=atof(env);
     if(!(eta>0)||!isfinite(eta))MPI_Abort(MPI_COMM(simpar),99);
-    postype warm_ax=0,warm_ay=0;kepler_accel(0,0,&warm_ax,&warm_ay);gfs_kdk_fixedpoly_wall_init();
+    postype warm_ax=0,warm_ay=0;kepler_accel(0,0,&warm_ax,&warm_ay);if(!periodic)gfs_kdk_fixedpoly_wall_init();
     double mark=MPI_Wtime();
     updateDenW2Pressure2DBlend(simpar,xmin,ymin,xmax,ymax,gamma,
         paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D,1);
@@ -55,7 +58,7 @@ static double gfs_unified_kdk(
     if(!(dt_factor>0)||dt_factor>1||!isfinite(dt_factor))MPI_Abort(MPI_COMM(simpar),99);
     dt*=dt_factor;
     if(gfs_rk4_step_ceiling>0)dt=fmin(dt,gfs_rk4_step_ceiling);
-    if(!(dt>0)||!isfinite(dt)||VORO_NPAD(simpar)!=0)MPI_Abort(MPI_COMM(simpar),99);
+    if(!(dt>0)||!isfinite(dt)||(!periodic&&VORO_NPAD(simpar)!=0))MPI_Abort(MPI_COMM(simpar),99);
     int n=VORO_NP(simpar),bad=0;
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(simpar);
     static double E_reference=0;static int reference_ready=0;
@@ -77,6 +80,7 @@ static double gfs_unified_kdk(
     mark=MPI_Wtime();double wall_Jx=0,wall_Jy=0,wall_Jz=0,wall_roundoff=0;unsigned long long impacts=0;
 #pragma omp parallel for schedule(static) reduction(max:bad) reduction(+:wall_Jx,wall_Jy,wall_Jz,wall_roundoff,impacts)
     for(int i=0;i<n;i++){
+        if(periodic){p[i].x+=dt*p[i].vx;p[i].y+=dt*p[i].vy;continue;}
         GfsKdkFixedPolyWallStats w;double x,y,vx,vy;
         int sub=gfs_kdk_lts_kepler_drift(p[i].x,p[i].y,p[i].vx,p[i].vy,dt,p[i].mass,1,eta,cx,cy,eps,0,0,&x,&y,&vx,&vy,&w);
         if(sub<0){bad=1;continue;}p[i].x=x;p[i].y=y;p[i].vx=vx;p[i].vy=vy;

@@ -37,7 +37,7 @@ static int gfs_u1_implicit_viscosity(double h)
         }
         int changed=0;
         for(int i=0;i<N-1;i++){
-            next[i]=gfs_u1_D[i]>0 && v0[i]+dv[i]>v0[i+1]+dv[i+1];
+            next[i]=gfs_u1_D[i]>0 && (v0[i]-v0[i+1])+(dv[i]-dv[i+1])>0;
             if(next[i]!=active[i])changed=1;
         }
         new_wall[0]=gfs_u1_Dwall[0]>0&&v0[0]+dv[0]<0;

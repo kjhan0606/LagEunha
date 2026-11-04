@@ -1,0 +1,75 @@
+{
+  "purpose": "Full native 2D periodic contacts, steady shear, and planar shocks using one common closure",
+  "cases": [
+    [
+      "contact",
+      32,
+      "axis",
+      0.25
+    ],
+    [
+      "contact",
+      64,
+      "axis",
+      0.25
+    ],
+    [
+      "moving_contact",
+      32,
+      "axis",
+      0.5
+    ],
+    [
+      "moving_contact",
+      64,
+      "axis",
+      0.5
+    ],
+    [
+      "moving_contact",
+      32,
+      "diagonal",
+      0.5
+    ],
+    [
+      "moving_contact",
+      64,
+      "diagonal",
+      0.5
+    ],
+    [
+      "shear",
+      32,
+      "axis",
+      0.25
+    ],
+    [
+      "shear",
+      64,
+      "axis",
+      0.25
+    ],
+    [
+      "sod",
+      64,
+      "axis",
+      0.2
+    ],
+    [
+      "sod",
+      128,
+      "axis",
+      0.2
+    ],
+    [
+      "sod",
+      64,
+      "diagonal",
+      0.15
+    ]
+  ],
+  "binary_sha256": "e4a855f1ed24ab5f9ae87aceafc0c184bd89da3a3bf647c738973e8fac4a0668",
+  "new_outputs": "one exact final snapshot per case plus new IC when needed",
+  "expected_new_storage_bytes": 150000000,
+  "matched_speed_benchmark": false
+}
