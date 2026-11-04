@@ -1,0 +1,16 @@
+{
+  "scope": "Frozen coefficient residual-to-physical-error audit only. No PDE. Existing CPU implementation remains held.",
+  "input": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_native_cost_v3/material_volume_native_input.bin",
+  "maximum_iterations_per_rhs": 256,
+  "relative_tolerance": 1e-10,
+  "shared_time_budget_seconds": 0.076127,
+  "maximum_capture_attempts": 1,
+  "continue_second_rhs": "Only after status 3 and while the unchanged shared budget remains. Preserve every first-field failure.",
+  "no_warm_start": true,
+  "no_new_preconditioner": true,
+  "no_tolerance_relaxation": true,
+  "independent_reference": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_reference_v1",
+  "planned_bounds": "One deterministic spanning-tree feasible residual flow, not a Ritz spectral-gap certificate.",
+  "scientific_error_budget": "Not numerically declared. Report observed rates and conservative bounds, not a new chosen solve tolerance.",
+  "accepted_PDE_steps": 0
+}

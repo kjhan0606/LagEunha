@@ -61,6 +61,11 @@ static int solve(const double *rhs,double *x,int *iterations,double *relative){
 }
 int main(int argc,char **argv){
     if(argc!=3)return 2;budget=atof(argv[2]);if(!(budget>0)||!isfinite(budget))return 2;
+    /* Optional diagnostic capture keeps the original numerical/time caps.
+     * After a first nonconvergence, another RHS may be observed only inside
+     * the SAME shared budget. The original failure is never cleared. */
+    const char *capture=getenv("MATERIAL_VOLUME_COEFFICIENT_CAPTURE");
+    int capture_enabled=capture&&*capture;
     FILE *in=fopen(argv[1],"rb");uint64_t header[3];
     if(!in||fread(header,sizeof(header),1,in)!=1||header[0]!=UINT64_C(0x4d56434f53543131)||header[1]>1000000||header[2]>20000000)return 2;
     n=header[1];nf=header[2];double *cell=malloc(6*n*sizeof(double));face=malloc(nf*sizeof(*face));
@@ -99,7 +104,8 @@ int main(int argc,char **argv){
         double G[3][3];if(!gfs_velocity_fit_solve(&fit,G,NULL))exit(2);
         for(int a=0;a<2;a++)for(int d=0;d<2;d++)inverse[4*i+2*a+d]=G[a][d];
     }
-    double compatibility[2];int it[2]={0,0};double rel[2]={1,1};int rc=0;
+    double compatibility[2];int it[2]={0,0},solve_status[2]={-1,-1};double rel[2]={1,1};int rc=0;
+    uint64_t attempted=0;
     for(int b=0;b<2;b++){
         double sum=0,absolute=0;for(int i=0;i<n;i++){sum+=rhs[b][i];absolute+=fabs(rhs[b][i]);}compatibility[b]=sum;
         if(fabs(sum)>4096*DBL_EPSILON*fmax(1,absolute))return 2;
@@ -107,8 +113,12 @@ int main(int argc,char **argv){
     }
     double preparation_seconds=omp_get_wtime()-start,coefficient_seconds[2]={0,0};
     for(int b=0;b<2;b++){
-        double mark=omp_get_wtime();rc=solve(rhs[b],psi[b],it+b,rel+b);
-        coefficient_seconds[b]=omp_get_wtime()-mark;if(rc)break;
+        if(b&&omp_get_wtime()-start>=budget){if(!rc)rc=3;break;}
+        attempted|=UINT64_C(1)<<b;
+        double mark=omp_get_wtime();int current=solve(rhs[b],psi[b],it+b,rel+b);
+        solve_status[b]=current;if(current&&!rc)rc=current;
+        coefficient_seconds[b]=omp_get_wtime()-mark;
+        if(current&&(!capture_enabled||current!=3))break;
     }
     double solve_seconds=omp_get_wtime()-start,identity=NAN;
     double R_seconds=NAN,transpose_seconds=NAN;
@@ -136,10 +146,21 @@ int main(int argc,char **argv){
         if(identity>1e-10)rc=2;
     }
     double elapsed=omp_get_wtime()-start;if(elapsed>budget&&!rc)rc=3;
+    /* File I/O follows the timed screen and is not candidate runtime work.
+     * Unattempted psi arrays are marked explicitly, never treated as solves.
+     * Header, rhs0, psi0, rhs1, psi1, native fit inverse (four doubles/cell). */
+    if(capture_enabled){
+        FILE *out=fopen(capture,"wbx");
+        uint64_t h[3]={UINT64_C(0x4d56434150543131),(uint64_t)n,attempted};
+        if(!out||fwrite(h,sizeof(h),1,out)!=1)return 2;
+        for(int b=0;b<2;b++)if(fwrite(rhs[b],sizeof(double),n,out)!=(size_t)n||fwrite(psi[b],sizeof(double),n,out)!=(size_t)n)return 2;
+        if(fwrite(inverse,4*sizeof(double),n,out)!=(size_t)n||fclose(out))return 2;
+    }
     printf("{\"scope\":\"native CPU bounded coefficient/R/transpose screen only; weighted geometry and PDE cost not included\",\"cells\":%d,\"faces\":%d,\"actual_threads\":%d,\"maximum_CG_iterations\":256,\"relative_tolerance\":1e-10,\"extra_time_budget_seconds\":%.9g,\"candidate_seconds\":%.9g,\"preparation_and_coefficient_seconds\":%.9g,\"iterations\":[%d,%d],\"relative_residuals\":[%.17g,%.17g],\"rhs_compatibility\":[%.17g,%.17g],\"R_transpose_work_residual\":",n,nf,actual_threads,budget,elapsed,solve_seconds,it[0],it[1],rel[0],rel[1],compatibility[0],compatibility[1]);
     if(isfinite(identity))printf("%.17g",identity);else printf("null");
     printf(",\"preparation_seconds\":%.9g,\"coefficient_seconds\":[%.9g,%.9g],\"R_seconds\":",preparation_seconds,coefficient_seconds[0],coefficient_seconds[1]);
     if(isfinite(R_seconds))printf("%.9g",R_seconds);else printf("null");
     printf(",\"transpose_seconds\":");if(isfinite(transpose_seconds))printf("%.9g",transpose_seconds);else printf("null");
+    printf(",\"coefficient_capture_enabled\":%s,\"attempted_rhs_mask\":%llu,\"solve_status\":[%d,%d],\"capture_io_outside_candidate_timer\":true",capture_enabled?"true":"false",(unsigned long long)attempted,solve_status[0],solve_status[1]);
     printf(",\"status\":%d,\"accepted_steps\":0}\n",rc);return rc;
 }

@@ -212,9 +212,10 @@ Compact results and SHA256 provenance are in
 `Research/MaterialVolume_20261105/material_volume_reference_v1`. The preceding
 256-iteration CPU cost failure remains unchanged. The planned finite stage
 propagates coefficient errors into volume work, force, and face displacement
-without increasing the iteration cap or relaxing the tolerance. The error
-propagation stage has not been executed in the present snapshot. No candidate
-PDE or manuscript result is released by the reference calculation.
+without increasing the iteration cap or relaxing the tolerance. The completed
+follow-up is now in `UNIFIED_HYDRO_COEFFICIENT_ERROR_2026-11-05.md`. The follow-up
+also identifies a frozen velocity/pressure-noise amplification with accurate
+reference coefficients. No candidate PDE or manuscript result is released.
 
 ## Provenance and remaining work
 
