@@ -1,0 +1,123 @@
+{
+  "contact_initial_cells": [
+    [
+      0.49921875,
+      0.3789473684210515,
+      0.0,
+      0.3789473684210515,
+      2.5,
+      0.0,
+      0.007421875000000022,
+      0.0028125,
+      0.4978125,
+      0.505234375,
+      -169.13711469707297
+    ],
+    [
+      0.51125,
+      0.1628959276018104,
+      0.0,
+      1.3031674208144834,
+      20.0,
+      0.0,
+      0.01726562499999995,
+      0.0028125,
+      0.505234375,
+      0.5225,
+      -37.80060182537205
+    ]
+  ],
+  "contact_initial_face": 0.505234375,
+  "initial_domain_right": 0.9949999999999999,
+  "resolution_orders": [
+    {
+      "N_pair": [
+        198,
+        396
+      ],
+      "order": 1.0689012732947567
+    },
+    {
+      "N_pair": [
+        396,
+        792
+      ],
+      "order": 1.0529902278963053
+    }
+  ],
+  "saved_artifacts": [
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/gfs_contact.dat",
+      "sha256": "e1301fa361a33ecf59c469bcb51994cf0a1398a050724b0541879cef71ae1b45",
+      "density_L1_site": 0.006476825931574072,
+      "max_pressure_error": 0.191838803,
+      "max_speed": 0.01578742706,
+      "ordered_sites": false,
+      "sum_volumes": 0.9954549729007
+    },
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/gfs_pair_contact.dat",
+      "sha256": "e610a80cdd87dcbc236b47c9306df85847be0c19cb3f4e5c5266b711aac6257a",
+      "density_L1_site": 0.004531976330435424,
+      "max_pressure_error": 0.21599482675000004,
+      "max_speed": 0.017501007331,
+      "ordered_sites": true,
+      "sum_volumes": 0.9959444210034
+    },
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/vr_contact.dat",
+      "sha256": "7645dcee68f9c32f6c746036f1b74754c392f30e3a44c77d1efc2ffb6a7a3e2e",
+      "density_L1_site": 0.006028542345299498,
+      "max_pressure_error": 0.015043130600000065,
+      "max_speed": 0.012641861284,
+      "ordered_sites": false,
+      "sum_volumes": 0.9952625245037001
+    },
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/contact/voronoi.dat",
+      "sha256": "bb148f47da4c0eb3bb59c0f216caa0915394405c6367b9038d843dc42fafb5d7",
+      "density_L1_site": 0.005232865777788587,
+      "max_pressure_error": 0.01435643407999998,
+      "max_speed": 0.033017998977,
+      "ordered_sites": true,
+      "sum_volumes": 0.998203565069
+    },
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/contact/hllc_cd10.dat",
+      "sha256": "81e7e54ddcfafc3f3f5e83c6aa28992b7ea2ccfac9aa60c137589fc8168c10af",
+      "density_L1_site": 0.0057092186857214625,
+      "max_pressure_error": 0.0188126903000001,
+      "max_speed": 0.015791189684,
+      "ordered_sites": true,
+      "sum_volumes": 0.9952765560309
+    },
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/contact/ns_av.dat",
+      "sha256": "a962efdcaea9dfed6ca0e17729fad8d1dcda0c0004c2bc98920ebfde96db49c1",
+      "density_L1_site": 0.004667987521610331,
+      "max_pressure_error": 0.01735574900000003,
+      "max_speed": 0.014574288845,
+      "ordered_sites": true,
+      "sum_volumes": 0.9957290542666
+    },
+    {
+      "path": "/home/kjhan/BACKUP/Eunha.A1/Claude/LagForce/src/Hydro1DExam/contact/sph.dat",
+      "sha256": "201ba98908647491c562ba2391d5ed2e79f1c811b6aa54c3e5fad883efdd026a",
+      "density_L1_site": 1.0268916790794553,
+      "max_pressure_error": 0.9999999999999963,
+      "max_speed": 7.1658651747,
+      "ordered_sites": false,
+      "sum_volumes": 3.1490578646009
+    }
+  ],
+  "causal_checks": {
+    "33_bounded_controls": true,
+    "initial_pressure_defect_before_motion": true,
+    "all_consistent_controls_reach_t025": true,
+    "all_consistent_controls_stationary": true,
+    "all_control_masses_fixed_during_evolution": true,
+    "all_runs_no_thermal_floor": true,
+    "saved_gfs_pair_result_reproduced": true,
+    "one_unrepaired_HLLC_failure_retained": true
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "job": "449508",
+  "time": 62.83185307179586,
+  "endpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_kdk_individual_20261104_v1/kdk_block2_wallkdk_v1/run_wall_lts_kdk_t4030_to20pi_v2/khout.227344.dat",
+  "endpoint_sha256": "588917e40438f637b18c76c90f865828e99c5c9441450bf88fc5fe6ee021a8c0",
+  "binary": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_kdk_individual_20261104_v1/kdk_block2_wallkdk_v1/build_kdk_wall_v8/weight_native_U64_KDK.exe",
+  "binary_sha256": "b26c3a1140178c973ef29c1af3b3437a87a60af4ac5ff44e9e6283fe6830e667",
+  "original_t0_energy_drift": -2.4381587780019655e-06,
+  "continuation_energy_drift": 1.722090566439116e-09,
+  "original_disk_J_drift": 5.822315733456252e-08,
+  "full_domain_J_initial": 15.230499802375586,
+  "full_domain_J_final": 15.23049828399093,
+  "full_domain_J_relative": -9.969368552908975e-08,
+  "global_J_change_plus_known_wall_torques": -6.71579143324497e-07,
+  "angular_accounting_qualification": "KDK pressure-wall torque is not separately logged; this is not a complete discrete angular-balance residual.",
+  "annular_velocity_L1": 3.4068080193466443e-07,
+  "annular_density_L1_literal": 0.011217276995635152,
+  "annular_density_L1_initial_plateau": 0.0037930646861561905,
+  "disk_density_change": 0.014496755533007012,
+  "disk_entropy_log_abs": 7.004644040440803e-07,
+  "published_GIZMO_velocity_L1_approx": 0.006,
+  "velocity_ratio_to_approx_paper": 5.6780133655777406e-05,
+  "velocity_magnitude_not_worse_than_paper_graph": true,
+  "paper_reference": "https://arxiv.org/pdf/1409.7395#page=20",
+  "published_exact_time_density_L1": null,
+  "density_first_crossing_threshold_screen": true,
+  "comparison_qualification": "Same metric, physical time and effective resolution; different IC particle placement and boundary realization. Graph ordinate is approximate. .25 is a first-crossing threshold, not actual GIZMO density error at20pi. No density-error ratio claimed.",
+  "original_cohort_1pct_flags_diagnostic_only": {
+    "gizmo_L1_velocity_below_0p01": true,
+    "gizmo_L1_density_below_0p25": true,
+    "disk_density_change_below_0p05": true,
+    "disk_entropy_log_abs_below_0p01": true,
+    "disk_position_error_below_0p01": true,
+    "disk_angular_momentum_drift_below_0p01": true,
+    "total_energy_drift_below_0p001": true,
+    "0.5_0.75_density_below_1pct": false,
+    "0.5_0.75_entropy_log_below_0p01": true,
+    "0.5_0.75_position_error_below_0p01": true,
+    "0.75_1.0_density_below_1pct": true,
+    "0.75_1.0_entropy_log_below_0p01": true,
+    "0.75_1.0_position_error_below_0p01": true,
+    "1.0_2.0_density_below_1pct": false,
+    "1.0_2.0_entropy_log_below_0p01": true,
+    "1.0_2.0_position_error_below_0p01": true
+  },
+  "all_accepted_steps_guarded": true,
+  "accepted_steps": 227343,
+  "morphology": {
+    "original_disk_cells": 49185,
+    "current_radius_min_max": [
+      0.49983953877201387,
+      2.0017615498903774
+    ],
+    "absolute_radial_departure_quantiles": {
+      "0.5": 1.30373152917862e-06,
+      "0.95": 0.00020454348201588262,
+      "0.99": 0.0005535402992074146,
+      "1.0": 0.0028380201750357603
+    },
+    "disk_mass_fraction_with_radial_departure_above_initial_spacing": 0.0,
+    "absolute_density_change_quantiles": {
+      "0.5": 0.0012454420150666001,
+      "0.95": 0.06019860267826685,
+      "0.99": 0.25664240541214883,
+      "0.999": 0.7657706512391688,
+      "1.0": 2.096547722547812
+    },
+    "density_ratio_min_max": [
+      0.7820857117160543,
+      3.096547722547812
+    ],
+    "original_disk_density_min_max": [
+      0.7899065613746643,
+      3.1275131702423096
+    ],
+    "density_change_tail_mass_fraction": {
+      "0.1": 0.028157798529665684,
+      "0.5": 0.0035984671838892963,
+      "1.0": 0.0003252766960069051
+    },
+    "density_change_tail_cell_count": {
+      "0.1": 1385,
+      "0.5": 177,
+      "1.0": 16
+    },
+    "initial_spacing_reference": 0.015625,
+    "note": "Descriptive geometry/orbit measurements; no additional rejection threshold invented."
+  },
+  "manual_density_image_review": "pending",
+  "source_contract": {
+    "purpose": "continuous KDK individual-timestep continuation from the verified t=40.3 checkpoint to 20pi",
+    "source_checkpoint": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_kdk_individual_20261104_v1/kdk_block2_wallkdk_v1/run_wall_lts_t4030_eta01/khout.165209.dat",
+    "source_checkpoint_sha256": "d78b1a99a9dda57a6098ee630920eceba4b344a240ed9df2c9cc343083bac530",
+    "source_time": 40.3,
+    "source_step": 165209,
+    "target_time": 62.83185307179586,
+    "cell_count": 90352,
+    "integrator": "EVOLMETHOD=3 KDK with block2 Kepler subcycling eta=0.1",
+    "thermal_update": "exact adiabatic volume update; fixed mass, W=0",
+    "model_scope": "legacy tapered Kepler IC with fixed reflective polygon boundary; AV off, spin off, steering off",
+    "qualification": "long continuation diagnostic; not the sharp-annulus vacuum-boundary GIZMO benchmark"
+  },
+  "model": {
+    "W": 0,
+    "fixed_mass": true,
+    "spin": false,
+    "viscosity": "off; Re=infinity",
+    "steering": false,
+    "pressure_operator": "GFS_VARPRESS_W0 variational geometric pressure force; exact adiabatic-volume thermal map",
+    "pressure_operator_source": "exam_gpu.cu:1246-1270,1290-1315; build_kdk_wall_v8.sh defines GFS_VARPRESS_W0 for CUDA",
+    "MPI_ranks": 1,
+    "OMP_threads": 8,
+    "GPU": "H200:1",
+    "lineage": "RK4to40.000091; globalKDKto40.2; block2KDKto20pi",
+    "LTS_scope": "two-level prototype; global geometry at fine events; no multi-rank scaling claim"
+  }
+}

@@ -292,9 +292,13 @@ int RunKH(SimParameters *simpar, int icont){
     const char *w0_long_mode=getenv("GFS_NATIVE_U64_W0_EVOLVE");
     int native_w0=w0_long_mode && !strcmp(w0_long_mode,"1");
     const char *rk4_mode=getenv("GFS_WEIGHT_NATIVE_RK4_VALIDATE");
-    int native_rk4=((rk4_mode && !strcmp(rk4_mode,"1")) || native_w0) && !native_rhs;
-    if(((!reader_only || strcmp(reader_only,"1")) && !native_rhs && !native_rk4) || icont<=0){
-        fprintf(stderr,"[WEIGHT_STATE] explicit reader, K1, or bounded native RK4 qualification mode required\n");
+    const char *kdk_mode=getenv("GFS_NATIVE_U64_W0_KDK");
+    int native_rk4=((rk4_mode && !strcmp(rk4_mode,"1")) || native_w0) &&
+        !native_rhs && GAS_EVOLMETHOD(simpar)==1;
+    int native_kdk=native_w0 && kdk_mode && !strcmp(kdk_mode,"1") &&
+        !native_rhs && GAS_EVOLMETHOD(simpar)==3;
+    if(((!reader_only || strcmp(reader_only,"1")) && !native_rhs && !native_rk4 && !native_kdk) || icont<=0){
+        fprintf(stderr,"[WEIGHT_STATE] explicit reader, K1, native RK4, or gated native-U64 KDK mode required\n");
         MPI_Abort(MPI_COMM(simpar),99);
     }
 #endif
@@ -380,6 +384,25 @@ int RunKH(SimParameters *simpar, int icont){
     if(native_rk4 && (!(kh_tmax()-t>0) || (!native_w0 && kh_tmax()-t>.02) || GAS_EVOLMETHOD(simpar)!=1)){
         fprintf(stderr,"[WEIGHT_RK4_VALIDATE] restart and positive window <=0.02 with native blend RK4 required\n");MPI_Abort(MPI_COMM(simpar),99);
     }
+    if(native_kdk){
+        double max_window=.02;
+        const char *window_env=getenv("GFS_KDK_MAX_WINDOW");
+        if(window_env && window_env[0]){
+            char *end=NULL;
+            double requested=strtod(window_env,&end);
+            if(!end || *end || !(requested>0) || !isfinite(requested)){
+                fprintf(stderr,"[WEIGHT_KDK_VALIDATE] invalid GFS_KDK_MAX_WINDOW=%s\n",window_env);
+                MPI_Abort(MPI_COMM(simpar),99);
+            }
+            max_window=requested;
+        }
+        if(!(kh_tmax()-t>0) || kh_tmax()-t>max_window || GAS_EVOLMETHOD(simpar)!=3){
+            fprintf(stderr,"[WEIGHT_KDK_VALIDATE] positive native-U64 KDK window must be <= %.17g\n",max_window);
+            MPI_Abort(MPI_COMM(simpar),99);
+        }
+        if(MYID(simpar)==0)
+            fprintf(stderr,"[WEIGHT_KDK_VALIDATE] accepted window=%.17g max_window=%.17g\n",kh_tmax()-t,max_window);
+    }
     if(reader_only && !strcmp(reader_only,"1")){
     kh_outdata(simpar,icount+1,t,dt);
     if(MYID(simpar)==0)fprintf(stderr,"[WEIGHT_STATE_READER_ONLY] native migrated payload re-exported without evolution\n");
@@ -430,8 +453,13 @@ int RunKH(SimParameters *simpar, int icont){
 		if(fixed_poly){
 			int ranks=0;
 			MPI_Comm_size(MPI_COMM(simpar),&ranks);
-			if(ranks!=1 || GAS_Kappa(simpar)!=0 || GAS_EVOLMETHOD(simpar)!=1 || !use_stress){
-				fprintf(stderr,"[FIXED_POLYGON] first native gate requires one rank, W=0, stress RK4\n");
+			const char *kdk_no_wall_env=getenv("GFS_KEPLER_KDK_NO_WALL_EVENTS");
+			const char *kdk_wall_env=getenv("GFS_KEPLER_KDK_FIXEDPOLY_WALL_EVENTS");
+			int kdk_no_wall=kdk_no_wall_env && !strcmp(kdk_no_wall_env,"1");
+			int kdk_wall=kdk_wall_env && !strcmp(kdk_wall_env,"1");
+			if(ranks!=1 || GAS_Kappa(simpar)!=0 ||
+			   (GAS_EVOLMETHOD(simpar)!=1 && !(native_kdk && (kdk_no_wall!=kdk_wall))) || !use_stress){
+				fprintf(stderr,"[FIXED_POLYGON] requires one rank, W=0, stress RK4 or explicitly gated U64 KDK wall mode\n");
 				MPI_Abort(MPI_COMM(simpar),98);
 			}
 		}

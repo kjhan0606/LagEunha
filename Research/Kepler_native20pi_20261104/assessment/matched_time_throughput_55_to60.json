@@ -1,0 +1,45 @@
+{
+  "interval": "physical t~55 to60",
+  "native_KDK": {
+    "start": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_kdk_individual_20261104_v1/kdk_block2_wallkdk_v1/run_wall_lts_kdk_t4030_to20pi_v2/khout.205426.dat",
+    "end": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_kdk_individual_20261104_v1/kdk_block2_wallkdk_v1/run_wall_lts_kdk_t4030_to20pi_v2/khout.219476.dat",
+    "start_time": 55.00020262516436,
+    "end_time": 60.00022175711972,
+    "wall_seconds": 4032.738154888153,
+    "timing_basis": "Original producer snapshot completion mtimes, shared GPFS. Not input-copy mtimes.",
+    "units_per_hour": 4.463485647641437,
+    "accepted_steps": 14050
+  },
+  "native_RK4": {
+    "start": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_circle_w0_to20pi_resume_t50p00005_h200_20261103_v1/run/khout.249336.dat",
+    "end": "/gpfs/kjhan/LagForce/Kepler_Q1_BoundedGlobal_20261029/native_u64_circle_w0_to20pi_resume_t50p00005_h200_20261103_v1/run/khout.279607.dat",
+    "start_time": 55.000172367375534,
+    "end_time": 60.000002825250526,
+    "wall_seconds": 21137.01236486435,
+    "timing_basis": "Original producer snapshot completion mtimes, shared GPFS. Not input-copy mtimes.",
+    "units_per_hour": 0.8515578899064286,
+    "accepted_steps": 30271
+  },
+  "GIZMO": {
+    "start": {
+      "step": 674707,
+      "time": 55.0048828125,
+      "cumulative_wall_seconds": 7425.98,
+      "MPI_tasks": 1
+    },
+    "end": {
+      "step": 812813,
+      "time": 60.003662109375,
+      "cumulative_wall_seconds": 8633.31,
+      "MPI_tasks": 1
+    },
+    "physical_delta": 4.998779296875,
+    "wall_seconds": 1207.33,
+    "units_per_hour": 14.90529140230923
+  },
+  "native_KDK_vs_RK4_speedup": 5.241552806388649,
+  "GIZMO_vs_native_KDK_speedup": 3.3393837415351335,
+  "qualification": "Production-path comparison on syn104; not an isolated integrator/algorithm benchmark. Native GPU/OMP and GIZMO CPU/OMP, boundaries and operators differ; native RK4 is circle and KDK polygon. Old full-job speed ratios mix different physical intervals and are not reused.",
+  "cpu_log_prefix_scope": "Only records near55..60 used; no simulation rerun.",
+  "timestamp": "2026-11-04T16:19:38.752662"
+}

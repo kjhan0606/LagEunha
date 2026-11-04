@@ -1,0 +1,117 @@
+{
+  "problem": "Two-dimensional cold Q1 Kepler disk",
+  "effective_spacing": 0.015625,
+  "effective_N1D_over_width4": 256,
+  "generators": 90352,
+  "original_disk_selection": "0.5 <= R0 <= 2, inclusive,49185 fixedIDs",
+  "published_norm_selection": "current0.8 < R < 1.2,equal-element mean",
+  "mass": "fixed per generator",
+  "weights": "zero",
+  "intrinsic_spin": false,
+  "steering": false,
+  "softening": 0.01175,
+  "initial_pressure": 1e-06,
+  "gamma": 1.6666669845581055,
+  "boundary": "fixed reflecting regular1024gon,circumradius2.75,for primary mixed trajectory",
+  "primary": {
+    "time": 62.83185307179586,
+    "snapshot_sha256": "588917e40438f637b18c76c90f865828e99c5c9441450bf88fc5fe6ee021a8c0",
+    "velocity_L1": 3.4068080193466443e-07,
+    "density_L1_literal": 0.011217276995635152,
+    "density_L1_plateau": 0.0037930646861561905,
+    "total_energy_change_relative_t0": -2.4381587780019655e-06,
+    "original_disk_angular_momentum_change_relative_t0": 5.822315733456252e-08,
+    "original_disk_density_change_mass_weighted": 0.014496755533007012,
+    "original_disk_entropy_log_change_mass_weighted": 7.004644040440803e-07
+  },
+  "RK4_circle_comparison": {
+    "time": 62.83185307179586,
+    "snapshot_sha256": "c6b9ac12818f34ea62e56168a0ce4dca9bcd11a26bd76beed394ffb54915c4ef",
+    "velocity_L1": 3.395351037634499e-07,
+    "density_L1_literal": 0.011217313891795167,
+    "density_L1_plateau": 0.0037930673264037554,
+    "total_energy_change_relative_t0": -2.5534618367026103e-06,
+    "original_disk_angular_momentum_change_relative_t0": 2.8512448109344404e-08,
+    "original_disk_density_change_mass_weighted": 0.014385742254924377,
+    "original_disk_entropy_log_change_mass_weighted": 9.79147452750961e-06
+  },
+  "mixed_lineage": [
+    [
+      "RK4",
+      0,
+      40.00009144754977
+    ],
+    [
+      "globalKDK",
+      40.00009144754977,
+      40.2
+    ],
+    [
+      "two_levelKDK",
+      40.2,
+      62.83185307179586
+    ]
+  ],
+  "exact_adiabatic_volume_map_starts": 40.02,
+  "original_disk_density_distribution": {
+    "original_disk_cells": 49185,
+    "current_radius_min_max": [
+      0.49983953877201387,
+      2.0017615498903774
+    ],
+    "absolute_radial_departure_quantiles": {
+      "0.5": 1.30373152917862e-06,
+      "0.95": 0.00020454348201588262,
+      "0.99": 0.0005535402992074146,
+      "1.0": 0.0028380201750357603
+    },
+    "disk_mass_fraction_with_radial_departure_above_initial_spacing": 0.0,
+    "absolute_density_change_quantiles": {
+      "0.5": 0.0012454420150666001,
+      "0.95": 0.06019860267826685,
+      "0.99": 0.25664240541214883,
+      "0.999": 0.7657706512391688,
+      "1.0": 2.096547722547812
+    },
+    "density_ratio_min_max": [
+      0.7820857117160543,
+      3.096547722547812
+    ],
+    "original_disk_density_min_max": [
+      0.7899065613746643,
+      3.1275131702423096
+    ],
+    "density_change_tail_mass_fraction": {
+      "0.1": 0.028157798529665684,
+      "0.5": 0.0035984671838892963,
+      "1.0": 0.0003252766960069051
+    },
+    "density_change_tail_cell_count": {
+      "0.1": 1385,
+      "0.5": 177,
+      "1.0": 16
+    },
+    "initial_spacing_reference": 0.015625,
+    "note": "Descriptive geometry/orbit measurements; no additional rejection threshold invented."
+  },
+  "full_domain_J_relative": -9.969368552908975e-08,
+  "conservation_scope": "State differences include external wall exchange; no exact finite-step torque balance claimed.",
+  "timing": {
+    "physical_interval": "approximately55to60",
+    "native_KDK_units_per_hour": 4.463485647641437,
+    "prior_RK4_units_per_hour": 0.8515578899064286,
+    "GIZMO_units_per_hour": 14.90529140230923,
+    "KDK_over_RK4": 5.241552806388649,
+    "GIZMO_over_KDK": 3.3393837415351335,
+    "qualification": "Production-path comparison on syn104; not an isolated integrator/algorithm benchmark. Native GPU/OMP and GIZMO CPU/OMP, boundaries and operators differ; native RK4 is circle and KDK polygon. Old full-job speed ratios mix different physical intervals and are not reused."
+  },
+  "published_GIZMO": {
+    "reference": "Hopkins2015,Figure8",
+    "effective_N1D": 256,
+    "time": 62.83185307179586,
+    "velocity_L1_approx": 0.006,
+    "density_L1_at_same_time": null,
+    "approximation": "Visual graph reading,not tabulated raw output; different IC/boundary realization."
+  },
+  "figure": "fig_kepler_w0_20pi_20261104.pdf"
+}

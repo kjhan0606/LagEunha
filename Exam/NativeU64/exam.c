@@ -10316,7 +10316,10 @@ void fixed_polygon_postStage_blend(SimParameters *simpar){
                 if(!isfinite(penetration) || penetration>1.e-6){gfs_wall_stage_failed=1;return;}
                 continue; /* trial predictor only; final domain checked before commit */
             }
-			if(penetration>=0){
+            const double touch_tol=32.*DBL_EPSILON*
+                fmax(2.75,fabs(cx)+fabs(cy));
+            if(penetration>=0 && penetration<=touch_tol) continue;
+			if(penetration>touch_tol){
 				fprintf(stderr,"[FIXED_POLYGON_CROSSING] id=%zu xy=(%.17g,%.17g) side=%d penetration=%.17g\n",
 					(size_t)PINDX(sbp+i),(double)sbp[i].x,(double)sbp[i].y,k,penetration);
 				MPI_Abort(MPI_COMM(simpar),98);
@@ -10769,6 +10772,7 @@ static void gfs_rk4_cfl_trace(SimParameters *simpar,const char *stage,int attemp
 #include "gfs_moment_native.inc"
 #include "gfs_dg_native.inc"
 #include "gfs_wall_events.inc"
+#include "gfs_kdk_fixedpoly_drift.inc"
 
 double exam2d_vph_rk4_int_blend(
 		SimParameters *simpar,
@@ -12010,6 +12014,9 @@ gfs_rk4_trial_rejected:
 #endif
 }
 
+#include "gfs_kdk_lts.h"
+#include "gfs_kdk_lts_block2.inc"
+
 /* ================================================================
  *  exam2d_vph_kdk_int_blend (EVOLMETHOD=3):
  *    KDK leapfrog integrator for the *blend* (Voronoi) hydro path.
@@ -12031,6 +12038,12 @@ gfs_rk4_trial_rejected:
  *
  *    Same Dtime is used throughout the step (consistent leapfrog).
  * ================================================================ */
+static int gfs_native_u64_w0_kdk_mode(void){
+	const char *e=getenv("GFS_NATIVE_U64_W0_KDK");
+	const char *w=getenv("GFS_NATIVE_U64_W0_EVOLVE");
+	return e && !strcmp(e,"1") && w && !strcmp(w,"1");
+}
+
 double exam2d_vph_kdk_int_blend(
 		SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
@@ -12042,7 +12055,85 @@ double exam2d_vph_kdk_int_blend(
 			void (*)(SimParameters *, postype)),
 		void (*postStage)(SimParameters *)
 		){
+	const int native_u64_kdk=gfs_native_u64_w0_kdk_mode();
+	const int kdk_adiabatic_volume=gfs_kdk_adiabatic_volume_on();
+	const int kdk_fixedpoly_wall_events=gfs_kdk_fixedpoly_wall_events();
+	const char *lts_block2_env=getenv("GFS_KDK_LTS_BLOCK2");
+	const int native_u64_kdk_lts_block2=native_u64_kdk &&
+		lts_block2_env && !strcmp(lts_block2_env,"1");
+	if(lts_block2_env && !strcmp(lts_block2_env,"1") && !native_u64_kdk){
+		fprintf(stderr,"[KDK_LTS_BLOCK2] requires the native U64 W0 KDK path\n");
+		MPI_Abort(MPI_COMM(simpar),96);
+	}
+	static double native_u64_kdk_etot0=0;
+	static int native_u64_kdk_e0_ready=0;
+	int i;
 	treevorostressrk4particletype *sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	if(native_u64_kdk){
+		int ranks=0;
+		MPI_Comm_size(MPI_COMM(simpar),&ranks);
+		const char *poly=getenv("GFS_KEPLER_FIXED_POLYGON");
+		const char *no_wall=getenv("GFS_KEPLER_KDK_NO_WALL_EVENTS");
+		const char *kdk_wall=getenv("GFS_KEPLER_KDK_FIXEDPOLY_WALL_EVENTS");
+		const char *legacy_wall=getenv("GFS_KEPLER_WALL_EVENTS");
+		const char *circle=getenv("GFS_KEPLER_CIRCLE_EVENTS");
+		const char *raw=getenv("GFS_GPU_RAW_FACES");
+		const char *finalv=getenv("GFS_GPU_FINAL_VOLUME");
+		const int no_wall_on=no_wall && !strcmp(no_wall,"1");
+		const int kdk_wall_on=kdk_wall && !strcmp(kdk_wall,"1");
+		const int no_wall_valid=!no_wall || !strcmp(no_wall,"0") || no_wall_on;
+		const int kdk_wall_valid=!kdk_wall || !strcmp(kdk_wall,"0") || kdk_wall_on;
+		if(ranks!=1 || GAS_EVOLMETHOD(simpar)!=3 ||
+		   !poly || strcmp(poly,"1") || !no_wall_valid || !kdk_wall_valid ||
+		   (no_wall_on==kdk_wall_on) || (legacy_wall && strcmp(legacy_wall,"0")) ||
+		   (circle && strcmp(circle,"0")) || postStage!=fixed_polygon_postStage_blend ||
+		   GAS_Kappa(simpar)!=0 || GAS_AVMODE(simpar)!=5 ||
+		   GAS_ENTROPY_MODE(simpar)!=0 || GAS_VISCOSITY(simpar)!=0 ||
+		   GAS_AlphaVis(simpar)!=0 || GAS_BetaVis(simpar)!=0 ||
+		   GAS_FCENTROID(simpar)!=0 || GAS_XSPHEPS(simpar)!=0 ||
+		   !GAS_GPU_ENABLED(simpar) || gfs_weight_native_active() ||
+		   (kdk_adiabatic_volume && (GAS_ENTROPY_MODE(simpar)!=0 ||
+		      GAS_VISCOSITY(simpar)!=0 || GAS_Kappa(simpar)!=0 ||
+		      GAS_FCENTROID(simpar)!=0)) ||
+		   !raw || strcmp(raw,"1") || !finalv || strcmp(finalv,"1")){
+			fprintf(stderr,"[U64_KDK_GUARD] requires one-rank frozen-W0 native thermal state, CUDA raw/final geometry, fixed polygon, exactly one KDK wall mode, and inviscid av5\n");
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
+		if(kdk_wall_on) gfs_kdk_fixedpoly_wall_init();
+		if(kdk_adiabatic_volume && MYID(simpar)==0){
+			static int adiabatic_banner=0;
+			if(!adiabatic_banner){
+				fprintf(stderr,"[KDK_ADIABATIC_VOLUME] enabled; exact fixed-mass PdV map U*V^(Gamma-1)=constant between force evaluations\n");
+				adiabatic_banner=1;
+			}
+		}
+		if(MYID(simpar)==0){
+			fprintf(stderr,"[U64_KDK_GUARD] enabled; U64 half-kicks, strict positivity, no legacy clipping, fixedpoly_wall=%d\n",kdk_wall_on);
+			fflush(stderr);
+		}
+	}
+	if(native_u64_kdk && !native_u64_kdk_e0_ready){
+		double e0_l=0,e0_g=0;
+		int bad0_l=0,bad0_g=0;
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i),SIMBOX(simpar).x.max,SIMBOX(simpar).y.max))continue;
+			double U=sbp[i].weight_thermal.U,V=sbp[i].weight_thermal.V;
+			double m=(double)sbp[i].mass;
+			if(!(U>0) || !(V>0) || !isfinite(U) || !isfinite(V)){bad0_l++;continue;}
+			e0_l+=U+0.5*m*((double)sbp[i].vx*sbp[i].vx+(double)sbp[i].vy*sbp[i].vy)
+				+m*(double)kepler_phi(sbp[i].x,sbp[i].y);
+		}
+		MPI_Allreduce(&e0_l,&e0_g,1,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+		MPI_Allreduce(&bad0_l,&bad0_g,1,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+		if(bad0_g || !isfinite(e0_g) || e0_g==0){
+			fprintf(stderr,"[U64_KDK_GUARD] invalid U64 restart energy state before first step\n");
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
+		native_u64_kdk_etot0=e0_g;
+		native_u64_kdk_e0_ready=1;
+		if(MYID(simpar)==0)
+			fprintf(stderr,"[U64_KDK_INIT] restart Etot0=%.15e; initial state is the comparison reference\n",native_u64_kdk_etot0);
+	}
 	postype xmin,ymin,xmax,ymax,OrderOfAccuracy;
 	postype Courant = GAS_COURANT(simpar);
 	postype Gamma = GAS_GAMMA(simpar);
@@ -12057,7 +12148,6 @@ double exam2d_vph_kdk_int_blend(
 
 	OrderOfAccuracy = VoroAccuracyOrder(simpar);
 
-	int i;
 	postype Dtime, dt_dummy;
 	postype Lx = SIMBOX(simpar).x.max;
 	postype Ly = SIMBOX(simpar).y.max;
@@ -12092,6 +12182,9 @@ double exam2d_vph_kdk_int_blend(
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] K before updateDen\n"); fflush(stderr); }
 
 	double _t0, _t_update=0, _t_force=0, _t_post=0, _t_fin=0;
+	int lts_block2_used=0;
+	int kdk_u64_bad=0;
+	double *kdk_volume_start=NULL;
 
 	/* === Stage 1: force eval at (x_n, v_n) === */
 	_t0 = MPI_Wtime();
@@ -12137,19 +12230,127 @@ double exam2d_vph_kdk_int_blend(
 					TVORORK4_DDINFO(simpar)[0].n_size, VORO_NP(simpar));
 			if(dtk < Dtime) Dtime = dtk;
 		}
+		if(native_u64_kdk && gfs_rk4_step_ceiling > 0 &&
+		   Dtime > (postype)gfs_rk4_step_ceiling)
+			Dtime = (postype)gfs_rk4_step_ceiling;
+		if(native_u64_kdk && (!(Dtime > 0) || !isfinite((double)Dtime))){
+			fprintf(stderr,"[U64_KDK_GUARD] invalid/nonpositive timestep %.17g\n",(double)Dtime);
+			MPI_Abort(MPI_COMM(simpar),99);
+		}
 	}
 
+	
+	/* Diagnostic-only local-step planning. This reports bins from the local
+	 * GPU dt candidates but deliberately leaves the global KDK trajectory
+	 * unchanged. The report excludes neighbor limiting, flux-register cost,
+	 * and the active-cell Voronoi geometry savings that the full LTS path must
+	 * implement. */
+	{
+		static int plan_reported = 0;
+		const char *plan_env = getenv("GFS_KDK_LTS_PLAN_DIAG");
+		if(native_u64_kdk && plan_env && !strcmp(plan_env,"1") && !plan_reported){
+			unsigned long long nbin_local[GFS_KDK_LTS_MAX_BIN + 1] = {0};
+			unsigned long long nbin_global[GFS_KDK_LTS_MAX_BIN + 1] = {0};
+			unsigned long long nlocal = 0, nglobal = 0;
+			double work_local = 0.0, work_global = 0.0;
+			int bad_local = 0, bad_global = 0;
+			for(i=0;i<VORO_NP(simpar);i++){
+				if(!targetBP((treevorork4particletype*)(sbp+i),Lx,Ly)) continue;
+				double candidate = (double)sbp[i].dt;
+				if(!isfinite(candidate) || candidate <= 0.0){
+					bad_local++;
+					continue;
+				}
+				if(candidate < (double)Dtime) candidate = (double)Dtime;
+				int b = gfs_kdk_lts_bin_from_dt(candidate,(double)Dtime,
+					GFS_KDK_LTS_MAX_BIN);
+				if(b < 0){ bad_local++; continue; }
+				nbin_local[b]++;
+				nlocal++;
+				work_local += ldexp(1.0,-b);
+			}
+			MPI_Allreduce(nbin_local,nbin_global,GFS_KDK_LTS_MAX_BIN+1,
+				MPI_UNSIGNED_LONG_LONG,MPI_SUM,MPI_COMM(simpar));
+			MPI_Allreduce(&nlocal,&nglobal,1,MPI_UNSIGNED_LONG_LONG,
+				MPI_SUM,MPI_COMM(simpar));
+			MPI_Allreduce(&work_local,&work_global,1,MPI_DOUBLE,
+				MPI_SUM,MPI_COMM(simpar));
+			MPI_Allreduce(&bad_local,&bad_global,1,MPI_INT,
+				MPI_SUM,MPI_COMM(simpar));
+			if(bad_global || nglobal==0){
+				fprintf(stderr,"[KDK_LTS_PLAN] invalid local timestep candidates=%d cells=%llu\n",
+					bad_global,nglobal);
+				MPI_Abort(MPI_COMM(simpar),98);
+			}
+			if(MYID(simpar)==0){
+				double active_fraction=work_global/(double)nglobal;
+				fprintf(stderr,"[KDK_LTS_PLAN] dt_base=%.9e cells=%llu active_fraction=%.6e ideal_cell_update_ratio=%.3f neighbor_limit=not_applied geometry_work=unchanged bins=",
+					(double)Dtime,nglobal,active_fraction,
+					(active_fraction>0.0)?1.0/active_fraction:0.0);
+				for(int b=0;b<=GFS_KDK_LTS_MAX_BIN;b++)
+					if(nbin_global[b])
+						fprintf(stderr,"%s%d:%llu",b?",":"",b,nbin_global[b]);
+				fprintf(stderr,"\n");
+				fflush(stderr);
+			}
+			plan_reported=1;
+		}
+	}
+	if(native_u64_kdk_lts_block2){
+		int lts_rc=gfs_kdk_lts_block2(simpar,sbp,Dtime,
+			(postype)gfs_rk4_step_ceiling,
+			xmin,ymin,xmax,ymax,OrderOfAccuracy,Courant,Gamma,
+			paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,
+			mkLinkedList2D,postStage,targetBP,Lx,Ly,&Dtime,
+			&_t_update,&_t_force,&_t_post);
+		if(lts_rc<0){
+			fprintf(stderr,"[KDK_LTS_BLOCK2] candidate failed its entry contract\n");
+			MPI_Abort(MPI_COMM(simpar),96);
+		}
+		lts_block2_used=(lts_rc>0);
+	}
+	if(!lts_block2_used){
+	if(kdk_adiabatic_volume){
+		const int nv=(int)VORO_NP(simpar);
+		kdk_volume_start=(double*)malloc((size_t)nv*sizeof(double));
+		if(!kdk_volume_start){fprintf(stderr,"[KDK_ADIABATIC_VOLUME] volume snapshot allocation failed\n");MPI_Abort(MPI_COMM(simpar),99);}
+		for(i=0;i<nv;i++)kdk_volume_start[i]=sbp[i].weight_thermal.V;
+	}
 	/* dK rate-limiter: clamp |dK|*dt_ref/K <= rate_max before stage-1 half-kick */
 	clamp_dK_rate_limiter(simpar, Dtime);
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
 
 	/* Half-kick with a_n, du_n */
 	postype half_dt = 0.5 * Dtime;
+	/* kepler_accel lazily reads process-constant environment values without
+	 * atomics; initialize it serially before the independent cell loop. */
+	if(native_u64_kdk){
+		postype warm_ax=0,warm_ay=0;
+		kepler_accel((postype)0,(postype)0,&warm_ax,&warm_ay);
+	}
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(max:kdk_u64_bad)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
 			postype axk = accx_ext, ayk = accy_ext;
 			kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
-			if(sedov_phase1_on()){
+			if(native_u64_kdk){
+				double U0=sbp[i].weight_thermal.U;
+				double Udot=sbp[i].weight_thermal.Udot;
+				double U1=kdk_adiabatic_volume ? U0 : U0+Udot*(double)half_dt;
+				if(!(U0>0) || !isfinite(U0) || !isfinite(Udot) ||
+				   (!kdk_adiabatic_volume && (!(U1>0) ||
+				    !isfinite(U1) || !isfinite((float)U1)))){
+					kdk_u64_bad=1;
+					continue;
+				}
+				sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+				sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
+				sbp[i].weight_thermal.U=U1;
+				sbp[i].ie=(float)U1;
+				sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+			} else if(sedov_phase1_on()){
 				phase1_half_kick(sbp+i, half_dt, axk, ayk);
 			} else {
 				sbp[i].vx += (sbp[i].ax + axk) * half_dt;
@@ -12159,13 +12360,54 @@ double exam2d_vph_kdk_int_blend(
 			}
 		}
 	}
+	if(native_u64_kdk && kdk_u64_bad){
+		fprintf(stderr,"[U64_KDK_POSITIVITY] first half-kick produced invalid/nonpositive U; no clipping or floor applied\n");
+		MPI_Abort(MPI_COMM(simpar),99);
+	}
 
-	/* Full drift with half-kicked v (XSPH offset added when xsph_eps>0) */
+	/* Exact straight-segment reflection events inside the KDK drift. */
+	unsigned long long kdk_wall_hits=0;
+	double kdk_wall_jx=0.0,kdk_wall_jy=0.0;
+	double kdk_wall_torque=0.0,kdk_wall_dk=0.0;
+	int kdk_wall_bad=0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(+:kdk_wall_hits,kdk_wall_jx,kdk_wall_jy,kdk_wall_torque,kdk_wall_dk) reduction(max:kdk_wall_bad)
+#endif
 	for(i=0;i<VORO_NP(simpar);i++){
 		if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
-			sbp[i].x += (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x) * Dtime;
-			sbp[i].y += (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y) * Dtime;
+			if(kdk_fixedpoly_wall_events){
+				GfsKdkFixedPolyWallStats wall_stats;
+				double x=(double)sbp[i].x,y=(double)sbp[i].y;
+				double vx=(double)sbp[i].vx,vy=(double)sbp[i].vy;
+				if(!gfs_kdk_fixedpoly_wall_drift(&x,&y,&vx,&vy,
+					(double)Dtime,(double)sbp[i].mass,&wall_stats)){
+					kdk_wall_bad=1;
+					continue;
+				}
+				sbp[i].x=(postype)x; sbp[i].y=(postype)y;
+				sbp[i].vx=(postype)vx; sbp[i].vy=(postype)vy;
+				kdk_wall_hits+=wall_stats.impacts;
+				kdk_wall_jx+=wall_stats.wall_jx;
+				kdk_wall_jy+=wall_stats.wall_jy;
+				kdk_wall_torque+=wall_stats.wall_torque;
+				kdk_wall_dk+=wall_stats.kinetic_roundoff;
+			} else {
+				sbp[i].x += (sbp[i].vx + xsph_eps*sbp[i].stress.v_smooth_x) * Dtime;
+				sbp[i].y += (sbp[i].vy + xsph_eps*sbp[i].stress.v_smooth_y) * Dtime;
+			}
 		}
+	}
+	if(kdk_wall_bad){
+		fprintf(stderr,"[KDK_WALL_FAILURE] invalid, unresolved, or corner drift event at step=%d t=%.17g dt=%.17g\n",
+			gfs_rk4_context_step,gfs_rk4_context_time,(double)Dtime);
+		MPI_Abort(MPI_COMM(simpar),98);
+	}
+	if(kdk_wall_hits && MYID(simpar)==0){
+		fprintf(stderr,"[KDK_WALL_LEDGER] step=%d t_start=%.17g t_end=%.17g hits=%llu wall_J=(%.17g,%.17g) wall_torque=%.17g kinetic_roundoff=%.17g\n",
+			gfs_rk4_context_step,gfs_rk4_context_time,
+			gfs_rk4_context_time+(double)Dtime,kdk_wall_hits,
+			kdk_wall_jx,kdk_wall_jy,kdk_wall_torque,kdk_wall_dk);
+		fflush(stderr);
 	}
 
 	_t0 = MPI_Wtime();
@@ -12185,6 +12427,23 @@ double exam2d_vph_kdk_int_blend(
 			mkLinkedList2D, Dtime);
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] O after stage2 updateDen\n"); fflush(stderr); }
 	_t_update += MPI_Wtime() - _t0;
+	sbp=(treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	if(kdk_adiabatic_volume){
+		int adiabat_bad=0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(max:adiabat_bad)
+#endif
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i),Lx,Ly))continue;
+			double Unew=0.0;
+			if(!gfs_kdk_adiabatic_volume_update(sbp[i].weight_thermal.U,
+					kdk_volume_start[i],sbp[i].weight_thermal.V,
+					(double)Gamma,&Unew)){adiabat_bad=1;continue;}
+			sbp[i].weight_thermal.U=Unew;
+			sbp[i].ie=(float)Unew;
+		}
+		if(adiabat_bad){fprintf(stderr,"[KDK_ADIABATIC_VOLUME] invalid volume or thermal state after drift\n");MPI_Abort(MPI_COMM(simpar),99);}
+	}
 	_t0 = MPI_Wtime();
 #ifdef USE_CUDA
 	if (GAS_GPU_ENABLED(simpar))
@@ -12207,11 +12466,29 @@ double exam2d_vph_kdk_int_blend(
 
 	/* Second half-kick with a_{n+1}, du_{n+1} */
 	{
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) reduction(max:kdk_u64_bad)
+#endif
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
 				postype axk = accx_ext, ayk = accy_ext;
 				kepler_accel(sbp[i].x, sbp[i].y, &axk, &ayk);
-				if(sedov_phase1_on()){
+				if(native_u64_kdk){
+					double U0=sbp[i].weight_thermal.U;
+					double Udot=sbp[i].weight_thermal.Udot;
+					double U1=kdk_adiabatic_volume ? U0 : U0+Udot*(double)half_dt;
+					if(!(U0>0) || !isfinite(U0) || !isfinite(Udot) ||
+					   (!kdk_adiabatic_volume && (!(U1>0) ||
+					    !isfinite(U1) || !isfinite((float)U1)))){
+						kdk_u64_bad=1;
+						continue;
+					}
+					sbp[i].vx += (sbp[i].ax + axk) * half_dt;
+					sbp[i].vy += (sbp[i].ay + ayk) * half_dt;
+					sbp[i].weight_thermal.U=U1;
+					sbp[i].ie=(float)U1;
+					sbp[i].stress.K += sbp[i].stress.dK * half_dt;
+				} else if(sedov_phase1_on()){
 					phase1_half_kick(sbp+i, half_dt, axk, ayk);
 				} else {
 					sbp[i].vx += (sbp[i].ax + axk) * half_dt;
@@ -12224,13 +12501,20 @@ double exam2d_vph_kdk_int_blend(
 			}
 		}
 	}
+	if(native_u64_kdk && kdk_u64_bad){
+		fprintf(stderr,"[U64_KDK_POSITIVITY] second half-kick produced invalid/nonpositive U; no clipping or floor applied\n");
+		MPI_Abort(MPI_COMM(simpar),99);
+	}
 
 	_t0 = MPI_Wtime();
 	postStage(simpar);
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] Q after 2nd postStage\n"); fflush(stderr); }
 	_t_post += MPI_Wtime() - _t0;
 	sbp = (treevorostressrk4particletype*)VORORK4_TBP(simpar);
+	}
 
+	free(kdk_volume_start);
+	kdk_volume_start=NULL;
 	migrateTreeVorork4Particles(simpar);
 	if(MYID(simpar)==0){ fprintf(stderr,"[KDK_DBG] R after migrate\n"); fflush(stderr); }
 
@@ -12347,29 +12631,92 @@ double exam2d_vph_kdk_int_blend(
 	{
 		int entropy_mode = GAS_ENTROPY_MODE(simpar);
 		postype K_floor = GAS_K_FLOOR(simpar);
+		int kdk_eos_bad=0;
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for reduction(max:kdk_eos_bad)
 #endif
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(targetBP((treevorork4particletype*)(sbp+i), Lx, Ly)){
-				sbp[i].den = sbp[i].mass/sbp[i].volume;
-				if(entropy_mode == 1){
-					if(sbp[i].stress.K < K_floor) sbp[i].stress.K = K_floor;
-					sbp[i].pressure = sbp[i].stress.K * pow((double)sbp[i].den, (double)Gamma);
-					sbp[i].ie = sbp[i].pressure * sbp[i].volume / (Gamma-1);
-				} else {
-					sbp[i].pressure = sbp[i].ie/sbp[i].volume * (Gamma-1);
-					if(sbp[i].pressure <= 0){
-						sbp[i].pressure = 1e-6;
-						sbp[i].ie = sbp[i].pressure * sbp[i].volume / (Gamma-1);
+				if(native_u64_kdk){
+					double U=sbp[i].weight_thermal.U;
+					double V=sbp[i].weight_thermal.V;
+					if(!(U>0) || !(V>0) || !isfinite(U) || !isfinite(V)){
+						kdk_eos_bad=1;
+						continue;
 					}
+					double rho=(double)sbp[i].mass/V;
+					double P=(Gamma-1.0)*U/V;
+					if(!(rho>0) || !(P>0) || !isfinite(rho) || !isfinite(P)){
+						kdk_eos_bad=1;
+						continue;
+					}
+					sbp[i].ie=(float)U;
+					sbp[i].volume=(postype)V;
+					sbp[i].den=(postype)rho;
+					sbp[i].pressure=(postype)P;
+					sbp[i].csound=(postype)sqrt(Gamma*P/rho);
+				} else {
+					sbp[i].den = sbp[i].mass/sbp[i].volume;
+					if(entropy_mode == 1){
+						if(sbp[i].stress.K < K_floor) sbp[i].stress.K = K_floor;
+						sbp[i].pressure = sbp[i].stress.K * pow((double)sbp[i].den, (double)Gamma);
+						sbp[i].ie = sbp[i].pressure * sbp[i].volume / (Gamma-1);
+					} else {
+						sbp[i].pressure = sbp[i].ie/sbp[i].volume * (Gamma-1);
+						if(sbp[i].pressure <= 0){
+							sbp[i].pressure = 1e-6;
+							sbp[i].ie = sbp[i].pressure * sbp[i].volume / (Gamma-1);
+						}
+					}
+					sbp[i].csound = sqrt(Gamma*sbp[i].pressure/sbp[i].den);
 				}
-				sbp[i].csound = sqrt(Gamma*sbp[i].pressure/sbp[i].den);
 			}
 			else {
 				sbp[i].vx = sbp[i].vy = 0;
 				sbp[i].w2 = sbp[i].rk4.w2backup;
 			}
+		}
+		if(kdk_eos_bad) kdk_u64_bad=1;
+	}
+	if(native_u64_kdk && kdk_u64_bad){
+		fprintf(stderr,"[U64_KDK_POSITIVITY] final geometry/EOS state invalid; no floor applied\n");
+		MPI_Abort(MPI_COMM(simpar),99);
+	}
+
+	if(native_u64_kdk){
+		double ehyd_l=0, epot_l=0, umin_l=HUGE_VAL, vmin64_l=HUGE_VAL;
+		double ehyd_g=0, epot_g=0, umin_g=0, vmin64_g=0;
+		int bad_l=0, bad_g=0;
+		for(i=0;i<VORO_NP(simpar);i++){
+			if(!targetBP((treevorork4particletype*)(sbp+i),Lx,Ly))continue;
+			double U=sbp[i].weight_thermal.U,V=sbp[i].weight_thermal.V;
+			double m=(double)sbp[i].mass;
+			if(!(U>0) || !(V>0) || !isfinite(U) || !isfinite(V)){bad_l++;continue;}
+			double dx=(double)sbp[i].x,dy=(double)sbp[i].y;
+			/* kepler_phi uses the configured central-mass location and softening. */
+			ehyd_l += U+0.5*m*((double)sbp[i].vx*sbp[i].vx+(double)sbp[i].vy*sbp[i].vy);
+			epot_l += m*(double)kepler_phi((postype)dx,(postype)dy);
+			if(U<umin_l)umin_l=U;
+			if(V<vmin64_l)vmin64_l=V;
+		}
+		MPI_Allreduce(&ehyd_l,&ehyd_g,1,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+		MPI_Allreduce(&epot_l,&epot_g,1,MPI_DOUBLE,MPI_SUM,MPI_COMM(simpar));
+		MPI_Allreduce(&umin_l,&umin_g,1,MPI_DOUBLE,MPI_MIN,MPI_COMM(simpar));
+		MPI_Allreduce(&vmin64_l,&vmin64_g,1,MPI_DOUBLE,MPI_MIN,MPI_COMM(simpar));
+		MPI_Allreduce(&bad_l,&bad_g,1,MPI_INT,MPI_SUM,MPI_COMM(simpar));
+		static int audit_steps=0;
+		double etot=ehyd_g+epot_g;
+		if(MYID(simpar)==0){
+			audit_steps++;
+			fprintf(stderr,"[U64_KDK_AUDIT] step=%d t=%.17g dt=%.9e Ehyd=%.15e Epot=%.15e Etot=%.15e dEtot/|Etot0|=%.9e Umin=%.9e Vmin=%.9e invalid=%d clips=%ld floors=0\n",
+				audit_steps,gfs_rk4_context_time+(double)Dtime,(double)Dtime,
+				ehyd_g,epot_g,etot,(etot-native_u64_kdk_etot0)/fmax(fabs(native_u64_kdk_etot0),1e-300),
+				umin_g,vmin64_g,bad_g,phase1_clip_events);
+			fflush(stderr);
+		}
+		if(bad_g || phase1_clip_events!=0 || phase1_ie_clips!=0){
+			fprintf(stderr,"[U64_KDK_AUDIT] strict state/clip gate failed\n");
+			MPI_Abort(MPI_COMM(simpar),99);
 		}
 	}
 
