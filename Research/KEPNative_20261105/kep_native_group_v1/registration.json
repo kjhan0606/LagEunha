@@ -1,0 +1,124 @@
+{
+  "scope": "First actual KEP/EC ALE native coupling group; not full candidate adoption",
+  "binary": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/kep_native_build_v2/kep_native",
+  "binary_sha256": "0495742cdf9b0846a87e4cac7afa355f71e39ad98aff30b0782db33d7f87541f",
+  "cases": [
+    [
+      "D1_contact_N200",
+      1,
+      200,
+      "contact",
+      0.25
+    ],
+    [
+      "D1_periodic_moving_contact_N200",
+      1,
+      200,
+      "moving_contact",
+      0.25
+    ],
+    [
+      "D2_contact_N8",
+      2,
+      8,
+      "contact",
+      0.25
+    ],
+    [
+      "D2_periodic_moving_contact_N8",
+      2,
+      8,
+      "moving_contact",
+      0.25
+    ],
+    [
+      "D3_contact_N4",
+      3,
+      4,
+      "contact",
+      0.25
+    ],
+    [
+      "D3_periodic_moving_contact_N4",
+      3,
+      4,
+      "moving_contact",
+      0.25
+    ],
+    [
+      "D1_sod_N200",
+      1,
+      200,
+      "sod",
+      0.2
+    ],
+    [
+      "D1_sod_N400",
+      1,
+      400,
+      "sod",
+      0.2
+    ],
+    [
+      "D2_cold_N64",
+      2,
+      64,
+      "cold",
+      0.25
+    ],
+    [
+      "D2_cold_N64_quarterdt",
+      2,
+      64,
+      "cold",
+      0.25,
+      0.25
+    ],
+    [
+      "D2_gresho_N64",
+      2,
+      64,
+      "gresho",
+      1.0
+    ]
+  ],
+  "cpu_sets": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  ],
+  "OMP_NUM_THREADS": 8,
+  "maximum_parallel_cases": 2,
+  "wave_CFL": 0.4,
+  "cone_safety": 0.9,
+  "mu": "immutable birth_mass/birth_volume^(2/d)",
+  "weight_solver": "one scalar SPD solve, PCG cap64, relative1e-12, true residual1e-12",
+  "core": "stored cell-mean KEP/EC ALE; no reconstructed face states in the core",
+  "stress": "rho_bar*(c_bar*shat+2*shat^2), shat=hbar/r*max(0,-minmod(actual_delta,reconstructed_delta))",
+  "stress_dt": ".4*min mass/sum(A*Pi/(-delta))",
+  "step_halving_cap": 8,
+  "minimum_dt": 1e-14,
+  "conservation_limit": 1e-10,
+  "mass_weight_residual_limit": 1e-09,
+  "cold_pressure_relative_L1_limit": 0.01,
+  "floor_steering_reservoir_reset": false,
+  "checkpoint_version": 2,
+  "still_required": "Original blast/collision and remaining 1D tests, higher-resolution/3D shock, full 2D suite, actual GPU/MPI evolution and matched GIZMO timing"
+}

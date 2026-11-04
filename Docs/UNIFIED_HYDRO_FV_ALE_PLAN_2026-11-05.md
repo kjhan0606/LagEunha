@@ -146,3 +146,8 @@ pending. Historical production entry points and accepted restart ABI are
 retained. The separate Shu IC repair uses the existing W0 variational
 operator and implicit KDK; it is not a result for the new FV candidate.
 The complete objective is unfinished.
+
+Subsequent qualification: `UNIFIED_HYDRO_FV_SMOOTH_2026-11-05.md` records
+completed Gresho refinement but failed cold shear, including time controls.
+This HLLC/HLL FV candidate is not adopted and does not proceed to KH.
+Its accepted states and failed endpoints remain available as evidence.

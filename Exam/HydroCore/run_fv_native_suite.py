@@ -11,6 +11,8 @@ import csv
 import hashlib
 import json
 import os
+from queue import Queue
+import shutil
 import subprocess
 import time
 
@@ -21,13 +23,15 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, allow_nan=False)+"\n")
 
 
-def execute(root, binary, specification):
+def execute(root, binary, specification, cpus=None):
     name, dim, side, problem, target, *control = specification
     case = root/name
     case.mkdir(exist_ok=False)
     command = [str(binary), str(dim), str(side), problem, str(target)]
     if control:
         command.append(str(control[0]))
+    if cpus is not None:
+        command = [shutil.which("taskset"), "-c", ",".join(map(str, cpus))]+command
     save(case/"command.json", command)
     env = dict(os.environ, TMPDIR=str(root), OMP_NUM_THREADS="8", OMP_DYNAMIC="FALSE",
                OMP_WAIT_POLICY="ACTIVE", OMP_PLACES="cores", OMP_PROC_BIND="spread")
@@ -71,7 +75,17 @@ def main():
     parser.add_argument("root", type=Path)
     parser.add_argument("binary", type=Path)
     parser.add_argument("--phase", choices=("coupling", "sod_large", "smooth"), default="coupling")
+    parser.add_argument("--cpu-sets", nargs=2, metavar=("SLOT1", "SLOT2"),
+                        help="Two disjoint comma-separated sets of eight allowed CPUs")
     args = parser.parse_args()
+    cpu_sets = [None, None]
+    if args.cpu_sets:
+        cpu_sets = [sorted({int(x) for x in entry.split(",")}) for entry in args.cpu_sets]
+        allowed = os.sched_getaffinity(0)
+        if not shutil.which("taskset") or any(len(x) != 8 or not set(x) <= allowed for x in cpu_sets):
+            parser.error("taskset and two sets of eight available CPUs are required")
+        if set(cpu_sets[0]) & set(cpu_sets[1]):
+            parser.error("The two CPU sets must be disjoint")
     if not args.root.resolve().is_relative_to(Path("/gpfs/kjhan/LagForce")):
         raise ValueError("New calculation directories must be under the authorized GPFS project root")
     args.root.mkdir(exist_ok=False)
@@ -98,6 +112,7 @@ def main():
     registration = {"scope": "Actual original geometry and native FV coupling/evolution endpoints, not full candidate adoption",
                     "binary": str(args.binary), "binary_sha256": hashlib.sha256(args.binary.read_bytes()).hexdigest(),
                     "cases": cases, "phase": args.phase, "CPU_threads_per_case": 8, "maximum_parallel_cases": 2,
+                    "cpu_sets": cpu_sets,
                     "wave_CFL": .4, "cone_safety": .9,
                     "reconstruction": "Centroid face-angular LSQ; scalar midpoint-extrema limiter, actual-point positivity slopes (0.9 safety), covariant midpoint velocity-ball bound with one common alpha",
                     "weight_mu": "birth_mass / birth_volume^(2/d), immutable",
@@ -109,10 +124,22 @@ def main():
                     "floor_steering_energy_repair": False,
                     "missing_scope": "Original open-boundary 1D problems, full 2D/3D resolutions, temporal/GCL convergence, physical reference norms and matched GIZMO speed remain unqualified."}
     save(args.root/"registration.json", registration)
+    slots = Queue()
+    for cpus in cpu_sets:
+        slots.put(cpus)
+    def execute_on_slot(case):
+        cpus = slots.get()
+        try:
+            return execute(args.root, args.binary, case, cpus)
+        finally:
+            slots.put(cpus)
     with ThreadPoolExecutor(max_workers=2) as executor:
-        results = list(executor.map(lambda case: execute(args.root, args.binary, case), cases))
+        results = list(executor.map(execute_on_slot, cases))
     save(args.root/"processes.json", results)
     print(json.dumps(results, indent=2))
+    if not all(r["exit_code"] == 0 and r["endpoint_pass"] and r.get("positive_final_state", False)
+               for r in results):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

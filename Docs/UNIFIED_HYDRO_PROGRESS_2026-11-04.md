@@ -388,3 +388,46 @@ UNIFIED_HYDRO_FV_NATIVE_2026-11-05.md 및 Research/FVNative_20261105에
 Gresho/cold shear, 새 연산자로 원래 1D 9종과 나머지 2D suite, 시간/GCL 수렴,
 새 장기 Kepler, 완전한 GPU/MPI 및 동등 조건 GIZMO 속도는 미검증이다.
 기존 원고·장기 궤도 결과를 새 후보의 성과로 옮기지 않는다. 전체 목표는 진행 중이다.
+
+## 2026-11-05: 실제 FV 회전/저압 전단 검증과 후보 기각
+
+등록된 Gresho 64²/128² t=1 및 64² 시간간격 절반 대조를 완료했다.
+실제 power polygon의 해석해 적분과 생성점의 물리적 재구성 속도를 구분해
+평가했다. 생성점 속도 L1은 64² 0.0126674→128² 0.00631061로 감소했고,
+기존 W0 기준선보다 작다. GCL 절대 누적량은 시간간격 절반에서 약 1/3.78로
+줄지만 속도 오차는 약 3%만 변한다.
+
+그러나 같은 연산자의 P=1e-6 sine shear는 64²가 t≈0.11477에 양압 경계로
+접근한 뒤 실패했다. 128²는 t=0.25 도달해도 압력 상대 L1이 1.90519이며,
+시간간격 1/4 대조도 1.29305다. 등록 기준 0.01을 크게 초과한다. 시간간격
+1/2는 t≈0.12722에 실패했으므로 서로 다른 시각의 오차를 수렴 비교하지 않는다.
+
+전체 E 보존은 약 1e-16으로 유지된다. 첫 RHS부터 Udot=Edot-u·pdot+
+0.5u²mdot가 양수여서 보존량 통과와 물리적 저온 정확도는 구분해야 한다.
+동일 기하·면 속도의 해석적 physical flux 대조도 분리했다. 상세는
+UNIFIED_HYDRO_FV_SMOOTH_2026-11-05.md 및 Research/FVSmooth_20261105다.
+현 HLLC/HLL 후보를 채택하거나 KH로 확대하지 않고, mass/momentum/energy의
+운동에너지 호환성을 함께 다루는 다음 묶음을 Astra에게 한 번 평가 의뢰했다.
+새 restart 형식의 세 차원 동일 binary roundtrip 및 두 번 replay는 바이트 단위로
+일치했다. 완전한 공통 solver, 전체 2D suite와 동등 GIZMO 2배 비용 목표는 남아 있다.
+
+## 2026-11-05: cell-mean KEP/EC 결합과 남은 stress 가열의 분리
+
+Astra가 묶음 평가에서 선정한 cell-mean KEP/EC ALE core를 native 공통
+연산자에 연결했다. 기존 birth mu와 제한을 유지하면서 weight Newton을
+RHS당 한 번의 scalar SPD solve로 단순화했다. 실제 기하·경계 entropy 장부와
+RK 운동에너지 결함을 분리해 기록한다. 별도 restart version2로 물리 연산자가
+바뀐 late-state 재시작을 차단한다.
+
+64²/128² 저압 전단의 첫 RHS 열원이 정확히 0이 되었고, 접촉 6건·Sod200/400·
+저압 전단64² 두 시간간격·Gresho64²의 11개 실제 native 종점을 완료했다.
+압력 L1은 cold64²에서 1.58%, 시간간격 1/4에서 1.85%로 여전히 1% 기준에
+미달한다. 이때 열 증가량과 압축 stress의 누적 열화가 약 1e-14 차이로 일치하며
+RK 운동에너지 결함은 약 1e-14이다. 남은 가열은 core의 큰 kinetic 수송 오차와
+구분되며, 변형된 매끄러운 전단에 반응하는 현재 stress가 주요 원인이다.
+
+Gresho64² 속도 L1은 0.03691로 W0보다 작지만 HLLC 0.01267보다 크다.
+진화 77.39초는 HLLC 54.26초보다 느리다. 수학 항등식이나 scalar solve 절감만으로
+물리·속도 목표 통과를 주장하지 않는다. 기존 default HLLC contact/Sod 최종
+상태와 checkpoint는 현재 소스에서도 byte-identical이다. 상세 수치·미완료 범위는
+UNIFIED_HYDRO_KEP_NATIVE_2026-11-05.md에 기록하며 전체 목표는 계속 유지한다.

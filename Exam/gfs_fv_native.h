@@ -30,6 +30,8 @@ typedef struct {
     int newton,cg,backtracks,hll_points,points;
     double wave_dt,admissible_dt,root_residual,mass_link_defect;
     double boundary_flux[5],reconstruction_seconds,fan_seconds,solve_seconds,flux_seconds;
+    double kinetic_rate,kinetic_pressure_work,stress_thermal_rate,viscous_dt;
+    double entropy_rate,entropy_boundary_flux,entropy_dissipation,entropy_balance_defect;
 } GfsFvRhsStats;
 typedef struct GfsFvWorkspace GfsFvWorkspace;
 int gfs_fv_geometry(GfsFvMesh *mesh);
