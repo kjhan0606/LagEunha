@@ -157,6 +157,12 @@ records pressure null modes, long-wave sound speed, false transverse
 compression, and positive-acoustic stiffness. No PDE, AV change, new global
 reference solve, or coefficient-solver tuning belongs to the next bundle.
 
+The completed follow-up is `UNIFIED_HYDRO_MODE_RESPONSE_2026-11-05.md`. The
+candidate passes the sampled long-wave and transverse consistency checks, but
+the deformed native graph has a roughly 50-fold higher positive-acoustic
+frequency than B. Independent reassembly confirms the candidate frequency.
+Pressure-force accuracy also remains unresolved. No PDE candidate is released.
+
 ## Provenance and open scope
 
 Run root is `/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_error_propagation_v1`.

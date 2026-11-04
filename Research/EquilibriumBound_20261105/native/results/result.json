@@ -1,0 +1,40 @@
+{
+  "scope": "Minimum uniform-pressure stiffness control using analytical inequalities.\n\nNo new eigensolve, coefficient solve, or PDE step. Reuse the independently\nverified C Rayleigh value. B uses induced rectangular-matrix norm bounds,\nnot an assumed Ritz upper bound. Floating arithmetic is not interval certified.\n",
+  "cells": 16384,
+  "diagnostic_equilibrium": {
+    "velocity": 0,
+    "P0": 0.6000000143051151,
+    "U0_min": 4.8306892072140415e-05,
+    "fixed_original_masses": true,
+    "weight": 0,
+    "uniform_pressure_force_max": {
+      "B": 1.24683249835833e-16,
+      "C": 2.741964234874786e-16
+    },
+    "relative_constant_pressure_force_defect": {
+      "B": 1.8806179657046036e-15,
+      "C": 8.149913074309965e-17
+    }
+  },
+  "original_pressure_range": [
+    3.3637514261037116,
+    7.20254922356638
+  ],
+  "B_uniform_lambda_upper_norm1_times_norminf": 1985780.3254197803,
+  "B_uniform_lambda_upper_absolute_product_row_sum": 1450670.8969729466,
+  "B_uniform_lambda_upper_used": 1450670.8969729466,
+  "C_original_pressure_Rayleigh_reused": 22595997020.229996,
+  "C_uniform_lambda_lower_from_pressure_comparison": 1882333337.9602535,
+  "uniform_frequency_ratio_lower_estimate": 36.0216678902167,
+  "arithmetic_padding_fraction": 1e-09,
+  "interval_arithmetic_certified": false,
+  "B_Ritz_value_used_as_upper_bound": false,
+  "new_spectral_matvecs": 0,
+  "new_coefficient_solves": 0,
+  "accepted_steps": 0,
+  "new_native_spectrum_needed": false,
+  "interpretation": "Large stiffness persists in a uniform-pressure rest equilibrium. C^T1 identically zero removes the background geometric force term in the inviscid pressure linearization. This is a pressure-subsystem result, not full nonlinear/AV/KDK or GIZMO runtime validation.",
+  "current_psi_times_strain_candidate_retired": true,
+  "retirement_scope": "Current local psi_i times fitted strain construction only; not every C=B+LR model.",
+  "source_sha256": "a3e128b1705811935e56a72bac0c5125018acb98214d806c8b837c3a8e424a69"
+}

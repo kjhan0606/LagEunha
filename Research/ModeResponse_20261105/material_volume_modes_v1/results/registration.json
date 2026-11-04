@@ -1,0 +1,37 @@
+{
+  "scope": "Bloch and known-wave response of frozen native operators, zero PDE steps.\n\nReuse the original irregular unit geometries and the saved N128 coefficient\nreference. No new native coefficient solve, limiter, or production change.\nUniform-pressure acoustic spectra concern the positive adjoint block only.\n",
+  "primitive_dimensions": [
+    1,
+    2,
+    3
+  ],
+  "small_symbol_wave_norms": [
+    0,
+    0.01,
+    0.02,
+    0.04,
+    0.7853981633974483,
+    1.5707963267948966,
+    3.141592653589793
+  ],
+  "directions": [
+    "axis",
+    "diagonal"
+  ],
+  "fixed_wavelength_refinement_sides": [
+    12,
+    24,
+    48,
+    96
+  ],
+  "native_modes": [
+    4,
+    8,
+    16
+  ],
+  "native_high_frequency_diagnostic_axis_mode": 64,
+  "stiffness_max_matvecs_per_operator": 256,
+  "stiffness_seconds_per_operator": 15,
+  "stop_rule": "Hold physics and solver tuning if long-wave speed has a wrong limit, transverse error does not decrease, or response is ambiguous. Larger compressive response alone is not rejection. No limiter, PDE, coefficient tuning or new native global reference solve.",
+  "previous_CPU_cost_and_tolerance_failure_preserved": true
+}
