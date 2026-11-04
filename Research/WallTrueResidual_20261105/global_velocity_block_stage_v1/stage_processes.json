@@ -1,0 +1,33 @@
+{
+  "diagonal_replay": {
+    "command": [
+      "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_block_stage_v1/global_native",
+      "1",
+      "200",
+      "blast",
+      ".038",
+      "1",
+      "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_strong_gates_v1/D1_blast_N200/final.fv"
+    ],
+    "exit_code": 1,
+    "seconds": 0.03308775497134775,
+    "unchanged_accepted_checkpoint": true,
+    "new_steps": 0,
+    "time": 0.00555821443586259
+  },
+  "birth_block_gates": {
+    "command": [
+      "python3",
+      "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_block_stage_v1/run_kep_filter_gates.py",
+      "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_block_stage_v1/birth_strong_gates",
+      "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/global_velocity_block_stage_v1/block_native",
+      "--select",
+      "blast",
+      "collision",
+      "--core-version",
+      "4"
+    ],
+    "exit_code": 1,
+    "seconds": 3.139657152001746
+  }
+}

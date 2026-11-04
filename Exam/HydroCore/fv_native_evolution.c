@@ -17,7 +17,10 @@ typedef struct {
     double lo[3],L[3],gamma,time,boundary[5],initial[5];
 } FvCheckpoint;
 static const uint64_t magic=UINT64_C(0x4656414c45303031);
-#if defined(GFS_NATIVE_GLOBAL_VELOCITY)
+#if defined(GFS_NATIVE_WALL_VELOCITY)
+static const uint64_t checkpoint_version=5;
+static const char *core_name="cell_mean_KEP_EC_ALE_LSQ_stress_global_velocity_constrained_wall";
+#elif defined(GFS_NATIVE_GLOBAL_VELOCITY)
 static const uint64_t checkpoint_version=4;
 static const char *core_name="cell_mean_KEP_EC_ALE_LSQ_stress_global_physical_velocity";
 #elif defined(GFS_NATIVE_KEP_FILTER)
@@ -50,8 +53,12 @@ static void failure_receipt(const char *stage,double time,double dt,int code,con
 }
 typedef struct {
     double seconds;long long calls,points,hops,changed,switches;int maximum_hops,maximum_changed,owner_switch_retries;
+    long long initial_true_stops,trigger_true_stops,cap_true_stops;
 } QueryLedger;
 static void add_queries(QueryLedger *q,const GfsFvRhsStats *s,int n){
+    if(s->pcg_stop_reason==0)q->initial_true_stops++;
+    else if(s->pcg_stop_reason==1)q->trigger_true_stops++;
+    else if(s->pcg_stop_reason==2)q->cap_true_stops++;
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     q->seconds+=s->velocity_query_seconds;q->calls++;q->points+=n;q->hops+=s->total_query_hops;q->changed+=s->velocity_owner_changed;q->switches+=s->velocity_owner_switches;
     if(s->maximum_query_hops>q->maximum_hops)q->maximum_hops=s->maximum_query_hops;
@@ -145,6 +152,16 @@ int main(int argc,char **argv){
         if(fclose(check))return 5;gfs_fv_geometry_free(&m);free(m.cell);return 0;
     }
     FILE *history=fopen("history.csv","wx");if(!history)return 5;
+    FILE *retry_log=fopen("step_retries.csv","wx");if(!retry_log)return 5;
+    fprintf(retry_log,"accepted_time,retry,dt,reason,stage0_wave_or_stress_dt,stage0_cone_dt,stage1_wave_or_stress_dt,stage1_cone_dt,stage1_stress_dt,stage1_outside_own_cell,stage1_owner_switches\n");
+    FILE *backend=fopen("numerical_backend.json","wx");if(!backend)return 5;
+#ifdef GFS_NATIVE_BLOCK_JACOBI
+    const char *preconditioner="mutual_strongest_edge_2x2_block_Jacobi";
+#else
+    const char *preconditioner="diagonal_Jacobi";
+#endif
+    fprintf(backend,"{\"preconditioner\":\"%s\",\"PCG_cap\":64,\"recursive_relative_check_trigger\":1e-12,\"true_scaled_final_tolerance\":1e-12,\"true_check_at_cap\":true,\"retry_cap\":8,\"minimum_dt\":1e-14}\n",preconditioner);
+    if(fclose(backend))return 5;
     fprintf(history,"time,dt,steps,retries,mass,momentum_x,momentum_y,momentum_z,energy,mass_ledger_error,energy_ledger_error,weight_mass_invariant,integrated_residual_invariant,pressure_relative_L1_from_initial_profile,mean_velocity_vs_initial_node_diagnostic_L1,minP,minV,minMass,GCL_L1,root_residual,Newton,PCG,physical_velocity_node_L1_from_initial_profile,kinetic_RK_defect,kinetic_pair_defect,stress_thermal_rate\n");
     GfsFvCell *saved=malloc(m.n*sizeof(*saved));GfsFvRate *r0=calloc(m.n,sizeof(*r0)),*r1=calloc(m.n,sizeof(*r1));double *V0=malloc(m.n*sizeof(double));
     double (*node_velocity)[3]=malloc(m.n*sizeof(*node_velocity));
@@ -161,17 +178,23 @@ int main(int argc,char **argv){
         for(int i=0;i<m.n;i++){V0[i]=m.geometry[i].V;for(int a=0;a<m.dim;a++)kinetic0+=.5*saved[i].Q[a+1]*saved[i].Q[a+1]/saved[i].Q[0];}
         int accepted=0,retry=0;
         for(;retry<=8;retry++){
+            const char *reject_reason=NULL;int has_stage1=0;
             if(!(dt>1e-14)||!isfinite(dt))break;
             for(int i=0;i<m.n;i++){
                 m.cell[i]=saved[i];for(int a=0;a<m.dim;a++)m.cell[i].q[a]+=dt*r0[i].qdot[a];m.cell[i].W+=dt*r0[i].z;
                 for(int c=0;c<5;c++)m.cell[i].Q[c]+=dt*r0[i].dQ[c];
             }
-            if(gfs_fv_geometry(&m)||valid(&m)){dt*=.5;continue;}
+            if(gfs_fv_geometry(&m)){reject_reason="Euler_geometry";goto reject_step;}
+            if(valid(&m)){reject_reason="Euler_state";goto reject_step;}
             code=gfs_fv_native_rhs(work,&m,r1,&s1);
+            has_stage1=1;
             add_queries(&query,&s1,m.n);
             recon_time+=s1.reconstruction_seconds;fan_time+=s1.fan_seconds;solve_time+=s1.solve_seconds;flux_time+=s1.flux_seconds;
             if(code){fprintf(stderr,"FV RHS1 failed code=%d t=%.17g dt=%.17g\n",code,time,dt);failure_receipt("RHS1 unaccepted Euler trial",time,dt,code,&s1);if(write_state_kind("failure_trial.fv",&m,side,problem,time+dt,steps,boundary,initial,1))return 5;failed=1;break;}
-            if(dt>factor*fmin(s1.wave_dt,s1.admissible_dt)*(1+32*DBL_EPSILON)){if(s1.velocity_owner_switches)query.owner_switch_retries++;dt*=.5;continue;}
+            if(dt>factor*fmin(s1.wave_dt,s1.admissible_dt)*(1+32*DBL_EPSILON)){
+                if(s1.velocity_owner_switches)query.owner_switch_retries++;
+                reject_reason=s1.wave_dt<s1.admissible_dt?"stage1_wave_or_stress_dt":"stage1_cone_dt";goto reject_step;
+            }
             int cone_bad=0;
             for(int i=0;i<m.n;i++){
                 double fe[5];for(int c=0;c<5;c++)fe[c]=m.cell[i].Q[c]+dt*r1[i].dQ[c];if(!(gfs_fv_internal(m.dim,fe)>0))cone_bad=1;
@@ -180,8 +203,19 @@ int main(int argc,char **argv){
                 for(int c=0;c<5;c++)m.cell[i].Q[c]=.5*(saved[i].Q[c]+fe[c]);
                 m.cell[i].residual_integral=saved[i].residual_integral+.5*dt*(r0[i].residual+r1[i].residual);
             }
-            if(cone_bad||gfs_fv_geometry(&m)||valid(&m)){if(s1.velocity_owner_switches)query.owner_switch_retries++;dt*=.5;continue;}
+            if(cone_bad)reject_reason="stage1_forward_Euler_cone";
+            else if(gfs_fv_geometry(&m))reject_reason="final_geometry";
+            else if(valid(&m))reject_reason="final_state";
+            if(reject_reason){if(s1.velocity_owner_switches)query.owner_switch_retries++;goto reject_step;}
             accepted=1;break;
+reject_step:
+            fprintf(retry_log,"%.17g,%d,%.17g,%s,%.17g,%.17g,%.17g,%.17g,%.17g,%d,%d\n",time,retry,dt,reject_reason,s0.wave_dt,s0.admissible_dt,has_stage1?s1.wave_dt:NAN,has_stage1?s1.admissible_dt:NAN,has_stage1?s1.viscous_dt:NAN,has_stage1?s1.velocity_owner_changed:0,has_stage1?s1.velocity_owner_switches:0);fflush(retry_log);
+            if(retry==8){
+                if(write_state_kind("retry_trial.fv",&m,side,problem,time+dt,steps,boundary,initial,1))return 5;
+                FILE *receipt=fopen("retry_failure.json","wx");if(!receipt)return 5;
+                fprintf(receipt,"{\"accepted_time\":%.17g,\"trial_dt\":%.17g,\"retry\":%d,\"reason\":\"%s\",\"diagnostic_trial_is_restartable\":false}\n",time,dt,retry,reject_reason);if(fclose(receipt))return 5;
+            }
+            dt*=.5;
         }
         if(!accepted){memcpy(m.cell,saved,m.n*sizeof(*saved));if(gfs_fv_geometry(&m))return 8;failed=1;fprintf(stderr,"FV step rejected t=%.17g dt=%.17g retry=%d\n",time,dt,retry);break;}
         total_retries+=retry;steps++;time+=dt;if(target-time<16*DBL_EPSILON*target)time=target;
@@ -231,9 +265,13 @@ int main(int argc,char **argv){
     }
     FILE *out=fopen("result.json","wx");if(!out)return 5;
     fprintf(out,"{\"scope\":\"native C/OpenMP FV--ALE with actual original Voro geometry; experimental format\",\"dim\":%d,\"side\":%d,\"cells\":%d,\"problem\":\"%s\",\"time\":%.17g,\"target\":%.17g,\"steps\":%llu,\"new_steps\":%llu,\"retries\":%d,\"failed\":%s,\"wall_seconds\":%.17g,\"geometry_seconds\":%.17g,\"reconstruction_seconds\":%.17g,\"fan_seconds\":%.17g,\"solve_seconds\":%.17g,\"flux_seconds\":%.17g,\"maximum_ledger_error\":%.17g,\"maximum_integrated_residual_invariant_error\":%.17g,\"cumulative_GCL_L1\":%.17g,\"cumulative_GCL_energy_budget\":%.17g,\"initial_continuum_kinetic_projection_difference\":%.17g,\"maximum_Newton\":%d,\"maximum_CG_total_per_rhs\":%d,\"maximum_geometry_candidates\":%d,\"maximum_volume_closure\":%.17g,\"floor_or_repair_count\":0}\n",m.dim,side,m.n,names[problem],time,target,(unsigned long long)steps,(unsigned long long)(steps-initial_steps),total_retries,failed?"true":"false",seconds,m.geometry_seconds,recon_time,fan_time,solve_time,flux_time,max_ledger,max_link,gcl_cumulative,budget_cumulative,projection,max_newton,max_cg,m.maximum_candidates,m.maximum_volume_closure);fclose(out);fclose(history);
+    if(fclose(retry_log))return 5;
     FILE *kinetic=fopen("kinetic_ledger.json","wx");if(!kinetic)return 5;
     fprintf(kinetic,"{\"core\":\"%s\",\"checkpoint_version\":%llu,\"new_segment_only\":true,\"has_pair_pressure_identity\":%s,\"kinetic_RK_defect_abs_sum\":%.17g,\"maximum_kinetic_pair_defect\":%.17g,\"integrated_compression_thermal_production\":%.17g,\"maximum_semidiscrete_entropy_balance_defect\":%.17g}\n",core_name,(unsigned long long)checkpoint_version,checkpoint_version>=2?"true":"false",kinetic_time_defect_sum,maximum_kinetic_pair_defect,integrated_stress_heat,maximum_entropy_balance_defect);
     if(fclose(kinetic))return 5;
+    FILE *stops=fopen("pcg_stopping.json","wx");if(!stops)return 5;
+    fprintf(stops,"{\"scope\":\"RHS calls including rejected trials\",\"true_residual_initial\":%lld,\"true_residual_at_recursive_trigger\":%lld,\"true_residual_at_cap\":%lld,\"cap\":64,\"true_scaled_tolerance\":1e-12,\"recursive_norm_is_check_trigger_only\":true}\n",query.initial_true_stops,query.trigger_true_stops,query.cap_true_stops);
+    if(fclose(stops))return 5;
     FILE *queries=fopen("velocity_query.json","wx");if(!queries)return 5;
     double minimum=HUGE_VAL,minimum_ratio=HUGE_VAL;
     for(int i=0;i<m.n;i++)for(int k=0;k<m.geometry[i].faces;k++){

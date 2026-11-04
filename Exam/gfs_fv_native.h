@@ -34,6 +34,7 @@ typedef struct {
 } GfsFvRate;
 typedef struct {
     int newton,cg,backtracks,hll_points,points;
+    int pcg_stop_reason; /* 0=initial true residual, 1=true at trigger, 2=true at cap */
     double wave_dt,admissible_dt,root_residual,mass_link_defect;
     double boundary_flux[5],reconstruction_seconds,fan_seconds,solve_seconds,flux_seconds;
     double kinetic_rate,kinetic_pressure_work,kinetic_boundary_flux,stress_thermal_rate,viscous_dt;

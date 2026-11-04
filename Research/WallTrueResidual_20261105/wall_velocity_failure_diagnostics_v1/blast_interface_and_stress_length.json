@@ -1,0 +1,44 @@
+{
+  "scope": "Read-only actual rejected blast pair, analytic reconstruction/stress diagnosis; alternative length is NOT evolved or selected",
+  "pair": [
+    3,
+    4
+  ],
+  "generator_q": [
+    0.06138943142476385,
+    0.061389431697846664
+  ],
+  "cell_centroids": [
+    0.05420808843468551,
+    0.06765413056100308
+  ],
+  "generator_gap": 2.7308281330684636e-10,
+  "centroid_normal_separation": 0.013446042126317573,
+  "centroid_to_generator_length_ratio": 49237965.44899763,
+  "face_position": 0.06138943142579782,
+  "cell_mean_velocity_difference": -2.3250974479083197e-09,
+  "limited_reconstructed_face_velocity_difference": -0.8284710515129222,
+  "normal_velocity_traces_at_shared_face": [
+    7.393975259752179,
+    6.565504208239258
+  ],
+  "selected_generator_velocity_difference": -0.8284710397471864,
+  "chi": 0.500000002012925,
+  "stress_from_current_generator_length": 0.6429888995357615,
+  "stress_if_only_centroid_normal_length_is_substituted": 1.2961723521535508e-08,
+  "strain_length_code_location": "Exam/gfs_fv_native.c build_points: compression *= .5*(hi+hj)/f->distance; f->distance is generator separation",
+  "interpretation": "Current physical cell-mean jump and LSQ locations use centroids, while AV strain denominator uses generator distance. This distinction and the discontinuous physical field require separate evaluation.",
+  "neighbor_cell_mean_velocities_2_to_5": [
+    4.596806250642408,
+    6.8345891026769765,
+    6.834589100351879,
+    7.926099242241975
+  ],
+  "pair_mean_extrema": [
+    "local_maximum",
+    "local_minimum"
+  ],
+  "hypothetical_standard_monotone_scalar_limiting": "The current positive slopes at these local extrema would both be zero. This is a frozen algebraic prediction, not an evolved control or a selected new method.",
+  "hypothetical_zero_slope_gap_rate": -2.3250974479083197e-09,
+  "current_velocity_limiter": "A vector-radius bound using the largest neighbor velocity difference; scalar min/max bounds currently apply only to density and pressure."
+}

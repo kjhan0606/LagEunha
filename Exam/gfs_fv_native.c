@@ -15,6 +15,9 @@
 #if defined(GFS_NATIVE_BLOCK_JACOBI) && !defined(GFS_NATIVE_GLOBAL_VELOCITY)
 #error The conditional block preconditioner is registered for global physical velocity
 #endif
+#if defined(GFS_NATIVE_WALL_VELOCITY) && !defined(GFS_NATIVE_GLOBAL_VELOCITY)
+#error The constrained wall field is registered with global physical velocity
+#endif
 #ifdef GFS_NATIVE_KEP
 #include "gfs_kep_ale.h"
 #ifdef GFS_NATIVE_KEP_FILTER
@@ -38,8 +41,11 @@ typedef struct {GfsFvFan fan;double weight,wq,inv2d;} FvFanPoint;
 typedef struct {int i,j,face,offset,count;double jacobian,flux[5],Vdot,wave,viscous,pressure_work,kinetic_boundary,stress_heat,entropy_dissipation,entropy_boundary;} FvEdge;
 struct GfsFvWorkspace {
     int n,ne,np,edge_capacity,point_capacity;GfsFvPrimitive *primitive;double (*gradient)[5][3],(*velocity)[3];
-    int pcg_iterations,pcg_failure;
-    double pcg_last_relative;
+    int pcg_iterations,pcg_failure,pcg_stop_reason,pcg_true_replacements;
+    double pcg_last_relative,pcg_first_candidate_true;
+#ifdef GFS_NATIVE_WALL_VELOCITY
+    unsigned char *wall_mask;double (*wall_relative)[3],(*wall_distance)[3];
+#endif
 #ifdef GFS_NATIVE_BLOCK_JACOBI
     int *strongest,*partner;double *block_a,*block_b;
 #endif
@@ -54,7 +60,8 @@ struct GfsFvWorkspace {
 #ifdef GFS_NATIVE_KEP_FILTER
     double *stress_fraction;
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
-    double *parallel_energy,*perpendicular_energy,*data_energy,*bulk_fraction;
+    double *parallel_energy,*perpendicular_energy,*data_energy,*bulk_fraction,*cross_energy;
+    double (*raw_velocity_gradient)[3][3];
 #endif
 #endif
 };
@@ -64,6 +71,9 @@ GfsFvWorkspace *gfs_fv_workspace_create(void){return memory(sizeof(GfsFvWorkspac
 void gfs_fv_workspace_free(GfsFvWorkspace *w){
     if(!w)return;free(w->primitive);free(w->gradient);free(w->velocity);free(w->edge);free(w->point);free(w->offset);free(w->incident);
     free(w->z);free(w->R);free(w->diagonal);free(w->scale);free(w->direction);free(w->r);free(w->p);free(w->Ap);free(w->pre);free(w->trial);
+#ifdef GFS_NATIVE_WALL_VELOCITY
+    free(w->wall_mask);free(w->wall_relative);free(w->wall_distance);
+#endif
 #ifdef GFS_NATIVE_BLOCK_JACOBI
     free(w->strongest);free(w->partner);free(w->block_a);free(w->block_b);
 #endif
@@ -73,7 +83,7 @@ void gfs_fv_workspace_free(GfsFvWorkspace *w){
 #ifdef GFS_NATIVE_KEP_FILTER
     free(w->stress_fraction);
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
-    free(w->parallel_energy);free(w->perpendicular_energy);free(w->data_energy);free(w->bulk_fraction);
+    free(w->parallel_energy);free(w->perpendicular_energy);free(w->data_energy);free(w->bulk_fraction);free(w->cross_energy);free(w->raw_velocity_gradient);
 #endif
 #endif
     free(w);
@@ -82,6 +92,10 @@ static void allocate(GfsFvWorkspace *w,int n){
     if(w->n==n)return;
     free(w->primitive);free(w->gradient);free(w->velocity);free(w->offset);
     w->primitive=memory(n*sizeof(*w->primitive));w->gradient=memory(n*sizeof(*w->gradient));w->velocity=memory(n*sizeof(*w->velocity));w->offset=memory((n+1)*sizeof(int));
+#ifdef GFS_NATIVE_WALL_VELOCITY
+    free(w->wall_mask);free(w->wall_relative);free(w->wall_distance);
+    w->wall_mask=memory(n*sizeof(*w->wall_mask));w->wall_relative=memory(n*sizeof(*w->wall_relative));w->wall_distance=memory(n*sizeof(*w->wall_distance));
+#endif
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     free(w->velocity_owner);w->velocity_owner=memory(n*sizeof(int));for(int i=0;i<n;i++)w->velocity_owner[i]=-1;
 #endif
@@ -93,7 +107,8 @@ static void allocate(GfsFvWorkspace *w,int n){
 #ifdef GFS_NATIVE_KEP_FILTER
     VECTOR(stress_fraction);
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
-    VECTOR(parallel_energy);VECTOR(perpendicular_energy);VECTOR(data_energy);VECTOR(bulk_fraction);
+    VECTOR(parallel_energy);VECTOR(perpendicular_energy);VECTOR(data_energy);VECTOR(bulk_fraction);VECTOR(cross_energy);
+    free(w->raw_velocity_gradient);w->raw_velocity_gradient=memory(n*sizeof(*w->raw_velocity_gradient));
 #endif
 #endif
 #undef VECTOR
@@ -102,6 +117,52 @@ static void allocate(GfsFvWorkspace *w,int n){
 static double component(GfsFvPrimitive p,int c){return c==0?p.rho:c==4?p.p:p.u[c-1];}
 static int mirrored(int flags,int a){return (flags&(1<<a))||(flags&(1<<(a+3)));}
 static int face_bc(const GfsFvMesh *m,const GfsFvNativeFace *f,int a){return gfs_fv_boundary_type(m->bc[a],!!(f->mirror&(1<<(a+3))));}
+#ifdef GFS_NATIVE_WALL_VELOCITY
+static int constrain_wall(GfsFvWorkspace *w,const GfsFvMesh *m,int i){
+    const GfsFvGeometry *g=m->geometry+i;unsigned char mask=0;
+    for(int k=0;k<g->faces;k++){
+        const GfsFvNativeFace *f=g->face+k;
+        for(int a=0;a<m->dim;a++)if(mirrored(f->mirror,a)&&face_bc(m,f,a)==GFS_FV_REFLECT){
+            if(f->j!=i)return 1;
+            for(int b=0;b<m->dim;b++)if(b!=a&&fabs(f->normal[b])>4096*DBL_EPSILON)return 1;
+            mask|=f->mirror&((1<<a)|(1<<(a+3)));
+        }
+    }
+    w->wall_mask[i]=mask;
+    for(int a=0;a<m->dim;a++)if(mirrored(mask,a)){
+        int both=(mask&(1<<a))&&(mask&(1<<(a+3)));
+        if(both&&w->primitive[i].u[a]!=0){
+            fprintf(stderr,"Native affine wall field infeasible cell=%d axis=%d normal_mean=%.17g: opposite walls require zero normal mean\n",i,a,w->primitive[i].u[a]);return 1;
+        }
+        double wall=m->lo[a]+((mask&(1<<(a+3)))?m->L[a]:0);
+        w->wall_relative[i][a]=wall-m->cell[i].q[a];
+        double distance=g->centroid[a]-w->wall_relative[i][a];
+        if(!isfinite(distance)||distance==0)return 1;
+        if(!both&&((mask&(1<<a))?!(distance>0):!(distance<0)))return 1;
+        w->wall_distance[i][a]=distance;
+        for(int b=0;b<m->dim;b++)w->gradient[i][a+1][b]=0;
+        if(!both)w->gradient[i][a+1][a]=w->primitive[i].u[a]/distance;
+    }
+    return 0;
+}
+#endif
+/* physical is available for generator queries, so x-wall is evaluated
+ * directly rather than by subtracting two large affine contributions. */
+static double physical_velocity(const GfsFvWorkspace *w,const GfsFvMesh *m,int i,int a,
+        const double relative[3],const double physical[3]){
+#ifdef GFS_NATIVE_WALL_VELOCITY
+    if(mirrored(w->wall_mask[i],a)){
+        if((w->wall_mask[i]&(1<<a))&&(w->wall_mask[i]&(1<<(a+3))))return 0;
+        double wall=m->lo[a]+((w->wall_mask[i]&(1<<(a+3)))?m->L[a]:0);
+        double distance=physical?physical[a]-wall:relative[a]-w->wall_relative[i][a];
+        return w->primitive[i].u[a]*(distance/w->wall_distance[i][a]);
+    }
+#else
+    (void)physical;
+#endif
+    double offset[3];for(int b=0;b<3;b++)offset[b]=relative[b]-m->geometry[i].centroid[b];
+    return w->primitive[i].u[a]+dot3(w->gradient[i][a+1],offset,m->dim);
+}
 static void neighbor(const GfsFvMesh *m,const GfsFvWorkspace *w,int i,const GfsFvNativeFace *f,
         GfsFvPrimitive *p,double r[3]){
     *p=w->primitive[f->j];
@@ -142,13 +203,19 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
             w->gradient[i][c][a]=0;
             for(int b=0;b<d;b++)if(a<d)w->gradient[i][c][a]+=rhs[c][b]*inverse[b][a];
         }
+#ifdef GFS_NATIVE_WALL_VELOCITY
+        if(constrain_wall(w,m,i)){bad=1;continue;}
+#endif
         double alpha[5]={1,1,1,1,1},velocity_alpha=1;
 #ifdef GFS_NATIVE_KEP_FILTER
         double Eparallel=0,Eperpendicular=0,G[3][3]={{0}};
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
-        double Edata=0;
+        double Edata=0,Ecross=0;
 #endif
         for(int a=0;a<d;a++)for(int b=0;b<d;b++)G[a][b]=w->gradient[i][a+1][b];
+#ifdef GFS_KEP_STRESS_DIAGNOSTICS
+        memcpy(w->raw_velocity_gradient[i],G,sizeof(G));
+#endif
 #endif
         for(int k=0;k<g->faces;k++){
             GfsFvNativeFace *f=g->face+k;GfsFvPrimitive other;double r[3];neighbor(m,w,i,f,&other,r);
@@ -159,7 +226,7 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
                 double predicted=dot3(G[a],r,d),delta=other.u[a]-w->primitive[i].u[a];
                 Eparallel+=omega*predicted*predicted;Eperpendicular+=omega*(delta-predicted)*(delta-predicted);
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
-                Edata+=omega*delta*delta;
+                Edata+=omega*delta*delta;Ecross+=2*omega*(delta-predicted)*predicted;
 #endif
             }
 #endif
@@ -176,7 +243,7 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
         double bulk;w->stress_fraction[i]=gfs_kep_stress_fraction(d,G,Eparallel,Eperpendicular,&bulk);
         if(!(w->stress_fraction[i]>=0)||w->stress_fraction[i]>1||!isfinite(w->stress_fraction[i]))bad=1;
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
-        w->parallel_energy[i]=Eparallel;w->perpendicular_energy[i]=Eperpendicular;w->data_energy[i]=Edata;w->bulk_fraction[i]=bulk;
+        w->parallel_energy[i]=Eparallel;w->perpendicular_energy[i]=Eperpendicular;w->data_energy[i]=Edata;w->bulk_fraction[i]=bulk;w->cross_energy[i]=Ecross;
 #endif
 #endif
         for(int c=0;c<5;c+=4){
@@ -187,9 +254,18 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
             }
             for(int a=0;a<d;a++)w->gradient[i][c][a]*=alpha[c];
         }
-        for(int c=1;c<=d;c++)for(int a=0;a<d;a++)w->gradient[i][c][a]*=velocity_alpha;
+        for(int c=1;c<=d;c++){
+#ifdef GFS_NATIVE_WALL_VELOCITY
+            if(mirrored(w->wall_mask[i],c-1))continue;
+#endif
+            for(int a=0;a<d;a++)w->gradient[i][c][a]*=velocity_alpha;
+        }
         for(int a=0;a<3;a++){
+#ifdef GFS_NATIVE_WALL_VELOCITY
+            w->velocity[i][a]=a<d?physical_velocity(w,m,i,a,zero,m->cell[i].q):0;
+#else
             w->velocity[i][a]=a<d?w->primitive[i].u[a]-dot3(w->gradient[i][a+1],g->centroid,d):0;
+#endif
             if(!isfinite(w->velocity[i][a]))bad=1;
         }
     }
@@ -203,8 +279,7 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
         hops_total+=hops;if(hops>max_hops)max_hops=hops;
         changed+=owner!=i;switches+=w->velocity_owner[i]>=0&&w->velocity_owner[i]!=owner;w->velocity_owner[i]=owner;
         if(owner!=i){
-            double offset[3];for(int a=0;a<3;a++)offset[a]=relative[a]-m->geometry[owner].centroid[a];
-            for(int a=0;a<d;a++)w->velocity[i][a]=w->primitive[owner].u[a]+dot3(w->gradient[owner][a+1],offset,d);
+            for(int a=0;a<d;a++)w->velocity[i][a]=physical_velocity(w,m,owner,a,relative,m->cell[i].q);
         }
     }
     w->query_seconds=omp_get_wtime()-start;w->owner_changed=changed;w->owner_switches=switches;w->query_hops=hops_total;w->query_max_hops=max_hops;
@@ -214,7 +289,14 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
 static GfsFvPrimitive trace(const GfsFvWorkspace *w,const GfsFvMesh *m,int i,const double rel[3]){
     double r[3];for(int a=0;a<3;a++)r[a]=rel[a]-m->geometry[i].centroid[a];
     GfsFvPrimitive p=w->primitive[i];p.rho+=dot3(w->gradient[i][0],r,m->dim);p.p+=dot3(w->gradient[i][4],r,m->dim);
-    for(int a=0;a<m->dim;a++)p.u[a]+=dot3(w->gradient[i][a+1],r,m->dim);return p;
+    for(int a=0;a<m->dim;a++){
+#ifdef GFS_NATIVE_WALL_VELOCITY
+        p.u[a]=physical_velocity(w,m,i,a,rel,NULL);
+#else
+        /* Preserve the historical operation order outside the opt-in field. */
+        p.u[a]+=dot3(w->gradient[i][a+1],r,m->dim);
+#endif
+    }return p;
 }
 static int build_points(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRhsStats *stats){
     int n=m->n,d=m->dim,ne=0,np=0,bad=0;
@@ -326,7 +408,12 @@ static int residual(GfsFvWorkspace *w,const GfsFvMesh *m,const double *z,double 
     }
     return bad;
 }
-static double norm(const GfsFvWorkspace *w,const double *r){double value=0;for(int i=0;i<w->n;i++)value=fmax(value,fabs(r[i])/w->scale[i]);return value;}
+static double norm(const GfsFvWorkspace *w,const double *r){
+    double value=0;for(int i=0;i<w->n;i++){
+        if(!isfinite(r[i])||!isfinite(w->scale[i])||!(w->scale[i]>0))return HUGE_VAL;
+        value=fmax(value,fabs(r[i])/w->scale[i]);
+    }return value;
+}
 static double product_sum(const double *a,const double *b,int n){
     double sum=0;
 #pragma omp parallel for if(n>1024) schedule(static) reduction(+:sum)
@@ -382,7 +469,7 @@ static int block_precondition(GfsFvWorkspace *w,const GfsFvMesh *m){
 }
 #endif
 static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
-    w->pcg_iterations=0;w->pcg_failure=0;w->pcg_last_relative=1;
+    w->pcg_iterations=0;w->pcg_failure=0;w->pcg_last_relative=1;w->pcg_stop_reason=0;w->pcg_true_replacements=0;w->pcg_first_candidate_true=NAN;
     int n=m->n;for(int i=0;i<n;i++){w->direction[i]=0;w->r[i]=-w->R[i];}
 #ifdef GFS_NATIVE_BLOCK_JACOBI
     prepare_blocks(w,m);if(block_precondition(w,m)){w->pcg_failure=5;return -1;}
@@ -409,7 +496,10 @@ static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
              * convergence. Check that residual and reliably replace it
              * within the SAME 64-iteration cap and same SPD system. */
             if(residual(w,m,w->direction,w->trial,0)){w->pcg_failure=2;return -1;}
-            if(norm(w,w->trial)<=1e-12)return step;
+            double true_norm=norm(w,w->trial);
+            if(isnan(w->pcg_first_candidate_true))w->pcg_first_candidate_true=true_norm;
+            if(true_norm<=1e-12){w->pcg_stop_reason=1;return step;}
+            w->pcg_true_replacements++;
             for(int i=0;i<n;i++)w->r[i]=-w->trial[i];
 #ifdef GFS_NATIVE_BLOCK_JACOBI
             if(block_precondition(w,m)){w->pcg_failure=5;return -1;}
@@ -424,12 +514,19 @@ static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
         }
         for(int i=0;i<n;i++)w->p[i]=w->pre[i]+(next/rz)*w->p[i];rz=next;
     }
+#ifdef GFS_NATIVE_KEP
+    /* The recursive preconditioned norm is only a trigger. The registered
+     * physical accuracy criterion also decides the last iterate at cap64. */
+    if(residual(w,m,w->direction,w->trial,0)){w->pcg_failure=2;return -1;}
+    if(norm(w,w->trial)<=1e-12){w->pcg_stop_reason=2;return 64;}
+#endif
     w->pcg_failure=4;return -1;
 }
 #ifndef GFS_NATIVE_KEP
 static double merit(const GfsFvMesh *m,const double *R){double value=0;for(int i=0;i<m->n;i++)value+=R[i]*R[i]/m->cell[i].mu;return value;}
 #endif
 static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
+    w->pcg_stop_reason=0;w->pcg_true_replacements=0;w->pcg_first_candidate_true=NAN;
     memset(w->z,0,m->n*sizeof(double));
     for(int i=0;i<m->n;i++){
         double h0=sqrt(m->cell[i].m0/m->cell[i].mu),speed=sqrt(dot3(w->primitive[i].u,w->primitive[i].u,m->dim))+sqrt(m->gamma*w->primitive[i].p/w->primitive[i].rho);
@@ -437,8 +534,8 @@ static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
     }
 #ifdef GFS_NATIVE_KEP
     if(residual(w,m,w->z,w->R,1))return 1;s->root_residual=norm(w,w->R);
-    if(s->root_residual<=1e-12)return 0;
-    int count=pcg(w,m);s->cg=w->pcg_iterations;if(count<0){
+    if(s->root_residual<=1e-12){s->pcg_stop_reason=0;return 0;}
+    int count=pcg(w,m);s->cg=w->pcg_iterations;s->pcg_stop_reason=w->pcg_stop_reason;if(count<0){
         double initial_residual=s->root_residual;
         if(!residual(w,m,w->direction,w->trial,0))s->root_residual=norm(w,w->trial);
         fprintf(stderr,"PCG failure iterations=%d reason=%d initial_scaled_residual=%.17g final_true_scaled_residual=%.17g (1=curvature,2=flux,3=replacement,4=cap,5=preconditioner)\n",w->pcg_iterations,w->pcg_failure,initial_residual,s->root_residual);return 3;
@@ -463,7 +560,7 @@ static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
 #endif
 }
 int gfs_fv_native_rhs(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRate *rate,GfsFvRhsStats *s){
-    memset(s,0,sizeof(*s));allocate(w,m->n);double mark=omp_get_wtime();
+    memset(s,0,sizeof(*s));s->pcg_stop_reason=-1;allocate(w,m->n);double mark=omp_get_wtime();
     if(reconstruct(w,m))return 1;s->reconstruction_seconds=omp_get_wtime()-mark;mark=omp_get_wtime();
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     s->velocity_query_seconds=w->query_seconds;s->velocity_owner_changed=w->owner_changed;s->velocity_owner_switches=w->owner_switches;s->maximum_query_hops=w->query_max_hops;s->total_query_hops=w->query_hops;

@@ -24,7 +24,7 @@ static int inspect(GfsFvMesh *m,const char *name,const char *csv,int mode){
     FILE *out=csv?fopen(csv,"wx"):NULL;if(csv&&!out)return 3;
     if(out)fprintf(out,"id,Eparallel,Eperpendicular,Edata,compression_fraction,chi,old_heat_share,new_heat_share\n");
     for(int i=0;i<m->n;i++){
-        orthogonal=fmax(orthogonal,fabs(w->data_energy[i]-w->parallel_energy[i]-w->perpendicular_energy[i])/(1+w->data_energy[i]));
+        orthogonal=fmax(orthogonal,fabs(w->data_energy[i]-w->parallel_energy[i]-w->perpendicular_energy[i]-w->cross_energy[i])/(1+w->data_energy[i]));
         if(out)fprintf(out,"%llu,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g\n",(unsigned long long)m->cell[i].id,w->parallel_energy[i],w->perpendicular_energy[i],w->data_energy[i],w->bulk_fraction[i],w->stress_fraction[i],old[i],updated[i]);
         int interior=1;for(int a=0;a<m->dim;a++)if(m->cell[i].q[a]<.25||m->cell[i].q[a]>.75)interior=0;
         if(mode>=0&&(mode==5||interior)){
@@ -36,7 +36,7 @@ static int inspect(GfsFvMesh *m,const char *name,const char *csv,int mode){
     int pass=orthogonal<1e-11&&fabs(H1-predicted)<1e-12*(1+H0)&&fabs(H1-Hbulk-Hresidual)<1e-12*(1+H0)&&fabs(H1-stats.stress_thermal_rate)<1e-12*(1+H0)&&kinetic<1e-10&&fabs(stats.entropy_balance_defect)<1e-10*(1+fabs(stats.entropy_rate));
     if(mode>=0)pass&=checked>0&&fixture_error<1e-12;
     if(mode==5)pass&=H0>0&&fabs(H1/H0-1)<1e-12;
-    printf("{\"case\":\"%s\",\"dim\":%d,\"cells\":%d,\"checked_cells\":%d,\"chi_fixture_error\":%.17g,\"LSQ_orthogonal_error\":%.17g,\"original_heat_rate\":%.17g,\"filtered_heat_rate\":%.17g,\"same_state_predicted_heat_rate\":%.17g,\"compression_component_heat_rate\":%.17g,\"residual_component_heat_rate\":%.17g,\"kinetic_pair_defect\":%.17g,\"actual_geometry_entropy_balance\":%.17g,\"pass\":%s}\n",name,m->dim,m->n,checked,fixture_error,orthogonal,H0,H1,predicted,Hbulk,Hresidual,kinetic,stats.entropy_balance_defect,pass?"true":"false");
+    printf("{\"case\":\"%s\",\"dim\":%d,\"cells\":%d,\"checked_cells\":%d,\"chi_fixture_error\":%.17g,\"LSQ_data_identity_with_cross_term_error\":%.17g,\"original_heat_rate\":%.17g,\"filtered_heat_rate\":%.17g,\"same_state_predicted_heat_rate\":%.17g,\"compression_component_heat_rate\":%.17g,\"residual_component_heat_rate\":%.17g,\"kinetic_pair_defect\":%.17g,\"actual_geometry_entropy_balance\":%.17g,\"pass\":%s}\n",name,m->dim,m->n,checked,fixture_error,orthogonal,H0,H1,predicted,Hbulk,Hresidual,kinetic,stats.entropy_balance_defect,pass?"true":"false");
     free(old);free(updated);free(r);gfs_fv_workspace_free(w);return pass?0:1;
 }
 int main(int argc,char **argv){

@@ -18,7 +18,7 @@ def main():
     parser.add_argument("binary", type=Path)
     parser.add_argument("--select", nargs="+", choices=("alternating", "sod", "blast", "collision", "cold", "gresho"))
     parser.add_argument("--restart-blast", type=Path)
-    parser.add_argument("--core-version", type=int, choices=(3, 4), default=3)
+    parser.add_argument("--core-version", type=int, choices=(3, 4, 5), default=3)
     args = parser.parse_args()
     if not args.root.resolve().is_relative_to(Path("/gpfs/kjhan/LagForce")):
         raise ValueError("Use GPFS")
@@ -40,14 +40,20 @@ def main():
         "detector": "chi=(Eperp+c*Eparallel)/(Eperp+Eparallel), c=min(1,max(0,-trG)^2/Frobenius(G)^2); original unlimited centroid LSQ weights A/r^(d+1)",
         "pair_fraction": "max(chi_i,chi_j)", "unchanged_stress_coefficients": [1, 2],
         "wave_CFL": .4, "cone_safety": .9, "PCG_cap": 64, "true_root_tolerance": 1e-12,
+        "PCG_stopping": "See numerical_backend.json in each case; current sources use true scaled flux residual as the final criterion, including at cap. Recursive relative norm is a check trigger.",
         "step_halving_cap": 8, "minimum_dt": 1e-14, "GFS_TEST_GUARD_MULTIPLIER": 1,
         "CPU_sets": [list(range(8)), list(range(8, 16))], "threads_each": 8,
         "cold_pressure_relative_L1_limit": .01,
         "Gresho64_physical_node_error_must_improve": .036911931828247264,
         "alternating_final_kinetic_fraction_limit": .99,
         "strong_failure_control": "If a strong shock fails, run chi=1 once for the first failed blast/collision."
-        if args.core_version == 3 else "If PCG fails, test mutual-strongest-edge 2x2 block Jacobi on the exact failed trial matrix before changing the common numerical backend; keep cap/tolerance/mu.",
+        if args.core_version == 3 else
+        "If PCG fails, test mutual-strongest-edge 2x2 block Jacobi on the exact failed trial matrix before changing the common numerical backend; keep cap/tolerance/mu."
+        if args.core_version == 4 else
+        "Stop this finite bundle on any failed full strong endpoint; preserve exact failure, no further preconditioner/mu/tolerance sweep.",
         "velocity_query": "Own-cell extrapolation" if args.core_version == 3 else "Actual containing power cell, native relative halfspaces/adjacency, deterministic ties, explicit failure, unchanged own-cell value on inside points",
+        "reflecting_velocity_field": "u_n(x)=mean_u_n*(x_n-wall)/(centroid_n-wall), fixed raw normal gradient row, limiter on free rows only, ratio evaluated directly"
+        if args.core_version == 5 else "Historical unconstrained LSQ field",
         "not_yet_qualified": "Original nine full tests/refinement, guard-doubling equivalence, higher-resolution/3D suite, native GPU/MPI and matched GIZMO timing"})
     slots = Queue()
     for cpus in [list(range(8)), list(range(8, 16))]:

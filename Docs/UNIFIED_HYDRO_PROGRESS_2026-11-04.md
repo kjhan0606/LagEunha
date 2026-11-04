@@ -1,6 +1,13 @@
 # 차원 공통 유체역학 진행 기록
 
-최신 후속 결과와 다음 단계는
+현재 최신 묶음은
+[반사벽 제약과 실제 잔차 판정](UNIFIED_HYDRO_WALL_TRUE_RESIDUAL_2026-11-05.md)이다.
+반사벽 속도장과 PCG 종료조건을 수정하고 최종 22개 차원 공통 연산자 검사를
+통과했다. 그러나 version5 blast는 t=0.006417, collision은 t=0.020612에서
+실패했다. 실패 쌍의 재구성 속도 점프 및 AV의 centroid/generator 길이 차이를
+확인했으며, 새 기법의 전체 충격·2D·속도 검증은 아직 미완료다.
+
+직전 묶음의 결과와 당시 다음 단계는
 [KEP filter 및 물리적 위치 속도 평가](UNIFIED_HYDRO_KEP_FILTER_POINT_2026-11-05.md)에
 기록했다. version3 cold64²의 압력 오차는 0.0174553%로 줄었지만,
 version4 강충격 두 시험은 원래 종점에 도달하지 못했다. 선택적 block PCG는
