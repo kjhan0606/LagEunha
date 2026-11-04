@@ -9,6 +9,7 @@
 #include "../gfs_viscosity_implicit.h"
 #include <stdint.h>
 #include "gfs_unified_acoustic_audit.inc"
+#include "gfs_unified_transport_audit.inc"
 /* Diagnostic-only original-radius lookup. Missing files never alter physics. */
 static double gfs_unified_original_radius(uint64_t id)
 {
@@ -202,6 +203,7 @@ static int gfs_unified_viscosity_apply(void *opaque,double gamma,double h,
     fprintf(stderr,"[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=%d max_relative_area=%.9e max_area_mismatch=%.9e max_roundoff_bound_ratio=%.9e\n",unpaired,max_unpaired_relative_area,max_area_mismatch,max_roundoff_ratio);
     int ne=0;for(int k=0;k<nf;k++)if(valid[k])edges[ne++]=edges[k];
     if(frozen_rate){
+        if(gfs_unified_transport_audit(simpar,ctx,alias,gamma,G))return 1;
         const char *acoustic=getenv("GFS_UNIFIED_ACOUSTIC_AUDIT");
         if(acoustic&&!strcmp(acoustic,"1")&&gfs_unified_acoustic_audit(simpar,ctx,alias,gamma))return 1;
         /* Diagnostic rate on the actual pre-kick state. No BE solve or

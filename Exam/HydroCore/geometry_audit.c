@@ -7,12 +7,16 @@
 #include "../../Voro/voro.h"
 #include "../gfs_variational_core.h"
 
+#ifndef NC
 #define NC 64
+#endif
 #define NV 8192
 typedef struct {int i,j;double r[3],c[3],area;} Face;
 static Face faces[10000];
 static int nf;
 static double pos[NC][3],vel[NC][3],pressure[NC];
+/* Default zero; diagnostic callers may exercise actual Laguerre weights. */
+static double site_weight[NC],site_weight_rate[NC];
 static double dot(const double *a,const double *b,int dim){
     double s=0;for(int k=0;k<dim;k++)s+=a[k]*b[k];return s;
 }
@@ -30,10 +34,15 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
             double xi=pos[i][0]+displacement*vel[i][0];
             double xl=pos[l][0]+displacement*vel[l][0]-(i==0);
             double xr=pos[r][0]+displacement*vel[r][0]+(i==n-1);
-            V[i]=.5*(xr-xl);
+            double wi=site_weight[i]+displacement*site_weight_rate[i];
+            double wl=site_weight[l]+displacement*site_weight_rate[l];
+            double wr=site_weight[r]+displacement*site_weight_rate[r];
+            double left=.5*(xi+xl)+(wi-wl)/(2*(xl-xi));
+            double right=.5*(xi+xr)+(wi-wr)/(2*(xr-xi));
+            V[i]=right-left;
             if(capture){
-                double rr[3]={xr-xi,0,0},c[3]={.5*(xr-xi),0,0};save_face(i,r,rr,c,1);
-                rr[0]=xl-xi;c[0]=.5*(xl-xi);save_face(i,l,rr,c,1);
+                double rr[3]={xr-xi,0,0},c[3]={right-xi,0,0};save_face(i,r,rr,c,1);
+                rr[0]=xl-xi;c[0]=left-xi;save_face(i,l,rr,c,1);
             }
         }else if(dim==2){
             Voro2D_point input[NC*9]={0},sorted_guard[NC*9+8]={0},ctr={0};
@@ -42,10 +51,12 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
             int m=0,parent[NC*9];
             ctr.x=pos[i][0]+displacement*vel[i][0];
             ctr.y=pos[i][1]+displacement*vel[i][1];ctr.indx=-1;
+            ctr.w2=site_weight[i]+displacement*site_weight_rate[i];
             for(int sy=-1;sy<=1;sy++)for(int sx=-1;sx<=1;sx++)for(int j=0;j<n;j++){
                 if(!sx&&!sy&&j==i)continue;
                 input[m].x=pos[j][0]+displacement*vel[j][0]+sx;
                 input[m].y=pos[j][1]+displacement*vel[j][1]+sy;
+                input[m].w2=site_weight[j]+displacement*site_weight_rate[j];
                 input[m].indx=m;parent[m]=j;m++;
             }
             int nv=Voro2D_FindVC(&ctr,input,sorted,m,corner,16,4);
@@ -70,6 +81,7 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
             ctr.x=pos[i][0]+displacement*vel[i][0];
             ctr.y=pos[i][1]+displacement*vel[i][1];
             ctr.z=pos[i][2]+displacement*vel[i][2];ctr.indx=-1;
+            ctr.w2=site_weight[i]+displacement*site_weight_rate[i];
             int m=0,parent[NC*27];
             for(int sz=-1;sz<=1;sz++)for(int sy=-1;sy<=1;sy++)for(int sx=-1;sx<=1;sx++)
                 for(int j=0;j<n;j++){
@@ -77,6 +89,7 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
                     input[m].x=pos[j][0]+displacement*vel[j][0]+sx;
                     input[m].y=pos[j][1]+displacement*vel[j][1]+sy;
                     input[m].z=pos[j][2]+displacement*vel[j][2]+sz;
+                    input[m].w2=site_weight[j]+displacement*site_weight_rate[j];
                     input[m].indx=m;parent[m]=j;m++;
                 }
             int nv=Voro3D_FindVC(&ctr,input,sorted,m,vertex,16,4,0,work);

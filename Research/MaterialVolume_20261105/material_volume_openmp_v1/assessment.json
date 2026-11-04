@@ -1,0 +1,156 @@
+{
+  "coefficient": {
+    "passive": {
+      "runs": 3,
+      "all_completed_two_solutions": false,
+      "iterations": [
+        [
+          180,
+          0
+        ],
+        [
+          180,
+          0
+        ],
+        [
+          186,
+          0
+        ]
+      ],
+      "true_residuals": [
+        [
+          3.8845120422427345e-05,
+          1
+        ],
+        [
+          3.8845120422427345e-05,
+          1
+        ],
+        [
+          2.701040174313704e-05,
+          1
+        ]
+      ],
+      "median_total_seconds": 0.0768041611,
+      "median_first_solve_seconds_per_iteration": 0.0004106561344444445,
+      "hit_256_unconverged": false
+    },
+    "active": {
+      "runs": 3,
+      "all_completed_two_solutions": false,
+      "iterations": [
+        [
+          256,
+          0
+        ],
+        [
+          256,
+          0
+        ],
+        [
+          256,
+          0
+        ]
+      ],
+      "true_residuals": [
+        [
+          2.6413753668530444e-07,
+          1
+        ],
+        [
+          2.6413753668530444e-07,
+          1
+        ],
+        [
+          2.6413753668530444e-07,
+          1
+        ]
+      ],
+      "median_total_seconds": 0.0304198265,
+      "median_first_solve_seconds_per_iteration": 0.00011205393828125,
+      "hit_256_unconverged": true
+    }
+  },
+  "baseline": {
+    "passive": {
+      "start_time": 0.5,
+      "end_time": 0.51,
+      "steps": 14,
+      "wall_seconds": 2.07200979499612,
+      "native_total_phase_seconds": 1.162941,
+      "median_step_seconds_after_first": 0.06553,
+      "median_phases": {
+        "geometry": 0.010301,
+        "pressure": 0.006309,
+        "viscosity": 0.045134,
+        "drift": 0.00039
+      },
+      "relative_energy_change_from_common_start": 0.00015115970041401638,
+      "masses_exact_per_id": true,
+      "W_pi_zero": true
+    },
+    "active": {
+      "start_time": 0.5,
+      "end_time": 0.51,
+      "steps": 14,
+      "wall_seconds": 1.6756858499720693,
+      "native_total_phase_seconds": 0.782822,
+      "median_step_seconds_after_first": 0.043839,
+      "median_phases": {
+        "geometry": 0.009618,
+        "pressure": 0.004492,
+        "viscosity": 0.027445,
+        "drift": 0.000339
+      },
+      "relative_energy_change_from_common_start": 0.00015115970041401638,
+      "masses_exact_per_id": true,
+      "W_pi_zero": true
+    }
+  },
+  "field_comparison": {
+    "x": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "y": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "m": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "vx": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "vy": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "W": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "pi": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "U": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    },
+    "V": {
+      "max_abs": 0.0,
+      "max_scaled": 0.0
+    }
+  },
+  "baseline_native_phase_speedup": 1.4855752648750291,
+  "same_setting_first_coefficient_cost_over_median_baseline_step": {
+    "passive": 1.1720457973447276,
+    "active": 0.6938987317228951
+  },
+  "persistent_team_implemented": false,
+  "candidate_release": false,
+  "reason": "Active runs all reached the unchanged 256-iteration cap without convergence. Stop as planned; no persistent-team or iteration-limit increase."
+}

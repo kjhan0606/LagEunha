@@ -1,0 +1,25 @@
+{
+  "purpose": "Same instrumented native coefficient binary, passive/active crossover with fixed numerical and wall budgets. Then identical native baseline checkpoint continuations under both policies.",
+  "input": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_native_cost_v3/material_volume_native_input.bin",
+  "coefficient_cases": [
+    "passive",
+    "active",
+    "passive",
+    "active",
+    "passive",
+    "active"
+  ],
+  "maximum_CG_iterations_per_rhs": 256,
+  "relative_tolerance": 1e-10,
+  "extra_seconds_budget": 0.076127,
+  "persistent_team_rule": "Only if budget ends before 256 and runtime overhead remains; never if 256 iterations fail convergence.",
+  "baseline_start": 0.5,
+  "baseline_end": 0.51,
+  "baseline_resolutions": [
+    128,
+    128
+  ],
+  "baseline_output_policy": "one exact final checkpoint",
+  "OMP_NUM_THREADS": 8,
+  "OMP_DYNAMIC": "FALSE"
+}

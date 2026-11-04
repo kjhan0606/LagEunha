@@ -1,0 +1,19 @@
+{
+  "purpose": "Single bounded native C/OpenMP CPU coefficient implementation screen after algebra/nonaffine/weighted geometry gates. No PDE evolution.",
+  "native_geometry_input": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_native_cost_v3/material_volume_native_input.bin",
+  "native_export_uses_direct_owned_image_aliases": true,
+  "all_faces_retained": true,
+  "baseline_step_times_source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/rotating_shear_suite_v1/gresho_128x128/log",
+  "baseline_time_window": [
+    0.4,
+    0.6
+  ],
+  "baseline_samples": 272,
+  "extra_seconds_budget": 0.076127,
+  "budget_definition": "at most one median original full native step for all extra coefficient/R/transpose work, optimistic early screen; not matched GIZMO qualification",
+  "maximum_CG_iterations_per_rhs": 256,
+  "relative_coefficient_residual_tolerance": 1e-10,
+  "OMP_NUM_THREADS": 8,
+  "weighted_geometry_and_timestep_cost_included": false,
+  "accepted_steps": 0
+}
