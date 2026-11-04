@@ -1,0 +1,17 @@
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/exam.c:8298:76: warning: format specifies type 'int' but the argument has type 'ptrdiff_t' (aka 'long') [-Wformat]
+ 8298 |         fprintf(stderr,"[UPDV] P%d after mkLinkedList2D npad=%d\n", MYID(simpar), VORO_NPAD(simpar)); fflush(stderr);
+      |                                                              ~~                   ^~~~~~~~~~~~~~~~~
+      |                                                              %td
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/eunha.h:1220:27: note: expanded from macro 'VORO_NPAD'
+ 1220 | #define VORO_NPAD(simpar) ((simpar)->bp.voro.npad)
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/exam.c:11200:41: warning: incompatible pointer types passing 'treevorork4particletype *' (aka 'struct treevorork4particletype *') to parameter of type 'const treevorostressrk4particletype *' (aka 'const struct treevorostressrk4particletype *') [-Wincompatible-pointer-types]
+ 11200 |         gfs_rk4_failure_snapshot(simpar,VORORK4_TBP(simpar),VORO_NP(simpar),
+       |                                         ^~~~~~~~~~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/eunha.h:1231:29: note: expanded from macro 'VORORK4_TBP'
+ 1231 | #define VORORK4_TBP(simpar) ((simpar)->bp.voro.p.tbprk4)
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/NativeU64/exam.c:10573:40: note: passing argument to parameter 'data' here
+ 10573 |                 const treevorostressrk4particletype *data, int np,
+       |                                                      ^
+2 warnings generated.

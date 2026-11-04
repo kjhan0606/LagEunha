@@ -5,6 +5,7 @@
  */
 #include "../gfs_variational_core.h"
 #include "gfs_unified_planar_audit.inc"
+#include "gfs_unified_flow_audit.inc"
 typedef struct {unsigned long long id;double V,U;} GfsUnifiedDriftState;
 static int gfs_unified_saved_compare(const void *a,const void *b){
     unsigned long long x=((const GfsUnifiedDriftState*)a)->id,y=((const GfsUnifiedDriftState*)b)->id;
@@ -47,12 +48,28 @@ static double gfs_unified_kdk(
     if((env=getenv("EUNHA_KEPLER_EPS")))eps=atof(env);
     if(!(eta>0)||!isfinite(eta))MPI_Abort(MPI_COMM(simpar),99);
     postype warm_ax=0,warm_ay=0;kepler_accel(0,0,&warm_ax,&warm_ay);if(!periodic)gfs_kdk_fixedpoly_wall_init();
-    double mark=MPI_Wtime();
-    updateDenW2Pressure2DBlend(simpar,xmin,ymin,xmax,ymax,gamma,
-        paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D,1);
-    geometry_seconds+=MPI_Wtime()-mark;mark=MPI_Wtime();
-    double dt=getAccVoro2DBlend_GPU(simpar,xmin,ymin,xmax,ymax,OoA,courant,gamma,
-        paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D);
+    static int cache_ready,last_step;
+    static double last_end,geometry_key[6];
+    static SimParameters *cached_simpar;
+    static void (*cached_boundary)(SimParameters *);
+    double key[6]={xmin,ymin,xmax,ymax,cell,OoA};
+    const char *reuse_env=getenv("GFS_UNIFIED_REUSE_GEOMETRY");
+    int reuse=(!reuse_env||strcmp(reuse_env,"0"))&&cache_ready&&cached_simpar==simpar&&
+        cached_boundary==postStage&&last_step+1==gfs_rk4_context_step&&last_end==gfs_rk4_context_time&&
+        !memcmp(key,geometry_key,sizeof(key))&&gpu_unified_geometry_reusable(simpar);
+    cache_ready=0;
+    double mark=MPI_Wtime(),dt;
+    if(reuse){
+        /* The last kick changed v. Recompute CFL, fit, and pressure from
+         * current states while retaining only the unchanged geometry. */
+        dt=gpu_unified_pressure_refresh(simpar);
+    }else{
+        updateDenW2Pressure2DBlend(simpar,xmin,ymin,xmax,ymax,gamma,
+            paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D,1);
+        geometry_seconds+=MPI_Wtime()-mark;mark=MPI_Wtime();
+        dt=getAccVoro2DBlend_GPU(simpar,xmin,ymin,xmax,ymax,OoA,courant,gamma,
+            paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D);
+    }
     pressure_seconds+=MPI_Wtime()-mark;
     const char *factor_env=getenv("GFS_UNIFIED_DT_FACTOR");
     double dt_factor=factor_env?atof(factor_env):1;
@@ -63,6 +80,16 @@ static double gfs_unified_kdk(
     int n=VORO_NP(simpar),bad=0;
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(simpar);
     gfs_unified_planar_audit(simpar,"initial_pressure",gfs_rk4_context_time,gamma);
+    gfs_unified_flow_audit(simpar,gfs_rk4_context_time,gamma);
+    static int initial_audit_done=0;
+    const char *initial_audit=getenv("GFS_UNIFIED_INITIAL_AUDIT");
+    if(initial_audit&&!strcmp(initial_audit,"1")&&!initial_audit_done){
+        if(gpu_unified_viscosity_rate_audit(simpar,gamma))MPI_Abort(MPI_COMM(simpar),99);
+        initial_audit_done=1;
+        fprintf(stderr,"[UNIFIED_INITIAL_AUDIT] t=%.17g accepted_steps_this_process=0 pressure_only_acceleration=1\n",gfs_rk4_context_time);
+        const char *only=getenv("GFS_UNIFIED_INITIAL_ONLY");
+        if(only&&!strcmp(only,"1")){MPI_Finalize();exit(0);}
+    }
     static double E_reference=0;static int reference_ready=0;
     if(!reference_ready){
         long double E=0;for(int i=0;i<n;i++)E+=p[i].weight_thermal.U+.5L*p[i].mass*(p[i].vx*p[i].vx+p[i].vy*p[i].vy)+p[i].mass*kepler_phi(p[i].x,p[i].y);
@@ -136,6 +163,10 @@ static double gfs_unified_kdk(
         E+=U+.5L*p[i].mass*(p[i].vx*p[i].vx+p[i].vy*p[i].vy)+p[i].mass*kepler_phi(p[i].x,p[i].y);
     }
     if(bad)MPI_Abort(MPI_COMM(simpar),99);
+    last_step=gfs_rk4_context_step;last_end=gfs_rk4_context_time+dt;
+    gfs_unified_flow_audit(simpar,last_end,gamma);
+    memcpy(geometry_key,key,sizeof(key));cached_simpar=simpar;cached_boundary=postStage;cache_ready=1;
+    fprintf(stderr,"[UNIFIED_GEOMETRY_REUSE] reused=%d new_geometry_builds=%d\n",reuse,reuse?1:2);
     fprintf(stderr,"[UNIFIED_KDK] step=%d t=%.17g dt=%.17g N=%d Etot=%.17Lg dErel=%.9e Umin=%.9e Vmin=%.9e heat=%.9e viscosity_energy_defect=%.9e CG=%d/%d active=%d/%d wall_hits=%llu wall_J=(%.9e,%.9e,%.9e) wall_roundoff=%.9e geometry_s=%.6f pressure_s=%.6f viscosity_s=%.6f drift_s=%.6f total_s=%.6f\n",
         gfs_rk4_context_step,gfs_rk4_context_time+dt,dt,n,E,((double)E-E_reference)/fabs(E_reference),Umin,Vmin,D0.heat+D1.heat,D0.energy_defect+D1.energy_defect,D0.iterations,D1.iterations,D0.active_iterations,D1.active_iterations,impacts,wall_Jx,wall_Jy,wall_Jz,wall_roundoff,geometry_seconds,pressure_seconds,viscosity_seconds,drift_seconds,MPI_Wtime()-begin);
     fprintf(stderr,"[UNIFIED_THERMAL_AUDIT] gamma=%.17g max_adiabat_identity_error=%.17g viscosity_min_heat=(%.17g,%.17g) viscosity_equation_residual=(%.17g,%.17g)\n",gamma,max_adiabatic_identity_error,D0.min_heat,D1.min_heat,D0.relative_equation_residual,D1.relative_equation_residual);

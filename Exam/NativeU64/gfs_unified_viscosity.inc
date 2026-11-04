@@ -8,6 +8,7 @@
 #include "../gfs_velocity_fit.h"
 #include "../gfs_viscosity_implicit.h"
 #include <stdint.h>
+#include "gfs_unified_acoustic_audit.inc"
 /* Diagnostic-only original-radius lookup. Missing files never alter physics. */
 static double gfs_unified_original_radius(uint64_t id)
 {
@@ -39,7 +40,8 @@ static int gfs_unified_interface_matches(int raw,int owner,double sx,double sy,
     return fabs(geometry->x[raw]-geometry->x[owner]-sx)<=tol&&
            fabs(geometry->y[raw]-geometry->y[owner]-sy)<=tol;
 }
-int gpu_unified_viscosity_half_step(void *opaque,double gamma,double h,GfsViscosityStats *stats)
+static int gfs_unified_viscosity_apply(void *opaque,double gamma,double h,
+        GfsViscosityStats *stats,int frozen_rate)
 {
     SimParameters *simpar=opaque;GPUContext *ctx=gpu_get_context();
     int n=VORO_NP(simpar),nf=ctx->d_faces.n_faces_total,nt=n+VORO_NPAD(simpar);
@@ -199,6 +201,25 @@ int gpu_unified_viscosity_half_step(void *opaque,double gamma,double h,GfsViscos
     if(bad){fprintf(stderr,"[UNIFIED_VISCOSITY] stage=%d input/geometry contract failed mask=%d unpaired=%d max_relative_area=%.17g\n",__LINE__,bad,unpaired,max_unpaired_relative_area);return 1;}
     fprintf(stderr,"[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=%d max_relative_area=%.9e max_area_mismatch=%.9e max_roundoff_bound_ratio=%.9e\n",unpaired,max_unpaired_relative_area,max_area_mismatch,max_roundoff_ratio);
     int ne=0;for(int k=0;k<nf;k++)if(valid[k])edges[ne++]=edges[k];
+    if(frozen_rate){
+        const char *acoustic=getenv("GFS_UNIFIED_ACOUSTIC_AUDIT");
+        if(acoustic&&!strcmp(acoustic,"1")&&gfs_unified_acoustic_audit(simpar,ctx,alias,gamma))return 1;
+        /* Diagnostic rate on the actual pre-kick state. No BE solve or
+         * state update. The same graph and constitutive law are used. */
+        memset(U,0,(size_t)n*sizeof(double));long double total=0;
+        for(int k=0;k<ne;k++){
+            const GfsViscosityEdge *e=edges+k;double a=0;
+            for(int d=0;d<2;d++)a+=e->normal[d]*(v[2*e->i+d]-(e->j>=0?v[2*e->j+d]:0));
+            double rate=e->coefficient*a*a;total+=rate;
+            U[e->i]+=e->j>=0?.5*rate:rate;if(e->j>=0)U[e->j]+=.5*rate;
+        }
+        FILE *out=fopen("unified_initial_heat.csv","wx");if(!out)return 1;
+        fprintf(out,"id,x,y,V,U,ax,ay,Gxx,Gxy,Gyx,Gyy,heat_rate\n");
+        for(int i=0;i<n;i++)fprintf(out,"%llu,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g\n",
+            (unsigned long long)PINDX(p+i),p[i].x,p[i].y,p[i].weight_thermal.V,p[i].weight_thermal.U,p[i].ax,p[i].ay,G[4*i],G[4*i+1],G[4*i+2],G[4*i+3],U[i]);
+        if(ferror(out)||fclose(out))return 1;
+        fprintf(stderr,"[UNIFIED_INITIAL_HEAT_RATE] edges=%d rate=%.17Lg no_state_update=1\n",ne,total);return 0;
+    }
     int rc=gfs_viscosity_be(workspace,2,n,ne,edges,mass,x,v,U,h,stats);
     if(rc){
         fprintf(stderr,"[UNIFIED_VISCOSITY] common solve failed rc=%d edges=%d h=%.17g\n",rc,ne,h);
@@ -215,20 +236,67 @@ int gpu_unified_viscosity_half_step(void *opaque,double gamma,double h,GfsViscos
 /* Initialize the diagnostic hash serially before parallel readers. */
     int cohorts=getenv("GFS_UNIFIED_COHORT_FILE")!=NULL;
     if(cohorts)(void)gfs_unified_original_radius((uint64_t)PINDX(p));
+    static int rbins=0,rthreads=0;static double rmax=0,*radial_partials,*radial_sum;
+    const char *radial_env=getenv("GFS_UNIFIED_RADIAL_BINS");
+    if(radial_env&&!cohorts)return 1;
+    if(radial_env&&!rbins){
+        rbins=atoi(radial_env);const char *limit=getenv("GFS_UNIFIED_RADIAL_MAX");rmax=limit?atof(limit):0;
+        if(rbins<1||rbins>64||!(rmax>0)||!isfinite(rmax))return 1;
+        rthreads=1;
+#ifdef _OPENMP
+        rthreads=omp_get_max_threads();
+#endif
+        radial_partials=calloc((size_t)rthreads*rbins,sizeof(double));radial_sum=calloc(rbins,sizeof(double));
+        if(!radial_partials||!radial_sum)return 1;
+    }
+    if(rbins)memset(radial_partials,0,(size_t)rthreads*rbins*sizeof(double));
     double Qcore=0,Qdisk=0,Qambient=0;
 #pragma omp parallel for schedule(static) reduction(+:Qcore,Qdisk,Qambient)
     for(int i=0;i<n;i++){
         if(cohorts){
             double r0=gfs_unified_original_radius((uint64_t)PINDX(p+i));
             double Q=U[i]-p[i].weight_thermal.U;
-            if(r0<.5)Qcore+=Q;else if(r0<=2)Qdisk+=Q;else Qambient+=Q;
+            if(rbins){
+                int tid=0,bin=(int)floor(r0/rmax*rbins);if(bin>=rbins)bin=rbins-1;
+#ifdef _OPENMP
+                tid=omp_get_thread_num();
+#endif
+                radial_partials[tid*rbins+bin]+=Q;
+            }else if(r0<.5)Qcore+=Q;else if(r0<=2)Qdisk+=Q;else Qambient+=Q;
         }
         p[i].vx=v[2*i];p[i].vy=v[2*i+1];p[i].weight_thermal.U=U[i];p[i].ie=(float)U[i];
         double V=p[i].weight_thermal.V,rho=mass[i]/V,P=(gamma-1)*U[i]/V;
         p[i].den=(float)rho;p[i].pressure=(float)P;p[i].csound=(float)sqrt(gamma*P/rho);
     }
-    if(cohorts)fprintf(stderr,"[UNIFIED_COHORT_HEAT] interval=%.17g core=%.17g original_disk=%.17g original_ambient=%.17g\n",h,Qcore,Qdisk,Qambient);
+    if(rbins){
+        for(int b=0;b<rbins;b++)for(int t=0;t<rthreads;t++)radial_sum[b]+=radial_partials[t*rbins+b];
+        fprintf(stderr,"[UNIFIED_RADIAL_HEAT] interval=%.17g bins=%d r0_max=%.17g segment_cumulative=(",h,rbins,rmax);
+        for(int b=0;b<rbins;b++)fprintf(stderr,"%s%.17g",b?",":"",radial_sum[b]);fprintf(stderr,")\n");
+    }else if(cohorts)fprintf(stderr,"[UNIFIED_COHORT_HEAT] interval=%.17g core=%.17g original_disk=%.17g original_ambient=%.17g\n",h,Qcore,Qdisk,Qambient);
     return 0;
+}
+int gpu_unified_viscosity_half_step(void *opaque,double gamma,double h,GfsViscosityStats *stats){return gfs_unified_viscosity_apply(opaque,gamma,h,stats,0);}
+int gpu_unified_viscosity_rate_audit(void *opaque,double gamma){return gfs_unified_viscosity_apply(opaque,gamma,0,NULL,1);}
+
+/* Exact owned-state and immutable-W checks before reusing local geometry.
+ * Image coordinates stay cached after the native wrapper frees CPU padding.
+ * The caller separately checks time, boundary, and geometry parameters. */
+int gpu_unified_geometry_reusable(void *opaque)
+{
+    SimParameters *simpar=opaque;GPUContext *ctx=gpu_get_context();
+    int n=VORO_NP(simpar),nt=n+VORO_NPAD(simpar);
+    if(!ctx->initialized||NID(simpar)!=1||n<1||ctx->d_faces.n_particles!=n||
+       ctx->h_parts.n_total!=nt||ctx->weight_geometry_count!=nt||
+       (nt!=n&&!gfs_unified_periodic_mode()))return 0;
+    treevorostressrk4particletype *p=(void*)VORORK4_TBP(simpar);ParticleSoA *a=&ctx->h_parts;
+    int valid=1;
+#pragma omp parallel for schedule(static) reduction(&:valid)
+    for(int i=0;i<n;i++){
+        if(a->indx[i]!=(long long)PINDX(p+i)||a->x[i]!=p[i].x||a->y[i]!=p[i].y||
+           a->mass[i]!=p[i].mass||a->weight_volume64[i]!=p[i].weight_thermal.V||
+           a->weight_W[i]!=p[i].weight.W||ctx->weight_geometry_snapshot[i]!=p[i].weight.W)valid=0;
+    }
+    return valid;
 }
 
 /* Reuse the current face CSR after a velocity/thermal update. No new mesh. */

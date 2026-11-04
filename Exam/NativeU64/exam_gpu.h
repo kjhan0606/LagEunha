@@ -329,6 +329,8 @@ GPUContext *gpu_get_context(void);
 int gpu_unified_viscosity_half_step(void *simpar,double gamma,double interval,
                                   GfsViscosityStats *stats);
 double gpu_unified_pressure_refresh(void *simpar);
+int gpu_unified_geometry_reusable(void *simpar);
+int gpu_unified_viscosity_rate_audit(void *simpar,double gamma);
 const int *gpu_unified_owner_aliases(GPUContext *ctx,int owned,int total,
                                     double domain_x,double domain_y);
 void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,

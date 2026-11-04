@@ -1,0 +1,22 @@
+{
+  "name": "gresho_64x64_dt2",
+  "problem": "gresho",
+  "Nx": 64,
+  "Ny": 64,
+  "target": 1.0,
+  "backend": "local",
+  "command": [
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/smooth_native_build_v2/unified_native_general.exe",
+    "params.dat",
+    "27"
+  ],
+  "birth_initial": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/smooth_initial_v1/gresho_64x64.bin",
+  "start_state": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/smooth_preflight_v1/gresho/khout.000027.dat",
+  "restart_step": 27,
+  "binary_sha256": "4edfbf8e0e1f532c4fda545a21a72edf92746b38fdf812972c233fa3c20c4f4b",
+  "birth_initial_sha256": "6e6efcfb2bf98276583e9229eaa79c90472bfeb85a9d1d966c88acbba39b4bbe",
+  "output_policy": "exact .25 Gresho or .5 KH final checkpoints, sparse flow CSV, one initial RHS/heat CSV",
+  "expected_new_bytes": 28087936,
+  "retains_preflight": true,
+  "dt_factor": 0.5
+}

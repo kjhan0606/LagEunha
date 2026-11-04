@@ -1,0 +1,25 @@
+{
+  "name": "gresho_128x128",
+  "problem": "gresho",
+  "Nx": 128,
+  "Ny": 128,
+  "target": 1.0,
+  "backend": "local_Ada_fallback",
+  "command": [
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/smooth_native_build_v2/unified_native_general.exe",
+    "params.dat",
+    "1"
+  ],
+  "birth_initial": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/rotating_shear_suite_v1/gresho_128x128/initial.bin",
+  "start_state": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/rotating_shear_suite_v1/gresho_128x128/initial.bin",
+  "restart_step": 1,
+  "binary_sha256": "4edfbf8e0e1f532c4fda545a21a72edf92746b38fdf812972c233fa3c20c4f4b",
+  "birth_initial_sha256": "1502a9bd5ec968aeca67d753102aa8dee497b003ddb48aa76794f113512f97f4",
+  "output_policy": "exact .25 Gresho or .5 KH final checkpoints, sparse flow CSV, one initial RHS/heat CSV",
+  "expected_new_bytes": 82351744,
+  "retains_preflight": false,
+  "cpus_per_task": 8,
+  "gpu_request": "gpu:H200:1",
+  "initial_backend": "h200",
+  "fallback_reason": "H200 QOSGrpGRES; own pending job withdrawn before start"
+}

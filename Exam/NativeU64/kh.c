@@ -422,6 +422,15 @@ int RunKH(SimParameters *simpar, int icont){
 			const char *exact = getenv("GFS_EXACT_STOP");
 			double ceiling = exact && atoi(exact) > 0 ? (double)kh_tmax()-(double)t : 0;
 			if(exact && atoi(exact) > 0 && !(ceiling > 0)) break;
+			const char *exact_output=getenv("GFS_EXACT_OUTPUT");
+			if(exact_output&&atoi(exact_output)>0){
+				const char *cadence=getenv("EUNHA_DUMP_DT");double spacing=cadence?atof(cadence):0;
+				if(!native_kdk||!(ceiling>0)||!(spacing>0)||!isfinite(spacing)){
+					fprintf(stderr,"[EXACT_OUTPUT] requires native KDK, exact final stop, and positive finite output cadence\n");MPI_Abort(MPI_COMM(simpar),99);
+				}
+				double next=(floor((double)t/spacing)+1)*spacing;
+				if(next>(double)t&&next-(double)t<ceiling)ceiling=next-(double)t;
+			}
 			const char *cap = getenv("GFS_DIAG_DT_MAX");
 			if(cap && cap[0]){
 				double requested=atof(cap);
