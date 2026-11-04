@@ -1,0 +1,109 @@
+{
+  "builds": [
+    {
+      "build": "pair_audit",
+      "command": [
+        "cc",
+        "-O3",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/pair_audit.c",
+        "-lm",
+        "-o",
+        "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/publication_check_v1/pair_audit"
+      ],
+      "exit": 0,
+      "run_exit": 0
+    },
+    {
+      "build": "fit_audit",
+      "command": [
+        "cc",
+        "-O3",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/fit_audit.c",
+        "-lm",
+        "-o",
+        "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/publication_check_v1/fit_audit"
+      ],
+      "exit": 0,
+      "run_exit": 0
+    },
+    {
+      "build": "hydro1d",
+      "command": [
+        "cc",
+        "-O3",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Hydro1DExam/laguerre_sod.c",
+        "-lm",
+        "-o",
+        "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/publication_check_v1/hydro1d"
+      ],
+      "exit": 0
+    }
+  ],
+  "runs": [
+    {
+      "problem": "contact",
+      "exit": 0,
+      "seconds": 0.04065785696730018,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "moving_contact",
+      "exit": 0,
+      "seconds": 0.05496655707247555,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "sod",
+      "exit": 0,
+      "seconds": 0.04330894001759589,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "blast",
+      "exit": 0,
+      "seconds": 0.2608853040728718,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "noh",
+      "exit": 0,
+      "seconds": 0.08714090706780553,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "lax",
+      "exit": 0,
+      "seconds": 0.0513073819456622,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "dblfan",
+      "exit": 0,
+      "seconds": 0.020561765995807946,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "collision",
+      "exit": 0,
+      "seconds": 0.17881923692766577,
+      "matches_completed_candidate": true
+    },
+    {
+      "problem": "shuosher",
+      "exit": 0,
+      "seconds": 0.177234016940929,
+      "matches_completed_candidate": true
+    }
+  ],
+  "all_pass": true,
+  "scope": "Rebuilt current 1D source; nine implicit N200 final fields compared byte-for-byte with completed first candidate. Does not validate multidimensional evolution or GIZMO speed."
+}

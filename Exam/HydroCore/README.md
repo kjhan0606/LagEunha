@@ -1,0 +1,51 @@
+# Common hydrodynamic operator audits
+
+The shared headers are experimental. Algebraic identities, successful 1D
+evolution, and native saved-state RHS checks are separate validation scopes.
+See `../../Docs/UNIFIED_HYDRO_PROGRESS_2026-11-04.md` and
+`../../Research/UnifiedHydro_20261104/README.md` for the current limitations.
+
+Run from a fresh directory under `/gpfs`. Set `repo` to the absolute checkout
+path and `run` to a new calculation directory. Never use `/scratch`.
+
+```bash
+repo=/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1
+run=$(mktemp -d /gpfs/kjhan/LagForce/common-hydro-audit.XXXXXX)
+cc -O3 -std=gnu11 -Wall -Wextra "$repo/Exam/HydroCore/pair_audit.c" -lm -o "$run/pair_audit"
+cc -O3 -std=gnu11 -Wall -Wextra "$repo/Exam/HydroCore/fit_audit.c" -lm -o "$run/fit_audit"
+"$run/pair_audit"
+"$run/fit_audit"
+cc -O3 -std=gnu11 -Wall -Wextra "$repo/Hydro1DExam/laguerre_sod.c" -lm -o "$run/hydro1d"
+mkdir "$run/blast" "$run/shuosher"
+cp "$repo/Hydro1DExam/blast/ref.dat" "$run/blast/ref.dat"
+cp "$repo/Hydro1DExam/shuosher/ref.dat" "$run/shuosher/ref.dat"
+cd "$run"
+./hydro1d unified_implicit 200
+```
+
+The 1D command runs stationary contact, moving contact, Sod, blast, Noh,
+Lax, double rarefaction, collision, and Shu--Osher with one coefficient set.
+The `unified` argument selects the explicit dissipation candidate.
+Use separate run directories to preserve outputs from each selection.
+The historical Shu--Osher reference has an upstream-boundary defect. Norms
+against the historical reference do not establish accuracy. Use the spatial
+self-convergence audit recorded in `shu_reference_audit.json` and obtain an
+independent reference before claiming verification.
+
+`geometry_audit.c` uses the project's actual Voro implementation.
+`device_audit.cu` evaluates shared functions on a CUDA device.
+`integrator_probe.c` replays one state with the RHS compiled from the current
+headers. Reproducing a rejected historical candidate requires the matching
+historical source snapshot in the GPFS experiment directory, rather than the
+current headers.
+
+`implicit_probe.c` is a frozen-state 2D sparse linear-algebra experiment.
+The probe is not a hydrodynamic timestep and does not solve endpoint active
+signs. The binary input layout is explicitly declared by the source structs.
+The archived native build invocations and results are in
+`../../Research/UnifiedHydro_20261104/results`.
+
+The native CUDA module is `../NativeU64/gfs_unified_gpu.cu`. The current
+adapter requires fully owned cells, W=0, and static wall faces. Enabling
+`GFS_UNIFIED_HYDRO=1` does not qualify the surrounding time integrator,
+periodic images, MPI decomposition, or 3D evolution.

@@ -1543,7 +1543,7 @@ static void alloc_particle_soa(ParticleSoA *h, ParticleSoA *d, int n,
     ALLOC_PAIR_D(x);       ALLOC_PAIR_D(y);
     ALLOC_PAIR_D(vx);      ALLOC_PAIR_D(vy);
     ALLOC_PAIR_D(mass);
-    ALLOC_PAIR_D(weight_W); ALLOC_PAIR_D(weight_rate); ALLOC_PAIR_D(weight_inertia); ALLOC_PAIR_D(weight_volume64); ALLOC_PAIR_D(weight_force); ALLOC_PAIR_D(weight_Hrow); ALLOC_PAIR_D(weight_Hcol); ALLOC_PAIR_D(weight_Edot64); ALLOC_PAIR_D(weight_U64); ALLOC_PAIR_D(weight_Udot64);
+    ALLOC_PAIR_D(weight_W); ALLOC_PAIR_D(weight_rate); ALLOC_PAIR_D(weight_inertia); ALLOC_PAIR_D(weight_volume64); ALLOC_PAIR_D(weight_force); ALLOC_PAIR_D(weight_Hrow); ALLOC_PAIR_D(weight_Hcol); ALLOC_PAIR_D(weight_Edot64); ALLOC_PAIR_D(weight_U64); ALLOC_PAIR_D(weight_Udot64); ALLOC_PAIR_D(unified_heat64);
     /* indx for ghost detection */
     CUDA_CHECK(cudaMallocHost(&h->indx, sl));
     CUDA_CHECK(cudaMalloc(&d->indx, sl));
@@ -1588,7 +1588,7 @@ static void free_particle_soa(ParticleSoA *h, ParticleSoA *d)
     FREE_PAIR(x);       FREE_PAIR(y);
     FREE_PAIR(vx);      FREE_PAIR(vy);
     FREE_PAIR(mass);
-    FREE_PAIR(weight_W); FREE_PAIR(weight_rate); FREE_PAIR(weight_inertia); FREE_PAIR(weight_volume64); FREE_PAIR(weight_force); FREE_PAIR(weight_Hrow); FREE_PAIR(weight_Hcol); FREE_PAIR(weight_Edot64); FREE_PAIR(weight_U64); FREE_PAIR(weight_Udot64);
+    FREE_PAIR(weight_W); FREE_PAIR(weight_rate); FREE_PAIR(weight_inertia); FREE_PAIR(weight_volume64); FREE_PAIR(weight_force); FREE_PAIR(weight_Hrow); FREE_PAIR(weight_Hcol); FREE_PAIR(weight_Edot64); FREE_PAIR(weight_U64); FREE_PAIR(weight_Udot64); FREE_PAIR(unified_heat64);
     FREE_PAIR(indx);
     FREE_PAIR(den);      FREE_PAIR(pressure);
     FREE_PAIR(csound);   FREE_PAIR(volume);
@@ -1840,6 +1840,9 @@ void gpu_download_results(GPUContext *ctx, int n)
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.weight_Hcol,ctx->d_parts.weight_Hcol,sd,cudaMemcpyDeviceToHost,s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.weight_Edot64,ctx->d_parts.weight_Edot64,sd,cudaMemcpyDeviceToHost,s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.weight_Udot64,ctx->d_parts.weight_Udot64,sd,cudaMemcpyDeviceToHost,s));
+    const char *unified_env=getenv("GFS_UNIFIED_HYDRO");
+    if(unified_env && !strcmp(unified_env,"1"))
+        CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.unified_heat64,ctx->d_parts.unified_heat64,sd,cudaMemcpyDeviceToHost,s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.weight_volume64,ctx->d_parts.weight_volume64,sd,cudaMemcpyDeviceToHost,s));
     if (gfs_thermal64_requested())
         CUDA_CHECK(cudaMemcpyAsync(ctx->h_parts.E_inv_yx, ctx->d_parts.E_inv_yx, sd, cudaMemcpyDeviceToHost, s));
@@ -2317,6 +2320,9 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
        memcmp(ctx->weight_geometry_snapshot,ctx->h_parts.weight_W,(size_t)n_total*sizeof(double))){
         fprintf(stderr,"[WEIGHT_NATIVE] force requires current immutable geometry-W snapshot\n");exit(99);
     }
+    const char *unified_env=getenv("GFS_UNIFIED_HYDRO");
+    if(unified_env && !strcmp(unified_env,"1"))
+        return gpu_launch_unified_force_kernel(ctx,n_particles,n_total,params);
     static int force_call = 0;
     static int dump_call = -1;
     static int dump_first=0,dump_last=0,dump_nids=0;

@@ -13,6 +13,15 @@
 #include <time.h>
 #include <sys/stat.h>
 #include "../Exam/gfs_pair.h"
+#include "../Exam/gfs_variational_core.h"
+
+static int unified1d=0,unified_implicit=0;
+static int gfs_unified1d_rhs(void);
+static double gfs_unified1d_visc_dt(void);
+static int gfs_unified1d_geometry(void);
+static void gfs_unified1d_init(int n);
+static int gfs_unified1d_step(double dt);
+static int gfs_unified1d_implicit_step(double dt);
 
 /* ===== Fixed constants ===== */
 #define NMAX 5000
@@ -844,9 +853,11 @@ static void rhs_sph(void){
 
 /* ===== Dispatcher ===== */
 static void compute_rhs(void){
+    if(unified1d) { (void)gfs_unified1d_rhs(); return; }
     if(mode==SPH_MODE) rhs_sph(); else rhs_mesh();
 }
 static void update_derived(void){
+    if(unified1d) { (void)gfs_unified1d_geometry(); return; }
     if(direct_hll) cells_hllface();
     else if(vol_smooth > 0) cells_vsmooth();
     else if(mode==VORONOI) cells_vor();
@@ -884,6 +895,10 @@ static int positions_ordered(void){
 
 static double get_dt(void){
     double dt=1e30;
+    if(unified1d){
+        if(!gfs_unified1d_rhs())return 0;
+        dt=unified_implicit?1e30:gfs_unified1d_visc_dt();
+    }
     for(int i=0;i<N;i++){
         double s=P[i].c+fabs(P[i].v);
         if(s<1e-30) continue;
@@ -1420,6 +1435,7 @@ static void init_shuosher(int n){
 }
 
 static void init(int n){
+    if(unified1d) { gfs_unified1d_init(n); return; }
     if(problem_id == PROB_BLAST)
         init_three_region(n);
     else if(problem_id == PROB_SHUOSHER)
@@ -1841,7 +1857,7 @@ static Metrics run_sim(int smode, int np, const char *outfile, int verbose)
         double dt=get_dt();
         if(t+dt>tend) dt=tend-t;
         int tries = 0;
-        while(rk4_step(dt) < 0){
+        while((unified1d ? (unified_implicit ? gfs_unified1d_implicit_step(dt) : gfs_unified1d_step(dt)) : rk4_step(dt)) < 0){
             dt *= 0.5;
             tries++;
             n_retry_1d++;
@@ -2077,11 +2093,46 @@ static void set_method_ns_av(void){
     use_AA=0; alpha_u=0;
 }
 
+#include "gfs_unified1d.inc"
+#include "gfs_unified1d_implicit.inc"
+
 /* ============================================================
  *  main
  * ============================================================ */
 int main(int argc, char **argv)
 {
+    if(argc>=2 && (!strcmp(argv[1], "unified") || !strcmp(argv[1], "unified_implicit"))){
+        unified_implicit=!strcmp(argv[1],"unified_implicit");
+        int np=argc>=3?atoi(argv[2]):200, failed=0;
+        const char *only=argc>=4?argv[3]:NULL;
+        const char *names[]={"sod","blast","shuosher","noh","lax","dblfan","collision","contact","moving_contact"};
+        unified1d=1;
+        printf("# unified W0 fixed-mass variational pressure, reconstructed strain viscosity (alpha=1 beta=2), global KDK, implicit=%d\n",unified_implicit);
+        for(int pid=0;pid<9;pid++){
+            if(only && strcmp(only,names[pid]))continue;
+            setup_problem(pid==8?PROB_CONTACT:pid);set_method_gfs();pair_1d=0;
+            if(pid==8)vL_ic=vR_ic=1;
+            if(has_exact_sol)exact_riemann(&ps_exact,&vs_exact);
+            else {char ref[128];snprintf(ref,sizeof(ref),"%s/ref.dat",names[pid]);read_reference(ref);}
+            char output[128];snprintf(output,sizeof(output),"unified_%s.dat",names[pid]);
+            Metrics m=run_sim(VORONOI,np,output,0);
+            int bad=m.failed || fabs(m.t_end-tend)>1e-12;
+            printf("%s N=%d t=%.17g target=%.17g L1rho=%.10g L1v=%.10g L1p=%.10g dE=%.10g steps=%d failed=%d\n",
+                names[pid],N,m.t_end,tend,m.l1_rho,m.l1_vel,m.l1_pre,m.eng_err,m.nstep,bad);
+            double minV=1e30,minU=1e30,minGap=1e30,maxPerr=0,maxV=0;
+            for(int i=0;i<N;i++){
+                minV=fmin(minV,P[i].vol);minU=fmin(minU,P[i].m*P[i].e);
+                if(i)minGap=fmin(minGap,P[i].x-P[i-1].x);
+                maxPerr=fmax(maxPerr,fabs(P[i].p-1));maxV=fmax(maxV,fabs(P[i].v));
+                if(!isfinite(P[i].p)||!isfinite(P[i].v)||!(P[i].vol>0)||!(P[i].e>0))bad=1;
+            }
+            if(!(minGap>0))bad=1;
+            printf("# invariant minV=%.17g minU=%.17g minGap=%.17g maxPminus1=%.17g maxV=%.17g efloor=%ld retry=%ld failed=%d\n",
+                minV,minU,minGap,maxPerr,maxV,n_efloor_1d,n_retry_1d,bad);
+            failed|=bad;
+        }
+        return failed?1:0;
+    }
     if(argc >= 2 && strcmp(argv[1], "blast") == 0){
         /* Woodward-Colella blast.  Same HLLC+MUSCL, no artificial viscosity.
          * Voronoi is w=0.  Laguerre is the pressure weight on top of that. */

@@ -1,7 +1,10 @@
 # Tested native W0 source at the Kepler 20pi endpoint
 
-The 17 files listed in published_source_manifest.json are byte-identical to
-the source overlay used for job 449508. The overlay is integrated into the
+At commit a1b52477b61570851d1012c3de82274d1a94e455, the 17 files listed in
+published_source_manifest.json are byte-identical to the source overlay
+used for job 449508. Later commits add an experimental common hydrodynamic
+operator to several of the same paths. Recover the historical files from
+the stated commit when reproducing job 449508. The overlay is integrated into the
 existing optional full-source target Exam/NativeU64, retaining the parent
 OpenMP, MPI, CUDA, and U64 particle ABI support.
 

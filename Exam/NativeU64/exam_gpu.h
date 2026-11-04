@@ -125,6 +125,7 @@ typedef struct {
     double *weight_W,*weight_rate,*weight_inertia,*weight_volume64;
     double *weight_force,*weight_Hrow,*weight_Hcol,*weight_Edot64;
     double *weight_U64,*weight_Udot64;
+    double *unified_heat64; /* explicit numerical-viscosity heat output */
 } ParticleSoA;
 
 /* ---- GPU memory manager (persistent across RK4 stages) ---- */
@@ -285,6 +286,8 @@ int gpu_refresh_local_periodic_fields(GPUContext *ctx, int nbp, int n_total, dou
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                int n_total, int mpi_rank,
                                const GPUPhysicsParams *params);
+double gpu_launch_unified_force_kernel(GPUContext *ctx, int n_particles,
+                               int n_total, const GPUPhysicsParams *params);
 /* Face-ends inside the pair cutoff on the latest launch. */
 long long gpu_take_pair_hits(void);
 /* Local-rank geometric sweep diagnostics on the latest force launch. */
