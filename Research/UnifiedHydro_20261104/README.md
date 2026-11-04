@@ -1,3 +1,8 @@
+The later native coupled gate and its unresolved heating are recorded in
+`Research/NativeImplicitGate_20261104` and
+`Docs/UNIFIED_HYDRO_NATIVE_IMPLICIT_GATE_2026-11-04.md`.
+The scope statements below describe the earlier publication at 1d33035.
+
 # Experimental dimension-independent W0 hydrodynamics
 
 This snapshot is an incomplete research implementation. The qualified native

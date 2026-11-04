@@ -2587,4 +2587,6 @@ double getAccVoro2D_LagMFM_GPU(
     return Dtime;
 }
 
+#include "gfs_unified_viscosity.inc"
+
 #endif /* USE_CUDA */

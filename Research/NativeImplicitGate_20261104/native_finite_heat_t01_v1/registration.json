@@ -1,0 +1,20 @@
+{
+  "purpose": "Finite Kepler numerical-heat and pressure-reaction gate before multidimensional suite expansion",
+  "cells": 90352,
+  "method": "same frozen native C/OpenMP/CUDA shared central BE closure; physical Re infinite; no steering; fixed mass W0",
+  "base_resume": "native_coupled_t0_short_v3/khout.000003.dat at t=.002; no repetition of completed interval",
+  "half_step_reference": "independent dt/2 comparison from t0, required for temporal discrimination",
+  "endpoints": [
+    0.01,
+    0.03,
+    0.1
+  ],
+  "branches": 2,
+  "new_full_snapshots": 6,
+  "estimated_bytes_per_snapshot": 63000000,
+  "expected_new_storage_bytes": 400000000,
+  "storage_mount": "/gpfs",
+  "binary": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/native_coupled_build_v5/unified_native_coupled.exe",
+  "matched_GIZMO_benchmark": false,
+  "speed_claim": "none; independent branches may run concurrently"
+}

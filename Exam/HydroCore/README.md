@@ -49,3 +49,22 @@ The native CUDA module is `../NativeU64/gfs_unified_gpu.cu`. The current
 adapter requires fully owned cells, W=0, and static wall faces. Enabling
 `GFS_UNIFIED_HYDRO=1` does not qualify the surrounding time integrator,
 periodic images, MPI decomposition, or 3D evolution.
+
+
+Later bounded native coupling is recorded in
+`../../Docs/UNIFIED_HYDRO_NATIVE_IMPLICIT_GATE_2026-11-04.md`.
+The persistent heating remains unresolved. The native KDK prototype retains
+one-rank fixed-wall Kepler scope. Complete periodic and 3D evolution are pending.
+
+The actual 1D stage and time-refinement checks are `implicit1d_audit.c`.
+`implicit_graph_audit.c` compares the common graph solve against the 1D
+tridiagonal solve and checks conservation in dimensions 2 and 3. Link the
+latter with `../gfs_viscosity_implicit.c` and OpenMP.
+`closure_channel_audit.c` reads the frozen native binary format from
+`implicit_probe.c`. Named circular-gradient and area-fit alternatives are
+causal diagnostics only. `scale_separation_audit.c` links the actual
+`../../Voro/voro.c` with XYZDBL and GOTPM definitions and checks fixed smooth
+and checkerboard velocity fields at three spatial resolutions.
+
+The source and compact data inventory for the later stage is in
+`../../Research/NativeImplicitGate_20261104`.

@@ -33,12 +33,13 @@ for lib in "${archives[@]}";do
 done
 /opt/ohpc/pub/cuda/13.0.2/bin/nvcc -O3 --use_fast_math --threads 1 -DXYZDBL -DGOTPM -DUSE_CUDA -DGFS_WEIGHT_DYNAMICS -DGFS_VARPRESS_W0 -DGFS_FIXEDPOLY_SIDES=1024 -gencode arch=compute_90,code=sm_90 "${inc[@]}" -c "$source_dir/exam_gpu.cu" -o "$build/exam_gpu.o"
 /opt/ohpc/pub/cuda/13.0.2/bin/nvcc -O3 --use_fast_math --threads 1 -DXYZDBL -DGOTPM -DUSE_CUDA -DGFS_WEIGHT_DYNAMICS -DGFS_VARPRESS_W0 -DGFS_FIXEDPOLY_SIDES=1024 -gencode arch=compute_90,code=sm_90 "${inc[@]}" -c "$source_dir/gfs_unified_gpu.cu" -o "$build/gfs_unified_gpu.o"
+mpiicx "${flags[@]}" "${inc[@]}" -c "$project/Exam/gfs_viscosity_implicit.c" -o "$build/gfs_viscosity_implicit.o"
 for unit in exam exam_gpu_extract mpirks.exam2d exam3d_gfs gfs_circle_observer gfs_circle_dense kh util gfs_weight_checkpoint;do
     mpiicx "${flags[@]}" "${inc[@]}" -c "$source_dir/$unit.c" -o "$build/$unit.o"
 done
 fi
 mpiicx "${flags[@]}" "${inc[@]}" -I"$project/FFT" -I"$project/Params" -I"$project/SPH" -I"$project/ParallelIO" -I"$project/Exam/RT" -I"$project/Exam/Kepler" -I"$project/Exam/MkGlass2D" -I"$project/Exam/Cylinder" -I"$project/Exam/Sedov2D" -c eunha2.c -o "$build/eunha2.o"
-ar rcs "$build/libexam.a" "$build/exam.o" "$build/exam_gpu.o" "$build/gfs_unified_gpu.o" "$build/exam_gpu_extract.o" "$build/mpirks.exam2d.o" "$build/exam3d_gfs.o" "$build/gfs_circle_observer.o" "$build/gfs_circle_dense.o"
+ar rcs "$build/libexam.a" "$build/exam.o" "$build/exam_gpu.o" "$build/gfs_unified_gpu.o" "$build/gfs_viscosity_implicit.o" "$build/exam_gpu_extract.o" "$build/mpirks.exam2d.o" "$build/exam3d_gfs.o" "$build/gfs_circle_observer.o" "$build/gfs_circle_dense.o"
 ar rcs "$build/libkh.a" "$build/kh.o" "$build/util.o" "$build/gfs_weight_checkpoint.o"
 # Preserve the qualified historical archive order; use only fresh local libraries.
 libpaths=(-L"$build")

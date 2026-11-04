@@ -324,6 +324,10 @@ void gpu_refresh_final_volumes(void *simpar_opaque, int mx, int my,
 
 /* --- CPU-side helpers for GPU tessellation (exam_gpu_extract.c) --- */
 GPUContext *gpu_get_context(void);
+#include "../gfs_viscosity_implicit.h"
+int gpu_unified_viscosity_half_step(void *simpar,double gamma,double interval,
+                                  GfsViscosityStats *stats);
+double gpu_unified_pressure_refresh(void *simpar);
 void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
                         int mx, int my, size_t p_size);
 void gpu_writeback_tess_results(void *simpar_opaque, GPUContext *ctx,

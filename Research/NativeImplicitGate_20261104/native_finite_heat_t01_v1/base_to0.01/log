@@ -1,0 +1,101 @@
+WMAP5 is detected
+[DBG] after mk_default_param simmodel=0 NWGROUP=4
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after Mpi_Basic_Set myid=0
+###############################################
+EUNHA2: compiled at 07:46:24 Oct 29 2026 
+###############################################
+[DBG] after HAMB
+Kelvin Helmholtz Instability Test is set
+box size nx/ny/nz= 384 384 1
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after ReadSimulationParameters simmodel=3
+[BSRMS] myid=0 nid=1 enter
+[BSRMS] myid=0 nid=1 nsubgroup=1
+[BSRMS] myid=0 returning early NDDINFO=0
+DEBUG: gpu_enabled=1 av_mode=5 use_stress=1 w2_mode=0
+P0: is now reading starting file: khout.000003.dat
+[WEIGHT_KDK_VALIDATE] accepted window=0.0080000000000000002 max_window=0.20000000000000001
+[DPQ_SKIP] nearest-neighbor tree not needed for fixed/zero Kappa
+[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)
+[GPU] Initialized: max_particles=109446, max_faces=2188920
+[GPU] Tessellation buffers: max_cells=9604, max_entries=180704, PolygonOut=135.3 MB
+[FIXED_POLYGON] enabled N=1024 R=2.75 apothem=2.7499870579763344
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542654 time=102.507 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=6.938893904e-16 max_roundoff_bound_ratio=6.890773393e-03
+[UNIFIED_COHORT_HEAT] interval=0.00077714206418022513 core=1.9276613263026625e-06 original_disk=9.189479218573787e-10 original_ambient=1.667139957849077e-11
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542631 time=68.479 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=5.967448757e-16 max_roundoff_bound_ratio=6.012044371e-03
+[UNIFIED_COHORT_HEAT] interval=0.00077714206418022513 core=2.1454476701817709e-06 original_disk=9.2054385806515304e-10 original_ambient=1.6499306794694898e-11
+[UNIFIED_KDK] step=3 t=0.0035542841283604503 dt=0.0015542841283604503 N=90352 Etot=-5.3494265150314789 dErel=-2.487295689e-10 Umin=3.603680197e-10 Vmin=1.969486110e-04 heat=4.074981659e-06 viscosity_energy_defect=-6.510811014e-19 CG=13/12 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.504620 pressure_s=0.019141 viscosity_s=0.304618 drift_s=0.005812 total_s=0.853253
+[UNIFIED_THERMAL_AUDIT] gamma=1.6666669845581055 max_adiabat_identity_error=4.4408920985006262e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(5.3912845460294139e-13,4.6310433670625638e-13)
+Time= 0.00355428  step= 4  dt= 0.00155428
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542631 time=71.011 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=5.967448757e-16 max_roundoff_bound_ratio=6.012044371e-03
+[UNIFIED_COHORT_HEAT] interval=0.00078742130426689982 core=1.9633016434862249e-06 original_disk=9.3263967481377135e-10 original_ambient=1.6703308059530716e-11
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542639 time=85.563 ms
+[GPU step 1] np=90352 faces=542639 (full) | extract=0.0ms SoA=0.0ms upload=0.0ms kernel=0.9ms download=0.4ms writeback=5.7ms | total=11.4ms dt=1.493e-03
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=6.383782392e-16 max_roundoff_bound_ratio=6.299448496e-03
+[UNIFIED_COHORT_HEAT] interval=0.00078742130426689982 core=2.3136161405346606e-06 original_disk=9.3477263012197936e-10 original_ambient=1.6723376493942378e-11
+[UNIFIED_KDK] step=4 t=0.00512912673689425 dt=0.0015748426085337996 N=90352 Etot=-5.3494265083196186 dErel=1.005958272e-09 Umin=3.604515294e-10 Vmin=1.861577743e-04 heat=4.278818623e-06 viscosity_energy_defect=-1.370998787e-18 CG=14/18 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.161000 pressure_s=0.022493 viscosity_s=0.247215 drift_s=0.006565 total_s=0.451190
+[UNIFIED_THERMAL_AUDIT] gamma=1.6666669845581055 max_adiabat_identity_error=4.4408920985006262e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(5.6171048104884922e-13,4.6791590295125254e-13)
+Time= 0.00512913  step= 5  dt= 0.00157484
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542639 time=50.064 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=6.383782392e-16 max_roundoff_bound_ratio=6.299448496e-03
+[UNIFIED_COHORT_HEAT] interval=0.00073558691656216979 core=1.9390466676258434e-06 original_disk=8.7316479952157579e-10 original_ambient=1.5609576134030478e-11
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542652 time=51.320 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=7.294512216e-16 max_roundoff_bound_ratio=7.674455787e-03
+[UNIFIED_COHORT_HEAT] interval=0.00073558691656216979 core=2.2093857133030863e-06 original_disk=8.7260626886922847e-10 original_ambient=1.5661322654758227e-11
+[UNIFIED_KDK] step=5 t=0.0066003005700185895 dt=0.0014711738331243396 N=90352 Etot=-5.3494264898997321 dErel=4.449296899e-09 Umin=3.604097899e-10 Vmin=1.789244462e-04 heat=4.150209423e-06 viscosity_energy_defect=-2.922273590e-18 CG=13/12 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.105713 pressure_s=0.015656 viscosity_s=0.180083 drift_s=0.006130 total_s=0.320972
+[UNIFIED_THERMAL_AUDIT] gamma=1.6666669845581055 max_adiabat_identity_error=4.4408920985006262e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(6.1695091179889772e-13,4.8636672075852963e-13)
+Time= 0.0066003  step= 6  dt= 0.00147117
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542652 time=47.505 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=7.294512216e-16 max_roundoff_bound_ratio=7.674455787e-03
+[UNIFIED_COHORT_HEAT] interval=0.00071651715552434325 core=1.9246595463879961e-06 original_disk=8.4991797983982402e-10 original_ambient=1.5243607821420242e-11
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542640 time=48.533 ms
+[GPU step 2] np=90352 faces=542640 (full) | extract=0.0ms SoA=0.0ms upload=0.0ms kernel=0.9ms download=0.4ms writeback=0.7ms | total=4.6ms dt=1.443e-03
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=7.216449660e-16 max_roundoff_bound_ratio=6.194331702e-03
+[UNIFIED_COHORT_HEAT] interval=0.00071651715552434325 core=2.4985540630428124e-06 original_disk=8.4874458537831494e-10 original_ambient=1.514286232113873e-11
+[UNIFIED_KDK] step=6 t=0.008033334881067276 dt=0.0014330343110486865 N=90352 Etot=-5.3494264860254419 dErel=5.173540930e-09 Umin=3.605595941e-10 Vmin=1.761160826e-04 heat=4.424942658e-06 viscosity_energy_defect=-2.808827014e-19 CG=12/12 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.100986 pressure_s=0.014877 viscosity_s=0.165994 drift_s=0.006634 total_s=0.301111
+[UNIFIED_THERMAL_AUDIT] gamma=1.6666669845581055 max_adiabat_identity_error=4.4408920985006262e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(6.0904588015398928e-13,4.0297261866354922e-13)
+Time= 0.00803333  step= 7  dt= 0.00143303
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542640 time=48.777 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=7.216449660e-16 max_roundoff_bound_ratio=6.194331702e-03
+[UNIFIED_COHORT_HEAT] interval=0.00071014562854543328 core=2.1660990671176182e-06 original_disk=8.4113292886484412e-10 original_ambient=1.4997093738223485e-11
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542641 time=51.983 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=5.967448757e-16 max_roundoff_bound_ratio=5.130370240e-03
+[UNIFIED_COHORT_HEAT] interval=0.00071014562854543328 core=2.3589010931248527e-06 original_disk=8.4153392171090499e-10 original_ambient=1.5224803542973594e-11
+[UNIFIED_KDK] step=7 t=0.0094536261381581426 dt=0.0014202912570908666 N=90352 Etot=-5.3494264707601162 dErel=8.027178599e-09 Umin=3.609883297e-10 Vmin=1.756938516e-04 heat=4.526713049e-06 viscosity_energy_defect=-1.279747403e-19 CG=12/15 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.106179 pressure_s=0.015359 viscosity_s=0.185651 drift_s=0.005633 total_s=0.326122
+[UNIFIED_THERMAL_AUDIT] gamma=1.6666669845581055 max_adiabat_identity_error=4.4408920985006262e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(5.0133696599381575e-13,4.4092267116707156e-13)
+Time= 0.00945363  step= 8  dt= 0.00142029
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542641 time=53.848 ms
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=5.967448757e-16 max_roundoff_bound_ratio=5.130370240e-03
+[UNIFIED_COHORT_HEAT] interval=0.0002731869309209288 core=8.1762577179515536e-07 original_disk=3.2370672556530619e-10 original_ambient=5.8531319734970391e-12
+[GPU_STENCIL_EXPANSION] expanded_cells=716 halo_clipped_cells=0
+[GPU tess] nbp=90352 npad=0 faces=542643 time=50.012 ms
+[GPU step 3] np=90352 faces=542643 (full) | extract=0.0ms SoA=0.0ms upload=0.0ms kernel=0.8ms download=0.4ms writeback=1.0ms | total=5.4ms dt=1.441e-03
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=0 max_relative_area=0.000000000e+00 max_area_mismatch=7.216449660e-16 max_roundoff_bound_ratio=7.120749525e-03
+[UNIFIED_COHORT_HEAT] interval=0.0002731869309209288 core=8.3553871905808088e-07 original_disk=3.2343021385944668e-10 original_ambient=5.8004005683388354e-12
+[UNIFIED_KDK] step=8 t=0.01 dt=0.0005463738618418576 N=90352 Etot=-5.3494264711650602 dErel=7.951480085e-09 Umin=3.610094935e-10 Vmin=1.756511941e-04 heat=1.653823281e-06 viscosity_energy_defect=1.646869180e-18 CG=11/10 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.108511 pressure_s=0.015991 viscosity_s=0.161726 drift_s=0.006355 total_s=0.305605
+[UNIFIED_THERMAL_AUDIT] gamma=1.6666669845581055 max_adiabat_identity_error=4.4408920985006262e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(1.383302276772091e-12,1.3301976769363539e-12)
+ccdmax 1.01114 , ccdmin 0 nx/ny 384/384
+Time= 0.01  step= 9  dt= 0.000546374

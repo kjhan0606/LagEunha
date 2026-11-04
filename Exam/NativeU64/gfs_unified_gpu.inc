@@ -36,7 +36,7 @@ __global__ void gfs_unified_fit_kernel(ParticleSoA p,FaceCSR f,int n)
 }
 
 __global__ void gfs_unified_force_kernel(ParticleSoA p,FaceCSR f,int n,
-        double gamma,double courant)
+        double gamma,double courant,int implicit)
 {
     int i=blockIdx.x*blockDim.x+threadIdx.x;if(i>=n)return;
     double mass=p.mass[i],V=p.weight_volume64[i],U=p.weight_U64[i];
@@ -64,7 +64,7 @@ __global__ void gfs_unified_force_kernel(ParticleSoA p,FaceCSR f,int n,
             double sf=gfs_variational_compression_fraction(div,curl,div,curl);
             double q=gfs_variational_pair_pressure(&b,vi,vg,jump,rho,ci,rho,ci,sf,h,h);
             double rate=-(vi[0]*S[0]+vi[1]*S[1]);vdot+=rate;sweep+=fabs(rate);
-            F[0]-=q*S[0];F[1]-=q*S[1];heat+=q*vn*area;
+            if(!implicit){F[0]-=q*S[0];F[1]-=q*S[1];heat+=q*vn*area;}
             if(q>0&&vn>0)damping+=2*q*area/(vn*mass);
             continue;
         }
@@ -82,13 +82,13 @@ __global__ void gfs_unified_force_kernel(ParticleSoA p,FaceCSR f,int n,
                     p.gUxx[j]+p.gUyy[j],p.gUyx[j]-p.gUxy[j]);
         double q=gfs_variational_pair_pressure(&b,vi,vj,jump,rho,ci,rhoj,cj,sf,h,sqrt(Vj));
         double relative=(vj[0]-vi[0])*b.normal[0]+(vj[1]-vi[1])*b.normal[1];
-        for(int a=0;a<2;a++)F[a]+=fp[a]-q*area*b.normal[a];
-        heat+=-.5*q*area*relative;
+        for(int a=0;a<2;a++)F[a]+=fp[a]-(implicit?0:q*area*b.normal[a]);
+        if(!implicit)heat+=-.5*q*area*relative;
         if(q>0&&relative<0)damping+=2*q*area/((-relative)*mass);
         dti=fmin(dti,courant*h/(ci+fabs(relative)));
         if(relative<0)dti=fmin(dti,.2*b.separation/(-relative));
     }
-    if(damping>0)dti=fmin(dti,courant/damping);
+    if(!implicit&&damping>0)dti=fmin(dti,courant/damping);
     if(sweep>0)dti=fmin(dti,courant*V/sweep);
     {
         double Udot=-Pi*vdot+heat;
@@ -123,7 +123,9 @@ static double gfs_unified_gpu_launch(GPUContext *ctx,int n,int nt,
     CUDA_CHECK(cudaMemcpyToSymbolAsync(gfs_unified_fit_failures,&zero,sizeof(zero),0,cudaMemcpyHostToDevice,stream));
     gfs_unified_fit_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n);
     CUDA_CHECK(cudaGetLastError());
-    gfs_unified_force_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n,params->Gamma,params->Courant);
+    const char *implicit_env=getenv("GFS_UNIFIED_IMPLICIT");
+    int implicit=implicit_env&&!strcmp(implicit_env,"1");
+    gfs_unified_force_kernel<<<(n+127)/128,128,0,stream>>>(ctx->d_parts,ctx->d_faces,n,params->Gamma,params->Courant,implicit);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cub::DeviceReduce::Min(ctx->d_cub_temp,ctx->cub_temp_bytes,
         ctx->d_parts.dt_out,(float*)ctx->d_cub_min_out,n,stream));

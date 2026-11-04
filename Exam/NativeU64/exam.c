@@ -12044,6 +12044,10 @@ static int gfs_native_u64_w0_kdk_mode(void){
 	return e && !strcmp(e,"1") && w && !strcmp(w,"1");
 }
 
+#ifdef USE_CUDA
+#include "gfs_unified_kdk.inc"
+#endif
+
 double exam2d_vph_kdk_int_blend(
 		SimParameters *simpar,
 		void (*paddingAllTreeParticles)(SimParameters *, postype),
@@ -12055,6 +12059,13 @@ double exam2d_vph_kdk_int_blend(
 			void (*)(SimParameters *, postype)),
 		void (*postStage)(SimParameters *)
 		){
+#ifdef USE_CUDA
+    const char *unified_env=getenv("GFS_UNIFIED_HYDRO");
+    if(unified_env&&!strcmp(unified_env,"1"))
+        return gfs_unified_kdk(simpar,paddingAllTreeParticles,find2DNeighborBP,
+                              find2DCellBP,mkLinkedList2D,postStage);
+#endif
+
 	const int native_u64_kdk=gfs_native_u64_w0_kdk_mode();
 	const int kdk_adiabatic_volume=gfs_kdk_adiabatic_volume_on();
 	const int kdk_fixedpoly_wall_events=gfs_kdk_fixedpoly_wall_events();
