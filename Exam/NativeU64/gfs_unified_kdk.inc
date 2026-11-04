@@ -1,9 +1,10 @@
 /* Coupled prototype using original native GPU geometry and pressure,
  * shared OpenMP implicit viscosity, and the original central-force KDK
- * subcycle. The present entry gate is explicitly the saved one-rank W0
- * fixed-polygon Kepler problem. This does not qualify periodic/3D/MPI.
+ * subcycle or free periodic drift. Explicit one-rank W0 boundaries are
+ * supported. Multi-rank evolution is not qualified by the periodic tests.
  */
 #include "../gfs_variational_core.h"
+#include "gfs_unified_planar_audit.inc"
 typedef struct {unsigned long long id;double V,U;} GfsUnifiedDriftState;
 static int gfs_unified_saved_compare(const void *a,const void *b){
     unsigned long long x=((const GfsUnifiedDriftState*)a)->id,y=((const GfsUnifiedDriftState*)b)->id;
@@ -61,6 +62,7 @@ static double gfs_unified_kdk(
     if(!(dt>0)||!isfinite(dt)||(!periodic&&VORO_NPAD(simpar)!=0))MPI_Abort(MPI_COMM(simpar),99);
     int n=VORO_NP(simpar),bad=0;
     treevorostressrk4particletype *p=(void*)VORORK4_TBP(simpar);
+    gfs_unified_planar_audit(simpar,"initial_pressure",gfs_rk4_context_time,gamma);
     static double E_reference=0;static int reference_ready=0;
     if(!reference_ready){
         long double E=0;for(int i=0;i<n;i++)E+=p[i].weight_thermal.U+.5L*p[i].mass*(p[i].vx*p[i].vx+p[i].vy*p[i].vy)+p[i].mass*kepler_phi(p[i].x,p[i].y);
@@ -68,10 +70,12 @@ static double gfs_unified_kdk(
     }
 #pragma omp parallel for schedule(static)
     for(int i=0;i<n;i++){p[i].vx+=.5*dt*p[i].ax;p[i].vy+=.5*dt*p[i].ay;}
+    gfs_unified_planar_audit(simpar,"first_pressure_kick",gfs_rk4_context_time,gamma);
     GfsViscosityStats D0,D1;mark=MPI_Wtime();
     int rc=gpu_unified_viscosity_half_step(simpar,gamma,.5*dt,&D0);
     if(rc){fprintf(stderr,"[UNIFIED_KDK] first viscosity failed rc=%d\n",rc);MPI_Abort(MPI_COMM(simpar),99);}
     viscosity_seconds+=MPI_Wtime()-mark;
+    gfs_unified_planar_audit(simpar,"first_viscosity",gfs_rk4_context_time,gamma);
     static GfsUnifiedDriftState *saved;static int capacity=0;
     if(n>capacity){void *q=realloc(saved,(size_t)n*sizeof(*saved));if(!q)MPI_Abort(MPI_COMM(simpar),99);saved=q;capacity=n;}
     for(int i=0;i<n;i++)saved[i]=(GfsUnifiedDriftState){(unsigned long long)PINDX(p+i),p[i].weight_thermal.V,p[i].weight_thermal.U};
@@ -106,19 +110,24 @@ static double gfs_unified_kdk(
         p[i].volume=(float)V;p[i].den=(float)rho;p[i].pressure=(float)P;p[i].csound=(float)sqrt(gamma*P/rho);
     }
     if(bad)MPI_Abort(MPI_COMM(simpar),99);
+    gfs_unified_planar_audit(simpar,"drift_adiabat",gfs_rk4_context_time+dt,gamma);
     /* Consume the newly built GPU geometry through the normal native wrapper.
      * Pressure is refreshed again after dissipation changes U. */
     mark=MPI_Wtime();
     (void)getAccVoro2DBlend_GPU(simpar,xmin,ymin,xmax,ymax,OoA,courant,gamma,
         paddingAllTreeParticles,find2DNeighborBP,find2DCellBP,mkLinkedList2D);
     pressure_seconds+=MPI_Wtime()-mark;mark=MPI_Wtime();
+    gfs_unified_planar_audit(simpar,"final_pressure_before_heat",gfs_rk4_context_time+dt,gamma);
     rc=gpu_unified_viscosity_half_step(simpar,gamma,.5*dt,&D1);
     if(rc){fprintf(stderr,"[UNIFIED_KDK] second viscosity failed rc=%d\n",rc);MPI_Abort(MPI_COMM(simpar),99);}
     viscosity_seconds+=MPI_Wtime()-mark;mark=MPI_Wtime();
+    gfs_unified_planar_audit(simpar,"second_viscosity",gfs_rk4_context_time+dt,gamma);
     (void)gpu_unified_pressure_refresh(simpar);pressure_seconds+=MPI_Wtime()-mark;
     p=(void*)VORORK4_TBP(simpar);
+    gfs_unified_planar_audit(simpar,"final_pressure_after_heat",gfs_rk4_context_time+dt,gamma);
 #pragma omp parallel for schedule(static)
     for(int i=0;i<n;i++){p[i].vx+=.5*dt*p[i].ax;p[i].vy+=.5*dt*p[i].ay;}
+    gfs_unified_planar_audit(simpar,"final_pressure_kick",gfs_rk4_context_time+dt,gamma);
     long double E=0;double Umin=HUGE_VAL,Vmin=HUGE_VAL;
     for(int i=0;i<n;i++){
         double U=p[i].weight_thermal.U,V=p[i].weight_thermal.V;

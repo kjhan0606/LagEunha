@@ -1,0 +1,99 @@
+{
+  "scope": "actual original native 3D CPU/OpenMP evolution, periodic, W0, same common closure; point-sampled shock norms, not exact-cell-average norms",
+  "cases": [
+    {
+      "name": "sod_N32_axis_dt1",
+      "problem": "sod",
+      "Nside": 32,
+      "angle": "axis",
+      "target": 0.2,
+      "exit": 0,
+      "wall_seconds": 5.821387843112461,
+      "dt_factor": 1,
+      "reused_baseline": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis",
+      "time": 0.2,
+      "reached_target": true,
+      "cells": 32768,
+      "max_mass_change": 0.0,
+      "min_U": 7.12580739237807e-05,
+      "min_V": 0.0001264376344393735,
+      "min_entropy_ratio": 0.9999999999999996,
+      "volume_sum": 7.999999999999999,
+      "relative_energy_change": 0.0008760028071115108,
+      "momentum_change": [
+        4.575333167888829e-17,
+        3.2447356462488744e-24,
+        6.75748112179496e-24
+      ],
+      "exact_point_sample_L1_volume_mean": {
+        "rho": 0.054798058077422614,
+        "normal_velocity": 0.1309290049552893,
+        "pressure": 0.066416923659209
+      },
+      "transverse_velocity_L1": 0.0,
+      "max_transverse_velocity": 0.0
+    },
+    {
+      "name": "sod_N32_axis_dt2",
+      "problem": "sod",
+      "Nside": 32,
+      "angle": "axis",
+      "target": 0.2,
+      "dt_factor": 0.5,
+      "exit": 0,
+      "wall_seconds": 7.830308591015637,
+      "time": 0.2,
+      "reached_target": true,
+      "cells": 32768,
+      "max_mass_change": 0.0,
+      "min_U": 7.124999587959248e-05,
+      "min_V": 0.00012687434799453848,
+      "min_entropy_ratio": 0.9999999999999996,
+      "volume_sum": 7.999999999999999,
+      "relative_energy_change": 0.00028365591423855233,
+      "momentum_change": [
+        1.2213537473049207e-16,
+        6.751994464887995e-35,
+        1.6701795508172636e-35
+      ],
+      "exact_point_sample_L1_volume_mean": {
+        "rho": 0.054420996952662275,
+        "normal_velocity": 0.13107102742199875,
+        "pressure": 0.06662024446098713
+      },
+      "transverse_velocity_L1": 0.0,
+      "max_transverse_velocity": 0.0
+    },
+    {
+      "name": "sod_N32_axis_dt4",
+      "problem": "sod",
+      "Nside": 32,
+      "angle": "axis",
+      "target": 0.2,
+      "dt_factor": 0.25,
+      "exit": 0,
+      "wall_seconds": 13.070839231018908,
+      "time": 0.2,
+      "reached_target": true,
+      "cells": 32768,
+      "max_mass_change": 0.0,
+      "min_U": 7.127169204175523e-05,
+      "min_V": 0.00012717371208507906,
+      "min_entropy_ratio": 0.9999999999999993,
+      "volume_sum": 8.0,
+      "relative_energy_change": 7.870669259785693e-05,
+      "momentum_change": [
+        -3.7399553939887475e-16,
+        -1.44691439614172e-28,
+        2.959458676166131e-30
+      ],
+      "exact_point_sample_L1_volume_mean": {
+        "rho": 0.054417207036635426,
+        "normal_velocity": 0.13132573393170002,
+        "pressure": 0.06676997111448149
+      },
+      "transverse_velocity_L1": 0.0,
+      "max_transverse_velocity": 0.0
+    }
+  ]
+}

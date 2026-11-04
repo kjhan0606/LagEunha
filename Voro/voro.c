@@ -2,6 +2,13 @@
 #define VORO_MAIN
 #include "voro.h"
 #undef VORO_MAIN
+#include <float.h>
+/* Only the explicit strict 3D entry selects roundoff-based half spaces and
+ * exact endpoint intersections. Thread-local state preserves OpenMP calls
+ * and leaves the historical 2D/3D entry points unchanged. */
+static _Thread_local int voro3d_strict_geometry;
+static _Thread_local int voro3d_strict_failure;
+static _Thread_local Voro3D_StrictStats voro3d_strict_stats,voro3d_last_strict_stats;
 
 void voro3D_EulerRot(Voro3D_point *rin, int np, postype theta, postype phi, postype psi){
 	Voro3D_point res,*r;
@@ -238,6 +245,34 @@ Voro3D_Vertex Voro3D_FindIntersection(
 		Voro3D_point *neigh,
 		postype wfrac 
 		){
+	if(voro3d_strict_geometry){
+		long double ax=a->x,ay=a->y,az=a->z,nx=neigh->x,ny=neigh->y,nz=neigh->z;
+		long double dx=(long double)b->x-ax,dy=(long double)b->y-ay,dz=(long double)b->z-az;
+		long double denominator=dx*nx+dy*ny+dz*nz;
+		long double numerator=(long double)wfrac*(nx*nx+ny*ny+nz*nz)-(ax*nx+ay*ny+az*nz);
+		Voro3D_Vertex result=*a;
+		if(denominator==0||!isfinite(denominator)||!isfinite(numerator)){
+			voro3d_strict_failure=1;voro3d_strict_stats.rejected_intersections++;return result;
+		}
+		long double t=numerator/denominator;
+		/* A roundoff-classified on-plane endpoint can lie just outside the
+		 * exact segment. Clamping to the endpoint adds no finite inset. */
+		if(!isfinite(t)){voro3d_strict_failure=1;voro3d_strict_stats.rejected_intersections++;return result;}
+		if(t<0||t>1){
+			long double ex=t<0?ax:b->x,ey=t<0?ay:b->y,ez=t<0?az:b->z;
+			long double x=ex*nx,y=ey*ny,z=ez*nz,plane=(long double)wfrac*(nx*nx+ny*ny+nz*nz);
+			long double residual=fabsl(x+y+z-plane),bound=64*DBL_EPSILON*(fabsl(x)+fabsl(y)+fabsl(z)+fabsl(plane));
+			if(!(residual<=bound)){
+				voro3d_strict_failure=1;voro3d_strict_stats.rejected_intersections++;return result;
+			}
+			voro3d_strict_stats.endpoint_clamps++;
+			double ratio=bound>0?(double)(residual/bound):0;
+			if(ratio>voro3d_strict_stats.max_endpoint_residual_over_bound)voro3d_strict_stats.max_endpoint_residual_over_bound=ratio;
+			t=t<0?0:1;
+		}
+		result.x=(postype)(ax+t*dx);result.y=(postype)(ay+t*dy);result.z=(postype)(az+t*dz);
+		return result;
+	}
 	Voro3D_point ba = Vec3DSub(b,a);
 	Voro3D_point *pba = &ba;
 	postype mod = Vec3DInnP(&ba, neigh);
@@ -293,6 +328,14 @@ int Voro3D_CutOrStay(
 		postype wfrac,
 		postype *offset
 		){
+	if(voro3d_strict_geometry){
+		long double x=(long double)a->x*neigh->x,y=(long double)a->y*neigh->y,z=(long double)a->z*neigh->z;
+		long double bound=(long double)wfrac*((long double)neigh->x*neigh->x+(long double)neigh->y*neigh->y+(long double)neigh->z*neigh->z);
+		long double delta=x+y+z-bound;
+		long double error=64*DBL_EPSILON*(fabsl(x)+fabsl(y)+fabsl(z)+fabsl(bound));
+		if(delta>error){*offset=(postype)delta;return Outside;}
+		*offset=-1;return Inside;
+	}
 	// This is for Voronoi. It compares the lengths between 0-a and neigh-a.
 	/*
 	postype d = Vec3DInnP(a,a);
@@ -462,6 +505,7 @@ int CreateNewVertices(
 	int ilink = start->ilink;
 
 	ip = Voro3D_CreateOneVertex(voroVertex, now, target, ip, neighbor, pp, wfrac);
+	if(voro3d_strict_geometry&&voro3d_strict_failure)return -1;
 
 	ilink ++;
 
@@ -492,6 +536,7 @@ int CreateNewVertices(
 					break;
 				default:
 					ip = Voro3D_CreateOneVertex(voroVertex, now, target, ip, neighbor, pp, wfrac);
+				if(voro3d_strict_geometry&&voro3d_strict_failure)return -1;
 			}
 			if(inoutflag == Outside) break;
 		}
@@ -1390,6 +1435,7 @@ int Voro3D_FindVC(
 				start = FindNearestBoundaryVertex(neighbors+i, voroVertex+j, wfrac);
 				int icount = InactivateOutsideVertex(neighbors+i, voroVertex,ip, wfrac);
 				ip = CreateNewVertices(neighbors,i,&start,voroVertex, ip, wfrac);
+				if(voro3d_strict_geometry&&(ip<0||voro3d_strict_failure))return -1;
 				ip = Voro3D_Trim_Vertex(voroVertex,ip, &maxdist2, intwork);
 				j = ip;
 				break;
@@ -1404,6 +1450,25 @@ int Voro3D_FindVC(
 
 	return ip;
 }
+
+int Voro3D_FindVCStrict(Voro3D_point *center,Voro3D_point *input,
+		Voro3D_point *neighbors,int np,Voro3D_Vertex *vertex,int mp,
+		postype boxsize,int shrink,int *work){
+	if(sizeof(postype)!=sizeof(double)){
+		memset(&voro3d_last_strict_stats,0,sizeof(voro3d_last_strict_stats));
+		voro3d_last_strict_stats.rejected_intersections=1;return -1;
+	}
+	int previous=voro3d_strict_geometry,previous_failure=voro3d_strict_failure;
+	Voro3D_StrictStats previous_stats=voro3d_strict_stats;
+	voro3d_strict_geometry=1;voro3d_strict_failure=0;
+	memset(&voro3d_strict_stats,0,sizeof(voro3d_strict_stats));
+	int result=Voro3D_FindVC(center,input,neighbors,np,vertex,mp,boxsize,shrink,work);
+	if(voro3d_strict_failure)result=-1;
+	voro3d_last_strict_stats=voro3d_strict_stats;voro3d_strict_stats=previous_stats;
+	voro3d_strict_geometry=previous;voro3d_strict_failure=previous_failure;
+	return result;
+}
+void Voro3D_LastStrictStats(Voro3D_StrictStats *stats){if(stats)*stats=voro3d_last_strict_stats;}
 
 int Voro3D_FaceExtract(Voro3D_Vertex *Vertex, int mp,int fid, Voro3D_point *outcorner){
 	int i,j,k;

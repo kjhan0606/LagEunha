@@ -148,6 +148,14 @@ int sort3Ddist(const void *a, const void *b);
 int Voro3D_CutOrStay(Voro3D_point *, Voro3D_Vertex *, postype, postype *);
 
 int Voro3D_FindVC(Voro3D_point *, Voro3D_point *, Voro3D_point *, int , Voro3D_Vertex *, int , postype, int , int *);
+/* Double-precision geometry only. Roundoff-bounded plane predicates are
+ * not exact arithmetic and do not guarantee every degenerate topology. */
+int Voro3D_FindVCStrict(Voro3D_point *, Voro3D_point *, Voro3D_point *, int , Voro3D_Vertex *, int , postype, int , int *);
+typedef struct {
+    long long endpoint_clamps,rejected_intersections;
+    double max_endpoint_residual_over_bound;
+} Voro3D_StrictStats;
+void Voro3D_LastStrictStats(Voro3D_StrictStats *);
 int Voro3D_InitializeVertex(Voro3D_Vertex *,int , postype );
 Voro3D_Vertex2 FindNearestBoundaryVertex(Voro3D_point *, Voro3D_Vertex *, postype);
 int InactivateOutsideVertex(Voro3D_point *, Voro3D_Vertex *, int , postype);

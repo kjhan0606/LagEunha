@@ -1,0 +1,91 @@
+{
+  "scope": "actual original native 3D CPU/OpenMP evolution, periodic, W0, same common closure; point-sampled shock norms, not exact-cell-average norms",
+  "cases": [
+    {
+      "name": "shear_N32_diagonal",
+      "problem": "shear",
+      "Nside": 32,
+      "angle": "diagonal",
+      "target": 0.25,
+      "exit": 0,
+      "wall_seconds": 6.196272508008406,
+      "time": 0.25,
+      "reached_target": true,
+      "cells": 32768,
+      "max_mass_change": 0.0,
+      "min_U": 0.0006101428892268089,
+      "min_V": 0.00024394141209133538,
+      "min_entropy_ratio": 1.000002138933984,
+      "volume_sum": 7.999999999999999,
+      "relative_energy_change": -1.349864381888272e-09,
+      "momentum_change": [
+        -7.352245982167327e-18,
+        -8.616120055505475e-21,
+        4.6293162981530194e-21
+      ],
+      "rho_L1": 0.0004520904268714353,
+      "pressure_L1": 0.00065924669177178,
+      "velocity_L1": 0.0007368075335084335
+    },
+    {
+      "name": "sod_N32_axis",
+      "problem": "sod",
+      "Nside": 32,
+      "angle": "axis",
+      "target": 0.2,
+      "exit": 0,
+      "wall_seconds": 5.821387843112461,
+      "time": 0.2,
+      "reached_target": true,
+      "cells": 32768,
+      "max_mass_change": 0.0,
+      "min_U": 7.12580739237807e-05,
+      "min_V": 0.0001264376344393735,
+      "min_entropy_ratio": 0.9999999999999996,
+      "volume_sum": 7.999999999999999,
+      "relative_energy_change": 0.0008760028071115108,
+      "momentum_change": [
+        4.575333167888829e-17,
+        3.2447356462488744e-24,
+        6.75748112179496e-24
+      ],
+      "exact_point_sample_L1_volume_mean": {
+        "rho": 0.054798058077422614,
+        "normal_velocity": 0.1309290049552893,
+        "pressure": 0.066416923659209
+      },
+      "transverse_velocity_L1": 0.0,
+      "max_transverse_velocity": 0.0
+    },
+    {
+      "name": "sod_N32_diagonal",
+      "problem": "sod",
+      "Nside": 32,
+      "angle": "diagonal",
+      "target": 0.15,
+      "exit": 0,
+      "wall_seconds": 6.354912861948833,
+      "time": 0.15,
+      "reached_target": true,
+      "cells": 32768,
+      "max_mass_change": 0.0,
+      "min_U": 8.42642858575409e-05,
+      "min_V": 0.00010943586038787451,
+      "min_entropy_ratio": 0.9999999999999992,
+      "volume_sum": 8.000000000000002,
+      "relative_energy_change": -0.0004741877061511119,
+      "momentum_change": [
+        -2.2414609366716923e-18,
+        -7.721975863643829e-18,
+        -8.059730251361481e-18
+      ],
+      "exact_point_sample_L1_volume_mean": {
+        "rho": 0.04725030235118736,
+        "normal_velocity": 0.11041249964516693,
+        "pressure": 0.05637235466197093
+      },
+      "transverse_velocity_L1": 5.357387754994148e-16,
+      "max_transverse_velocity": 3.181132864214931e-15
+    }
+  ]
+}

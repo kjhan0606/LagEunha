@@ -1,0 +1,41 @@
+LAGEUNHA_3D_GFS_V1: 3D GFS hydro (CPU/OpenMP), params params.dat
+[3D] N=4096 box=[0,2]x[0,2]x[0,2] bc=periodic,periodic,periodic gamma=1.400000 courant=0.4 t_end=0.2 dump_dt=0
+[3D] av_mode=5 muscl=1 w2=0 phase1=0 floor_log=0 dual_energy=0 entropy_switch=0(coef 0.01) half_limit=0 lag_rot=0 alphavis=0 pair_nshare=16 stage_floor_reset=0 threads=8
+[3D] gravity=0 G=1 eps=0 theta=0.5 direct=1 point_mass=0(GM 0 at 0 0 0 eps 0) uniform_acc=0
+[UNIFIED_3D] common W0 fixed-mass pressure/face-angular LSQ/BE/KDK; strict double geometry with bounded endpoints, no jitter/floor/finite area cutoff; CPU/OpenMP only
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=0 volume_identity=0 parallel_scaled=0 sumV_error=0 adjoint_work=2.1084705725531485e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[3D] wrote snap_000000.l3d t=0.000000e+00 N=4096 rc=0
+[UNIFIED_3D_GRAPH] edges=512 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=0 volume_identity=0 parallel_scaled=1.1741085705667594e-16 sumV_error=1.1102230246251565e-16 adjoint_work=8.0326743276134278e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=1024 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_KDK] step=1 t=0.042257712736425833 dt=0.042257712736425833 E=10.999250539379018 dErel=-6.813278373e-05 momentum=(9.93400241e-18,0,0) minU=4.882812500e-04 minV=1.795903498e-03 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=1.127787411e-02 viscosity_energy_defect=-2.339631930e-17 CG=1/3 active=1/1 wall_s=0.032347
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=0 volume_identity=0 parallel_scaled=1.1589220429029275e-16 sumV_error=0 adjoint_work=4.3764439612030089e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_KDK] step=2 t=0.068702989712033313 dt=0.02644527697560748 E=11.003075919149778 dErel=2.796290136e-04 momentum=(8.46694134e-18,0,0) minU=4.907257498e-04 minV=1.608296665e-03 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=4.120524959e-02 viscosity_energy_defect=9.264428766e-19 CG=4/4 active=1/1 wall_s=0.023585
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=0 volume_identity=0 parallel_scaled=1.3665764341235623e-16 sumV_error=0 adjoint_work=2.24292181357718e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_KDK] step=3 t=0.094221352660674454 dt=0.025518362948641141 E=11.006343428807941 dErel=5.766753462e-04 momentum=(7.69783542e-18,0,0) minU=4.989010218e-04 minV=1.430192489e-03 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=4.028620807e-02 viscosity_energy_defect=-3.878191376e-18 CG=4/4 active=1/1 wall_s=0.040563
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=0 volume_identity=2.2204460492503131e-16 parallel_scaled=1.0373107083575805e-16 sumV_error=1.1102230246251565e-16 adjoint_work=3.2791502285441087e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_KDK] step=4 t=0.11980135800041811 dt=0.025580005339743646 E=11.009012459817505 dErel=8.193145289e-04 momentum=(-2.79182059e-18,0,0) minU=5.178747715e-04 minV=1.276600159e-03 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=3.751243440e-02 viscosity_energy_defect=-2.849758035e-17 CG=4/4 active=1/1 wall_s=0.041489
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=2.3254708308811249e-17 volume_identity=1.1102230246251565e-16 parallel_scaled=1.3589698944512177e-16 sumV_error=1.1102230246251565e-16 adjoint_work=7.0257669064863865e-21 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=3.469446952e-18 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_KDK] step=5 t=0.14536644313926822 dt=0.025565085138850106 E=11.011042626677933 dErel=1.003875153e-03 momentum=(1.7198157e-17,0,0) minU=5.525964133e-04 minV=1.151865917e-03 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=3.630711013e-02 viscosity_energy_defect=-4.411769762e-18 CG=4/4 active=1/1 wall_s=0.037632
+[UNIFIED_3D_GRAPH] edges=1792 unpaired_roundoff=0 max_area_mismatch=3.469446952e-18 periodic_torque=(0.000000000e+00,0.000000000e+00,0.000000000e+00)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=0 volume_identity=0 parallel_scaled=1.6769294760902734e-16 sumV_error=1.1102230246251565e-16 adjoint_work=9.6378443157731592e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=2048 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,1.428993005e-52,-1.071744753e-52)
+[UNIFIED_3D_KDK] step=6 t=0.17066154674752515 dt=0.02529510360825692 E=11.012604681294176 dErel=1.145880118e-03 momentum=(2.57498016e-18,0,0) minU=5.816315827e-04 minV=1.052139162e-03 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=3.800651076e-02 viscosity_energy_defect=1.429728067e-17 CG=4/4 active=1/1 wall_s=0.041329
+[UNIFIED_3D_GRAPH] edges=2048 unpaired_roundoff=0 max_area_mismatch=0.000000000e+00 periodic_torque=(0.000000000e+00,2.137543129e-52,-1.425028753e-52)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=1.2516268982948721e-17 volume_identity=0 parallel_scaled=1.7694573092066278e-16 sumV_error=0 adjoint_work=1.8160360640524001e-18 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=2048 unpaired_roundoff=0 max_area_mismatch=3.469446952e-18 periodic_torque=(0.000000000e+00,2.132997652e-52,-1.421998435e-52)
+[UNIFIED_3D_KDK] step=7 t=0.19557691609839886 dt=0.024915369350873712 E=11.014020124315329 dErel=1.274556756e-03 momentum=(-1.55854062e-18,0,0) minU=5.850945156e-04 minV=9.707004928e-04 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=3.987378426e-02 viscosity_energy_defect=-9.610014268e-18 CG=4/4 active=1/1 wall_s=0.044597
+[UNIFIED_3D_GRAPH] edges=2304 unpaired_roundoff=0 max_area_mismatch=3.469446952e-18 periodic_torque=(0.000000000e+00,1.333377869e-52,-1.205435193e-52)
+[UNIFIED_3D_GEOMETRY] N=4096 faces=24576 closure=1.2627272055569427e-17 volume_identity=0 parallel_scaled=4.8057724036653257e-17 sumV_error=1.1102230246251565e-16 adjoint_work=5.2266476392101876e-19 jitter=0 endpoint_clamps=0 max_endpoint_residual_over_bound=0 pass=1
+[UNIFIED_3D_GRAPH] edges=2304 unpaired_roundoff=0 max_area_mismatch=3.469446952e-18 periodic_torque=(0.000000000e+00,1.332514575e-52,-1.204612872e-52)
+[UNIFIED_3D_KDK] step=8 t=0.20000000000000001 dt=0.0044230839016011492 E=11.014042664526596 dErel=1.276605866e-03 momentum=(-1.12757026e-17,0,0) minU=5.860716741e-04 minV=9.578300103e-04 max_vy=0.000000000e+00 max_vz=0.000000000e+00 heat=7.416988959e-03 viscosity_energy_defect=5.263475129e-18 CG=4/4 active=1/1 wall_s=0.043439
+[3D] wrote snap_000001.l3d t=2.000000e-01 N=4096 rc=0
+[UNIFIED_3D] complete step=8 t=0.20000000000000001 jitter=0

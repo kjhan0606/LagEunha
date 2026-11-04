@@ -1,7 +1,6 @@
 /* Native CUDA adapter for the shared W0 operator.
- * First qualification scope: fully owned one-rank cells and static wall
- * faces. Periodic image synchronization and the new KDK driver are separate
- * integration gates. No old solver path is silently reinterpreted.
+ * One-rank fixed-wall and periodic alias paths share the pressure and
+ * face-angular velocity fit. Old trajectories retain their original scope.
  */
 #include "../gfs_variational_core.h"
 #include "../gfs_velocity_fit.h"
@@ -70,7 +69,8 @@ __global__ void gfs_unified_fit_kernel(ParticleSoA p,FaceCSR f,int n,int nt)
             r[0]=2*distance*nx;r[1]=2*distance*ny;
             dv[0]=-2*vn*nx;dv[1]=-2*vn*ny;
         }else{valid=0;break;}
-        if(!gfs_velocity_fit_add(&fit,r,dv)){valid=0;break;}
+        double area=hypot(f.c2y[k]-f.c1y[k],f.c1x[k]-f.c2x[k]);
+        if(!gfs_velocity_fit_add_face(&fit,r,dv,area)){valid=0;break;}
     }
     double G[3][3];
     if(!valid||!gfs_velocity_fit_solve(&fit,G,NULL)){

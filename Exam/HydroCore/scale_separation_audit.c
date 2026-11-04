@@ -42,7 +42,7 @@ static int run(int n,int checkerboard,int exact){
         for(int k=0;k<nf;k++){
             LocalFace *f=faces+k;int j=((y+f->sy+n)%n)*n+(x+f->sx+n)%n;
             double dv[3]={v[2*j]-v[2*i],v[2*j+1]-v[2*i+1],0};
-            if(!gfs_velocity_fit_add(&fit,f->r,dv))return 2;
+            if(!gfs_velocity_fit_add_face(&fit,f->r,dv,f->A))return 2;
         }
         if(!gfs_velocity_fit_solve(&fit,g,&condition))return 2;
         max_condition=fmax(max_condition,condition);

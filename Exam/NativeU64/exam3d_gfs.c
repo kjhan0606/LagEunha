@@ -101,7 +101,7 @@ typedef struct {
 	/* parameters */
 	double gamma, courant, tend, dumpdt, alphavis, betavis, etavis;
 	double kappa, eps, G, theta, nshare;
-	int av_mode, use_muscl, gravity, grav_direct, maxsteps;
+	int av_mode, use_muscl, gravity, grav_direct, maxsteps, unified;
 	int bc[3];
 	double lo[3], hi[3], L[3];
 	char icfile[512];
@@ -135,6 +135,8 @@ typedef struct {
 	long long npair;
 	int max_R;
 	long n_expand, n_jitter;
+	long long strict_endpoint_clamps;
+	double strict_endpoint_max_ratio;
 	int sfl_nlog, stage_reset;
 	double E0tot, E0hyd;
 	int E0tot_set;
@@ -426,8 +428,19 @@ static double g3_tess_one(g3sim *s, long i, g3work *w, g3fbuf *tb, int tid){
 		/* mp only sizes Voro3D_InitializeVertex's "mark the rest Inactive"
 		 * loop; FindVC reads vertices [0, ip) only, so a small value avoids
 		 * touching the whole G3_MP buffer for every cell. */
-		int ip = Voro3D_FindVC(&ctr, w->cand, w->nw + 8, (int)nc, w->vert, 16, boxsize, 0, w->iwork);
-		if(ip <= 0 || ip >= G3_MP){ why = 1; if(attempt < 3){ attempt++; R--; } else attempt = 0; continue; }
+		int ip = s->unified
+			? Voro3D_FindVCStrict(&ctr, w->cand, w->nw + 8, (int)nc, w->vert, 16, boxsize, 0, w->iwork)
+			: Voro3D_FindVC(&ctr, w->cand, w->nw + 8, (int)nc, w->vert, 16, boxsize, 0, w->iwork);
+		if(s->unified){
+			Voro3D_StrictStats stats;Voro3D_LastStrictStats(&stats);
+			if(stats.endpoint_clamps){
+#pragma omp atomic
+				s->strict_endpoint_clamps+=stats.endpoint_clamps;
+#pragma omp critical (g3_strict_endpoint_stats)
+				{if(stats.max_endpoint_residual_over_bound>s->strict_endpoint_max_ratio)s->strict_endpoint_max_ratio=stats.max_endpoint_residual_over_bound;}
+			}
+		}
+		if(ip <= 0 || ip >= G3_MP){ why = 1; if(s->unified)break; if(attempt < 3){ attempt++; R--; } else attempt = 0; continue; }
 		int bad = 0, iv, jj;
 		double rmax2 = 0;
 		for(iv=0; iv<ip; iv++){
@@ -465,11 +478,11 @@ static double g3_tess_one(g3sim *s, long i, g3work *w, g3fbuf *tb, int tid){
 				nf++;
 			}
 		}
-		if(bad){ why = 4; if(attempt < 3){ attempt++; R--; } else attempt = 0; continue; }
+		if(bad){ why = 4; if(s->unified)break; if(attempt < 3){ attempt++; R--; } else attempt = 0; continue; }
 		double sgn = 1.0;
 		if(V < 0){ sgn = -1.0; V = -V; }
-		if(!(V > 0)){ why = 5; if(attempt < 3){ attempt++; R--; } else attempt = 0; continue; }
-		double amin = 1e-12 * pow(V, 2.0/3.0);
+		if(!(V > 0)){ why = 5; if(s->unified)break; if(attempt < 3){ attempt++; R--; } else attempt = 0; continue; }
+		double amin = s->unified ? 0 : 1e-12 * pow(V, 2.0/3.0);
 		long f0 = tb->n, q;
 		for(q=0;q<nf;q++){
 			g3face *f = w->tmpf + q;
@@ -1347,12 +1360,14 @@ static int g3_parse_bc(const char *v, int bc[3]){
 }
 
 /* ------------------------------------------------------------ driver */
+#include "gfs_unified3d.inc"
 int exam3d_gfs_run(const char *pf, int myid, int nranks){
 	g3sim S, *s = &S;
 	char v[512];
 	int a;
 	if(myid != 0) return 0;
 	memset(s, 0, sizeof(*s));
+	s->unified=g3_env_on("GFS_UNIFIED_HYDRO");
 	G3S = s;
 	printf("LAGEUNHA_3D_GFS_V1: 3D GFS hydro (CPU/OpenMP), params %s\n", pf);
 	if(nranks > 1)
@@ -1377,7 +1392,11 @@ int exam3d_gfs_run(const char *pf, int myid, int nranks){
 		int way = (int)g3_pd(pf, "Hydro time-stepping way", 1);
 		int em = (int)g3_pd(pf, "GAS entropy_mode", 0);
 		double fc = g3_pd(pf, "Voro centroid shift factor", 0);
-		if(way != 1) printf("[3D] warning: Hydro time-stepping way = %d; the 3D path is RK4 only (way 1)\n", way);
+		if(s->unified){
+			if(way!=3||nranks!=1||!g3_env_on("GFS_UNIFIED_IMPLICIT")||em!=0||fc!=0||s->kappa!=0||g3_pd(pf,"GAS gpu_enabled",0)!=0){
+				fprintf(stderr,"[UNIFIED_3D] requires one-rank CPU/OpenMP KDK, implicit common viscosity, W0, no entropy repair or steering\n");return 2;
+			}
+		}else if(way != 1) printf("[3D] warning: Hydro time-stepping way = %d; the 3D path is RK4 only (way 1)\n", way);
 		if(s->av_mode != 5){ fprintf(stderr, "[3D] GAS av_mode = %d not supported (3D path is av_mode 5)\n", s->av_mode); return 2; }
 		if(em != 0){ fprintf(stderr, "[3D] GAS entropy_mode = %d not supported (ie only)\n", em); return 2; }
 		if(s->kappa > 0){ fprintf(stderr, "[3D] GAS kappa > 0 (adaptive Laguerre weights) not supported in 3D\n"); return 2; }
@@ -1471,6 +1490,7 @@ int exam3d_gfs_run(const char *pf, int myid, int nranks){
 			s->gravity, s->G, s->eps, s->theta, s->grav_direct, s->pm_on, s->pm_gm,
 			s->pm_x[0], s->pm_x[1], s->pm_x[2], s->pm_eps, s->acc_on);
 	if(!(s->tend > s->time)){ fprintf(stderr, "[3D] t_end %g <= t0 %g\n", s->tend, s->time); return 2; }
+	if(s->unified)return g3_unified_run(s,&h0);
 	/* initial state */
 	g3_wrap(s);
 	if(g3_tessellate(s)){ fprintf(stderr, "[3D] initial tessellation failed\n"); return 4; }

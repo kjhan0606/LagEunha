@@ -45,17 +45,17 @@ static int gfs_unified1d_rhs(void)
         if(!gfs_velocity_fit_init(&fit,1))return 0;
         if(i>0){
             double r[3]={P[i-1].x-P[i].x,0,0},dv[3]={P[i-1].v-P[i].v,0,0};
-            if(!gfs_velocity_fit_add(&fit,r,dv))return 0;
+            if(!gfs_velocity_fit_add_face(&fit,r,dv,1))return 0;
         }else if(bc_left==BC_REFLECT){
             double r[3]={2*(x0_dom-P[i].x),0,0},dv[3]={-2*P[i].v,0,0};
-            if(!gfs_velocity_fit_add(&fit,r,dv))return 0;
+            if(!gfs_velocity_fit_add_face(&fit,r,dv,1))return 0;
         }
         if(i<N-1){
             double r[3]={P[i+1].x-P[i].x,0,0},dv[3]={P[i+1].v-P[i].v,0,0};
-            if(!gfs_velocity_fit_add(&fit,r,dv))return 0;
+            if(!gfs_velocity_fit_add_face(&fit,r,dv,1))return 0;
         }else if(bc_right==BC_REFLECT){
             double r[3]={2*(x1_dom-P[i].x),0,0},dv[3]={-2*P[i].v,0,0};
-            if(!gfs_velocity_fit_add(&fit,r,dv))return 0;
+            if(!gfs_velocity_fit_add_face(&fit,r,dv,1))return 0;
         }
         if(!gfs_velocity_fit_solve(&fit,G,NULL))return 0;
         gfs_u1_slope[i]=G[0][0];

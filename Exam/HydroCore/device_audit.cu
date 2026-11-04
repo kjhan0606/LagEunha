@@ -12,7 +12,7 @@ __global__ void audit(Result *out){
         double r[3]={0},dv[3]={0};
         for(int a=0;a<d;a++)r[a]=sin(.7*j*(a+1))+.2*cos(.37*j*(a+2));
         for(int a=0;a<d;a++)for(int b=0;b<d;b++)dv[a]+=A[a][b]*r[b];
-        if(!gfs_velocity_fit_add(&fit,r,dv)){out[d-1].valid=0;return;}
+        if(!gfs_velocity_fit_add_face(&fit,r,dv,.2+j*.17)){out[d-1].valid=0;return;}
     }
     double G[3][3],condition;
     if(!gfs_velocity_fit_solve(&fit,G,&condition)){out[d-1].valid=0;return;}

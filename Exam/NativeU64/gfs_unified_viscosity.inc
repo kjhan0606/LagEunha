@@ -88,12 +88,54 @@ int gpu_unified_viscosity_half_step(void *opaque,double gamma,double h,GfsViscos
                 double vn=v[2*i]*nx+v[2*i+1]*ny;
                 r[0]=2*distance*nx;r[1]=2*distance*ny;dv[0]=-2*vn*nx;dv[1]=-2*vn*ny;
             }else{bad=1;continue;}
-            if(!gfs_velocity_fit_add(&fit,r,dv))bad=1;
+            double area=hypot(f->c2y[k]-f->c1y[k],f->c1x[k]-f->c2x[k]);
+            if(!gfs_velocity_fit_add_face(&fit,r,dv,area))bad=1;
         }
         if(!gfs_velocity_fit_solve(&fit,gradient,NULL)){bad=1;continue;}
         G[4*i]=gradient[0][0];G[4*i+1]=gradient[0][1];G[4*i+2]=gradient[1][0];G[4*i+3]=gradient[1][1];
     }
     if(bad){fprintf(stderr,"[UNIFIED_VISCOSITY] stage=%d input/geometry contract failed mask=%d\n",__LINE__,bad);return 1;}
+    const char *planar_n=getenv("GFS_UNIFIED_PLANAR_AUDIT_N");
+    if(planar_n){
+        int side=atoi(planar_n);static int fit_call;static FILE *fit_trace;
+        if(side<2||(long long)side*side!=n)return 1;
+        double *low=malloc((size_t)side*4*sizeof(double)),*high=malloc((size_t)side*4*sizeof(double));
+        if(!low||!high)return 1;
+        for(int k=0;k<4*side;k++){low[k]=HUGE_VAL;high[k]=-HUGE_VAL;}
+        int trace_calls=0;const char *trace_env=getenv("GFS_UNIFIED_PLANAR_TRACE_STEPS");
+        if(trace_env)trace_calls=2*atoi(trace_env);
+        ++fit_call;
+        if(fit_call<=trace_calls&&!fit_trace){fit_trace=fopen("unified_planar_fit.csv","wx");if(!fit_trace)return 1;fprintf(fit_trace,"call,id,Gxx,Gxy,Gyx,Gyy\n");}
+        double maxxy=0,maxyx=0,weighted_maxxy=0,weighted_maxxx_span=0;unsigned long long idxy=0;
+        double *weighted_low=malloc((size_t)side*sizeof(double)),*weighted_high=malloc((size_t)side*sizeof(double));
+        if(!weighted_low||!weighted_high)return 1;
+        for(int c=0;c<side;c++){weighted_low[c]=HUGE_VAL;weighted_high[c]=-HUGE_VAL;}
+        for(int i=0;i<n;i++){
+            unsigned long long id=(unsigned long long)PINDX(p+i);int col=id%side;
+            for(int a=0;a<4;a++){int k=4*col+a;low[k]=fmin(low[k],G[4*i+a]);high[k]=fmax(high[k],G[4*i+a]);}
+            if(fabs(G[4*i+1])>maxxy){maxxy=fabs(G[4*i+1]);idxy=id;}
+            maxyx=fmax(maxyx,fabs(G[4*i+2]));
+            if(fit_call<=trace_calls)fprintf(fit_trace,"%d,%llu,%.17g,%.17g,%.17g,%.17g\n",fit_call,id,G[4*i],G[4*i+1],G[4*i+2],G[4*i+3]);
+            /* Frozen-state causal comparison only. Production G is unchanged. */
+            GfsVelocityFit weighted;gfs_velocity_fit_init(&weighted,2);
+            for(int k=f->face_offset[i];k<f->face_offset[i+1];k++){
+                int raw=f->neighbor_idx[k];if(raw<0||raw>=nt)return 1;int j=alias[raw];
+                double r[3]={geometry->x[raw]-x[2*i],geometry->y[raw]-x[2*i+1],0};
+                double dv[3]={v[2*j]-v[2*i],v[2*j+1]-v[2*i+1],0};
+                double A=hypot(f->c2y[k]-f->c1y[k],f->c1x[k]-f->c2x[k]);
+                if(!gfs_velocity_fit_add_weight(&weighted,r,dv,A/hypot(r[0],r[1])))return 1;
+            }
+            double Gw[3][3];if(!gfs_velocity_fit_solve(&weighted,Gw,NULL))return 1;
+            weighted_maxxy=fmax(weighted_maxxy,fabs(Gw[0][1]));
+            weighted_low[col]=fmin(weighted_low[col],Gw[0][0]);weighted_high[col]=fmax(weighted_high[col],Gw[0][0]);
+        }
+        double span[4]={0};for(int col=0;col<side;col++)for(int a=0;a<4;a++)span[a]=fmax(span[a],high[4*col+a]-low[4*col+a]);
+        if(fit_trace&&fflush(fit_trace))return 1;
+        for(int c=0;c<side;c++)weighted_maxxx_span=fmax(weighted_maxxx_span,weighted_high[c]-weighted_low[c]);
+        fprintf(stderr,"[UNIFIED_PLANAR_FIT] call=%d column_span=(%.9e,%.9e,%.9e,%.9e) max_Gxy=%.9e id_Gxy=%llu max_Gyx=%.9e frozen_solid_angle_max_Gxy=%.9e frozen_solid_angle_Gxx_column_span=%.9e\n",fit_call,span[0],span[1],span[2],span[3],maxxy,idxy,maxyx,weighted_maxxy,weighted_maxxx_span);
+        free(weighted_low);free(weighted_high);
+        free(low);free(high);
+    }
     memset(valid,0,nf);
     int unpaired=0;double max_unpaired_relative_area=0,max_area_mismatch=0,max_roundoff_ratio=0;
 #pragma omp parallel for schedule(static) reduction(max:bad,max_unpaired_relative_area,max_area_mismatch,max_roundoff_ratio) reduction(+:unpaired)

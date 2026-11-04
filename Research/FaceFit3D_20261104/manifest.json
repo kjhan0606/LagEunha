@@ -1,0 +1,1965 @@
+{
+  "status": "experimental common 1D/2D/3D evolution gate; full goal incomplete",
+  "parent_commit": "78e2948013f7e1a1e2b6decbd114272bf2d5c6bc",
+  "source_root": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1",
+  "run_root": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1",
+  "source_snapshot_sha256": {
+    "Docs/UNIFIED_HYDRO_FACE_FIT_3D_2026-11-04.md": "9a36d8fe6654a17a62ac11f9dd4833aca2d90cafcd44dcee9a1dae4b528dec69",
+    "Docs/UNIFIED_HYDRO_PROGRESS_2026-11-04.md": "7ead14a3a08cd8327b65b4a059c3eb23b8f296c996d522a64f708877f190e58f",
+    "Docs/UNIFIED_HYDRO_STAGE_PLAN_2026-11-04.md": "72db733d90a2832eb264b515ffab9adc306f24fbf2829f3552c471539ae9d075",
+    "Exam/HydroCore/README.md": "b04ac7266eb4ef6f022e5cae036b118b8204d03cb2062bdd50e6dc0ce26fb60a",
+    "Exam/HydroCore/device_audit.cu": "e885fdab59071d85736dc22cf9a79f492e41e8c5ecba0a1ff3a32d58c6acd7b9",
+    "Exam/HydroCore/fit_audit.c": "ada370440c5db6faf10ed91c2a56b748d4155d16ea8d66629300eddeb61a0e3a",
+    "Exam/HydroCore/native3d_geometry_replay.c": "89a02abf54a700384d441d162c766cdf7da2309abed545227cf874b539d22936",
+    "Exam/HydroCore/scale_separation_audit.c": "28296780a78f01a2e7fa7b1ae52ffef3cd3ba8282140dfe12bcb970e04a67517",
+    "Exam/HydroCore/strict_intersection_audit.c": "84b2f3acb1be7cd9e4c8ca3f8ad29a85f5c6905ad4c9b1ede442457bdaa92c9e",
+    "Exam/NativeU64/exam3d_gfs.c": "3ae30d47e995100685795435964352987a68c222c4b451e62d7d47a8ddee3a49",
+    "Exam/NativeU64/gfs_unified3d.inc": "6b523399ed5aac98411165bade028867795bf28412a10d5bd86b8cfa6bfc75ce",
+    "Exam/NativeU64/gfs_unified_gpu.inc": "af422f1f655ed4cb26026c7f70a66589a4b0d665a2a8f416770e16c9d2e4ee3e",
+    "Exam/NativeU64/gfs_unified_kdk.inc": "3d0524201880354baf80114793cc813229dfb7714bef05eefe9927b535b65d31",
+    "Exam/NativeU64/gfs_unified_planar_audit.inc": "7cf29796552c0943acde1d3f27b2a2dbd100d188b8c836be360d996609c56cc3",
+    "Exam/NativeU64/gfs_unified_viscosity.inc": "f597fdbf21b6b6995bf67348f326403b610a9bb8cb3904c7af2c4edf9933a0c2",
+    "Exam/NativeU64/unified_initial3d.c": "87e686714ef51c3acc4e50247d6e8a402a35051826ac2710dbfca9c0dee8e2aa",
+    "Exam/gfs_velocity_fit.h": "c5e5fbef9dfc34bd294029fd5ff6a4a95f9671c298d5b536584b69682b1bd000",
+    "Hydro1DExam/gfs_unified1d.inc": "9b233ad3240034fe0c55c1fdf83a0a2f9831e6263e6e9b797a844f15c84e3b47",
+    "Voro/voro.c": "3513f77b5b603986b4b57364fe69eca4f97cbadab5715ead0b44ba8c4c212a87",
+    "Voro/voro.h": "660af81c238eba5b4e754098de489e63d9a390761305b60880e825400f8549dc"
+  },
+  "retained_gpfs_files": [
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v1/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v1/exam_gpu_extract.o",
+      "bytes": 445560,
+      "sha256": "469575e32dfb96671c3469fe3572ffae6827be84c08872b08928baf76cff711b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v1/libexam.a",
+      "bytes": 7740602,
+      "sha256": "4ee274f5801e4fcc4175eb5afdbc772fc73ac0c0275e6e278fff497c29bf2ed0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v1/unified_native_general.exe",
+      "bytes": 12894600,
+      "sha256": "347bf5fc861420e947aa2e38f771aec0308d9440794f9cac4d4ecfe0c7400f8b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v1/exam.o",
+      "bytes": 2045872,
+      "sha256": "b2a10fcb8ef81ac3660a11adef5f676c3be71e1a30f19ab9b73d91cf2a4ec8a8"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v2/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v2/exam_gpu_extract.o",
+      "bytes": 456888,
+      "sha256": "e1ec73f07a43157a4c5430776359445bcb21678a91e439809aa5a0d98466df3c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v2/libexam.a",
+      "bytes": 7751930,
+      "sha256": "0b5a5648dcd2f19a77bad320bbc26b19f3b4f779bf78e7e52bc017616e32f2b5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_build_v2/unified_native_general.exe",
+      "bytes": 12903520,
+      "sha256": "d57e0ba71efcdc0369b5106996a8f7080b90a4abb8e72ac81dbd54c08a09bdfa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_trace_v1/unified_planar_trace.csv",
+      "bytes": 14013879,
+      "sha256": "d3b3e2abd38da4a4aaced2a90cdac2d3f2a7370f29eb7f3eab8d8d763fa0f501"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_trace_v1/khmap.000036.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_trace_v1/khout.000036.dat",
+      "bytes": 2850932,
+      "sha256": "c0361bd278c82fd969bc69ac391bcfa262949248c69e60c15b965763bf7b6706"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_frozen_fit_v1/khout.000006.dat",
+      "bytes": 2850932,
+      "sha256": "d08701661c49cd4bf1e75b2eb51877dfe2e449d4ff9e59672c2aadbc887b28c2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_frozen_fit_v1/khmap.000006.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_build_v1/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_build_v1/gfs_unified_gpu.o",
+      "bytes": 518080,
+      "sha256": "e0b99902f93ef9952b3ab06e2af4aa74436cd747bf921a01c0270b61ca0995ce"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_build_v1/exam_gpu_extract.o",
+      "bytes": 458656,
+      "sha256": "61823b12553f50e41b578edb874ef4be16ff7b269863bc7bffea87520c8eb7ca"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_build_v1/libexam.a",
+      "bytes": 7761882,
+      "sha256": "b54fbeabfb55a117d9c7af99f818a0a91f4c1019c5212bed843765c0c2f06bab"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_build_v1/unified_native_general.exe",
+      "bytes": 12912568,
+      "sha256": "54e7d34c4a0871a32bc1b1d940732e14f773f18efe94678c39d99ab0f849d4ac"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_build_v1/exam.o",
+      "bytes": 2045864,
+      "sha256": "58ada1c618fa7deba7f2a5be6350aff1aefbbfc99a26e4983b6373f72e20985c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/hydro1d",
+      "bytes": 156528,
+      "sha256": "c8cf820035404cd9babda2a9178ed9c9db97dbf55451b9a4d251a2c49aa20b4b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/device",
+      "bytes": 1047736,
+      "sha256": "be61ed03d8a009e74e16fa1dea90b2841f6ebaaa9b787a6635287f321633fd6d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/fit",
+      "bytes": 25888,
+      "sha256": "54f8f3a67463da52c98abbd0b8be35e097194e7829ba2a8fb6e8dbb7581ac0ae"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/dblfan/dblfan/ref.dat",
+      "bytes": 85533,
+      "sha256": "774b0ad6dd2b5f356d0d435ceed8e4a535f7390c8722d609c86d95329df6a44d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/shuosher/shuosher/ref.dat",
+      "bytes": 477139,
+      "sha256": "9c99e295374c93556cb6ef0007869bb750facb004c3fdb625c1caafafac46b8a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/collision/collision/ref.dat",
+      "bytes": 85257,
+      "sha256": "3e44f4c249dc423d0dfea34f063a78ef63608d69ad59fde7fbe07e1cb299c11e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/noh/noh/ref.dat",
+      "bytes": 85886,
+      "sha256": "255fa9330087f94bee5ac9a63bab566ad6a8f4112dcddeed700c0fd0035b31b9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/blast/blast/ref.dat",
+      "bytes": 476037,
+      "sha256": "367fdfe6d68c0c3fb428c87179c1e1167d4213f9064f4af286ea3256470dc1cb"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/contact/contact/ref.dat",
+      "bytes": 85085,
+      "sha256": "65ab76fba1244943e855e3406924f75bac7493fad84c20392d5e48043e4499c8"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/lax/lax/ref.dat",
+      "bytes": 85085,
+      "sha256": "490071ee5dba79981f186b7e88f6ae1206e3e4843412c39953645873a66534d3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_regression_v1/sod/sod/ref.dat",
+      "bytes": 85085,
+      "sha256": "e7697c4165b6e83778c10ccab6c2aa76faabab1eca5ef8c06491196c0d9fee94"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N256_axis/initial.bin",
+      "bytes": 45613172,
+      "sha256": "4ce61ceea82d8845cd1eda99c4893d84acd9885e46fe9d4359a5e4f5a0efef1d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N256_axis/khout.000127.dat",
+      "bytes": 45613172,
+      "sha256": "acc868b0ee9b774fa7c3d3ca763a391fc8b014a4e5b4724095bcc1b637f03337"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N256_axis/khmap.000127.ppm",
+      "bytes": 196623,
+      "sha256": "05a966288630fac3313dfcad051e54053f208994caf737577ea4d465ff4608ad"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/contact_N64_axis/khmap.000068.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/contact_N64_axis/khout.000068.dat",
+      "bytes": 2850932,
+      "sha256": "2bbba34c298a5bdde124b7c5da71e50e677b059d6909a27e675be9e88426c04d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_axis/khout.000066.dat",
+      "bytes": 11403380,
+      "sha256": "6300ba607ee5936acf581504207e4ce1b8d31b1464efb1d14c79e4aeaf126b96"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_axis/khmap.000066.ppm",
+      "bytes": 49167,
+      "sha256": "7c5114447157a29dd9a18977ec94fd8b380f00e6f81893d4588fda50a8bd5e31"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N128_axis/khmap.000050.ppm",
+      "bytes": 49167,
+      "sha256": "7c5114447157a29dd9a18977ec94fd8b380f00e6f81893d4588fda50a8bd5e31"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N128_axis/khout.000050.dat",
+      "bytes": 11403380,
+      "sha256": "70ff8e55373974fb4d68c9fd3fd4197a7539ee271e773b2930a13c2412ea3171"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N64_axis/khout.000034.dat",
+      "bytes": 2850932,
+      "sha256": "6ae6c25f7b5348ceb120ccc110d20ee42fa1aa1633ccc0d4a0bff6bde9390f34"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N64_axis/khmap.000034.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_diagonal/khout.000049.dat",
+      "bytes": 11403380,
+      "sha256": "6365d8113d44227f43a3d3a60372fb094cfab3323dac19d946cc85b39bc10612"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_diagonal/initial.bin",
+      "bytes": 11403380,
+      "sha256": "a72d994c8bc5804d3f23c4881739dd92289c9e4fbeb0d38a95237300ed338970"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_diagonal/khmap.000049.ppm",
+      "bytes": 49167,
+      "sha256": "7c5114447157a29dd9a18977ec94fd8b380f00e6f81893d4588fda50a8bd5e31"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N32_axis/khout.000014.dat",
+      "bytes": 712820,
+      "sha256": "08dcf5675e5ece8446f3dc1b778968b9973289e09ac2ef91aecbadf8694ba0fa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N32_axis/khmap.000014.ppm",
+      "bytes": 3085,
+      "sha256": "3fcfd2f5260006cc7ededc8f831dddf3938a9fcd6711c694ebde6e1176fa7777"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N64_axis/khmap.000026.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N64_axis/khout.000026.dat",
+      "bytes": 2850932,
+      "sha256": "bf99b165358c7b6cce94e255bd6424556c0f39a20f560cadb4d7044dc7c310f5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/contact_N32_axis/khout.000035.dat",
+      "bytes": 712820,
+      "sha256": "46c0227fe2f71e94b8e639c1f8e6da746868921f13e51f8bd8c218840cb0b6e0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/contact_N32_axis/khmap.000035.ppm",
+      "bytes": 3085,
+      "sha256": "3fcfd2f5260006cc7ededc8f831dddf3938a9fcd6711c694ebde6e1176fa7777"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/khmap.000135.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/khout.000135.dat",
+      "bytes": 2850932,
+      "sha256": "88bdafa784984c95c5002f1f4efa87fca014408e3b702d92bcc3c9d451ef32a2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N64_axis/khmap.000135.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N64_axis/khout.000135.dat",
+      "bytes": 2850932,
+      "sha256": "636077973fe9dc46d5e5fb7e7cdd620bea9c429a846d3dedf5f714b00030fd17"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/khmap.000068.ppm",
+      "bytes": 3085,
+      "sha256": "3fcfd2f5260006cc7ededc8f831dddf3938a9fcd6711c694ebde6e1176fa7777"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/khout.000068.dat",
+      "bytes": 712820,
+      "sha256": "5fa9497dc8e10354d7d837d396e6a88dc54723df35d4f2a4b90161ce9fb7f873"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N32_axis/khmap.000068.ppm",
+      "bytes": 3085,
+      "sha256": "3fcfd2f5260006cc7ededc8f831dddf3938a9fcd6711c694ebde6e1176fa7777"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N32_axis/khout.000068.dat",
+      "bytes": 712820,
+      "sha256": "98028aaaaea5a3ae3f4d1833f0c856ae4024709982f72dbf6e9526676cbd02c9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N64_diagonal/khout.000025.dat",
+      "bytes": 2850932,
+      "sha256": "17a7a474bf012f27245859d3827cddea24a2d005a223ca36fd508ed088a2ad3f"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N64_diagonal/khmap.000025.ppm",
+      "bytes": 12301,
+      "sha256": "3cf730e8f850835d0144959c030b85528727ce709853299de2252625c91c78ed"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v1/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v1/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v1/libexam.a",
+      "bytes": 7874826,
+      "sha256": "c0cc9b9462d7ee7f45371ba6ac0031312c5d151fad880ed9eee311c2ca1c0547"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v1/exam3d_gfs.o",
+      "bytes": 410888,
+      "sha256": "7fd5059f1a35850b3b905f09fa54046a11d72c1d1c019d2c27592044f6817b68"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v1/unified_native_general.exe",
+      "bytes": 12979776,
+      "sha256": "96b348b57cbc9d18e361b7b4b015573bf526c2deec0f7b018661cbb905a3c586"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v2/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v2/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v2/libexam.a",
+      "bytes": 7892674,
+      "sha256": "eac95a2eceaf3c13a4770e82d35a0b83fc779e139cd97910300b49ce6ed3b13f"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v2/exam3d_gfs.o",
+      "bytes": 428736,
+      "sha256": "9d90be2d41ff1ebc6f86680f1d0749caec43ea757edf6e82d744f63467802a26"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v2/unified_native_general.exe",
+      "bytes": 13079848,
+      "sha256": "f7626bb0c2cb8262cc672c670b4abc03b78338fe2a18c55a9c4fbb06b2333a05"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v3/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v3/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v3/libexam.a",
+      "bytes": 7892970,
+      "sha256": "0ce71b00c7d14bea5c833235f8b90db09be4f8434c3d81d91c136b8c465a11aa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v3/exam3d_gfs.o",
+      "bytes": 429032,
+      "sha256": "79718064f0c27f46a8f31d93531f080c057c9ad320979833e8096ec5837f5137"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_build_v3/unified_native_general.exe",
+      "bytes": 13079984,
+      "sha256": "cfd0c30e7ac6df2e31f13870daf198718bb2ac62287975a347624252a6347f61"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d",
+      "bytes": 45184,
+      "sha256": "2718d2cafdf9062c04131c2593d24e8d7b5add9dfee5c1b8d0d2ae1b43441bfc"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v2/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "7eb353323f2d6b09dfcd48384485dd62ea7ef19dc4751252140296022d6638c0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v2/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "398bb73e9e67ec5a4dfe88be13e5eb98af46a5784f4323b46f81ce0588218892"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_fd_v2/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "398bb73e9e67ec5a4dfe88be13e5eb98af46a5784f4323b46f81ce0588218892"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "df473fd76cb3fd66be737ae3b8a57170e1009abdcacb9680a2246424923e8be9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "6da7c996d8d3ebf21abe03d7a641e032abd5b4c21cbacb090bf2e0ab72a34644"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "a3695a8b7f636b0e28da877fc74c99e03dcc2f208ac54d683edaeac10501d3fa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "152c3bf3c1d877cfdc5e9a5592243972864cfb134c9d2d062c6a0a98eb30c083"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "cfe420d159e0c9969b21c0b1fd274d69cc5331b410a2b4ca65bac9b9c4c2c46d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "152c3bf3c1d877cfdc5e9a5592243972864cfb134c9d2d062c6a0a98eb30c083"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "3ba666bc6e46cf332f95d700b3b43617b3c3e8f42df92d376ccdaa1a120adac0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "7bfaed74a3394d96f80a70a0a043c4b4b8ae80da4c0c57ceeadaa8d21bcb0371"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "2b0f8f7cbc11567d8b721493d679060bf1b9bfab3b3d64e135fe15949f5ae60e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "9757639424b1881c4e11e3bce2c20eab695c71d412e000ebf4ebe8bde32c1cce"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "129b0d3610f4b066721b1f8bfc424328722213bc7f7581469b77ca4143993636"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "825ed964d68c1ab77a64fd5fc4cb4ac9d172add472ba71a620658ac120ea233a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "90c5be040c0a9d31f305fbd0e592ec4b0f612ede3f8c48f1f370beb0c4142e3f"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "54198aec56ce480f785f430819ae0c1cc9af12c8fa7035db21c8cdbccf38385a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/moving_contact_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "4862b925ef483bc55df506556168a90cc58b4d8925f3b14f5260dea9c84b7ea5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "e6a36cffb2e4b64385bb26d07ee4e2b2a18aa483fa8d952cc03b3d6a1418898d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "b8ae5c719a45c5a1eadd3f5df90cd90914eb3e6f75fc99551352fba411a77b70"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "e6a36cffb2e4b64385bb26d07ee4e2b2a18aa483fa8d952cc03b3d6a1418898d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "21011ec7263e2809c8ea74b93943a060348de46604011254bf724926c0794db5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "cee41b1c37059b6d79b49fea319e859d835e0748061cf1669b03e7a3c048b12a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "7aa3ebd2674a47e0be2d61bf1e1b0c89c57210911373277c5ba9f2fc4b95ca3c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/contact_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "621fe79ed2e9beb23e55bec3efdcfba648ada3f1e93f820289411830ca2ae304"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/contact_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "fc826186ea71ce09486db61305305e90998541d42de933fa882d4ad82c990c98"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/contact_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "e82f918c3ee7807d3be34e0a1bbe2970e3f0881203aa705c486493403ed95d26"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "60bcb23b667aca95a57c7dc978157c614a0c34b0a0ef4db9dbcdbf6ae04908b3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "0ffffc96b181fc4762827c612d9ac78c3562168c7a2c161fb6abfd70b961fe5b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "60bcb23b667aca95a57c7dc978157c614a0c34b0a0ef4db9dbcdbf6ae04908b3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "18c417bf2c59e8c35425d6525cbdca5816c4590497e49cae71b041388f63e356"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "f0c4a530afbb5b61e664c9ada76ba54fce6168665ab5be7b0c5f1a3075b7e4c2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "ab4986b1784c8c60b2f2065041f7aaf86ae0c728eab3cd4dcea1b3a67e5c1167"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "e0487461e18b30af87424e4e983c82e6d4e741c64a6574aa5952c09fcde6c10e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "e7b87b727e161136a5e6ab7c1bd8cf241b3737622078a1cbb1b878ee8f86d2e7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "e0487461e18b30af87424e4e983c82e6d4e741c64a6574aa5952c09fcde6c10e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_capture_build_v1/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_capture_build_v1/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_capture_build_v1/libexam.a",
+      "bytes": 7896450,
+      "sha256": "33636da7bbf8329cd38268710d8ec76729c7693702ce7f8806da1a84b3adac8b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_capture_build_v1/exam3d_gfs.o",
+      "bytes": 432512,
+      "sha256": "e670a5d80ea9bbc1f0c129796de9f35be7633d455163a62f97e8dafadc0c7d5e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_capture_build_v1/unified_native_general.exe",
+      "bytes": 13081320,
+      "sha256": "c47b2d50f5c31db15fda84be0b909b00e2e9abd25ca8643fdd273b659632e4c9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_capture_v1/shear_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "e6a36cffb2e4b64385bb26d07ee4e2b2a18aa483fa8d952cc03b3d6a1418898d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_capture_v1/shear_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "e6a36cffb2e4b64385bb26d07ee4e2b2a18aa483fa8d952cc03b3d6a1418898d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_capture_v1/sod_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "60bcb23b667aca95a57c7dc978157c614a0c34b0a0ef4db9dbcdbf6ae04908b3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_capture_v1/sod_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "60bcb23b667aca95a57c7dc978157c614a0c34b0a0ef4db9dbcdbf6ae04908b3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/voro.o",
+      "bytes": 123832,
+      "sha256": "10fa6d692d8f8e5ea69e2c3226aefd13d8b03392620432d07f56721ea3518ae8"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/libmyvoro.a",
+      "bytes": 153122,
+      "sha256": "23b0a107dba70c221f5b7bc2a7e5b2127b69aaf807a78d5e48b7b54622ea3fb5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/geometry_replay",
+      "bytes": 699336,
+      "sha256": "cd39db954c2a20fe368201bd599b63be8239b340e67b31157c426cd858170e01"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/libexam.a",
+      "bytes": 7897074,
+      "sha256": "4f1e60b10e50c12f44d7ff2c2169a7b5b736635fb0167ffc20c432f6d3e887ff"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/exam3d_gfs.o",
+      "bytes": 433136,
+      "sha256": "6f3bd4bfb37f16a08f88c5be40072eaaac7a661b1061ef47894f97386ba88ca7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v1/unified_native_general.exe",
+      "bytes": 13079480,
+      "sha256": "18d982a8ec17e7525fd3f1c3fbfb99ab7f4fbc26adb7a98261a2ffe4d55f2dad"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/voro.o",
+      "bytes": 123832,
+      "sha256": "10fa6d692d8f8e5ea69e2c3226aefd13d8b03392620432d07f56721ea3518ae8"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/libmyvoro.a",
+      "bytes": 153122,
+      "sha256": "23b0a107dba70c221f5b7bc2a7e5b2127b69aaf807a78d5e48b7b54622ea3fb5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/libexam.a",
+      "bytes": 7897498,
+      "sha256": "d454b8bffdf79e76cf7e3d1a39c994f5a26ba8a0600bbcdad34f98e621ad6a5b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/exam3d_gfs.o",
+      "bytes": 433560,
+      "sha256": "526499131947d27191f801139d0299a083d305c7892bed617123a8e0699369bb"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v2/unified_native_general.exe",
+      "bytes": 13079648,
+      "sha256": "76395f6d362e2ed93701c445a84960edff6ffab6cdd6ca5b8f2d7a31a4473239"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/voro.o",
+      "bytes": 127800,
+      "sha256": "64a9ca50bc6782e9c2916da26077ee6bc05af3790890d59b0c29324390ca57fd"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/libkh.a",
+      "bytes": 283054,
+      "sha256": "ab40fb668af9515a8c1205ed3168f43d1565bcbd78746f8564b228a7688b9d43"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/libmyvoro.a",
+      "bytes": 157118,
+      "sha256": "bfcb8b21a34e4d65f442699defb8a711b24a59a385a093e77553b33d4cbaa2dc"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/initial3d",
+      "bytes": 18128,
+      "sha256": "14a848ead26ab1755c6d842d3cd6fb17c742cec11ec196e3dc93e8886db996f7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/libexam.a",
+      "bytes": 7899084,
+      "sha256": "438b4fc629275e23ee3c82b0da8cb89e01abcdd11a00dae913cd6a23dc0fc1ea"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/exam3d_gfs.o",
+      "bytes": 435088,
+      "sha256": "bf797335f1d73d667f01d4fe9f396b027a3cc61f4aa63f54c57da77ead837032"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_build_v3/unified_native_general.exe",
+      "bytes": 13081872,
+      "sha256": "52a3415df9c5f56f5a03adf4f344baf339d47bb4b0b691156b489db42f6e29c9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strict_geometry_regression_v1/legacy_geometry",
+      "bytes": 53432,
+      "sha256": "ae4618f2a1254d2e3cbc2d5196a22f43bc00896d10898b3bc78d5b802fdbb8b9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strict_geometry_regression_v1/replay",
+      "bytes": 699336,
+      "sha256": "f4ccbf7a348edbaa3b31ade1a2eeb6d2bf272833a5d0364709f438c5a2dc305d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_geometry_fd_v1/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "398bb73e9e67ec5a4dfe88be13e5eb98af46a5784f4323b46f81ce0588218892"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/contact_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "7eb353323f2d6b09dfcd48384485dd62ea7ef19dc4751252140296022d6638c0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/contact_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "2718d2cafdf9062c04131c2593d24e8d7b5add9dfee5c1b8d0d2ae1b43441bfc"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/contact_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "398bb73e9e67ec5a4dfe88be13e5eb98af46a5784f4323b46f81ce0588218892"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "4095ccfeffc29e92e5ef12ea3afa4ce2fe5e4960ae8b6d764a20cfbb4a73501c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "6da7c996d8d3ebf21abe03d7a641e032abd5b4c21cbacb090bf2e0ab72a34644"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "a3695a8b7f636b0e28da877fc74c99e03dcc2f208ac54d683edaeac10501d3fa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "feb39cbc5eee98ce7424981f14a370949e9390b18d203745db382bfc496e086e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "cfe420d159e0c9969b21c0b1fd274d69cc5331b410a2b4ca65bac9b9c4c2c46d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "152c3bf3c1d877cfdc5e9a5592243972864cfb134c9d2d062c6a0a98eb30c083"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "b5aa874ba4a0497d2510d2e29f75ccac668e29f99016499849489288cf9abdfa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "7bfaed74a3394d96f80a70a0a043c4b4b8ae80da4c0c57ceeadaa8d21bcb0371"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "2b0f8f7cbc11567d8b721493d679060bf1b9bfab3b3d64e135fe15949f5ae60e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "bfd55c991e3bf1db9b4d491f90f538b6b10568bd30b5bc5d463c643aa1151571"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "129b0d3610f4b066721b1f8bfc424328722213bc7f7581469b77ca4143993636"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "825ed964d68c1ab77a64fd5fc4cb4ac9d172add472ba71a620658ac120ea233a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "e0aa8904109f2e11a8ccb01031d0e2d1d9efd3697c64035d785d5373c3c35bd9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "54198aec56ce480f785f430819ae0c1cc9af12c8fa7035db21c8cdbccf38385a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/moving_contact_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "4862b925ef483bc55df506556168a90cc58b4d8925f3b14f5260dea9c84b7ea5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/shear_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "73a53836dd172b3a1a784e47f86e5e3db0ff52cbc9f1ef3087c44a3bfe03799a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/shear_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "b8ae5c719a45c5a1eadd3f5df90cd90914eb3e6f75fc99551352fba411a77b70"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/shear_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "e6a36cffb2e4b64385bb26d07ee4e2b2a18aa483fa8d952cc03b3d6a1418898d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "8d63d5734241c409f3575d182f21b3cab0342a9c010b26d8780cdbd2ed2ee274"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "cee41b1c37059b6d79b49fea319e859d835e0748061cf1669b03e7a3c048b12a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "7aa3ebd2674a47e0be2d61bf1e1b0c89c57210911373277c5ba9f2fc4b95ca3c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/contact_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "621fe79ed2e9beb23e55bec3efdcfba648ada3f1e93f820289411830ca2ae304"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/contact_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "fc826186ea71ce09486db61305305e90998541d42de933fa882d4ad82c990c98"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/contact_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "e82f918c3ee7807d3be34e0a1bbe2970e3f0881203aa705c486493403ed95d26"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "e34871314432891271b0b7728db256ecb87da42b8c5d74cd7e20945850a3e402"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "0ffffc96b181fc4762827c612d9ac78c3562168c7a2c161fb6abfd70b961fe5b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "60bcb23b667aca95a57c7dc978157c614a0c34b0a0ef4db9dbcdbf6ae04908b3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "fcfc8ef94b2b1da9543aea65a5731698980b340bcc00829b6fdb1dfc97ce90ec"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "f0c4a530afbb5b61e664c9ada76ba54fce6168665ab5be7b0c5f1a3075b7e4c2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/sod_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "ab4986b1784c8c60b2f2065041f7aaf86ae0c728eab3cd4dcea1b3a67e5c1167"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/shear_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "bc90afc680b0a2e583729c3bf3c7447ba70d419731c02425143d75c8f81cc613"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/shear_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "e7b87b727e161136a5e6ab7c1bd8cf241b3737622078a1cbb1b878ee8f86d2e7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_trials_v1/shear_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "e0487461e18b30af87424e4e983c82e6d4e741c64a6574aa5952c09fcde6c10e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/sod_N32_axis/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "d4311678023e09d18b9c1bd3ac4c805a09cfe39e6822ecbe254460ee76a48833"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/sod_N32_axis/initial.l3d",
+      "bytes": 2883712,
+      "sha256": "e9cae81f86f389b8f6f169e2ab8d2293fbf2f0e1a7f6b223d2085a3d087bd46b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/sod_N32_axis/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "6ed9e5ca72fc537dc6e89cb3834a83cd02b75c02fcc6f0c1195a30d6297c3971"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/shear_N32_diagonal/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "757c09b6e616d49ea3ed32eb037ec905faa27cdf5f7b4a2c76646b1d07b48566"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/shear_N32_diagonal/initial.l3d",
+      "bytes": 2883712,
+      "sha256": "a2737f4dd8dc52b02f59f7bd4295f32c7e587d77d0ade0e29aa2b87de0be0c29"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/shear_N32_diagonal/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "f954377a6d118743508606f91e6933153296e64bfe615214bb7ab15751df68c4"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/sod_N32_diagonal/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "41f96ab9006d68ec3835fbdd8a6e39d74bcd417b197dd6d98823ad6ffc68abbe"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/sod_N32_diagonal/initial.l3d",
+      "bytes": 2883712,
+      "sha256": "391dfe37b375699273d00a011f36aa673ef4969b02d8f5222af0b1a50f28d27d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_refine32_v1/sod_N32_diagonal/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "1ccbe8f4d49975933a80f9045590d9ea3779428ffef12519bf13563c9350ade6"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strict_endpoint_audit_v1/float",
+      "bytes": 36528,
+      "sha256": "131738d11d100a67b8425119bc9e625fe207fd87a638b1e862aebdc4d92cbad0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/strict_endpoint_audit_v1/double",
+      "bytes": 40712,
+      "sha256": "5f58c910feb0ef2b96b77d52ac6e1229ff8910c0b1d333d27b6b7afde2331a9f"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/contact_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "7eb353323f2d6b09dfcd48384485dd62ea7ef19dc4751252140296022d6638c0"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/contact_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "2718d2cafdf9062c04131c2593d24e8d7b5add9dfee5c1b8d0d2ae1b43441bfc"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/contact_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "398bb73e9e67ec5a4dfe88be13e5eb98af46a5784f4323b46f81ce0588218892"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "4095ccfeffc29e92e5ef12ea3afa4ce2fe5e4960ae8b6d764a20cfbb4a73501c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "6da7c996d8d3ebf21abe03d7a641e032abd5b4c21cbacb090bf2e0ab72a34644"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "a3695a8b7f636b0e28da877fc74c99e03dcc2f208ac54d683edaeac10501d3fa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "feb39cbc5eee98ce7424981f14a370949e9390b18d203745db382bfc496e086e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "cfe420d159e0c9969b21c0b1fd274d69cc5331b410a2b4ca65bac9b9c4c2c46d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "152c3bf3c1d877cfdc5e9a5592243972864cfb134c9d2d062c6a0a98eb30c083"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "b5aa874ba4a0497d2510d2e29f75ccac668e29f99016499849489288cf9abdfa"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "7bfaed74a3394d96f80a70a0a043c4b4b8ae80da4c0c57ceeadaa8d21bcb0371"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "2b0f8f7cbc11567d8b721493d679060bf1b9bfab3b3d64e135fe15949f5ae60e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "bfd55c991e3bf1db9b4d491f90f538b6b10568bd30b5bc5d463c643aa1151571"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "129b0d3610f4b066721b1f8bfc424328722213bc7f7581469b77ca4143993636"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "825ed964d68c1ab77a64fd5fc4cb4ac9d172add472ba71a620658ac120ea233a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "e0aa8904109f2e11a8ccb01031d0e2d1d9efd3697c64035d785d5373c3c35bd9"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "54198aec56ce480f785f430819ae0c1cc9af12c8fa7035db21c8cdbccf38385a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/moving_contact_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "4862b925ef483bc55df506556168a90cc58b4d8925f3b14f5260dea9c84b7ea5"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/shear_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "73a53836dd172b3a1a784e47f86e5e3db0ff52cbc9f1ef3087c44a3bfe03799a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/shear_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "b8ae5c719a45c5a1eadd3f5df90cd90914eb3e6f75fc99551352fba411a77b70"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/shear_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "e6a36cffb2e4b64385bb26d07ee4e2b2a18aa483fa8d952cc03b3d6a1418898d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N8_axis/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "8d63d5734241c409f3575d182f21b3cab0342a9c010b26d8780cdbd2ed2ee274"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N8_axis/initial.l3d",
+      "bytes": 45184,
+      "sha256": "cee41b1c37059b6d79b49fea319e859d835e0748061cf1669b03e7a3c048b12a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N8_axis/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "7aa3ebd2674a47e0be2d61bf1e1b0c89c57210911373277c5ba9f2fc4b95ca3c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/contact_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "621fe79ed2e9beb23e55bec3efdcfba648ada3f1e93f820289411830ca2ae304"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/contact_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "fc826186ea71ce09486db61305305e90998541d42de933fa882d4ad82c990c98"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/contact_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "e82f918c3ee7807d3be34e0a1bbe2970e3f0881203aa705c486493403ed95d26"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N8_diagonal/snap_000001.l3d",
+      "bytes": 45184,
+      "sha256": "e34871314432891271b0b7728db256ecb87da42b8c5d74cd7e20945850a3e402"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N8_diagonal/initial.l3d",
+      "bytes": 45184,
+      "sha256": "0ffffc96b181fc4762827c612d9ac78c3562168c7a2c161fb6abfd70b961fe5b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N8_diagonal/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "60bcb23b667aca95a57c7dc978157c614a0c34b0a0ef4db9dbcdbf6ae04908b3"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N16_axis/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "fcfc8ef94b2b1da9543aea65a5731698980b340bcc00829b6fdb1dfc97ce90ec"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N16_axis/initial.l3d",
+      "bytes": 360576,
+      "sha256": "f0c4a530afbb5b61e664c9ada76ba54fce6168665ab5be7b0c5f1a3075b7e4c2"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/sod_N16_axis/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "ab4986b1784c8c60b2f2065041f7aaf86ae0c728eab3cd4dcea1b3a67e5c1167"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/shear_N16_diagonal/snap_000001.l3d",
+      "bytes": 360576,
+      "sha256": "bc90afc680b0a2e583729c3bf3c7447ba70d419731c02425143d75c8f81cc613"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/shear_N16_diagonal/initial.l3d",
+      "bytes": 360576,
+      "sha256": "e7b87b727e161136a5e6ab7c1bd8cf241b3737622078a1cbb1b878ee8f86d2e7"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_trials_v1/shear_N16_diagonal/snap_000000.l3d",
+      "bytes": 360576,
+      "sha256": "e0487461e18b30af87424e4e983c82e6d4e741c64a6574aa5952c09fcde6c10e"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "d4311678023e09d18b9c1bd3ac4c805a09cfe39e6822ecbe254460ee76a48833"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/initial.l3d",
+      "bytes": 2883712,
+      "sha256": "e9cae81f86f389b8f6f169e2ab8d2293fbf2f0e1a7f6b223d2085a3d087bd46b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "6ed9e5ca72fc537dc6e89cb3834a83cd02b75c02fcc6f0c1195a30d6297c3971"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/shear_N32_diagonal/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "757c09b6e616d49ea3ed32eb037ec905faa27cdf5f7b4a2c76646b1d07b48566"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/shear_N32_diagonal/initial.l3d",
+      "bytes": 2883712,
+      "sha256": "a2737f4dd8dc52b02f59f7bd4295f32c7e587d77d0ade0e29aa2b87de0be0c29"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/shear_N32_diagonal/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "f954377a6d118743508606f91e6933153296e64bfe615214bb7ab15751df68c4"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_diagonal/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "41f96ab9006d68ec3835fbdd8a6e39d74bcd417b197dd6d98823ad6ffc68abbe"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_diagonal/initial.l3d",
+      "bytes": 2883712,
+      "sha256": "391dfe37b375699273d00a011f36aa673ef4969b02d8f5222af0b1a50f28d27d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_diagonal/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "1ccbe8f4d49975933a80f9045590d9ea3779428ffef12519bf13563c9350ade6"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_geometry_fd_v1/snap_000000.l3d",
+      "bytes": 45184,
+      "sha256": "398bb73e9e67ec5a4dfe88be13e5eb98af46a5784f4323b46f81ce0588218892"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt4/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "a3e1bdf4a4821a6902aa76083257819817cc1c86c80c18b897c73f06de7b03e6"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt4/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "6ed9e5ca72fc537dc6e89cb3834a83cd02b75c02fcc6f0c1195a30d6297c3971"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt2/snap_000001.l3d",
+      "bytes": 2883712,
+      "sha256": "81707487f55b66d54e274e0ed18983b3ff765a2b164e1aa4013a96149008ae58"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt2/snap_000000.l3d",
+      "bytes": 2883712,
+      "sha256": "6ed9e5ca72fc537dc6e89cb3834a83cd02b75c02fcc6f0c1195a30d6297c3971"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/bounded_geometry_final_regression_v1/legacy_geometry",
+      "bytes": 49472,
+      "sha256": "84fbe921a205753409f376594f01a8e844bd675e9155c920f6f652b24fe2e27b"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/bounded_geometry_final_regression_v1/replay",
+      "bytes": 701352,
+      "sha256": "becd8fb962149f04fc60012d96e49c77ee88fa1e6feb6d94fd8c93521640bcdb"
+    }
+  ],
+  "original_symlinks": [
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_trace_v1/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/planar_symmetry_frozen_fit_v1/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N256_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N256_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/contact_N64_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/contact_N64_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N128_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N128_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_shear_corrected_v1/N128/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N64_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_diagonal/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N128_diagonal/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N32_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/shear_N32_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/shear_N64_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/shear_N64_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/contact_N32_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_contact_preflight_v1/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N64_diagonal/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N64_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N64_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N32_diagonal/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/moving_contact_N32_axis/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/moving_contact_N32_axis/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/solid_angle_periodic2d_v1/sod_N64_diagonal/khout.000001.dat",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/general2d_trial_v1/sod_N64_diagonal/initial.bin"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v2/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_fd_v1/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_fd_v2/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/contact_N8_axis/snap_000001.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v2/snap_000001.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/contact_N8_axis/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/contact_N8_axis/snap_000000.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v2/snap_000000.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_capture_v1/shear_N8_diagonal/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/shear_N8_diagonal/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_geometry_capture_v1/sod_N8_diagonal/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_trials_v1/sod_N8_diagonal/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_strict_geometry_fd_v1/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_geometry_fd_v1/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_contact_preflight_v1/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt4/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/initial.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt1/snap_000001.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/snap_000001.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt1/log",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/log"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt1/snap_000000.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/snap_000000.l3d"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_temporal32_v1/sod_N32_axis_dt2/initial.l3d",
+      "target": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/unified3d_endpoint_refine32_v1/sod_N32_axis/initial.l3d"
+    }
+  ],
+  "archive_sha256": {
+    "Research/FaceFit3D_20261104/README.md": "1899aaaa64abc3771edef26484f69344e1dcebb3d1a8f9bd42307cae3a0eab4e",
+    "Research/FaceFit3D_20261104/astra_stage_review.md": "dc26e2d82d67d3df16e380a151ee41ddea8341c2de366af04d47523efab84fcf",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/build0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/build1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/commands.json": "b750fb706af8e2836abfa9982d738c295c49df496a3d04417b7250b72d1be8e4",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/legacy_geometry.jsonl": "50cde977f030f2acbc82848a0e9fb5442daa3ed946b1d92abee0cc4792e807d1",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/legacy_geometry.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/results.json": "1f34538aab5827300b732afcc384683f10111e594b558a0fb1d4a1187d5b0386",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/shear_N8_diagonal.jsonl": "b82fee120b420800eb72f84b80134802b67f95b1e1bd164279306a7453f49527",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/shear_N8_diagonal.log": "08342e62f206038e647d36983a4b73e6397ce2faeaf085e2a2dc1ba94574dd0f",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/sod_N8_diagonal.jsonl": "3619bc40a80f0621f517138ec386a9bd3e71b5156412df553b4a5a8b94607813",
+    "Research/FaceFit3D_20261104/bounded_geometry_final_regression_v1/sod_N8_diagonal.log": "51f4e54183e67defd36c3d61caa397dfe4893f3de3f6ee867fb79eac936bfef7",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/commands.json": "3c9ce0035ace9d9cbb80a669b0c2dfdd9de779aea074eee29a01fc57c6f7ef41",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/compile_results.json": "e2e39505cce4782c641a9f1f794343a39ec4ea33074da3f5af821bc9199effd7",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/exam.log": "023bf3b48f11ea74000b9f87226d7c4c292913aa0456273d0b39ffae4ab31f4e",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/exam_gpu_extract.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/link_command.json": "5ed4bb896f76ca2a23f887c2ffb473ddef37383c7e8e475894407cc6c1baf398",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/link_initial_missing_libkh.log": "8d16d4cdfc5fd9cec2c31c6fab8d065cb327f8142f88640492012ce263c74d9e",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v1/manifest.json": "be8178213fab6358b05a7628e34b0360da72b3e2bfd772b959044766c9a771ca",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/command.json": "3cecbd8787a64f336591c67cc8c2d1110b6f86af7afa5cffc204c53fa400213e",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/frozen_source/Exam/NativeU64/gfs_unified_kdk.inc": "c1e64784c01f558e8ae929726b35d9a5ee42f757d150fd5507a954405343755d",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/frozen_source/Exam/NativeU64/gfs_unified_planar_audit.inc": "7cf29796552c0943acde1d3f27b2a2dbd100d188b8c836be360d996609c56cc3",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/frozen_source/Exam/NativeU64/gfs_unified_viscosity.inc": "15b115fedb615ba814d6b0a255d97b58cc82314c1d968221e02b2e2b38a11b80",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/frozen_source/Exam/gfs_velocity_fit.h": "07511a6e11d6c65ebbb7efe827ddf4b53a8ddfa62f243062a73c050a834789b1",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/link_command.json": "0122745eaf8e54c74efc155501b39498a3fdf8e356216ec7a0943fc3b313932a",
+    "Research/FaceFit3D_20261104/planar_symmetry_build_v2/manifest.json": "b59c94ca072ba21abeb599daf4e3ee985d0a2db9e0e011c9f7356323ae8294d6",
+    "Research/FaceFit3D_20261104/planar_symmetry_frozen_fit_v1/environment.json": "685b2cedfcc1f355fa033dcee8079cf87fdf5712ce315453026d682ecdc8cd8e",
+    "Research/FaceFit3D_20261104/planar_symmetry_frozen_fit_v1/log": "d0455a39345735a85b88991d70e0aedfd6b3495c0446818ee60046d89ac2e714",
+    "Research/FaceFit3D_20261104/planar_symmetry_frozen_fit_v1/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/planar_symmetry_frozen_fit_v1/process.json": "8270acbb367aa59dde91b7c7fbe380ae1e892bf9e6f7fba15472ab1f78e1514e",
+    "Research/FaceFit3D_20261104/planar_symmetry_frozen_fit_v1/registration.json": "048304e6c4d29e50f4c58d739d5064fea76c603e3493fce055d252d1ba50321f",
+    "Research/FaceFit3D_20261104/planar_symmetry_frozen_fit_v1/result.json": "ea63b8b7820a27c4d29b2e6f6b10271b8613ca169d43b009b2f89fb5ca6ab498",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/environment.json": "1a8df361ccd5be1d63d7f653f1014fe98e4d887fef5d700201046aba07417459",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/log": "569c0ad74efcec817452f32c643714a3b5ba063a104345ad87b1e1bd110be0c5",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/process.json": "091660d642d71c8dee9a2cdd96abbfee4d322215ad20947b6560561897896adc",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/registration.json": "eb09c46173825523a079ec2f948142666bf3851c619ad8a6fbdb4e44db53af54",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/result.json": "8b8e2c1981fb943892c6f08dd5f944495259a4f0f894d27e79edeebf52032dfb",
+    "Research/FaceFit3D_20261104/planar_symmetry_trace_v1/unified_planar_fit.csv": "1a234f369bc261fc52bd58603349c6877d49fb96e8386c859e96b22737c09677",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/commands.json": "5cd9cfb96ae9efff109910c22f005415ffca04c84f8c8a875f8dc8d3f19120a9",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/compile_results.json": "0a99e0f8a0a04d3d9837ccf01ae1561912607be5a0e876f3ed43b14fea56f9b0",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/exam.log": "023bf3b48f11ea74000b9f87226d7c4c292913aa0456273d0b39ffae4ab31f4e",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/exam_gpu_extract.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/frozen_source/Exam/NativeU64/gfs_unified_gpu.inc": "113fcc6ee45f7ad0ee4f233c95eed097a8838d4b64668f06c1129e2b628ced80",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/frozen_source/Exam/NativeU64/gfs_unified_kdk.inc": "c1e64784c01f558e8ae929726b35d9a5ee42f757d150fd5507a954405343755d",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/frozen_source/Exam/NativeU64/gfs_unified_planar_audit.inc": "7cf29796552c0943acde1d3f27b2a2dbd100d188b8c836be360d996609c56cc3",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/frozen_source/Exam/NativeU64/gfs_unified_viscosity.inc": "f597fdbf21b6b6995bf67348f326403b610a9bb8cb3904c7af2c4edf9933a0c2",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/frozen_source/Exam/gfs_velocity_fit.h": "cf77f96883833a0fb43cc11d394b3948945404f7a2933bd604b4aadf1244af37",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/gfs_unified_gpu.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/link_command.json": "62f6c4251addde725756bb56f1cef2768e9e10ec7a3eb75710447ff65989243b",
+    "Research/FaceFit3D_20261104/solid_angle_build_v1/manifest.json": "f8134dbc0eddb6cdbc65e83ef771ef1850c419c698a56a72a91de4167745a756",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/analyse.py": "7a2ce86e5d66b2fd643018a6af0accc923abcc41aa800c16fc6fc16d4ada40b0",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/assessment.json": "4b2e09f5f0b2092597cef76ebdf6e75b37f38fff7640ac38cfacf0fde34f2b1c",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N32_axis/environment.json": "2f62d82a7d165b984dd6a433fae5ea0a154cab0df2bbdabdc7b20bf6fe5034cc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N32_axis/log": "801aedc3e5fc46721e95d73e6cae40e854ab80ec3c656fe6df2417f191ccffc8",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N32_axis/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N32_axis/process.json": "fbeee3db44db3c7ed0964cf006b98a56f72fa18fcbf071bff0dad39da1a6df6c",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N32_axis/result.json": "c93cbaf79d1f440f137663c46a4c616f0a5b5e40a852c857ed7463a57cfe6bc7",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N64_axis/environment.json": "2f62d82a7d165b984dd6a433fae5ea0a154cab0df2bbdabdc7b20bf6fe5034cc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N64_axis/log": "13e9bab41e13814d0ff4af7ed56d8a12700639b407b573b18d74a92a358c4759",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N64_axis/process.json": "48e0307af3656cf6db7e25f4f63a84654f67431963380a1143a9176a7fd23ae1",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/contact_N64_axis/result.json": "cef51327085cc753600c8e4435ce6b335b348468aa10bed83389f472e38ac10d",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_axis/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_axis/log": "c71a6b573f627fd5048a3593be3fd89e182a803852f907d834a2e6904528a148",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_axis/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_axis/process.json": "f4d5ee7a5238f3b94cf196115cc26b3a1a75539f92959e1e21760139de970313",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_axis/result.json": "5972676ba071952944eb3dcc4a5020368fb0fa85942286ed245b7982b001bccf",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/log": "fca761c57031c5f19d2892a0316d798800400ab086180c5811ab8184c9b0c915",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/process.json": "5b57dca731db15effbde6ffc9f2b2cb88423774d0d7a07995a4cc5d98e5d2e6c",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N32_diagonal/result.json": "e3ea7fd2b871af5f37e0147d3619565a65898f27012db74569c8ea1a41363081",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_axis/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_axis/log": "0d1f445e497b0fd208906bbc67e878351704602f4534b2fefd4e89fb4e6667df",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_axis/process.json": "c6c0a44f29f196ad862ffdc8686a839917977732c2f638c06ce264c2d179a55a",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_axis/result.json": "beef32ee923bf47dbfbee228edaad0eecfad1a80155d1dce43deb118ea06c4ff",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/environment.json": "caa29e26deffbd83e00c135f9be11200147f3c2ac14c22c01302efe514e474fc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/log": "6d3125962d01fd477431a56b30db5bfbab49e46f700a9c628d88f934b6ead06f",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/process.json": "8bc16658cafc32104bc1dee46ed58615c4db0484a478cf1ef02f7537db5faf9b",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/moving_contact_N64_diagonal/result.json": "fca5e0cbc2a0daa4f3bc5b392aa98b2ecb3380843615df88e06ba2b7737549ad",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/registration.json": "5ffaf7504f04de4edaa73f9cd05bb36512eb700e319f11e0b62a6042b4ee5e42",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/results.json": "ec4aa5ecac65fbc482c34e24a50fae7cb556fb2e394593194788adbebac278df",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/run.py": "1320dac6d4a6147f7a1a6d499f56915abe96703083a8d136b5efadcafa40c880",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N128_axis/environment.json": "b3037c4f6b75b83571d22c5c1894d0b63c9cb45fa0766762d500706d96cca0d2",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N128_axis/log": "7b14e14d7f81953a311c974e7dce4199ca35e39837f40ffe8bae47c6325ee86b",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N128_axis/params.dat": "0b230a34d89a3226b4b4e1e6989952e71672528e6963ab42bf9b81c52522a3a2",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N128_axis/process.json": "3da851bd69f35fe4984b2cd3c4e34246d1377f903c4e2df4bd15365b5771a5cc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N128_axis/result.json": "e0f0803cbf87f68121e0127c05497153211d0e2b3fd2684f4e14298450de2c9e",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N32_axis/environment.json": "b3037c4f6b75b83571d22c5c1894d0b63c9cb45fa0766762d500706d96cca0d2",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N32_axis/log": "bdba2f3b2df3f0d1777170ad03d2daf115d68e5a04cc59f186277a1a0f632a71",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N32_axis/params.dat": "013815a9df09f9f02de1ed0b54d2b885bd133c31e5d9dfd1434e4b43586bee28",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N32_axis/process.json": "86ddb729b2d845b3d80eb6893bb7512a4177297d6f864238fd7fd36b9c1ea6cd",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N32_axis/result.json": "00b96113b2b9ab7f4d4e1c23a62a46904de6bdf6239caf18cd7b134caba5c353",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N64_axis/environment.json": "b3037c4f6b75b83571d22c5c1894d0b63c9cb45fa0766762d500706d96cca0d2",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N64_axis/log": "5b9c6e3c60afd0d713371cd7a7b3cbaafbec17f087d27a0db331ad25287e8edf",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N64_axis/process.json": "0209a60a0fe6778f1f067970a2a137bfd25e324f0cf6f0b1600901fcb3695a3f",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/shear_N64_axis/result.json": "0932a58089a8f95362a0839513a089fd8180db16314e3d0d31f813ee519628fc",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_axis/column_profile.csv": "b8b99d7093854095a7da4d35b3272dffbfc83d0c5e1969214e3bdd23fa66367e",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_axis/environment.json": "b164b905195191bb19f4ec58d1bdc20534e9c162233edc0333c13643f57b4252",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_axis/log": "fdeb99ded1c4882ba81757d23a6ce8c11eb8341f24ff8ae8fcd83cf42faebb06",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_axis/params.dat": "0b230a34d89a3226b4b4e1e6989952e71672528e6963ab42bf9b81c52522a3a2",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_axis/process.json": "8e5f597f31a91967b93783e286de50e201a81abdd322ac033f3f585b42e172f4",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_axis/result.json": "bab35f8405d3602ced5af83d8327ba8dd85d8568d856c263feb3d1cb607c4b2d",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_diagonal/environment.json": "b61ef866b61de4de77480a9a09028f7d9ccb526e899d62dad4d5c4038d805a61",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_diagonal/initial.json": "a8b67da1b9a6bb1e64a5eaf7acc2f4f3a70c77933417ea3a01c5599f6a01d0b8",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_diagonal/log": "e78834e3c407841fc730dafa5d76951afe35cd8aac6290e2fe9b9b647c4d3108",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_diagonal/params.dat": "0b230a34d89a3226b4b4e1e6989952e71672528e6963ab42bf9b81c52522a3a2",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_diagonal/process.json": "13a97dfd602a2ccb05231129ad0604bf09d176e688be5b1318e930b55176b976",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N128_diagonal/result.json": "f72b54601aed107be137877dad0cea764d6043bb30457b82779df41760864bba",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/column_profile.csv": "2ea8f2dabb430ad5591d7343407899094ae89c0306b4c9683dd4969308d297b1",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/environment.json": "9c1c5a5e9bbbeecb15adb2f88c2768da8132346d2e2a95d433105bfbb84b93b9",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/initial.json": "9102274ade882b05a6136dc57ef24b9599d36527677a517253a560d6602eabf9",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/log": "049a368ce31ded7b7fa651bf6ba4f8f05066255d8ad60ba226c0ce0bc9e4ebd4",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/params.dat": "7eb9b09b8879a3fe88ef708aae2f0ed59cd5276b3cac4a85f45558c0f7a60b08",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/process.json": "beeafeb2e81b7ed5b41d062f851ac2102f6e909c573082f642d01fafcd20d024",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N256_axis/result.json": "c04105f1e0522a5de5864fa86217055d440f3e6835ab4a5b9b7614bbc75b0001",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_axis/column_profile.csv": "60a44b7dc1683839bc361d0358fa219ba1251843530083ac2f93db6bd5b9f036",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_axis/environment.json": "c3f92d25b1dcaf6d5454fe816c3bcecb6858b07532248b51b6e9677a0025b736",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_axis/log": "747ca3f75d98d0a0d481f794c2931e21f23690f6b21a36ed237bb20e57daadc3",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_axis/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_axis/process.json": "39dbac42015d07d578cdd5d17bb454e18128e960bfb1189b9b3e24797e17697d",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_axis/result.json": "174cf9861a5282038e1a638d89cd9c8361072894306bd944c1b048bba30043c7",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_diagonal/environment.json": "b61ef866b61de4de77480a9a09028f7d9ccb526e899d62dad4d5c4038d805a61",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_diagonal/log": "bf3f776822ee5a9921bb996102c80eed578cdc4ebbf64a5ac61315e52cefbed3",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_diagonal/params.dat": "60f0cb949d3a736c4f60ff5a1a28983c8baebd0886d39577bf43c34844f37921",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_diagonal/process.json": "8989ddd038e684cfbf7e24c30e6193e06d659f42f355b0054785b1bf43345ce9",
+    "Research/FaceFit3D_20261104/solid_angle_periodic2d_v1/sod_N64_diagonal/result.json": "b3dfe6ef142e3f117fc0a3bbf153a84471551d1a3c71a9a4251dcc1bc50a8afe",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/blast/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/blast/stdout.log": "9248ba9772393e91e4240d09827324e8d4089fa291dd29213e7c40eaf8e600eb",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/blast/unified_blast.dat": "9f87f4dac77a15efcdd36423d3971296ebff81524dfd50bc8373ee674420d370",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/build0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/build1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/build2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/collision/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/collision/stdout.log": "d45b7bfbf0797bea7205126276c242beb07db8ec273c3c7930756aa2044045d6",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/collision/unified_collision.dat": "c8e99d80b64f555a7e0a0397c093ead05453a76044e56c04f63d9f28cd0ed69b",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/commands.json": "8a4ff86bddb2417378dce3ca6bb1f4f20e2b976ddfafef1ba4e98c16498ada8a",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/contact/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/contact/stdout.log": "a62ac7ec3abd882a9560b210342cc369fea901efb7b53e65cb12c33ba53f0f54",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/contact/unified_contact.dat": "ed0d2d0e00f5d0b6cd46ba7c1fc6e8d9a59509e30b00a463310fabca61f37d53",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/dblfan/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/dblfan/stdout.log": "10f24fb4a825b82136897263148dff2344b86e0d6725a63b2a4bc49c9afc1544",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/dblfan/unified_dblfan.dat": "88fbf639a4d6d35a6e77a0f5a0031951ed58ddd2dcaaafe4645fff3596bb04c7",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/device.json": "7fecc797b4d4807f68544f4c1d86f90e2e7c568d7f49262a812804ce568da71f",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/fit.json": "138c32bf29f5230ddf5025ac28fe16235d5b8a4db056deecea71f1efb3880677",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/lax/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/lax/stdout.log": "1dd1c86396dfda1e78616891500b15349ec9d4ee7eff7c7d0adbb94944b28e54",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/lax/unified_lax.dat": "216f113f705c502694965fc4d177e30c8e1d09422034be4cd99559be186f75ca",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/moving_contact/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/moving_contact/stdout.log": "5797c617f3408bee52e488d605a71c4b50d47176a04235159cd53f9a89e9a8db",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/moving_contact/unified_moving_contact.dat": "f65989ffadfedbae6561bbb0dda952d85c41e693c33610a08655ec7b05315277",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/noh/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/noh/stdout.log": "4d572b292227cd3fea5c114b9bc6bd844a49d458f40b36f10849028a3bf64504",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/noh/unified_noh.dat": "361b75555f55ee03bd0ce1229f3c901fbd14a6942f5ef73c84176b401b4af199",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/results.json": "4a1b98666e60045e093a16447dca5a333c922e2c77fc312eb10d33bab3eda88c",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/results_initial_path_lookup.json": "5cda0da53faf8c07ce7259eb0833bc66f7c36c34297509a213a3e6aa5ff6dea5",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/shuosher/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/shuosher/stdout.log": "c23bf43729c9833befd19ebadb5da3b9bd70d0887deec64da99614d19c41074e",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/shuosher/unified_shuosher.dat": "4d8b16ebfec02a2952ee12f7434dc537990542e1a51ad5c694c8aee30794f585",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/sod/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/sod/stdout.log": "f5fa77ec4e1038e30b1d3e7378b720a8054100fd1172f3308a5b897336189b05",
+    "Research/FaceFit3D_20261104/solid_angle_regression_v1/sod/unified_sod.dat": "2df54ccfc491532f860b2c35b0cb1988521c2336bab491d71719949ee0e9d408",
+    "Research/FaceFit3D_20261104/strict_endpoint_audit_v1/commands.json": "43615621bcfe4c14a0600cc300a2ccc121ab5bbe33c0c607a326666430bbcb01",
+    "Research/FaceFit3D_20261104/strict_endpoint_audit_v1/double.jsonl": "9cac4fede22e39ab17715e626e5aa6e718079005cb8a1fd3b5f794cb504346ba",
+    "Research/FaceFit3D_20261104/strict_endpoint_audit_v1/double_build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/strict_endpoint_audit_v1/float.jsonl": "367457fb4c495784e300d6a0d435464206a6db31cb5e9c20dd7edb7893ae67c6",
+    "Research/FaceFit3D_20261104/strict_endpoint_audit_v1/float_build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/strict_endpoint_audit_v1/results.json": "8acf3f8228dbb2b599809e4151d8dc50d0b682c1933542539afca4ef00ae155c",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/build0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/build1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/commands.json": "f291d5d38ca167d59cd2afa4cb1ab85ee2e959f65918a2a3f82571e3764cd4be",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/legacy_geometry.jsonl": "50cde977f030f2acbc82848a0e9fb5442daa3ed946b1d92abee0cc4792e807d1",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/legacy_geometry.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/results.json": "1f34538aab5827300b732afcc384683f10111e594b558a0fb1d4a1187d5b0386",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/shear_N8_diagonal.jsonl": "b82fee120b420800eb72f84b80134802b67f95b1e1bd164279306a7453f49527",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/shear_N8_diagonal.log": "c9be032736522975b5339bec9f52c9b4c92c0d41da2101cc69aac80e0804324b",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/sod_N8_diagonal.jsonl": "3619bc40a80f0621f517138ec386a9bd3e71b5156412df553b4a5a8b94607813",
+    "Research/FaceFit3D_20261104/strict_geometry_regression_v1/sod_N8_diagonal.log": "5a74236d2d658c95e72a73b7118831adb794368cbdc860fb75ecb3468a3c72c4",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/command.json": "9657b2ed0e11a5ae8e2c6f8fe0692e8af61baf17780b0c9456eac92613fb26f7",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/initial_build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/initial_command.json": "e44bd81455ed73afd6a4a57e621951b3b02a8e0b5639badf637329bf8fccabed",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/link_command.json": "2104b8e098d1111bbe98cd4c05c983e9aca975181e14ff8610e748d1cd2cc9d7",
+    "Research/FaceFit3D_20261104/unified3d_build_v1/manifest.json": "a3dfd05e04196eea9d3cc29bac595542628f2ae682576535a5d2207a1742814d",
+    "Research/FaceFit3D_20261104/unified3d_build_v2/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v2/command.json": "5815189caedba789b0f5b7290e194fb9adecbb829426faa97a1ee50915577847",
+    "Research/FaceFit3D_20261104/unified3d_build_v2/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v2/link_command.json": "64b508fd0afd42a2217e2df3c60d4adf021672ce85868dd288124f327721135c",
+    "Research/FaceFit3D_20261104/unified3d_build_v2/manifest.json": "4f4b66b068952455a5f156dcc8a7469ac04db53d440e2667156f83798ac7de98",
+    "Research/FaceFit3D_20261104/unified3d_build_v3/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v3/command.json": "5abcd1a19706a1dccd88b6f319e56e4a715e5419230039ecd4af5f53718fe81c",
+    "Research/FaceFit3D_20261104/unified3d_build_v3/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_build_v3/link_command.json": "5e86d1e094ba3ed906c7d1147dd1c0ef848b6c48dd7dc303a17b2d20ede16862",
+    "Research/FaceFit3D_20261104/unified3d_build_v3/manifest.json": "4d5a2a8febd6600618d4911e5516bd973109c7aad76090de673b7b5fbeb3acb0",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/command.json": "be6958b584609e3a69593ec9fbc398345e0ea8651d41a9a6b210b2e7bf747e31",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/frozen_source/Exam/NativeU64/exam3d_gfs.c": "3d91db2268fdbcd6ce174988ce1b13a15bd6743e1b848b9a8da8fe13eacd3cef",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/frozen_source/Exam/NativeU64/gfs_unified3d.inc": "322c2957b76891c2ffa909f81e88764480358c51bfb6bc07c2b7c4fdeb271f1a",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/frozen_source/Voro/voro.c": "57019f254dbdd644ea21c7a475051b87096a6520d5181aee9f91fe1e66ae19a2",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/frozen_source/Voro/voro.h": "b430a7a6ed84a50058a2f8b02fe0d6905d196a40f48e4a9b70c27e1dca44f1f4",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_capture_build_v1/link_command.json": "62e20152eeba258bd396b0f2097579d729dafe0bb6b3b7009c0fa92c9e090930",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/environment.json": "40b291c5440458a3c54f16dca084e9d8eb200bbf33be691a11e77f3de5e6eb58",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/initial.json": "e27f07a065bfaaea9b2068cf034fad3fd3583ad9f6fe534ea9af837a3f249a56",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/log": "c726c2bee3d92d5de9f25c53a5bf20e326f9017a394c1fea339c570b038e0596",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/process.json": "349da6dfb42943ff39cf652db4c81019e22da1f92c34dc8427aca54b41e4c806",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/registration.json": "784c4bbf66b67281f6c0e7e803216185e858948b65c939e4b4b86d998b04c543",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v1/result.json": "c950dbc4828e5e3439b406acbb4e62437bb6bfec4c6064421114960710923deb",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v2/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v2/log": "df96bcba7b6863462d03fbd9daad74771ea3d8a19b31428e249aa013c85a69f2",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v2/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v2/process.json": "b013b434d3d5e23e21fea998bbe50969bec2eb1266f8bbb2909a731cbd21f2a3",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v2/registration.json": "784c4bbf66b67281f6c0e7e803216185e858948b65c939e4b4b86d998b04c543",
+    "Research/FaceFit3D_20261104/unified3d_contact_preflight_v2/result.json": "c2fcd20220edafb9b637764c908a54cb0aa70bee322cbcc1078bca564ee94d16",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_geometry_fd_v1/environment.json": "cdb20bc4414493fb64ee65425082ea3a04769c3725c629c4bb988f191a6bfd94",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_geometry_fd_v1/log": "fb847d31592d8f977ec085034c3443028ee119212c5d7ec355f0f6c9178a8817",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_geometry_fd_v1/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_geometry_fd_v1/result.json": "76db5c9ec49935f8242a03de15dab8285784131a69b5ee3d5a0becb1f096905e",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/analyse.py": "901e875edec19dc18e5d293fde5ceab33cda15a343779626896fc5162673aa4c",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/analysis_stdout.log": "38af414dc86357856f9295f8264637eaa5ac8d3af1806f0da87e79400affe438",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/assessment.json": "f7f90f106f0c681abab9ccaece313f21d9af6d35eb3e627176c8c0b9fd177979",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/registration.json": "1f95937ec2130b4f8e4414e388305efcd1469f6c5901c89561bba1ad4b98b330",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/results.json": "ac78caaf1965112fdbe42d8cd1458d64aac52643979e960e8937fb57e2cc3896",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/run.py": "b49e647774500bc0812637a0ca58e9645db4d6268582b595be4893febbeecb63",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/shear_N32_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/shear_N32_diagonal/initial.json": "40542e0ed3e46e89519edd1d067b23a470d13a08df0017fde9a80d1c96563cec",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/shear_N32_diagonal/log": "6c17bfebf27685fb4db485994b281f8bfb854eb77b4043e19a075c1185d5f1af",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/shear_N32_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/shear_N32_diagonal/process.json": "8f1f8faf21eed7ca95cc33138fb6229039d36c26412dfc024ae5237405cfb586",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/shear_N32_diagonal/result.json": "8c2e794aaf4979503022315f9de5ac48817033c769d017d6de057e46e4ec9ae0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_axis/initial.json": "f906151f8daa9e8f411da7397b41dc040d6215ba65df434c293b5dc70ff1e131",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_axis/log": "43b0724a3409b1c3dc558e246b9e0a987e53ea743980d57da79faf9ac823294f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_axis/process.json": "4a5594572cc0d8e664b8736e53735e41632fe966d5d9a0679e49b4fd39ec3ba9",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_axis/result.json": "200745db9a53bb49ecdaed271b862d1cc0832a08fa11e6f9ecd089fe0bb9e4a1",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_diagonal/initial.json": "e3b3e5caa02a00f0b0937af65bddbba885b3cbadc39898379c6ec6221f5637b5",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_diagonal/log": "b808c66ac19a698e0a9284fe2810dae00ce87a548d989e6211c3ef7ead46b232",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_diagonal/process.json": "5dded2247a7d6d30120f44929121d970c289c81c66172e6efe6806c7f91a7224",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_refine32_v1/sod_N32_diagonal/result.json": "483c62640de322eb2f1173f47d5b14915e794616258888a70ae5d16799a2a117",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/analyse.py": "901e875edec19dc18e5d293fde5ceab33cda15a343779626896fc5162673aa4c",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/analysis_stdout.log": "1d3a1fb49e0406e15a94ed93bc0ec1124a89058c5fe429d94f7884f204b5ed34",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/assessment.json": "8222b2a7dc6f11f7f6c3dccf3dfcb20db4a4338959cbd71555911b41afa96b0e",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N16_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N16_axis/initial.json": "2853045092ee51990cae1673c2c603c4f16fb0526cf61bab17d4d5ee75331807",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N16_axis/log": "b892ffcbc109f7a8a1b77b90332ab73ac615723eaed685b5557622f401edbf8d",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N16_axis/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N16_axis/process.json": "00c7f442cdf62bc23af36259e76a91e91c95af5ea363f5dc52a8d3bc0b24b639",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N16_axis/result.json": "23403cbc86258796a47116b6e8b97597f63024083d708b6f5c226c2885767705",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N8_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N8_axis/initial.json": "e27f07a065bfaaea9b2068cf034fad3fd3583ad9f6fe534ea9af837a3f249a56",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N8_axis/log": "95272e7e94ce44637bee6c433923a35ca7aed7606bd6612ff114a0dc19e741eb",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N8_axis/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N8_axis/process.json": "a57cb708dcb16df45d4532d4b9268bfd23dd6d169d13cbbd559ca193ecd7ab61",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/contact_N8_axis/result.json": "28ed99be87591a05c5d339a989a53161a7c2b0c33a5b9b8347a3b967be133cf4",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_axis/initial.json": "c2d2a7c505ef9b493a7c980079603e721c99c465c26f22a548bd0c3323704b5b",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_axis/log": "bdef9ede022fdc109658ba13db903b469b56986e4578f094d3263b39cd186705",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_axis/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_axis/process.json": "2bfd03bce0fba57e9481d5d96a406e5d6c0c2d9eaa3d5921d2164b3711f2700d",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_axis/result.json": "76035af1481519e1a6539fa64beda83b3d3ec18f6343a111ce2a59f6be2859c1",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/initial.json": "11807987b9bf0bc06b3d57ecbff96009a88cc393669537330d15d86dd020ad37",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/log": "2209856c83bda23dfdad1a326b34d1898fa8f05afce19a8d89e95d23360202a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/process.json": "dbd054d7bcce478d65f1d2285184f4c651f0fe3b06bb976fc08038c39d5eb30f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N16_diagonal/result.json": "6c681e573f2028ffe8e20f5afbe034343db88c7631763c61927ad7dcd2b528a5",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_axis/initial.json": "0fa224cad2cefceb666b83240012e4138a33a90a03834e321c924879952ae508",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_axis/log": "7583c9b79f384e8b6cf8647310d97bd0ae033920c0fd5d9d072a4224b3aded39",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_axis/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_axis/process.json": "270659592801d848d262f43f86436199217dedd10b292f2e8ef180b725e9b70d",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_axis/result.json": "549d94ffcd3d63e3459c62b223481983a9991f23ac544978dd9c2bd82a251b00",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/initial.json": "dd5fbb80122693407e286eb5e8bcd6e4b8088c0a5f3a1ebed89cd24c7cd021e9",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/log": "c6077c9ceb42a22b396215f49be10458e4c916541f950568e870485a6ffcc910",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/process.json": "4f5bf2bafb3d720acdde9ccceae8a4fd3a3fc8140e0abb630709dfb7fe484b67",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/moving_contact_N8_diagonal/result.json": "3604203fb491d629311d9c7a702e479b8c46f1dfbe273f9fd8d57d7a1fefdc4c",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/registration.json": "23e7ed778d3844891ca535adcc75f0259868b25474cd3e6f8fa3cceff7cff12f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/results.json": "2944b0330c1c37dd0b57c15c453ce79c12ca62f6e95c2c84a11ef50332eb170f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/run.py": "9c403144fda021b0a13271023ea993d737145449542e887581cb82740f144bad",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N16_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N16_diagonal/initial.json": "3b5d0762bca544ba23d8aaef5a2035f049623ac2ba8748dc0ebe04a8aede8a26",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N16_diagonal/log": "b883693510ffdb2a4143be025acdaa5ad8124e9138754fa58bddcf64b8696034",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N16_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N16_diagonal/process.json": "3cda05cc78cf9b8ec5918ce25720a6ef5aba6e213a8bb4b417e7ed15a4a7d7d4",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N16_diagonal/result.json": "4a3c703b5a9e34ea3cd50e3e07ee9f6053536f3f05c80a959485d97a75116f15",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N8_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N8_diagonal/initial.json": "e154fa5c693ca21c281ecb6a31cfa22c7fad22463cfa6e7952a810695702b581",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N8_diagonal/log": "6c4707d0ef64d76bb15b54c19c222a4993149fb8052bdb73d637f7376c8ddb43",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N8_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N8_diagonal/process.json": "cada10ef5834d3043ab135fb37fdeb1d05460d5a893f2e2101adbfbc0dd94651",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/shear_N8_diagonal/result.json": "853ad19ffbbf8f52f9c1c0220e17b8ea452fe9ad1f72ab48d15ff251cd4c8482",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_axis/initial.json": "a4b6c80a313ee8441c50f04232134c0992418cf245638739cd242c8c17e41fad",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_axis/log": "0aae998b4cea47a44bb54fdc15585c1cf8fe015d8c8a6d68d3b99781a786312f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_axis/process.json": "eac5e63d7d6b20d12c4e6f48073f3007be7c36200fd6e438dcb3489e54e5529d",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_axis/result.json": "288657b3be72002ac216abd8d1bf3fb071d2f63ba39f613bad9df828338bd13d",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_diagonal/initial.json": "1cf870b8d1ecca8b81e63238bfa52e89c1680204546bec8f9106f867efca1415",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_diagonal/log": "04de35d910b1fc0ec27b63fadef2130d5ed1c2835692141bdeb3766987cec211",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_diagonal/process.json": "7c3c2332a49d1d2a0ddbd9720ff47cc3648ff6e6c4312eaed880ed35c3b8c219",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N16_diagonal/result.json": "afa48ff6a45b237b17fb741e16a9cd4164d59ce4c6b4e3ff91a7cb2bb55fcd12",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_axis/initial.json": "0e8b53e03c5e0976900f8342357d092d41b492aa2bc9aec4a522fd6327427f8b",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_axis/log": "6599beafd31c8921ff702746e487c0ed20a79c160227502c1c5c058cc8d25639",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_axis/process.json": "c760650ca06c663d9f91d125cd69526e95f0391d59ef14b6c71b74f36a41a103",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_axis/result.json": "bcb3b2b1847c191cd01bd8acfd93ecfb0d2ecc8ecfb1a79674f8887208e56eb8",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_diagonal/initial.json": "033bba77e521ac2981556c82670bc4ccd3ac4e376aef62e5563cd3aed5126ce9",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_diagonal/log": "66f4521a788d377b4dcb7da19c3f00057931b7cf8c8d8bc043d1ecc374bfd88e",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_diagonal/process.json": "090b292d50e4380b0723d5ca12163e28b84597f1ebe76c684b9f311f105535ec",
+    "Research/FaceFit3D_20261104/unified3d_endpoint_trials_v1/sod_N8_diagonal/result.json": "e1acee4c7ae6c1ba255a404a3d6adfc6a82a17c4f5b3abe2bb746923bd55d9d2",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/results.json": "4386c30b34147e57075a906f506a012f1ee802697c33352786d48f4b12d074b2",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/shear_N8_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/shear_N8_diagonal/log": "dfb91ef4eb5e8481f86103f2915da18a73513c063e38dcb2764dbff0a27514d0",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/shear_N8_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/shear_N8_diagonal/process.json": "d3c11a21fb5063326a4cfc38e597ccadd1c5def150c0bed1829bdc10f8a61fe7",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/shear_N8_diagonal/unified3d_geometry_failure.bin": "5245cb4272a770bab63929d7ce1c32c98c050d82d53288f906025d715a250171",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/sod_N8_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/sod_N8_diagonal/log": "4bec9446b80d32952a9d8cf5b7fa4bff738148aa3a7c9c71ff93feff0b67784e",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/sod_N8_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/sod_N8_diagonal/process.json": "d766ef6f35b82e8d627a3189447283b328d1a6feda90006f5c13c913823539ad",
+    "Research/FaceFit3D_20261104/unified3d_geometry_capture_v1/sod_N8_diagonal/unified3d_geometry_failure.bin": "fbba0e7bc0472bea524ca398c23999dc7dc8988aa25f8b7c22dd4a1b19c25b50",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v1/environment.json": "cdb20bc4414493fb64ee65425082ea3a04769c3725c629c4bb988f191a6bfd94",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v1/log": "2dba2bcb214791fd386ca4878d8423c8525ab403acd8fd44121b4cc300595036",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v1/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v1/process.json": "8de930b9f0ca779cc4087a27156622c05482ce6695262bbad66a16f9a17cfb7f",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v1/result.json": "dca1b850976ea5c4467634586c871a8885749ce0b8496c29004eb0fbe765644a",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v2/environment.json": "cdb20bc4414493fb64ee65425082ea3a04769c3725c629c4bb988f191a6bfd94",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v2/log": "32430d826f64c716b4a9bbe491cc45f0b54ac8f7170591581f35de8f9cf1a510",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v2/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v2/process.json": "fc6c2114f5577a617da895bc8582826bbf0060f9d66f2cb01abaff17cc605571",
+    "Research/FaceFit3D_20261104/unified3d_geometry_fd_v2/result.json": "031ce995d115cb1a25a6b46797168a75cbaffc69470e7486cf970f03c1657c0f",
+    "Research/FaceFit3D_20261104/unified3d_geometry_replay_v1/results.json": "4a62ecde9972989b078feb0a4d62bb8916358e7fd317c65f4ed8a86e03f43197",
+    "Research/FaceFit3D_20261104/unified3d_geometry_replay_v1/shear_N8_diagonal.jsonl": "5d862fc6f068f0009d653ca60e0f05ed6833c15511ec4a9e7776fe41f2f98cd8",
+    "Research/FaceFit3D_20261104/unified3d_geometry_replay_v1/shear_N8_diagonal.log": "c9be032736522975b5339bec9f52c9b4c92c0d41da2101cc69aac80e0804324b",
+    "Research/FaceFit3D_20261104/unified3d_geometry_replay_v1/sod_N8_diagonal.jsonl": "d923e84922b5e35298a2d9844bfa249db3b54450fe8da573292d17eae26ad8d4",
+    "Research/FaceFit3D_20261104/unified3d_geometry_replay_v1/sod_N8_diagonal.log": "5a74236d2d658c95e72a73b7118831adb794368cbdc860fb75ecb3468a3c72c4",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/commands.json": "0b48b5507050487c5b121af47187c36ce95b75dcc0dd4718837c70feda9e68e9",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/exam3d_gfs.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/link_command.json": "f3af9c2963d91a85ba02e8c9affb84a472d6439de41520dec5764a9e2152bc0e",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/manifest.json": "9310c2a196cec4655d51d8a2bc3a713206adfbc74f2e5fb8ee48fb7dc1a4bc86",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/replay_build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/replay_command.json": "834de6832a546582d83e839faa3cf1d9f98ce257be297f93b690919b245ff65d",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/replay_initial_mixed_compiler.log": "27d51147526caffaf06ae06921a47af61253ff9cc701dd769236084302c66f13",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v1/voro.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v2/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v2/command.json": "41644188f0d78ef72875c8c92fb7cb32b983dd331e1dfde2d3f9ce962c5817eb",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v2/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v2/link_command.json": "e303ecd223ae5ac3f3995bc1d9a4516533be1c827894acf702de42a06899ae0b",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v2/manifest.json": "808527824932b2429bae03aa7768bd878662414fc93ce2e297ef3b6d36faf406",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/commands.json": "a16b1462b4f545c6f61a8fed9072aa64b7efe4cc6f34c04e306507fe0eddfc28",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/exam3d_gfs.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/NativeU64/exam3d_gfs.c": "3ae30d47e995100685795435964352987a68c222c4b451e62d7d47a8ddee3a49",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/NativeU64/gfs_unified3d.inc": "6b523399ed5aac98411165bade028867795bf28412a10d5bd86b8cfa6bfc75ce",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/NativeU64/unified_initial3d.c": "87e686714ef51c3acc4e50247d6e8a402a35051826ac2710dbfca9c0dee8e2aa",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/gfs_variational_core.h": "79b1011a8c9b66e0ceb1d966a908790cf16c96717c0ddcb9b206ed252904390b",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/gfs_velocity_fit.h": "c5e5fbef9dfc34bd294029fd5ff6a4a95f9671c298d5b536584b69682b1bd000",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/gfs_viscosity_implicit.c": "30bed4d6db8898f5c1c2094b2bb6ff1f127875ef479dc96f95f1e6b16bf09c0f",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Exam/gfs_viscosity_implicit.h": "bd4722ab959cae91324016730e1b011c879ac6b4826ea16a2fd187c28244e50d",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Voro/voro.c": "3513f77b5b603986b4b57364fe69eca4f97cbadab5715ead0b44ba8c4c212a87",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/frozen_source/Voro/voro.h": "660af81c238eba5b4e754098de489e63d9a390761305b60880e825400f8549dc",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/link_command.json": "a2452156d4e57d9ace4b2d4604d391b76a13decea5850dbb0274f595bb32653a",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/manifest.json": "0c34cd60d9d614f9629c03da036f79759803fb326f8ceb62948e841df61b81ea",
+    "Research/FaceFit3D_20261104/unified3d_strict_build_v3/voro.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Research/FaceFit3D_20261104/unified3d_strict_geometry_fd_v1/environment.json": "cdb20bc4414493fb64ee65425082ea3a04769c3725c629c4bb988f191a6bfd94",
+    "Research/FaceFit3D_20261104/unified3d_strict_geometry_fd_v1/log": "d23829b21c9f954ad5be2724bb43926b19d88dc6ebc2858fbaf8eb4e5a4e18fb",
+    "Research/FaceFit3D_20261104/unified3d_strict_geometry_fd_v1/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_strict_geometry_fd_v1/result.json": "5a4cdb737da37d1a4622ab50d16240c478430dc5ebc267bc82445df11e43ee00",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/analyse.py": "901e875edec19dc18e5d293fde5ceab33cda15a343779626896fc5162673aa4c",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/assessment.json": "3cd4fe1ed3a581c80279daaa85508a5930130582f7309b56d31fe994bed95082",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/registration.json": "11dda9fd6fb785b627fe37dec09677861d4ac690c0e9981aa9299cecd5b9afd9",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/results.json": "9998200378a1d604dc833c8238c60596d0b6ae1f03d0a8f2f29b7fa0a72ff446",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/run.py": "88f79483c0045fbca60690d62d73289ad1b0f122e4ccdaf394b4fc5c29315700",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/shear_N32_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/shear_N32_diagonal/initial.json": "40542e0ed3e46e89519edd1d067b23a470d13a08df0017fde9a80d1c96563cec",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/shear_N32_diagonal/log": "953ed08ff3381d678e40f98214faa55d640c8bb0898d8cef0ca8391f5103ca09",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/shear_N32_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/shear_N32_diagonal/process.json": "14262051c5624de8cd500c30dbd97574e41eecbac9e4a976c2f73ec322aa865b",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/shear_N32_diagonal/result.json": "365d6e90d77867ad9abb478d4591c6a047565c178f3d13e9bb6d65f85a800623",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_axis/initial.json": "f906151f8daa9e8f411da7397b41dc040d6215ba65df434c293b5dc70ff1e131",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_axis/log": "50301409731dd6eabd294032e189567dd4ccad0b0438c4a88b6306af2564c8dd",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_axis/process.json": "7d5ea42bd318afcc68da9d5a6c151f7a5db657cbbc6a4410d3be26f097222abd",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_axis/result.json": "c6db56044a0987b871c4dc797f3d58f8762dc90d94ab78511f5a1c0a4e9f85e1",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_diagonal/initial.json": "e3b3e5caa02a00f0b0937af65bddbba885b3cbadc39898379c6ec6221f5637b5",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_diagonal/log": "f9943bb4595cc95bb94951619dfe6b48430f44c13ff9c7679f922cfe057690da",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_diagonal/process.json": "c0fc33e5f569ae4acdbd370fdcd3901dcbd5a2bdb4e0fe523700b2e64453e2ad",
+    "Research/FaceFit3D_20261104/unified3d_strict_refine32_v1/sod_N32_diagonal/result.json": "c5838aa7b07337da0c2baa53f1433a248bfa73a50fa3a86e32fdd40db3a61699",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/analyse.py": "901e875edec19dc18e5d293fde5ceab33cda15a343779626896fc5162673aa4c",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/assessment.json": "1f3f035bf6121c1cec4a3522c9796ee491b7a9f0d23cfa0eb1e2315d07ef55d8",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N16_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N16_axis/initial.json": "2853045092ee51990cae1673c2c603c4f16fb0526cf61bab17d4d5ee75331807",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N16_axis/log": "93b9eb50054ceb59912499301645c542c3e738fefe7827f83a0b80708f3858f6",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N16_axis/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N16_axis/process.json": "9b7ddc267ea6f0a7186c9a621a3580f813603759c98f0125abe20333a805ad5d",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N16_axis/result.json": "6e4a5ff8772bf72cedad594a9c60dd37055e01f486933ed3df50a75fae1d4686",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N8_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N8_axis/initial.json": "e27f07a065bfaaea9b2068cf034fad3fd3583ad9f6fe534ea9af837a3f249a56",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N8_axis/log": "13ce671aad77acd2639df3cc56f0482326bbc78a447433de805682541ba2ead4",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N8_axis/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N8_axis/process.json": "6f7708f1958e5f6b213f8874b0caa5fe6d26061c7681b9b994251c2cf0d9a365",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/contact_N8_axis/result.json": "b2a4c7888ac0d28160b36e01f895f5e6575b497c74ae021e9324aa9fb6a9b470",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_axis/initial.json": "c2d2a7c505ef9b493a7c980079603e721c99c465c26f22a548bd0c3323704b5b",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_axis/log": "ce325cf0e25485575ee4910aa97ef5329206b9a6d98854250f2259a29cc48849",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_axis/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_axis/process.json": "d2ead6d94eb8a1c79f9c321de87d7d4ff458ec4da61ddff5cd17d37e44eec964",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_axis/result.json": "cc62bb2a0b8f39f1dec7cddc77a196a68d7bf524eabb22fd117bdb4a9ddf30eb",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_diagonal/initial.json": "11807987b9bf0bc06b3d57ecbff96009a88cc393669537330d15d86dd020ad37",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_diagonal/log": "0f7280a480c0baf77b8eec004c84ec1bb659f4d5c8dd3ce4c47dde197339df50",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_diagonal/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_diagonal/process.json": "4cc2bc584ab7d5be818308e6968d2555411a4d5bb56c29c5b82d786d22f9cf5f",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N16_diagonal/result.json": "eb40cccc926095ba8d3d53162f101545999d3e29f2a963c931219ee9ac0de269",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_axis/initial.json": "0fa224cad2cefceb666b83240012e4138a33a90a03834e321c924879952ae508",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_axis/log": "a0696dfcbcbc7f407df6fe244bbc5440e767426f1b1940f1c05584f39fd0eed1",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_axis/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_axis/process.json": "a7744f9f2eb057afe91f3191f7a227e843fa7485bf80cb9007bb1223381c1f5e",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_axis/result.json": "1f45207907912e1547009ef158757acd574bbba28d60bc85b8f90719390b5366",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_diagonal/initial.json": "dd5fbb80122693407e286eb5e8bcd6e4b8088c0a5f3a1ebed89cd24c7cd021e9",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_diagonal/log": "eb1033904e15b09bacb7f02ced723778af78d0d07d98585721b3999d1f386dbe",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_diagonal/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_diagonal/process.json": "abefce942cd368ce52e7ad197577ea8f84d4556daf00174c1b3205bacac6f587",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/moving_contact_N8_diagonal/result.json": "98b90b6f762a6718d790a84da1b90d8873c8c9c3dbc7df677baaabbcfc1db8b6",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/registration.json": "6a7f2ae73b08880bdb6c7051719c47478c2e4ae13424d0904e897c45b6745a01",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/results.json": "937c3c56407bccf71f34cefe8884c142705af162b4a111fbbdcf48acfa985705",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/run.py": "f11031fbccd032266fee245c052da4cf4adf445590c80fb6877bcda465c1a8d4",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N16_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N16_diagonal/initial.json": "3b5d0762bca544ba23d8aaef5a2035f049623ac2ba8748dc0ebe04a8aede8a26",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N16_diagonal/log": "edfe5467a4a773f869a4223f7b7be455bc52b4ed62ead9bc7295cf542f7248eb",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N16_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N16_diagonal/process.json": "3b05fa1a6040f11c471da264ced61a1ae911a1f8ea272056a04eea2813872bfe",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N16_diagonal/result.json": "d3cc1e221683a7b9a690d15ce210ae716109d64fb9c7660860c5502263fe7db9",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N8_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N8_diagonal/initial.json": "e154fa5c693ca21c281ecb6a31cfa22c7fad22463cfa6e7952a810695702b581",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N8_diagonal/log": "93ead81f4f466a6dc1311b40b498b67e59fe5782680bf294de62f9ed532ee930",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N8_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N8_diagonal/process.json": "4c642f2bf34b21230fd679da4f5342ec89837d40460b898070d5c320726f14d5",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/shear_N8_diagonal/result.json": "0009f1f9af6b69155fa4da3b08a2d2e2224ee7578028c3bcbec09f85750877b7",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_axis/initial.json": "a4b6c80a313ee8441c50f04232134c0992418cf245638739cd242c8c17e41fad",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_axis/log": "be16f818551eccbbedb05100cca140a715d836a3edd27a1854c158a34fada6dd",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_axis/process.json": "c8863e21f6b95e2f9520c45d6bb82f48c69462d3337b73d50d5a2357935ed031",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_axis/result.json": "93158c94929a36e8b2ec691e79d56a0afd566f9ef21b47ba8958ff9708918416",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_diagonal/initial.json": "1cf870b8d1ecca8b81e63238bfa52e89c1680204546bec8f9106f867efca1415",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_diagonal/log": "1f9cd2cd9ecf4807bd831a1e39c15770af766f08d670a607418157a3b8201e71",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_diagonal/process.json": "159d7135208efe3bd2b263a08e1a5a931f22af242366f81c99d595aea77dda8b",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N16_diagonal/result.json": "b788cc8dbc16787243586150e99c716464221a182b33d7c70cd8fcba6b5d25ed",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_axis/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_axis/initial.json": "0e8b53e03c5e0976900f8342357d092d41b492aa2bc9aec4a522fd6327427f8b",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_axis/log": "cdcadb6f5f12801985578d91a0ee47f1b50bf23be2f6c19cb105487fe405de6f",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_axis/process.json": "58068a57e78f30330cc3cc27066d2c01d0f82e471a373873d3a341d1403b2a2e",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_axis/result.json": "f4075785036397765b68fad6d9fbdc41748415cd8cce66d214fa206b3d69409c",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_diagonal/environment.json": "3846b0d4632b89793602a6209608dd6ef2493359887abc85c3e26aa6346a35a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_diagonal/initial.json": "033bba77e521ac2981556c82670bc4ccd3ac4e376aef62e5563cd3aed5126ce9",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_diagonal/log": "9be3335282deb261162214cb06c85b950fe50b44f15b19f9c566ad8d467fe65e",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_diagonal/process.json": "0131ee23bfeeefcdf58ea7ce43cbd13d20f0e68d1f59fcb8c925ffcf51583e6a",
+    "Research/FaceFit3D_20261104/unified3d_strict_trials_v1/sod_N8_diagonal/result.json": "658c41fbc4c2ee46aa14a09d98e0cafe337d5d182a17144006b9f0cda1f40084",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/analyse.py": "901e875edec19dc18e5d293fde5ceab33cda15a343779626896fc5162673aa4c",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/assessment.json": "0689083c8e71bc5277d6a122ffe0e0fda1cf0bb6a5d778faa167f7658ca33fc0",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/registration.json": "bbba0689e990fab43e98f519d6a71890a0de4fae2307c3c85c7da3fc4b1e2e6a",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/results.json": "daceec31081601b5739bb22284ccdf375204e58a3893d4b281b7dfb7006d64cf",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt1/result.json": "27650780064f6c9f5df435a4cf26a1b7e7d36bb5ed5e66d8f4b45c8dc6c7efc6",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt2/environment.json": "ece8b5c05b6bb03102340ed9cab4f00132758fa5721d4695b6360d5861f77cd7",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt2/log": "8b3130dda509a8238b789a86be3fa174e2e39df8f73b45a001dc1bfdc8575bac",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt2/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt2/process.json": "0511b80fc22318c1bd3934f14bb8447c816a5f547f541b0e8b56bcca35f7382a",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt2/result.json": "e6843992803c9703aca9544722704e374621506ec8c74904228fc21bf97ad9db",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt4/environment.json": "27e3b27d0d44db7843572d354f756c98e21f38c0a9bffc4c3e6b30238e78953b",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt4/log": "cdabc40aa64fa2019ee214bf09baa8058b1f5874b2ba0af26d5d58ccd6a0b0b1",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt4/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt4/process.json": "d5bd3df032c3b57620c638a552c1c15a59ff5b4287293ff6cc2eb9eb8e4b7457",
+    "Research/FaceFit3D_20261104/unified3d_temporal32_v1/sod_N32_axis_dt4/result.json": "66724673073ea4cf90bad24b0b0c5c8f10eba6cd89950d5ac3d16131ec57535a",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/analyse.py": "901e875edec19dc18e5d293fde5ceab33cda15a343779626896fc5162673aa4c",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/assessment.json": "7afe7922ba153e4ea71fd4ad4f37a5447095e46562f63580819fd128c012b22f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N16_axis/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N16_axis/initial.json": "2853045092ee51990cae1673c2c603c4f16fb0526cf61bab17d4d5ee75331807",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N16_axis/log": "6bbdd5c42bf9d07d17522521a9a5ae15239d0a87e03fff8e4aa02442e3554ff4",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N16_axis/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N16_axis/process.json": "29d782dbe9890f42dccc74153b1c778ef43296264f14495089df03ea82d2c654",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N16_axis/result.json": "9e683ff33f86975fd51830fd14cffaa104ad62f12cb302eee740472695bd71c0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/contact_N8_axis/result.json": "85eefcef648a2cfd4f86215ba9afff0fdc654a17a18f9996c43f9773b821599b",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_axis/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_axis/initial.json": "c2d2a7c505ef9b493a7c980079603e721c99c465c26f22a548bd0c3323704b5b",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_axis/log": "e8d1ba779d2c79a1e0f7f81c376afd14c0c522340b9986665920cc19a8656f32",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_axis/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_axis/process.json": "35ddb561d96b11386272609956db5619f207515ce3654602e5cc7ec213cb774d",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_axis/result.json": "fd63498b4158ff774cf3f70b3a44122da221daeb17aece83a095ed444d2653cc",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_diagonal/initial.json": "11807987b9bf0bc06b3d57ecbff96009a88cc393669537330d15d86dd020ad37",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_diagonal/log": "0c7b250a9c9d3ccd6365ad64fdf6eadf8a6cea3e48b1e399d49e81fbbe7861b6",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_diagonal/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_diagonal/process.json": "64d3c68fca5def640a796eccd5e88b24ceb6ff8791ff5e0a490ac7ae7e3900cc",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N16_diagonal/result.json": "b445e941aa896453c23accd9b6a8e977ea80b79ab3a9d8feaa2de347748fa5bf",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_axis/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_axis/initial.json": "0fa224cad2cefceb666b83240012e4138a33a90a03834e321c924879952ae508",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_axis/log": "60068b932c35daa0083a128e9193bf96645d1bd6a14957b1757befc9994d819b",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_axis/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_axis/process.json": "299b4d316f8914d6aa1f4a606ba631067f674dfe6769f263fbf316ce50988c3a",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_axis/result.json": "6d6d969b891f52ae65fe441ee94f24001192d146bf03d2f5febcd2c990b38d3b",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_diagonal/initial.json": "dd5fbb80122693407e286eb5e8bcd6e4b8088c0a5f3a1ebed89cd24c7cd021e9",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_diagonal/log": "45e0993d7a01722f86c926bb036a2cc0888fc00974b0609277ac25e96a83557e",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_diagonal/params.dat": "9997b18a9d434e69d694daddc05b0e1f593c4671afd2e3d719f2b13a34283145",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_diagonal/process.json": "b82beec78fce68301cca38a60eca2412f148e4b2a262acc3be8eb948efa108cc",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/moving_contact_N8_diagonal/result.json": "9095031643dc59d680f81afb2046064b2d3da891cd175ed618a58623070cfc9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/registration.json": "ad92fe2fa078e2a32a1ba2d89cf33d36f5185cd65029459221285020aa7e406d",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/results.json": "ca708bdcbab6a01b37d98fb375c00fcc5f08ebae93e8a68310ed2fa4442bfd8d",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/run.py": "355dd8ea3053edcdbe39983729a831e046c88945ebe7256b4fc596208dac0f47",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N16_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N16_diagonal/initial.json": "3b5d0762bca544ba23d8aaef5a2035f049623ac2ba8748dc0ebe04a8aede8a26",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N16_diagonal/log": "b48bbedfa9aa80b6203fc90015276b1e374f9990aa915e7f9306f80af9cdbeed",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N16_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N16_diagonal/process.json": "f26ab33dcb261cadd6774d631f74d8e4b13e079592361c70d648dff9c863fbd9",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N16_diagonal/result.json": "234f26f959d8f5bc9ede5492402ae4c95418893bde44398fca8d96e791152b17",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N8_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N8_diagonal/initial.json": "e154fa5c693ca21c281ecb6a31cfa22c7fad22463cfa6e7952a810695702b581",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N8_diagonal/log": "dfb91ef4eb5e8481f86103f2915da18a73513c063e38dcb2764dbff0a27514d0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N8_diagonal/params.dat": "4208ff5a43a912473342897162b2b1d441a35b4b22ec9d9cfdf17ecd9ef917f0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N8_diagonal/process.json": "2ffd7d4dcea69b095a9770ec8ad5555cb841ded4ce154c7ab42f93594a738b87",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/shear_N8_diagonal/result.json": "936739ac801c338ac190aee38606349c932a174d68b5a679c5291cf364d47f7d",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_axis/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_axis/initial.json": "a4b6c80a313ee8441c50f04232134c0992418cf245638739cd242c8c17e41fad",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_axis/log": "9c3dbc7e3d2ba0801328cd854e5004713871010ba2387878db5621f1902eb2c8",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_axis/process.json": "6b090bc3191be4a82744bc27658700e0323e83d55a46a4857e7262ad392772e6",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_axis/result.json": "203e81023494367b5ad77b9507b68d0a47ea962a888eeee96772758dd645d2f7",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_diagonal/initial.json": "1cf870b8d1ecca8b81e63238bfa52e89c1680204546bec8f9106f867efca1415",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_diagonal/log": "c58f7c6f34e6fd76f6f1fd19fcea0b3bb281ab5fbb7c28d7c23a0dccc28698f3",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_diagonal/process.json": "02c8bdb31e70736c9dcc915f83755f2ce8e35f18656024ab010d406bc415d5da",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N16_diagonal/result.json": "6b25b2bbebee96b36bb035c1bd728a476057da0e051198854dfe5bb71c5484ba",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_axis/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_axis/initial.json": "0e8b53e03c5e0976900f8342357d092d41b492aa2bc9aec4a522fd6327427f8b",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_axis/log": "68f43b30af0fdbaa7f26136001b253d311ee666109ed06003bce3129a5eb1b8f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_axis/params.dat": "8be4e451c5a9841dd335b7bcccd5d56ce0f577e2a31c1a6a462985790f9d480f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_axis/process.json": "2aea521826d85d5c63a4dc585256fcaf70cb21505d3f6a28f173ee2a6efaef98",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_axis/result.json": "c07df891185a923b68f6f01e95d515020b62371cd113bf9d4f4f4938ca38e27b",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_diagonal/environment.json": "6efd38e4617d03aea29bb1d8623d58d5971cdf430726b2caf0392d0cd88e1c9f",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_diagonal/initial.json": "033bba77e521ac2981556c82670bc4ccd3ac4e376aef62e5563cd3aed5126ce9",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_diagonal/log": "4bec9446b80d32952a9d8cf5b7fa4bff738148aa3a7c9c71ff93feff0b67784e",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_diagonal/params.dat": "8d2a813e1dc92ea1e075256e6d9c3c3e3c3f1944dd5e1cd449d213cf4767f8a0",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_diagonal/process.json": "670b7ab3b48cd48bfc8147915d543dca5fb32e28b85bd83a8b7c7b50ca352cf5",
+    "Research/FaceFit3D_20261104/unified3d_trials_v1/sod_N8_diagonal/result.json": "83cd9a160d35d7045c33d6bfdab1a6274207869d6c846179b91cf3a816a95f04",
+    "Research/FaceFit3D_20261104/validation_summary.json": "888cd67b911edf00c0d1eba8d3791641c07b239bad5f6de6ec036a3757793e69"
+  }
+}

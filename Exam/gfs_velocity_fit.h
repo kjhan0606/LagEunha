@@ -13,6 +13,10 @@
  * The fit is affine exact, rotation covariant, and Galilean invariant.
  * It is used for numerical viscosity, not primitive-state extrapolation.
  * No fit regularization or silent zero-gradient fallback is permitted.
+ * Native hydrodynamics uses face-angular weights A/distance^(dim-1),
+ * a geometric measure rather than the exact polygon solid angle.
+ * Thus a vanishing face cannot contribute a finite angular sample. The
+ * 1D unit-area face reduces exactly to the original fit.
  */
 typedef struct { double M[3][3],R[3][3];int dim,count; } GfsVelocityFit;
 GFS_FIT_INLINE int gfs_velocity_fit_init(GfsVelocityFit *f,int dim)
@@ -22,9 +26,11 @@ GFS_FIT_INLINE int gfs_velocity_fit_init(GfsVelocityFit *f,int dim)
     for(int a=0;a<3;a++)for(int b=0;b<3;b++)f->M[a][b]=f->R[a][b]=0;
     return 1;
 }
-GFS_FIT_INLINE int gfs_velocity_fit_add(GfsVelocityFit *f,
-        const double r[3],const double dv[3])
+GFS_FIT_INLINE int gfs_velocity_fit_add_weight(GfsVelocityFit *f,
+        const double r[3],const double dv[3],double weight)
 {
+    if(!(weight>=0)||!isfinite(weight))return 0;
+    if(weight==0)return 1;
     double d2=0;
     for(int a=0;a<f->dim;a++){
         if(!isfinite(r[a])||!isfinite(dv[a]))return 0;
@@ -32,10 +38,26 @@ GFS_FIT_INLINE int gfs_velocity_fit_add(GfsVelocityFit *f,
     }
     if(!(d2>0)||!isfinite(d2))return 0;
     for(int a=0;a<f->dim;a++)for(int b=0;b<f->dim;b++){
-        f->M[a][b]+=r[a]*r[b]/d2;
-        f->R[a][b]+=dv[a]*r[b]/d2;
+        f->M[a][b]+=weight*(r[a]*r[b]/d2);
+        f->R[a][b]+=weight*(dv[a]*r[b]/d2);
     }
     f->count++;return 1;
+}
+GFS_FIT_INLINE int gfs_velocity_fit_add(GfsVelocityFit *f,
+        const double r[3],const double dv[3])
+{
+    return gfs_velocity_fit_add_weight(f,r,dv,1);
+}
+GFS_FIT_INLINE int gfs_velocity_fit_add_face(GfsVelocityFit *f,
+        const double r[3],const double dv[3],double area)
+{
+    if(!(area>=0)||!isfinite(area))return 0;
+    double d2=0;for(int a=0;a<f->dim;a++)d2+=r[a]*r[a];
+    if(!(d2>0)||!isfinite(d2))return 0;
+    double weight=area;
+    if(f->dim==2)weight/=sqrt(d2);
+    else if(f->dim==3)weight/=d2;
+    return gfs_velocity_fit_add_weight(f,r,dv,weight);
 }
 GFS_FIT_INLINE int gfs_velocity_fit_solve(const GfsVelocityFit *f,
         double G[3][3],double *condition_bound)

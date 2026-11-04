@@ -1,0 +1,118 @@
+WMAP5 is detected
+[DBG] after mk_default_param simmodel=0 NWGROUP=4
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after Mpi_Basic_Set myid=0
+###############################################
+EUNHA2: compiled at 07:46:24 Oct 29 2026 
+###############################################
+[DBG] after HAMB
+Kelvin Helmholtz Instability Test is set
+box size nx/ny/nz= 64 64 1
+[MBS] enter
+[MBS] set com
+[MBS] myid=0 nid=1 NWGROUP=4
+[MBS] before divide nid=1 NWGROUP=4
+[MBS] WGROUPSIZE=1 done
+[DBG] after ReadSimulationParameters simmodel=3
+[BSRMS] myid=0 nid=1 enter
+[BSRMS] myid=0 nid=1 nsubgroup=1
+[BSRMS] myid=0 returning early NDDINFO=0
+DEBUG: gpu_enabled=1 av_mode=5 use_stress=1 w2_mode=0
+P0: is now reading starting file: khout.000001.dat
+[WEIGHT_KDK_VALIDATE] accepted window=0.029999999999999999 max_window=1
+[DPQ_SKIP] nearest-neighbor tree not needed for fixed/zero Kappa
+[GPU] rank 0 -> device 0/1: NVIDIA RTX 5000 Ada Generation (32229 MB)
+[GPU] Initialized: max_particles=7244, max_faces=144880
+[GPU] Tessellation buffers: max_cells=324, max_entries=10368, PolygonOut=9.0 MB
+[GPU tess] nbp=4096 npad=1088 faces=20480 time=10.384 ms
+[UNIFIED_PLANAR] step=1 t=0 stage=initial_pressure column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=0.000000000e+00 id_vy=0 max_ay=0.000000000e+00 id_ay=0
+[UNIFIED_PLANAR] step=1 t=0 stage=first_pressure_kick column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=0.000000000e+00 id_vy=0 max_ay=0.000000000e+00 id_ay=0
+[UNIFIED_PLANAR_FIT] call=1 column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_Gxy=3.042555481e+00 id_Gxy=48 max_Gyx=0.000000000e+00 frozen_solid_angle_max_Gxy=2.533436362e-16 frozen_solid_angle_Gxx_column_span=0.000000000e+00
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=4096 max_relative_area=7.850462293e-17 max_area_mismatch=2.453269467e-18 max_roundoff_bound_ratio=2.762135864e-04
+[UNIFIED_PLANAR] step=1 t=0 stage=first_viscosity column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=0.000000000e+00 id_ay=0
+[GPU tess] nbp=4096 npad=1088 faces=20112 time=4.394 ms
+[UNIFIED_PLANAR] step=1 t=0.010564428754150867 stage=drift_adiabat column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=0.000000000e+00 id_ay=0
+[UNIFIED_PLANAR] step=1 t=0.010564428754150867 stage=final_pressure_before_heat column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=5.918408566e-18 id_ay=15
+[UNIFIED_PLANAR_FIT] call=2 column_span=(2.027716739e-01,1.976882609e-01,0.000000000e+00,0.000000000e+00) max_Gxy=2.165418328e+00 id_Gxy=15 max_Gyx=3.342807490e-17 frozen_solid_angle_max_Gxy=1.653025456e-16 frozen_solid_angle_Gxx_column_span=0.000000000e+00
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=3728 max_relative_area=3.015472384e-16 max_area_mismatch=9.813077867e-18 max_roundoff_bound_ratio=3.768518400e-04
+[UNIFIED_PLANAR] step=1 t=0.010564428754150867 stage=second_viscosity column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=5.918408566e-18 id_ay=15
+[UNIFIED_PLANAR] step=1 t=0.010564428754150867 stage=final_pressure_after_heat column_span=(0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=8.466979696e-18 id_ay=15
+[UNIFIED_PLANAR] step=1 t=0.010564428754150867 stage=final_pressure_kick column_span=(0.000000000e+00,0.000000000e+00,1.734723476e-18,2.066230510e-20,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=8.466979696e-18 id_ay=15
+[UNIFIED_KDK] step=1 t=0.010564428754150867 dt=0.010564428754150867 N=4096 Etot=5.4996310346741558 dErel=-6.714420535e-05 Umin=2.441406396e-04 Vmin=8.941156876e-04 heat=1.338784542e-03 viscosity_energy_defect=-5.127178861e-20 CG=2/5 active=1/1 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.173392 pressure_s=0.004599 viscosity_s=0.008810 drift_s=0.000284 total_s=0.191667
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(1.1319635386637746e-16,2.5644784435968786e-16)
+Time= 0.0105644  step= 2  dt= 0.0105644
+[GPU tess] nbp=4096 npad=1088 faces=20112 time=4.311 ms
+[UNIFIED_PLANAR] step=2 t=0.010564428754150867 stage=initial_pressure column_span=(0.000000000e+00,0.000000000e+00,1.734723476e-18,2.066230510e-20,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=8.466979696e-18 id_ay=15
+[UNIFIED_PLANAR] step=2 t=0.010564428754150867 stage=first_pressure_kick column_span=(0.000000000e+00,0.000000000e+00,3.469446952e-18,3.314701362e-20,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=1.191454901e-18 id_vy=48 max_ay=8.466979696e-18 id_ay=15
+[UNIFIED_PLANAR_FIT] call=3 column_span=(4.492394038e-01,4.379771334e-01,5.170564785e-19,1.060704436e-18) max_Gxy=5.823818694e+00 id_Gxy=15 max_Gyx=2.713999998e-17 frozen_solid_angle_max_Gxy=4.445755549e-16 frozen_solid_angle_Gxx_column_span=4.440892099e-16
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=3728 max_relative_area=3.015472384e-16 max_area_mismatch=9.813077867e-18 max_roundoff_bound_ratio=3.768518400e-04
+[UNIFIED_PLANAR] step=2 t=0.010564428754150867 stage=first_viscosity column_span=(0.000000000e+00,0.000000000e+00,3.469446952e-18,3.083635260e-20,0.000000000e+00,0.000000000e+00,0.000000000e+00) max_vy=2.166589249e-18 id_vy=14 max_ay=8.466979696e-18 id_ay=15
+[GPU tess] nbp=4096 npad=1088 faces=20288 time=4.433 ms
+[UNIFIED_PLANAR] step=2 t=0.016947734635323286 stage=drift_adiabat column_span=(0.000000000e+00,0.000000000e+00,3.469446952e-18,3.083635260e-20,5.421010862e-20,2.168404345e-19,5.551115123e-17) max_vy=2.166589249e-18 id_vy=14 max_ay=8.466979696e-18 id_ay=15
+[GPU step 1] np=4096 faces=20288 (full) | extract=0.0ms SoA=0.0ms upload=0.0ms kernel=0.2ms download=0.1ms writeback=0.3ms | total=1.0ms dt=6.281e-03
+[UNIFIED_PLANAR] step=2 t=0.016947734635323286 stage=final_pressure_before_heat column_span=(0.000000000e+00,0.000000000e+00,3.469446952e-18,3.083635260e-20,5.421010862e-20,2.168404345e-19,5.551115123e-17) max_vy=2.166589249e-18 id_vy=14 max_ay=3.142382935e-15 id_ay=241
+[UNIFIED_PLANAR_FIT] call=4 column_span=(5.794996771e-01,6.675676752e-01,8.909237412e-18,1.026319624e-17) max_Gxy=4.012203105e+00 id_Gxy=15 max_Gyx=7.110652200e-17 frozen_solid_angle_max_Gxy=2.665057485e-16 frozen_solid_angle_Gxx_column_span=8.881784197e-16
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=3808 max_relative_area=2.363776892e-16 max_area_mismatch=7.359808400e-18 max_roundoff_bound_ratio=3.772983833e-04
+[UNIFIED_PLANAR] step=2 t=0.016947734635323286 stage=second_viscosity column_span=(0.000000000e+00,0.000000000e+00,1.050434183e-03,1.393567241e-18,2.925316158e-08,2.168404345e-19,1.265790271e-05) max_vy=1.191454901e-18 id_vy=48 max_ay=3.142382935e-15 id_ay=241
+[UNIFIED_PLANAR] step=2 t=0.016947734635323286 stage=final_pressure_after_heat column_span=(0.000000000e+00,0.000000000e+00,1.050434183e-03,1.393567241e-18,2.925316158e-08,2.168404345e-19,1.265790271e-05) max_vy=1.191454901e-18 id_vy=48 max_ay=1.533708067e-03 id_ay=205
+[UNIFIED_PLANAR] step=2 t=0.016947734635323286 stage=final_pressure_kick column_span=(0.000000000e+00,0.000000000e+00,1.051507214e-03,9.790127721e-06,2.925316158e-08,2.168404345e-19,1.265790271e-05) max_vy=4.895063861e-06 id_vy=4045 max_ay=1.533708067e-03 id_ay=205
+[UNIFIED_KDK] step=2 t=0.016947734635323286 dt=0.0063833058811724186 N=4096 Etot=5.4999916860415838 dErel=-1.571233358e-06 Umin=2.441406396e-04 Vmin=7.979283950e-04 heat=5.019236801e-03 viscosity_energy_defect=-1.537049296e-18 CG=9/14 active=1/1 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.009703 pressure_s=0.002921 viscosity_s=0.012644 drift_s=0.000271 total_s=0.027260
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(1.6937882695981866e-16,2.3922615104423731e-15)
+Time= 0.0169477  step= 3  dt= 0.00638331
+[GPU tess] nbp=4096 npad=1088 faces=20288 time=4.451 ms
+[UNIFIED_PLANAR] step=3 t=0.016947734635323286 stage=initial_pressure column_span=(0.000000000e+00,0.000000000e+00,1.051507214e-03,9.790127721e-06,2.925316158e-08,2.168404345e-19,1.265790271e-05) max_vy=4.895063861e-06 id_vy=4045 max_ay=1.533708067e-03 id_ay=205
+[UNIFIED_PLANAR] step=3 t=0.016947734635323286 stage=first_pressure_kick column_span=(0.000000000e+00,0.000000000e+00,1.052538373e-03,1.919822746e-05,2.925316158e-08,2.168404345e-19,1.265790271e-05) max_vy=9.599113729e-06 id_vy=4045 max_ay=1.533708067e-03 id_ay=205
+[UNIFIED_PLANAR_FIT] call=5 column_span=(5.693053182e-01,5.357139397e-01,2.843727810e-04,5.406553261e-04) max_Gxy=5.429381140e+00 id_Gxy=15 max_Gyx=1.421863905e-04 frozen_solid_angle_max_Gxy=1.684061397e-02 frozen_solid_angle_Gxx_column_span=3.571936315e-02
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=3808 max_relative_area=2.363776892e-16 max_area_mismatch=7.359808400e-18 max_roundoff_bound_ratio=3.772983833e-04
+[UNIFIED_PLANAR] step=3 t=0.016947734635323286 stage=first_viscosity column_span=(0.000000000e+00,0.000000000e+00,1.733331424e-03,1.746762752e-05,5.669903694e-08,2.168404345e-19,2.605834681e-05) max_vy=8.733939051e-06 id_vy=4045 max_ay=1.533708067e-03 id_ay=205
+[GPU tess] nbp=4096 npad=1088 faces=20560 time=4.519 ms
+[UNIFIED_PLANAR] step=3 t=0.023081952705979347 stage=drift_adiabat column_span=(1.063263294e-05,1.071502362e-07,1.733331424e-03,1.746762752e-05,6.246730127e-08,2.980234239e-07,5.436477020e-05) max_vy=8.733939051e-06 id_vy=4045 max_ay=1.533708067e-03 id_ay=205
+[UNIFIED_PLANAR] step=3 t=0.023081952705979347 stage=final_pressure_before_heat column_span=(1.063263294e-05,1.071502362e-07,1.733331424e-03,1.746762752e-05,6.246730127e-08,2.980234239e-07,5.436477020e-05) max_vy=8.733939051e-06 id_vy=4045 max_ay=2.215013256e-03 id_ay=2123
+[UNIFIED_PLANAR_FIT] call=6 column_span=(1.450048519e+01,2.222796506e+00,2.068538041e-04,4.915435742e-04) max_Gxy=3.342679038e+00 id_Gxy=48 max_Gyx=1.092304172e-04 frozen_solid_angle_max_Gxy=2.821932145e-02 frozen_solid_angle_Gxx_column_span=5.878431264e-02
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=2960 max_relative_area=3.277858501e-16 max_area_mismatch=3.816391647e-17 max_roundoff_bound_ratio=1.714403780e-03
+[UNIFIED_PLANAR] step=3 t=0.023081952705979347 stage=second_viscosity column_span=(1.063263294e-05,1.071502362e-07,6.657820848e-03,1.144133766e-05,1.793311880e-07,2.980234239e-07,1.238590147e-04) max_vy=5.733336097e-06 id_vy=79 max_ay=2.215013256e-03 id_ay=2123
+[UNIFIED_PLANAR] step=3 t=0.023081952705979347 stage=final_pressure_after_heat column_span=(1.063263294e-05,1.071502362e-07,6.657820848e-03,1.144133766e-05,1.793311880e-07,2.980234239e-07,1.238590147e-04) max_vy=5.733336097e-06 id_vy=79 max_ay=1.227801413e-02 id_ay=2125
+[UNIFIED_PLANAR] step=3 t=0.023081952705979347 stage=final_pressure_kick column_span=(1.063263294e-05,1.071502362e-07,6.811388663e-03,6.992104567e-05,1.793311880e-07,2.980234239e-07,1.238590147e-04) max_vy=3.504727035e-05 id_vy=717 max_ay=1.227801413e-02 id_ay=2125
+[UNIFIED_KDK] step=3 t=0.023081952705979347 dt=0.0061342180706560612 N=4096 Etot=5.5003618502844981 dErel=6.573135225e-05 Umin=2.441406396e-04 Vmin=7.085572672e-04 heat=4.797954056e-03 viscosity_energy_defect=1.438015538e-18 CG=16/20 active=1/3 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.010108 pressure_s=0.002994 viscosity_s=0.017626 drift_s=0.000268 total_s=0.032811
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(8.2168210795806765e-16,3.8577243517882664e-16)
+Time= 0.023082  step= 4  dt= 0.00613422
+[GPU tess] nbp=4096 npad=1088 faces=20560 time=4.545 ms
+[UNIFIED_PLANAR] step=4 t=0.023081952705979347 stage=initial_pressure column_span=(1.063263294e-05,1.071502362e-07,6.811388663e-03,6.992104567e-05,1.793311880e-07,2.980234239e-07,1.238590147e-04) max_vy=3.504727035e-05 id_vy=717 max_ay=1.227801413e-02 id_ay=2125
+[UNIFIED_PLANAR] step=4 t=0.023081952705979347 stage=first_pressure_kick column_span=(1.063263294e-05,1.071502362e-07,6.963232428e-03,1.443914198e-04,1.793311880e-07,2.980234239e-07,1.238590147e-04) max_vy=7.228240919e-05 id_vy=717 max_ay=1.227801413e-02 id_ay=2125
+[UNIFIED_PLANAR_FIT] call=7 column_span=(1.883207262e+01,2.344184414e+00,2.066211677e-03,3.779380695e-03) max_Gxy=4.687690927e+00 id_Gxy=48 max_Gyx=1.178413339e-03 frozen_solid_angle_max_Gxy=5.212049052e-02 frozen_solid_angle_Gxx_column_span=3.336138887e-01
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=2960 max_relative_area=3.277858501e-16 max_area_mismatch=3.816391647e-17 max_roundoff_bound_ratio=1.714403780e-03
+[UNIFIED_PLANAR] step=4 t=0.023081952705979347 stage=first_viscosity column_span=(1.063263294e-05,1.071502362e-07,1.484791283e-02,1.436484424e-04,3.817639876e-07,2.980234239e-07,2.173762298e-04) max_vy=7.244288360e-05 id_vy=3917 max_ay=1.227801413e-02 id_ay=2125
+[GPU tess] nbp=4096 npad=1088 faces=21008 time=4.707 ms
+[UNIFIED_PLANAR] step=4 t=0.029147304128855467 stage=drift_adiabat column_span=(8.596498380e-05,7.641280484e-07,1.484791283e-02,1.436484424e-04,8.343739264e-07,2.942400864e-06,8.508954773e-04) max_vy=7.244288360e-05 id_vy=3917 max_ay=1.227801413e-02 id_ay=2125
+[GPU step 2] np=4096 faces=21008 (full) | extract=0.0ms SoA=0.0ms upload=0.0ms kernel=0.2ms download=0.1ms writeback=0.3ms | total=1.1ms dt=6.090e-03
+[UNIFIED_PLANAR] step=4 t=0.029147304128855467 stage=final_pressure_before_heat column_span=(8.596498380e-05,7.641280484e-07,1.484791283e-02,1.436484424e-04,8.343739264e-07,2.942400864e-06,8.508954773e-04) max_vy=7.244288360e-05 id_vy=3917 max_ay=5.560153085e-02 id_ay=79
+[UNIFIED_PLANAR_FIT] call=8 column_span=(1.229585202e+01,2.128304219e+00,2.109604434e-03,3.375543867e-03) max_Gxy=3.080994572e+00 id_Gxy=48 max_Gyx=1.142099930e-03 frozen_solid_angle_max_Gxy=1.674438582e-01 frozen_solid_angle_Gxx_column_span=1.095045743e+00
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=2768 max_relative_area=3.140155673e-16 max_area_mismatch=5.898059818e-17 max_roundoff_bound_ratio=2.817971778e-03
+[UNIFIED_PLANAR] step=4 t=0.029147304128855467 stage=second_viscosity column_span=(8.596498380e-05,7.641280484e-07,1.075013492e-02,1.621109663e-04,8.343739273e-07,2.942400864e-06,9.536584787e-04) max_vy=8.430906072e-05 id_vy=973 max_ay=5.560153085e-02 id_ay=79
+[UNIFIED_PLANAR] step=4 t=0.029147304128855467 stage=final_pressure_after_heat column_span=(8.596498380e-05,7.641280484e-07,1.075013492e-02,1.621109663e-04,8.343739273e-07,2.942400864e-06,9.536584787e-04) max_vy=8.430906072e-05 id_vy=973 max_ay=7.166441583e-02 id_ay=271
+[UNIFIED_PLANAR] step=4 t=0.029147304128855467 stage=final_pressure_kick column_span=(8.596498380e-05,7.641280484e-07,9.678487251e-03,3.976827702e-04,8.343739273e-07,2.942400864e-06,9.536584787e-04) max_vy=1.996905525e-04 id_vy=2191 max_ay=7.166441583e-02 id_ay=271
+[UNIFIED_KDK] step=4 t=0.029147304128855467 dt=0.0060653514228761196 N=4096 Etot=5.5006371512620506 dErel=1.157860725e-04 Umin=2.441406396e-04 Vmin=6.329867137e-04 heat=4.163462387e-03 viscosity_energy_defect=-9.359017523e-19 CG=18/18 active=2/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.010726 pressure_s=0.002766 viscosity_s=0.017182 drift_s=0.000548 total_s=0.032790
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(5.1540215894204324e-15,3.1291476799382247e-15)
+Time= 0.0291473  step= 5  dt= 0.00606535
+[GPU tess] nbp=4096 npad=1088 faces=21008 time=4.076 ms
+[UNIFIED_PLANAR] step=5 t=0.029147304128855467 stage=initial_pressure column_span=(8.596498380e-05,7.641280484e-07,9.678487251e-03,3.976827702e-04,8.343739273e-07,2.942400864e-06,9.536584787e-04) max_vy=1.996905525e-04 id_vy=2191 max_ay=7.166441583e-02 id_ay=271
+[UNIFIED_PLANAR] step=5 t=0.029147304128855467 stage=first_pressure_kick column_span=(8.596498380e-05,7.641280484e-07,9.527829939e-03,4.587171929e-04,8.343739273e-07,2.942400864e-06,9.536584787e-04) max_vy=2.301709994e-04 id_vy=2191 max_ay=7.166441583e-02 id_ay=271
+[UNIFIED_PLANAR_FIT] call=9 column_span=(1.288694360e+01,2.010710414e+00,1.611264163e-02,1.474394852e-02) max_Gxy=3.271068847e+00 id_Gxy=48 max_Gyx=8.203901708e-03 frozen_solid_angle_max_Gxy=1.669624542e-01 frozen_solid_angle_Gxx_column_span=5.994260573e-01
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=2768 max_relative_area=3.140155673e-16 max_area_mismatch=5.898059818e-17 max_roundoff_bound_ratio=2.817971778e-03
+[UNIFIED_PLANAR] step=5 t=0.029147304128855467 stage=first_viscosity column_span=(8.596498380e-05,7.641280484e-07,1.144728667e-02,4.535237694e-04,8.343738821e-07,2.942400864e-06,9.711816610e-04) max_vy=2.287045538e-04 id_vy=2191 max_ay=7.166441583e-02 id_ay=271
+[GPU tess] nbp=4096 npad=1088 faces=21920 time=4.180 ms
+[UNIFIED_PLANAR] step=5 t=0.029999999999999999 stage=drift_adiabat column_span=(8.882631463e-05,1.062966097e-06,1.144728667e-02,4.535237694e-04,8.467277434e-07,3.052361073e-06,1.041048369e-03) max_vy=2.287045538e-04 id_vy=2191 max_ay=7.166441583e-02 id_ay=271
+[UNIFIED_PLANAR] step=5 t=0.029999999999999999 stage=final_pressure_before_heat column_span=(8.882631463e-05,1.062966097e-06,1.144728667e-02,4.535237694e-04,8.467277434e-07,3.052361073e-06,1.041048369e-03) max_vy=2.287045538e-04 id_vy=2191 max_ay=7.138771332e-02 id_ay=79
+[UNIFIED_PLANAR_FIT] call=10 column_span=(1.186005934e+01,1.487128047e+00,1.615458835e-02,1.464780073e-02) max_Gxy=3.039841728e+00 id_Gxy=48 max_Gyx=8.238376212e-03 frozen_solid_angle_max_Gxy=1.987673694e-01 frozen_solid_angle_Gxx_column_span=7.683719747e-01
+[UNIFIED_VISCOSITY_GRAPH] unpaired_roundoff_faces=2016 max_relative_area=2.758818037e-16 max_area_mismatch=5.265834426e-17 max_roundoff_bound_ratio=1.909098526e-03
+[UNIFIED_PLANAR] step=5 t=0.029999999999999999 stage=second_viscosity column_span=(8.882631463e-05,1.062966097e-06,1.234456177e-02,4.485746062e-04,8.467277062e-07,3.052361073e-06,1.055088701e-03) max_vy=2.273466652e-04 id_vy=1935 max_ay=7.138771332e-02 id_ay=79
+[UNIFIED_PLANAR] step=5 t=0.029999999999999999 stage=final_pressure_after_heat column_span=(8.882631463e-05,1.062966097e-06,1.234456177e-02,4.485746062e-04,8.467277062e-07,3.052361073e-06,1.055088701e-03) max_vy=2.273466652e-04 id_vy=1935 max_ay=7.227044575e-02 id_ay=79
+[UNIFIED_PLANAR] step=5 t=0.029999999999999999 stage=final_pressure_kick column_span=(8.882631463e-05,1.062966097e-06,1.216681707e-02,5.055817885e-04,8.467277062e-07,3.052361073e-06,1.055088701e-03) max_vy=2.558114011e-04 id_vy=1935 max_ay=7.227044575e-02 id_ay=79
+[UNIFIED_KDK] step=5 t=0.029999999999999999 dt=0.00085269587114453205 N=4096 Etot=5.5006385150741983 dErel=1.160340383e-04 Umin=2.441406396e-04 Vmin=6.236455007e-04 heat=5.703472065e-04 viscosity_energy_defect=4.963907165e-19 CG=10/10 active=1/2 wall_hits=0 wall_J=(0.000000000e+00,0.000000000e+00,0.000000000e+00) wall_roundoff=0.000000000e+00 geometry_s=0.009053 pressure_s=0.002086 viscosity_s=0.010756 drift_s=0.000148 total_s=0.023208
+[UNIFIED_THERMAL_AUDIT] gamma=1.3999999761581421 max_adiabat_identity_error=2.2204460492503131e-16 viscosity_min_heat=(0,0) viscosity_equation_residual=(2.4289379128152154e-15,3.1734399241089254e-15)
+ccdmax 1 , ccdmin 0.113379 nx/ny 64/64
+Time= 0.03  step= 6  dt= 0.000852696

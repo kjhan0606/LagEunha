@@ -57,9 +57,9 @@ Later bounded native coupling is recorded in
 The persistent Kepler heating remains unresolved. Subsequent actual periodic
 2D contact, steady shear, and planar shock runs are documented in
 `../../Docs/UNIFIED_HYDRO_PERIODIC_2D_2026-11-04.md` with compact evidence in
-`../../Research/Periodic2D_20261104`. Axis-aligned Sod has unresolved transverse
-velocity growth. Full 2D benchmarks, actual 3D evolution, and matched GIZMO
-performance remain incomplete.
+`../../Research/Periodic2D_20261104`. That earlier stage retained transverse
+growth in axis-aligned Sod. The subsequent face-fit/3D report below records
+the correction. Full 2D benchmarks and matched GIZMO performance remain incomplete.
 
 The actual 1D stage and time-refinement checks are `implicit1d_audit.c`.
 `implicit_graph_audit.c` compares the common graph solve against the 1D
@@ -78,3 +78,14 @@ and checkerboard velocity fields at three spatial resolutions.
 
 The source and compact data inventory for the later stage is in
 `../../Research/NativeImplicitGate_20261104`.
+
+The subsequent face-angular fit and actual native 3D gate are documented in
+`../../Docs/UNIFIED_HYDRO_FACE_FIT_3D_2026-11-04.md`. The common production
+fit uses A/r^(dimension-1), an angular proxy rather than an exact solid angle.
+The former 2D axis-shock transverse growth is resolved in the recorded gate.
+Full physics benchmarks, long Kepler, MPI, and matched performance are pending.
+`native3d_geometry_replay.c` replays actual captured coordinates and reciprocal
+face moments. `strict_intersection_audit.c` checks bounded endpoint clamps,
+explicit rejection of finite invalid intersections, and the float-entry guard.
+The strict 3D geometry entry retains the existing clipping algorithm with
+roundoff-based predicates, without a guarantee for every degenerate topology.

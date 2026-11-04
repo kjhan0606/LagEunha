@@ -1,0 +1,14 @@
+LAGEUNHA_3D_GFS_V1: 3D GFS hydro (CPU/OpenMP), params params.dat
+[3D] N=512 box=[0,2]x[0,2]x[0,2] bc=periodic,periodic,periodic gamma=1.400000 courant=0.4 t_end=0.25 dump_dt=0
+[3D] av_mode=5 muscl=1 w2=0 phase1=0 floor_log=0 dual_energy=0 entropy_switch=0(coef 0.01) half_limit=0 lag_rot=0 alphavis=0 pair_nshare=16 stage_floor_reset=0 threads=8
+[3D] gravity=0 G=1 eps=0 theta=0.5 direct=1 point_mass=0(GM 0 at 0 0 0 eps 0) uniform_acc=0
+[UNIFIED_3D] common W0 fixed-mass pressure/solid-angle LSQ/BE/KDK; strict geometry, no jitter/floor/finite area cutoff; CPU/OpenMP only
+[UNIFIED_3D_GEOMETRY] N=512 faces=3072 closure=0 volume_identity=0 parallel_scaled=0 sumV_error=1.1102230246251565e-16 adjoint_work=1.2309836604800222e-18 jitter=0 pass=1
+[UNIFIED_3D_VOLUME_FD] eta=1.000000000e-03 max_derivative_error_over_h2=0.0038451255365989923
+[UNIFIED_3D_VOLUME_FD] eta=1.000000000e-04 max_derivative_error_over_h2=0.00038493295524855142
+[UNIFIED_3D_VOLUME_FD] eta=1.000000000e-05 max_derivative_error_over_h2=3.8496598980142238e-05
+[UNIFIED_3D_VOLUME_FD] eta=1.000000000e-06 max_derivative_error_over_h2=3.1547195566972164e-06
+[UNIFIED_3D_VOLUME_FD] eta=1.000000000e-07 max_derivative_error_over_h2=1.09356994015819e-08
+[UNIFIED_3D_VOLUME_FD] eta=1.000000000e-08 max_derivative_error_over_h2=1.0086681601073622e-07
+[UNIFIED_3D_VOLUME_FD] best=1.09356994015819e-08 pass=1
+[3D] wrote snap_000000.l3d t=0.000000e+00 N=512 rc=0
