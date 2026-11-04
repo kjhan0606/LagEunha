@@ -294,3 +294,27 @@ pattern을 두 배 정밀하게 반복해도 셀 평균 선형 압력의 힘밀�
 native pressure helper로 확인했다. 정지 contact의 초기화 원인과는 별개다.
 다음은 보존 상태·열역학·생성점 이동의 표현을 함께 정하는 단계다. 생산
 코드와 원고 기준선은 유지하며 전체 목표는 미완료다.
+
+## 2026-11-05: 순질량 보존 ALE의 수송과 첫 RHS 열역학 검사
+
+UNIFIED_HYDRO_ALE_REPRESENTATION_2026-11-05.md에 후속 묶음을 기록했다.
+실제 1D/2D/3D 작은 native 기하에서 면의 질량·운동량·총에너지 수송을
+함께 적분하고, 작은 reference weight-rate 풀이로 셀별 순질량을 고정했다.
+RHS 평균 제거는 하지 않았다. 면 수송 자체는 남고, centroid·기하·갈릴레이·
+경계 장부가 맞는다. 그러나 E-Kmean을 열로 해석하면 정상 전단의 첫 RHS부터
+Kvar_dot가 섞인다. 이 항은 실제 기하의 q/W 유한차분으로 확인했고, 같은
+local pattern을 절반 크기로 하면 단위 부피당 항은 1/4로 준다. 양·음 부호가
+모두 있어 이를 단순한 비가역 가열로 부르지 않는다. 기존 Hopkins 초기투영은
+재실행하지 않았다. 단순 m,p,E thermal 모델을 채택하거나 새 PDE로 넘어가지
+않으며, 보존 상태와 pressure recovery의 일관된 정의가 다음 과제다.
+
+## 2026-11-05: 무제한 LSQ 운동에너지 복구의 양의 압력 반례
+
+UNIFIED_HYDRO_KINETIC_RECOVERY_2026-11-05.md가 최소 후속 gate의 결과다.
+cell means와 geometry Q에서 이웃 LSQ 기울기로 Kvar를 추정해 E에서 빼는
+단순 복구식을 검사했다. native 공통 C fit을 사용한 양의 rho=P=1, Mach 8
+속도 jump 초기상태에서 복구 압력은 약 -1.963으로 나왔고 16→32 셀에서도
+동일하다. constant/affine 대조는 통과하여 구현 오류와 구분했다. 현 무제한
+복구식은 제외했으며 limiter·floor·E reset으로 바꾸어 통과시키지 않았다.
+이는 모든 reconstruction이나 FV 방법의 불가능성 주장이 아니다. 새 PDE,
+large weight solve, Gdot/Qdot 구현으로 진행하지 않았고 전체 목표는 유지한다.

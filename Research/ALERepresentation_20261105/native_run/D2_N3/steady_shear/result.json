@@ -1,0 +1,54 @@
+{
+  "dimension": 2,
+  "side": 3,
+  "field": "steady_shear",
+  "checks": {
+    "mass_residual_max": 2.723515857283587e-16,
+    "volume_rate_max": 2.636779683484747e-16,
+    "raw_weight_solve_residual_max": 2.740863092043355e-16,
+    "centroid_transport_identity_max": 5.898059818321144e-17,
+    "site_vs_cellmean_velocity_identity_max": 0.0,
+    "momentum_Euler_reference_max_error": 5.898059818321144e-17,
+    "thermal_proxy_vs_variance_rate_max_error": 7.101524229780054e-18,
+    "internal_plus_periodic_cut_ledgers": {
+      "mass": 5.898059818321144e-17,
+      "momentum": 1.734723475976807e-18,
+      "energy": 7.806255641895632e-18
+    }
+  },
+  "raw_rhs_compatibility": -2.706168622523819e-16,
+  "rhs_mean_removed": false,
+  "weight_gauge": "arithmetic mean zero",
+  "rate_max": 0.008886337919823718,
+  "surface_mass_flux_absolute_sum": 1.2701056955559669,
+  "thermal_proxy_rate_L1_per_volume": 0.0014603090379731141,
+  "thermal_proxy_rate_signed_sum": -0.0003511864582084937,
+  "thermal_proxy_rate_max_per_physical_U": 191107.45995934747,
+  "physical_Udot": "zero for the registered incompressible affine/rest-pressure initial states",
+  "periodic_cut_scope": "Physical affine continuation on the owned-cell patch with fixed periodic geometry images. Cut fluxes are explicit external boundary ledgers, not a new production shear-periodic BC.",
+  "Galilean_checks": {
+    "mass": 3.3306690738754696e-16,
+    "momentum": 4.198030811863873e-16,
+    "energy": 2.714842239903703e-16,
+    "thermal_proxy_rate": 2.432000998156547e-17
+  },
+  "native_geometry_FD": [
+    {
+      "epsilon": 1e-05,
+      "volume_rate_max_error": 1.1796102289407527e-11,
+      "centroid_rate_max_error": 1.0006584449939737e-10,
+      "variance_rate_max_error": 5.675346802756775e-13,
+      "variance_rate_relative_error": 1.859004494425321e-09
+    },
+    {
+      "epsilon": 5e-06,
+      "volume_rate_max_error": 1.3877819032837023e-11,
+      "centroid_rate_max_error": 3.9817038555156614e-11,
+      "variance_rate_max_error": 1.4923240933468508e-13,
+      "variance_rate_relative_error": 4.888224972125781e-10
+    }
+  ],
+  "accepted_steps": 0,
+  "half_scale_variance_rate_per_volume_ratio": 0.24999999999999784,
+  "scale_control_scope": "Same local irregular pattern and physical affine gradient at half cell length; not a full global PDE convergence test."
+}

@@ -42,7 +42,13 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
             V[i]=right-left;
             if(capture){
                 double rr[3]={xr-xi,0,0},c[3]={right-xi,0,0};save_face(i,r,rr,c,1);
+#ifdef GFS_CAPTURE_GEOMETRY_FACE
+                double point[1][3]={{c[0],0,0}};GFS_CAPTURE_GEOMETRY_FACE(nf-1,1,1,point);
+#endif
                 rr[0]=xl-xi;c[0]=left-xi;save_face(i,l,rr,c,1);
+#ifdef GFS_CAPTURE_GEOMETRY_FACE
+                point[0][0]=c[0];GFS_CAPTURE_GEOMETRY_FACE(nf-1,1,1,point);
+#endif
             }
         }else if(dim==2){
             Voro2D_point input[NC*9]={0},sorted_guard[NC*9+8]={0},ctr={0};
@@ -70,7 +76,13 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
                 double c[3]={.5*(a->x+b->x),.5*(a->y+b->y),0};
                 double area=hypot(b->x-a->x,b->y-a->y),d=sqrt(dot(r,r,2));
                 V[i]+=.5*area*dot(c,r,2)/d;
-                if(capture)save_face(i,j,r,c,area);
+                if(capture){
+                    save_face(i,j,r,c,area);
+#ifdef GFS_CAPTURE_GEOMETRY_FACE
+                    double points[2][3]={{a->x,a->y,0},{b->x,b->y,0}};
+                    GFS_CAPTURE_GEOMETRY_FACE(nf-1,2,2,points);
+#endif
+                }
                 a=b;
             }
         }else{
@@ -116,7 +128,14 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
                 if(!(area>0))exit(2);
                 for(int k=0;k<3;k++)c[k]/=area;
                 V[i]+=area*dot(c,r,3)/(3*sqrt(dot(r,r,3)));
-                if(capture)save_face(i,parent[sorted[id].indx],r,c,area);
+                if(capture){
+                    save_face(i,parent[sorted[id].indx],r,c,area);
+#ifdef GFS_CAPTURE_GEOMETRY_FACE
+                    double points[NV][3];
+                    for(int t=0;t<count;t++){points[t][0]=polygon[t].x;points[t][1]=polygon[t].y;points[t][2]=polygon[t].z;}
+                    GFS_CAPTURE_GEOMETRY_FACE(nf-1,3,count,points);
+#endif
+                }
             }
             free(input);free(guard);free(vertex);free(work);
         }

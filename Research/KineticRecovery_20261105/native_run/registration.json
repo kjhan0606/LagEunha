@@ -1,0 +1,18 @@
+{
+  "scope": "Specified unlimited centroid-LSQ kinetic deconvolution admissibility gate, selected by Astra.",
+  "cells": [
+    16,
+    32
+  ],
+  "gamma": "native float32 5/3 converted to double",
+  "rho": 1,
+  "pressure": 1,
+  "jump_Mach": 8,
+  "states": [
+    "constant velocity",
+    "one compressive velocity jump with constant exterior continuation",
+    "affine velocity with exact affine integrated energy"
+  ],
+  "stop_rule": "If valid exact cell means give negative recovered pressure, reject this unlimited-gradient candidate before Gdot/Qdot, new RHS, spectrum or cold replay. No limiter/energy reset/floor.",
+  "accepted_PDE_steps": 0
+}

@@ -1,0 +1,52 @@
+{
+  "dimension": 3,
+  "side": 3,
+  "field": "rotation",
+  "checks": {
+    "mass_residual_max": 1.135532369089115e-17,
+    "volume_rate_max": 9.104587743447023e-17,
+    "raw_weight_solve_residual_max": 1.9081958235744878e-17,
+    "centroid_transport_identity_max": 1.285592726024687e-16,
+    "site_vs_cellmean_velocity_identity_max": 0.0,
+    "momentum_Euler_reference_max_error": 1.1644331332494318e-16,
+    "thermal_proxy_vs_variance_rate_max_error": 7.818114103157192e-18,
+    "internal_plus_periodic_cut_ledgers": {
+      "mass": 1.910832234302332e-17,
+      "momentum": 1.3444106938820255e-17,
+      "energy": 1.0842021724855044e-17
+    }
+  },
+  "raw_rhs_compatibility": -2.2558181451276527e-17,
+  "rhs_mean_removed": false,
+  "weight_gauge": "arithmetic mean zero",
+  "rate_max": 0.009329422923137702,
+  "surface_mass_flux_absolute_sum": 1.0728616659312702,
+  "thermal_proxy_rate_L1_per_volume": 0.0008070234742367532,
+  "thermal_proxy_rate_signed_sum": 0.00012971046052629592,
+  "thermal_proxy_rate_max_per_physical_U": 177052.2899798657,
+  "physical_Udot": "zero for the registered incompressible affine/rest-pressure initial states",
+  "periodic_cut_scope": "Physical affine continuation on the owned-cell patch with fixed periodic geometry images. Cut fluxes are explicit external boundary ledgers, not a new production shear-periodic BC.",
+  "Galilean_checks": {
+    "mass": 4.440892098500626e-16,
+    "momentum": 3.469446951953614e-16,
+    "energy": 2.636779683484747e-16,
+    "thermal_proxy_rate": 6.844026213814747e-18
+  },
+  "native_geometry_FD": [
+    {
+      "epsilon": 1e-05,
+      "volume_rate_max_error": 1.290634033149803e-10,
+      "centroid_rate_max_error": 1.2303588148299127e-09,
+      "variance_rate_max_error": 4.274760368816813e-12,
+      "variance_rate_relative_error": 4.710387361549996e-08
+    },
+    {
+      "epsilon": 5e-06,
+      "volume_rate_max_error": 3.19189897444234e-11,
+      "centroid_rate_max_error": 3.060981468294699e-10,
+      "variance_rate_max_error": 1.13057406860885e-12,
+      "variance_rate_relative_error": 1.245787212522812e-08
+    }
+  ],
+  "accepted_steps": 0
+}

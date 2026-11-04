@@ -1,0 +1,36 @@
+{
+  "scope": "Frozen net-mass ALE balance and first-RHS thermal representation audit.\n\nAnalytic fields and original native geometry only. No fluid evolution or new\nevolved moments. A small direct weight-rate solve is a reference existence\ncheck, not a production solver or cost result. Never remove the RHS mean.\n",
+  "native_cases": [
+    [
+      1,
+      16
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      3
+    ]
+  ],
+  "fields": [
+    "translation",
+    "rigid_rotation_Dge2",
+    "steady_affine_shear_Dge2",
+    "rest_linear_pressure"
+  ],
+  "rho": 1,
+  "constant_pressure": 1e-08,
+  "linear_pressure_base": 2,
+  "RHS_compatibility": "No RHS mean subtraction. A failed compatibility test stops.",
+  "weight_solver": "Small pinned direct reference only. Mean-zero solution gauge.",
+  "finite_difference_epsilons": [
+    1e-05,
+    5e-06
+  ],
+  "geometry_FD_gate": "Volume/centroid max error <1e-7; variance derivative relative error <1e-4 with absolute scale floor 1e-9 for exact-zero controls. No extra epsilon scan.",
+  "quadrature": "Exact degree three for uniform-density affine flux, from original native faces. 2-point lines; positive 3x3 Duffy face triangles.",
+  "stop_rule": "No scalar m,p,E model adoption if physical thermal energy and unresolved kinetic variance need an undefined correction. Report FV spatial order separately; no PDE, native128, limiter or new evolved reservoir.",
+  "new_PDE_steps": 0
+}

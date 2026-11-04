@@ -1,0 +1,41 @@
+{
+  "dimension": 3,
+  "side": 3,
+  "field": "linear_pressure",
+  "checks": {
+    "mass_residual_max": 0.0,
+    "volume_rate_max": 0.0,
+    "raw_weight_solve_residual_max": 0.0,
+    "centroid_transport_identity_max": 0.0,
+    "site_vs_cellmean_velocity_identity_max": 0.0,
+    "momentum_Euler_reference_max_error": 4.969982758673552e-16,
+    "thermal_proxy_vs_variance_rate_max_error": 0.0,
+    "internal_plus_periodic_cut_ledgers": {
+      "mass": 0.0,
+      "momentum": 7.216449660063518e-16,
+      "energy": 0.0
+    }
+  },
+  "raw_rhs_compatibility": 0.0,
+  "rhs_mean_removed": false,
+  "weight_gauge": "arithmetic mean zero",
+  "rate_max": 0.0,
+  "surface_mass_flux_absolute_sum": 0.0,
+  "thermal_proxy_rate_L1_per_volume": 0.0,
+  "thermal_proxy_rate_signed_sum": 0.0,
+  "thermal_proxy_rate_max_per_physical_U": 0.0,
+  "physical_Udot": "zero for the registered incompressible affine/rest-pressure initial states",
+  "periodic_cut_scope": "Physical affine continuation on the owned-cell patch with fixed periodic geometry images. Cut fluxes are explicit external boundary ledgers, not a new production shear-periodic BC.",
+  "Galilean_checks": {
+    "mass": 0.0,
+    "momentum": 0.0,
+    "energy": 2.220446049250313e-16,
+    "thermal_proxy_rate": 2.237793284010081e-16
+  },
+  "native_geometry_FD": [
+    {
+      "scope": "Zero geometry direction; exact zero derivative, no duplicate native geometry replay."
+    }
+  ],
+  "accepted_steps": 0
+}
