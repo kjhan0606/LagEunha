@@ -1,0 +1,40 @@
+{
+  "scope": "Finite eligibility screen of a midpoint-offset Gauss/adjoint operator.\n\nAnalysis of existing original-native geometry only. No fluid evolution, new\nmesh, global weight/coefficient solve, or production change. The pressure gate\nprecedes Bloch/native stiffness/cost work. Pressure representation is fixed\nbefore measurements and is never selected from the better-looking result.\n",
+  "algebra_cases": [
+    [
+      1,
+      16
+    ],
+    [
+      1,
+      32
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      3,
+      3
+    ],
+    [
+      3,
+      6
+    ]
+  ],
+  "pressure_pattern_repeats": [
+    3,
+    6
+  ],
+  "pressure_samples": "One complete central primitive pattern, guarded through both reconstruction layers.",
+  "primary_pressure_representation": "exact cell average consistent with cell thermodynamic P=(gamma-1)U/V",
+  "secondary_pressure_representation": "generator sample, diagnosed separately without changing the physical gate",
+  "pressure_stop_rule": "For any dimension/axis, a primary D force-density error above 1e-9 retaining >=99% of its value under factor-two pattern refinement rejects the operator stage. Record inherited B errors separately. Algebra failure also stops. No tolerance or representation selection after measurement.",
+  "later_phases_only_if_pass": "Small Bloch and N128 known-wave/uniform-P acoustic screen; fixed 256 matvec/15 s limits and omega_D/omega_B<=2 engineering ceiling. No weight solve or PDE in this bundle.",
+  "new_global_coefficient_or_weight_solves": 0,
+  "accepted_PDE_steps": 0
+}

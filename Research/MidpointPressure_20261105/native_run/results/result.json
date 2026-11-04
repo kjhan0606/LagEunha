@@ -1,0 +1,100 @@
+{
+  "scope": "Finite eligibility screen of a midpoint-offset Gauss/adjoint operator.\n\nAnalysis of existing original-native geometry only. No fluid evolution, new\nmesh, global weight/coefficient solve, or production change. The pressure gate\nprecedes Bloch/native stiffness/cost work. Pressure representation is fixed\nbefore measurements and is never selected from the better-looking result.\n",
+  "algebra_pass": true,
+  "scaling_controls": [
+    {
+      "dimension": 1,
+      "native_doubled_position_max_error": 1.1102230246251565e-16,
+      "native_doubled_volume_max_error": 1.1102230246251565e-16
+    },
+    {
+      "dimension": 2,
+      "native_doubled_position_max_error": 1.1102230246251565e-16,
+      "native_doubled_volume_max_error": 9.020562075079397e-17
+    },
+    {
+      "dimension": 3,
+      "native_doubled_position_max_error": 1.1102230246251565e-16,
+      "native_doubled_volume_max_error": 6.071532165918825e-18
+    }
+  ],
+  "primary_pressure_nonconvergence_failures": [
+    {
+      "dimension": 1,
+      "axis": 0,
+      "coarse_error": 0.017283150998099687,
+      "fine_error": 0.01728315099810093,
+      "ratio": 1.000000000000072
+    },
+    {
+      "dimension": 2,
+      "axis": 0,
+      "coarse_error": 0.04158657251850418,
+      "fine_error": 0.04158657251850347,
+      "ratio": 0.999999999999983
+    },
+    {
+      "dimension": 2,
+      "axis": 1,
+      "coarse_error": 0.03926052775060524,
+      "fine_error": 0.03926052775059775,
+      "ratio": 0.9999999999998092
+    },
+    {
+      "dimension": 3,
+      "axis": 0,
+      "coarse_error": 0.039878322891743714,
+      "fine_error": 0.03987832289174264,
+      "ratio": 0.999999999999973
+    },
+    {
+      "dimension": 3,
+      "axis": 1,
+      "coarse_error": 0.04624524115194658,
+      "fine_error": 0.046245241151945046,
+      "ratio": 0.9999999999999668
+    },
+    {
+      "dimension": 3,
+      "axis": 2,
+      "coarse_error": 0.03541954727045017,
+      "fine_error": 0.035419547270449776,
+      "ratio": 0.9999999999999888
+    }
+  ],
+  "pressure_gate_pass": false,
+  "decision": "REJECT_AT_OPERATOR_PRESSURE_GATE",
+  "weight_solve_released": false,
+  "candidate_PDE_released": false,
+  "Bloch_native_acoustic_phase_executed": false,
+  "new_global_solves": 0,
+  "new_native_meshes": 0,
+  "accepted_steps": 0,
+  "source_sha256": "c0a8f16958c41193e50eecc05d174815446a06bc456f3ce8405a2cef0a7c0703",
+  "geometry_sources": [
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_candidate_v1/algebra_D1_N16/geometry.json",
+      "sha256": "4677fa720fb79d9778eef09ba0d375f793ce0e24960d757e16642f7ed1e8ea0a"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_candidate_v1/algebra_D1_N32/geometry.json",
+      "sha256": "289e6e20f40b97f61903dd79220ee08a2a177a7324f3486498097d62111da74c"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_candidate_v1/algebra_D2_N3/geometry.json",
+      "sha256": "9f1d780fc38cc728c122fda16bfe5a60cd31886455fa914503c3344a8bcacc2f"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_candidate_v1/algebra_D2_N6/geometry.json",
+      "sha256": "810a49cab920221b48490672a12c492c6fa4133ac52b94772454f7795c7775bd"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_candidate_v1/algebra_D3_N3/geometry.json",
+      "sha256": "6e363a24332b6853b16060baf3151b488d290993d4d5071e8d397fbd03823381"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_candidate_v1/algebra_D3_N6/geometry.json",
+      "sha256": "9ca1ab0c6634317753755b8a357f81ae3bae01710177e5c99158142c2a73896b"
+    }
+  ]
+}
