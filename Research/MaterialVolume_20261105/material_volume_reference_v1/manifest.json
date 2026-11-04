@@ -1,0 +1,59 @@
+{
+  "captured_at_utc": "2026-11-04T17:20:54.285230+00:00",
+  "parent_commit": "7b0a3463cac8ddfe79ead225d23fc9cc555b2edb",
+  "source": {
+    "path": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/material_volume_reference_audit.py",
+    "bytes": 4013,
+    "sha256": "8b15d0388e2c01fb14e3b5b7367c64b41955e8cb59351ad0730e8c16ca051596"
+  },
+  "source_capture_scope": "Post-run capture; not a pre-run frozen snapshot.",
+  "input": {
+    "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_native_cost_v3/material_volume_native_input.bin",
+    "bytes": 5505144,
+    "sha256": "af0058481f7a1e09c6324b4e4003753f7de265fb6abd433fab1edeb3c039801c"
+  },
+  "run_outputs": [
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_reference_v1/result.json",
+      "bytes": 2209,
+      "sha256": "1f8a1c198d4eb3c71c201c70371e20318315e50e1d3c551550edc83fa3e204e6"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_reference_v1/native_L.npz",
+      "bytes": 808910,
+      "sha256": "232bd1bf3fda241eb928f307556ecbeaa9b90a2647c9647fc1b5f75d3b68fadb"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_reference_v1/psi_reference.npy",
+      "bytes": 262272,
+      "sha256": "4a839abe7feffd2eec24343b9c5f6c2fca7b89aa95ef033e7f8092d115dc0c25"
+    },
+    {
+      "path": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_reference_v1/rhs.npy",
+      "bytes": 262272,
+      "sha256": "7a80de391a29b47237bdc473ab30efbd78625911887fe31f984ece3679790f2e"
+    }
+  ],
+  "reproduction_argv": [
+    "python",
+    "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Exam/HydroCore/material_volume_reference_audit.py",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_native_cost_v3/material_volume_native_input.bin",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_volume_reference_reproduction_NEW_DIRECTORY"
+  ],
+  "reproduction_scope": "Example invocation requiring a new output directory, not a recovered historical launch record.",
+  "publication_validation": {
+    "saved_reference_relative_residuals": [
+      4.625066280216898e-14,
+      5.869374385049445e-14
+    ],
+    "saved_reference_check": "PASS",
+    "validation_python": "3.13.11 | packaged by Anaconda, Inc. | (main, Dec 10 2025, 21:28:48) [GCC 14.3.0]",
+    "validation_numpy": "2.3.3",
+    "validation_scipy": "1.18.0"
+  },
+  "accepted_PDE_steps": 0,
+  "production_physics_changed": false,
+  "production_solver_qualified": false,
+  "certified_global_spectral_bound": false,
+  "pending": "Residual-to-volume-work/force/face-displacement propagation; fixed cap and tolerance remain unchanged."
+}

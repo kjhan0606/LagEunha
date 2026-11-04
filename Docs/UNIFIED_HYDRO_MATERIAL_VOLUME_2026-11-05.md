@@ -193,6 +193,29 @@ Future controlled native tests should explicitly use ACTIVE with reserved CPU
 resources; historical run environments remain unchanged. This measured runtime
 improvement is separate from the unresolved physical volume-transport problem.
 
+## Independent frozen-graph reference, analysis only
+
+An independent sparse factorization of the same 128² t=0.5 native graph supplies
+mean-zero reference coefficients for the planned residual-to-physical-error
+analysis. The two relative reference residuals are 4.6251e-14 and 5.8694e-14.
+The maximum entry of `L-L^T` is 4.44e-15. Saved matrix, coefficient, and RHS
+arrays reproduce the reported residuals in an independent post-run check.
+
+Ritz values for the symmetric part of the matrix suggest positive-spectrum
+condition ratios of about 12,596 without scaling and 4,097 with Jacobi scaling.
+The measured Ritz residuals accompany the estimates. The estimates are not
+certified global spectral bounds and cannot certify a physical error budget.
+The factorization timing is reference-only and is not a production cost result.
+The script performs no fluid evolution and accepts no PDE steps.
+
+Compact results and SHA256 provenance are in
+`Research/MaterialVolume_20261105/material_volume_reference_v1`. The preceding
+256-iteration CPU cost failure remains unchanged. The planned finite stage
+propagates coefficient errors into volume work, force, and face displacement
+without increasing the iteration cap or relaxing the tolerance. The error
+propagation stage has not been executed in the present snapshot. No candidate
+PDE or manuscript result is released by the reference calculation.
+
 ## Provenance and remaining work
 
 Run/build root: `/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1`.
