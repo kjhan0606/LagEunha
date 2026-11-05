@@ -1,0 +1,100 @@
+{
+  "scope": "Saved accepted states and rejected trials only; no new trajectory or adopted physics change",
+  "cases": {
+    "noh": {
+      "last_accepted_time": 0.005302082775718974,
+      "original_target": 0.6,
+      "endpoint_pass": false,
+      "exact_Riemann_wave_kinds": [
+        "shock",
+        "contact",
+        "shock"
+      ],
+      "wave_positions": [
+        -0.0017673675528369131,
+        0.0,
+        0.0017673675528369131
+      ],
+      "middle_states_rho_P_u": [
+        [
+          3.9999887500527342,
+          1.333335583332161,
+          0.0
+        ],
+        [
+          3.9999887500527342,
+          1.333335583332161,
+          0.0
+        ]
+      ],
+      "original_ROI_partial_time_L1_rho_P_u": [
+        0.011117499042958952,
+        0.002382298894254927,
+        0.0017673850168930141
+      ],
+      "root_bracket": "Upstream default",
+      "wall": {
+        "mean_delta": -1.9860155590075335,
+        "reconstructed_delta": 0.0,
+        "chi": 1.0,
+        "Pi_native": 0.0,
+        "centroid_normal_distance": 2.2014975637346524e-08
+      },
+      "wall_cell_rho_P_V_q": [
+        252434.87705095886,
+        1174.876982578866,
+        2.2014975637346527e-08,
+        8.876002097061785e-12
+      ],
+      "finding": "Constrained no-penetration traces force reconstructed jump to zero. The additional reconstructed-compression gate suppresses AV despite negative mean jump and chi=1. This identifies the zero-stress branch, not a completed remedy trial."
+    },
+    "doublefan": {
+      "last_accepted_time": 0.0499156709340045,
+      "original_target": 0.15,
+      "endpoint_pass": false,
+      "exact_Riemann_wave_kinds": [
+        "simple",
+        "contact",
+        "simple"
+      ],
+      "wave_positions": [
+        0.36281519035879195,
+        0.4826128006004028,
+        0.5,
+        0.5173871993995972,
+        0.637184809641208
+      ],
+      "middle_states_rho_P_u": [
+        [
+          0.021852118206812716,
+          0.0018938734200547496,
+          0.0
+        ],
+        [
+          0.021852118206812716,
+          0.0018938734200547496,
+          0.0
+        ]
+      ],
+      "original_ROI_partial_time_L1_rho_P_u": [
+        0.01758244855362313,
+        0.005960574182069492,
+        0.1278940654668752
+      ],
+      "root_bracket": "Lower exact-Riemann root bracket reduced to1e-8 P0 to include the near-vacuum root; no evolved solver parameter changed",
+      "nearest_pair": {
+        "ids": [
+          187,
+          188
+        ],
+        "gap": 2.0975274694912116e-07,
+        "selected_gap_rate": -0.1118284164067973,
+        "mean_velocity_difference": -0.1118284164067973,
+        "centroid_separation": 0.04498162952765328,
+        "chi": 0.5840269440970185,
+        "Pi": 0.011283389960450333
+      },
+      "finding": "A nonmonotone cell-mean velocity pair approaches in an exact expanding Riemann flow. Rejected trial crosses ordered q, while exhaustive power cells remain positive at the saved post-crossing instant. Reordering alone would not demonstrate a continuous valid trajectory through coincidence."
+    }
+  }
+}

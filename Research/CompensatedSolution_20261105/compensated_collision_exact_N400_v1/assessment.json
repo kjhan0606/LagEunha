@@ -1,0 +1,106 @@
+{
+  "scope": "Independent exact solution, no native PDE rerun; original physical interval [0,1]",
+  "physical_version": 8,
+  "time": 0.035,
+  "gamma": 1.4,
+  "cut": 0.4,
+  "wave_kinds": [
+    "shock",
+    "contact",
+    "shock"
+  ],
+  "wave_speeds": [
+    0.789593919264437,
+    8.689774411632381,
+    12.250778123084338
+  ],
+  "wave_positions": [
+    0.4276357871742553,
+    0.7041421044071334,
+    0.8287772343079518
+  ],
+  "states_rho_u_P": [
+    [
+      5.99924,
+      19.5975,
+      460.894
+    ],
+    [
+      14.282349951978404,
+      8.689774411632381,
+      1691.646955399126
+    ],
+    [
+      31.04260164161988,
+      8.689774411632381,
+      1691.646955399126
+    ],
+    [
+      5.99242,
+      -6.19633,
+      46.095
+    ]
+  ],
+  "physical_interval_measure": 0.9999999999999981,
+  "native_final_cells": 1248,
+  "physical_intersecting_cells": 762,
+  "norms": {
+    "density": {
+      "piecewise_field_L1": 0.0627243890234368,
+      "cell_average_L1": 0.057179080412211314,
+      "relative_piecewise_field_L1": 0.005497467929042291,
+      "reference_integral_absolute": 11.409687120150938
+    },
+    "momentum_density": {
+      "piecewise_field_L1": 0.6202406976990278,
+      "cell_average_L1": 0.5927747467934422,
+      "relative_piecewise_field_L1": 0.004978937834708095,
+      "reference_integral_absolute": 124.57289451885474
+    },
+    "total_energy_density": {
+      "piecewise_field_L1": 14.261403348801855,
+      "cell_average_L1": 12.829435154068605,
+      "relative_piecewise_field_L1": 0.004727835429497505,
+      "reference_integral_absolute": 3016.4762630744935
+    },
+    "pressure": {
+      "piecewise_field_L1": 5.225713930210769,
+      "cell_average_L1": 4.648770489067596,
+      "relative_piecewise_field_L1": 0.005914271185963716,
+      "reference_integral_absolute": 883.5769896065801
+    },
+    "velocity": {
+      "piecewise_field_L1": 0.040788211698825155,
+      "cell_average_L1": 0.04076793197986466,
+      "relative_piecewise_field_L1": 0.0031551815850461343,
+      "reference_integral_absolute": 12.927373781635671
+    }
+  },
+  "independent_reference_Rankine_Hugoniot_max_relative_defect": 2.2065196950771457e-15,
+  "physical_cell_primitive_extrema": {
+    "density": {
+      "minimum": 5.992419999998137,
+      "maximum": 43.61396671598759
+    },
+    "pressure": {
+      "minimum": 46.09499999998348,
+      "maximum": 2640.493934468048
+    },
+    "velocity": {
+      "minimum": -6.19633000000089,
+      "maximum": 19.59750000000045
+    }
+  },
+  "pressure_norm_convention": "Pressure from native cell conserved means, compared with exact primitive pressure; conservative energy and momentum norms reported separately.",
+  "boundary_scope": "Existing guard multiplier1, no guard-doubling equivalence inferred.",
+  "positive_final_state": true,
+  "floor_or_repair_count": 0,
+  "reference_source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/RiemannSolver/riemann.py",
+  "sha256": {
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/compensated_strong_N400_v1/gates/D1_collision_N400/final.fv": "27aea29da8afc7e6cf721e81ca84f227f0a2d2caf85f8aca88ceff9745af2b59",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/compensated_strong_N400_v1/gates/D1_collision_N400/final.dat": "74e69ad06db604ee038f1a411711eb780c83bc2de534ba0881b8a7fe390de096",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/compensated_strong_N400_v1/gates/D1_collision_N400/problem_spec.json": "17b0b046ee6b8c339979571cb93b1589980eaf8eec29ccbd006b520b363c1793",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/RiemannSolver/riemann.py": "f6971816a9de3ffcea32206c7cec7410ed7c5b5977fe0164a9c8f67f0be290a2",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/EquationOfState/eos.py": "680308e91a2561c1fa65567bc3d916b0763605f410e4236906b9ae7b72bd94d7"
+  }
+}

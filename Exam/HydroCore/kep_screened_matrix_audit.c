@@ -11,15 +11,20 @@ static int ic0_algebra(GfsFvWorkspace *w,const GfsFvMesh *m,const char *prefix){
     double *inverse_x=calloc(m->n,sizeof(double)),*inverse_y=calloc(m->n,sizeof(double));
     if(!x||!y||!ax||!csr||!inverse_x||!inverse_y)return 4;
     if(!w->ic_applications&&prepare_ic0(w,m))return 3;
-    double matrix_error=0;
+    double matrix_error=0,matrix_backward_error=0,constant_mode_error=0;
     for(int mode=0;mode<2;mode++){
-        for(int i=0;i<m->n;i++){x[i]=mode?1:sin(1.7*(i+1));csr[i]=w->diagonal[i]*x[i];}
+        for(int i=0;i<m->n;i++){x[i]=mode?1:sin(1.7*(i+1));csr[i]=w->diagonal[i]*x[i];y[i]=fabs(csr[i]);}
         multiply(w,m,x,ax);double scale=1;
         for(int i=0;i<m->n;i++)for(int p=w->ic_offset[i];p<w->ic_offset[i+1];p++){
             int j=w->ic_column[p];double a=w->ic_matrix[p];csr[i]+=a*x[j];csr[j]+=a*x[i];
+            y[i]+=fabs(a*x[j]);y[j]+=fabs(a*x[i]);
         }
         for(int i=0;i<m->n;i++)scale=fmax(scale,fabs(ax[i]));
-        for(int i=0;i<m->n;i++)matrix_error=fmax(matrix_error,fabs(ax[i]-csr[i])/scale);
+        for(int i=0;i<m->n;i++){
+            matrix_error=fmax(matrix_error,fabs(ax[i]-csr[i])/scale);
+            matrix_backward_error=fmax(matrix_backward_error,fabs(ax[i]-csr[i])/(1+y[i]));
+            if(mode)constant_mode_error=fmax(constant_mode_error,fabs(ax[i]-m->cell[i].mu)/(1+m->cell[i].mu));
+        }
     }
     for(int i=0;i<m->n;i++){x[i]=sin(1.7*(i+1));y[i]=cos(.83*(i+.4));w->r[i]=x[i];}
     if(ic0_precondition(w,m))return 3;memcpy(inverse_x,w->pre,m->n*sizeof(double));
@@ -31,9 +36,13 @@ static int ic0_algebra(GfsFvWorkspace *w,const GfsFvMesh *m,const char *prefix){
     for(int i=0;i<m->n;i++)for(int p=w->ic_offset[i];p<w->ic_offset[i+1];p++)fprintf(out,"%d,%d,%.17g,%.17g\n",i,w->ic_column[p],w->ic_matrix[p],w->ic_lower[p]);
     if(fclose(out))return 4;snprintf(path,sizeof(path),"%s_pivots.csv",prefix);out=fopen(path,"wx");if(!out)return 4;
     fprintf(out,"i,Aii,Di\n");for(int i=0;i<m->n;i++)fprintf(out,"%d,%.17g,%.17g\n",i,w->diagonal[i],w->ic_pivot[i]);if(fclose(out))return 4;
-    int pass=matrix_error<1e-12&&symmetry<1e-12&&xMx>0&&isfinite(xMx)&&w->ic_min_pivot>0;
+    /* A constant probe cancels O(a_ij) CSR terms to O(mu). The forward
+     * discrepancy then scales with a_ij/mu even for the same coefficients.
+     * Keep that observation and test coefficient-scale backward error plus
+     * the native exact constant mode. This is not a root stopping rule. */
+    int pass=matrix_backward_error<1e-12&&constant_mode_error<1e-12&&symmetry<1e-12&&xMx>0&&isfinite(xMx)&&w->ic_min_pivot>0;
     snprintf(path,sizeof(path),"%s_algebra.json",prefix);out=fopen(path,"wx");if(!out)return 4;
-    fprintf(out,"{\"scope\":\"original native edge matvec vs assembled symmetric CSR, IC0 preconditioner bilinear probes\",\"matrix_action_relative_error\":%.17g,\"preconditioner_symmetry_relative_error\":%.17g,\"positive_quadratic_form\":%.17g,\"minimum_pivot\":%.17g,\"stored_lower_plus_diagonal_entries\":%d,\"shift_or_fill_or_reordering\":false,\"pass\":%s}\n",matrix_error,symmetry,xMx,w->ic_min_pivot,w->ic_nnz+m->n,pass?"true":"false");
+    fprintf(out,"{\"scope\":\"original native edge matvec vs assembled symmetric CSR, IC0 preconditioner bilinear probes\",\"matrix_action_relative_error\":%.17g,\"matrix_action_backward_error\":%.17g,\"native_constant_mode_relative_error\":%.17g,\"preconditioner_symmetry_relative_error\":%.17g,\"positive_quadratic_form\":%.17g,\"minimum_pivot\":%.17g,\"stored_lower_plus_diagonal_entries\":%d,\"shift_or_fill_or_reordering\":false,\"pass\":%s}\n",matrix_error,matrix_backward_error,constant_mode_error,symmetry,xMx,w->ic_min_pivot,w->ic_nnz+m->n,pass?"true":"false");
     if(fclose(out))return 4;free(x);free(y);free(ax);free(csr);free(inverse_x);free(inverse_y);return pass?0:1;
 }
 #endif
@@ -56,11 +65,12 @@ int GFS_MATRIX_AUDIT_ENTRY(int argc,char **argv){
     fprintf(out,"i,j,aij\n");for(int k=0;k<w->ne;k++){FvEdge *e=w->edge+k;if(e->j>=0)fprintf(out,"%d,%d,%.17g\n",e->i,e->j,e->jacobian);}
     if(fclose(out))return 4;
     snprintf(path,sizeof(path),"%s_rows.csv",argv[2]);out=fopen(path,"wx");if(!out)return 4;
-    fprintf(out,"id,mu,diagonal,b,scale,z_candidate,volume,qx,qy,qz,qdotx,qdoty,qdotz\n");
+    fprintf(out,"id,mu,diagonal,b,scale,z_candidate,volume,qx,qy,qz,qdotx,qdoty,qdotz,z_low\n");
     const double *candidate=code>=10?w->direction:w->z;double maximum=0;
     for(int i=0;i<m.n;i++){
         maximum=fmax(maximum,w->diagonal[i]/m.cell[i].mu);
-        fprintf(out,"%d,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g\n",i,m.cell[i].mu,w->diagonal[i],-R0[i],w->scale[i],candidate[i],m.geometry[i].V,m.cell[i].q[0],m.cell[i].q[1],m.cell[i].q[2],w->velocity[i][0],w->velocity[i][1],w->velocity[i][2]);
+        const double *low=solution_low(w,candidate);
+        fprintf(out,"%d,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g\n",i,m.cell[i].mu,w->diagonal[i],-R0[i],w->scale[i],candidate[i],m.geometry[i].V,m.cell[i].q[0],m.cell[i].q[1],m.cell[i].q[2],w->velocity[i][0],w->velocity[i][1],w->velocity[i][2],low?low[i]:0);
     }if(fclose(out))return 4;
     if(residual(w,&m,candidate,w->trial,0))return 3;multiply(w,&m,candidate,w->Ap);
     double representation=0;for(int i=0;i<m.n;i++)representation=fmax(representation,fabs(w->trial[i]-w->Ap[i]-R0[i])/w->scale[i]);

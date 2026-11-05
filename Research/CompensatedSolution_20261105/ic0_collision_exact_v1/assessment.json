@@ -1,0 +1,106 @@
+{
+  "scope": "Independent exact solution, no native PDE rerun; original physical interval [0,1]",
+  "physical_version": 8,
+  "time": 0.035,
+  "gamma": 1.4,
+  "cut": 0.4,
+  "wave_kinds": [
+    "shock",
+    "contact",
+    "shock"
+  ],
+  "wave_speeds": [
+    0.789593919264437,
+    8.689774411632381,
+    12.250778123084338
+  ],
+  "wave_positions": [
+    0.4276357871742553,
+    0.7041421044071334,
+    0.8287772343079518
+  ],
+  "states_rho_u_P": [
+    [
+      5.99924,
+      19.5975,
+      460.894
+    ],
+    [
+      14.282349951978404,
+      8.689774411632381,
+      1691.646955399126
+    ],
+    [
+      31.04260164161988,
+      8.689774411632381,
+      1691.646955399126
+    ],
+    [
+      5.99242,
+      -6.19633,
+      46.095
+    ]
+  ],
+  "physical_interval_measure": 1.0000000000000013,
+  "native_final_cells": 628,
+  "physical_intersecting_cells": 382,
+  "norms": {
+    "density": {
+      "piecewise_field_L1": 0.125684997937368,
+      "cell_average_L1": 0.11511527084339074,
+      "relative_piecewise_field_L1": 0.011015639308407665,
+      "reference_integral_absolute": 11.409687120151016
+    },
+    "momentum_density": {
+      "piecewise_field_L1": 1.2170352365518076,
+      "cell_average_L1": 1.1534360830726307,
+      "relative_piecewise_field_L1": 0.009769663306391238,
+      "reference_integral_absolute": 124.57289451885553
+    },
+    "total_energy_density": {
+      "piecewise_field_L1": 28.252788753905698,
+      "cell_average_L1": 25.392617431715543,
+      "relative_piecewise_field_L1": 0.009366156498479921,
+      "reference_integral_absolute": 3016.4762630745086
+    },
+    "pressure": {
+      "piecewise_field_L1": 10.56037390226336,
+      "cell_average_L1": 9.48803043065498,
+      "relative_piecewise_field_L1": 0.011951843502585335,
+      "reference_integral_absolute": 883.5769896065851
+    },
+    "velocity": {
+      "piecewise_field_L1": 0.0857078393101584,
+      "cell_average_L1": 0.08152766691760438,
+      "relative_piecewise_field_L1": 0.006629949807122706,
+      "reference_integral_absolute": 12.927373781635668
+    }
+  },
+  "independent_reference_Rankine_Hugoniot_max_relative_defect": 2.2065196950771457e-15,
+  "physical_cell_primitive_extrema": {
+    "density": {
+      "minimum": 5.992419999999066,
+      "maximum": 46.348427404051826
+    },
+    "pressure": {
+      "minimum": 46.09499999999265,
+      "maximum": 2854.9861160781147
+    },
+    "velocity": {
+      "minimum": -6.196330000000493,
+      "maximum": 19.59750000000026
+    }
+  },
+  "pressure_norm_convention": "Pressure from native cell conserved means, compared with exact primitive pressure; conservative energy and momentum norms reported separately.",
+  "boundary_scope": "Existing guard multiplier1, no guard-doubling equivalence inferred.",
+  "positive_final_state": true,
+  "floor_or_repair_count": 0,
+  "reference_source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/RiemannSolver/riemann.py",
+  "sha256": {
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/ic0_strong_resume_v1/gates/D1_collision_N200/final.fv": "aba6d67a033db18977d6e173150733e461e852813e640f5dfbfdee4dc8d264d4",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/ic0_strong_resume_v1/gates/D1_collision_N200/final.dat": "13a198c938349f0ff39e0655102a870e2c2a613af30c94b3176c3d87b714ad05",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/ic0_strong_resume_v1/gates/D1_collision_N200/problem_spec.json": "0c3ddbef6d0e72ad12f28575955b4fab844587fd280de136cd5764b0229046e6",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/RiemannSolver/riemann.py": "f6971816a9de3ffcea32206c7cec7410ed7c5b5977fe0164a9c8f67f0be290a2",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/EquationOfState/eos.py": "680308e91a2561c1fa65567bc3d916b0763605f410e4236906b9ae7b72bd94d7"
+  }
+}

@@ -31,6 +31,7 @@ typedef struct {
 } GfsFvMesh;
 typedef struct {
     double dQ[5],qdot[3],z,Vdot,residual;
+    double z_materialization_error; /* rounded rate.z minus internal two-word z, not persisted */
 } GfsFvRate;
 typedef struct {
     int newton,cg,backtracks,hll_points,points;
@@ -45,6 +46,8 @@ typedef struct {
     double preconditioner_assembly_seconds,preconditioner_factor_seconds,preconditioner_apply_seconds;
     double minimum_preconditioner_pivot;
     int preconditioner_nonzeros,preconditioner_applications,preconditioner_failure_row;
+    double maximum_z_materialization_error,maximum_mu_z_materialization_error;
+    double maximum_edge_z_materialization_scaled_error;
 } GfsFvRhsStats;
 typedef struct GfsFvWorkspace GfsFvWorkspace;
 int gfs_fv_geometry(GfsFvMesh *mesh);

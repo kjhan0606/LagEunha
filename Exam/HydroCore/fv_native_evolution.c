@@ -69,8 +69,12 @@ typedef struct {
     long long initial_true_stops,trigger_true_stops,cap_true_stops;
     double preconditioner_assembly_seconds,preconditioner_factor_seconds,preconditioner_apply_seconds,minimum_preconditioner_pivot;
     long long preconditioner_applications;int maximum_preconditioner_nonzeros;
+    double maximum_z_materialization_error,maximum_mu_z_materialization_error,maximum_edge_z_materialization_scaled_error;
 } QueryLedger;
 static void add_queries(QueryLedger *q,const GfsFvRhsStats *s,int n){
+    q->maximum_z_materialization_error=fmax(q->maximum_z_materialization_error,s->maximum_z_materialization_error);
+    q->maximum_mu_z_materialization_error=fmax(q->maximum_mu_z_materialization_error,s->maximum_mu_z_materialization_error);
+    q->maximum_edge_z_materialization_scaled_error=fmax(q->maximum_edge_z_materialization_scaled_error,s->maximum_edge_z_materialization_scaled_error);
     if(s->pcg_stop_reason==0)q->initial_true_stops++;
     else if(s->pcg_stop_reason==1)q->trigger_true_stops++;
     else if(s->pcg_stop_reason==2)q->cap_true_stops++;
@@ -181,7 +185,12 @@ int main(int argc,char **argv){
 #else
     const char *preconditioner="diagonal_Jacobi";
 #endif
-    fprintf(backend,"{\"preconditioner\":\"%s\",\"PCG_cap\":64,\"recursive_relative_check_trigger\":1e-12,\"true_scaled_final_tolerance\":1e-12,\"true_check_at_cap\":true,\"retry_cap\":8,\"minimum_dt\":1e-14}\n",preconditioner);
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    const char *solution_precision="two_word_accumulated_solution_and_face_difference";
+#else
+    const char *solution_precision="double";
+#endif
+    fprintf(backend,"{\"preconditioner\":\"%s\",\"solution_precision\":\"%s\",\"PCG_cap\":64,\"recursive_relative_check_trigger\":1e-12,\"true_scaled_final_tolerance\":1e-12,\"true_check_at_cap\":true,\"retry_cap\":8,\"minimum_dt\":1e-14}\n",preconditioner,solution_precision);
     if(fclose(backend))return 5;
     fprintf(history,"time,dt,steps,retries,mass,momentum_x,momentum_y,momentum_z,energy,mass_ledger_error,energy_ledger_error,weight_mass_invariant,integrated_residual_invariant,pressure_relative_L1_from_initial_profile,mean_velocity_vs_initial_node_diagnostic_L1,minP,minV,minMass,GCL_L1,root_residual,Newton,PCG,physical_velocity_node_L1_from_initial_profile,kinetic_RK_defect,kinetic_pair_defect,stress_thermal_rate\n");
     GfsFvCell *saved=malloc(m.n*sizeof(*saved));GfsFvRate *r0=calloc(m.n,sizeof(*r0)),*r1=calloc(m.n,sizeof(*r1));double *V0=malloc(m.n*sizeof(double));
@@ -190,6 +199,7 @@ int main(int argc,char **argv){
     double start=omp_get_wtime(),gcl_cumulative=0,budget_cumulative=0,max_ledger=0,max_link=0,last_output=-1,recon_time=0,fan_time=0,solve_time=0,flux_time=0;
     int failed=0,total_retries=0,max_newton=0,max_cg=0;
     double kinetic_time_defect_sum=0,maximum_kinetic_pair_defect=0,integrated_stress_heat=0,maximum_entropy_balance_defect=0;
+    double maximum_trial_weight_roundoff_relative=0,accepted_weight_roundoff_bound_sum=0;
     QueryLedger query={0};
     while(time<target){
         GfsFvRhsStats s0,s1;int code=gfs_fv_native_rhs(work,&m,r0,&s0);add_queries(&query,&s0,m.n);if(code){fprintf(stderr,"FV RHS0 failed code=%d t=%.17g\n",code,time);failure_receipt("RHS0 accepted state",time,0,code,&s0);failed=1;break;}
@@ -203,6 +213,11 @@ int main(int argc,char **argv){
             if(!(dt>1e-14)||!isfinite(dt))break;
             for(int i=0;i<m.n;i++){
                 m.cell[i]=saved[i];for(int a=0;a<m.dim;a++)m.cell[i].q[a]+=dt*r0[i].qdot[a];m.cell[i].W+=dt*r0[i].z;
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+                long double exact=(long double)saved[i].W+(long double)dt*((long double)r0[i].z-r0[i].z_materialization_error);
+                double error=(double)(fabsl((long double)m.cell[i].W-exact)*saved[i].mu/saved[i].m0);
+                maximum_trial_weight_roundoff_relative=fmax(maximum_trial_weight_roundoff_relative,error);
+#endif
                 for(int c=0;c<5;c++)m.cell[i].Q[c]+=dt*r0[i].dQ[c];
             }
             if(gfs_fv_geometry(&m)){reject_reason="Euler_geometry";goto reject_step;}
@@ -240,6 +255,15 @@ reject_step:
         }
         if(!accepted){memcpy(m.cell,saved,m.n*sizeof(*saved));if(gfs_fv_geometry(&m))return 8;failed=1;fprintf(stderr,"FV step rejected t=%.17g dt=%.17g retry=%d\n",time,dt,retry);break;}
         total_retries+=retry;steps++;time+=dt;if(target-time<16*DBL_EPSILON*target)time=target;
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+        double accepted_roundoff=0;
+        for(int i=0;i<m.n;i++){
+            long double exact=(long double)saved[i].W+.5L*dt*((long double)r0[i].z-r0[i].z_materialization_error+(long double)r1[i].z-r1[i].z_materialization_error);
+            double error=(double)(fabsl((long double)m.cell[i].W-exact)*saved[i].mu/saved[i].m0);
+            accepted_roundoff=fmax(accepted_roundoff,error);
+        }
+        accepted_weight_roundoff_bound_sum+=accepted_roundoff;
+#endif
         for(int c=0;c<5;c++)boundary[c]+=.5*dt*(s0.boundary_flux[c]+s1.boundary_flux[c]);
         double sum[5];totals(&m,sum);double pnorm=0,vnorm=0,minP=HUGE_VAL,minV=HUGE_VAL,minM=HUGE_VAL,link=0,link_res=0,gcl=0,budget=0,kinetic1=0;
         for(int i=0;i<m.n;i++){
@@ -296,6 +320,9 @@ reject_step:
     FILE *precon=fopen("preconditioner_ledger.json","wx");if(!precon)return 5;
     fprintf(precon,"{\"scope\":\"all RHS solves including rejected trials; IC0 times are included within solve_seconds\",\"preconditioner\":\"%s\",\"assembly_and_symbolic_seconds\":%.17g,\"numeric_factor_seconds\":%.17g,\"triangular_apply_seconds\":%.17g,\"applications\":%lld,\"maximum_stored_lower_plus_diagonal_entries\":%d,\"minimum_positive_pivot\":%.17g,\"triangular_execution\":\"serial native row order; not a CUDA/MPI claim\"}\n",preconditioner,query.preconditioner_assembly_seconds,query.preconditioner_factor_seconds,query.preconditioner_apply_seconds,query.preconditioner_applications,query.maximum_preconditioner_nonzeros,query.minimum_preconditioner_pivot);
     if(fclose(precon))return 5;
+    FILE *rounding=fopen("solution_rounding_ledger.json","wx");if(!rounding)return 5;
+    fprintf(rounding,"{\"solution_precision\":\"%s\",\"checkpoint_cell_bytes\":%zu,\"checkpoint_has_permanent_low_state\":false,\"maximum_z_rate_materialization_abs_error\":%.17g,\"maximum_mu_z_rate_materialization_abs_error\":%.17g,\"maximum_edge_rate_materialization_scaled_error\":%.17g,\"maximum_trial_weight_roundoff_mass_relative\":%.17g,\"accepted_weight_roundoff_mass_relative_bound_sum\":%.17g,\"update_reference_arithmetic\":\"long double diagnostic, not fluid evolution; actual stored W and existing geometry/GCL/mass-weight checks unchanged\"}\n",solution_precision,sizeof(GfsFvCell),query.maximum_z_materialization_error,query.maximum_mu_z_materialization_error,query.maximum_edge_z_materialization_scaled_error,maximum_trial_weight_roundoff_relative,accepted_weight_roundoff_bound_sum);
+    if(fclose(rounding))return 5;
     FILE *queries=fopen("velocity_query.json","wx");if(!queries)return 5;
     double minimum=HUGE_VAL,minimum_ratio=HUGE_VAL;
     for(int i=0;i<m.n;i++)for(int k=0;k<m.geometry[i].faces;k++){

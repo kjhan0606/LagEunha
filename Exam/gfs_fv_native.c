@@ -24,6 +24,21 @@
 #if (defined(GFS_NATIVE_SCALAR_VELOCITY) || defined(GFS_NATIVE_CENTROID_STRAIN)) && !defined(GFS_NATIVE_WALL_VELOCITY)
 #error The common limiter/strain candidates retain the constrained physical wall field
 #endif
+#if defined(GFS_NATIVE_COMPENSATED_SOLUTION) && (!defined(GFS_NATIVE_IC0) || !defined(GFS_NATIVE_SCALAR_VELOCITY) || !defined(GFS_NATIVE_CENTROID_STRAIN) || defined(__FAST_MATH__))
+#error Compensated solution requires IC0 and floating point operations without fast-math reassociation
+#endif
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+/* Error-free TwoSum / FMA TwoProd, followed by normalized two-word sums.
+ * Only the accumulated solution uses two words. A and Krylov vectors do not. */
+typedef struct {double hi,lo;} FvWide;
+static FvWide wide_sum(double a,double b){double s=a+b,v=s-a;return (FvWide){s,(a-(s-v))+(b-v)};}
+static FvWide wide_add(FvWide a,FvWide b){
+    FvWide s=wide_sum(a.hi,b.hi),t=wide_sum(a.lo,b.lo);
+    s.lo+=t.hi;s=wide_sum(s.hi,s.lo);s.lo+=t.lo;return wide_sum(s.hi,s.lo);
+}
+static FvWide wide_product(double a,double b){double p=a*b;return (FvWide){p,fma(a,b,-p)};}
+static double wide_scale(double a,FvWide b){FvWide p=wide_product(a,b.hi);p.lo=fma(a,b.lo,p.lo);return p.hi+p.lo;}
+#endif
 #ifdef GFS_NATIVE_KEP
 #include "gfs_kep_ale.h"
 #ifdef GFS_NATIVE_KEP_FILTER
@@ -71,6 +86,9 @@ struct GfsFvWorkspace {
 #endif
     FvEdge *edge;FvFanPoint *point;int *offset,*incident;
     double *z,*R,*diagonal,*scale,*direction,*r,*p,*Ap,*pre,*trial;
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    double *z_low,*direction_low;
+#endif
 #ifdef GFS_NATIVE_KEP_FILTER
     double *stress_fraction;
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
@@ -85,6 +103,9 @@ GfsFvWorkspace *gfs_fv_workspace_create(void){return memory(sizeof(GfsFvWorkspac
 void gfs_fv_workspace_free(GfsFvWorkspace *w){
     if(!w)return;free(w->primitive);free(w->gradient);free(w->velocity);free(w->edge);free(w->point);free(w->offset);free(w->incident);
     free(w->z);free(w->R);free(w->diagonal);free(w->scale);free(w->direction);free(w->r);free(w->p);free(w->Ap);free(w->pre);free(w->trial);
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    free(w->z_low);free(w->direction_low);
+#endif
 #ifdef GFS_NATIVE_WALL_VELOCITY
     free(w->wall_mask);free(w->wall_relative);free(w->wall_distance);
 #endif
@@ -121,6 +142,9 @@ static void allocate(GfsFvWorkspace *w,int n){
 #endif
 #define VECTOR(field) free(w->field);w->field=memory(n*sizeof(double))
     VECTOR(z);VECTOR(R);VECTOR(diagonal);VECTOR(scale);VECTOR(direction);VECTOR(r);VECTOR(p);VECTOR(Ap);VECTOR(pre);VECTOR(trial);
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    VECTOR(z_low);VECTOR(direction_low);
+#endif
 #ifdef GFS_NATIVE_BLOCK_JACOBI
     free(w->strongest);free(w->partner);w->strongest=memory(n*sizeof(int));w->partner=memory(n*sizeof(int));VECTOR(block_a);VECTOR(block_b);
 #endif
@@ -431,13 +455,21 @@ static int build_points(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRhsStats *stats){
     }
     stats->hll_points=fallbacks;stats->points=np;return bad;
 }
-static int residual(GfsFvWorkspace *w,const GfsFvMesh *m,const double *z,double *R,int coefficients){
+static double solution_difference(const double *z,const double *low,int i,int j){
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    if(low){FvWide delta=wide_add((FvWide){z[i],low[i]},(FvWide){-z[j],-low[j]});return delta.hi+delta.lo;}
+#else
+    (void)low;
+#endif
+    return z[i]-z[j];
+}
+static int residual_parts(GfsFvWorkspace *w,const GfsFvMesh *m,const double *z,const double *low,double *R,int coefficients){
     int bad=0,n=m->n;
 #pragma omp parallel for if(n>1024) schedule(static) reduction(max:bad)
     for(int e=0;e<w->ne;e++){
         FvEdge *edge=w->edge+e;double mass=0,jac=0;
         for(int q=0;q<edge->count;q++){
-            FvFanPoint *p=w->point+edge->offset+q;double wn=p->wq+(edge->j>=0?p->inv2d*(z[edge->i]-z[edge->j]):0);
+            FvFanPoint *p=w->point+edge->offset+q;double wn=p->wq+(edge->j>=0?p->inv2d*solution_difference(z,low,edge->i,edge->j):0);
 #ifdef GFS_NATIVE_KEP
             GfsFvNativeFace *face=m->geometry[edge->i].face+edge->face;
             double un=0;for(int a=0;a<m->dim;a++)un+=.5*(p->left.u[a]+p->right.u[a])*face->normal[a];
@@ -452,12 +484,28 @@ static int residual(GfsFvWorkspace *w,const GfsFvMesh *m,const double *z,double 
 #pragma omp parallel for if(n>1024) schedule(static)
     for(int i=0;i<n;i++){
         R[i]=m->cell[i].mu*z[i];if(coefficients)w->diagonal[i]=m->cell[i].mu;
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+        if(low)R[i]=wide_scale(m->cell[i].mu,(FvWide){z[i],low[i]});
+#endif
         for(int k=w->offset[i];k<w->offset[i+1];k++){
             FvEdge *e=w->edge+w->incident[k];R[i]+=(e->i==i?-1:1)*e->flux[0];
             if(coefficients&&e->j>=0)w->diagonal[i]+=e->jacobian;
         }
     }
     return bad;
+}
+static const double *solution_low(const GfsFvWorkspace *w,const double *z){
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    if(z==w->z)return w->z_low;if(z==w->direction)return w->direction_low;
+#else
+    (void)w;(void)z;
+#endif
+    return NULL;
+}
+static int residual(GfsFvWorkspace *w,const GfsFvMesh *m,const double *z,double *R,int coefficients){
+    /* Workspace solutions carry their low words. External double vectors
+     * have no low component and remain independent rounding controls. */
+    return residual_parts(w,m,z,solution_low(w,z),R,coefficients);
 }
 static double norm(const GfsFvWorkspace *w,const double *r){
     double value=0;for(int i=0;i<w->n;i++){
@@ -593,6 +641,9 @@ static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
     w->pcg_true_history[0]=w->pcg_recursive_history[0]=norm(w,w->R);w->pcg_relative_history[0]=1;
 #endif
     int n=m->n;for(int i=0;i<n;i++){w->direction[i]=0;w->r[i]=-w->R[i];}
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    memset(w->direction_low,0,n*sizeof(double));
+#endif
 #ifdef GFS_NATIVE_IC0
     if(prepare_ic0(w,m)||ic0_precondition(w,m)){w->pcg_failure=5;return -1;}
 #elif defined(GFS_NATIVE_BLOCK_JACOBI)
@@ -605,7 +656,15 @@ static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
     for(int step=1;step<=64;step++){
         w->pcg_iterations=step;
         multiply(w,m,w->p,w->Ap);double den=product_sum(w->p,w->Ap,n);if(!(den>0)){w->pcg_failure=1;return -1;}double a=rz/den;
-        for(int i=0;i<n;i++){w->direction[i]+=a*w->p[i];w->r[i]-=a*w->Ap[i];}
+        for(int i=0;i<n;i++){
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+            FvWide next=wide_add((FvWide){w->direction[i],w->direction_low[i]},wide_product(a,w->p[i]));
+            w->direction[i]=next.hi;w->direction_low[i]=next.lo;
+#else
+            w->direction[i]+=a*w->p[i];
+#endif
+            w->r[i]-=a*w->Ap[i];
+        }
 #ifdef GFS_NATIVE_IC0
         if(ic0_precondition(w,m)){w->pcg_failure=5;return -1;}
 #elif defined(GFS_NATIVE_BLOCK_JACOBI)
@@ -666,6 +725,9 @@ static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
     w->ic_assembly_seconds=w->ic_factor_seconds=w->ic_apply_seconds=w->ic_min_pivot=0;w->ic_nnz=w->ic_applications=0;w->ic_failure_row=-1;
 #endif
     memset(w->z,0,m->n*sizeof(double));
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    memset(w->z_low,0,m->n*sizeof(double));
+#endif
     for(int i=0;i<m->n;i++){
         double h0=sqrt(m->cell[i].m0/m->cell[i].mu),speed=sqrt(dot3(w->primitive[i].u,w->primitive[i].u,m->dim))+sqrt(m->gamma*w->primitive[i].p/w->primitive[i].rho);
         w->scale[i]=m->cell[i].mu*h0*speed;if(!(w->scale[i]>0))return 1;
@@ -683,6 +745,9 @@ static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
         fprintf(stderr,"PCG failure iterations=%d reason=%d initial_scaled_residual=%.17g final_true_scaled_residual=%.17g (1=curvature,2=flux,3=replacement,4=cap,5=preconditioner)\n",w->pcg_iterations,w->pcg_failure,initial_residual,s->root_residual);return 3;
     }
     memcpy(w->z,w->direction,m->n*sizeof(double));
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    memcpy(w->z_low,w->direction_low,m->n*sizeof(double));
+#endif
     if(residual(w,m,w->z,w->R,0))return 1;s->root_residual=norm(w,w->R);
     return s->root_residual<=1e-12?0:2;
 #else
@@ -714,7 +779,7 @@ int gfs_fv_native_rhs(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRate *rate,GfsFvRhsSta
     for(int e=0;e<w->ne;e++){
         FvEdge *f=w->edge+e;memset(f->flux,0,sizeof(f->flux));f->Vdot=f->wave=f->viscous=f->pressure_work=f->kinetic_boundary=f->stress_heat=f->entropy_dissipation=f->entropy_boundary=0;
         for(int q=0;q<f->count;q++){
-            FvFanPoint *p=w->point+f->offset+q;double wn=p->wq+(f->j>=0?p->inv2d*(w->z[f->i]-w->z[f->j]):0);
+            FvFanPoint *p=w->point+f->offset+q;double wn=p->wq+(f->j>=0?p->inv2d*solution_difference(w->z,solution_low(w,w->z),f->i,f->j):0);
 #ifdef GFS_NATIVE_KEP
             GfsFvNativeFace *face=m->geometry[f->i].face+f->face;
             double flux[5],rho;
@@ -746,6 +811,10 @@ int gfs_fv_native_rhs(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRate *rate,GfsFvRhsSta
 #pragma omp parallel for if(m->n>1024) schedule(static) reduction(max:bad,link) reduction(min:wave,limit,viscous_dt) reduction(+:kinetic_rate,entropy_rate,entropy_absolute_rate)
     for(int i=0;i<m->n;i++){
         GfsFvRate *r=rate+i;memset(r,0,sizeof(*r));memcpy(r->qdot,w->velocity[i],sizeof(r->qdot));r->z=w->z[i];r->residual=w->R[i];double signals=0,damping=0;
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+        r->z=w->z[i]+w->z_low[i];
+        FvWide error=wide_add((FvWide){r->z,0},(FvWide){-w->z[i],-w->z_low[i]});r->z_materialization_error=error.hi+error.lo;
+#endif
         for(int k=w->offset[i];k<w->offset[i+1];k++){
             FvEdge *f=w->edge+w->incident[k];double sign=f->i==i?1:-1;
             for(int c=0;c<5;c++)r->dQ[c]-=sign*f->flux[c];r->Vdot+=sign*f->Vdot;signals+=f->wave;damping+=f->viscous;
@@ -761,6 +830,20 @@ int gfs_fv_native_rhs(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRate *rate,GfsFvRhsSta
         double ray=gfs_fv_admissible_interval(m->dim,m->cell[i].Q,r->dQ);if(!(ray>0))bad=1;limit=fmin(limit,.9*ray);
         link=fmax(link,fabs(r->dQ[0]+m->cell[i].mu*r->z+r->residual)/w->scale[i]);
     }
+#ifdef GFS_NATIVE_COMPENSATED_SOLUTION
+    /* Observe rounding at the transient rate boundary without changing
+     * either the internal flux solution or the checkpoint representation. */
+    for(int i=0;i<m->n;i++){
+        double error=rate[i].z_materialization_error;
+        s->maximum_z_materialization_error=fmax(s->maximum_z_materialization_error,fabs(error));
+        s->maximum_mu_z_materialization_error=fmax(s->maximum_mu_z_materialization_error,fabs(m->cell[i].mu*error));
+    }
+    for(int e=0;e<w->ne;e++){
+        FvEdge *f=w->edge+e;if(f->j<0)continue;
+        double error=f->jacobian*(rate[f->i].z_materialization_error-rate[f->j].z_materialization_error);
+        s->maximum_edge_z_materialization_scaled_error=fmax(s->maximum_edge_z_materialization_scaled_error,fabs(error)/fmin(w->scale[f->i],w->scale[f->j]));
+    }
+#endif
     for(int e=0;e<w->ne;e++){
         if(w->edge[e].j<0)for(int c=0;c<5;c++)s->boundary_flux[c]+=w->edge[e].flux[c];
         s->kinetic_pressure_work+=w->edge[e].pressure_work;s->stress_thermal_rate+=w->edge[e].stress_heat;

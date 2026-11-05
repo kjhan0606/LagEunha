@@ -7,6 +7,14 @@
 #ifndef GFS_AUDIT_SOURCE_VERSION
 #define GFS_AUDIT_SOURCE_VERSION checkpoint_version
 #endif
+static int audit_solution_rows(const char *prefix,const char *suffix,const GfsFvMesh *m,
+                               const GfsFvWorkspace *w,const double *z,const double *R){
+    char path[4096];snprintf(path,sizeof(path),"%s_%s.csv",prefix,suffix);
+    FILE *out=fopen(path,"wx");if(!out)return 4;
+    fprintf(out,"id,z,native_true_residual,scale\n");
+    for(int i=0;i<m->n;i++)fprintf(out,"%d,%.17g,%.17g,%.17g\n",i,z[i],R[i],w->scale[i]);
+    return fclose(out)?4:0;
+}
 int main(int argc,char **argv){
     if(argc!=3&&argc!=5)return 2;FILE *in=fopen(argv[1],"rb");FvCheckpoint h;
     if(!in||fread(&h,sizeof(h),1,in)!=1||h.magic!=magic||h.dim!=1||h.count<2||h.count>1000000||h.cell_bytes!=sizeof(GfsFvCell)||
@@ -44,17 +52,20 @@ int main(int argc,char **argv){
         diagonal[edge->i]+=jac;diagonal[edge->j]+=jac;fprintf(matrix,"%d,%d,%.17g\n",edge->i,edge->j,jac);
     }if(fclose(matrix))return 4;
     snprintf(path,sizeof(path),"%s_stress.csv",argv[2]);FILE *stress=fopen(path,"wx");if(!stress)return 4;
-    fprintf(stress,"i,j,point,area_weight,generator_distance,centroid_normal_distance,h_mean,mean_delta,reconstructed_delta,chi,Pi_native,mesh_velocity_from_q,stress_damping_coefficient\n");
+    fprintf(stress,"i,j,point,area_weight,generator_distance,centroid_normal_distance,h_mean,mean_delta,reconstructed_delta,chi,Pi_native,mesh_velocity_from_q,stress_damping_coefficient,image_owner,mirror_flags\n");
     for(int e=0;e<w->ne;e++){
-        FvEdge *edge=w->edge+e;if(edge->j<0)continue;
-        GfsFvGeometry *gi=m.geometry+edge->i,*gj=m.geometry+edge->j;GfsFvNativeFace *face=gi->face+edge->face;
-        double dc[3];for(int a=0;a<3;a++)dc[a]=face->r[a]+gj->centroid[a]-gi->centroid[a];
+        FvEdge *edge=w->edge+e;
+        GfsFvGeometry *gi=m.geometry+edge->i;GfsFvNativeFace *face=gi->face+edge->face;GfsFvGeometry *gj=m.geometry+face->j;
+        double dc[3];for(int a=0;a<3;a++)dc[a]=face->r[a]+(mirrored(face->mirror,a)?-1:1)*gj->centroid[a]-gi->centroid[a];
         for(int q=0;q<edge->count;q++){
             FvFanPoint *p=w->point+edge->offset+q;GfsFvPoint *point=gi->point+face->point+q;
             double rj[3];for(int a=0;a<3;a++)rj[a]=point->x[a]-face->r[a];
-            GfsFvPrimitive left=trace(w,&m,edge->i,point->x),right=trace(w,&m,edge->j,rj);double reconstructed=0;
+            GfsFvPrimitive left=trace(w,&m,edge->i,point->x),right;
+            if(edge->j>=0)right=trace(w,&m,edge->j,rj);
+            else{right=left;for(int a=0;a<m.dim;a++)if(mirrored(face->mirror,a)&&face_bc(&m,face,a)==GFS_FV_REFLECT)right.u[a]*=-1;}
+            double reconstructed=0;
             for(int a=0;a<m.dim;a++)reconstructed+=(right.u[a]-left.u[a])*face->normal[a];
-            fprintf(stress,"%d,%d,%d,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g\n",edge->i,edge->j,q,p->weight,face->distance,dot3(dc,face->normal,m.dim),.5*(pow(gi->V,1./m.dim)+pow(gj->V,1./m.dim)),p->delta,reconstructed,p->fraction,p->compression,p->wq,p->compression>0?p->compression/(-p->delta):0);
+            fprintf(stress,"%d,%d,%d,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%.17g,%d,%d\n",edge->i,edge->j,q,p->weight,face->distance,dot3(dc,face->normal,m.dim),.5*(pow(gi->V,1./m.dim)+pow(gj->V,1./m.dim)),p->delta,reconstructed,p->fraction,p->compression,p->wq,p->compression>0?p->compression/(-p->delta):0,face->j,face->mirror);
         }
     }if(fclose(stress))return 4;
     snprintf(path,sizeof(path),"%s_rhs.csv",argv[2]);FILE *rhs=fopen(path,"wx");if(!rhs)return 4;
@@ -85,6 +96,8 @@ int main(int argc,char **argv){
     double own0=w->primitive[min_i].u[0]-dot3(w->gradient[min_i][1],m.geometry[min_i].centroid,1);
     double own1=w->primitive[min_i+1].u[0]-dot3(w->gradient[min_i+1][1],m.geometry[min_i+1].centroid,1);
     int status=solve(w,&m,&s),paired_cells=0;
+    const double *returned=status?w->direction:w->z;
+    if(residual(w,&m,returned,w->trial,0)||audit_solution_rows(argv[2],"solution_rows",&m,w,returned,w->trial))return 6;
 #ifdef GFS_PCG_TRUE_HISTORY
     snprintf(path,sizeof(path),"%s_pcg_history.csv",argv[2]);FILE *history=fopen(path,"wx");if(!history)return 4;
     fprintf(history,"iteration,true_scaled_flux_residual,recursive_scaled_inf_residual,recursive_preconditioned_relative_residual\n");
@@ -120,6 +133,7 @@ int main(int argc,char **argv){
         for(int i=0;i<m.n;i++)if(!isfinite(candidate[i]))return 5;
         memset(w->p,0,m.n*sizeof(double));if(residual(w,&m,w->p,R0,0)||residual(w,&m,candidate,check,0))return 5;
         double true_norm=norm(w,check),matrix_norm=0;long double extended=0;
+        if(audit_solution_rows(argv[2],"candidate_rows",&m,w,candidate,check))return 4;
         multiply(w,&m,candidate,w->Ap);
         for(int i=0;i<m.n;i++){
             matrix_norm=fmax(matrix_norm,fabs(w->Ap[i]+R0[i])/w->scale[i]);

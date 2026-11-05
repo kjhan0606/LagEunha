@@ -1,6 +1,15 @@
 # 차원 공통 유체역학 진행 기록
 
 현재 최신 묶음은
+[보상 정밀도와 전체 원래 시험 감사](UNIFIED_HYDRO_COMPENSATED_SOLUTION_2026-11-05.md)이다.
+물리 version8과 실제 잔차 기준을 유지한 보상 해로 blast가 t=0.038에
+도달했다. N400 blast·collision도 원래 종점에 도달했고 collision의
+적분 오차는 대략 절반으로 줄었다. 그러나 원래 9종 중 Noh와 이중
+희박파가 실패하여 현재 전체 종점 성공은 7/9다. Noh 벽에서는 추가
+재구성 압축 조건이 점성을 0으로 만들고, 이중 희박파는 비단조 평균
+속도로 생성점 순서가 교차한다. 큰 2D suite와 GIZMO 속도 목표는 미완료다.
+
+직전 묶음은
 [scalar velocity·centroid strain·IC(0)](UNIFIED_HYDRO_SCALAR_CENTROID_IC0_2026-11-05.md)이다.
 version8의 52개 연산자 검사와 실제 1D/2D/3D 저장 행렬의 IC(0) 검사가
 통과했다. 같은 물리의 accepted checkpoint에서 재개하여 collision은

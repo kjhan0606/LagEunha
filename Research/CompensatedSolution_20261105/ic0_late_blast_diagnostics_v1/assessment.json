@@ -1,0 +1,92 @@
+{
+  "scope": "Exact failed IC0 state, passive history and independent frozen linear algebra only",
+  "native_failure_reproduced_exactly": true,
+  "native_solver": {
+    "scope": "readonly same-state point ownership and matrix audit; global-field velocities are NOT evolved",
+    "time": 0.0350467843307421,
+    "cells": 200,
+    "diagnostic_trial_not_restartable": true,
+    "preconditioner": "unshifted_zero_fill_IC0_LDL_native_order",
+    "paired_cells": 0,
+    "generators_outside_own_cell": 69,
+    "closest_pair": [
+      52,
+      53
+    ],
+    "minimum_generator_gap": 5.493842047954445e-10,
+    "pair_mean_velocity_difference": 0.006542707745298415,
+    "pair_own_extrapolated_qdot_difference": -9.659369093029113e-06,
+    "pair_selected_qdot_difference": 1.306478480955775e-09,
+    "pair_global_physical_qdot_difference": 1.306478480955775e-09,
+    "pair_point_owners": [
+      52,
+      52
+    ],
+    "maximum_diagonal_over_mu": 10397366.68984721,
+    "screened_solve_status": 3,
+    "actual_PCG_iterations": 64,
+    "PCG_failure_reason": 4,
+    "recursive_preconditioned_relative_residual": 2.0648223044872458e-26,
+    "true_residual": 1.5766295269473258e-12
+  },
+  "first_true_pass_iteration": null,
+  "minimum_true_scaled_residual_in_64": 1.43323846348984e-12,
+  "independent_60digit_rounded_double": {
+    "scope": "external finite frozen linear-algebra vector, evaluated by actual native flux; no trajectory or accepted state",
+    "native_true_scaled_flux_residual": 1.4332636606418694e-12,
+    "matrix_double_scaled_residual": 1.4333381404588973e-12,
+    "matrix_extended_scaled_residual": 1.4333378533216597e-12,
+    "actual_true_tolerance": 1e-12,
+    "native_true_criterion_pass": false,
+    "accepted_evolution_steps": 0
+  },
+  "worst_reference_rows": [
+    {
+      "id": 53.0,
+      "z": 0.0001273544502130382,
+      "native_true_residual": -2.6839461209071658e-11,
+      "scale": 18.72611574973717
+    },
+    {
+      "id": 52.0,
+      "z": 0.00012735442803737886,
+      "native_true_residual": 2.6838940792028865e-11,
+      "scale": 18.81847912432889
+    },
+    {
+      "id": 161.0,
+      "z": -0.0001570970047423228,
+      "native_true_residual": -1.8340884366807586e-13,
+      "scale": 15.717102220543524
+    },
+    {
+      "id": 162.0,
+      "z": -0.00015713119975018774,
+      "native_true_residual": 1.7552626019323725e-13,
+      "scale": 15.103189854119332
+    },
+    {
+      "id": 167.0,
+      "z": -0.0005760252943199861,
+      "native_true_residual": -7.605027718682322e-14,
+      "scale": 15.82432326665825
+    },
+    {
+      "id": 168.0,
+      "z": -0.0005752809833247672,
+      "native_true_residual": 6.850076061937216e-14,
+      "scale": 15.675330455782742
+    }
+  ],
+  "closest_pair": {
+    "i": 52,
+    "j": 53,
+    "aij": 2079472754.9472446,
+    "z_i": 0.00012735442803737886,
+    "z_j": 0.0001273544502130382,
+    "z_difference": 2.217565933941741e-11,
+    "one_ulp_i_scaled_by_face_jacobian": 2.9951528809034708e-12,
+    "one_ulp_j_scaled_by_face_jacobian": 3.009925962048301e-12
+  },
+  "input_trial_bytes_unchanged": true
+}
