@@ -1,0 +1,61 @@
+{
+  "scope": "Finite common physical9 birth gates; no physical8 restart or prior pass reuse",
+  "physical_version": 9,
+  "binary_sha256": "5c25efabb97f56a6e2a5a99901b5acb745eb5a171cf74620568a0fb828aec96a",
+  "cases": [
+    [
+      "D1_noh_N200",
+      1,
+      200,
+      "noh",
+      0.6
+    ],
+    [
+      "D1_doublefan_N200",
+      1,
+      200,
+      "doublefan",
+      0.15
+    ],
+    [
+      "D2_cold_N64",
+      2,
+      64,
+      "cold",
+      0.25
+    ]
+  ],
+  "CPU_sets": [
+    [
+      0
+    ],
+    [
+      8
+    ],
+    [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ]
+  ],
+  "OMP_threads": [
+    1,
+    1,
+    8
+  ],
+  "physical8_restart_rejected": true,
+  "cold_pressure_relative_L1_limit": 0.01,
+  "PCG_cap": 64,
+  "true_tolerance": 1e-12,
+  "coefficients": [
+    1,
+    2
+  ],
+  "guard_multiplier": 1,
+  "stop": "No larger suite if any of the three gates fails; no coefficient/CFL/cap/mu changes."
+}

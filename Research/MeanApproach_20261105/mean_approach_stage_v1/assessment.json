@@ -1,0 +1,151 @@
+{
+  "scope": "Physical9 frozen common gates only, no evolved validation or restart of physical8",
+  "physical_version": 9,
+  "same_mean_delta_raw_chi_centroid_length_coefficients": true,
+  "only_physical_change": "Remove reconstructed compression gate; use approaching cell means",
+  "fixture_counts": {
+    "wall": 22,
+    "frame": 15,
+    "stress": 15
+  },
+  "saved_controls_and_affine_scaling": {
+    "old_probe": [
+      {
+        "case": "frozen_noh_wall",
+        "source_version": 8,
+        "operator_version": 8,
+        "pair": [
+          0,
+          -1
+        ],
+        "mean_jump": -1.9860155590075335,
+        "chi": 1,
+        "Pi": 0,
+        "physical_stress_heat": 0,
+        "boundary_mass_flux": 0,
+        "boundary_energy_flux": 0,
+        "kinetic_identity_defect": 2.2737367544323206e-13,
+        "entropy_identity_defect": 6.385288204768183e-13,
+        "viscous_dt_coefficient_error": 0,
+        "state_and_birth_parameters_unchanged": true,
+        "accepted_steps": 0,
+        "pass": true
+      },
+      {
+        "case": "frozen_doublefan_closest_pair",
+        "source_version": 8,
+        "operator_version": 8,
+        "pair": [
+          187,
+          188
+        ],
+        "mean_jump": -0.1118284164067973,
+        "chi": 0.5840269440970185,
+        "Pi": 0.011283389960450333,
+        "physical_stress_heat": 0.001261803630977516,
+        "boundary_mass_flux": -2.0068012956881516e-10,
+        "boundary_energy_flux": 0.058704007961562624,
+        "kinetic_identity_defect": 4.440892098500626e-15,
+        "entropy_identity_defect": -6.938893903907228e-17,
+        "viscous_dt_coefficient_error": 0,
+        "state_and_birth_parameters_unchanged": true,
+        "accepted_steps": 0,
+        "pass": true
+      }
+    ],
+    "mean_probe": [
+      {
+        "case": "frozen_noh_wall",
+        "source_version": 8,
+        "operator_version": 9,
+        "pair": [
+          0,
+          -1
+        ],
+        "mean_jump": -1.9860155590075335,
+        "chi": 1,
+        "Pi": 2035491.2634858082,
+        "physical_stress_heat": 2021258.659753359,
+        "boundary_mass_flux": 0,
+        "boundary_energy_flux": 0,
+        "kinetic_identity_defect": 4.656612873077393e-10,
+        "entropy_identity_defect": 0,
+        "viscous_dt_coefficient_error": 0,
+        "state_and_birth_parameters_unchanged": true,
+        "accepted_steps": 0,
+        "pass": true
+      },
+      {
+        "case": "frozen_doublefan_closest_pair",
+        "source_version": 8,
+        "operator_version": 9,
+        "pair": [
+          187,
+          188
+        ],
+        "mean_jump": -0.1118284164067973,
+        "chi": 0.5840269440970185,
+        "Pi": 0.011283389960450333,
+        "physical_stress_heat": 0.001261803630977516,
+        "boundary_mass_flux": -2.0068012956881516e-10,
+        "boundary_energy_flux": 0.058704007961562624,
+        "kinetic_identity_defect": 3.9968028886505635e-15,
+        "entropy_identity_defect": -6.938893903907228e-17,
+        "viscous_dt_coefficient_error": 0,
+        "state_and_birth_parameters_unchanged": true,
+        "accepted_steps": 0,
+        "pass": true
+      },
+      {
+        "case": "affine_compression_local_h_scaling",
+        "dim": 1,
+        "Pi_h": 0.1791519945774904,
+        "Pi_h_over2": 0.0817634972887452,
+        "linear_ratio": 0.5,
+        "quadratic_ratio": 0.25,
+        "local_operator_not_PDE_convergence": true,
+        "pass": true
+      },
+      {
+        "case": "affine_compression_local_h_scaling",
+        "dim": 2,
+        "Pi_h": 0.1791519945774904,
+        "Pi_h_over2": 0.0817634972887452,
+        "linear_ratio": 0.5,
+        "quadratic_ratio": 0.25,
+        "local_operator_not_PDE_convergence": true,
+        "pass": true
+      },
+      {
+        "case": "affine_compression_local_h_scaling",
+        "dim": 3,
+        "Pi_h": 0.17915199457749048,
+        "Pi_h_over2": 0.08176349728874524,
+        "linear_ratio": 0.5,
+        "quadratic_ratio": 0.25000000000000067,
+        "local_operator_not_PDE_convergence": true,
+        "pass": true
+      }
+    ]
+  },
+  "pass": true,
+  "next_conditional_birth_runs": [
+    [
+      "noh",
+      200,
+      0.6
+    ],
+    [
+      "doublefan",
+      200,
+      0.15
+    ],
+    [
+      "cold",
+      64,
+      0.25
+    ]
+  ],
+  "cold_pressure_relative_L1_limit": 0.01,
+  "no_coefficient_CFL_cap_mu_scan": true
+}

@@ -1,0 +1,72 @@
+{
+  "scope": "Failed physical9 candidate; Noh completion does not qualify the whole method",
+  "cases": {
+    "noh": {
+      "scope": "Actual saved time, never substituted for the original endpoint",
+      "actual_time": 0.6,
+      "original_target": 0.6,
+      "endpoint_reached": true,
+      "density_pressure_velocity_L1": [
+        0.01473499500977303,
+        0.002503927666455455,
+        0.004550668913161168
+      ],
+      "absolute_quadrature_difference_16_to32": [
+        0.0,
+        0.0,
+        8.673617379884035e-19
+      ],
+      "exact_middle_rho_P_u": [
+        3.9999887500527342,
+        1.333335583332161,
+        0.0
+      ],
+      "physical_cell_maximum_density": 4.063846408569996,
+      "physical_cell_maximum_pressure": 1.368793213698968,
+      "wall_cell_density_pressure_velocity": [
+        2.056121923570028,
+        1.3333298205895965,
+        -3.3432490398724864e-06
+      ],
+      "total_downward_mean_velocity_variation": null,
+      "volume_of_cells_adjacent_to_nonmonotone_pairs": null,
+      "final_checkpoint_sha256": "57fbd4471b90e61da50eb7d5d1aa06209a0f14a9b384f72fcc192cf1e99c28c6"
+    },
+    "doublefan": {
+      "scope": "Actual saved time, never substituted for the original endpoint",
+      "actual_time": 0.050023523401842594,
+      "original_target": 0.15,
+      "endpoint_reached": false,
+      "density_pressure_velocity_L1": [
+        0.01758705377494307,
+        0.005969958055533833,
+        0.12800793741405217
+      ],
+      "absolute_quadrature_difference_16_to32": [
+        8.323646949599112e-06,
+        4.389438800476465e-06,
+        3.337571054251587e-07
+      ],
+      "exact_middle_rho_P_u": [
+        0.021852118206812716,
+        0.0018938734200547496,
+        0.0
+      ],
+      "physical_cell_maximum_density": 1.0000000000000222,
+      "physical_cell_maximum_pressure": 0.40000000000000535,
+      "wall_cell_density_pressure_velocity": null,
+      "total_downward_mean_velocity_variation": 0.3432800709019954,
+      "volume_of_cells_adjacent_to_nonmonotone_pairs": 0.7500940936073692,
+      "final_checkpoint_sha256": "4ab185253cbb3f137982a56162c9b7e54f26fff411c221553e04e79b2e1e2ca1",
+      "raw_negative_pair_volume_includes_roundoff_signs": true
+    }
+  },
+  "candidate_accepted": false,
+  "larger_suite_released": false,
+  "rejection_reasons": [
+    "doublefan misses original endpoint",
+    "cold64 pressure error exceeds1%"
+  ],
+  "reference_source": "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/athena_source/tst/regression/scripts/utils/RiemannSolver/riemann.py",
+  "near_vacuum_reference_bracket": "Doublefan root bracket extended below default lower pressure; exact Euler problem and evolved method unchanged"
+}

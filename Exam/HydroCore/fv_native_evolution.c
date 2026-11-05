@@ -17,7 +17,10 @@ typedef struct {
     double lo[3],L[3],gamma,time,boundary[5],initial[5];
 } FvCheckpoint;
 static const uint64_t magic=UINT64_C(0x4656414c45303031);
-#if defined(GFS_NATIVE_SCALAR_VELOCITY) && defined(GFS_NATIVE_CENTROID_STRAIN)
+#if defined(GFS_NATIVE_MEAN_APPROACH_STRESS)
+static const uint64_t checkpoint_version=9;
+static const char *core_name="cell_mean_KEP_EC_ALE_mean_approach_stress_scalar_velocity_centroid_strain";
+#elif defined(GFS_NATIVE_SCALAR_VELOCITY) && defined(GFS_NATIVE_CENTROID_STRAIN)
 static const uint64_t checkpoint_version=8;
 static const char *core_name="cell_mean_KEP_EC_ALE_scalar_velocity_centroid_strain_constrained_wall";
 #elif defined(GFS_NATIVE_SCALAR_VELOCITY)

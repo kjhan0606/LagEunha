@@ -24,6 +24,9 @@
 #if (defined(GFS_NATIVE_SCALAR_VELOCITY) || defined(GFS_NATIVE_CENTROID_STRAIN)) && !defined(GFS_NATIVE_WALL_VELOCITY)
 #error The common limiter/strain candidates retain the constrained physical wall field
 #endif
+#if defined(GFS_NATIVE_MEAN_APPROACH_STRESS) && (!defined(GFS_NATIVE_SCALAR_VELOCITY) || !defined(GFS_NATIVE_CENTROID_STRAIN))
+#error Mean-approach stress retains the common scalar physical field and centroid strain length
+#endif
 #if defined(GFS_NATIVE_COMPENSATED_SOLUTION) && (!defined(GFS_NATIVE_IC0) || !defined(GFS_NATIVE_SCALAR_VELOCITY) || !defined(GFS_NATIVE_CENTROID_STRAIN) || defined(__FAST_MATH__))
 #error Compensated solution requires IC0 and floating point operations without fast-math reassociation
 #endif
@@ -411,7 +414,14 @@ static int build_points(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRhsStats *stats){
                 reconstructed+=(right.u[a]-left.u[a])*f->normal[a];
                 delta+=(point->right.u[a]-point->left.u[a])*f->normal[a];
             }
+#ifdef GFS_NATIVE_MEAN_APPROACH_STRESS
+            /* The raw chi sensor already distinguishes compression/noise
+             * from affine shear. Constrained wall traces must not disable
+             * dissipation of approaching cell means. */
+            (void)reconstructed;double compression=fmax(0,-delta);
+#else
             double compression=delta<0&&reconstructed<0?fmin(-delta,-reconstructed):0;
+#endif
 #ifdef GFS_NATIVE_CENTROID_STRAIN
             compression*=strain_scale;
 #else

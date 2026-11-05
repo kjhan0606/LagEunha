@@ -4,6 +4,9 @@
 #include "fv_native_evolution.c"
 #undef main
 #include "../gfs_fv_native.c"
+#ifndef GFS_AUDIT_SOURCE_VERSION
+#define GFS_AUDIT_SOURCE_VERSION 2
+#endif
 static int inspect(GfsFvMesh *m,const char *name,const char *csv,int mode){
     GfsFvWorkspace *w=gfs_fv_workspace_create();GfsFvRate *r=calloc(m->n,sizeof(*r));GfsFvRhsStats stats;
     if(gfs_fv_native_rhs(w,m,r,&stats))return 2;
@@ -39,7 +42,10 @@ static int inspect(GfsFvMesh *m,const char *name,const char *csv,int mode){
     printf("{\"case\":\"%s\",\"dim\":%d,\"cells\":%d,\"checked_cells\":%d,\"chi_fixture_error\":%.17g,\"LSQ_data_identity_with_cross_term_error\":%.17g,\"original_heat_rate\":%.17g,\"filtered_heat_rate\":%.17g,\"same_state_predicted_heat_rate\":%.17g,\"compression_component_heat_rate\":%.17g,\"residual_component_heat_rate\":%.17g,\"kinetic_pair_defect\":%.17g,\"actual_geometry_entropy_balance\":%.17g,\"pass\":%s}\n",name,m->dim,m->n,checked,fixture_error,orthogonal,H0,H1,predicted,Hbulk,Hresidual,kinetic,stats.entropy_balance_defect,pass?"true":"false");
     free(old);free(updated);free(r);gfs_fv_workspace_free(w);return pass?0:1;
 }
-int main(int argc,char **argv){
+#ifndef GFS_STRESS_AUDIT_ENTRY
+#define GFS_STRESS_AUDIT_ENTRY main
+#endif
+int GFS_STRESS_AUDIT_ENTRY(int argc,char **argv){
     if(argc==2&&!strcmp(argv[1],"fixtures")){
         const char *names[]={"translation","affine_shear","rotation","traceless_strain","planar_compression","alternating"};int failed=0;
         for(int d=1;d<=3;d++)for(int mode=0;mode<6;mode++){
@@ -60,7 +66,7 @@ int main(int argc,char **argv){
         }return failed;
     }
     if(argc!=3)return 2;FILE *in=fopen(argv[1],"rb");FvCheckpoint h;
-    if(!in||fread(&h,sizeof(h),1,in)!=1||h.magic!=magic||h.version!=2||h.dim!=2||h.count>1000000||(h.problem!=COLD_SHEAR&&h.problem!=GRESHO))return 2;
+    if(!in||fread(&h,sizeof(h),1,in)!=1||h.magic!=magic||h.version!=GFS_AUDIT_SOURCE_VERSION||h.cell_bytes!=sizeof(GfsFvCell)||h.dim!=2||h.count>1000000||(h.problem!=COLD_SHEAR&&h.problem!=GRESHO))return 2;
     GfsFvMesh m={0};m.dim=h.dim;m.n=h.count;m.gamma=h.gamma;memcpy(m.bc,h.bc,sizeof(m.bc));memcpy(m.lo,h.lo,sizeof(m.lo));memcpy(m.L,h.L,sizeof(m.L));m.cell=calloc(m.n,sizeof(*m.cell));
     if(!m.cell||fread(m.cell,sizeof(*m.cell),m.n,in)!=(size_t)m.n||fgetc(in)!=EOF||fclose(in)||gfs_fv_geometry(&m))return 2;
     int code=inspect(&m,h.problem==COLD_SHEAR?"frozen_cold64":"frozen_gresho64",argv[2],-1);gfs_fv_geometry_free(&m);free(m.cell);return code;

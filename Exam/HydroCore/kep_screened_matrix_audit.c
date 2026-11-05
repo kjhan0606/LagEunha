@@ -52,7 +52,7 @@ static int ic0_algebra(GfsFvWorkspace *w,const GfsFvMesh *m,const char *prefix){
 int GFS_MATRIX_AUDIT_ENTRY(int argc,char **argv){
     if(argc!=3&&argc!=4)return 2;int repetitions=argc==4?atoi(argv[3]):0;if(argc==4&&(repetitions<1||repetitions>10000))return 2;
     FILE *in=fopen(argv[1],"rb");FvCheckpoint h;
-    if(!in||fread(&h,sizeof(h),1,in)!=1||h.magic!=magic||h.cell_bytes!=sizeof(GfsFvCell)||h.count<2||h.count>1000000||h.dim<1||h.dim>3||(h.version&~diagnostic_trial_flag)<1||(h.version&~diagnostic_trial_flag)>8)return 2;
+    if(!in||fread(&h,sizeof(h),1,in)!=1||h.magic!=magic||h.cell_bytes!=sizeof(GfsFvCell)||h.count<2||h.count>1000000||h.dim<1||h.dim>3||(h.version&~diagnostic_trial_flag)<1||(h.version&~diagnostic_trial_flag)>9)return 2;
     GfsFvMesh m={0};m.dim=h.dim;m.n=h.count;m.gamma=h.gamma;memcpy(m.bc,h.bc,sizeof(m.bc));memcpy(m.lo,h.lo,sizeof(m.lo));memcpy(m.L,h.L,sizeof(m.L));
     m.cell=calloc(m.n,sizeof(*m.cell));if(!m.cell||fread(m.cell,sizeof(*m.cell),m.n,in)!=(size_t)m.n||fgetc(in)!=EOF||fclose(in))return 2;
     GfsFvCell *copy=malloc(m.n*sizeof(*copy));memcpy(copy,m.cell,m.n*sizeof(*copy));

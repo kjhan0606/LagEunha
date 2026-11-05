@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--select", nargs="+", choices=("alternating", "sod", "blast", "collision", "cold", "gresho"))
     parser.add_argument("--restart-blast", type=Path)
     parser.add_argument("--restart-collision", type=Path)
-    parser.add_argument("--core-version", type=int, choices=(3, 4, 5, 6, 7, 8), default=3)
+    parser.add_argument("--core-version", type=int, choices=(3, 4, 5, 6, 7, 8, 9), default=3)
     args = parser.parse_args()
     if not args.root.resolve().is_relative_to(Path("/gpfs/kjhan/LagForce")):
         raise ValueError("Use GPFS")
@@ -41,6 +41,7 @@ def main():
         "collision_restart": str(args.restart_collision) if args.restart_collision else None,
         "detector": "chi=(Eperp+c*Eparallel)/(Eperp+Eparallel), c=min(1,max(0,-trG)^2/Frobenius(G)^2); original unlimited centroid LSQ weights A/r^(d+1)",
         "pair_fraction": "max(chi_i,chi_j)", "unchanged_stress_coefficients": [1, 2],
+        "compression_measure": "approaching cell-mean normal jump only" if args.core_version == 9 else "minimum of approaching mean and reconstructed normal jumps",
         "wave_CFL": .4, "cone_safety": .9, "PCG_cap": 64, "true_root_tolerance": 1e-12,
         "PCG_stopping": "See numerical_backend.json in each case; current sources use true scaled flux residual as the final criterion, including at cap. Recursive relative norm is a check trigger.",
         "step_halving_cap": 8, "minimum_dt": 1e-14, "GFS_TEST_GUARD_MULTIPLIER": 1,
@@ -57,9 +58,9 @@ def main():
         "reflecting_velocity_field": "u_n(x)=mean_u_n*(x_n-wall)/(centroid_n-wall), fixed raw normal gradient row, limiter on free rows only, ratio evaluated directly"
         if args.core_version >= 5 else "Historical unconstrained LSQ field",
         "velocity_limiter": "Scalar local min/max bounds at centroid midpoints, independent free rows"
-        if args.core_version in (6, 8) else "Historical common velocity-vector radius",
+        if args.core_version in (6, 8, 9) else "Historical common velocity-vector radius",
         "AV_strain_length": "Positive centroid-normal separation, consistent images"
-        if args.core_version in (7, 8) else "Generator separation",
+        if args.core_version in (7, 8, 9) else "Generator separation",
         "not_yet_qualified": "Original nine full tests/refinement, guard-doubling equivalence, higher-resolution/3D suite, native GPU/MPI and matched GIZMO timing"})
     slots = Queue()
     for cpus in [list(range(8)), list(range(8, 16))]:
