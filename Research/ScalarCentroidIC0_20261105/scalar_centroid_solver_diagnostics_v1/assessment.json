@@ -1,0 +1,93 @@
+{
+  "scope": "Read-only exact failed systems and passive PCG history; no physics, tolerance, cap, preconditioner, or PDE changes",
+  "cases": {
+    "blast": {
+      "native_original_failure_reproduced_exactly": true,
+      "native_solver": {
+        "scope": "readonly same-state point ownership and matrix audit; global-field velocities are NOT evolved",
+        "time": 0.010843203283344443,
+        "cells": 200,
+        "diagnostic_trial_not_restartable": true,
+        "preconditioner": "mutual_strongest_edge_2x2_block_Jacobi",
+        "paired_cells": 112,
+        "generators_outside_own_cell": 23,
+        "closest_pair": [
+          29,
+          30
+        ],
+        "minimum_generator_gap": 0.0001304105219387397,
+        "pair_mean_velocity_difference": 0.14629955647527026,
+        "pair_own_extrapolated_qdot_difference": 0.14629955647527026,
+        "pair_selected_qdot_difference": 0,
+        "pair_global_physical_qdot_difference": 0,
+        "pair_point_owners": [
+          30,
+          30
+        ],
+        "maximum_diagonal_over_mu": 114.65009970433158,
+        "screened_solve_status": 3,
+        "actual_PCG_iterations": 64,
+        "PCG_failure_reason": 4,
+        "recursive_preconditioned_relative_residual": 1.4769207083168075e-13,
+        "true_residual": 1.4780645007309817e-12
+      },
+      "minimum_true_flux_residual_in_64": 1.4780645007309817e-12,
+      "first_true_pass_iteration": null,
+      "recursive_scaled_inf_at_first_true_pass": null,
+      "relative_preconditioned_at_first_true_pass": null,
+      "independent_LDL_60digit_rounded_double_reference": {
+        "scope": "external finite frozen linear-algebra vector, evaluated by actual native flux; no trajectory or accepted state",
+        "native_true_scaled_flux_residual": 8.939167851014238e-16,
+        "matrix_double_scaled_residual": 8.939167851014238e-16,
+        "matrix_extended_scaled_residual": 9.332002375717012e-16,
+        "actual_true_tolerance": 1e-12,
+        "native_true_criterion_pass": true,
+        "accepted_evolution_steps": 0
+      }
+    },
+    "collision": {
+      "native_original_failure_reproduced_exactly": true,
+      "native_solver": {
+        "scope": "readonly same-state point ownership and matrix audit; global-field velocities are NOT evolved",
+        "time": 0.02061738323372331,
+        "cells": 628,
+        "diagnostic_trial_not_restartable": true,
+        "preconditioner": "mutual_strongest_edge_2x2_block_Jacobi",
+        "paired_cells": 488,
+        "generators_outside_own_cell": 2,
+        "closest_pair": [
+          295,
+          296
+        ],
+        "minimum_generator_gap": 0.0003154358516368472,
+        "pair_mean_velocity_difference": 0.0014711491801282506,
+        "pair_own_extrapolated_qdot_difference": 0.0014711491801282506,
+        "pair_selected_qdot_difference": 0,
+        "pair_global_physical_qdot_difference": 0,
+        "pair_point_owners": [
+          296,
+          296
+        ],
+        "maximum_diagonal_over_mu": 52.36687292273479,
+        "screened_solve_status": 3,
+        "actual_PCG_iterations": 64,
+        "PCG_failure_reason": 4,
+        "recursive_preconditioned_relative_residual": 9.456918968966551e-12,
+        "true_residual": 1.3355713374015793e-12
+      },
+      "minimum_true_flux_residual_in_64": 1.3355713374015793e-12,
+      "first_true_pass_iteration": null,
+      "recursive_scaled_inf_at_first_true_pass": null,
+      "relative_preconditioned_at_first_true_pass": null,
+      "independent_LDL_60digit_rounded_double_reference": {
+        "scope": "external finite frozen linear-algebra vector, evaluated by actual native flux; no trajectory or accepted state",
+        "native_true_scaled_flux_residual": 5.089948511990862e-16,
+        "matrix_double_scaled_residual": 4.1051239641048814e-17,
+        "matrix_extended_scaled_residual": 1.5295975968979125e-17,
+        "actual_true_tolerance": 1e-12,
+        "native_true_criterion_pass": true,
+        "accepted_evolution_steps": 0
+      }
+    }
+  }
+}

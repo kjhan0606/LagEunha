@@ -17,7 +17,16 @@ typedef struct {
     double lo[3],L[3],gamma,time,boundary[5],initial[5];
 } FvCheckpoint;
 static const uint64_t magic=UINT64_C(0x4656414c45303031);
-#if defined(GFS_NATIVE_WALL_VELOCITY)
+#if defined(GFS_NATIVE_SCALAR_VELOCITY) && defined(GFS_NATIVE_CENTROID_STRAIN)
+static const uint64_t checkpoint_version=8;
+static const char *core_name="cell_mean_KEP_EC_ALE_scalar_velocity_centroid_strain_constrained_wall";
+#elif defined(GFS_NATIVE_SCALAR_VELOCITY)
+static const uint64_t checkpoint_version=6;
+static const char *core_name="audit_scalar_velocity_generator_strain_constrained_wall";
+#elif defined(GFS_NATIVE_CENTROID_STRAIN)
+static const uint64_t checkpoint_version=7;
+static const char *core_name="audit_vector_velocity_centroid_strain_constrained_wall";
+#elif defined(GFS_NATIVE_WALL_VELOCITY)
 static const uint64_t checkpoint_version=5;
 static const char *core_name="cell_mean_KEP_EC_ALE_LSQ_stress_global_velocity_constrained_wall";
 #elif defined(GFS_NATIVE_GLOBAL_VELOCITY)
@@ -50,15 +59,25 @@ static void failure_receipt(const char *stage,double time,double dt,int code,con
     FILE *out=fopen("failure_stage.json","wx");if(!out)return;char number[64];
     if(isfinite(s->root_residual))snprintf(number,sizeof(number),"%.17g",s->root_residual);else strcpy(number,"null");
     fprintf(out,"{\"stage\":\"%s\",\"accepted_time\":%.17g,\"trial_dt\":%.17g,\"rhs_status\":%d,\"actual_PCG_iterations\":%d,\"true_scaled_residual\":%s,\"PCG_cap\":64,\"diagnostic_trial_is_restartable\":false}\n",stage,time,dt,code,s->cg,number);fclose(out);
+    if(s->preconditioner_failure_row>=0){
+        out=fopen("preconditioner_failure.json","wx");if(!out)return;
+        fprintf(out,"{\"row\":%d,\"stored_lower_plus_diagonal_entries\":%d,\"applications\":%d,\"minimum_completed_positive_pivot\":%.17g,\"shift_or_fallback\":false}\n",s->preconditioner_failure_row,s->preconditioner_nonzeros,s->preconditioner_applications,s->minimum_preconditioner_pivot);fclose(out);
+    }
 }
 typedef struct {
     double seconds;long long calls,points,hops,changed,switches;int maximum_hops,maximum_changed,owner_switch_retries;
     long long initial_true_stops,trigger_true_stops,cap_true_stops;
+    double preconditioner_assembly_seconds,preconditioner_factor_seconds,preconditioner_apply_seconds,minimum_preconditioner_pivot;
+    long long preconditioner_applications;int maximum_preconditioner_nonzeros;
 } QueryLedger;
 static void add_queries(QueryLedger *q,const GfsFvRhsStats *s,int n){
     if(s->pcg_stop_reason==0)q->initial_true_stops++;
     else if(s->pcg_stop_reason==1)q->trigger_true_stops++;
     else if(s->pcg_stop_reason==2)q->cap_true_stops++;
+    q->preconditioner_assembly_seconds+=s->preconditioner_assembly_seconds;q->preconditioner_factor_seconds+=s->preconditioner_factor_seconds;q->preconditioner_apply_seconds+=s->preconditioner_apply_seconds;
+    q->preconditioner_applications+=s->preconditioner_applications;
+    if(s->preconditioner_nonzeros>q->maximum_preconditioner_nonzeros)q->maximum_preconditioner_nonzeros=s->preconditioner_nonzeros;
+    if(s->minimum_preconditioner_pivot>0&&(!q->minimum_preconditioner_pivot||s->minimum_preconditioner_pivot<q->minimum_preconditioner_pivot))q->minimum_preconditioner_pivot=s->minimum_preconditioner_pivot;
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     q->seconds+=s->velocity_query_seconds;q->calls++;q->points+=n;q->hops+=s->total_query_hops;q->changed+=s->velocity_owner_changed;q->switches+=s->velocity_owner_switches;
     if(s->maximum_query_hops>q->maximum_hops)q->maximum_hops=s->maximum_query_hops;
@@ -155,7 +174,9 @@ int main(int argc,char **argv){
     FILE *retry_log=fopen("step_retries.csv","wx");if(!retry_log)return 5;
     fprintf(retry_log,"accepted_time,retry,dt,reason,stage0_wave_or_stress_dt,stage0_cone_dt,stage1_wave_or_stress_dt,stage1_cone_dt,stage1_stress_dt,stage1_outside_own_cell,stage1_owner_switches\n");
     FILE *backend=fopen("numerical_backend.json","wx");if(!backend)return 5;
-#ifdef GFS_NATIVE_BLOCK_JACOBI
+#ifdef GFS_NATIVE_IC0
+    const char *preconditioner="unshifted_zero_fill_IC0_LDL_native_order";
+#elif defined(GFS_NATIVE_BLOCK_JACOBI)
     const char *preconditioner="mutual_strongest_edge_2x2_block_Jacobi";
 #else
     const char *preconditioner="diagonal_Jacobi";
@@ -272,6 +293,9 @@ reject_step:
     FILE *stops=fopen("pcg_stopping.json","wx");if(!stops)return 5;
     fprintf(stops,"{\"scope\":\"RHS calls including rejected trials\",\"true_residual_initial\":%lld,\"true_residual_at_recursive_trigger\":%lld,\"true_residual_at_cap\":%lld,\"cap\":64,\"true_scaled_tolerance\":1e-12,\"recursive_norm_is_check_trigger_only\":true}\n",query.initial_true_stops,query.trigger_true_stops,query.cap_true_stops);
     if(fclose(stops))return 5;
+    FILE *precon=fopen("preconditioner_ledger.json","wx");if(!precon)return 5;
+    fprintf(precon,"{\"scope\":\"all RHS solves including rejected trials; IC0 times are included within solve_seconds\",\"preconditioner\":\"%s\",\"assembly_and_symbolic_seconds\":%.17g,\"numeric_factor_seconds\":%.17g,\"triangular_apply_seconds\":%.17g,\"applications\":%lld,\"maximum_stored_lower_plus_diagonal_entries\":%d,\"minimum_positive_pivot\":%.17g,\"triangular_execution\":\"serial native row order; not a CUDA/MPI claim\"}\n",preconditioner,query.preconditioner_assembly_seconds,query.preconditioner_factor_seconds,query.preconditioner_apply_seconds,query.preconditioner_applications,query.maximum_preconditioner_nonzeros,query.minimum_preconditioner_pivot);
+    if(fclose(precon))return 5;
     FILE *queries=fopen("velocity_query.json","wx");if(!queries)return 5;
     double minimum=HUGE_VAL,minimum_ratio=HUGE_VAL;
     for(int i=0;i<m.n;i++)for(int k=0;k<m.geometry[i].faces;k++){

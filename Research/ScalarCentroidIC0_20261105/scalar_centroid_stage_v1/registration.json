@@ -1,0 +1,22 @@
+{
+  "previous_goal_turn": "progress: constrained wall and true-residual gates implemented/evaluated, strong failures preserved, interface/strain causes isolated",
+  "source_commit": "fd7b6a492d7de73ea30aea1c4fcaffd7bed9f405 plus chosen scalar-velocity and centroid-strain changes",
+  "planner": "Astra grouped evaluation",
+  "selected_common_candidate_version": 8,
+  "fixed_operator_controls": {
+    "00": 5,
+    "10_scalar_only": 6,
+    "01_length_only": 7,
+    "11_combined": 8
+  },
+  "partial_controls_scope": "Read-only failed-state operators; no partial-mode PDE trajectories",
+  "full_targets": {
+    "blast_N200": 0.038,
+    "collision_physical_N200": 0.035
+  },
+  "method": "Existing scalar minmax midpoint bounds on free velocity rows, same constrained rawG/sensor/wall rows. AV denominator only uses centroid-normal distance; power motion and screenedA keep generator distance.",
+  "invariants": "same mu, cap64, true residual1e-12, stress coefficients1/2, CFL.4, cone.9, retry8, min_dt1e-14; no q steering/floors/mean subtraction",
+  "rotation_scope": "Affine and rank-one alias/boost exact to1e-12; nonlinear component limiter not exactly rotation covariant. Local centroid-sample reconstruction errors/frame differences at h=.2/.1 must decrease unless already<=1e-12; not PDE norms.",
+  "next_if_strong_pass": "N400 refinement, original1D9, cold64 pressure<=1%, savedGresho RHS; then full2D3D and matchedGIZMO<=2x",
+  "stop": "Any failed full strong endpoint; preserve actual failure, no automatic extra limiter orC0field/precon/mu/tolerance sweeps"
+}

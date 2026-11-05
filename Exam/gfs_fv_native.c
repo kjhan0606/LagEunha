@@ -15,8 +15,14 @@
 #if defined(GFS_NATIVE_BLOCK_JACOBI) && !defined(GFS_NATIVE_GLOBAL_VELOCITY)
 #error The conditional block preconditioner is registered for global physical velocity
 #endif
+#if defined(GFS_NATIVE_IC0) && (defined(GFS_NATIVE_BLOCK_JACOBI) || !defined(GFS_NATIVE_GLOBAL_VELOCITY))
+#error IC0 is a separate preconditioner for the common KEP physical field
+#endif
 #if defined(GFS_NATIVE_WALL_VELOCITY) && !defined(GFS_NATIVE_GLOBAL_VELOCITY)
 #error The constrained wall field is registered with global physical velocity
+#endif
+#if (defined(GFS_NATIVE_SCALAR_VELOCITY) || defined(GFS_NATIVE_CENTROID_STRAIN)) && !defined(GFS_NATIVE_WALL_VELOCITY)
+#error The common limiter/strain candidates retain the constrained physical wall field
 #endif
 #ifdef GFS_NATIVE_KEP
 #include "gfs_kep_ale.h"
@@ -43,11 +49,19 @@ struct GfsFvWorkspace {
     int n,ne,np,edge_capacity,point_capacity;GfsFvPrimitive *primitive;double (*gradient)[5][3],(*velocity)[3];
     int pcg_iterations,pcg_failure,pcg_stop_reason,pcg_true_replacements;
     double pcg_last_relative,pcg_first_candidate_true;
+#ifdef GFS_PCG_TRUE_HISTORY
+    double pcg_true_history[65],pcg_recursive_history[65],pcg_relative_history[65];
+#endif
 #ifdef GFS_NATIVE_WALL_VELOCITY
     unsigned char *wall_mask;double (*wall_relative)[3],(*wall_distance)[3];
 #endif
 #ifdef GFS_NATIVE_BLOCK_JACOBI
     int *strongest,*partner;double *block_a,*block_b;
+#endif
+#ifdef GFS_NATIVE_IC0
+    int *ic_offset,*ic_column,ic_capacity,ic_nnz,ic_applications,ic_failure_row;
+    double *ic_matrix,*ic_lower,*ic_pivot;
+    double ic_assembly_seconds,ic_factor_seconds,ic_apply_seconds,ic_min_pivot;
 #endif
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     int *velocity_owner;
@@ -77,6 +91,9 @@ void gfs_fv_workspace_free(GfsFvWorkspace *w){
 #ifdef GFS_NATIVE_BLOCK_JACOBI
     free(w->strongest);free(w->partner);free(w->block_a);free(w->block_b);
 #endif
+#ifdef GFS_NATIVE_IC0
+    free(w->ic_offset);free(w->ic_column);free(w->ic_matrix);free(w->ic_lower);free(w->ic_pivot);
+#endif
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     free(w->velocity_owner);
 #endif
@@ -92,6 +109,9 @@ static void allocate(GfsFvWorkspace *w,int n){
     if(w->n==n)return;
     free(w->primitive);free(w->gradient);free(w->velocity);free(w->offset);
     w->primitive=memory(n*sizeof(*w->primitive));w->gradient=memory(n*sizeof(*w->gradient));w->velocity=memory(n*sizeof(*w->velocity));w->offset=memory((n+1)*sizeof(int));
+#ifdef GFS_NATIVE_IC0
+    free(w->ic_offset);free(w->ic_pivot);w->ic_offset=memory((n+1)*sizeof(int));w->ic_pivot=memory(n*sizeof(double));
+#endif
 #ifdef GFS_NATIVE_WALL_VELOCITY
     free(w->wall_mask);free(w->wall_relative);free(w->wall_distance);
     w->wall_mask=memory(n*sizeof(*w->wall_mask));w->wall_relative=memory(n*sizeof(*w->wall_relative));w->wall_distance=memory(n*sizeof(*w->wall_distance));
@@ -181,6 +201,9 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
     for(int i=0;i<n;i++){
         GfsFvGeometry *g=m->geometry+i;GfsVelocityFit fit;gfs_velocity_fit_init(&fit,d);
         double rhs[5][3]={{0}},lo[5]={0},hi[5]={0},velocity_radius2=0,zero[3]={0};
+#ifdef GFS_NATIVE_SCALAR_VELOCITY
+        (void)velocity_radius2;
+#endif
         for(int k=0;k<g->faces;k++){
             GfsFvNativeFace *f=g->face+k;GfsFvPrimitive other;double r[3];neighbor(m,w,i,f,&other,r);
             if(!gfs_velocity_fit_add_face(&fit,r,zero,f->area)){bad=1;continue;}
@@ -188,7 +211,9 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
             if(d==2)angular/=sqrt(distance2);if(d==3)angular/=distance2;
             double delta[5]={other.rho-w->primitive[i].rho,0,0,0,other.p-w->primitive[i].p};
             for(int a=0;a<d;a++)delta[1+a]=other.u[a]-w->primitive[i].u[a];
+#ifndef GFS_NATIVE_SCALAR_VELOCITY
             double norm=0;for(int a=0;a<d;a++)norm+=delta[1+a]*delta[1+a];velocity_radius2=fmax(velocity_radius2,norm);
+#endif
             for(int c=0;c<5;c++){
                 lo[c]=fmin(lo[c],delta[c]);hi[c]=fmax(hi[c],delta[c]);
                 for(int a=0;a<d;a++)rhs[c][a]+=angular*delta[c]*r[a]/distance2;
@@ -207,6 +232,9 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
         if(constrain_wall(w,m,i)){bad=1;continue;}
 #endif
         double alpha[5]={1,1,1,1,1},velocity_alpha=1;
+#ifdef GFS_NATIVE_SCALAR_VELOCITY
+        (void)velocity_alpha;
+#endif
 #ifdef GFS_NATIVE_KEP_FILTER
         double Eparallel=0,Eperpendicular=0,G[3][3]={{0}};
 #ifdef GFS_KEP_STRESS_DIAGNOSTICS
@@ -230,14 +258,21 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
 #endif
             }
 #endif
+#ifdef GFS_NATIVE_SCALAR_VELOCITY
+            for(int c=0;c<5;c++){
+                if(c>0&&c<4&&(c>d||mirrored(w->wall_mask[i],c-1)))continue;
+#else
             for(int c=0;c<5;c+=4){
+#endif
                 double prediction=.5*dot3(w->gradient[i][c],r,d);
                 if(prediction>hi[c])alpha[c]=fmin(alpha[c],hi[c]/prediction);
                 if(prediction<lo[c])alpha[c]=fmin(alpha[c],lo[c]/prediction);
             }
+#ifndef GFS_NATIVE_SCALAR_VELOCITY
             double norm=0;
             for(int a=0;a<d;a++){double du=.5*dot3(w->gradient[i][1+a],r,d);norm+=du*du;}
             if(norm>velocity_radius2)velocity_alpha=fmin(velocity_alpha,sqrt(velocity_radius2/norm));
+#endif
         }
 #ifdef GFS_NATIVE_KEP_FILTER
         double bulk;w->stress_fraction[i]=gfs_kep_stress_fraction(d,G,Eparallel,Eperpendicular,&bulk);
@@ -258,7 +293,11 @@ static int reconstruct(GfsFvWorkspace *w,GfsFvMesh *m){
 #ifdef GFS_NATIVE_WALL_VELOCITY
             if(mirrored(w->wall_mask[i],c-1))continue;
 #endif
+#ifdef GFS_NATIVE_SCALAR_VELOCITY
+            for(int a=0;a<d;a++)w->gradient[i][c][a]*=alpha[c];
+#else
             for(int a=0;a<d;a++)w->gradient[i][c][a]*=velocity_alpha;
+#endif
         }
         for(int a=0;a<3;a++){
 #ifdef GFS_NATIVE_WALL_VELOCITY
@@ -325,6 +364,14 @@ static int build_points(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRhsStats *stats){
     for(int k=0;k<ne;k++){
         FvEdge *e=w->edge+k;int i=e->i,j=e->j;GfsFvNativeFace *f=m->geometry[i].face+e->face;
         if(j<0&&f->j!=i){fprintf(stderr,"FV reflected nonowner face dim=%d i=%d image_j=%d mirror=%d area=%.17g r=(%.17g %.17g %.17g)\n",d,i,f->j,f->mirror,f->area,f->r[0],f->r[1],f->r[2]);bad=1;continue;}
+#ifdef GFS_NATIVE_CENTROID_STRAIN
+        double physical_separation[3];
+        for(int a=0;a<3;a++)physical_separation[a]=f->r[a]+(mirrored(f->mirror,a)?-1:1)*m->geometry[f->j].centroid[a]-m->geometry[i].centroid[a];
+        double strain_distance=dot3(physical_separation,f->normal,d);
+        if(!(strain_distance>0)||!isfinite(strain_distance)){fprintf(stderr,"FV nonpositive centroid-normal strain distance i=%d j=%d value=%.17g\n",i,j,strain_distance);bad=1;continue;}
+        double hi=pow(m->geometry[i].V,1./d),hj=j>=0?pow(m->geometry[j].V,1./d):hi;
+        double strain_scale=.5*(hi+hj)/strain_distance;
+#endif
         for(int q=0;q<e->count;q++){
             FvFanPoint *point=w->point+e->offset+q;GfsFvPoint *g=m->geometry[i].point+f->point+q;
             GfsFvPrimitive left=trace(w,m,i,g->x),right;
@@ -341,8 +388,12 @@ static int build_points(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRhsStats *stats){
                 delta+=(point->right.u[a]-point->left.u[a])*f->normal[a];
             }
             double compression=delta<0&&reconstructed<0?fmin(-delta,-reconstructed):0;
+#ifdef GFS_NATIVE_CENTROID_STRAIN
+            compression*=strain_scale;
+#else
             double hi=pow(m->geometry[i].V,1./d),hj=j>=0?pow(m->geometry[j].V,1./d):hi;
             compression*=.5*(hi+hj)/f->distance;
+#endif
             double rhobar=.5*(point->left.rho+point->right.rho);
             double sound=.5*(sqrt(m->gamma*point->left.p/point->left.rho)+sqrt(m->gamma*point->right.p/point->right.rho));
             point->compression=rhobar*(sound*compression+2*compression*compression);point->delta=delta;
@@ -428,6 +479,73 @@ static void multiply(GfsFvWorkspace *w,const GfsFvMesh *m,const double *v,double
         }out[i]=value;
     }
 }
+#ifdef GFS_NATIVE_IC0
+static int ic0_error(GfsFvWorkspace *w,const char *stage,int row,int column,double value){
+    w->ic_failure_row=row;
+    fprintf(stderr,"Native unshifted IC0 failure stage=%s row=%d column=%d value=%.17g; no pivot replacement or fallback\n",stage,row,column,value);return 1;
+}
+static int prepare_ic0(GfsFvWorkspace *w,const GfsFvMesh *m){
+    double mark=omp_get_wtime();w->ic_nnz=0;
+    if(w->ne>w->ic_capacity){
+        w->ic_capacity=2*w->ne+16;free(w->ic_column);free(w->ic_matrix);free(w->ic_lower);
+        w->ic_column=memory(w->ic_capacity*sizeof(int));w->ic_matrix=memory(w->ic_capacity*sizeof(double));w->ic_lower=memory(w->ic_capacity*sizeof(double));
+    }
+    /* Native row order, original lower sparsity only. Parallel/image faces
+     * for the same owned pair are summed, without changing edge fluxes. */
+    for(int i=0;i<m->n;i++){
+        int start=w->ic_nnz;w->ic_offset[i]=start;
+        for(int k=w->offset[i];k<w->offset[i+1];k++){
+            FvEdge *e=w->edge+w->incident[k];if(e->j<0)continue;int j=e->i==i?e->j:e->i;
+            if(j>=i)continue;
+            double a=e->jacobian;if(!isfinite(a)||a<0){w->ic_assembly_seconds=omp_get_wtime()-mark;return ic0_error(w,"assembly",i,j,a);}
+            if(a==0)continue;
+            int found=start;while(found<w->ic_nnz&&w->ic_column[found]!=j)found++;
+            if(found==w->ic_nnz){w->ic_column[found]=j;w->ic_matrix[found]=0;w->ic_nnz++;}
+            w->ic_matrix[found]-=a;
+        }
+        for(int k=start+1;k<w->ic_nnz;k++){
+            int column=w->ic_column[k],p=k;double value=w->ic_matrix[k];
+            while(p>start&&w->ic_column[p-1]>column){w->ic_column[p]=w->ic_column[p-1];w->ic_matrix[p]=w->ic_matrix[p-1];p--;}
+            w->ic_column[p]=column;w->ic_matrix[p]=value;
+        }
+    }
+    w->ic_offset[m->n]=w->ic_nnz;w->ic_assembly_seconds=omp_get_wtime()-mark;mark=omp_get_wtime();w->ic_min_pivot=HUGE_VAL;
+    for(int i=0;i<m->n;i++){
+        double diagonal=w->diagonal[i];
+        for(int p=w->ic_offset[i];p<w->ic_offset[i+1];p++){
+            int j=w->ic_column[p],a=w->ic_offset[i],b=w->ic_offset[j];double value=w->ic_matrix[p];
+            while(a<p&&b<w->ic_offset[j+1]){
+                int ka=w->ic_column[a],kb=w->ic_column[b];
+                if(ka<kb)a++;else if(kb<ka)b++;else{value-=w->ic_lower[a]*w->ic_pivot[ka]*w->ic_lower[b];a++;b++;}
+            }
+            value/=w->ic_pivot[j];
+            if(!isfinite(value)){w->ic_factor_seconds=omp_get_wtime()-mark;return ic0_error(w,"lower",i,j,value);}
+            w->ic_lower[p]=value;diagonal-=value*value*w->ic_pivot[j];
+        }
+        if(!(diagonal>0)||!isfinite(diagonal)){w->ic_factor_seconds=omp_get_wtime()-mark;return ic0_error(w,"pivot",i,i,diagonal);}
+        w->ic_pivot[i]=diagonal;w->ic_min_pivot=fmin(w->ic_min_pivot,diagonal);
+    }
+    w->ic_factor_seconds=omp_get_wtime()-mark;return 0;
+}
+static int ic0_precondition(GfsFvWorkspace *w,const GfsFvMesh *m){
+    double mark=omp_get_wtime();int bad=-1;w->ic_applications++;
+    for(int i=0;i<m->n;i++){
+        double value=w->r[i];for(int p=w->ic_offset[i];p<w->ic_offset[i+1];p++)value-=w->ic_lower[p]*w->pre[w->ic_column[p]];
+        w->pre[i]=value;if(!isfinite(value)){bad=i;break;}
+    }
+    if(bad<0)for(int i=0;i<m->n;i++){w->pre[i]/=w->ic_pivot[i];if(!isfinite(w->pre[i])){bad=i;break;}}
+    if(bad<0)for(int i=m->n-1;i>=0;i--){
+        double value=w->pre[i];if(!isfinite(value)){bad=i;break;}
+        for(int p=w->ic_offset[i];p<w->ic_offset[i+1];p++)w->pre[w->ic_column[p]]-=w->ic_lower[p]*value;
+    }
+    w->ic_apply_seconds+=omp_get_wtime()-mark;
+    return bad>=0?ic0_error(w,"triangular",bad,bad,w->pre[bad]):0;
+}
+static void ic0_stats(const GfsFvWorkspace *w,GfsFvRhsStats *s){
+    s->preconditioner_assembly_seconds=w->ic_assembly_seconds;s->preconditioner_factor_seconds=w->ic_factor_seconds;s->preconditioner_apply_seconds=w->ic_apply_seconds;
+    s->minimum_preconditioner_pivot=isfinite(w->ic_min_pivot)?w->ic_min_pivot:0;s->preconditioner_nonzeros=w->ic_nnz+w->n;s->preconditioner_applications=w->ic_applications;s->preconditioner_failure_row=w->ic_failure_row;
+}
+#endif
 #ifdef GFS_NATIVE_BLOCK_JACOBI
 static void prepare_blocks(GfsFvWorkspace *w,const GfsFvMesh *m){
 #pragma omp parallel for if(m->n>1024) schedule(static)
@@ -470,8 +588,14 @@ static int block_precondition(GfsFvWorkspace *w,const GfsFvMesh *m){
 #endif
 static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
     w->pcg_iterations=0;w->pcg_failure=0;w->pcg_last_relative=1;w->pcg_stop_reason=0;w->pcg_true_replacements=0;w->pcg_first_candidate_true=NAN;
+#ifdef GFS_PCG_TRUE_HISTORY
+    for(int k=0;k<=64;k++)w->pcg_true_history[k]=w->pcg_recursive_history[k]=w->pcg_relative_history[k]=NAN;
+    w->pcg_true_history[0]=w->pcg_recursive_history[0]=norm(w,w->R);w->pcg_relative_history[0]=1;
+#endif
     int n=m->n;for(int i=0;i<n;i++){w->direction[i]=0;w->r[i]=-w->R[i];}
-#ifdef GFS_NATIVE_BLOCK_JACOBI
+#ifdef GFS_NATIVE_IC0
+    if(prepare_ic0(w,m)||ic0_precondition(w,m)){w->pcg_failure=5;return -1;}
+#elif defined(GFS_NATIVE_BLOCK_JACOBI)
     prepare_blocks(w,m);if(block_precondition(w,m)){w->pcg_failure=5;return -1;}
 #else
     for(int i=0;i<n;i++)w->pre[i]=w->r[i]/w->diagonal[i];
@@ -482,13 +606,21 @@ static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
         w->pcg_iterations=step;
         multiply(w,m,w->p,w->Ap);double den=product_sum(w->p,w->Ap,n);if(!(den>0)){w->pcg_failure=1;return -1;}double a=rz/den;
         for(int i=0;i<n;i++){w->direction[i]+=a*w->p[i];w->r[i]-=a*w->Ap[i];}
-#ifdef GFS_NATIVE_BLOCK_JACOBI
+#ifdef GFS_NATIVE_IC0
+        if(ic0_precondition(w,m)){w->pcg_failure=5;return -1;}
+#elif defined(GFS_NATIVE_BLOCK_JACOBI)
         if(block_precondition(w,m)){w->pcg_failure=5;return -1;}
 #else
         for(int i=0;i<n;i++)w->pre[i]=w->r[i]/w->diagonal[i];
 #endif
         double next=product_sum(w->r,w->pre,n);
         w->pcg_last_relative=sqrt(fmax(0,next/initial));
+#ifdef GFS_PCG_TRUE_HISTORY
+        /* Passive saved-system audit only. Flux[] is scratch; this does
+         * not alter A, b, the Krylov recurrence, or stopping decisions. */
+        if(!residual(w,m,w->direction,w->trial,0))w->pcg_true_history[step]=norm(w,w->trial);
+        w->pcg_recursive_history[step]=norm(w,w->r);w->pcg_relative_history[step]=w->pcg_last_relative;
+#endif
         if(next<=1e-24*initial){
 #ifdef GFS_NATIVE_KEP
             /* An L2 recursive residual is not the registered scaled true
@@ -501,7 +633,9 @@ static int pcg(GfsFvWorkspace *w,const GfsFvMesh *m){
             if(true_norm<=1e-12){w->pcg_stop_reason=1;return step;}
             w->pcg_true_replacements++;
             for(int i=0;i<n;i++)w->r[i]=-w->trial[i];
-#ifdef GFS_NATIVE_BLOCK_JACOBI
+#ifdef GFS_NATIVE_IC0
+            if(ic0_precondition(w,m)){w->pcg_failure=5;return -1;}
+#elif defined(GFS_NATIVE_BLOCK_JACOBI)
             if(block_precondition(w,m)){w->pcg_failure=5;return -1;}
 #else
             for(int i=0;i<n;i++)w->pre[i]=w->r[i]/w->diagonal[i];
@@ -527,6 +661,10 @@ static double merit(const GfsFvMesh *m,const double *R){double value=0;for(int i
 #endif
 static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
     w->pcg_stop_reason=0;w->pcg_true_replacements=0;w->pcg_first_candidate_true=NAN;
+    s->preconditioner_failure_row=-1;
+#ifdef GFS_NATIVE_IC0
+    w->ic_assembly_seconds=w->ic_factor_seconds=w->ic_apply_seconds=w->ic_min_pivot=0;w->ic_nnz=w->ic_applications=0;w->ic_failure_row=-1;
+#endif
     memset(w->z,0,m->n*sizeof(double));
     for(int i=0;i<m->n;i++){
         double h0=sqrt(m->cell[i].m0/m->cell[i].mu),speed=sqrt(dot3(w->primitive[i].u,w->primitive[i].u,m->dim))+sqrt(m->gamma*w->primitive[i].p/w->primitive[i].rho);
@@ -535,7 +673,11 @@ static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
 #ifdef GFS_NATIVE_KEP
     if(residual(w,m,w->z,w->R,1))return 1;s->root_residual=norm(w,w->R);
     if(s->root_residual<=1e-12){s->pcg_stop_reason=0;return 0;}
-    int count=pcg(w,m);s->cg=w->pcg_iterations;s->pcg_stop_reason=w->pcg_stop_reason;if(count<0){
+    int count=pcg(w,m);s->cg=w->pcg_iterations;s->pcg_stop_reason=w->pcg_stop_reason;
+#ifdef GFS_NATIVE_IC0
+    ic0_stats(w,s);
+#endif
+    if(count<0){
         double initial_residual=s->root_residual;
         if(!residual(w,m,w->direction,w->trial,0))s->root_residual=norm(w,w->trial);
         fprintf(stderr,"PCG failure iterations=%d reason=%d initial_scaled_residual=%.17g final_true_scaled_residual=%.17g (1=curvature,2=flux,3=replacement,4=cap,5=preconditioner)\n",w->pcg_iterations,w->pcg_failure,initial_residual,s->root_residual);return 3;
@@ -560,7 +702,7 @@ static int solve(GfsFvWorkspace *w,const GfsFvMesh *m,GfsFvRhsStats *s){
 #endif
 }
 int gfs_fv_native_rhs(GfsFvWorkspace *w,GfsFvMesh *m,GfsFvRate *rate,GfsFvRhsStats *s){
-    memset(s,0,sizeof(*s));s->pcg_stop_reason=-1;allocate(w,m->n);double mark=omp_get_wtime();
+    memset(s,0,sizeof(*s));s->pcg_stop_reason=-1;s->preconditioner_failure_row=-1;allocate(w,m->n);double mark=omp_get_wtime();
     if(reconstruct(w,m))return 1;s->reconstruction_seconds=omp_get_wtime()-mark;mark=omp_get_wtime();
 #ifdef GFS_NATIVE_GLOBAL_VELOCITY
     s->velocity_query_seconds=w->query_seconds;s->velocity_owner_changed=w->owner_changed;s->velocity_owner_switches=w->owner_switches;s->maximum_query_hops=w->query_max_hops;s->total_query_hops=w->query_hops;

@@ -42,6 +42,9 @@ typedef struct {
     double velocity_query_seconds;
     int velocity_owner_changed,velocity_owner_switches,maximum_query_hops;
     long long total_query_hops;
+    double preconditioner_assembly_seconds,preconditioner_factor_seconds,preconditioner_apply_seconds;
+    double minimum_preconditioner_pivot;
+    int preconditioner_nonzeros,preconditioner_applications,preconditioner_failure_row;
 } GfsFvRhsStats;
 typedef struct GfsFvWorkspace GfsFvWorkspace;
 int gfs_fv_geometry(GfsFvMesh *mesh);

@@ -1,6 +1,15 @@
 # 차원 공통 유체역학 진행 기록
 
 현재 최신 묶음은
+[scalar velocity·centroid strain·IC(0)](UNIFIED_HYDRO_SCALAR_CENTROID_IC0_2026-11-05.md)이다.
+version8의 52개 연산자 검사와 실제 1D/2D/3D 저장 행렬의 IC(0) 검사가
+통과했다. 같은 물리의 accepted checkpoint에서 재개하여 collision은
+원래 목표 t=0.035에 도달했다. blast는 t=0.0350188에서 실제 잔차
+1.57663e-12가 기준 1e-12를 넘어 원래 목표 0.038에 도달하지 못했다.
+충돌 해의 정확 리만 해 오차, 전체 공통 2D/3D 진화와 GIZMO 속도 기준은
+아직 검증하지 않았다. 전체 목표는 진행 중이다.
+
+직전 묶음은
 [반사벽 제약과 실제 잔차 판정](UNIFIED_HYDRO_WALL_TRUE_RESIDUAL_2026-11-05.md)이다.
 반사벽 속도장과 PCG 종료조건을 수정하고 최종 22개 차원 공통 연산자 검사를
 통과했다. 그러나 version5 blast는 t=0.006417, collision은 t=0.020612에서

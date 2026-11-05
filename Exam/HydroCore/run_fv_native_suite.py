@@ -41,7 +41,7 @@ def execute(root, binary, specification, cpus=None, extra_env=None, restart=None
                OMP_WAIT_POLICY="ACTIVE", OMP_PLACES="cores", OMP_PROC_BIND="spread")
     if extra_env:
         env.update(extra_env)
-    save(case/"resources.json", {"CPU_set": cpus, "OMP_NUM_THREADS": 8,
+    save(case/"resources.json", {"CPU_set": cpus, "OMP_NUM_THREADS": int(env["OMP_NUM_THREADS"]),
                                  "explicit_environment": extra_env or {}})
     start = time.monotonic()
     with (case/"stdout.log").open("x") as out, (case/"stderr.log").open("x") as err:
@@ -63,7 +63,7 @@ def assess(case, specification, record):
     initial = np.loadtxt(case/"initial.dat")
     final = np.loadtxt(case/"final.dat")
     endpoint = bool(code == 0 and not result["failed"] and abs(result["time"]-target) < 1e-13)
-    positive = np.isfinite(final).all() and bool(np.all(final[:, [5, 10, 11, 12]] > 0))
+    positive = bool(np.isfinite(final).all() and np.all(final[:, [5, 10, 11, 12]] > 0))
     metrics = {"endpoint_pass": endpoint, "positive_final_state": positive,
                "new_steps": result["new_steps"], "max_ledger": result["maximum_ledger_error"],
                "max_mass_weight_with_residual": result["maximum_integrated_residual_invariant_error"],

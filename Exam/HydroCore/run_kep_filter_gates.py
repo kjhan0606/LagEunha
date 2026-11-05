@@ -18,7 +18,8 @@ def main():
     parser.add_argument("binary", type=Path)
     parser.add_argument("--select", nargs="+", choices=("alternating", "sod", "blast", "collision", "cold", "gresho"))
     parser.add_argument("--restart-blast", type=Path)
-    parser.add_argument("--core-version", type=int, choices=(3, 4, 5), default=3)
+    parser.add_argument("--restart-collision", type=Path)
+    parser.add_argument("--core-version", type=int, choices=(3, 4, 5, 6, 7, 8), default=3)
     args = parser.parse_args()
     if not args.root.resolve().is_relative_to(Path("/gpfs/kjhan/LagForce")):
         raise ValueError("Use GPFS")
@@ -37,6 +38,7 @@ def main():
         "binary_sha256": hashlib.sha256(args.binary.read_bytes()).hexdigest(), "cases": cases,
         "full_matrix": full_matrix, "selected_subset": args.select,
         "blast_restart": str(args.restart_blast) if args.restart_blast else None,
+        "collision_restart": str(args.restart_collision) if args.restart_collision else None,
         "detector": "chi=(Eperp+c*Eparallel)/(Eperp+Eparallel), c=min(1,max(0,-trG)^2/Frobenius(G)^2); original unlimited centroid LSQ weights A/r^(d+1)",
         "pair_fraction": "max(chi_i,chi_j)", "unchanged_stress_coefficients": [1, 2],
         "wave_CFL": .4, "cone_safety": .9, "PCG_cap": 64, "true_root_tolerance": 1e-12,
@@ -51,9 +53,13 @@ def main():
         "If PCG fails, test mutual-strongest-edge 2x2 block Jacobi on the exact failed trial matrix before changing the common numerical backend; keep cap/tolerance/mu."
         if args.core_version == 4 else
         "Stop this finite bundle on any failed full strong endpoint; preserve exact failure, no further preconditioner/mu/tolerance sweep.",
-        "velocity_query": "Own-cell extrapolation" if args.core_version == 3 else "Actual containing power cell, native relative halfspaces/adjacency, deterministic ties, explicit failure, unchanged own-cell value on inside points",
+        "velocity_query": "Own-cell extrapolation" if args.core_version == 3 else "Actual containing power cell, native relative halfspaces/adjacency, deterministic ties, explicit failure; own and global branches use the same selected physical reconstruction",
         "reflecting_velocity_field": "u_n(x)=mean_u_n*(x_n-wall)/(centroid_n-wall), fixed raw normal gradient row, limiter on free rows only, ratio evaluated directly"
-        if args.core_version == 5 else "Historical unconstrained LSQ field",
+        if args.core_version >= 5 else "Historical unconstrained LSQ field",
+        "velocity_limiter": "Scalar local min/max bounds at centroid midpoints, independent free rows"
+        if args.core_version in (6, 8) else "Historical common velocity-vector radius",
+        "AV_strain_length": "Positive centroid-normal separation, consistent images"
+        if args.core_version in (7, 8) else "Generator separation",
         "not_yet_qualified": "Original nine full tests/refinement, guard-doubling equivalence, higher-resolution/3D suite, native GPU/MPI and matched GIZMO timing"})
     slots = Queue()
     for cpus in [list(range(8)), list(range(8, 16))]:
@@ -63,7 +69,7 @@ def main():
         try:
             record = execute(args.root, args.binary, specification, cpus,
                              {"GFS_TEST_GUARD_MULTIPLIER": "1"},
-                             args.restart_blast if specification[3] == "blast" else None)
+                             {"blast": args.restart_blast, "collision": args.restart_collision}.get(specification[3]))
             case = args.root/specification[0]
             if (case/"kinetic_ledger.json").exists():
                 record["kinetic_ledger"] = json.loads((case/"kinetic_ledger.json").read_text())
