@@ -12302,9 +12302,14 @@ static int gfs_native_u64_w0_kdk_mode(void){
 #include "gfs_unified_kdk.inc"
 #include "gfs_native_weight_kdk.inc"
 #include "gfs_material_ssprk2_native.inc"
+#include "gfs_material_mpi.inc"
 /* Geometry refresh after accepted ownership changes, with the same stage
  * samples and high/low image coordinates as the native material RHS. */
 int gfs_material_cylinder_refresh(SimParameters*s,double t){
+ if(NID(s)>1){void*ticket=NULL;SimParameters*view=gfs_material_mpi_view_begin(s,&ticket);
+  int ok=gfs_material_cylinder_refresh(view,t);MPI_Allreduce(MPI_IN_PLACE,&ok,1,MPI_INT,MPI_MIN,MPI_COMM(s));
+  gfs_material_mpi_view_end(ticket,0);return ok;
+ }
  double xmin,ymin,xmax,ymax;const char*e=getenv("GFS_MATERIAL_DT");double cap=e?strtod(e,NULL):0;
  if(!gfs_material_cylinder_mode()||!(cap>0)||!gfs_material_cylinder_search(s,t+cap,&xmin,&ymin,&xmax,&ymax)||
     !gfs_material_evaluation_set(t,cap,1))return 0;
@@ -12333,7 +12338,7 @@ double exam2d_vph_kdk_int_blend(
 #ifdef USE_CUDA
     const char *material_env=getenv("GFS_MATERIAL_EVOLVE");
     if(material_env&&!strcmp(material_env,"1"))
-        return gfs_material_ssprk2_native(simpar,paddingAllTreeParticles,find2DNeighborBP,
+        return gfs_material_ssprk2_mpi(simpar,paddingAllTreeParticles,find2DNeighborBP,
                                      find2DCellBP,mkLinkedList2D,postStage);
     if(gfs_native_periodic_weight_kdk_mode())
         return gfs_native_weight_kdk(simpar,paddingAllTreeParticles,find2DNeighborBP,

@@ -1,6 +1,6 @@
 /* Opt-in inverse after existing native GPU geometry. No force, U or x update. */
 #include "../gfs_material_volume_closed.h"
-int gfs_material_native_volume_correct(void*opaque,int stage,double dt,int iteration){
+static int gfs_material_native_volume_correct_local(void*opaque,int stage,double dt,int iteration){
  SimParameters*s=opaque;GPUContext*c=gpu_get_context();
  GfsMaterialVolumeAudit*a=&gfs_material_native_volume_audit;
  if(!s||!c||!c->initialized||!c->tess_faces_on_device||NID(s)!=1||
@@ -125,3 +125,17 @@ done:
  free(reflection);free(rt_alias);free(coefficient);free(owner);free(delta);free(rhs);return answer;
 }
 
+
+int gfs_material_native_volume_correct(void*opaque,int stage,double dt,int iteration){
+ SimParameters*s=opaque;int result=0;
+ if(gfs_material_mpi_rank()<=0)result=gfs_material_native_volume_correct_local(opaque,stage,dt,iteration);
+ gfs_material_mpi_bcast(&result,sizeof(result));
+ if(result==2&&gfs_material_mpi_rank()>=0){
+  int n=VORO_NP(s);treevorostressrk4particletype*p=(void*)VORORK4_TBP(s);
+  double*w=malloc((size_t)n*sizeof(double));if(!w)MPI_Abort(MPI_COMM_WORLD,99);
+  for(int i=0;i<n;i++)w[i]=p[i].weight.W;
+  gfs_material_mpi_bcast(w,(size_t)n*sizeof(double));
+  for(int i=0;i<n;i++)p[i].weight.W=w[i];free(w);
+ }
+ return result;
+}

@@ -32,17 +32,21 @@ int kh_makemap(SimParameters *simpar, int icount){
 	int nyimg = NY(simpar);
 	float *map = (float*)malloc(sizeof(float)*nximg*nyimg);
 	float *img = (float*)malloc(sizeof(float)*nximg*nyimg);
+    struct {double distance;int rank;} *nearest=malloc((size_t)nximg*nyimg*sizeof(*nearest)),*winner=malloc((size_t)nximg*nyimg*sizeof(*winner));
+    if(!map||!img||!nearest||!winner)MPI_Abort(MPI_COMM(simpar),99);
+    for(int k=0;k<nximg*nyimg;k++){nearest[k].distance=HUGE_VAL;nearest[k].rank=MYID(simpar);}
 //	float *ndist = (float*)malloc(sizeof(float)*nximg*nyimg);
 	int i,j;
 	int ii,jj;
-	for(i=0;i<nximg*nyimg;i++) map[i] = KH_Rho1(simpar);
+	for(i=0;i<nximg*nyimg;i++) map[i] = 0;
 //	for(i=0;i<nximg*nyimg;i++) ndist[i] = 1.e20;
 	postype pixsize = Lx/nximg;
 	postype xmin,ymin,xmax,ymax;
-	xmin = KH_XMIN(simpar);
-	ymin = KH_YMIN(simpar);
-	xmax = KH_XMAX(simpar);
-	ymax = KH_YMAX(simpar);
+    /* The image grid is global. Adaptive k-section pivots can move away
+     * from the initial KH sub-box; indexing owned particles into that old
+     * box wrote beyond cells[] after migration. */
+    xmin=SIMBOX(simpar).x.min;ymin=SIMBOX(simpar).y.min;
+    xmax=SIMBOX(simpar).x.max;ymax=SIMBOX(simpar).y.max;
 	int mx,my;
 	mx = ceil((xmax-xmin)/cellsize);
 	my = ceil((ymax-ymin)/cellsize);
@@ -58,6 +62,7 @@ int kh_makemap(SimParameters *simpar, int icount){
 		int ix,iy;
 		ix = ((bpi->x-xmin)/cellsize);
 		iy = ((bpi->y-ymin)/cellsize);
+        if(ix<0||ix>=mx||iy<0||iy>=my)continue; /* outside the requested image */
 		int index = ix+mx*iy;
 		struct linkedlisttype *tmp = cells[index].link;
 		cells[index].link = (struct linkedlisttype*)bpi;
@@ -66,10 +71,10 @@ int kh_makemap(SimParameters *simpar, int icount){
 	}
 
 	for(j=0;j<nyimg;j++){
-		postype yp = (j+0.5)*pixsize; // img pixel position
+		postype yp = ymin+(j+0.5)*Ly/nyimg; // img pixel position
 		if(yp < ymin || yp >= ymax) continue;
 		for(i=0;i<nximg;i++){
-			postype xp = (i+0.5)*pixsize; // img pixel position
+			postype xp = xmin+(i+0.5)*pixsize; // img pixel position
 			if(xp < xmin || xp >= xmax) continue;
 			postype nearden = 0;
 			postype idist = 1.e20;
@@ -101,6 +106,7 @@ int kh_makemap(SimParameters *simpar, int icount){
 			}
 //			map[i+nximg*j] = nearden;
 			map[i+nximg*(nyimg-j-1)] = nearden;
+            nearest[i+nximg*(nyimg-j-1)].distance=idist;
 //			ndist[i+nximg*j] = idist;
 
 		}
@@ -144,7 +150,10 @@ int kh_makemap(SimParameters *simpar, int icount){
  	free(map); free(img);
 	free(ndist);
 	*/
-	MPI_Reduce(map, img, nximg*nyimg, MPI_FLOAT, MPI_MAX, 0, MPI_COMM_WORLD);
+	MPI_Allreduce(nearest,winner,nximg*nyimg,MPI_DOUBLE_INT,MPI_MINLOC,MPI_COMM(simpar));
+    for(int k=0;k<nximg*nyimg;k++)if(winner[k].rank!=MYID(simpar))map[k]=0;
+    MPI_Reduce(map,img,nximg*nyimg,MPI_FLOAT,MPI_SUM,0,MPI_COMM(simpar));
+    free(nearest);free(winner);
 
 
     if(MYID(simpar)==0){

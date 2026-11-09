@@ -72,7 +72,8 @@ static GfsMaterialFreeSupport2D *gfs_material_free_support;
 static int gfs_material_free_count,gfs_material_free_valid;
 static double gfs_material_free_budget;
 int gfs_material_free_rhs_valid_for_dt(double dt){
- return gfs_material_free_valid&&dt<=gfs_material_free_budget&&gfs_material_free_pairs_support_valid2d(gfs_material_free_count,gfs_material_free_pairs,gfs_material_free_support,dt,.9);
+ int valid=0;if(gfs_material_mpi_rank()<=0)valid=gfs_material_free_valid&&dt<=gfs_material_free_budget&&gfs_material_free_pairs_support_valid2d(gfs_material_free_count,gfs_material_free_pairs,gfs_material_free_support,dt,.9);
+ gfs_material_mpi_bcast(&valid,sizeof(valid));return valid;
 }
 static double gfs_material_last_face_crossing;
 static double gfs_material_last_geometry_bound;

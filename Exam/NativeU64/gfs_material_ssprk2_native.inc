@@ -55,7 +55,8 @@ static int gfs_material_ssprk2_geometry(SimParameters*s,
 }
 #endif
 
-/* Opt-in single-rank periodic stage loop, using existing geometry/rollback. */
+/* Global material stage operator, using existing geometry/rollback.
+ * The MPI adapter supplies a consistent global view and handles ownership. */
 static double gfs_material_ssprk2_native(SimParameters *s,
  void (*padding)(SimParameters *,postype),Voro2D_point *(*neighbors)(SimParameters *,int,int,int *),
  treevorork4particletype *(*cells)(SimParameters *,int,int,int *),

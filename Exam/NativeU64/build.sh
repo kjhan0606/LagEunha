@@ -22,7 +22,7 @@ fi
 build="$project/.native-u64"
 source_dir="$project/Exam/NativeU64"
 profile=${NATIVE_PROFILE:-legacy}
-material_geometry_defines=(); material_host_defines=(); material_host_includes=(); material_link_flags=(); material_objects=(); material_weight_defines=(); material_project_defines=()
+material_main_defines=(); material_boundary_defines=(); material_geometry_defines=(); material_host_defines=(); material_host_includes=(); material_link_flags=(); material_objects=(); material_weight_defines=(); material_project_defines=()
 case "$profile" in
  legacy) ;;
  material) source "$source_dir/material_profile.sh" ;;
@@ -58,7 +58,11 @@ for lib in "${archives[@]}";do
     # These legacy Makefiles have a %.c generator with no prerequisites.
     # Built-in makefile-remake rules plus -B try to compile Makefile.c.
     # A fresh tree already forces object compilation; use explicit rules only.
-    make -r -C "${lib%/*}" -j "$jobs" "${common[@]}" "${lib##*/}"
+    boundary_extra=()
+    if [[ "$profile" == material && "$lib" == Exam/Cylinder/libcyl.a ]];then
+      boundary_extra=("specialrules=-DINTEL -DXYZDBL -DGOTPM -DUSE_CUDA -DGFS_WEIGHT_DYNAMICS -DGFS_FIXEDPOLY_SIDES=1024 ${material_boundary_defines[*]}")
+    fi
+    make -r -C "${lib%/*}" -j "$jobs" "${common[@]}" "${boundary_extra[@]}" "${lib##*/}"
     test -f "$lib"
 done
 /opt/ohpc/pub/cuda/13.0.2/bin/nvcc -O3 --use_fast_math --threads 1 -DXYZDBL -DGOTPM -DUSE_CUDA -DGFS_WEIGHT_DYNAMICS -DGFS_VARPRESS_W0 -DGFS_FIXEDPOLY_SIDES=1024 -gencode "arch=compute_$cuda_arch,code=sm_$cuda_arch" "${material_geometry_defines[@]}" "${inc[@]}" -c "$source_dir/exam_gpu.cu" -o "$build/exam_gpu.o"
@@ -66,6 +70,7 @@ done
 mpiicx "${flags[@]}" "${inc[@]}" -c "$project/Exam/gfs_viscosity_implicit.c" -o "$build/gfs_viscosity_implicit.o"
 for unit in exam exam_gpu_extract mpirks.exam2d exam3d_gfs gfs_circle_observer gfs_circle_dense kh util gfs_weight_checkpoint;do
     extra=(); extra_inc=()
+    if [[ "$profile" == material && "$unit" == exam ]];then extra=("${material_main_defines[@]}");fi
     if [[ "$profile" == material && "$unit" == exam_gpu_extract ]];then extra=("${material_host_defines[@]}"); extra_inc=("${material_host_includes[@]}");fi
     mpiicx "${flags[@]}" "${extra[@]}" "${extra_inc[@]}" "${inc[@]}" -c "$source_dir/$unit.c" -o "$build/$unit.o"
 done

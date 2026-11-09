@@ -1,3 +1,4 @@
+#include "gfs_material_mpi.h"
 #ifdef USE_CUDA
 /* ================================================================
  *  exam_gpu_extract.c
@@ -1075,12 +1076,32 @@ double getAccVoro2DBlend_GPU(
         FaceCSR *f=&g_gpu_ctx.h_faces;int nf=g_gpu_ctx.d_faces.n_faces_total;
         gpu_download_face_csr(&g_gpu_ctx,nbp,nf,f->face_offset,f->c1x,f->c1y,f->c2x,f->c2y,
             f->neighbor_idx,f->kp_idx,f->km_idx,f->is_ghost);
-        if(cyl_material_native){
-         if(!gfs_material_cylinder_native_rhs(simpar,&g_gpu_ctx,nbp,n_total))return 0;
-        }else if(noh_material_native){
-         if(!gfs_material_noh_native_rhs(simpar,&g_gpu_ctx,nbp,n_total))return 0;
-        }else if(!gfs_material_trace_probe(&g_gpu_ctx,nbp,n_total,
-             params.domain_x,params.domain_y,params.Gamma,1,Ymin_HydroExam(simpar),Ymax_HydroExam(simpar),GAS_ACCX(simpar),GAS_ACCY(simpar)))return 0;
+        int material_ok=1;
+        if(gfs_material_mpi_rank()<=0){
+         if(cyl_material_native)material_ok=gfs_material_cylinder_native_rhs(simpar,&g_gpu_ctx,nbp,n_total);
+         else if(noh_material_native)material_ok=gfs_material_noh_native_rhs(simpar,&g_gpu_ctx,nbp,n_total);
+         else material_ok=gfs_material_trace_probe(&g_gpu_ctx,nbp,n_total,
+             params.domain_x,params.domain_y,params.Gamma,1,Ymin_HydroExam(simpar),Ymax_HydroExam(simpar),GAS_ACCX(simpar),GAS_ACCY(simpar));
+        }
+        gfs_material_mpi_bcast(&material_ok,sizeof(material_ok));
+        if(!material_ok)return 0;
+        if(gfs_material_mpi_rank()>=0){
+         ParticleSoA *a=&g_gpu_ctx.h_parts;
+#define MATERIAL_BCAST_ROW(field) gfs_material_mpi_bcast(a->field,(size_t)nbp*sizeof(*a->field))
+         MATERIAL_BCAST_ROW(ax_out);MATERIAL_BCAST_ROW(ay_out);MATERIAL_BCAST_ROW(die_out);
+         MATERIAL_BCAST_ROW(weight_Udot64);MATERIAL_BCAST_ROW(weight_rate);MATERIAL_BCAST_ROW(weight_force);
+#undef MATERIAL_BCAST_ROW
+#define MATERIAL_BCAST_VALUE(field) gfs_material_mpi_bcast(&field,sizeof(field))
+         MATERIAL_BCAST_VALUE(gfs_material_last_face_crossing);MATERIAL_BCAST_VALUE(gfs_material_last_geometry_bound);
+         MATERIAL_BCAST_VALUE(gfs_material_last_damping_bound);MATERIAL_BCAST_VALUE(gfs_material_last_ledger);
+         MATERIAL_BCAST_VALUE(gfs_material_last_potential);MATERIAL_BCAST_VALUE(gfs_material_last_potential_valid);
+         MATERIAL_BCAST_VALUE(gfs_material_boundary_power_valid);MATERIAL_BCAST_VALUE(gfs_material_boundary_power_value);
+         MATERIAL_BCAST_VALUE(gfs_material_wall_power_valid);MATERIAL_BCAST_VALUE(gfs_material_wall_power_value);
+         GfsMaterialVolumeAudit *audit=&gfs_material_native_volume_audit;
+         MATERIAL_BCAST_VALUE(audit->phase);
+         if(audit->row)gfs_material_mpi_bcast(audit->row,(size_t)audit->n*sizeof(*audit->row));
+#undef MATERIAL_BCAST_VALUE
+        }
     }
     double t6_writeback = MPI_Wtime();
     if(material_on&&getenv("GFS_MATERIAL_PROFILE"))fprintf(stderr,"[MATERIAL_NATIVE_PROFILE] download_ms=%.9g adapter_and_faces_ms=%.9g\n",1e3*(material_download_done-t5_download),1e3*(t6_writeback-material_download_done));

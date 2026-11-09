@@ -15,3 +15,7 @@
 최근 완료 단계: `Docs/RT_T4_APPROVED_RESULT_2026-11-09.md` — RT t=4 완료.
 
 현재 승인 단계: `Docs/KH_T10_APPROVED_STAGE_2026-11-09.md` — KH·동일 IC GIZMO를 t=10까지, 중간 밀도·보존량 비교. 128×256은 t=1.35 재개 중, 추가 256×512는 Slurm 457379(H100 1장)에 제출. GIZMO 4 MPI 랭크, native material 경로는 기존 1랭크 제한을 유지하며 OpenMP 8스레드. 다음 과학 단계는 승인 대기. 이전 보류 Slurm 작업을 풀거나 자율 goal을 재개하지 않는다.
+
+추가 승인(2026-11-09): 현 단계 커밋·푸시, 모든 기존 native material SSPRK2 경로의 nrank>1 구현·검증. MPI 영역 분할에는 사용자의 기존 k-section DD와 예제(`Exam/NativeU64/mpirks.exam2d.c`, `RkS/`)를 사용한다. 실행 중인 KH/GIZMO의 동결 바이너리는 바꾸지 않는다. Noh regular/glass IC 비교는 다음 검증 후보이며 아직 실행하지 않는다.
+
+MPI 구현 결과: `Docs/MATERIAL_MPI_KSECTION_2026-11-09.md`. 기존 native 2D SSPRK2 경로에 k-section 소유권과 GPU 기하 분담을 연결했다. 제약식은 0번 랭크, 전역 그래프는 복제되므로 분산 메모리·가속 완료로 표현하지 않는다. 1·2·3·4랭크, 랭크 변경 재시작, 실제 원통 출입, 스텝 거절/복구 검증을 통과했다. 실행 중인 과학 계산은 동결 바이너리를 유지한다.

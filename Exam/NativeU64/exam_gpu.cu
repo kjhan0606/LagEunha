@@ -45,6 +45,7 @@ static __device__ inline void fixed_solid_relative(double ox,double oy,double*x,
 #include "../gfs_unified_runtime.h"
 #include "gfs_velocity_limiter.h"
 #include "gfs_thermal64.h"
+#include "gfs_material_mpi.h"
 
 extern "C" {
 #include "exam_gpu.h"
@@ -1738,6 +1739,8 @@ void gpu_init(GPUContext *ctx, int max_particles, int max_faces, int mpi_rank)
             fprintf(stderr, "[GPU] FATAL: no CUDA devices found\n");
             exit(1);
         }
+        int material_rank=gfs_material_mpi_rank();
+        if(material_rank>=0)mpi_rank=material_rank;
         int device_id = mpi_rank % n_devices;
         CUDA_CHECK(cudaSetDevice(device_id));
 
@@ -3108,6 +3111,44 @@ __device__ void gpu_raw_clip_failure(const char*phase,int i,int j,int before,int
 }
 #endif
 
+/* k-section ownership applies to material tessellation rows. Global
+ * constraints still consume the assembled graph on each rank. */
+static __device__ const unsigned char *d_material_owned_rows;
+static unsigned char *material_owned_device, *material_owned_host;
+static int material_owned_capacity,material_owned_active;
+static void material_mpi_tess_prepare(GPUContext *ctx,int n,cudaStream_t stream){
+ if(gfs_material_mpi_rank()<0){
+  const unsigned char *off=NULL;material_owned_active=0;
+  CUDA_CHECK(cudaMemcpyToSymbolAsync(d_material_owned_rows,&off,sizeof(off),0,cudaMemcpyHostToDevice,stream));return;
+ }
+ if(n>material_owned_capacity){
+  cudaFree(material_owned_device);free(material_owned_host);
+  CUDA_CHECK(cudaMalloc((void**)&material_owned_device,n));material_owned_host=(unsigned char*)malloc(n);
+  if(!material_owned_host){fprintf(stderr,"[MATERIAL_MPI] mask allocation failed\n");exit(1);}material_owned_capacity=n;
+ }
+ material_owned_active=gfs_material_mpi_rows(n,ctx->h_parts.indx,material_owned_host);
+ CUDA_CHECK(cudaMemcpyAsync(material_owned_device,material_owned_host,n,cudaMemcpyHostToDevice,stream));
+ CUDA_CHECK(cudaMemcpyToSymbolAsync(d_material_owned_rows,&material_owned_device,sizeof(material_owned_device),0,cudaMemcpyHostToDevice,stream));
+}
+static void material_mpi_tess_merge(void*device,size_t stride,int n,cudaStream_t stream){
+ if(!material_owned_active)return;
+ size_t bytes=stride*(size_t)n;void*host=malloc(bytes);
+ if(!host){fprintf(stderr,"[MATERIAL_MPI] row assembly allocation failed\n");exit(1);}
+ CUDA_CHECK(cudaMemcpyAsync(host,device,bytes,cudaMemcpyDeviceToHost,stream));CUDA_CHECK(cudaStreamSynchronize(stream));
+ gfs_material_mpi_merge(host,stride,n,material_owned_host);
+ CUDA_CHECK(cudaMemcpyAsync(device,host,bytes,cudaMemcpyHostToDevice,stream));CUDA_CHECK(cudaStreamSynchronize(stream));free(host);
+}
+static void material_mpi_tess_outputs(GPUContext *ctx,int n,cudaStream_t stream){
+ if(!material_owned_active)return;
+#define MROW(field) material_mpi_tess_merge(ctx->d_parts.field,sizeof(*ctx->d_parts.field),n,stream)
+ MROW(den);MROW(volume);MROW(w2ceil);MROW(avgNeighP);
+ MROW(gUxx);MROW(gUxy);MROW(gUyx);MROW(gUyy);MROW(dPdx);MROW(dPdy);MROW(dRhodx);MROW(dRhody);MROW(lap_vx);MROW(lap_vy);
+ MROW(E_inv_xy);MROW(weight_volume64);
+#undef MROW
+ material_mpi_tess_merge(ctx->d_polygons,sizeof(*ctx->d_polygons),n,stream);
+ material_mpi_tess_merge(ctx->d_face_count,sizeof(*ctx->d_face_count),n,stream);
+}
+
 __global__ __launch_bounds__(256, 2)
 void voronoi_tessellate_kernel(
     /* Particle SoA */
@@ -3144,6 +3185,7 @@ void voronoi_tessellate_kernel(
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
+    if (d_material_owned_rows && !d_material_owned_rows[i]) return;
 
     double xi = px[i], yi = py[i];
     double w2i = weight_geometry_value(weight_W,i);
@@ -4278,6 +4320,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
 #ifdef GFS_MATERIAL_COMMON_GEOMETRY
     prepare_power_chart(ctx,nbp,n_total,s);
 #endif
+    material_mpi_tess_prepare(ctx,nbp,s);
     voronoi_tessellate_kernel<<<gridSize, blockSize, 0, s>>>(
         ctx->d_parts.x, ctx->d_parts.y,
         ctx->d_parts.vx, ctx->d_parts.vy,
@@ -4298,6 +4341,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         gradient_method, raw_geometry, limit_velocity, merge_small_faces,
         thermal64, ctx->d_parts.E_inv_xy,ctx->d_parts.weight_W,ctx->d_parts.weight_volume64 GFS_MATERIAL_CHART_INPUT);
     CUDA_CHECK(cudaGetLastError());
+    material_mpi_tess_outputs(ctx,nbp,s);
     if (tess_profile) CUDA_CHECK(cudaEventRecord(tess_events[1], s));
 
     /* Kernel B: Pressure, sound speed, NS stress */
@@ -4359,10 +4403,14 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         unsigned long long weight_clamps=0;
         CUDA_CHECK(cudaMemcpyFromSymbol(&weight_clamps,d_weight_geometry_clamp_hits,sizeof(weight_clamps)));
         geometry_errors+=weight_clamps;
+        unsigned long long mpi_errors[4]={invalid_volume,invalid_fit,geometry_errors,h_halo_clipped};
+        gfs_material_mpi_counters(mpi_errors,4);
+        invalid_volume=mpi_errors[0];invalid_fit=mpi_errors[1];geometry_errors=mpi_errors[2];h_halo_clipped=mpi_errors[3];
         if (invalid_volume || invalid_fit || geometry_errors || (raw_geometry && h_halo_clipped)) {
 #ifdef GFS_MATERIAL_SEARCH_EXTENT
             if(raw_geometry&&h_halo_clipped&&!invalid_volume&&!invalid_fit&&!geometry_errors){
                 CUDA_CHECK(cudaMemcpyFromSymbol(h_gfs_search_shortfall,d_gfs_search_shortfall,sizeof(h_gfs_search_shortfall)));
+                gfs_material_mpi_maxima(h_gfs_search_shortfall,4);
                 h_gfs_search_retryable=1;
             }
 #endif
@@ -4565,6 +4613,7 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
 #ifdef GFS_MATERIAL_COMMON_GEOMETRY
     prepare_power_chart(ctx,nbp,n_total,s);
 #endif
+    material_mpi_tess_prepare(ctx,nbp,s);
     voronoi_tessellate_kernel<<<gridSize, blockSize, 0, s>>>(
         ctx->d_parts.x, ctx->d_parts.y,
         ctx->d_parts.vx, ctx->d_parts.vy,
@@ -4585,6 +4634,7 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
         gradient_method, raw_geometry, 1, 0,
         thermal64, ctx->d_parts.E_inv_xy,ctx->d_parts.weight_W,ctx->d_parts.weight_volume64 GFS_MATERIAL_CHART_INPUT);
     CUDA_CHECK(cudaGetLastError());
+    material_mpi_tess_outputs(ctx,nbp,s);
     unsigned long long invalid = 0, clipped = 0, geometry_errors=0;
     CUDA_CHECK(cudaMemcpyFromSymbolAsync(&geometry_errors,d_gfs_tess_geometry_errors,sizeof(geometry_errors),0,cudaMemcpyDeviceToHost,s));
     CUDA_CHECK(cudaMemcpyFromSymbolAsync(&invalid, d_gfs_invalid_raw_volume_cells,
@@ -4604,6 +4654,9 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
     unsigned long long weight_clamps=0;
     CUDA_CHECK(cudaMemcpyFromSymbol(&weight_clamps,d_weight_geometry_clamp_hits,sizeof(weight_clamps)));
     geometry_errors+=weight_clamps;
+    unsigned long long mpi_errors[3]={invalid,clipped,geometry_errors};
+    gfs_material_mpi_counters(mpi_errors,3);
+    invalid=mpi_errors[0];clipped=mpi_errors[1];geometry_errors=mpi_errors[2];
     if (invalid || clipped || geometry_errors)
         fprintf(stderr, "[GPU_FINAL_VOLUME] invalid=%llu halo_clipped=%llu geometry=%llu\n",
                 invalid, clipped,geometry_errors);

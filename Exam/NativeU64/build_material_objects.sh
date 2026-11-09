@@ -14,7 +14,7 @@ flags=(-g -O2 -fno-strict-aliasing -qopenmp -DINTEL -DXYZDBL -DGOTPM -DUSE_CUDA 
 inc=(-I"$source_dir" -I"$project/Exam" -I"$project" -I"$project/Voro" -I/home/kjhan/local/include -I"$project/RkS" -I"$project/Cosmos" -I"$project/Timer" -I"$project/MpiAux" -I"$project/Colorize" -I"$project/OST" -I"$project/Exam/KH")
 {
  set -x
- mpiicx "${flags[@]}" "${inc[@]}" -c "$source_dir/exam.c" -o "$build/exam.o"
+ mpiicx "${flags[@]}" "${material_main_defines[@]}" "${inc[@]}" -c "$source_dir/exam.c" -o "$build/exam.o"
  mpiicx "${flags[@]}" "${material_host_defines[@]}" "${material_host_includes[@]}" "${inc[@]}" -c "$source_dir/exam_gpu_extract.c" -o "$build/exam_gpu_extract.o"
  "$cuda_home/bin/nvcc" -O3 --use_fast_math --threads 1 -gencode "arch=compute_$cuda_arch,code=sm_$cuda_arch" -DXYZDBL -DGOTPM -DUSE_CUDA -DGFS_WEIGHT_DYNAMICS -DGFS_VARPRESS_W0 -DGFS_FIXEDPOLY_SIDES=1024 "${material_geometry_defines[@]}" "${inc[@]}" -c "$source_dir/exam_gpu.cu" -o "$build/exam_gpu.o"
  # Preserve the validated face-response arithmetic and device target during

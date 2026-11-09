@@ -19,6 +19,7 @@ static int cyl_solid_write(FILE*f){return 1;}
 #include "../gfs_material_radial_image.h"
 #include "../NativeU64/gfs_material_stage_time.h"
 #include "material_boundary.h"
+#include "../NativeU64/gfs_material_mpi.h"
 static GfsMaterialOpenStream cyl_material_stream={.dim=2};
 static GfsCylinderMaterialSites cyl_material_sites;
 static int64_t cyl_material_cursor;
@@ -169,6 +170,7 @@ void gfs_material_cylinder_accept(double work,double wall,double repair){
 static double cyl_material_energy(SimParameters*s){
  treevorostressrk4particletype*p=(void*)VORORK4_TBP(s);long double E=0;
  for(int i=0;i<VORO_NP(s);i++)E+=p[i].weight_thermal.U+.5L*p[i].mass*(p[i].vx*p[i].vx+p[i].vy*p[i].vy);
+ MPI_Allreduce(MPI_IN_PLACE,&E,1,MPI_LONG_DOUBLE,MPI_SUM,MPI_COMM(s));
  return E;
 }
 static void cyl_material_transport(const treevorostressrk4particletype*p,int sign){
@@ -177,6 +179,9 @@ static void cyl_material_transport(const treevorostressrk4particletype*p,int sig
  cyl_material_exchange[3]+=sign*(p->weight_thermal.U+.5*p->mass*(p->vx*p->vx+p->vy*p->vy));
 }
 static int cyl_material_events(SimParameters*s,double t){
+ if(NID(s)>1){void*ticket=NULL;SimParameters*view=gfs_material_mpi_view_begin(s,&ticket);
+  int changed=cyl_material_events(view,t);gfs_material_mpi_view_end(ticket,1);return changed;
+ }
  treevorostressrk4particletype*p=(void*)VORORK4_TBP(s);
  double lx=SIMBOX(s).x.max,h=cyl_material_h,gamma=GAS_GAMMA(s);int old=VORO_NP(s),k=0,removed=0,added=0;
  int64_t columns=(int64_t)floor((cyl_material_u*t+32*DBL_EPSILON*fmax(1.,cyl_material_u*t))/h+.5);
@@ -241,16 +246,17 @@ void gfs_material_cylinder_checkpoint_boundary(SimParameters*s,const char*owned,
 static void cyl_material_write(SimParameters*s,int step,double t,double dt){
  gfs_native_checkpoint_outdata(s,step,t,dt,"cylmat");
  char owned[256];snprintf(owned,sizeof(owned),"cylmat.%06d.dat",step);
- gfs_material_cylinder_checkpoint_boundary(s,owned,t);
+ if(MYID(s)==0)gfs_material_cylinder_checkpoint_boundary(s,owned,t);
+ MPI_Barrier(MPI_COMM(s));
 }
 extern void gfs_rk4_set_step_context(int,double,double);
 static int cyl_material_run(SimParameters*s,int step){
 #ifdef GFS_MATERIAL_SEARCH_EXTENT
  cyl_material_search_valid=0; /* computational cache is not a physical checkpoint variable */
 #endif
- if(NID(s)!=1||step<1||GAS_AVMODE(s)<1||GAS_EVOLMETHOD(s)!=3||!GAS_GPU_ENABLED(s)||
+ if(step<1||GAS_AVMODE(s)<1||GAS_EVOLMETHOD(s)!=3||!GAS_GPU_ENABLED(s)||
     NX(s)<16||NY(s)<4||!(CYL_UINF(s)>0)||GAS_Kappa(s)!=0)
-  cyl_material_fail(s,"requires one-rank GPU material mode and explicit versioned cylmat restart");
+  cyl_material_fail(s,"requires GPU material mode and explicit versioned cylmat restart");
 #ifdef GFS_MATERIAL_FIXED_SOLID
  if(CYL_CX(s)!=2.5||CYL_CY(s)!=2.||CYL_R(s)!=.5)cyl_material_fail(s,"fixed solid coordinates mismatch");
 #endif
