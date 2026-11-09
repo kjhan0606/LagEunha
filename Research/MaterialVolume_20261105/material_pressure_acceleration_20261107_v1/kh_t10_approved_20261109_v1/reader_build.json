@@ -1,0 +1,15 @@
+{
+  "command": [
+    "mpicc",
+    "-O2",
+    "-fopenmp",
+    "-I/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source",
+    "-I/home/kjhan/local/include",
+    "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/kh_t10_approved_20261109_v1/read_gizmo_rank.c",
+    "-o",
+    "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/kh_t10_approved_20261109_v1/bin/read_gizmo_rank",
+    "-lm"
+  ],
+  "exit": 0,
+  "stderr": "In file included from /gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/kh_t10_approved_20261109_v1/read_gizmo_rank.c:7:\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/allvars.h:42: warning: \"DOUBLEPRECISION\" redefined\n   42 | #define DOUBLEPRECISION         /* using double (not floating-point) precision */\n      | \nIn file included from /gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/allvars.h:39:\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/GIZMO_config.h:10: note: this is the location of the previous definition\n   10 | #define DOUBLEPRECISION 1\n      | \nIn file included from /gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/eos/eos.h:4,\n                 from /gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/allvars.h:216:\n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/eos/../GIZMO_config.h:10: warning: \"DOUBLEPRECISION\" redefined\n   10 | #define DOUBLEPRECISION 1\n      | \n/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/gizmo_matched_kh_20261106_v1/source/allvars.h:42: note: this is the location of the previous definition\n   42 | #define DOUBLEPRECISION         /* using double (not floating-point) precision */\n      | \n"
+}

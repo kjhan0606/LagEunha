@@ -35,6 +35,22 @@ static inline int gfs_thermal64_requested(void){
     return value;
 }
 #ifndef __CUDACC__
+#ifdef GFS_WEIGHT_DYNAMICS
+/* Boundary ghost only: its prescribed rho/P must agree with the native
+ * mass/U/V representation uploaded to CUDA. Does not change any real cell.
+ * Preserve mirrored geometry/weight; never replace invalid states by floors. */
+static inline int gfs_material_ghost_thermo_sync(
+ treevorostressrk4particletype *p,double gamma){
+ if(!p||!(gamma>1)||!isfinite(gamma))return 0;
+ double V=p->weight_thermal.V,rho=p->den,P=p->pressure;
+ if(!(V>0)||!(rho>0)||!(P>0)||!isfinite(V)||!isfinite(rho)||!isfinite(P))return 0;
+ double mass=rho*V,U=P*V/(gamma-1),cs=sqrt(gamma*P/rho),K=P/pow(rho,gamma);
+ if(!(mass>0)||!(U>0)||!isfinite(mass)||!isfinite(U)||!isfinite(cs)||!isfinite(K))return 0;
+ p->mass=mass;p->weight_thermal.U=U;p->weight_thermal.Udot=0;
+ p->volume=V;p->ie=U;p->csound=cs;p->stress.K=K;
+ return 1;
+}
+#endif
 static inline double gfs_t64_U(const treevorostressrk4particletype *p){
 #ifdef GFS_WEIGHT_DYNAMICS
     return p->weight_thermal.U;

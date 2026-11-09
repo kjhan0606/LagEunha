@@ -66,6 +66,13 @@ Harten--Lax--van Leer fallback supplies pressure and normal work speed
 when face pressures differ by more than a factor of 100. The normal work
 speed can differ from the geometric speed governing cell-volume change.
 
+A separate one-dimensional material-boundary comparison uses a common
+interface speed for cell motion and pressure work. Linear reconstruction
+and SSPRK2 complete nine tests with fixed cell masses and boundary-work
+energy residuals below $4\times10^{-15}$. Local density peaks and
+rarefaction errors remain. The one-dimensional construction does not yet
+establish a multidimensional Laguerre update.
+
 The standard GFS tests include shocks, vortices, shear instabilities,
 flow past a cylinder, and a two-dimensional Noh problem. A separate cold
 Kepler disk benchmark uses a fixed-mass, zero-weight variational-pressure
@@ -142,8 +149,9 @@ reconstruction for Riemann states; the moving-volume formulation removes the
 bulk mesh-advection term but does not remove all reconstruction or
 truncation errors.
 
-The reported calculations use several time integrators. The one-dimensional
-shock suite and weighted Kepler Q2 control use RK4. The two-dimensional
+The reported calculations use several time integrators. The historical one-dimensional GFS
+shock suite and weighted Kepler Q2 control use RK4. The material-boundary
+comparison in Section~\ref{sec:material1d} uses SSPRK2. The two-dimensional
 standard-GFS Gresho, KH, RT, cylinder, and Noh calculations use KDK.
 The completed Q1 trajectory combines RK4 and KDK as described in
 Section~\ref{sec:kepler}. KH and RT retain KDK for the intended cosmological
@@ -567,7 +575,8 @@ the original-state conservation errors at the exact Kepler endpoint.
 
 \section{Hydrodynamic test problems}
 The test ledger records the operator and integrator used in each calculation.
-The one-dimensional suite and weighted Kepler Q2 control use RK4.
+The historical one-dimensional GFS suite and weighted Kepler Q2 control
+use RK4. The new one-dimensional material-boundary comparison uses SSPRK2.
 The two-dimensional standard-GFS calculations use KDK with zero weights,
 fixed cell masses, and the mode-5 MUSCL--HLLC operator. Ordinary faces
 use geometric face speed and selected extreme faces use the Riemann-speed
@@ -578,10 +587,17 @@ face-pressure operator. The earlier face-algorithm comparison remains
 a separate appendix study.
 
 \begin{itemize}
-\item \textbf{One-dimensional Sod.} The $N=200$ run uses W=0, fixed assigned
+\item \textbf{Material-boundary one-dimensional comparison.} All nine
+problems in Section~\ref{sec:material1d} use exact Riemann pressure and
+contact speed, primitive-variable linear reconstruction with minmod slopes,
+and SSPRK2. A shared interface speed determines both cell motion and
+pressure work. Every cell retains the initial mass. The independent CPU
+comparison does not evolve generators, Laguerre weights, or intrinsic spin.
+
+\item \textbf{Historical one-dimensional GFS Sod.} The $N=200$ run uses W=0, fixed assigned
 cell masses, RK4, the standard GFS pressure rule, and reflecting walls.
 
-\item \textbf{One-dimensional blast, Noh, Lax, double rarefaction, two-shock
+\item \textbf{Historical one-dimensional GFS blast, Noh, Lax, double rarefaction, two-shock
 collision, contact, and Shu--Osher.} These use standard GFS and RK4, with
 $N=200$ except Shu--Osher ($N=800$). Ordinary faces use MUSCL--HLLC pressure;
 the HLL pressure and normal work-speed fallback is selected when the
@@ -633,32 +649,175 @@ shock, vortex, and instability results show the standard GFS at their
 reported resolutions; they are not evidence for the Kepler variational branch,
 dynamic weights, or an intrinsic-spin model.
 
-\subsection{Sod shock tube}
+\subsection{One-dimensional material-boundary comparison}
+\label{sec:material1d}
 
-The Sod shock tube is the Riemann problem $(\rho,P,\vel)=(1,1,0)$ for $x<0.5$ and $(0.125,0.1,0)$ for $x\ge 0.5$, on $0\le x\le 1$, with reflecting walls.
-Figure~\ref{fig:sodgfs} shows GFS at $N=200$.
-The density $L_1$ is $5.86\times 10^{-3}$ and the energy error is $1.3\times 10^{-8}$.
-The shock, the contact, and the rarefaction sit on the reference solution.
+A separate material-cell construction tests whether a common boundary
+velocity can couple fixed mass, changing volume, and pressure work without
+additional stress coefficients. The earlier GFS and adaptive-weight results
+remain historical comparisons, rather than results of the material-cell
+operator. The present construction evolves shared interval boundaries
+instead of reconstructing boundaries from moving Voronoi or Laguerre
+sites. A multidimensional material-cell extension remains unverified.
+
+Let $x_{i\pm1/2}$ denote the shared boundaries, $m_i$ the fixed cell mass,
+$\pi_i$ the cell momentum, and $\mathcal E_i$ the cell total energy.
+For unit transverse area, the cell volume and primitive variables are
+\begin{align}
+ V_i&=x_{i+1/2}-x_{i-1/2},\\
+ \rho_i&=m_i/V_i,\\
+ u_i&=\pi_i/m_i,\\
+ P_i&=(\gamma-1)(\mathcal E_i-\pi_i^2/2m_i)/V_i.
+\end{align}
+An exact ideal-gas Riemann solution supplies the pressure $P_f^*$ and
+contact velocity $u_f^*$ at each interface. Piecewise-linear reconstruction
+\citep{vanLeer1979} uses minmod-limited neighboring secants of
+$(\rho,u,P)$ on the nonuniform cell centers. The shared update is
+\begin{align}
+ {d m_i\over dt}&=0,\\
+ {d x_f\over dt}&=u_f^*,\\
+ {d\pi_i\over dt}&=P_{i-1/2}^*-P_{i+1/2}^*,\\
+ {d\mathcal E_i\over dt}
+ &=P_{i-1/2}^*u_{i-1/2}^*-P_{i+1/2}^*u_{i+1/2}^*.
+ \label{eq:material1d_update}
+\end{align}
+A reflecting wall has zero boundary velocity and a reflected exterior
+velocity. Internal face contributions cancel pairwise in the total momentum
+and energy sums. The boundary pressure impulse and pressure work enter the
+global conservation account. No intercell mass flux, energy repair, or
+separate artificial-viscosity coefficient is added. Riemann dissipation
+still produces numerical diffusion and shock entropy.
+
+SSPRK2 advances the vector $Y$ of boundaries, momenta, and energies,
+\begin{align}
+ Y^{(1)}&=Y^n+\Delta t\,L(Y^n),\\
+ Y^{n+1}&=\tfrac12Y^n+\tfrac12[Y^{(1)}+\Delta t\,L(Y^{(1)})].
+\end{align}
+The Courant factor is 0.3. The time-step bound includes acoustic motion
+relative to the interfaces and the interface approach rate. Failed stage
+checks halve the step until ordered boundaries and positive primitive
+states satisfy the bound. The acceptance checks are not a proof of
+positivity for arbitrary initial conditions. Initial conserved quantities
+are integrated over the actual intervals. The present native CPU comparison
+has not been incorporated into the full MPI/OpenMP/CUDA solver.
+
+The nine problems include the Sod tube \citep{sod1978}, interacting blast
+waves \citep{WoodwardColella1984}, the planar Noh wall problem
+\citep{Noh1987}, and the Shu--Osher interaction \citep{ShuOsher1989}.
+Table~\ref{tab:material1d} lists the endpoint and resolution for every
+problem. Shu--Osher uses $[-5,5]$ with the right density
+$1+0.2\sin(5\pi x)$. The remaining physical intervals are $[0,1]$.
+The gas has $\gamma=1.4$, except Noh with $\gamma=5/3$ and initial
+pressure $10^{-6}$. The stationary and moving contacts have densities
+1 and 0.125, pressure 1, and velocities 0 and 1, respectively.
+Sod and blast use reflecting end walls. Noh reflects at the left wall.
+Open ends use initially extended exterior gas and moving transmissive outer
+boundaries, without cell insertion. The guard counts follow the maximum
+initial signal speed times the endpoint divided by the initial cell width,
+rounded upward with four additional cells per open side. Guard-size
+independence remains untested for the material-boundary operator.
+
+Reference values are integrated over each final cell intersecting the
+original physical interval. The relative cell-mean error is
+\begin{equation}
+ \epsilon_1(q)=
+ {\sum_i|\ell_i q_i-\int_{I_i}q_{\rm ref}(x)\,dx|
+  \over\sum_i|\int_{I_i}q_{\rm ref}(x)\,dx|},
+ \label{eq:material_error}
+\end{equation}
+where $I_i$ is the cell intersection and $\ell_i$ the intersection length.
+Analytic Riemann and rarefaction profiles supply the references except for
+blast and Shu--Osher. Independent Athena++ calculations
+\citep{Stone2020} supply finite-resolution references with 6400 and 12800
+cells, respectively. Doubling the blast reference from 3200 to 6400 cells
+changes the density field by 1.13\% in a spatial $L_1$ comparison.
+The reference sensitivity is not an error bound for the material solution.
+
+\begin{table*}[t]
+\centering
+\caption{Material-boundary results with linear reconstruction and SSPRK2.
+All nine runs reach the listed times. $N$ counts initial cells in the
+physical interval. $N_{\rm tot}$ includes exterior guard cells.
+Errors are percentages from equation~(\ref{eq:material_error}).
+A dash denotes an undefined relative velocity error for a zero-velocity
+reference. Blast and Shu--Osher use finite-resolution numerical references.}
+\label{tab:material1d}
+\begin{tabular}{lrrrrrr}
+\toprule
+Problem & $N$ & $N_{\rm tot}$ & $t$ & $100\epsilon_1(\rho)$ & $100\epsilon_1(u)$ & $100\epsilon_1(P)$\\
+\midrule
+Sod &200&200&0.2&0.688&1.525&0.695\\
+Blast interaction &200&200&0.038&4.998&3.348&2.439\\
+Noh wall &200&325&0.6&0.403&0.101&0.111\\
+Shu--Osher &800&2124&1.8&0.593&0.387&0.644\\
+Lax &200&418&0.13&0.563&0.889&0.468\\
+Double rarefaction &200&374&0.15&2.546&14.933&5.378\\
+Two-shock collision &200&628&0.035&0.411&0.227&0.235\\
+Stationary contact &200&544&0.25&$<10^{-9}$&---&0\\
+Moving contact &200&644&0.25&$<10^{-9}$&$<10^{-9}$&$<10^{-9}$\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Every stored cell mass remains identical to the initial mass, and every
+final cell has positive volume and pressure. Across the full computational
+domains, the largest absolute boundary-work energy residual normalized by
+$\max(1,|\mathcal E_0|)$ is $3.80\times10^{-15}$. Exact conservation of
+cell mass and small energy residuals do not establish local solution
+accuracy. Figures~\ref{fig:material_density}--\ref{fig:material_velocity}
+show both the reproduced wave structure and the remaining discrepancies.
+The blast peak density is 8.15 against a reference maximum of 6.44.
+The Noh wall peak reaches 4.49 against a postshock density near 4.
+The double rarefaction retains larger central errors in the dilute region.
+The completed endpoints therefore do not constitute uniform accuracy
+acceptance across the suite.
+
+A separate resolution sequence with 100, 200, 400, and 800 physical cells
+compares constant and linear reconstruction. At 200 cells, the Sod density
+error decreases from 2.35\% to 0.69\%, and the blast error decreases from
+16.18\% to 5.00\%. Between 200 and 400 cells, the spatial density-field
+difference decreases from 0.93\% to 0.46\% for Sod and from 6.70\% to
+3.08\% for blast. Reduced sensitivity does not imply resolution independence.
+The narrow blast maximum remains nonmonotonic with resolution. A smooth
+traveling acoustic wave of amplitude $10^{-6}$ gives measured density
+orders 1.88 and 1.90 over 64, 128, and 256 cells. Smooth-wave convergence
+does not establish second-order convergence across discontinuities.
+The one-dimensional results motivate a two-dimensional comparison of
+material motion, pressure forces, and pressure work. The historical KH/RT
+and Kepler calculations do not already validate the new operator.
 
 \begin{figure*}[htbp!]
-\includegraphics[width=\textwidth]{fig_sod.pdf}
-\caption{Sod shock tube at the standard end time for GFS with $N=200$. The panels are density, velocity, and pressure. Points are particles and the line is the reference solution.}
-\label{fig:sodgfs}
+\centering
+\includegraphics[width=\textwidth]{fig_material_1d_density.pdf}
+\caption{Density for the nine material-boundary tests at the endpoints in
+Table~\ref{tab:material1d}. Blue segments and points show actual cell averages without
+smoothing. Black dashed curves show the analytic or independent numerical
+references described in the text. Every panel covers the original physical
+interval. Shu--Osher has 800 initial physical cells and the remaining
+problems have 200. Points mark cell centers and retain narrow blast and Noh peaks.}
+\label{fig:material_density}
 \end{figure*}
-
-\subsection{One-dimensional problems}
-
-Figure~\ref{fig:gfs1d} collects eight standard problems at $N=200$, except the Shu--Osher panel, which uses $N=800$.
-Every run is GFS. Transmissive boundaries insert the exterior state when the velocity points into the domain.
-The density $L_1$ values are $5.86\times10^{-3}$ (Sod), $0.154$ (blast), $1.36\times10^{-2}$ (Noh), $0.571$ (Shu--Osher), $5.25\times10^{-3}$ (Lax), $2.86\times10^{-2}$ (double rarefaction), $0.105$ (collision), and $6.48\times10^{-3}$ (contact).
-The energy error is below $10^{-5}$ on every problem except the blast, where it is $3.3\times10^{-2}$.
-In the Shu--Osher problem the left state has velocity $2.629$. The shock in the $N=800$ calculation lies at $x=2.39$, on the reference shock.
-
 \begin{figure*}[htbp!]
-\includegraphics[width=\textwidth]{fig_gfs_1d.pdf}
-\caption{GFS density for eight one-dimensional problems. Points are the particles and the line is the reference. $N=200$, except Shu--Osher, which uses $N=800$. The panel title names the problem.}
-\label{fig:gfs1d}
+\centering
+\includegraphics[width=\textwidth]{fig_material_1d_pressure.pdf}
+\caption{Pressure for the same nine material-boundary calculations and
+reference solutions as Figure~\ref{fig:material_density}. Blue segments
+represent cell averages. The stationary and moving contacts retain uniform
+pressure to roundoff. Finite-width shock transitions and double-rarefaction
+central errors remain.}
+\label{fig:material_pressure}
 \end{figure*}
+\begin{figure*}[htbp!]
+\centering
+\includegraphics[width=\textwidth]{fig_material_1d_velocity.pdf}
+\caption{Velocity for the same material-boundary calculations as
+Figure~\ref{fig:material_density}. Blue segments represent cell averages
+and black dashed curves represent reference solutions. The double
+rarefaction has a 14.93\% relative cell-mean velocity error despite
+successful completion and fixed cell masses.}
+\label{fig:material_velocity}
+\end{figure*}
+
 
 \subsection{Gresho vortex}
 
@@ -967,8 +1126,15 @@ The Q2 control does not demonstrate long-term Kepler stability.
 
 \section{Discussion}
 
-The tests validate several distinct numerical operators at the stated
-resolutions. Standard GFS results cover one-dimensional shocks and contacts,
+The tests measure several distinct numerical operators at the stated
+resolutions. The material-boundary comparison in
+Section~\ref{sec:material1d} establishes fixed-mass one-dimensional evolution
+with consistent boundary motion and pressure work. The comparison reduces
+numerical diffusion through linear reconstruction without extra stress
+coefficients. Local blast and wall peaks and the underresolved rarefaction
+remain limitations. The one-dimensional result does not establish convex,
+space-filling material-cell evolution in two or three dimensions.
+Historical standard GFS results cover one-dimensional shocks and contacts,
 two-dimensional vortices and instabilities, a solid-wall flow, and a strong
 converging shock. The separate Q1 variational-pressure branch now preserves
 a cold disk through the nominal ten-orbit time $t=20\pi$ with the small
@@ -2183,7 +2349,11 @@ allowing finer structure to survive.
 Voronoi ($1.24$) and Price~AV ($2.74$) suffer from
 excessive diffusion of the post-shock density peaks
 at this resolution.
-These transmissive runs do not insert post-shock gas, so the shock remains near $x\simeq 1.8$. The GFS result with inflow is Figure~\ref{fig:gfs1d}.
+The historical transmissive runs do not insert post-shock gas, and the
+shock remains near $x\simeq1.8$. The material-boundary comparison in
+Section~\ref{sec:material1d} instead extends the exterior gas initially
+and uses 800 physical cells. The different boundary treatment, resolution,
+and operator prevent an isolated algorithm comparison.
 
 \begin{figure*}[htbp!]
 \includegraphics[width=\textwidth]{1d_shuosher.pdf}

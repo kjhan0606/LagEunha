@@ -91,7 +91,7 @@ $(TIMERLIB): $(TIMEROBJ)
 %.c: 
 	$(CC) $(CCFLAGS) -c $*.c
 
-.c.o: 
+%.o: %.c
 	$(CC) $(CCFLAGS) -c $<
 
 clean:

@@ -85,6 +85,9 @@ $(FEEDBACKLIB): $(FEEDBACKOBJ)
 
 #	ranlib $(COOLLIB)
 
+%.o: %.f
+	$(FC) $(FFLAGS) -c $<
+
 %.o: %.for
 	$(FC) $(FFFLAGS) -c $*.for
 

@@ -1,0 +1,35 @@
+{
+  "authorization": "User approved only existing RT restart to t=4 and density/conservation report; wait for approval before next stage.",
+  "start": 3.6,
+  "target": 4.0,
+  "cells": 32768,
+  "shape": [
+    128,
+    256
+  ],
+  "source": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/common_rt128_halo_capture_20261109_v2/recovery_continuation_v1/segment_02/rtout.004823.dat",
+  "source_sha256": "c5f5c72a42bb2e3f22dcb328d784c5c7eb389672a4d271a89664f2756bc6aa18",
+  "binary": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/common_portable_20261109_v1/native/native.exe",
+  "binary_sha256": "11a0234acc882f6f2fc405b0053c2e5210262863be665f88cc5ae91b821ddf4e",
+  "effective_params": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/rt_t4_approved_20261109_v1/params.dat",
+  "params_sha256": "91b494c4353c9b7a797aacbacc9f26c1ce0a5d43c6a0e0d7e57a8d9e29d1fa23",
+  "environment_changes": {
+    "HYDRO_TSTOP": {
+      "before": "3.6",
+      "after": "4.0"
+    },
+    "GFS_MATERIAL_TRACE_FAILURE_DUMP": {
+      "before": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/common_rt128_halo_capture_20261109_v2/recovery_continuation_v1/segment_02/failed_edges.bin",
+      "after": "/gpfs/kjhan/LagForce/Git_publish_native20pi_contact_20261104_v1/Research/MaterialVolume_20261105/material_pressure_acceleration_20261107_v1/rt_t4_approved_20261109_v1/failed_edges.bin"
+    }
+  },
+  "maximum_new_checkpoints": 6,
+  "checkpoint_bytes": 22806644,
+  "maximum_checkpoint_bytes_including_copy": 159646508,
+  "postprocessing_allowance_bytes": 104857600,
+  "free_bytes": 148963743236096,
+  "on_failure": "Stop and report; no automatic tuning or restart.",
+  "after_completion": "Await next explicit stage approval. Do not release held Slurm jobs.",
+  "integrator": "Existing material SSPRK2 path in native C/CUDA executable; no rebuild.",
+  "output_rule": "Existing rt.c dumps at crossed multiples of 0.1, optional step21045, and final step if not already saved; .4 window."
+}

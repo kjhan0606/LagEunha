@@ -1,3 +1,6 @@
+#ifdef GFS_MATERIAL_FIXED_SOLID
+#include "../gfs_fixed_cylinder_contact.h"
+#endif
 #include<stdio.h>
 #include<stdlib.h>
 #include<stddef.h>
@@ -16,6 +19,16 @@
 /* Cylinder geometry cached for callbacks (which have no simpar access) */
 static postype _cyl_cx, _cyl_cy, _cyl_R, _cyl_Lx;
 static int _cyl_wall_on = 0;
+
+/* Shared by RunCylinder and adapters invoking the existing post-stage wall
+ * treatment. This initializes geometry only; it does not change wall physics. */
+void cyl_prepareWallContext(SimParameters *simpar){
+	_cyl_cx = CYL_CX(simpar);
+	_cyl_cy = CYL_CY(simpar);
+	_cyl_R = CYL_R(simpar);
+	_cyl_Lx = SIMBOX(simpar).x.max;
+	_cyl_wall_on = 1;
+}
 
 /* Ghost at (x,y) lies inside the cylinder. nx,ny is center → ghost. */
 int cyl_wall_query(postype x, postype y, postype *nx, postype *ny){
@@ -141,7 +154,14 @@ void cyl_postStage(SimParameters *simpar){
 	for(i=0;i<np;i++){
 		treevorork4particletype *bp = (treevorork4particletype*)(raw + i*p_size);
 		bp->y = fmod(bp->y + Ly, Ly);
-		/* Cylinder boundary: push particles inside cylinder to surface */
+#ifdef GFS_MATERIAL_FIXED_SOLID
+        if(!gfs_fixed_cylinder_contact(&bp->x,&bp->y,&bp->vx,&bp->vy)){
+            fprintf(stderr,"[CYLINDER_FIXED_CONTACT_FAILED] id=%llu\n",(unsigned long long)PINDX(bp));
+            MPI_Abort(MPI_COMM(simpar),99);
+        }
+        continue;
+#endif
+		/* Existing cylinder treatment: reflect penetrations across the wall. */
 		postype dx = bp->x - _cyl_cx;
 		postype dy = bp->y - _cyl_cy;
 		postype r = sqrt(dx*dx + dy*dy);
@@ -189,6 +209,10 @@ void cyl_outflowCleanup(SimParameters *simpar){
 	}
 }
 
+
+#ifdef GFS_WEIGHT_DYNAMICS
+#include "material_boundary.inc"
+#endif
 
 int RunCylinder(SimParameters *simpar, int icont){
 	postype t,dt;
@@ -248,11 +272,10 @@ int RunCylinder(SimParameters *simpar, int icont){
 	VORO_BASICCELL(simpar)= (CellType*)malloc(sizeof(CellType)*100);
 
 	/* Cache cylinder geometry for callbacks */
-	_cyl_cx = CYL_CX(simpar);
-	_cyl_cy = CYL_CY(simpar);
-	_cyl_R  = CYL_R(simpar);
-	_cyl_Lx = SIMBOX(simpar).x.max;
-	_cyl_wall_on = 1;
+	cyl_prepareWallContext(simpar);
+#ifdef GFS_WEIGHT_DYNAMICS
+    if(gfs_material_cylinder_mode())return cyl_material_run(simpar,icont);
+#endif
 
 	if(icont ==0) {
 		t = 0;
@@ -269,6 +292,20 @@ int RunCylinder(SimParameters *simpar, int icont){
 		GAS_invw2Scale(simpar) = 1.L / CYL_P(simpar);
 		GAS_w2Power(simpar) = (Gamma-1)/Gamma;
 	}
+
+    /* Explicit IC-only diagnostics: HYDRO_TSTOP=0 alone still enters the
+     * legacy do/while integrator once. Export the initialized native state
+     * before any force integration, injection, cleanup or position repair. */
+    const char *ic_only=getenv("GFS_CYLINDER_IC_ONLY");
+    if(ic_only && !strcmp(ic_only,"1")){
+        if(icont!=0){
+            fprintf(stderr,"[CYLINDER_IC_ONLY] requires a fresh initial condition\n");
+            MPI_Abort(MPI_COMM(simpar),99);return 0;
+        }
+        cyl_outdata(simpar,0,t,0);
+        if(MYID(simpar)==0)printf("[CYLINDER_IC_ONLY] t=0 cells=%td no evolution\n",VORO_TNP(simpar));
+        return 1;
+    }
 
 	postype t_max = AMAX(simpar);
 	{

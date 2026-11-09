@@ -1,23 +1,9 @@
+#include "../gfs_variational_core.h"
+
 static int gfs_kdk_adiabatic_volume_on(void)
 {
     const char *s=getenv("GFS_KDK_ADIABATIC_VOLUME");
     return s && strcmp(s,"1")==0;
-}
-
-/* Exact fixed-mass ideal-gas PdV update: U V^(Gamma-1) is invariant. */
-static int gfs_kdk_adiabatic_volume_update(double U0,double V0,double V1,
-                                           double Gamma,double *U1)
-{
-    if(!U1 || !(U0>0.0) || !(V0>0.0) || !(V1>0.0) || !(Gamma>1.0) ||
-       !isfinite(U0) || !isfinite(V0) || !isfinite(V1) || !isfinite(Gamma))
-        return 0;
-    const double ratio=V0/V1;
-    const double value=U0*pow(ratio,Gamma-1.0);
-    if(!(value>0.0) || !isfinite(value) || !isfinite((float)value) ||
-       !((float)value>0.0f))
-        return 0;
-    *U1=value;
-    return 1;
 }
 
 typedef struct {
@@ -464,8 +450,9 @@ static int gfs_kdk_lts_block2(
                 size_t id=(size_t)PINDX(p);
                 if(id>=nslot || !state[id].valid){adiabat_bad=1;continue;}
                 double Unew=0.0;
-                if(!gfs_kdk_adiabatic_volume_update(state[id].U,state[id].V,
-                        sbp[i].weight_thermal.V,(double)Gamma,&Unew)){
+                if(!gfs_variational_adiabatic(state[id].U,state[id].V,
+                        sbp[i].weight_thermal.V,(double)Gamma,&Unew) ||
+                   !isfinite((float)Unew) || !((float)Unew>0.0f)){
                     adiabat_bad=1;continue;
                 }
                 sbp[i].weight_thermal.U=Unew;

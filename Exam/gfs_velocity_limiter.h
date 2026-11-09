@@ -34,11 +34,11 @@ GFS_VEL_HD static inline double gfs_velocity_matrix_condition(
 
 /* A negative return reports an invalid/insufficiently resolved fit; callers
  * must report/stop, never disguise that condition as a zero gradient. */
-GFS_VEL_HD static inline double gfs_velocity_midpoint_alpha(
+GFS_VEL_HD static inline double gfs_velocity_projection_alpha(
     int n, const double *dx, const double *dy,
     const double *dvx, const double *dvy,
     double bxx, double bxy, double byx, double byy,
-    double condition, double input_velocity_scale)
+    double condition, double input_velocity_scale, int geometric_directions)
 {
     if (!isfinite(bxx) || !isfinite(bxy) || !isfinite(byx) || !isfinite(byy) ||
         !isfinite(condition) || condition*DBL_EPSILON > 1.e-6 || n <= 0)
@@ -68,12 +68,14 @@ GFS_VEL_HD static inline double gfs_velocity_midpoint_alpha(
          8.0*fabs(input_velocity_scale) + 8.0*term_scale);
 
     for (int k = 0; k < n; k++) {
-        double nk2 = dvx[k]*dvx[k] + dvy[k]*dvy[k];
+        double ux = geometric_directions ? dx[k] : dvx[k];
+        double uy = geometric_directions ? dy[k] : dvy[k];
+        double nk2 = ux*ux + uy*uy;
         if (!(nk2 > 0.0)) continue;
         double tol = vector_error * sqrt(nk2);
         for (int perpendicular = 0; perpendicular < 2; perpendicular++) {
-            double nx = perpendicular ? -dvy[k] : dvx[k];
-            double ny = perpendicular ?  dvx[k] : dvy[k];
+            double nx = perpendicular ? -uy : ux;
+            double ny = perpendicular ?  ux : uy;
             double lo = 0.0, hi = 0.0, trial_lo = 0.0, trial_hi = 0.0;
             for (int j = 0; j < n; j++) {
                 double actual = nx*dvx[j] + ny*dvy[j];
@@ -97,6 +99,19 @@ GFS_VEL_HD static inline double gfs_velocity_midpoint_alpha(
         }
     }
     return fmax(0.0, fmin(1.0, alpha));
+}
+
+/* Legacy velocity-direction policy remains unchanged for existing callers. */
+GFS_VEL_HD static inline double gfs_velocity_midpoint_alpha(
+ int n,const double*dx,const double*dy,const double*dvx,const double*dvy,
+ double bxx,double bxy,double byx,double byy,double condition,double scale){
+ return gfs_velocity_projection_alpha(n,dx,dy,dvx,dvy,bxx,bxy,byx,byy,condition,scale,0);
+}
+/* Experimental material trace policy: bounds along geometric directions. */
+GFS_VEL_HD static inline double gfs_velocity_geometric_alpha(
+ int n,const double*dx,const double*dy,const double*dvx,const double*dvy,
+ double bxx,double bxy,double byx,double byy,double condition,double scale){
+ return gfs_velocity_projection_alpha(n,dx,dy,dvx,dvy,bxx,bxy,byx,byy,condition,scale,1);
 }
 
 #undef GFS_VEL_HD

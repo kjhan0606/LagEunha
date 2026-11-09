@@ -99,6 +99,9 @@ $(FEEDBACKLIB): $(FEEDBACKOBJ)
 
 #	ranlib $(COOLLIB)
 
+%.o: %.f
+	$(FC) $(FFLAGS) -c $<
+
 %.o: %.for
 	$(FC) $(INCLUDES) $(FFLAGS) -c $*.for
 

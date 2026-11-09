@@ -123,6 +123,9 @@ typedef struct {
     double *lap_vx, *lap_vy;
 } ParticleSoA;
 
+struct GfsMaterialCsr2D;
+int gfs_material_import_facecsr(const FaceCSR*,const ParticleSoA*,struct GfsMaterialCsr2D*);
+
 /* ---- GPU memory manager (persistent across RK4 stages) ---- */
 typedef struct {
     /* Device-side copies */

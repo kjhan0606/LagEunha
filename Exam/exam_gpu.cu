@@ -21,6 +21,7 @@
 /* CUB for device-wide reduction */
 #include <cub/cub.cuh>
 #include "gfs_pair.h"
+#include "gfs_face_work.h"
 #include "gfs_velocity_limiter.h"
 #include "gfs_thermal64.h"
 
@@ -1221,8 +1222,8 @@ void getAccVoro2DBlend_kernel(
             }
 #else
             double udotds = uax * dSx + uay * dSy;
-            double face_work = -pi_total * udotds
-                 + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
+            double face_work = gfs_face_work2d(pi_total, dSx, dSy,
+                tau_dot_dS_x, tau_dot_dS_y, uax, uay);
             dte += face_work;
             if (audit_work) {
                 audit_work[f] = face_work;

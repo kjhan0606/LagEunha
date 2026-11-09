@@ -128,6 +128,9 @@ typedef struct {
     double *unified_heat64; /* explicit numerical-viscosity heat output */
 } ParticleSoA;
 
+struct GfsMaterialCsr2D;
+int gfs_material_import_facecsr(const FaceCSR*,const ParticleSoA*,struct GfsMaterialCsr2D*);
+
 /* ---- GPU memory manager (persistent across RK4 stages) ---- */
 typedef struct {
     /* Device-side copies */
@@ -202,6 +205,9 @@ typedef struct {
     /* Immutable input for neighbor density gradients in the tessellation
      * kernel. d_parts.den is also an output of that kernel. */
     float *d_tess_den_input;
+    /* Optional low parts of power-site coordinates, updated with each state. */
+    double *d_power_lowx, *d_power_lowy;
+    int power_low_capacity, power_low_count;
 } GPUContext;
 
 /* ---- Physics parameters passed to GPU kernel ---- */
@@ -277,11 +283,14 @@ void gpu_free(GPUContext *ctx);
 
 /* --- Upload / download (exam_gpu.cu) --- */
 void gpu_upload_particles(GPUContext *ctx, int n_total, int has_stress);
+void gpu_upload_power_coordinate_lows(GPUContext *ctx,int n_total,
+    const double *lowx,const double *lowy);
 void gpu_upload_faces(GPUContext *ctx, int n_particles, int n_faces);
 void gpu_download_results(GPUContext *ctx, int n_particles);
 void gpu_download_dt_limit_diagnostics(GPUContext *ctx, int n_particles);
 /* W0/MPI1 periodic aliases only; 0 requests the ordinary host refresh. */
 int gpu_refresh_local_periodic_fields(GPUContext *ctx, int nbp, int n_total, double boxsize);
+int gpu_refresh_periodic_fields_xy(GPUContext *ctx,int nbp,int n_total,double lx,double ly);
 
 /* --- Force kernel launch (exam_gpu.cu) --- */
 double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
@@ -302,6 +311,11 @@ void gpu_geometry_trial_end(void);
 int gpu_geometry_trial_active(void);
 int gpu_geometry_trial_failed(void);
 void gpu_geometry_trial_mark_failed(void);
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+/* Available only for a pure search-bound failure of the latest tessellation. */
+int gpu_geometry_search_shortfall(double out[4]);
+#endif
+int gpu_material_cylinder_support_certificate(GPUContext*,int,double,double,double,double,int*);
 
 /* --- GPU tessellation (exam_gpu.cu) --- */
 void gpu_alloc_tess_buffers(GPUContext *ctx, int max_particles,
@@ -403,6 +417,20 @@ double gpu_launch_lagmfm_force_kernel(GPUContext *ctx, int n_particles,
                                        const GPUPhysicsParams *params);
 void gpu_upload_lagmfm_fields(GPUContext *ctx, int n_total);
 void gpu_download_lagmfm_density(GPUContext *ctx, int n_particles);
+void gfs_material_rhs_ledger(double rates[3]);
+int gfs_material_native_volume_audit_begin(int n);
+int gfs_material_native_volume_audit_rewind_first(int n);
+void gfs_material_native_volume_audit_end(void);
+int gfs_material_native_volume_audit_cell(long long id,double V,double dt,double*defect,double*relative);
+#ifdef GFS_MATERIAL_VOLUME_PRIMARY
+/* Geometry-only native Newton correction. 1=converged, 2=rebuild, 0=reject. */
+int gfs_material_native_volume_correct(void *simpar,int stage,double dt,int iteration);
+#endif
+int gfs_material_potential_ledger(double *energy,double *power);
+void gfs_material_constraint_step_budget(double dt);
+int gfs_material_step_support_begin(int n,const long long *ids,const double *xy,double lx,double ly);
+void gfs_material_step_support_end(void);
+int gfs_material_free_rhs_valid_for_dt(double dt);
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,198 @@
+{
+  "scope": "Same PLM fixed-mass operator for all original nine; physical intervals only. Cell-average reference integrals; analytic refs discretized on40000 intervals. Numerical refs for Shu/Blast. Endpoints do not constitute final acceptance.",
+  "cases": [
+    {
+      "case": "sod",
+      "physical_N": 200,
+      "total_cells": 200,
+      "time": 0.2,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 1.0,
+      "reference_density_max": 1.0,
+      "reference": "Exact Riemann",
+      "cell_mean_L1_relative": {
+        "density": 0.006882919595619822,
+        "velocity": 0.015253076726400697,
+        "pressure": 0.006947882816108105
+      },
+      "energy_balance_error": 2.0993308102002985e-15
+    },
+    {
+      "case": "blast",
+      "physical_N": 200,
+      "total_cells": 200,
+      "time": 0.038,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 8.1516357963755,
+      "reference_density_max": 6.441684950220741,
+      "reference": "Athena N=6400",
+      "cell_mean_L1_relative": {
+        "density": 0.049979496783879196,
+        "velocity": 0.03347952549390213,
+        "pressure": 0.024392345305718686
+      },
+      "energy_balance_error": 1.653506475479837e-15
+    },
+    {
+      "case": "noh",
+      "physical_N": 200,
+      "total_cells": 325,
+      "time": 0.6,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 4.494076643919461,
+      "reference_density_max": 3.9999887500527342,
+      "reference": "Exact Riemann",
+      "cell_mean_L1_relative": {
+        "density": 0.004029462424911271,
+        "velocity": 0.0010088983324165054,
+        "pressure": 0.0011070211547140989
+      },
+      "energy_balance_error": -9.783973812198385e-16
+    },
+    {
+      "case": "shu",
+      "physical_N": 800,
+      "total_cells": 2124,
+      "time": 1.8,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 4.724138506852783,
+      "reference_density_max": 4.746397809028859,
+      "reference": "Athena N=12800",
+      "cell_mean_L1_relative": {
+        "density": 0.005932610664658394,
+        "velocity": 0.003869757273026243,
+        "pressure": 0.0064392340870543345
+      },
+      "energy_balance_error": 3.4962640471369445e-16
+    },
+    {
+      "case": "lax",
+      "physical_N": 200,
+      "total_cells": 418,
+      "time": 0.13,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 1.3045175090927192,
+      "reference_density_max": 1.3040845320261996,
+      "reference": "Exact Riemann",
+      "cell_mean_L1_relative": {
+        "density": 0.005629711139639081,
+        "velocity": 0.008890613892700022,
+        "pressure": 0.004677244534444557
+      },
+      "energy_balance_error": -3.795838218059369e-15
+    },
+    {
+      "case": "doublefan",
+      "physical_N": 200,
+      "total_cells": 374,
+      "time": 0.15,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 0.9999999916727057,
+      "reference_density_max": 1.0,
+      "reference": "Exact rarefaction",
+      "cell_mean_L1_relative": {
+        "density": 0.02546418294059141,
+        "velocity": 0.1493314100253506,
+        "pressure": 0.0537783272932036
+      },
+      "energy_balance_error": -1.4050950935541156e-15
+    },
+    {
+      "case": "collision",
+      "physical_N": 200,
+      "total_cells": 628,
+      "time": 0.035,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 31.493811993822888,
+      "reference_density_max": 31.04260164161988,
+      "reference": "Exact Riemann",
+      "cell_mean_L1_relative": {
+        "density": 0.0041054878459256955,
+        "velocity": 0.0022667695382701672,
+        "pressure": 0.002348426724699834
+      },
+      "energy_balance_error": 3.029161819848739e-15
+    },
+    {
+      "case": "contact_open",
+      "physical_N": 200,
+      "total_cells": 544,
+      "time": 0.25,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 1.0,
+      "reference_density_max": 1.0,
+      "reference": "Exact Riemann",
+      "cell_mean_L1_relative": {
+        "density": 2.5895335258819244e-13,
+        "velocity": null,
+        "pressure": 0.0
+      },
+      "energy_balance_error": 0
+    },
+    {
+      "case": "moving_contact_open",
+      "physical_N": 200,
+      "total_cells": 644,
+      "time": 0.25,
+      "endpoint_pass": true,
+      "cell_mass_bitwise_fixed": true,
+      "density_max": 1.0000000000000666,
+      "reference_density_max": 1.0,
+      "reference": "Exact Riemann",
+      "cell_mean_L1_relative": {
+        "density": 1.1220024909165341e-13,
+        "velocity": 1.3130121989668453e-14,
+        "pressure": 1.7338561142388187e-14
+      },
+      "energy_balance_error": 1.6879056338308681e-15
+    }
+  ],
+  "sha256": {
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/sod/initial.dat": "2e6d9ad626c6dbd72ad2e42c1b0e86826cb77d9f9b8e7bf04047bb2e96d11ef6",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/sod/final.dat": "4c6753ac023c19104bc0302dc96abe639b254cb4fa672249306f4a00a047316d",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/sod/result.json": "d6a15dce19b552cbbd5fc29fd258ee4922849cf434831b7ead6a961fbd895d61",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/sod/problem_spec.json": "ad2f42ab84bdf8f4f2c9959c8d56ff1c2daf435a657170afcb9decb7374eedd8",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/blast_athena_plm_reference_20261105_v1/N6400/BlastReference.block0.out1.00001.tab": "02c9b824eecf6e5f3ce14c6f8807dbe00737556bbabe7087d3048004b657e066",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/blast/initial.dat": "7bdd4e943b8d4eb8092d8aa97051ea4cdc6885e404d8aecfc27fe5a0f08fdb27",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/blast/final.dat": "247bf293af333df4f612cabcf8db9c73b542b4c815315ec5e94f6edf72bcd565",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/blast/result.json": "df569fdff4ab991b84c50801a703d7b679f76383b8c06827b79c3942d5d02ae5",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/blast/problem_spec.json": "4ae1b3617743d0a87c84d6c7950eaf6133b94d1eda7f6f54fc1f6b09a91fa869",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/noh/initial.dat": "d6b6194cd9f9bfd12d3cda6f7403d4e18c62648e6a1f9cbae1f0a88dc605659a",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/noh/final.dat": "fb29fbf7f80edf44fe567aa6f95a6d350db2ad62b6c30e95587231ee45c782f0",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/noh/result.json": "05e196039b21cb1e0ea406922bb87be290aff08f96e34e0b708877c4c77237ca",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/noh/problem_spec.json": "8c94aa8d933a9e8bf5307827068fdb6ce9e1809c08788c718a293238b1087ad9",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/shu_independent_athena_v1/N12800/ShuReference.block0.out1.00001.tab": "c6afd601493abd1c0cff40423563f48cb30f2a9b790d7ec175c0a35ca767fc10",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/shu/initial.dat": "fe3dff630d463cd4465a607b532bcd8159eee207bcbad518c484fe04252044ad",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/shu/final.dat": "4a319194cd498cba3e45164bc4c842a63d54bb4d1689ddf59c253a39ff796dfa",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/shu/result.json": "ac6cc97f9f2fe6a4778af7769f8c877a178f74680e3f18be91b7ad854d120c1c",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/shu/problem_spec.json": "a88511913ccb779c0b98c47a7dff34cc10cdc926f4395ef22c679aff9d4ecd95",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/lax/initial.dat": "927cbb92c7a070ce852cd2cef89c33022eea4e5bed452f2ecf3137299727d99d",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/lax/final.dat": "ea2d993a6e1219773a2681d267ec4480697c1bf49006d38067635c0c618faa1e",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/lax/result.json": "5af8e5cc99c3d9d27bc55ad1a13521548dc1c723911fcbd4d2c085afb2892632",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/lax/problem_spec.json": "bd323e44e5af45af5b9bcf7d5685cbf2fd283252581fdd758a278f22a0a64b56",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/doublefan/initial.dat": "c1c1e7e22eac6bcb85877ad25ee41a006aa682d1903e656246714f54a443d5f1",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/doublefan/final.dat": "c8a21bceac296baf05c6e3c90898d72e0fd10edc015b70b616356c8f4853b204",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/doublefan/result.json": "b64f61f6b59743368248a01b08d311d19ab1eeb2cf394fe36c8e5fcc5619e0be",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/doublefan/problem_spec.json": "6c0e46187388e90a159ab7a370159ec50489541ad315b08dda5de6962056482c",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/collision/initial.dat": "084cb04b7dd84148b2cfb039389142b31b32a3b95d121ec4ff2ca591d44fbe23",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/collision/final.dat": "2c44edb9fe12472ff26fe3f1f3c4270b0338db67de2776a78d550cc8226acd1d",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/collision/result.json": "0bf701e1b6fcd9bc87c8f2cce634633ba8e53edc0374289b061cfc3c4675a3d2",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/collision/problem_spec.json": "452d26a06b6de394a62d7ff21a3cd8906a02d65a3f8dc29e16b1e0c6f0dcd00e",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/contact_open/initial.dat": "389ebd6f6e73d41acf59d43d85151c24d918dd2e2cb09b6c66c764d67018bdbd",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/contact_open/final.dat": "389ebd6f6e73d41acf59d43d85151c24d918dd2e2cb09b6c66c764d67018bdbd",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/contact_open/result.json": "58de9c4d38c7e353e471d80ccaeaedc101c0f22f17660b874a78518de8b6d132",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/contact_open/problem_spec.json": "85a3ae6159e541fab956d8270cfffbe5e9cf74da8d1cc8fe8d5ac3823ab7eb4b",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/moving_contact_open/initial.dat": "b518e0ce2fc2d44ab4ca2d8b598a7ef2a8b8ace4d5e3daa4b9e1d134a704a721",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/moving_contact_open/final.dat": "a6911379380d92722df83f5dbaae0493fc8161a30eb0c2b2b5bc03fbf08b8839",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/moving_contact_open/result.json": "12efd5c948f8d7e6eebe0fe64a8daa239f39b6eb94dfc91f66285f688dd5c6bc",
+    "/gpfs/kjhan/LagForce/UnifiedHydro_20261104_v1/material_full_original_nine_20261105_v1/moving_contact_open/problem_spec.json": "6c00e9d36abf6b29c58880c9f9840febd5cf5d7f4f5ec011d30d72d2e1fb5d85"
+  }
+}

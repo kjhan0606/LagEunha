@@ -19,6 +19,7 @@
 #include "exam.h"
 #include "exam2d.h"
 #include "gfs_pair.h"
+#include "gfs_face_work.h"
 #include "gfs_velocity_limiter.h"
 
 /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
@@ -6390,8 +6391,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							ua.x = ibp_vx + uradix_ui.x;
 							ua.y = ibp_vy + uradix_ui.y;
 						}
-						dte += -pi_total * Vec2DDotP(&ua, &dS)
-						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
+						dte += gfs_face_work2d(pi_total, dS.x, dS.y,
+                            tau_dot_dS_x, tau_dot_dS_y, ua.x, ua.y);
 						dvb += Vec2DDotP(&ua, &dS);
 						if(gfs_dynw2_active && riemann_vstar && !jbp_is_ghost){
 							/* realised face speed minus HLL v* (independent check) */

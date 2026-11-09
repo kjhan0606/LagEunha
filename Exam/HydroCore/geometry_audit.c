@@ -113,7 +113,7 @@ static void tess(int dim,int n,double displacement,double *V,int capture){
                 if(used[id])continue;
                 used[id]=1;
                 Voro3D_point polygon[NV];
-                int count=Voro3D_FaceExtract(vertex,nv,id,polygon);
+                int count=Voro3D_FaceExtractBounded(vertex,nv,id,polygon,NV);
                 if(count<3)exit(2);
                 double area=0,c[3]={0},r[3]={sorted[id].x,sorted[id].y,sorted[id].z};
                 for(int t=1;t<count-1;t++){

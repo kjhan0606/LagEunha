@@ -12,9 +12,24 @@
 #include "exam2d.h"
 #include "cylinder.h"
 #include "color.h"
+#include "../gfs_material_radial_image.h"
 
 
 static CellType *cells = NULL;
+
+/* Prescribed inlet state is the same on straight and periodic-corner
+ * images. A periodic translation must not restore the source's vy. */
+static inline void cyl_set_inflow_state(treevorork4particletype *ghost,
+        postype u_inf, postype rho_inf, postype p_inf,
+        postype cs_inf, postype ie_per_vol){
+    ghost->vx = u_inf;
+    ghost->vy = 0;
+    ghost->den = rho_inf;
+    ghost->pressure = p_inf;
+    ghost->csound = cs_inf;
+    ghost->ie = ie_per_vol * ghost->volume;
+}
+
 
 int cyl_makemap(SimParameters *simpar, int icount){
 	postype cellsize = CYL_GridSize(simpar);
@@ -233,6 +248,17 @@ treevorork4particletype *cyl_mkinitial(SimParameters *simpar, int *mp){
 		char *bp_raw = (char*)res;
 		for(i=0;i<nbp;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
+            /* The prescribed IC is uniform rho, P and velocity. The obstacle
+             * removes lattice sites, so their final power-cell volumes differ
+             * from the nominal lattice volume. Project conserved quantities
+             * onto those volumes ONCE at initialization. Subsequent evolution
+             * keeps each assigned mass; this is not a mass-flux correction. */
+            if(!(bpi->volume>0)||!isfinite(bpi->volume)){
+                fprintf(stderr,"[CYLINDER_IC] invalid cell volume\n");
+                MPI_Abort(MPI_COMM(simpar),99);
+            }
+            bpi->mass = rho_inf*bpi->volume;
+            bpi->den = rho_inf;
 			bpi->ie = bpi->pressure*bpi->volume/(Gamma-1);
 			bpi->csound = sqrt(Gamma*bpi->pressure/bpi->den);
 		}
@@ -267,7 +293,10 @@ treevorork4particletype *cyl_mkinitial(SimParameters *simpar, int *mp){
 }
 
 
-void paddingCylinderParticles(SimParameters *simpar, postype width){
+static void paddingCylinderParticlesImpl(SimParameters *simpar, postype width,
+                                        CylinderPaddingOwner **owners, int *owner_count){
+    if(owners) *owners=NULL;
+    if(owner_count) *owner_count=0;
 	/* 1. Standard MPI padding (skip for single-process: NDDINFO=0) */
 	if(NDDINFO(simpar) > 0)
 		paddingTreeVorork4Particles(simpar, width);
@@ -370,6 +399,17 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 	}
 	bp_raw = (char*)VORORK4_TBP(simpar);
 
+    CylinderPaddingOwner *map=NULL;
+    if(owners && npad_mpi+nghost_total>0){
+        map=malloc((size_t)(npad_mpi+nghost_total)*sizeof(*map));
+        if(!map){fprintf(stderr,"[CYLINDER_IMAGE] ownership allocation failed\n");MPI_Abort(MPI_COMM(simpar),99);}
+        for(i=0;i<npad_mpi;i++){
+            treevorork4particletype *source=SRC_PTL(np+i);
+            map[i]=(CylinderPaddingOwner){(long long)PINDX(source),np+i,CYL_IMAGE_MPI,0};
+        }
+    }
+    #define RECORD_IMAGE(kind_,shift_) do { if(map) \
+        map[gidx]=(CylinderPaddingOwner){(long long)PINDX(bpi),i,(kind_),(shift_)}; } while(0)
 	int gidx = npad_mpi;
 	/* All boundary ghosts must have PINDX == MAX_INDEX so that
 	   the force loop skips AV and applies CFL floor for them */
@@ -383,16 +423,21 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 		if(r > R && r < R + 2*width){
 			treevorork4particletype *ghost = (treevorork4particletype*)(bpp_raw + gidx*p_size);
 			memcpy(ghost, bpi, p_size);
-			postype nx = dx/r;
-			postype ny = dy/r;
-			postype r_mirror = 2*R - r;
-			ghost->x = cx + nx*r_mirror;
-			ghost->y = cy + ny*r_mirror;
-			postype vn = bpi->vx*nx + bpi->vy*ny;
-			ghost->vx = bpi->vx - 2*vn*nx;
-			ghost->vy = bpi->vy - 2*vn*ny;
+			const double center[2]={cx,cy},position[2]={bpi->x,bpi->y};
+			const double velocity[2]={bpi->vx,bpi->vy};
+			double reflected_velocity[2];GfsMaterialRadialImage image;
+			if(!gfs_material_radial_image(2,center,R,position,&image)||
+			   !gfs_material_radial_vector(2,&image,velocity,0,reflected_velocity)){
+				fprintf(stderr,"[CYLINDER_IMAGE] invalid radial reflection\n");
+				MPI_Abort(MPI_COMM(simpar),99);
+			}
+			ghost->x=image.point[0];ghost->y=image.point[1];
+			/* Fluid reflection is intentionally NOT the coordinate derivative.
+			 * A moving-geometry adapter must call radial_vector with mode 1. */
+			ghost->vx=reflected_velocity[0];ghost->vy=reflected_velocity[1];
 			ghost->u4if.indx = MAX_INDEX;
 			ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+			RECORD_IMAGE(CYL_IMAGE_RADIAL,0);
 			gidx++;
 		}
 	}
@@ -406,6 +451,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 			ghost->y = bpi->y + Ly;
 			/* Periodic ghost: keep original PINDX so force loop
 			   treats it as a normal neighbor (AV on, no CFL floor) */
+			RECORD_IMAGE(CYL_IMAGE_PERIODIC,1);
 			gidx++;
 		}
 	}
@@ -418,6 +464,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 			memcpy(ghost, bpi, p_size);
 			ghost->y = bpi->y - Ly;
 			/* Periodic ghost: keep original PINDX */
+			RECORD_IMAGE(CYL_IMAGE_PERIODIC,-1);
 			gidx++;
 		}
 	}
@@ -431,14 +478,10 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				treevorork4particletype *ghost = (treevorork4particletype*)(bpp_raw + gidx*p_size);
 				memcpy(ghost, bpi, p_size);
 				ghost->x = -bpi->x;
-				ghost->vx = u_inf;
-				ghost->vy = 0;
-				ghost->den = rho_inf;
-				ghost->pressure = p_inf;
-				ghost->csound = cs_inf;
-				ghost->ie = ie_per_vol * ghost->volume;
+				cyl_set_inflow_state(ghost,u_inf,rho_inf,p_inf,cs_inf,ie_per_vol);
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+				RECORD_IMAGE(CYL_IMAGE_INFLOW,0);
 				gidx++;
 			}
 		}
@@ -453,6 +496,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 			ghost->x = 2*Lx - bpi->x;
 			ghost->u4if.indx = MAX_INDEX;
 			ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+			RECORD_IMAGE(CYL_IMAGE_OUTFLOW,0);
 			gidx++;
 		}
 	}
@@ -471,14 +515,10 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				memcpy(ghost, bpi, p_size);
 				ghost->x = -bpi->x;
 				ghost->y = bpi->y + Ly;
-				ghost->vx = u_inf;
-				ghost->vy = bpi->vy;
-				ghost->den = rho_inf;
-				ghost->pressure = p_inf;
-				ghost->csound = cs_inf;
-				ghost->ie = ie_per_vol * ghost->volume;
+				cyl_set_inflow_state(ghost,u_inf,rho_inf,p_inf,cs_inf,ie_per_vol);
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+				RECORD_IMAGE(CYL_IMAGE_INFLOW,1);
 				gidx++;
 			}
 			if(near_bot && near_right){
@@ -488,6 +528,7 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				ghost->y = bpi->y + Ly;
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+				RECORD_IMAGE(CYL_IMAGE_OUTFLOW,1);
 				gidx++;
 			}
 			if(near_top && near_left){
@@ -495,14 +536,10 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				memcpy(ghost, bpi, p_size);
 				ghost->x = -bpi->x;
 				ghost->y = bpi->y - Ly;
-				ghost->vx = u_inf;
-				ghost->vy = bpi->vy;
-				ghost->den = rho_inf;
-				ghost->pressure = p_inf;
-				ghost->csound = cs_inf;
-				ghost->ie = ie_per_vol * ghost->volume;
+				cyl_set_inflow_state(ghost,u_inf,rho_inf,p_inf,cs_inf,ie_per_vol);
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+				RECORD_IMAGE(CYL_IMAGE_INFLOW,-1);
 				gidx++;
 			}
 			if(near_top && near_right){
@@ -512,19 +549,39 @@ void paddingCylinderParticles(SimParameters *simpar, postype width){
 				ghost->y = bpi->y - Ly;
 				ghost->u4if.indx = MAX_INDEX;
 				ghost->u4if.Flag[ENDIAN_OFFSET] |= BoundaryGhostflag;
+				RECORD_IMAGE(CYL_IMAGE_OUTFLOW,-1);
 				gidx++;
 			}
 		}
 	}
 
+	#undef RECORD_IMAGE
 	#undef SRC_PTL
 
 	/* 10. Update total padding count */
+    if(gidx!=npad_mpi+nghost_total){
+        fprintf(stderr,"[CYLINDER_IMAGE] padding count mismatch\n");MPI_Abort(MPI_COMM(simpar),99);
+    }
+    if(owners) *owners=map;
+    if(owner_count) *owner_count=gidx;
 	VORO_NPAD(simpar) = gidx;
 /*	DEBUGPRINT("P%d paddingCyl: npad_mpi=%d ncyl=%d nbot=%d ntop=%d nleft=%d nright=%d ncorner=%d total=%d\n",
 		MYID(simpar), npad_mpi, ncyl_ghost, nbot_ghost, ntop_ghost, nleft_ghost, nright_ghost, ncorner_ghost, gidx); */
 }
 
+
+void paddingCylinderParticles(SimParameters *simpar, postype width){
+    paddingCylinderParticlesImpl(simpar,width,NULL,NULL);
+}
+
+void paddingCylinderParticlesMapped(SimParameters *simpar, postype width,
+                                   CylinderPaddingOwner **owners,int *count){
+    if(!owners||!count){
+        fprintf(stderr,"[CYLINDER_IMAGE] missing ownership output\n");MPI_Abort(MPI_COMM(simpar),99);
+        return;
+    }
+    paddingCylinderParticlesImpl(simpar,width,owners,count);
+}
 
 void cyl_findVol(SimParameters *simpar){
 	treevorork4particletype *bp = VORORK4_TBP(simpar);

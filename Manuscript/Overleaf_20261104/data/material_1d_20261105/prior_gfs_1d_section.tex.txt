@@ -1,0 +1,27 @@
+\subsection{Sod shock tube}
+
+The Sod shock tube is the Riemann problem $(\rho,P,\vel)=(1,1,0)$ for $x<0.5$ and $(0.125,0.1,0)$ for $x\ge 0.5$, on $0\le x\le 1$, with reflecting walls.
+Figure~\ref{fig:sodgfs} shows GFS at $N=200$.
+The density $L_1$ is $5.86\times 10^{-3}$ and the energy error is $1.3\times 10^{-8}$.
+The shock, the contact, and the rarefaction sit on the reference solution.
+
+\begin{figure*}[htbp!]
+\includegraphics[width=\textwidth]{fig_sod.pdf}
+\caption{Sod shock tube at the standard end time for GFS with $N=200$. The panels are density, velocity, and pressure. Points are particles and the line is the reference solution.}
+\label{fig:sodgfs}
+\end{figure*}
+
+\subsection{One-dimensional problems}
+
+Figure~\ref{fig:gfs1d} collects eight standard problems at $N=200$, except the Shu--Osher panel, which uses $N=800$.
+Every run is GFS. Transmissive boundaries insert the exterior state when the velocity points into the domain.
+The density $L_1$ values are $5.86\times10^{-3}$ (Sod), $0.154$ (blast), $1.36\times10^{-2}$ (Noh), $0.571$ (Shu--Osher), $5.25\times10^{-3}$ (Lax), $2.86\times10^{-2}$ (double rarefaction), $0.105$ (collision), and $6.48\times10^{-3}$ (contact).
+The energy error is below $10^{-5}$ on every problem except the blast, where it is $3.3\times10^{-2}$.
+In the Shu--Osher problem the left state has velocity $2.629$. The shock in the $N=800$ calculation lies at $x=2.39$, on the reference shock.
+
+\begin{figure*}[htbp!]
+\includegraphics[width=\textwidth]{fig_gfs_1d.pdf}
+\caption{GFS density for eight one-dimensional problems. Points are the particles and the line is the reference. $N=200$, except Shu--Osher, which uses $N=800$. The panel title names the problem.}
+\label{fig:gfs1d}
+\end{figure*}
+

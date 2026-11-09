@@ -165,7 +165,7 @@ static int fv_native_cell(GfsFvMesh *m,int i,NativeWork *w,const int nc[3],
             for(int k=0;k<vertices;k++)if(w->vertex[k].status==Active)for(int a=0;a<3;a++){
                 int related=w->vertex[k].related[a];if(related<0||related>=count)return 1;if(w->used[related])continue;w->used[related]=1;
                 int id=w->s3[8+related].indx;if(id<0||id>=count)return 1;
-                int size=Voro3D_FaceExtract(w->vertex,vertices,related,w->polygon);if(size<3)return 1;
+                int size=Voro3D_FaceExtractBounded(w->vertex,vertices,related,w->polygon,FV_VERTEX_CAP);if(size<3){fprintf(stderr,"[FV_GEOMETRY] bounded face extraction failed cell=%d face=%d nv=%d status=%d cap=%d\n",i,related,vertices,size,FV_VERTEX_CAP);return 1;}
                 GfsFvNativeFace *f=fv_face(g);f->j=w->parent[id];f->mirror=w->mirror[id];memcpy(f->r,w->rel[id],sizeof(f->r));
                 for(int t=1;t<size-1;t++){
                     double v0[3]={w->polygon[0].x,w->polygon[0].y,w->polygon[0].z};

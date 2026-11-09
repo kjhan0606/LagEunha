@@ -104,3 +104,24 @@ header is `../gfs_fv_ale.h`; `fv_flux_audit.c` and `fv_device_audit.cu` check
 the C/C++/CUDA primitives. The fixed payload has E in slot four and exactly
 zero unused momenta. Do not infer a production FV solver, weight update,
 SSPRK2/GCL qualification, or new PDE trajectory from those primitive checks.
+
+### Common material 1D counterpart
+
+`material1d_common.c` is the fixed-mass 1D comparison driver for the current
+2D pressure-offset and ordered-velocity reconstruction candidate. Its case
+specifications are in `material1d_cases.h`; it uses the shared headers in
+`Exam/`. It requires no source checkout outside this repository.
+
+Build from the repository root with `gcc -O2 -IExam
+Exam/HydroCore/material1d_common.c -lm -o /gpfs/<your-run-directory>/material1d`.
+Run the resulting executable in a fresh output directory with arguments
+`<case> <physical-cell-count>`. Cases: `sod`, `blast`, `noh`, `shu`, `lax`,
+`doublefan`, `collision`, `contact_open`, `moving_contact_open`.
+Shu–Osher comparisons use800 physical cells; the standard comparison uses200
+for the others. Open cases include padding cells, so the total count is larger.
+
+The nine endpoints, conservation, and smooth-wave convergence have been
+checked for this candidate. Noh pressure error is larger than the archived
+minmod baseline at equal resolution. Boundary reconstruction, general2D
+geometry,3D evolution, and the matched-accuracy GIZMO speed requirement remain
+separate qualifications. See `Docs/MATERIAL_RT_PORT_AUDIT_2026-11-06.md`.

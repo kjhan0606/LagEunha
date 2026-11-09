@@ -27,9 +27,15 @@ static double inner(const double *x,const double *y){
 }
 static int solve(const double *rhs,double *x,int *iterations,double *relative){
     double *r=malloc(n*sizeof(double)),*z=malloc(n*sizeof(double)),*p=malloc(n*sizeof(double)),*Ap=malloc(n*sizeof(double));
-    if(!r||!z||!p||!Ap)return 2;
+    if(!r||!z||!p||!Ap){free(r);free(z);free(p);free(Ap);return 2;}
     double norm=inner(rhs,rhs),rz=0,mean=0;*iterations=0;*relative=1;
-    if(!(norm>0))return 2;
+    if(!(norm>0)||!isfinite(norm)){
+        /* Uniform rest requires no weight update. Do not confuse an exact
+         * zero RHS with a nonzero RHS whose squared norm underflows. */
+        int zero=1;for(int i=0;i<n;i++)if(rhs[i]!=0)zero=0;
+        if(zero){for(int i=0;i<n;i++)x[i]=0;*relative=0;}
+        free(r);free(z);free(p);free(Ap);return zero?0:2;
+    }
 #pragma omp parallel for schedule(static) reduction(+:mean)
     for(int i=0;i<n;i++){x[i]=0;r[i]=rhs[i];z[i]=r[i]/diagonal[i];mean+=z[i];}
     mean/=n;

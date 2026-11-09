@@ -30,8 +30,13 @@ void gfs_native_u64_roundoff_footer(void){
 #include "exam.h"
 #include "exam2d.h"
 #include "gfs_pair.h"
+#include "../gfs_face_work.h"
 #include "gfs_velocity_limiter.h"
 #include "gfs_fixed_polygon_geometry.h"
+#include "../gfs_material_ssprk2.h"
+#include "gfs_material_stage_time.h"
+#include "gfs_material_noh_boundary.h"
+#include "../Cylinder/material_boundary.h"
 
 /* Dual energy for the RK4 blend path. GFS_DUAL_ENERGY = eta > 0 turns it
  * on (default off). The entropy K = P/rho^gamma is stress.K. It is set from
@@ -1487,6 +1492,21 @@ void new_mkLinkedList2D_rt(
 }
 */
 
+/* RT padding ownership is rebuilt together with the mirror list. Keep the
+ * MAX_INDEX ghost sentinel: CUDA geometry uses it to identify wall faces. */
+#include "../gfs_material_rt_owner.h"
+static GfsMaterialRtOwner *gfs_material_rt_owners;
+static int gfs_material_rt_owners_count;
+static size_t gfs_material_rt_owners_capacity;
+const GfsMaterialRtOwner *gfs_material_rt_owner_map(int *count){
+ if(count)*count=gfs_material_rt_owners_count;return gfs_material_rt_owners;
+}
+static void gfs_material_rt_owner_reserve(SimParameters *s,size_t count){
+ if(count<=gfs_material_rt_owners_capacity)return;
+ void *q=realloc(gfs_material_rt_owners,count*sizeof(*gfs_material_rt_owners));
+ if(!q)MPI_Abort(MPI_COMM(s),99);
+ gfs_material_rt_owners=q;gfs_material_rt_owners_capacity=count;
+}
 void mkLinkedList2D_rt(
 		SimParameters *simpar,
 		postype cellsize,
@@ -1505,6 +1525,12 @@ void mkLinkedList2D_rt(
     int mx,my;
 	postype Gamma = GAS_GAMMA(simpar);
 	postype Ly = SIMBOX(simpar).y.max;
+    const char *rt_material_boundary=getenv("GFS_MATERIAL_RT_NATIVE");
+    if(rt_material_boundary&&!strcmp(rt_material_boundary,"1"))Ly=Ymax_HydroExam(simpar);
+    /* Reflect through the same halo width as the local geometry grid.
+     * Periodic/MPI padding already expands its own callback width. */
+    postype mirror_width=(rt_material_boundary&&!strcmp(rt_material_boundary,"1"))
+        ?gfs_kepler_halo_width(cellsize):cellsize;
 	postype rho1 = RT_DEN1(simpar), rho2 = RT_DEN2(simpar);
 	postype deltay = RT_Deltay(simpar);
 	postype ycen = 0.5*Ly;
@@ -1537,6 +1563,20 @@ void mkLinkedList2D_rt(
     }
 	// now for the particle padding from other ranks
     paddingTreeAllParticle(simpar, cellsize);
+    const char *material_owner_env=getenv("GFS_MATERIAL_EVOLVE");
+    const char *material_trace_env=getenv("GFS_MATERIAL_TRACE_PROBE");
+    int material_owners=(material_owner_env&&!strcmp(material_owner_env,"1"))||
+        (material_trace_env&&!strcmp(material_trace_env,"1"));
+    gfs_material_rt_owners_count=0;
+    if(material_owners){
+        gfs_material_rt_owner_reserve(simpar,VORO_NPAD(simpar));
+        for(int k=0;k<VORO_NPAD(simpar);k++){
+            treevorork4particletype *a=(void*)((char*)VORORK4_TBPP(simpar)+k*p_size);
+            if(PINDX(a)==MAX_INDEX)MPI_Abort(MPI_COMM(simpar),99);
+            gfs_material_rt_owners[k]=(GfsMaterialRtOwner){(long long)PINDX(a),0};
+        }
+    }
+
 
 	postype getRT_Den(postype , postype , postype , postype ,postype );
 	int ny = NY(simpar);
@@ -1550,28 +1590,32 @@ void mkLinkedList2D_rt(
 			treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);
 			if(bppi->y < Ly) {
 				if(mpad != i) memcpy(bpp_raw + mpad*p_size, bpp_raw + i*p_size, p_size);
+                if(material_owners)gfs_material_rt_owners[mpad]=gfs_material_rt_owners[i];
 				mpad ++;
 			}
 		}
 		int nmirror = 0;
 		for(i=0;i<np;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
-			if((Ly-bpi->y) < cellsize) nmirror++;
+			if((Ly-bpi->y) < mirror_width) nmirror++;
 		}
 		for(i=0;i<mpad;i++){
 			treevorork4particletype *bppi = (treevorork4particletype*)((char*)VORORK4_TBPP(simpar) + i*p_size);
-			if((Ly-bppi->y) < cellsize) nmirror++;
+			if((Ly-bppi->y) < mirror_width) nmirror++;
 		}
 		if(VORO_NPAD(simpar) != (mpad+nmirror)) {
 			VORORK4_TBPP(simpar) = (treevorork4particletype *)
 					realloc(VORORK4_TBPP(simpar), p_size*(mpad+nmirror));
 		}
+		if(material_owners)gfs_material_rt_owner_reserve(simpar,mpad+nmirror);
 		bpp_raw = (char*)VORORK4_TBPP(simpar);
 		char *cursor = bpp_raw + mpad*p_size;
 		for(i=0;i<np;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
-			if((Ly-bpi->y) < cellsize) {
+			if((Ly-bpi->y) < mirror_width) {
 				memcpy(cursor, bpi, p_size);
+                if(material_owners)gfs_material_rt_owners[(cursor-bpp_raw)/p_size]=
+                    (GfsMaterialRtOwner){(long long)PINDX(bpi),1};
 				treevorork4particletype *gp = (treevorork4particletype*)cursor;
 				postype dy = 2*(Ly-bpi->y);
 				gp->u4if.indx = MAX_INDEX;
@@ -1580,6 +1624,16 @@ void mkLinkedList2D_rt(
 				gp->den = getRT_Den(rho1, rho2, deltay, ycen, gp->y);
 				gp->pressure += GAS_ACCY(simpar)* getRT_Den(rho1,rho2,deltay,ycen,Ly) * dy;
 				gp->ie = gp->pressure*gp->volume/(Gamma-1);
+#ifdef GFS_WEIGHT_DYNAMICS
+                const char *material=getenv("GFS_MATERIAL_EVOLVE");
+                if(material&&!strcmp(material,"1")){
+                    if(p_size!=sizeof(treevorostressrk4particletype)||
+                       !gfs_material_ghost_thermo_sync((void*)gp,Gamma)){
+                        fprintf(stderr,"[MATERIAL_RT_GHOST] invalid native boundary state\n");
+                        MPI_Abort(MPI_COMM(simpar),99);
+                    }
+                }
+#endif
 				CLEAR_FLAG(gp);
 				SET_FLAG(gp,BoundaryGhostflag);
 				SET_FLAG(gp,VOROflag);
@@ -1588,8 +1642,12 @@ void mkLinkedList2D_rt(
 		}
 		for(i=0;i<mpad;i++){
 			treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);
-			if((Ly-bppi->y) < cellsize) {
+			if((Ly-bppi->y) < mirror_width) {
 				memcpy(cursor, bppi, p_size);
+                if(material_owners){
+                    GfsMaterialRtOwner owner=gfs_material_rt_owners[i];owner.reflected_y^=1;
+                    gfs_material_rt_owners[(cursor-bpp_raw)/p_size]=owner;
+                }
 				treevorork4particletype *gp = (treevorork4particletype*)cursor;
 				postype dy = 2*(Ly-bppi->y);
 				gp->u4if.indx = MAX_INDEX;
@@ -1598,6 +1656,16 @@ void mkLinkedList2D_rt(
 				gp->den = getRT_Den(rho1, rho2, deltay, ycen, gp->y);
 				gp->pressure += GAS_ACCY(simpar)* getRT_Den(rho1,rho2,deltay,ycen,Ly) * dy;
 				gp->ie = gp->pressure*gp->volume/(Gamma-1);
+#ifdef GFS_WEIGHT_DYNAMICS
+                const char *material=getenv("GFS_MATERIAL_EVOLVE");
+                if(material&&!strcmp(material,"1")){
+                    if(p_size!=sizeof(treevorostressrk4particletype)||
+                       !gfs_material_ghost_thermo_sync((void*)gp,Gamma)){
+                        fprintf(stderr,"[MATERIAL_RT_GHOST] invalid native boundary state\n");
+                        MPI_Abort(MPI_COMM(simpar),99);
+                    }
+                }
+#endif
 				CLEAR_FLAG(gp);
 				SET_FLAG(gp,BoundaryGhostflag);
 				SET_FLAG(gp,VOROflag);
@@ -1615,28 +1683,32 @@ void mkLinkedList2D_rt(
 			treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);
 			if(bppi->y >= 0.) {
 				if(mpad != i) memcpy(bpp_raw + mpad*p_size, bpp_raw + i*p_size, p_size);
+                if(material_owners)gfs_material_rt_owners[mpad]=gfs_material_rt_owners[i];
 				mpad ++;
 			}
 		}
 		int nmirror = 0;
 		for(i=0;i<np;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
-			if(bpi->y <= cellsize) nmirror++;
+			if(bpi->y <= mirror_width) nmirror++;
 		}
 		for(i=0;i<mpad;i++){
 			treevorork4particletype *bppi = (treevorork4particletype*)((char*)VORORK4_TBPP(simpar) + i*p_size);
-			if(bppi->y <= cellsize) nmirror++;
+			if(bppi->y <= mirror_width) nmirror++;
 		}
 		if(VORO_NPAD(simpar) != (mpad+nmirror)) {
 			VORORK4_TBPP(simpar) = (treevorork4particletype *) realloc(VORORK4_TBPP(simpar),
 						p_size*(mpad+nmirror));
 		}
+		if(material_owners)gfs_material_rt_owner_reserve(simpar,mpad+nmirror);
 		bpp_raw = (char*)VORORK4_TBPP(simpar);
 		char *cursor = bpp_raw + mpad*p_size;
 		for(i=0;i<np;i++){
 			treevorork4particletype *bpi = (treevorork4particletype*)(bp_raw + i*p_size);
-			if(bpi->y <= cellsize) {
+			if(bpi->y <= mirror_width) {
 				memcpy(cursor, bpi, p_size);
+                if(material_owners)gfs_material_rt_owners[(cursor-bpp_raw)/p_size]=
+                    (GfsMaterialRtOwner){(long long)PINDX(bpi),1};
 				treevorork4particletype *gp = (treevorork4particletype*)cursor;
 				gp->u4if.indx = MAX_INDEX;
 				postype dy = -bpi->y;
@@ -1645,6 +1717,16 @@ void mkLinkedList2D_rt(
 				gp->den = getRT_Den(rho1, rho2, deltay, ycen, gp->y);
 				gp->pressure -= GAS_ACCY(simpar)* getRT_Den(rho1,rho2,deltay,ycen,0.) * 2*(-dy);
 				gp->ie = gp->pressure*gp->volume/(Gamma-1);
+#ifdef GFS_WEIGHT_DYNAMICS
+                const char *material=getenv("GFS_MATERIAL_EVOLVE");
+                if(material&&!strcmp(material,"1")){
+                    if(p_size!=sizeof(treevorostressrk4particletype)||
+                       !gfs_material_ghost_thermo_sync((void*)gp,Gamma)){
+                        fprintf(stderr,"[MATERIAL_RT_GHOST] invalid native boundary state\n");
+                        MPI_Abort(MPI_COMM(simpar),99);
+                    }
+                }
+#endif
 				CLEAR_FLAG(gp);
 				SET_FLAG(gp,BoundaryGhostflag);
 				SET_FLAG(gp,VOROflag);
@@ -1653,8 +1735,12 @@ void mkLinkedList2D_rt(
 		}
 		for(i=0;i<mpad;i++){
 			treevorork4particletype *bppi = (treevorork4particletype*)(bpp_raw + i*p_size);
-			if(bppi->y <= cellsize) {
+			if(bppi->y <= mirror_width) {
 				memcpy(cursor, bppi, p_size);
+                if(material_owners){
+                    GfsMaterialRtOwner owner=gfs_material_rt_owners[i];owner.reflected_y^=1;
+                    gfs_material_rt_owners[(cursor-bpp_raw)/p_size]=owner;
+                }
 				treevorork4particletype *gp = (treevorork4particletype*)cursor;
 				gp->u4if.indx = MAX_INDEX;
 				postype dy = -bppi->y;
@@ -1663,6 +1749,16 @@ void mkLinkedList2D_rt(
 				gp->den = getRT_Den(rho1, rho2, deltay, ycen, gp->y);
 				gp->pressure -= GAS_ACCY(simpar)* getRT_Den(rho1,rho2,deltay,ycen,0.) * 2*(-dy);
 				gp->ie = gp->pressure*gp->volume/(Gamma-1);
+#ifdef GFS_WEIGHT_DYNAMICS
+                const char *material=getenv("GFS_MATERIAL_EVOLVE");
+                if(material&&!strcmp(material,"1")){
+                    if(p_size!=sizeof(treevorostressrk4particletype)||
+                       !gfs_material_ghost_thermo_sync((void*)gp,Gamma)){
+                        fprintf(stderr,"[MATERIAL_RT_GHOST] invalid native boundary state\n");
+                        MPI_Abort(MPI_COMM(simpar),99);
+                    }
+                }
+#endif
 				CLEAR_FLAG(gp);
 				SET_FLAG(gp,BoundaryGhostflag);
 				SET_FLAG(gp,VOROflag);
@@ -1671,7 +1767,8 @@ void mkLinkedList2D_rt(
 		}
 		VORO_NPAD(simpar) = mpad + nmirror;
 	}
-	/* Insert padding + mirror particles into linked list (stride-aware) */
+	if(material_owners)gfs_material_rt_owners_count=VORO_NPAD(simpar);
+    /* Insert padding + mirror particles into linked list (stride-aware) */
 	{
 		char *bpp_raw = (char*)VORORK4_TBPP(simpar);
 		for(i=0;i<VORO_NPAD(simpar);i++){
@@ -1974,15 +2071,77 @@ void mkLinkedList2D_sedov2d(
 	}
 }
 
-postype gfs_kepler_halo_width(postype cellsize){
-	const char *s = getenv("GFS_KEPLER_HALO_CELLS");
-	if(!s || !s[0]) return cellsize;
-	char *end = NULL;
-	double cells = strtod(s, &end);
-	if(end == s || *end != '\0' || !(cells >= 1.0) || cells > 64.0)
-		return cellsize;
-	return (postype)(cellsize * cells);
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+#include "../gfs_power_search_extent.h"
+/* Computational capacity, never a change to the physical domain. One width
+ * feeds the grid, periodic images, RT reflections, and halo-state refresh.
+ * The qualified material driver currently permits one MPI rank only. */
+static struct {
+ SimParameters *context;
+ double domain[4],cell,time,halo;
+ int active,valid,kind;
+} gfs_material_search_capacity;
+static int gfs_material_search_begin(SimParameters*s,int active,double time){
+ double domain[4]={Xmin_HydroExam(s),Ymin_HydroExam(s),Xmax_HydroExam(s),Ymax_HydroExam(s)};
+ double cell=BASICCELL_CELLWIDTH(s);
+ if(!active){memset(&gfs_material_search_capacity,0,sizeof(gfs_material_search_capacity));return 1;}
+ if(NID(s)!=1||!(cell>0)||!isfinite(cell)||!isfinite(time))return 0;
+ for(int d=0;d<2;d++)if(!isfinite(domain[d])||!isfinite(domain[d+2])||!(domain[d+2]>domain[d]))return 0;
+ if(!gfs_material_search_capacity.valid||gfs_material_search_capacity.kind!=active||gfs_material_search_capacity.context!=s||
+    gfs_material_search_capacity.cell!=cell||time<gfs_material_search_capacity.time||
+    memcmp(domain,gfs_material_search_capacity.domain,sizeof(domain))){
+  memset(&gfs_material_search_capacity,0,sizeof(gfs_material_search_capacity));
+  gfs_material_search_capacity.context=s;gfs_material_search_capacity.cell=cell;
+  memcpy(gfs_material_search_capacity.domain,domain,sizeof(domain));
+ }
+ gfs_material_search_capacity.active=1;gfs_material_search_capacity.valid=1;
+ gfs_material_search_capacity.kind=active;gfs_material_search_capacity.time=time;return 1;
 }
+#endif
+postype gfs_kepler_halo_width(postype cellsize){
+ const char *s=getenv("GFS_KEPLER_HALO_CELLS");double cells=1.;
+ if(s&&s[0]){
+  char *end=NULL;double value=strtod(s,&end);
+  if(end!=s&&!*end&&value>=1.&&value<=64.)cells=value;
+ }
+ postype width=(postype)(cellsize*cells);
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+ if(gfs_material_search_capacity.active)
+  width=fmax(width,gfs_material_search_capacity.halo);
+#endif
+ return width;
+}
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+static int gfs_material_search_extent(SimParameters*s,double*xmin,double*ymin,
+ double*xmax,double*ymax,const double*deficit){
+ if(gfs_material_cylinder_mode())return gfs_material_cylinder_search_extent(s,xmin,ymin,xmax,ymax,deficit);
+ if(!gfs_material_search_capacity.active||gfs_material_search_capacity.context!=s)
+  return deficit?-1:0; /* No automatic extension of finite exterior samples. */
+ if(NID(s)!=1)return -1;
+ double cell=gfs_material_search_capacity.cell,halo=gfs_kepler_halo_width(cell);
+ double *domain=gfs_material_search_capacity.domain;
+ double lo[2]={domain[0]-halo,domain[1]-halo},hi[2]={domain[2]+halo,domain[3]+halo};
+ double zero[4]={0};int changed=0;
+ if(gfs_power_expand_search_box(2,cell,zero,lo,hi)<0)return -1;
+ if(deficit){
+  changed=gfs_power_expand_search_box(2,cell,deficit,lo,hi);if(changed<0)return -1;
+  if(changed){
+   double old=halo;
+   for(int d=0;d<2;d++)halo=fmax(halo,fmax(domain[d]-lo[d],hi[d]-domain[d+2]));
+   if(!(halo>old)||!isfinite(halo))return -1;
+   /* The existing image callbacks supply one translated/reflected layer.
+    * Do not pretend that enlarging empty bins supplies additional layers. */
+   for(int d=0;d<2;d++)if(!(halo<domain[d+2]-domain[d]))return -1;
+   for(int d=0;d<2;d++){lo[d]=domain[d]-halo;hi[d]=domain[d+2]+halo;}
+   if(gfs_power_expand_search_box(2,cell,zero,lo,hi)<0)return -1;
+   gfs_material_search_capacity.halo=halo;
+   fprintf(stderr,"[MATERIAL_SEARCH_EXTEND] old=%.17g new=%.17g bin=%.17g deficit=%.17g,%.17g,%.17g,%.17g bounds=%.17g,%.17g,%.17g,%.17g\n",
+    old,halo,cell,deficit[0],deficit[1],deficit[2],deficit[3],lo[0],lo[1],hi[0],hi[1]);
+  }
+ }
+ *xmin=lo[0];*ymin=lo[1];*xmax=hi[0];*ymax=hi[1];return changed;
+}
+#endif
 
 void mkLinkedList2D_oExam(
 		SimParameters *simpar,
@@ -2066,6 +2225,8 @@ void mkLinkedList2D_oExam(
 }
 
 
+
+#include "gfs_material_noh_padding.inc"
 
 void updateDenW2Pressure2D(
 		SimParameters *simpar, 
@@ -3057,6 +3218,12 @@ void updateDenW2Pressure2DBlend(
 			applyW2Controls(simpar, (treevorork4particletype*)(bp+i), Dtime);
 		}
 	}
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+gfs_material_search_retry: ;
+ if(gfs_material_search_extent(simpar,&xmin,&ymin,&xmax,&ymax,NULL)<0){
+  gpu_geometry_trial_mark_failed();return;
+ }
+#endif
 	int mx, my;
 	BASICCELL_MX(simpar) = mx = ceil((xmax-xmin)/cellsize);
 	BASICCELL_MY(simpar) = my = ceil((ymax-ymin)/cellsize);
@@ -3210,7 +3377,7 @@ void updateDenW2Pressure2DBlend(
 			char *pad_base  = _fused_pad_base;
 			ParticleSoA *h = &gctx->h_parts;
             const int pack_weight_active=gfs_weight_native_active();
-            if(p_size!=sizeof(treevorostressrk4particletype) || (_fused_npad!=0&&!gfs_unified_periodic_mode()) || NID(simpar)!=1){
+            if(p_size!=sizeof(treevorostressrk4particletype) || (_fused_npad!=0&&!gfs_unified_periodic_mode()&&!gfs_native_periodic_weight_mode()) || NID(simpar)!=1){
                 fprintf(stderr,"[WEIGHT_NATIVE] geometry requires explicit696-byte fully owned one-rank state\n");
                 MPI_Abort(MPI_COMM(simpar),99);
             }
@@ -3230,6 +3397,7 @@ void updateDenW2Pressure2DBlend(
                 const treevorostressrk4particletype *wp=(const void*)raw;
                 h->weight_W[ii]=wp->weight.W;
                 h->weight_U64[ii]=wp->weight_thermal.U;
+                h->weight_volume64[ii]=wp->weight_thermal.V;
                 h->weight_inertia[ii]=wp->weight.inertia;
                 h->weight_rate[ii]=pack_weight_active?wp->weight.pi/wp->weight.inertia:0.;
 				h->indx[ii] = (long long)PINDX(bpi);
@@ -3266,6 +3434,11 @@ void updateDenW2Pressure2DBlend(
 		/* Upload particles + cells to GPU */
 		gctx->d_parts.n_total = n_total;
 		gpu_upload_particles(gctx, n_total, use_stress);
+        if(gfs_material_cylinder_mode()){
+            const GfsCylinderMaterialSites*b=gfs_material_cylinder_sites(nbp,n_total,gctx->h_parts.indx);
+            if(!b){fprintf(stderr,"[CYLINDER_MATERIAL] geometry sidecar mismatch\n");MPI_Abort(MPI_COMM(simpar),99);}
+            gpu_upload_power_coordinate_lows(gctx,n_total,b->lowx,b->lowy);
+        }
 		gpu_upload_cells(gctx, mx * my, gctx->h_cells.n_entries);
 		double _tess_t_upload = _tess_profile ? MPI_Wtime() : 0.0;
 
@@ -3282,14 +3455,50 @@ void updateDenW2Pressure2DBlend(
 			int local_failed=gpu_geometry_trial_failed(),any_failed=0;
 			MPI_Allreduce(&local_failed,&any_failed,1,MPI_INT,MPI_MAX,MPI_COMM(simpar));
 			if (any_failed) {
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+                double deficit[4];
+                int retry_search=NID(simpar)==1&&gpu_geometry_search_shortfall(deficit);
+#endif
 				gpu_geometry_trial_mark_failed();
 				my_free(VORO_BASICCELL(simpar)); VORO_BASICCELL(simpar)=NULL;
 				my_free(VORORK4_TBPP(simpar)); VORORK4_TBPP(simpar)=NULL;
 				VORO_NPAD(simpar)=0;
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+                if(retry_search&&gfs_material_search_extent(simpar,&xmin,&ymin,&xmax,&ymax,deficit)>0){
+                    gctx->tess_faces_on_device=0;
+                    gpu_geometry_trial_begin();goto gfs_material_search_retry;
+                }
+#endif
 				return;
 			}
 		}
 
+		/* Complete near-side images are already supplied. Certify both solid
+		 * exclusion and inactivity of the r=2R cutoff before publishing V.
+		 * All SSP stages, endpoints and restart/ownership refreshes use this. */
+		if(gfs_material_cylinder_mode()){
+			int*status=malloc((size_t)nbp*sizeof(int)),failed=-1,reason=-1;
+			double maximum_weight=-DBL_MAX;
+			for(int ii=0;ii<nbp;ii++){
+				double wi=gctx->h_parts.weight_W[ii];
+				if(!isfinite(wi)){failed=ii;reason=4;break;}
+				maximum_weight=fmax(maximum_weight,wi);
+			}
+			if(failed<0){
+				if(!status||!gpu_material_cylinder_support_certificate(gctx,nbp,
+				   CYL_CX(simpar),CYL_CY(simpar),CYL_R(simpar),maximum_weight,status))failed=0;
+				else for(int ii=0;ii<nbp;ii++)if(status[ii]){failed=ii;reason=status[ii];break;}
+			}
+			free(status);
+			if(failed>=0){
+				fprintf(stderr,"[CYLINDER_SUPPORT] failed index=%d id=%lld reason=%d (1=tangent,2=center-cutoff,4=invalid)\n",
+				 failed,(long long)gctx->h_parts.indx[failed],reason);
+				gpu_geometry_trial_mark_failed();
+				my_free(VORO_BASICCELL(simpar));VORO_BASICCELL(simpar)=NULL;
+				my_free(VORORK4_TBPP(simpar));VORORK4_TBPP(simpar)=NULL;VORO_NPAD(simpar)=0;
+				gctx->tess_faces_on_device=0;return;
+			}
+		}
 		/* Download results back to host */
 		gpu_download_tess_results(gctx, nbp, use_stress);
 		double _tess_t_download = _tess_profile ? MPI_Wtime() : 0.0;
@@ -6414,8 +6623,8 @@ static double getAccVoro2DBlend_impl(SimParameters *simpar, postype xmin, postyp
 							ua.x = ibp_vx + uradix_ui.x;
 							ua.y = ibp_vy + uradix_ui.y;
 						}
-						dte += -pi_total * Vec2DDotP(&ua, &dS)
-						     + tau_dot_dS_x * ua.x + tau_dot_dS_y * ua.y;
+						dte += gfs_face_work2d(pi_total, dS.x, dS.y,
+                            tau_dot_dS_x, tau_dot_dS_y, ua.x, ua.y);
 						dvb += Vec2DDotP(&ua, &dS);
 						if(gfs_dynw2_active && riemann_vstar && !jbp_is_ghost){
 							/* realised face speed minus HLL v* (independent check) */
@@ -10252,6 +10461,8 @@ double exam2d_vph_rk4_int(
  *  Default postStage callbacks for periodic boundary models (KH etc.).
  *  Wrap x,y and migrate particles between MPI ranks.
  * ================================================================ */
+/* Preserve in-domain coordinates bitwise; adding/subtracting a box can
+ * invalidate a certified Laguerre bound through coordinate roundoff. */
 void periodic_postStage_kNN(SimParameters *simpar){
 	postype Lx = SIMBOX(simpar).x.max - SIMBOX(simpar).x.min;
 	postype Ly = SIMBOX(simpar).y.max - SIMBOX(simpar).y.min;
@@ -10261,8 +10472,8 @@ void periodic_postStage_kNN(SimParameters *simpar){
 	int i;
 	for(i=0;i<np;i++){
 		treevorork4particletype *bp = (treevorork4particletype*)(raw + i*p_size);
-		bp->x = fmod(bp->x + Lx, Lx);
-		bp->y = fmod(bp->y + Ly, Ly);
+		if(bp->x < 0 || bp->x >= Lx) bp->x = fmod(bp->x + Lx, Lx);
+		if(bp->y < 0 || bp->y >= Ly) bp->y = fmod(bp->y + Ly, Ly);
 	}
 	migrateTreeVorork4Particles(simpar);
 }
@@ -10274,8 +10485,8 @@ void periodic_postStage_blend(SimParameters *simpar){
 	int np = VORO_NP(simpar);
 	int i;
 	for(i=0;i<np;i++){
-		sbp[i].x = fmod(sbp[i].x + Lx, Lx);
-		sbp[i].y = fmod(sbp[i].y + Ly, Ly);
+		if(sbp[i].x < 0 || sbp[i].x >= Lx) sbp[i].x = fmod(sbp[i].x + Lx, Lx);
+		if(sbp[i].y < 0 || sbp[i].y >= Ly) sbp[i].y = fmod(sbp[i].y + Ly, Ly);
 	}
 	migrateTreeVorork4Particles(simpar);
 }
@@ -10550,11 +10761,33 @@ static void vaud_close(SimParameters *simpar, treevorostressrk4particletype *sbp
  * ceiling. Defaults do not alter the operator or add MPI collectives. */
 static int gfs_rk4_context_step = 0;
 static double gfs_rk4_context_time = 0, gfs_rk4_step_ceiling = 0;
+/* Separate from the immutable step-start context: physical exterior states
+ * and time-dependent sources need the actual state evaluation time. */
+static double gfs_material_evaluation_time = NAN;
+static int gfs_material_evaluation_phase = 0;
+int gfs_material_native_evaluation_time(double *time,int *phase){
+ if(!gfs_material_evaluation_phase)return 0;
+ if(time)*time=gfs_material_evaluation_time;
+ if(phase)*phase=gfs_material_evaluation_phase;
+ return 1;
+}
+static void gfs_material_evaluation_clear(void){
+ gfs_material_evaluation_phase=0;gfs_material_evaluation_time=NAN;
+}
+static int gfs_material_evaluation_set(double start,double h,int phase){
+ double time;gfs_material_evaluation_clear();
+ if(phase<1||phase>3||!gfs_material_ssprk2_rhs_time(start,h,phase==1?1:2,&time))return 0;
+ gfs_material_evaluation_time=time;gfs_material_evaluation_phase=phase;
+ if(getenv("GFS_MATERIAL_STAGE_TIME_AUDIT"))
+  fprintf(stderr,"[MATERIAL_STAGE_TIME] start=%.17g trial_dt=%.17g phase=%d time=%.17g\n",start,h,phase,time);
+ return 1;
+}
 static treevorostressrk4particletype *gfs_rk4_saved_start = NULL;
 static int gfs_rk4_saved_count = 0;
 static float gfs_rk4_saved_dtold = 0;
 static SimParameters *gfs_rk4_saved_simpar = NULL;
 void gfs_rk4_set_step_context(int step, double time, double ceiling){
+	gfs_material_evaluation_clear();
 	gfs_rk4_context_step = step;
 	gfs_rk4_context_time = time;
 	gfs_rk4_step_ceiling = ceiling;
@@ -10591,6 +10824,16 @@ static void gfs_rk4_failure_snapshot(SimParameters *simpar,
         fprintf(stderr,"[WEIGHT_SNAPSHOT] %s\n",weight_error);MPI_Abort(MPI_COMM(simpar),99);
     }
     if(fclose(f))MPI_Abort(MPI_COMM(simpar),99);
+    if(gfs_material_cylinder_mode()&&!strcmp(label,"material_ssp_stop")){
+        /* SSP exhausted retries only after restoring the entire accepted
+         * input. RunCylinder changes stream ownership after success, so
+         * these companions belong to the same restored accepted instant.
+         * Other RK4/stage diagnostics must never acquire this certificate. */
+        if(np!=VORO_NP(simpar)||memcmp(data,VORORK4_TBP(simpar),(size_t)np*sizeof(*data)))
+            MPI_Abort(MPI_COMM(simpar),99);
+        gfs_material_cylinder_checkpoint_boundary(simpar,path,(double)t);
+        fprintf(stderr,"[CYLINDER_FAILURE_CHECKPOINT] %s accepted restored input with stream/exterior companions t=%.17g; rejected trial not saved\n",path,(double)t);
+    }
     fprintf(stderr,"[RK4_FAILURE_SNAPSHOT] %s np=%d t_start=%.17g; diagnostic state, not accepted restart\n",path,np,gfs_rk4_context_time);
     return;
 
@@ -10831,9 +11074,19 @@ double exam2d_vph_rk4_int_blend(
         u64_audit_every=(int)requested;
     }
     int weight_k1=native_weight_rhs && !strcmp(native_weight_rhs,"1") && only_weight && !strcmp(only_weight,"1");
+    /* Qualification only: periodic K1 may be inspected, never advanced by
+     * this gate. Keep production/bounded RK4's wall contract unchanged. */
+    const char *periodic_rhs_env=getenv("GFS_WEIGHT_PERIODIC_RHS_ONLY");
+    int periodic_weight_k1=periodic_rhs_env && !strcmp(periodic_rhs_env,"1") &&
+        weight_k1 && postStage==periodic_postStage_blend &&
+        (!weight_wall || !strcmp(weight_wall,"0"));
+    if(periodic_rhs_env && strcmp(periodic_rhs_env,"0") && !periodic_weight_k1){
+        fprintf(stderr,"[WEIGHT_PERIODIC_RHS] requires periodic K1-only, no wall events\n");
+        MPI_Abort(MPI_COMM(simpar),99);
+    }
     if((!weight_k1 && !weight_rk4) ||
        weight_incompatible ||
-       NID(simpar)!=1 || postStage!=fixed_polygon_postStage_blend || GAS_Kappa(simpar)!=0 ||
+       NID(simpar)!=1 || (!periodic_weight_k1 && postStage!=fixed_polygon_postStage_blend) || GAS_Kappa(simpar)!=0 ||
        GAS_AVMODE(simpar)!=5 || GAS_FCENTROID(simpar)!=0 || GAS_XSPHEPS(simpar)!=0 ||
        !GAS_GPU_ENABLED(simpar)){
         fprintf(stderr,"[WEIGHT_NATIVE] require explicit K1 or bounded RK4 qualification; no production weight evolution\n");MPI_Abort(MPI_COMM(simpar),99);
@@ -11191,7 +11444,7 @@ gfs_rk4_trial_restart:
      * arrays and stop before any position predictor or accepted evolution. */
     const char *wall_rhs_probe=getenv("GFS_WALL_RHS_PROBE_ONLY");
     if(wall_rhs_probe && strcmp(wall_rhs_probe,"1")==0){
-        if(NID(simpar)!=1 || postStage!=fixed_polygon_postStage_blend ||
+        if(NID(simpar)!=1 || (!periodic_weight_k1 && postStage!=fixed_polygon_postStage_blend) ||
            GAS_AVMODE(simpar)!=5 || GAS_Kappa(simpar)!=0 ||
            !GAS_GPU_ENABLED(simpar) || !gpu_varpress_w0_enabled() ||
            tx.on || thermal64 || w2lin || dynw2){
@@ -12047,6 +12300,23 @@ static int gfs_native_u64_w0_kdk_mode(void){
 
 #ifdef USE_CUDA
 #include "gfs_unified_kdk.inc"
+#include "gfs_native_weight_kdk.inc"
+#include "gfs_material_ssprk2_native.inc"
+/* Geometry refresh after accepted ownership changes, with the same stage
+ * samples and high/low image coordinates as the native material RHS. */
+int gfs_material_cylinder_refresh(SimParameters*s,double t){
+ double xmin,ymin,xmax,ymax;const char*e=getenv("GFS_MATERIAL_DT");double cap=e?strtod(e,NULL):0;
+ if(!gfs_material_cylinder_mode()||!(cap>0)||!gfs_material_cylinder_search(s,t+cap,&xmin,&ymin,&xmax,&ymax)||
+    !gfs_material_evaluation_set(t,cap,1))return 0;
+ gpu_geometry_trial_begin();
+ updateDenW2Pressure2DBlend(s,xmin,ymin,xmax,ymax,GAS_GAMMA(s),gfs_material_cylinder_padding,
+   searchCellRk4Neighbors2D,findCellRk4BP2D,mkLinkedList2D_oExam,1);
+ int ok=!gpu_geometry_trial_failed();gpu_geometry_trial_end();gfs_material_evaluation_clear();
+ if(VORORK4_TBPP(s)){my_free(VORORK4_TBPP(s));VORORK4_TBPP(s)=NULL;VORO_NPAD(s)=0;}
+ gpu_get_context()->tess_faces_on_device=0;
+ return ok;
+}
+
 #endif
 
 double exam2d_vph_kdk_int_blend(
@@ -12061,6 +12331,13 @@ double exam2d_vph_kdk_int_blend(
 		void (*postStage)(SimParameters *)
 		){
 #ifdef USE_CUDA
+    const char *material_env=getenv("GFS_MATERIAL_EVOLVE");
+    if(material_env&&!strcmp(material_env,"1"))
+        return gfs_material_ssprk2_native(simpar,paddingAllTreeParticles,find2DNeighborBP,
+                                     find2DCellBP,mkLinkedList2D,postStage);
+    if(gfs_native_periodic_weight_kdk_mode())
+        return gfs_native_weight_kdk(simpar,paddingAllTreeParticles,find2DNeighborBP,
+                                     find2DCellBP,mkLinkedList2D,postStage);
     const char *unified_env=getenv("GFS_UNIFIED_HYDRO");
     if(unified_env&&!strcmp(unified_env,"1"))
         return gfs_unified_kdk(simpar,paddingAllTreeParticles,find2DNeighborBP,
@@ -12448,9 +12725,10 @@ double exam2d_vph_kdk_int_blend(
 		for(i=0;i<VORO_NP(simpar);i++){
 			if(!targetBP((treevorork4particletype*)(sbp+i),Lx,Ly))continue;
 			double Unew=0.0;
-			if(!gfs_kdk_adiabatic_volume_update(sbp[i].weight_thermal.U,
+			if(!gfs_variational_adiabatic(sbp[i].weight_thermal.U,
 					kdk_volume_start[i],sbp[i].weight_thermal.V,
-					(double)Gamma,&Unew)){adiabat_bad=1;continue;}
+					(double)Gamma,&Unew) || !isfinite((float)Unew) ||
+					!((float)Unew>0.0f)){adiabat_bad=1;continue;}
 			sbp[i].weight_thermal.U=Unew;
 			sbp[i].ie=(float)Unew;
 		}

@@ -11,6 +11,9 @@
 #include "exam.h"
 #include "exam2d.h"
 #include "rt.h"
+#ifdef GFS_WEIGHT_DYNAMICS
+#include "../gfs_native_checkpoint_io.h"
+#endif
 //#include "DD2d.h"
 
 #define Nneigh 50
@@ -19,6 +22,10 @@ static Voro2D_point neigh[Nneigh];
 extern int  malloc_calls;
 
 void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
+#ifdef GFS_WEIGHT_DYNAMICS
+ const char *material=getenv("GFS_MATERIAL_EVOLVE");
+ if(material&&!strcmp(material,"1")){gfs_native_checkpoint_outdata(simpar,nstep,t,dt,"rtout");return;}
+#endif
 	int np = VORO_NP(simpar);
 	int myid, nid;
 	myid = MYID(simpar);
@@ -73,6 +80,10 @@ void rt_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 
 
 void rt_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
+#ifdef GFS_WEIGHT_DYNAMICS
+ const char *material=getenv("GFS_MATERIAL_EVOLVE");
+ if(material&&!strcmp(material,"1")){gfs_native_checkpoint_readdata(simpar,t,dt,nstep,"rtout");return;}
+#endif
 	float dtold;
 	char infile[190];
 	sprintf(infile,"rtout.%.6d.dat", nstep);
@@ -139,11 +150,15 @@ static postype rt_tmax(void){
 }
 
 int RunRT(SimParameters *simpar, int icont){
+ const char *material_env=getenv("GFS_MATERIAL_EVOLVE");
+ const char *native_env=getenv("GFS_MATERIAL_RT_NATIVE");
+ int material_native=material_env&&!strcmp(material_env,"1")&&native_env&&!strcmp(native_env,"1");
 	postype t;
 	postype dt;
 	int np;
 	treevorork4particletype *bp;
-	int icount = 0;;
+	int icount = 0;
+ int material_last_saved_step=-1;
 	int iflag,jflag;
 	int av_mode = GAS_AVMODE(simpar);
 
@@ -213,7 +228,29 @@ int RunRT(SimParameters *simpar, int icont){
 		GAS_w2Power(simpar) = (GAS_GAMMA(simpar)-1)/GAS_GAMMA(simpar);
 	}
 
+#ifdef GFS_WEIGHT_DYNAMICS
+ const char *roundtrip=getenv("GFS_MATERIAL_RT_CHECKPOINT_ROUNDTRIP");
+ if(roundtrip&&!strcmp(roundtrip,"1")){
+  const char *material=getenv("GFS_MATERIAL_EVOLVE");
+  if(icont<=0||!material||strcmp(material,"1"))MPI_Abort(MPI_COMM(simpar),99);
+  rt_outdata(simpar,icont+1,t,dt);
+  fprintf(stderr,"[MATERIAL_RT_CHECKPOINT_ROUNDTRIP] time=%.17g no evolution\n",(double)t);
+  return 0;
+ }
+#endif
+
+ if(material_native){
+  GAS_dMean(simpar)=(Xmax_HydroExam(simpar)-Xmin_HydroExam(simpar))/NX(simpar);
+  fprintf(stderr,"[MATERIAL_RT_SETTINGS] time=%.17g gamma=%.17g gravity=(%.17g,%.17g) domain=(%.17g,%.17g,%.17g,%.17g) cells=%td\n",(double)t,(double)GAS_GAMMA(simpar),(double)GAS_ACCX(simpar),(double)GAS_ACCY(simpar),(double)Xmin_HydroExam(simpar),(double)Xmax_HydroExam(simpar),(double)Ymin_HydroExam(simpar),(double)Ymax_HydroExam(simpar),(ptrdiff_t)VORO_NP(simpar));
+ }
+ if(material_native&&(icont<=0||GAS_EVOLMETHOD(simpar)!=3||!(rt_tmax()>t)||rt_tmax()-t>.4)){
+  fprintf(stderr,"[MATERIAL_RT] requires restart, SSP dispatch and positive window<=.4\n");MPI_Abort(MPI_COMM(simpar),99);
+ }
 	do {
+  if(material_native){
+   double remaining=(double)rt_tmax()-(double)t;if(!(remaining>0))break;
+   gfs_rk4_set_step_context(icount,(double)t,remaining);
+  }
 
 		if(av_mode >= 1 && GAS_EVOLMETHOD(simpar) == 1)
 			dt = exam2d_vph_rk4_int_blend(simpar,
@@ -256,6 +293,7 @@ int RunRT(SimParameters *simpar, int icont){
 		if(iflag != jflag || icount == 21045)
 		{
 			rt_outdata(simpar,  icount, t, dt);
+   if(material_native)material_last_saved_step=icount;
 			MPI_Barrier(MPI_COMM_WORLD);
 			if(MYID(simpar) ==0) {DEBUGPRINT0("passing saving data\n");fflush(stdout);}
 			rt_makemap(simpar, icount);
@@ -266,5 +304,6 @@ int RunRT(SimParameters *simpar, int icont){
 					t,icount, dt, get_malloc_call_count()); fflush(stdout);
         }
 	} while(t<rt_tmax());
+ if(material_native&&material_last_saved_step!=icount)rt_outdata(simpar,icount,t,dt);
 	return 1;
 }

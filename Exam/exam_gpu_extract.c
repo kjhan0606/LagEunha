@@ -21,6 +21,9 @@
 #endif
 #include "exam_gpu.h"
 #include "gfs_pair.h"
+#include "gfs_face_work.h"
+#include "gfs_material_csr2d.h"
+#include "gfs_material_csr_native.inc"
 #include "../eunha.h"
 #include "gfs_thermal64.h"
 #include "../RkS/mpirks.h"
@@ -1662,8 +1665,8 @@ static void cpu_reference_force_csr(
                     uax = ibp_vx + uradx;
                     uay = ibp_vy + urady;
                 }
-                die += -pi_total * (uax * dSx + uay * dSy)
-                     + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
+                die += gfs_face_work2d(pi_total, dSx, dSy,
+                    tau_dot_dS_x, tau_dot_dS_y, uax, uay);
             } else {
             die += -pi_total * (uradx * dSx + urady * dSy);
             die += tau_dot_dS_x * uradx + tau_dot_dS_y * urady;

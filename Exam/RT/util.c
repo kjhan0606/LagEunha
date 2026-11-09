@@ -182,12 +182,15 @@ postype rt_pressure(SimParameters *simpar,
 }
 
 /* for hydrostatic equilibrium, the pressure at y is obtained by integral of g(y)*rho(y) */
-postype  getRTpressure(SimParameters *simpar, postype rho1, postype rho2, postype ycen, postype y){
-	postype deltay = RT_Deltay(simpar);
-//	postype pressure = RT_Phalf(simpar) + GAS_ACCY(simpar)*getRT_Den(rho1,rho2, deltay, ycen, y)*(y-ycen);
-	postype Const = RT_Phalf(simpar)-GAS_ACCY(simpar)*(rho2/2+(rho2-rho1)*deltay*log(2.));
-	postype pressure = GAS_ACCY(simpar)*(rho2*y+(rho2-rho1)*deltay*log(1+exp(-(y-ycen)/deltay))) + Const;
-	return pressure;
+postype getRTpressure(SimParameters *simpar, postype rho1, postype rho2, postype ycen, postype y){
+    const postype width = RT_Deltay(simpar), dy = y-ycen;
+    if (!(width > 0)) return NAN;
+    /* Exact integral of getRT_Den, anchored at ycen. The softplus form
+     * avoids overflow in thin transition layers and supports any ycen. */
+    const postype z = dy/width;
+    const postype softplus = (z > 0 ? z : 0) + log1pl(expl(-fabsl(z)));
+    const postype integral = rho1*dy + (rho2-rho1)*width*(softplus-logl(2.L));
+    return RT_Phalf(simpar) + GAS_ACCY(simpar)*integral;
 }
 treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	int i,j,k;
@@ -224,30 +227,7 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 	else
 		res = (treevorork4particletype*)my_malloc(sizeof(treevorork4particletype)*nx*ny);
 	postype meanvol = Lx*Ly/(postype)nx/(postype)ny;
-	postype Pressure[ny+1];
-	memset(Pressure, 0, sizeof(postype)*(ny+1));
-	postype dy = Ly/ny;
-	for(j=ny/2;j<=ny;j++){
-		postype y = (postype)(j+0.5)*Ly/ny;
-		postype rho = getRT_Den(rho1, rho2, deltay, ycen, y);
-		postype dr = dy;
-		if(j==ny/2) {
-			Pressure[j] = RT_Phalf(simpar);
-		}
-		else {
-			Pressure[j] = Pressure[j-1] + GAS_ACCY(simpar)* rho * dr;
-		}
-	}
-//	GAS_invw2Scale(simpar) = 1.L/(RT_Phalf(simpar)/getRT_Den(rho1,rho2,deltay,ycen,ycen));
-	GAS_invw2Scale(simpar) = 1.L / RT_Phalf(simpar);
-	GAS_w2Power(simpar) = (Gamma-1)/Gamma;
-	for(j=ny/2-1;j>=0;j--){
-		postype y = (postype)(j+0.5)*Ly/ny;
-        postype rho = getRT_Den(rho1, rho2, deltay, ycen, y);
-        postype dr = -dy;
-        Pressure[j] = Pressure[j+1] + GAS_ACCY(simpar)* rho * dr;
 
-	}
 	size_t np = 0;
 	for(j=0;j<ny;j++){
 		postype rho;
@@ -286,7 +266,7 @@ treevorork4particletype *rt_mkinitial(SimParameters *simpar, int *mp){
 
 				res[np].mass  = rho*meanvol;
 				res[np].den  = rho;
-				res[np].pressure  = 0.5*(Pressure[j] +Pressure[j+1]);
+				res[np].pressure  = getRTpressure(simpar, rho1, rho2, ycen, y);
 				res[np].ie  = res[np].pressure *meanvol/(Gamma-1);
 				/*
 				res[np].ke  = 0.5*(res[np].vx*res[np].vx + res[np].vy*res[np].vy);

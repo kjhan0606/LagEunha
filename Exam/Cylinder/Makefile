@@ -21,6 +21,9 @@ INCLUDES = -I. -I../ -I../../  -I$(VORO) -I$(FFTW)/include -I$(OST)\
 default:
 	$(MAKE) $(CYLLIB)
 
+util.o: util.c cylinder.h ../gfs_material_radial_image.h
+cylinder.o: cylinder.c cylinder.h material_boundary.inc material_boundary.h ../gfs_material_open_stream.h
+
 $(CYLLIB): $(CYLOBJ)
 	ar -rcv $@ $?
 	ranlib $@

@@ -3,6 +3,8 @@
 #include "voro.h"
 #undef VORO_MAIN
 #include <float.h>
+#include <limits.h>
+#include <stdint.h>
 /* Only the explicit strict 3D entry selects roundoff-based half spaces and
  * exact endpoint intersections. Thread-local state preserves OpenMP calls
  * and leaves the historical 2D/3D entry points unchanged. */
@@ -14,6 +16,44 @@ static _Thread_local Voro3D_StrictStats voro3d_strict_stats,voro3d_last_strict_s
 static _Thread_local int voro_true_power,voro_power_capacity,voro2d_power_failure;
 static postype voro_fraction(postype wi,postype wj,postype d2){
 	return voro_true_power ? .5+.5*(wi-wj)/d2 : getwfrac(wi,wj,d2);
+}
+static int voro3d_vertex_index_checked(const Voro3D_Vertex *,int,const Voro3D_Vertex *);
+static int voro3d_vertex_index_checked(const Voro3D_Vertex *base,int mp,
+        const Voro3D_Vertex *p){
+    if(!base||!p||mp<=0)return -1;
+    uintptr_t b=(uintptr_t)(const void*)base;
+    uintptr_t x=(uintptr_t)(const void*)p;
+    if(x<b)return -1;
+    uintptr_t offset=x-b;
+    if(offset%sizeof(*base))return -1;
+    uintptr_t index=offset/sizeof(*base);
+    return index<(uintptr_t)mp?(int)index:-1;
+}
+static int voro3d_validate_active_links(Voro3D_Vertex *v,int mp){
+    for(int i=0;i<mp;i++)if(v[i].status==Active)for(int k=0;k<3;k++){
+        int j=voro3d_vertex_index_checked(v,mp,v[i].link[k]);
+        int ok=j>=0&&v[j].status==Active;
+        if(ok)for(int a=0;a<3;a++)if(a!=k){
+            int shared=0;
+            for(int b=0;b<3;b++)if(v[j].related[b]==v[i].related[a])shared=1;
+            if(!shared)ok=0;
+        }
+        if(!ok){
+            int j0=voro3d_vertex_index_checked(v,mp,v[i].link[k]);
+            int p0=v[i].related[(k+1)%3],p1=v[i].related[(k+2)%3],edge_count=0,edge_candidate=-1;
+            for(int c=0;c<mp;c++)if(c!=i&&v[c].status==Active){
+                int has0=0,has1=0;
+                for(int b=0;b<3;b++){if(v[c].related[b]==p0)has0=1;if(v[c].related[b]==p1)has1=1;}
+                if(has0&&has1){edge_count++;edge_candidate=c;}
+            }
+            fprintf(stderr,"[VORO_TOPOLOGY] invalid active link mp=%d vertex=%d slot=%d target=%d status=%d rel=(%d,%d,%d) target_rel=(%d,%d,%d) edge_planes=(%d,%d) active_edge_candidates=%d candidate=%d\n",
+                mp,i,k,j0,j0>=0?v[j0].status:-1,v[i].related[0],v[i].related[1],v[i].related[2],
+                j0>=0?v[j0].related[0]:-1,j0>=0?v[j0].related[1]:-1,j0>=0?v[j0].related[2]:-1,
+                p0,p1,edge_count,edge_candidate);
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void voro3D_EulerRot(Voro3D_point *rin, int np, postype theta, postype phi, postype psi){
@@ -123,6 +163,9 @@ int Voro3D_Trim_Vertex(
 	int newmp=0;
 	int i;
 	postype mdist2=-1.e20, dist2;
+    if(voro3d_strict_geometry&&!voro3d_validate_active_links(voroVertex,mp)){
+        voro3d_strict_failure=1;return -1;
+    }
 	for(i=0;i<mp;i++){
 		if(voroVertex[i].status == Active){
 			dist2 = Vec3DInnP(voroVertex+i, voroVertex+i);
@@ -143,6 +186,9 @@ int Voro3D_Trim_Vertex(
 		}
 	}
 	*maxdist2 = mdist2;
+    if(voro3d_strict_geometry&&!voro3d_validate_active_links(voroVertex,newmp)){
+        voro3d_strict_failure=1;return -1;
+    }
 	return newmp;
 }
 
@@ -509,11 +555,20 @@ int Voro3D_CreateOneVertex(
     voroVertex[ip].status = Active;
 	for(k=0;k<3;k++) voroVertex[ip].facecount[k] = 0;
     /* This is to update the disconnected inner vertex to link to the new vertex. */
-    for(k=0;k<3;k++) if(target->link[k] == now) { 
+    int backlinks=0;
+    for(k=0;k<3;k++) if(target->link[k] == now) {
+        backlinks++;
 		target->link[k] = voroVertex+ip;
 		voroVertex[ip].related[2] = target->related[(k+1)%3];
 		voroVertex[ip].related[1] = target->related[(k-1+3)%3];
 	}
+    if(voro3d_strict_geometry&&backlinks!=1){
+        int ni=voro3d_vertex_index_checked(voroVertex,voro_power_capacity,now);
+        int ti=voro3d_vertex_index_checked(voroVertex,voro_power_capacity,target);
+        fprintf(stderr,"[VORO_TOPOLOGY] new-vertex backlink count=%d ip=%d pp=%d now=%d target=%d target_rel=(%d,%d,%d)\n",
+            backlinks,ip,pp,ni,ti,target->related[0],target->related[1],target->related[2]);
+        voro3d_strict_failure=1;return -1;
+    }
 	ip ++;
 	return ip;
 }
@@ -1500,6 +1555,7 @@ int Voro3D_FindVC(
 				ip = CreateNewVertices(neighbors,i,&start,voroVertex, ip, wfrac);
 				if(voro3d_strict_geometry&&(ip<0||voro3d_strict_failure))return -1;
 				ip = Voro3D_Trim_Vertex(voroVertex,ip, &maxdist2, intwork);
+                if(ip<0||(voro3d_strict_geometry&&voro3d_strict_failure))return -1;
 				j = ip;
 				break;
 			}
@@ -1543,33 +1599,49 @@ int Voro3D_FindVCPowerStrict(Voro3D_point *center,Voro3D_point *input,
 	voro_true_power=previous;voro_power_capacity=previous_capacity;return result;
 }
 
-int Voro3D_FaceExtract(Voro3D_Vertex *Vertex, int mp,int fid, Voro3D_point *outcorner){
-	int i,j,k;
-	int np = 0;
-	for(i=0;i<mp;i++){
-		for(j=0;j<3;j++){
-			if(Vertex[i].related[j] == fid){
-				Voro3D_Vertex *onow = Vertex+i;
-				Voro3D_Vertex *now = onow;
-				k = (j+1)%3;
-				Voro3D_Vertex *otarget = (Vertex+i)->link[k];
-				Voro3D_Vertex *target = otarget;
-				DumpTo3DPoint(outcorner+np, now); np++;
-				do{
-					for(k=0;k<3;k++){
-						if(target->related[k] == fid){
-							now = target;
-							target = target->link[ (k+1)%3];
-							break;
-						}
-					}
-					DumpTo3DPoint(outcorner+np, now); np++;
-				} while(now != onow || target != otarget);
-				return np;
-			}
-		}
-	}
-	return np;
+/* Bounded polygon walk. The historical routine had neither a capacity nor a
+ * cycle guard; corrupted vertex links could write past the caller buffer.
+ * A valid face returns its cyclic vertices plus the repeated first vertex,
+ * preserving the old return convention. Negative values signal invalid links,
+ * insufficient output capacity, or a non-closing traversal. */
+int Voro3D_FaceExtractBounded(Voro3D_Vertex *Vertex,int mp,int fid,
+        Voro3D_point *outcorner,size_t capacity){
+    if(!Vertex||!outcorner||mp<=0||fid<0||capacity==0)return -1;
+    for(int i=0;i<mp;i++)for(int j=0;j<3;j++){
+        if(Vertex[i].related[j]!=fid)continue;
+        int start=i,k=(j+1)%3;
+        int target=voro3d_vertex_index_checked(Vertex,mp,Vertex[i].link[k]);
+        if(target<0)return -1;
+        const int start_target=target;
+        int current=start;
+        size_t np=0;
+        for(int step=0;step<mp;step++){
+            if(np>=capacity)return -2;
+            DumpTo3DPoint(outcorner+np,Vertex+current);np++;
+            int slot=-1;
+            for(int e=0;e<3;e++)if(Vertex[target].related[e]==fid){slot=e;break;}
+            if(slot<0)return -1;
+            int next_current=target;
+            int next_target=voro3d_vertex_index_checked(Vertex,mp,
+                    Vertex[target].link[(slot+1)%3]);
+            if(next_target<0)return -1;
+            if(next_current==start&&next_target==start_target){
+                if(np>=capacity)return -2;
+                DumpTo3DPoint(outcorner+np,Vertex+start);np++;
+                return np>(size_t)INT_MAX?-3:(int)np;
+            }
+            current=next_current;
+            target=next_target;
+        }
+        return -3;
+    }
+    return 0;
+}
+
+int Voro3D_FaceExtract(Voro3D_Vertex *Vertex,int mp,int fid,
+        Voro3D_point *outcorner){
+    if(mp<=0)return 0;
+    return Voro3D_FaceExtractBounded(Vertex,mp,fid,outcorner,(size_t)mp+1);
 }
 int Voro2D_LineExtract(Voro2D_Corner *corner, int mp,Voro2D_point *outpolygon){
 	int i;

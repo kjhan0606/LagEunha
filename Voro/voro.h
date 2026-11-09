@@ -166,6 +166,7 @@ int InactivateOutsideVertex(Voro3D_point *, Voro3D_Vertex *, int , postype);
 int CreateNewVertices(Voro3D_point *, int , Voro3D_Vertex2 *, Voro3D_Vertex *, int , postype);
 int Voro3D_Trim_Vertex(Voro3D_Vertex *, int, postype * , int *);
 int Voro3D_FaceExtract(Voro3D_Vertex *, int ,int , Voro3D_point *);
+int Voro3D_FaceExtractBounded(Voro3D_Vertex *, int, int, Voro3D_point *, size_t);
 void voro3D_EulerRot(Voro3D_point *, int, postype , postype , postype );
 Voro3D_point voro3D_norm(Voro3D_point *);
 Voro2D_point voro2D_norm(Voro2D_point *);

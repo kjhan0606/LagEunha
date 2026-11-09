@@ -173,3 +173,15 @@ exam_gpu_extract.o: exam_gpu_extract.c exam_gpu.h gfs_thermal64.h gfs_pair.h gfs
 endif
 
 #include ../sRules.make
+
+# Common host/device pressure-work implementation.
+exam.o exam_gpu.o exam_gpu_extract.o: gfs_face_work.h
+
+exam_gpu_extract.o: gfs_material_csr2d.h gfs_material_mesh2d.h gfs_material_csr_native.inc
+
+# Explicit material profile; regular/default and legacy Kepler targets retain
+# their existing settings. Outputs must go to a fresh absolute directory.
+.PHONY: material-native-objects
+material-native-objects:
+	@test -n "$(MATERIAL_BUILD_DIR)" || (echo 'Set MATERIAL_BUILD_DIR to a fresh absolute directory.' >&2; exit 2)
+	CUDA_ARCH=$(or $(CUDA_ARCH),90) bash NativeU64/build_material_objects.sh "$(MATERIAL_BUILD_DIR)"

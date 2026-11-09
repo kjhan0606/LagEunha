@@ -11,6 +11,8 @@
 #include "exam.h"
 #include "exam2d.h"
 #include "kh.h"
+#include "../gfs_native_checkpoint_io.h"
+#include "../gfs_unified_runtime.h"
 #include "../gfs_moment.h"
 #ifdef GFS_WEIGHT_DYNAMICS
 #include "gfs_weight_checkpoint.h"
@@ -21,6 +23,8 @@ int gfs_weight_native_active(void){return kh_weight_read_ready && !(kh_weight_fe
 //#include "DD2d.h"
 
 extern void gfs_native_u64_roundoff_footer(void);
+void kh_outdata(SimParameters *,int,postype,postype);
+void kh_readdata(SimParameters *,postype *,postype *,int);
 #define Nneigh 50
 static Voro2D_point neigh[Nneigh];
 
@@ -30,7 +34,7 @@ static Voro2D_point neigh[Nneigh];
  * snapshots start with tnp >= 0 in the first int, so detection is safe. */
 #define KH_SNAP_MAGIC (-1)
 
-void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
+void gfs_native_checkpoint_outdata(SimParameters *simpar, int nstep, postype t, postype dt, const char *prefix){
 	int np = VORO_NP(simpar);
 	int myid, nid;
 	myid = MYID(simpar);
@@ -52,7 +56,7 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 	char *bp_raw = (char*)VORORK4_TBP(simpar);
 
 	char outfile[190];
-	sprintf(outfile,"khout.%.6d.dat",nstep);
+	snprintf(outfile,sizeof(outfile),"%s.%.6d.dat",prefix,nstep);
 	int i;
 	FILE *wp;
 	int tnp = VORO_TNP(simpar);
@@ -94,8 +98,9 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 		fwrite(&GAS_dtold(simpar), sizeof(float), 1, wp);
 		fwrite(&nx, sizeof(int), 1, wp);
 		fwrite(&ny, sizeof(int), 1, wp);
-		fwrite(&(SIMBOX(simpar).x.max), sizeof(postype), 1, wp);
-		fwrite(&(SIMBOX(simpar).y.max), sizeof(postype), 1, wp);
+		postype domain_x=Xmax_HydroExam(simpar),domain_y=Ymax_HydroExam(simpar);
+		fwrite(&domain_x, sizeof(postype), 1, wp);
+		fwrite(&domain_y, sizeof(postype), 1, wp);
 		fwrite(&GAS_AlphaVis(simpar), sizeof(float), 1, wp);
 		fwrite(&GAS_BetaVis(simpar), sizeof(float), 1, wp);
 		fclose(wp);
@@ -115,9 +120,9 @@ void kh_outdata(SimParameters *simpar, int nstep, postype t, postype dt){
 }
 
 
-void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
+void gfs_native_checkpoint_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep, const char *prefix){
 	char infile[190];
-	sprintf(infile,"khout.%.6d.dat", nstep);
+	snprintf(infile,sizeof(infile),"%s.%.6d.dat",prefix,nstep);
 	int myid = MYID(simpar);
 	int av_mode = GAS_AVMODE(simpar);
 #ifdef USE_CUDA
@@ -145,6 +150,9 @@ void kh_readdata(SimParameters *simpar, postype *t, postype *dt, int nstep){
         VORORK4_TBP(simpar)=(void*)weighted;
         kh_weight_features=header.features;kh_weight_read_ready=1;
         memcpy(t,footer,8);memcpy(dt,footer+8,8);memcpy(&GAS_dtold(simpar),footer+16,4);
+        /* Restore the validated hydro-domain footer, not an aliased cosmology box. */
+        double saved_xmax,saved_ymax;memcpy(&saved_xmax,footer+28,8);memcpy(&saved_ymax,footer+36,8);
+        Xmax_HydroExam(simpar)=saved_xmax;Ymax_HydroExam(simpar)=saved_ymax;
         fclose(fp);
 #else
         /* Detect known formats. Unknown negative magic is never a count. */
@@ -295,8 +303,12 @@ int RunKH(SimParameters *simpar, int icont){
     const char *kdk_mode=getenv("GFS_NATIVE_U64_W0_KDK");
     int native_rk4=((rk4_mode && !strcmp(rk4_mode,"1")) || native_w0) &&
         !native_rhs && GAS_EVOLMETHOD(simpar)==1;
-    int native_kdk=native_w0 && kdk_mode && !strcmp(kdk_mode,"1") &&
+    int weighted_kdk=gfs_native_periodic_weight_kdk_mode();
+    int native_kdk=((native_w0 && kdk_mode && !strcmp(kdk_mode,"1")) || weighted_kdk) &&
         !native_rhs && GAS_EVOLMETHOD(simpar)==3;
+    if(weighted_kdk && (native_w0 || native_rhs || (reader_only && !strcmp(reader_only,"1")))){
+        fprintf(stderr,"[WEIGHT_KDK] incompatible reader/W0/probe mode\n");MPI_Abort(MPI_COMM(simpar),99);
+    }
     if(((!reader_only || strcmp(reader_only,"1")) && !native_rhs && !native_rk4 && !native_kdk) || icont<=0){
         fprintf(stderr,"[WEIGHT_STATE] explicit reader, K1, native RK4, or gated native-U64 KDK mode required\n");
         MPI_Abort(MPI_COMM(simpar),99);
@@ -387,10 +399,14 @@ int RunKH(SimParameters *simpar, int icont){
     if(native_kdk){
         double max_window=.02;
         const char *window_env=getenv("GFS_KDK_MAX_WINDOW");
+        /* Explicit continuation window after short-run qualification.
+         * This is a run-duration guard, not a timestep/CFL override.
+         * Keep the default .02 and cap this experimental path at 2. */
         if(window_env && window_env[0]){
             char *end=NULL;
             double requested=strtod(window_env,&end);
-            if(!end || *end || !(requested>0) || !isfinite(requested)){
+            if(!end || *end || !(requested>0) || !isfinite(requested) ||
+               (weighted_kdk && requested>2)){
                 fprintf(stderr,"[WEIGHT_KDK_VALIDATE] invalid GFS_KDK_MAX_WINDOW=%s\n",window_env);
                 MPI_Abort(MPI_COMM(simpar),99);
             }
@@ -566,3 +582,6 @@ int RunKH(SimParameters *simpar, int icont){
     if(native_rk4)gfs_native_u64_roundoff_footer();
 	return 1;
 }
+
+void kh_outdata(SimParameters *s,int n,postype t,postype dt){gfs_native_checkpoint_outdata(s,n,t,dt,"khout");}
+void kh_readdata(SimParameters *s,postype *t,postype *dt,int n){gfs_native_checkpoint_readdata(s,t,dt,n,"khout");}

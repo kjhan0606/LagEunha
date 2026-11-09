@@ -1,0 +1,21 @@
+{
+  "job_id": 457379,
+  "observed_epoch": 1794211032.624006,
+  "partition": "h100",
+  "requested_gpus": 1,
+  "reason": "QOSGrpGRES",
+  "partition_qos": "part_h100",
+  "partition_gpu_limit": 8,
+  "physical_gpus": 10,
+  "allocated_gpus": 8,
+  "node_allocated_gpus": {
+    "syn08": 3,
+    "syn09": 5
+  },
+  "user_qos": "normal",
+  "user_gpu_limit": 8,
+  "user_current_allocated_gpus": 1,
+  "earliest_running_h100_scheduled_end": "2026-11-09T18:48:31+09:00",
+  "start_time_guaranteed": false,
+  "diagnosis": "Partition aggregate GPU quota saturated; two unallocated physical H100s do not bypass part_h100 GrpTRES=gres/gpu=8. CPU/memory requests fit syn08. Not caused by this user requesting too many GPUs."
+}

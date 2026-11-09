@@ -20,10 +20,22 @@
 #include <omp.h>
 #endif
 #include "exam_gpu.h"
+#include "gfs_material_volume_audit_native.inc"
+#include "gfs_material_trace_probe.inc"
 #include "../gfs_unified_runtime.h"
 #include "gfs_pair.h"
+#include "../gfs_face_work.h"
+#include "../gfs_material_csr2d.h"
+#include "../gfs_material_csr_native.inc"
 #include "eunha.h"
 #include "gfs_thermal64.h"
+#include "gfs_material_noh_boundary.h"
+#include "../Cylinder/material_boundary.h"
+#include "gfs_material_noh_rhs.inc"
+#include "gfs_material_cylinder_rhs_native.inc"
+#ifdef GFS_MATERIAL_VOLUME_PRIMARY
+#include "gfs_material_volume_inverse_native.inc"
+#endif
 #include "../RkS/mpirks.h"
 
 extern int gfs_weight_native_active(void);
@@ -264,11 +276,19 @@ static void gpu_fused_scatter(FaceCSR *faces, int max_capacity)
  *
  *  Iterates contiguous real and padding arrays. No cell traversal needed.
  * ================================================================ */
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+#include "gfs_material_power_chart_native.inc"
+#endif
+
 static void fillParticleSoA(
     SimParameters *simpar,
     ParticleSoA *h_parts,
     int has_stress)
 {
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+    gfs_material_power_chart_config(simpar);
+#endif
+
     size_t p_size = TVORORK4_DDINFO(simpar)[0].n_size;
     char *real_base = (char *)VORORK4_TBP(simpar);
     char *pad_base  = (char *)VORORK4_TBPP(simpar);
@@ -277,7 +297,7 @@ static void fillParticleSoA(
     int n_total = nbp + npad;
     int i;
     int w2lin_soa = gfs_w2lin_is_active();
-    if(p_size!=sizeof(treevorostressrk4particletype) || (npad!=0&&!gfs_unified_periodic_mode()) || NID(simpar)!=1){
+    if(p_size!=sizeof(treevorostressrk4particletype) || (npad!=0&&!gfs_unified_periodic_mode()&&!gfs_native_periodic_weight_mode()) || NID(simpar)!=1){
         fprintf(stderr,"[WEIGHT_NATIVE] force path requires actual696-byte fully owned one-rank payload\n");MPI_Abort(MPI_COMM(simpar),99);
     }
     int weight_active=gfs_weight_native_active();
@@ -302,6 +322,7 @@ static void fillParticleSoA(
         const treevorostressrk4particletype *wp=(const void*)raw;
         h_parts->weight_W[i]=wp->weight.W;
         h_parts->weight_U64[i]=wp->weight_thermal.U;
+        h_parts->weight_volume64[i]=wp->weight_thermal.V;
         h_parts->weight_inertia[i]=wp->weight.inertia;
         h_parts->weight_rate[i]=weight_active?wp->weight.pi/wp->weight.inertia:0.;
         h_parts->indx[i]     = (long long)PINDX(bp);
@@ -790,6 +811,7 @@ double getAccVoro2DBlend_GPU(
         void (*)(SimParameters *, postype)))
 {
     double t0_total = MPI_Wtime();
+    gfs_material_boundary_power_valid=0;gfs_material_wall_power_valid=0;
     int nbp  = VORO_NP(simpar);
     int npad;
     int n_total;
@@ -801,7 +823,7 @@ double getAccVoro2DBlend_GPU(
     postype Lx = SIMBOX(simpar).x.max;
     postype cellsize = BASICCELL_CELLWIDTH(simpar);
 
-    if (fused) {
+    if (fused || g_gpu_ctx.tess_faces_on_device) {
         /* Fused path: cells already freed by updateDenW2Pressure2DBlend,
            padding still alive from that call. */
         npad = VORO_NPAD(simpar);
@@ -897,6 +919,17 @@ double getAccVoro2DBlend_GPU(
     }
 
     double t2_soa = MPI_Wtime();
+    const char *rt_native_env=getenv("GFS_MATERIAL_RT_NATIVE");
+    const char *rt_evolve_env=getenv("GFS_MATERIAL_EVOLVE");
+    const char *rt_ic_env=getenv("EUNHA_IC");
+    int rt_material_native=rt_native_env&&!strcmp(rt_native_env,"1")&&
+        rt_evolve_env&&!strcmp(rt_evolve_env,"1")&&rt_ic_env&&!strcmp(rt_ic_env,"rt");
+    int noh_material_native=gfs_material_noh_native_mode()&&rt_evolve_env&&!strcmp(rt_evolve_env,"1");
+    int cyl_material_native=gfs_material_cylinder_mode()&&rt_evolve_env&&!strcmp(rt_evolve_env,"1");
+    int physical_material_boundary=rt_material_native||noh_material_native||cyl_material_native;
+    /* Radial images require the certified high/low GPU geometry route. */
+    if(cyl_material_native&&!tess_on_device)return 0;
+    if(rt_material_native&&NID(simpar)!=1)return 0;
     double t3_upload;
 
     if (!tess_on_device) {
@@ -917,11 +950,15 @@ double getAccVoro2DBlend_GPU(
          * when refreshed padding preserves its SoA indices. Setting
          * GFS_GPU_SYNC_HALO_STATE=0 retains the old path for comparisons. */
         const char *sync_env = getenv("GFS_GPU_SYNC_HALO_STATE");
-        if (!sync_env || atoi(sync_env) > 0) {
+        /* RT material reconstruction resolves mirror ownership itself from real
+         * cell states. A periodic-only refresh would replace reflected ghost
+         * slots and invalidate the already-built face CSR. Legacy ghost
+         * gradients are not used by the material force/work operator. */
+        if (!physical_material_boundary&&(gfs_native_periodic_weight_kdk_mode() || !sync_env || atoi(sync_env) > 0)) {
             int local_sync=0;
 #ifndef GPU_VALIDATE
             const char *local_sync_env=getenv("GFS_GPU_LOCAL_PERIODIC_SYNC");
-            if(local_sync_env && atoi(local_sync_env)>0 && NID(simpar)==1 &&
+            if(!gfs_native_periodic_weight_kdk_mode() && local_sync_env && atoi(local_sync_env)>0 && NID(simpar)==1 &&
                GAS_Kappa(simpar)==0 && GAS_ENTROPY_MODE(simpar)==0 &&
                GAS_AVMODE(simpar)==5 && GAS_CDAMAX(simpar)==0 && GAS_CDAMIN(simpar)==0) {
                 local_sync=gpu_refresh_local_periodic_fields(&g_gpu_ctx,nbp,n_total,
@@ -973,6 +1010,16 @@ double getAccVoro2DBlend_GPU(
         t3_upload = MPI_Wtime();
     }
 
+    /* Native periodic K1 has no halo cells of its own: their derived
+     * geometry/thermodynamic fields are aliases of owned cells. Fail closed
+     * if the existing device ID mapping cannot certify those aliases. */
+    if(!physical_material_boundary && gfs_native_periodic_weight_mode() && npad>0 &&
+       !gpu_refresh_periodic_fields_xy(&g_gpu_ctx,nbp,n_total,
+            (double)(SIMBOX(simpar).x.max-SIMBOX(simpar).x.min),
+            (double)(SIMBOX(simpar).y.max-SIMBOX(simpar).y.min))){
+        fprintf(stderr,"[WEIGHT_PERIODIC_RHS] cannot certify periodic state aliases\n");
+        MPI_Abort(MPI_COMM(simpar),99);
+    }
     double t4_kernel = MPI_Wtime();
     /* --- Launch force kernel --- */
     GPUPhysicsParams params;
@@ -984,6 +1031,7 @@ double getAccVoro2DBlend_GPU(
     params.Gamma       = Gamma;
     params.domain_x=SIMBOX(simpar).x.max-SIMBOX(simpar).x.min;
     params.domain_y=SIMBOX(simpar).y.max-SIMBOX(simpar).y.min;
+    if(rt_material_native){params.domain_x=Xmax_HydroExam(simpar)-Xmin_HydroExam(simpar);params.domain_y=Ymax_HydroExam(simpar)-Ymin_HydroExam(simpar);}
     params.alphavis    = GAS_AlphaVis(simpar);
     params.betavis     = GAS_BetaVis(simpar);
     params.etavis      = GAS_ETAVIS(simpar) * Lx / NX(simpar);
@@ -1011,16 +1059,49 @@ double getAccVoro2DBlend_GPU(
 
     /* --- Launch GPU kernel (all particles) --- */
     const char *unified_force=getenv("GFS_UNIFIED_HYDRO");
-    double Dtime_gpu = unified_force&&!strcmp(unified_force,"1")
+    double Dtime_gpu = physical_material_boundary ? 0 : unified_force&&!strcmp(unified_force,"1")
         ? gpu_launch_unified_force_kernel(&g_gpu_ctx,nbp,n_total,&params)
         : gpu_launch_force_kernel(&g_gpu_ctx,nbp,n_total,MYID(simpar),&params);
     gfs_pair_face_ends = gpu_take_pair_hits();
 
     double t5_download = MPI_Wtime();
     gpu_download_results(&g_gpu_ctx, nbp);
+    double material_download_done=MPI_Wtime();
 
+    const char *material_evolve=getenv("GFS_MATERIAL_EVOLVE");
+    int material_on=material_evolve&&!strcmp(material_evolve,"1");
+    if(material_on){
+        if(NID(simpar)!=1||!has_stress)return 0;
+        FaceCSR *f=&g_gpu_ctx.h_faces;int nf=g_gpu_ctx.d_faces.n_faces_total;
+        gpu_download_face_csr(&g_gpu_ctx,nbp,nf,f->face_offset,f->c1x,f->c1y,f->c2x,f->c2y,
+            f->neighbor_idx,f->kp_idx,f->km_idx,f->is_ghost);
+        if(cyl_material_native){
+         if(!gfs_material_cylinder_native_rhs(simpar,&g_gpu_ctx,nbp,n_total))return 0;
+        }else if(noh_material_native){
+         if(!gfs_material_noh_native_rhs(simpar,&g_gpu_ctx,nbp,n_total))return 0;
+        }else if(!gfs_material_trace_probe(&g_gpu_ctx,nbp,n_total,
+             params.domain_x,params.domain_y,params.Gamma,1,Ymin_HydroExam(simpar),Ymax_HydroExam(simpar),GAS_ACCX(simpar),GAS_ACCY(simpar)))return 0;
+    }
     double t6_writeback = MPI_Wtime();
-    writeBackResults_range(simpar, &g_gpu_ctx.h_parts, has_stress, 0, nbp);
+    if(material_on&&getenv("GFS_MATERIAL_PROFILE"))fprintf(stderr,"[MATERIAL_NATIVE_PROFILE] download_ms=%.9g adapter_and_faces_ms=%.9g\n",1e3*(material_download_done-t5_download),1e3*(t6_writeback-material_download_done));
+    if(physical_material_boundary){
+        /* Only outputs defined by the material operator belong to this
+         * integrator. Do not import unused legacy-kernel stress/dt fields. */
+        double bound=gfs_material_face_cfl_bound(Courant);
+        if(!(bound>0)||!isfinite(bound))return 0;
+        size_t stride=TVORORK4_DDINFO(simpar)[0].n_size;
+        for(int i=0;i<nbp;i++){
+            treevorostressrk4particletype *q=(void*)((char*)VORORK4_TBP(simpar)+i*stride);
+            q->ax=g_gpu_ctx.h_parts.ax_out[i];q->ay=g_gpu_ctx.h_parts.ay_out[i];
+            q->die=g_gpu_ctx.h_parts.die_out[i];q->dt=bound;
+            q->weight_rk4.k4pi=0;q->weight_thermal.Udot=g_gpu_ctx.h_parts.weight_Udot64[i];
+        }
+    }else writeBackResults_range(simpar, &g_gpu_ctx.h_parts, has_stress, 0, nbp);
+    if(material_on){
+        size_t stride=TVORORK4_DDINFO(simpar)[0].n_size;
+        char *base=(char*)VORORK4_TBP(simpar);
+        for(int i=0;i<nbp;i++)((treevorostressrk4particletype*)(base+i*stride))->weight_rk4.k4W=g_gpu_ctx.h_parts.weight_rate[i];
+    }
 
     /* Export full faces only for the already qualified K1 probe. */
     const char *weight_k1_dump=getenv("GFS_WEIGHT_NATIVE_RHS_ONLY");
@@ -1043,6 +1124,14 @@ double getAccVoro2DBlend_GPU(
         FaceCSR *f=&g_gpu_ctx.h_faces;
         gpu_download_face_csr(&g_gpu_ctx,nbp,nf,f->face_offset,f->c1x,f->c1y,f->c2x,f->c2y,
             f->neighbor_idx,f->kp_idx,f->km_idx,f->is_ghost);
+        const char *trace_probe=getenv("GFS_MATERIAL_TRACE_PROBE");
+        if(trace_probe&&!strcmp(trace_probe,"1")){
+            if(NID(simpar)!=1||!gfs_material_trace_probe(&g_gpu_ctx,nbp,n_total,
+                    params.domain_x,params.domain_y,params.Gamma,0,Ymin_HydroExam(simpar),Ymax_HydroExam(simpar),GAS_ACCX(simpar),GAS_ACCY(simpar))){
+                fprintf(stderr,"[MATERIAL_TRACE_PROBE] unsupported or inconsistent periodic geometry\n");
+                MPI_Abort(MPI_COMM(simpar),99);
+            }
+        }
         out=fopen("weight_native_faces.bin","wbx");if(!out)MPI_Abort(MPI_COMM(simpar),99);
         for(int k=0;k<nbp;k++)for(int e=f->face_offset[k];e<f->face_offset[k+1];e++){
             WeightFace row={k,f->neighbor_idx[e],f->c1x[e],f->c1y[e],f->c2x[e],f->c2y[e]};
@@ -1053,8 +1142,13 @@ double getAccVoro2DBlend_GPU(
         fprintf(out,"{\"n\":%d,\"faces\":%d,\"cell_bytes\":88,\"face_bytes\":40,\"Gamma\":%.17g,\"active\":%d,\"K1_only\":true}\n",nbp,nf,params.Gamma,params.weight_active);
         if(ferror(out)||fclose(out))MPI_Abort(MPI_COMM(simpar),99);
     }
-    double Dtime_local = Dtime_gpu;
-    if(params.weight_active){
+    const char *material_cfl_env=getenv("GFS_MATERIAL_FACE_CFL");
+    int material_face_cfl=material_on&&material_cfl_env&&!strcmp(material_cfl_env,"1");
+    double material_bound=material_on?gfs_material_face_cfl_bound(Courant):0;
+    if(material_on&&(!(material_bound>0)||!isfinite(material_bound)))return 0;
+    double Dtime_local = material_face_cfl?material_bound:Dtime_gpu;
+    if(material_on&&material_face_cfl)fprintf(stderr,"[MATERIAL_FACE_CFL] bound=%.17g legacy_kernel=%.17g\n",material_bound,Dtime_gpu);
+    if(params.weight_active&&!material_face_cfl){
         double hr=0,hc=0,fluid=0,weight=0,cast=0,cast_abs=0;
         for(int k=0;k<nbp;k++){
             if(!isfinite(g_gpu_ctx.h_parts.weight_Hrow[k]) || !isfinite(g_gpu_ctx.h_parts.weight_Hcol[k]) ||
@@ -1088,7 +1182,7 @@ double getAccVoro2DBlend_GPU(
     double t7_done = MPI_Wtime();
 
     /* Free: fused path only has padding; fallback has cells + padding */
-    if (!fused)
+    if (!fused && !tess_on_device)
         my_free(VORO_BASICCELL(simpar));
     my_free(VORORK4_TBPP(simpar));
     VORORK4_TBPP(simpar) = NULL;
@@ -1735,8 +1829,8 @@ static void cpu_reference_force_csr(
                     uax = ibp_vx + uradx;
                     uay = ibp_vy + urady;
                 }
-                die += -pi_total * (uax * dSx + uay * dSy)
-                     + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
+                die += gfs_face_work2d(pi_total, dSx, dSy,
+                    tau_dot_dS_x, tau_dot_dS_y, uax, uay);
             } else {
             die += -pi_total * (uradx * dSx + urady * dSy);
             die += tau_dot_dS_x * uradx + tau_dot_dS_y * urady;
@@ -1952,6 +2046,9 @@ void gpu_build_cell_csr(GPUContext *ctx, void *simpar_opaque,
                         int mx, int my, size_t p_size)
 {
     SimParameters *simpar = (SimParameters *)simpar_opaque;
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+    gfs_material_power_chart_config(simpar);
+#endif
     HydroTreeLinkedCell *cells = VORO_BASICCELL(simpar);
     char *real_base = (char *)VORORK4_TBP(simpar);
     char *pad_base  = (char *)VORORK4_TBPP(simpar);

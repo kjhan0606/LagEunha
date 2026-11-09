@@ -1,5 +1,7 @@
-/* Same W0 pressure, face-angular LSQ, positive central BE viscosity,
- * and P-D-drift-D-P update as the 1D and native CUDA 2D candidates.
+/* Retained earlier W0 pressure, face-angular LSQ, positive central BE viscosity,
+ * and P-D-drift-D-P candidate. This is NOT the current dynamic-W material
+ * direct-Riemann/SSPRK2 path used by the 2D Cylinder comparisons. That method's
+ * 3D geometry/RHS/time-step integration is not connected here.
  * Only existing linked-cell Voro3D/OpenMP geometry and LAG3DV1 IO are reused.
  * No legacy Riemann, RK4, floor, jitter, or finite face-area cutoff enters.
  */

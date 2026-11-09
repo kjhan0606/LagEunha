@@ -88,6 +88,9 @@ $(RECFASTLIB): $(RECOBJ)
 
 #	ranlib $(RECFASTLIB)
 
+%.o: %.f
+	$(FC) $(FFLAGS) -c $<
+
 %.o: %.for
 	$(FC) $(FFLAGS) -c $*.for
 

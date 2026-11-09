@@ -8,6 +8,11 @@
  *  Compiled with nvcc.
  * ================================================================ */
 
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+#define GFS_STABLE_POWER_VERTEX
+#define GFS_FILTERED_POWER_CLIP
+#endif
+
 #ifdef USE_CUDA
 
 #include <stdio.h>
@@ -20,7 +25,24 @@
 
 /* CUB for device-wide reduction */
 #include <cub/cub.cuh>
+#ifdef GFS_MATERIAL_FIXED_SOLID
+#include "../gfs_material_fixed_solid2d.h"
+#define GFS_FIXED_CYLINDER_STORAGE static __device__ __constant__
+#include "../gfs_material_fixed_cylinder_data.h"
+#undef GFS_FIXED_CYLINDER_STORAGE
+static __device__ inline int fixed_solid_near(int n,const double*x,const double*y,double ox,double oy){
+ double ax=DBL_MAX,bx=-DBL_MAX,ay=DBL_MAX,by=-DBL_MAX;
+ for(int k=0;k<n;k++){ax=fmin(ax,x[k]+ox);bx=fmax(bx,x[k]+ox);ay=fmin(ay,y[k]+oy);by=fmax(by,y[k]+oy);}
+ return ax<=3.&&bx>=2.&&ay<=2.5&&by>=1.5;
+}
+static __device__ inline void fixed_solid_relative(double ox,double oy,double*x,double*y){
+ for(int k=0;k<GFS_FIXED_CYLINDER_N;k++){x[k]=gfs_fixed_cylinder_x[k]-ox;y[k]=gfs_fixed_cylinder_y[k]-oy;}
+}
+#endif
 #include "gfs_pair.h"
+#include "../gfs_face_work.h"
+#include "../gfs_variational_core.h"
+#include "../gfs_unified_runtime.h"
 #include "gfs_velocity_limiter.h"
 #include "gfs_thermal64.h"
 
@@ -35,8 +57,16 @@ static __device__ unsigned long long d_gfs_invalid_velocity_fit_cells;
 static __device__ unsigned long long d_gfs_tess_geometry_errors;
 static __device__ unsigned long long d_gfs_stencil_expanded_cells;
 static __device__ unsigned long long d_gfs_stencil_halo_clipped_cells;
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+static __device__ unsigned long long d_gfs_search_shortfall[4];
+static double h_gfs_search_shortfall[4];
+static int h_gfs_search_retryable;
+#endif
 /* Static support planes for the opt-in bounded Kepler research branch. */
 #include "gfs_fixed_polygon_geometry.h"
+#ifdef GFS_STABLE_POWER_VERTEX
+#include "../gfs_power_vertex2d.h"
+#endif
 #include "gfs_circle_native_faces.h"
 extern "C" int gfs_circle_rhs_probe_attested(void);
 extern "C" int gfs_circle_events_native_attested(void);
@@ -61,11 +91,21 @@ extern "C" int gpu_varpress_w0_enabled(void) {
 extern "C" double gpu_varpress_geom_max_rate(void) { return h_varpress_geom_max_rate; }
 extern "C" long long gpu_varpress_geom_max_id(void) { return h_varpress_geom_max_id; }
 static int h_geometry_trial=0,h_geometry_failed=0;
-extern "C" void gpu_geometry_trial_begin(void) { h_geometry_trial=1; h_geometry_failed=0; }
+extern "C" void gpu_geometry_trial_begin(void) { h_geometry_trial=1; h_geometry_failed=0;
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+ h_gfs_search_retryable=0;
+#endif
+}
 extern "C" void gpu_geometry_trial_end(void) { h_geometry_trial=0; h_geometry_failed=0; }
 extern "C" int gpu_geometry_trial_active(void) { return h_geometry_trial; }
 extern "C" int gpu_geometry_trial_failed(void) { return h_geometry_failed; }
 extern "C" void gpu_geometry_trial_mark_failed(void) { h_geometry_failed=1; }
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+extern "C" int gpu_geometry_search_shortfall(double out[4]){
+ if(!out||!h_geometry_trial||!h_geometry_failed||!h_gfs_search_retryable)return 0;
+ for(int d=0;d<4;d++)out[d]=h_gfs_search_shortfall[d];return 1;
+}
+#endif
 /* Geometry from the latest host tessellation launch, for optional dumps. */
 static int h_diag_tess_mx = 0, h_diag_tess_my = 0;
 static double h_diag_tess_cellsize = 0.0;
@@ -74,8 +114,15 @@ static double h_diag_global_w2_max = 0.0;
 static __device__ unsigned long long d_weight_geometry_clamp_hits;
 __device__ __forceinline__ double weight_geometry_value(const double *w,int i){return w[i];}
 __device__ __forceinline__ double weight_geometry_fraction(double raw){
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+    /* Isolated true-power experiment: finite offsets may lie outside [0,1].
+     * Nonfinite input remains a geometry failure, never an accepted cell. */
+    if(!isfinite(raw))atomicAdd(&d_weight_geometry_clamp_hits,1ull);
+    return raw;
+#else
     if(!isfinite(raw)||raw<.05||raw>.95)atomicAdd(&d_weight_geometry_clamp_hits,1ull);
     return fmax(.05,fmin(.95,raw));
+#endif
 }
 
 /* ================================================================
@@ -1248,8 +1295,19 @@ void getAccVoro2DBlend_kernel(
         const double face_cy = 0.5 * (c1y[f] + c2y[f]);
         const double off_x = face_cx - 0.5 * drx;
         const double off_y = face_cy - 0.5 * dry;
-        const double b_ix = 0.5*dSx + facearea*off_x*dramp_inv;
-        const double b_iy = 0.5*dSy + facearea*off_y*dramp_inv;
+        const double r_face[3] = {drx, dry, 0.0};
+        const double c_face[3] = {face_cx, face_cy, 0.0};
+        GfsVariationalFace variational_face;
+        /* Share the dimension-independent operator for the exact fixed W=0
+         * reduction; retain the existing weighted-face calculation otherwise. */
+        const int use_variational_core = !WeightActive &&
+            ibp_w2 == 0.0f && jbp_w2 == 0.0f &&
+            gfs_variational_face(2, r_face, c_face, facearea,
+                                 &variational_face);
+        const double b_ix = use_variational_core ? variational_face.bi[0]
+            : 0.5*dSx + facearea*off_x*dramp_inv;
+        const double b_iy = use_variational_core ? variational_face.bi[1]
+            : 0.5*dSy + facearea*off_y*dramp_inv;
         const double dp = ibp_pressure - jbp_pressure;
         if(WeightActive){
             double c=.5*facearea*dramp_inv;
@@ -1265,7 +1323,13 @@ void getAccVoro2DBlend_kernel(
         }
         const double var_fx = dp*b_ix;
         const double var_fy = dp*b_iy;
-        const double var_vdot = uradx*dSx + urady*dSy;
+        double var_vdot = uradx*dSx + urady*dSy;
+        if (use_variational_core) {
+            const double vi_face[3] = {ibp_vx, ibp_vy, 0.0};
+            const double vj_face[3] = {jbp_vx, jbp_vy, 0.0};
+            var_vdot = gfs_variational_sweep(&variational_face,
+                                              vi_face, vj_face);
+        }
         if (thermal64) thermal_rate64 -= ibp_pressure * var_vdot;
         if (var_geom_cfl>0 || var_geom_audit) var_sweep_abs+=fabs(var_vdot);
 #endif
@@ -1295,8 +1359,8 @@ void getAccVoro2DBlend_kernel(
             }
 #else
             double udotds = uax * dSx + uay * dSy;
-            double face_work = -pi_total * udotds
-                 + tau_dot_dS_x * uax + tau_dot_dS_y * uay;
+            double face_work = gfs_face_work2d(pi_total, dSx, dSy,
+                tau_dot_dS_x, tau_dot_dS_y, uax, uay);
             dte += face_work;
             if (audit_work) {
                 audit_work[f] = face_work;
@@ -1725,6 +1789,10 @@ extern "C"
 void gpu_free(GPUContext *ctx)
 {
     if (!ctx->initialized) return;
+    if(ctx->d_power_lowx)cudaFree(ctx->d_power_lowx);
+    if(ctx->d_power_lowy)cudaFree(ctx->d_power_lowy);
+    ctx->d_power_lowx=ctx->d_power_lowy=NULL;
+    ctx->power_low_capacity=ctx->power_low_count=0;
     if(ctx->weight_geometry_snapshot){cudaFreeHost(ctx->weight_geometry_snapshot);ctx->weight_geometry_snapshot=NULL;}
     ctx->weight_geometry_count=0;
     free_particle_soa(&ctx->h_parts, &ctx->d_parts);
@@ -1872,24 +1940,28 @@ void gpu_download_dt_limit_diagnostics(GPUContext *ctx, int n)
 #ifdef GFS_VARPRESS_W0
 static __device__ unsigned long long d_local_periodic_sync_errors;
 __global__ void refresh_local_periodic_fields_kernel(ParticleSoA p,
-    int nbp,int n_total,double boxsize)
+    int nbp,int n_total,const int *owner,double lx,double ly)
 {
     int h=nbp+blockIdx.x*blockDim.x+threadIdx.x;
     if(h>=n_total) return;
-    long long id=p.indx[h];
-    if(id<0 || id>=nbp || p.indx[(int)id]!=id) {
+    int j=owner[h];
+    if(j<0 || j>=nbp || p.indx[h]!=p.indx[j]) {
         atomicAdd(&d_local_periodic_sync_errors,1ull); return;
     }
-    int j=(int)id;
     double dx=p.x[h]-p.x[j],dy=p.y[h]-p.y[j];
-    double tol=128.0*DBL_EPSILON*boxsize;
-    if(fabs(dx-boxsize*nearbyint(dx/boxsize))>tol ||
-       fabs(dy-boxsize*nearbyint(dy/boxsize))>tol ||
+    double tol=128.0*DBL_EPSILON*(lx+ly);
+    if(fabs(dx-lx*nearbyint(dx/lx))>tol ||
+       fabs(dy-ly*nearbyint(dy/ly))>tol ||
        p.vx[h]!=p.vx[j] || p.vy[h]!=p.vy[j] || p.mass[h]!=p.mass[j] ||
-       p.ie[h]!=p.ie[j] || p.w2[h]!=0.0f || p.w2[j]!=0.0f) {
+       p.ie[h]!=p.ie[j] || p.w2[h]!=0.0f || p.w2[j]!=0.0f ||
+       p.weight_W[h]!=p.weight_W[j] || p.weight_rate[h]!=p.weight_rate[j] ||
+       p.weight_inertia[h]!=p.weight_inertia[j] || p.weight_U64[h]!=p.weight_U64[j]) {
         atomicAdd(&d_local_periodic_sync_errors,1ull); return;
     }
 #define GFS_ALIAS(field) p.field[h]=p.field[j]
+    /* V64 is produced only for owned cells by tessellation. Periodic
+     * aliases must receive that exact value before weighted CFL evaluation. */
+    GFS_ALIAS(weight_volume64);
     GFS_ALIAS(den); GFS_ALIAS(pressure); GFS_ALIAS(csound); GFS_ALIAS(volume);
     GFS_ALIAS(w2ceil); GFS_ALIAS(avgNeighP); GFS_ALIAS(K);
     GFS_ALIAS(gUxx); GFS_ALIAS(gUxy); GFS_ALIAS(gUyx); GFS_ALIAS(gUyy);
@@ -1900,16 +1972,26 @@ __global__ void refresh_local_periodic_fields_kernel(ParticleSoA p,
 }
 #endif
 
-extern "C" int gpu_refresh_local_periodic_fields(GPUContext *ctx,
-    int nbp,int n_total,double boxsize)
+extern "C" int gpu_refresh_periodic_fields_xy(GPUContext *ctx,
+    int nbp,int n_total,double lx,double ly)
 {
 #ifdef GFS_VARPRESS_W0
-    if(n_total<nbp || !(boxsize>0)) return 0;
+    if(n_total<nbp || !(lx>0) || !(ly>0)) return 0;
     if(n_total==nbp) return 1;
     cudaStream_t stream=(cudaStream_t)ctx->stream;
+    const int *owner=gpu_unified_owner_aliases(ctx,nbp,n_total,lx,ly);
+    static int *device_owner=NULL,capacity=0,owner_device=-1;
+    int device;CUDA_CHECK(cudaGetDevice(&device));
+    if(owner_device!=-1 && owner_device!=device)return 0;
+    owner_device=device;
+    if(n_total>capacity){
+        if(device_owner)CUDA_CHECK(cudaFree(device_owner));
+        CUDA_CHECK(cudaMalloc(&device_owner,(size_t)n_total*sizeof(int)));capacity=n_total;
+    }
+    CUDA_CHECK(cudaMemcpyAsync(device_owner,owner,(size_t)n_total*sizeof(int),cudaMemcpyHostToDevice,stream));
     unsigned long long errors=0;
     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_local_periodic_sync_errors,&errors,sizeof(errors),0,cudaMemcpyHostToDevice,stream));
-    refresh_local_periodic_fields_kernel<<<(n_total-nbp+255)/256,256,0,stream>>>(ctx->d_parts,nbp,n_total,boxsize);
+    refresh_local_periodic_fields_kernel<<<(n_total-nbp+255)/256,256,0,stream>>>(ctx->d_parts,nbp,n_total,device_owner,lx,ly);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaMemcpyFromSymbolAsync(&errors,d_local_periodic_sync_errors,sizeof(errors),0,cudaMemcpyDeviceToHost,stream));
     CUDA_CHECK(cudaStreamSynchronize(stream));
@@ -1917,9 +1999,14 @@ extern "C" int gpu_refresh_local_periodic_fields(GPUContext *ctx,
      * the full host refresh/upload before any force evaluation. */
     return errors==0;
 #else
-    (void)ctx;(void)nbp;(void)n_total;(void)boxsize;
+    (void)ctx;(void)nbp;(void)n_total;(void)lx;(void)ly;
     return 0;
 #endif
+}
+
+extern "C" int gpu_refresh_local_periodic_fields(GPUContext *ctx,
+    int nbp,int n_total,double boxsize){
+    return gpu_refresh_periodic_fields_xy(ctx,nbp,n_total,boxsize,boxsize);
 }
 
 /* Host-only structural snapshot used with GFS_GPU_FACE_DUMP_CALL.
@@ -2316,7 +2403,8 @@ double gpu_launch_force_kernel(GPUContext *ctx, int n_particles,
                                int n_total, int mpi_rank,
                                const GPUPhysicsParams *params)
 {
-    if(ctx->weight_geometry_count!=n_total || n_total!=n_particles ||
+    if(ctx->weight_geometry_count!=n_total ||
+       (n_total!=n_particles && !gfs_native_periodic_weight_mode()) ||
        memcmp(ctx->weight_geometry_snapshot,ctx->h_parts.weight_W,(size_t)n_total*sizeof(double))){
         fprintf(stderr,"[WEIGHT_NATIVE] force requires current immutable geometry-W snapshot\n");exit(99);
     }
@@ -2802,6 +2890,22 @@ void gpu_upload_cells(GPUContext *ctx, int n_cells, int n_entries)
  *  gradients, avgNeighP, w2ceil. Writes PolygonOut for face scatter.
  * ================================================================ */
 
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+#include "gfs_material_gpu_chart.cuh"
+#include "../gfs_power_coordinates2d.h"
+#define GFS_MATERIAL_CLIP_INPUT ,px,py,weight_W,i,chart_owner,chart_lx,chart_ly,coordinate_lowx,coordinate_lowy
+#define GFS_MATERIAL_CHART_DECL ,const int *chart_owner,double chart_lx,double chart_ly,const double*coordinate_lowx,const double*coordinate_lowy
+#define GFS_MATERIAL_CHART_INPUT ,chart_period[0]>0?chart_device_owner:NULL,chart_period[0],chart_period[1],ctx->power_low_count?ctx->d_power_lowx:NULL,ctx->power_low_count?ctx->d_power_lowy:NULL
+#define GFS_POWER_DX(j) gfs_power_coordinate_delta(px,coordinate_lowx,i,(j))
+#define GFS_POWER_DY(j) gfs_power_coordinate_delta(py,coordinate_lowy,i,(j))
+#else
+#define GFS_MATERIAL_CLIP_INPUT
+#define GFS_MATERIAL_CHART_DECL
+#define GFS_MATERIAL_CHART_INPUT
+#define GFS_POWER_DX(j) (px[(j)]-xi)
+#define GFS_POWER_DY(j) (py[(j)]-yi)
+#endif
+
 /* Legacy inline capacity, retained only to count dense seed stencils.
  * Candidate clipping now streams directly from CellCSR; no candidate is
  * truncated and no per-thread arrays of this size are allocated. */
@@ -2830,11 +2934,19 @@ int gpu_raw_append_vertex(double x, double y, int support,
     return 1;
 }
 
+#ifdef GFS_FILTERED_POWER_CLIP
+#include "gfs_power_clip_filter.cuh"
+#endif
+
 __device__ __forceinline__
 int gpu_clip_voronoi_halfplane(
     double nx_n, double ny_n, double wfrac, int neighbor_soa,
     double *&poly_x, double *&poly_y, int *&poly_neigh, int nc,
-    double *&tmp_x, double *&tmp_y, int *&tmp_neigh, int exact_intersections)
+    double *&tmp_x, double *&tmp_y, int *&tmp_neigh, int exact_intersections
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+    ,const double *sites_x=NULL,const double *sites_y=NULL,const double *sites_w=NULL,int owner=-1,const int*periodic_owner=NULL,double periodic_lx=0,double periodic_ly=0,const double*coordinate_lowx=NULL,const double*coordinate_lowy=NULL
+#endif
+    )
 {
     const double dist2 = nx_n * nx_n + ny_n * ny_n;
     const double threshold = wfrac * dist2;
@@ -2846,16 +2958,40 @@ int gpu_clip_voronoi_halfplane(
             int en=(e+1)%nc;
             double ax=poly_x[e],ay=poly_y[e],bx=poly_x[en],by=poly_y[en];
             double da=ax*nx_n+ay*ny_n,db=bx*nx_n+by*ny_n;
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+            double sa=da-threshold,sb=db-threshold;int filtered=0;
+#ifdef GFS_FILTERED_POWER_CLIP
+            int prev=(e+nc-1)%nc;
+            int fa=gpu_power_clip_side(owner,poly_neigh[prev],poly_neigh[e],neighbor_soa,
+                sites_x,sites_y,sites_w,nx_n,ny_n,threshold,&ax,&ay,&sa,periodic_owner,periodic_lx,periodic_ly,coordinate_lowx,coordinate_lowy);
+            int fb=gpu_power_clip_side(owner,poly_neigh[e],poly_neigh[en],neighbor_soa,
+                sites_x,sites_y,sites_w,nx_n,ny_n,threshold,&bx,&by,&sb,periodic_owner,periodic_lx,periodic_ly,coordinate_lowx,coordinate_lowy);
+            if(fa<0||fb<0){atomicAdd(&d_gfs_tess_geometry_errors,1ull);return -1;}
+            filtered=fa||fb;
+#endif
+            int ain=sa<=0,bin=sb<=0;
+#else
             int ain=da<=threshold,bin=db<=threshold;
+#endif
             if(ain)
                 valid=gpu_raw_append_vertex(ax,ay,poly_neigh[e],tmp_x,tmp_y,tmp_neigh,&out_count);
             if(ain!=bin && valid){
+
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+                double denom=filtered?sb-sa:db-da;
+#else
                 double denom=db-da;
+#endif
                 if(denom==0 || !isfinite(denom)){
                     atomicAdd(&d_gfs_tess_geometry_errors,1ull);
                     return -1;
                 }
+
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+                double t=fmax(0.0,fmin(1.0,(filtered?-sa:threshold-da)/denom));
+#else
                 double t=fmax(0.0,fmin(1.0,(threshold-da)/denom));
+#endif
                 double x=ax+t*(bx-ax),y=ay+t*(by-ay);
                 valid=gpu_raw_append_vertex(x,y,ain?neighbor_soa:poly_neigh[e],
                     tmp_x,tmp_y,tmp_neigh,&out_count);
@@ -2955,6 +3091,23 @@ int gpu_clip_voronoi_halfplane(
     return out_count;
 }
 
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+/* Failure-only evidence, including low coordinate parts used by the actual
+ * power predicates. No clipping decision or accepted geometry is changed. */
+__device__ void gpu_raw_clip_failure(const char*phase,int i,int j,int before,int after,
+ const double*x,const double*y,const double*w,const double*lx,const double*ly,
+ const long long*ids,const double*vx,const double*vy,const int*support){
+ printf("[GPU_RAW_CLIP_FAILURE] phase=%s owner=%d id=%lld competitor=%d competitor_id=%lld before=%d after=%d\n",
+  phase,i,ids[i],j,ids[j],before,after);
+ for(int k=-2;k<before;k++){
+  int site=k==-2?i:(k==-1?j:support[k]);
+  if(k>=0)printf("[GPU_RAW_CLIP_PRE_VERTEX] owner=%lld edge=%d x=%.17g y=%.17g support=%d\n",ids[i],k,vx[k],vy[k],site);
+  if(site>=0)printf("[GPU_RAW_CLIP_SITE] owner=%lld site=%d id=%lld x=%.17g y=%.17g lowx=%.17g lowy=%.17g W=%.17g\n",
+   ids[i],site,ids[site],x[site],y[site],lx?lx[site]:0.,ly?ly[site]:0.,w[site]);
+ }
+}
+#endif
+
 __global__ __launch_bounds__(256, 2)
 void voronoi_tessellate_kernel(
     /* Particle SoA */
@@ -2987,7 +3140,7 @@ void voronoi_tessellate_kernel(
     double cellsize, double xmin, double ymin,
     double boxsize, double global_w2_max, double OoA, int av_mode,
     int gradient_method, int raw_volume, int limit_velocity, int merge_small_faces,
-    int thermal64, double *__restrict__ out_V64, const double *__restrict__ weight_W, double *__restrict__ weight_volume64)
+    int thermal64, double *__restrict__ out_V64, const double *__restrict__ weight_W, double *__restrict__ weight_volume64 GFS_MATERIAL_CHART_DECL)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
@@ -3064,7 +3217,7 @@ void voronoi_tessellate_kernel(
                 int cell=cx+mx*cy;
                 for(int k=cell_offset[cell];k<cell_offset[cell+1];k++){
                     int j=cell_particle_index[k];if(pindx[j]==indx_i)continue;
-                    double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+                    double dx=GFS_POWER_DX(j),dy=GFS_POWER_DY(j),d2=dx*dx+dy*dy;
                     if(!(d2>0))continue;
                     double wf=weight_geometry_fraction(.5+.5*(w2i-weight_geometry_value(weight_W,j))/d2);
                     double dr2=wf*wf*d2;
@@ -3084,11 +3237,22 @@ void voronoi_tessellate_kernel(
         }
         const int n_pre=wall_may_touch?32:8;
         for(int s=0;s<n_pre && nc>=3;s++){
-            int j=nearest[s];if(j<0 || offset2[s]>maxdist2)continue;
-            double dx=px[j]-xi,dy=py[j]-yi,d2=dx*dx+dy*dy;
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+            int j=nearest[s];if(j<0)continue;
+            double dx=GFS_POWER_DX(j),dy=GFS_POWER_DY(j),d2=dx*dx+dy*dy;
             double wf=weight_geometry_fraction(.5+.5*(w2i-weight_geometry_value(weight_W,j))/d2);
+            if(wf>0.0 && offset2[s]>maxdist2)continue;
+#else
+            int j=nearest[s];if(j<0 || offset2[s]>maxdist2)continue;
+            double dx=GFS_POWER_DX(j),dy=GFS_POWER_DY(j),d2=dx*dx+dy*dy;
+            double wf=weight_geometry_fraction(.5+.5*(w2i-weight_geometry_value(weight_W,j))/d2);
+#endif
+            int nc_before_clip=nc;
             nc=gpu_clip_voronoi_halfplane(dx,dy,wf,j,poly_x,poly_y,poly_neigh,nc,
-                                         tmp_x,tmp_y,tmp_neigh,1);
+                                         tmp_x,tmp_y,tmp_neigh,1 GFS_MATERIAL_CLIP_INPUT);
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+            if(nc<3)gpu_raw_clip_failure("anchor",i,j,nc_before_clip,nc,px,py,weight_W,coordinate_lowx,coordinate_lowy,pindx,tmp_x,tmp_y,tmp_neigh);
+#endif
             maxdist2=0;
             for(int e=0;e<nc;e++)maxdist2=fmax(maxdist2,poly_x[e]*poly_x[e]+poly_y[e]*poly_y[e]);
         }
@@ -3143,18 +3307,26 @@ void voronoi_tessellate_kernel(
                 if (pindx[j] == indx_i) continue;
                 seed_candidates++;
 
-                double dx = px[j] - xi;
-                double dy_val = py[j] - yi;
+                double dx = GFS_POWER_DX(j);
+                double dy_val = GFS_POWER_DY(j);
                 double dist2 = dx * dx + dy_val * dy_val;
                 double w2j = weight_geometry_value(weight_W,j);
                 double wfrac = 0.5 + 0.5 * (w2i - w2j) / dist2;
                 wfrac=weight_geometry_fraction(wfrac);
                 double drad2 = wfrac * wfrac * dist2;
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+                if (wfrac > 0.0 && drad2 > maxdist2) continue;
+#else
                 if (drad2 > maxdist2) continue;
+#endif
 
+                int nc_before_clip=nc;
                 nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
                                                 poly_x, poly_y, poly_neigh, nc,
-                                                tmp_x, tmp_y, tmp_neigh, raw_volume >= 2);
+                                                tmp_x, tmp_y, tmp_neigh, raw_volume >= 2 GFS_MATERIAL_CLIP_INPUT);
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+                if(nc<3)gpu_raw_clip_failure("seed",i,j,nc_before_clip,nc,px,py,weight_W,coordinate_lowx,coordinate_lowy,pindx,tmp_x,tmp_y,tmp_neigh);
+#endif
                 if (nc < 3) break;
 
                 double new_max = 0.0;
@@ -3219,17 +3391,25 @@ void voronoi_tessellate_kernel(
                     for (int k = c_begin; k < c_end && nc >= 3; k++) {
                         const int j = cell_particle_index[k];
                         if (pindx[j] == indx_i) continue;
-                        const double dx = px[j] - xi;
-                        const double dy_val = py[j] - yi;
+                        const double dx = GFS_POWER_DX(j);
+                        const double dy_val = GFS_POWER_DY(j);
                         const double dist2 = dx * dx + dy_val * dy_val;
                         if (!(dist2 > 0.0)) continue;
                         double wfrac = 0.5 + 0.5 * (w2i - weight_geometry_value(weight_W,j)) / dist2;
                         wfrac=weight_geometry_fraction(wfrac);
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+                        if (wfrac > 0.0 && wfrac * wfrac * dist2 > maxdist2) continue;
+#else
                         if (wfrac * wfrac * dist2 > maxdist2) continue;
+#endif
 
+                        int nc_before_clip=nc;
                         nc = gpu_clip_voronoi_halfplane(dx, dy_val, wfrac, j,
                                                         poly_x, poly_y, poly_neigh, nc,
-                                                        tmp_x, tmp_y, tmp_neigh, raw_volume >= 2);
+                                                        tmp_x, tmp_y, tmp_neigh, raw_volume >= 2 GFS_MATERIAL_CLIP_INPUT);
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+                        if(nc<3)gpu_raw_clip_failure("adaptive",i,j,nc_before_clip,nc,px,py,weight_W,coordinate_lowx,coordinate_lowy,pindx,tmp_x,tmp_y,tmp_neigh);
+#endif
                         if (nc < 3) break;
                         double new_max = 0.0;
                         for (int e = 0; e < nc; e++) {
@@ -3288,6 +3468,18 @@ void voronoi_tessellate_kernel(
             nc=new_nc;
         }
     }
+    /* An empty intersection with the LOCAL seed box does not prove an
+     * empty power cell: unrestricted weights can move it outside that box.
+     * Repeat the existing complete search with the existing enlarged box.
+     * A negative clip return is a numerical error, not an empty polygon;
+     * keep that failure and all final geometry checks unchanged. */
+    if(raw_volume>=2 && !d_gfs_fixedpoly_on && !d_gfs_circle_rhs_on &&
+       nc>=0 && nc<3 && halfbox<max_halfbox && box_retry<32){
+        double next_halfbox=fmin(max_halfbox,2.0*halfbox);
+        printf("[GPU_EMPTY_LOCAL_BOX_EXPAND] id=%lld old=%.17g new=%.17g nc=%d\n",
+            (long long)pindx[i],halfbox,next_halfbox,nc);
+        halfbox=next_halfbox;box_retry++;continue;
+    }
     if (raw_volume < 2 || nc < (d_gfs_circle_rhs_on?2:3)) break;
     int touches_box=0;
     for (int e=0;e<nc;e++)
@@ -3329,6 +3521,46 @@ void voronoi_tessellate_kernel(
             }
         }
     }
+
+#ifdef GFS_STABLE_POWER_VERTEX
+    /* Same Laguerre planes/topology, with a shared stable triple evaluation.
+     * Experimental compile gate; legacy and curved/fixed-wall paths unchanged.
+     * Never replace clipped weight planes by a different power diagram. */
+    if(raw_volume>=2 && !d_gfs_circle_rhs_on && !d_gfs_fixedpoly_on){
+        for(int e=0;e<nc;e++){
+            int prev=(e+nc-1)%nc,j=poly_neigh[e],k=poly_neigh[prev];
+            if(j<0||k<0)continue;
+            double s[3][3]={{xi,yi,w2i},{px[j],py[j],weight_geometry_value(weight_W,j)},
+                {px[k],py[k],weight_geometry_value(weight_W,k)}};
+            int unclipped=1;
+            for(int h=1;h<3;h++){
+                int site=h==1?j:k;
+                double dx=GFS_POWER_DX(site),dy=GFS_POWER_DY(site),d2=dx*dx+dy*dy;
+                double wf=.5+.5*(w2i-s[h][2])/d2;
+                if(!isfinite(wf)||weight_geometry_fraction(wf)!=wf)unclipped=0;
+            }
+            if(!unclipped)continue;
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+            double v[2];int ok;
+            int coordinate_ids[3]={i,j,k};
+            if(gfs_power_coordinates_active(3,coordinate_ids,coordinate_lowx,coordinate_lowy)){
+                ok=gfs_power_coordinates_vertex2d(coordinate_ids,px,py,weight_W,coordinate_lowx,coordinate_lowy,v);
+            }else if(chart_owner && chart_owner[i]>=0 && chart_owner[j]>=0 && chart_owner[k]>=0){
+                int ids[3]={i,j,k};double base[3][3],period[2]={chart_lx,chart_ly};
+                for(int a=0;a<3;a++){int z=chart_owner[ids[a]];base[a][0]=px[z];base[a][1]=py[z];base[a][2]=weight_geometry_value(weight_W,z);}
+                ok=gfs_power_chart_vertex2d(base,s,period,v);
+            }else ok=gfs_power_vertex2d(s,v);
+            if(!ok){
+#else
+            double v[2];
+            if(!gfs_power_vertex2d(s,v)){
+#endif
+                atomicAdd(&d_gfs_tess_geometry_errors,1ull);face_count_out[i]=0;return;
+            }
+            poly_x[e]=v[0];poly_y[e]=v[1];
+        }
+    }
+#endif
 
     /* ---- Merge near-coincident vertices (degenerate faces at grid corners) ----
      * On a regular/near-regular grid, 4+ Voronoi cells meet at (near) a
@@ -3386,7 +3618,7 @@ void voronoi_tessellate_kernel(
             if (jn < 0) continue;
             double ex=poly_x[en]-poly_x[e], ey=poly_y[en]-poly_y[e];
             if (!(ex*ex+ey*ey > 0.0)) continue;
-            double dx=px[jn]-xi, dy=py[jn]-yi, d2=dx*dx+dy*dy;
+            double dx=GFS_POWER_DX(jn), dy=GFS_POWER_DY(jn), d2=dx*dx+dy*dy;
             double wf=weight_geometry_fraction(0.5+0.5*(w2i-weight_geometry_value(weight_W,jn))/d2);
             double rhs=wf*d2;
             double scale=fabs(rhs)+fabs(dx)*(fabs(poly_x[e])+fabs(poly_x[en]))+
@@ -3436,10 +3668,36 @@ void voronoi_tessellate_kernel(
         }
     }
     if (raw_volume && (!(area > 0.0) || !isfinite(volume) || nc < (d_gfs_circle_rhs_on?2:3))) {
-        atomicAdd(&d_gfs_invalid_raw_volume_cells, 1ull);
+        unsigned long long invalid=atomicAdd(&d_gfs_invalid_raw_volume_cells, 1ull);
+        if(invalid<8){
+            printf("[GPU_RAW_VOLUME_ERROR] i=%d id=%lld x=%.17g y=%.17g W=%.17g mass=%.17g nc=%d signed_area=%.17g volume=%.17g\n",
+                i,(long long)pindx[i],px[i],py[i],w2i,massi,nc,area,volume);
+            for(int e=0;e<nc&&e<8;e++)
+                printf("[GPU_RAW_VOLUME_VERTEX] id=%lld edge=%d x=%.17g y=%.17g\n",
+                    (long long)pindx[i],e,poly_x[e],poly_y[e]);
+        }
         face_count_out[i] = 0;
         return;
     }
+#ifdef GFS_MATERIAL_FIXED_SOLID
+    GfsSolidMeasure2D fixed_measure={0};
+    int fixed_cut=fixed_solid_near(nc,poly_x,poly_y,px[i],py[i]);
+    if(fixed_cut){
+        double sx[GFS_FIXED_CYLINDER_N],sy[GFS_FIXED_CYLINDER_N];
+        fixed_solid_relative(px[i],py[i],sx,sy);
+        double nx[GPU_MAX_CORNERS],ny[GPU_MAX_CORNERS],h[GPU_MAX_CORNERS];
+        for(int e=0;e<nc;e++){
+            int j=poly_neigh[e],v=(e+1)%nc;
+            if(j>=0){nx[e]=GFS_POWER_DX(j);ny[e]=GFS_POWER_DY(j);double d2=nx[e]*nx[e]+ny[e]*ny[e];h[e]=weight_geometry_fraction(.5+.5*(w2i-weight_geometry_value(weight_W,j))/d2)*d2;}
+            else {nx[e]=poly_y[v]-poly_y[e];ny[e]=poly_x[e]-poly_x[v];h[e]=nx[e]*poly_x[e]+ny[e]*poly_y[e];}
+        }
+        GfsSolidSupports2D supports={nx,ny,h};
+        if(!gfs_solid_measure_supports(nc,poly_x,poly_y,poly_neigh,GFS_FIXED_CYLINDER_N,sx,sy,&fixed_measure,&supports)){
+            atomicAdd(&d_gfs_invalid_raw_volume_cells,1ull);face_count_out[i]=0;return;
+        }
+        volume=fixed_measure.volume;area=2*volume;
+    }
+#endif
     /* Volume floor at 0.1% of nominal cell area (= cellsize²).  Sutherland-
      * Hodgman clipping at corners of rings IC (Nx≥256) sometimes produces
      * polygon area ~1e-30 → density = mass/V → 1.5e+25 garbage → step-1
@@ -3460,8 +3718,8 @@ void voronoi_tessellate_kernel(
         int j_neigh = poly_neigh[e];
         if (j_neigh >= 0) {
             /* w2ceil = min over real faces of (dist2_j + w2_j) */
-            double jdx = px[j_neigh] - xi;
-            double jdy = py[j_neigh] - yi;
+            double jdx = GFS_POWER_DX(j_neigh);
+            double jdy = GFS_POWER_DY(j_neigh);
             double jdist2 = jdx * jdx + jdy * jdy;
             double val = jdist2 + weight_geometry_value(weight_W,j_neigh);
             if (val < w2ceil_val) w2ceil_val = val;
@@ -3498,8 +3756,8 @@ void voronoi_tessellate_kernel(
         double dSx = poly_y[en] - poly_y[e];
         double dSy = -(poly_x[en] - poly_x[e]);
 
-        double dx_ij = px[j_neigh] - xi;
-        double dy_ij = py[j_neigh] - yi;
+        double dx_ij = GFS_POWER_DX(j_neigh);
+        double dy_ij = GFS_POWER_DY(j_neigh);
         double d2_ij = dx_ij * dx_ij + dy_ij * dy_ij;
 
         /* Hyperviscosity Pass 1: accumulate (v_j - v_i) weighted by A_face/d_ij;
@@ -3675,8 +3933,8 @@ void voronoi_tessellate_kernel(
             for (int e = 0; e < nc; e++) {
                 int jn = poly_neigh[e];
                 if (jn < 0 || pindx[jn] == MAX_INDEX_GPU) continue;
-                sample_x[nsample] = px[jn] - xi;
-                sample_y[nsample] = py[jn] - yi;
+                sample_x[nsample] = GFS_POWER_DX(jn);
+                sample_y[nsample] = GFS_POWER_DY(jn);
                 tmp_x[nsample] = pvx[jn] - pvx[i];
                 tmp_y[nsample] = pvy[jn] - pvy[i];
                 input_scale = fmax(input_scale,hypot(pvx[jn],pvy[jn]));
@@ -3734,6 +3992,9 @@ void voronoi_tessellate_kernel(
         if ((poly_neigh[e] >= 0 || (d_gfs_fixedpoly_on && poly_neigh[e] <= -1000))
             && (raw_volume < 2 || ex*ex+ey*ey > 0.0)) n_real_faces++;
     }
+#ifdef GFS_MATERIAL_FIXED_SOLID
+    if(fixed_cut)n_real_faces=fixed_measure.count;
+#endif
     po->n_real_faces = n_real_faces;
     if (nc >= (d_gfs_circle_rhs_on?2:3)) {
         double final_maxdist2 = 0.0;
@@ -3753,8 +4014,16 @@ void voronoi_tessellate_kernel(
         po->halo_clipped = !d_gfs_fixedpoly_on &&
             (xi - final_search_radius < xmin || xi + final_search_radius > grid_xmax ||
              yi - final_search_radius < ymin || yi + final_search_radius > grid_ymax);
-        if (po->halo_clipped)
+        if (po->halo_clipped){
             atomicAdd(&d_gfs_stencil_halo_clipped_cells, 1ull);
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+            const double deficit[4]={fmax(0.,xmin-(xi-final_search_radius)),
+                fmax(0.,ymin-(yi-final_search_radius)),
+                fmax(0.,xi+final_search_radius-grid_xmax),fmax(0.,yi+final_search_radius-grid_ymax)};
+            for(int d=0;d<4;d++)atomicMax(d_gfs_search_shortfall+d,
+                (unsigned long long)__double_as_longlong(deficit[d]));
+#endif
+        }
     } else {
         po->halo_clipped = 0;
     }
@@ -3855,7 +4124,7 @@ void scatter_faces_kernel(
     int *__restrict__ f_neighbor_idx,
     int *__restrict__ f_kp_idx, int *__restrict__ f_km_idx,
     int *__restrict__ f_is_ghost,
-    int nbp, int omit_zero_edges)
+    int nbp, int omit_zero_edges, ParticleSoA p, const double* lowx, const double* lowy)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= nbp) return;
@@ -3864,7 +4133,29 @@ void scatter_faces_kernel(
     int nc = po->n_corners;
     int base = face_offset[i];
     int local_f = 0;
-
+#ifdef GFS_MATERIAL_FIXED_SOLID
+    if(fixed_solid_near(nc,po->cx,po->cy,p.x[i],p.y[i])){
+        double sx[GFS_FIXED_CYLINDER_N],sy[GFS_FIXED_CYLINDER_N];
+        fixed_solid_relative(p.x[i],p.y[i],sx,sy);
+        double nx[GPU_MAX_CORNERS],ny[GPU_MAX_CORNERS],h[GPU_MAX_CORNERS];
+        for(int e=0;e<nc;e++){
+            int j=po->edge_neigh[e],v=(e+1)%nc;
+            if(j>=0){nx[e]=gfs_power_coordinate_delta(p.x,lowx,i,j);ny[e]=gfs_power_coordinate_delta(p.y,lowy,i,j);double d2=nx[e]*nx[e]+ny[e]*ny[e];h[e]=weight_geometry_fraction(.5+.5*(weight_geometry_value(p.weight_W,i)-weight_geometry_value(p.weight_W,j))/d2)*d2;}
+            else {nx[e]=po->cy[v]-po->cy[e];ny[e]=po->cx[e]-po->cx[v];h[e]=nx[e]*po->cx[e]+ny[e]*po->cy[e];}
+        }
+        GfsSolidSupports2D supports={nx,ny,h};
+        GfsSolidIterator2D it={0,0,0};GfsSolidSegment2D e;
+        while(gfs_solid_next_supports(nc,po->cx,po->cy,po->edge_neigh,GFS_FIXED_CYLINDER_N,sx,sy,&it,&e,&supports)){
+            if(local_f>=po->n_real_faces){printf("[FIXED_SOLID_SCATTER_OVERFLOW] i=%d count=%d expected=%d\n",i,local_f,po->n_real_faces);asm("trap;");return;}
+            int dst=base+local_f++;
+            f_c1x[dst]=e.ax;f_c1y[dst]=e.ay;f_c2x[dst]=e.bx;f_c2y[dst]=e.by;
+            f_neighbor_idx[dst]=e.neighbor;f_kp_idx[dst]=f_km_idx[dst]=-1;
+            f_is_ghost[dst]=e.neighbor>=0&&pindx[e.neighbor]==MAX_INDEX_GPU;
+        }
+        if(local_f!=po->n_real_faces){printf("[FIXED_SOLID_SCATTER_COUNT] i=%d count=%d expected=%d\n",i,local_f,po->n_real_faces);asm("trap;");}
+        return;
+    }
+#endif
     for (int e = 0; e < nc; e++) {
         int j_neigh = po->edge_neigh[e];
         if (j_neigh < 0 && j_neigh > -1000) continue; /* artificial box only */
@@ -3958,6 +4249,11 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     }
 
     unsigned long long zero_fallbacks = 0;
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+    h_gfs_search_retryable=0;
+    unsigned long long zero_shortfall[4]={0,0,0,0};
+    CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_search_shortfall,zero_shortfall,sizeof(zero_shortfall),0,cudaMemcpyHostToDevice,s));
+#endif
     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_invalid_raw_volume_cells,&zero_fallbacks,sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_invalid_velocity_fit_cells,&zero_fallbacks,sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
     CUDA_CHECK(cudaMemcpyToSymbolAsync(d_gfs_tess_geometry_errors,&zero_fallbacks,sizeof(zero_fallbacks),0,cudaMemcpyHostToDevice,s));
@@ -3979,6 +4275,9 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
                                cudaMemcpyDeviceToDevice, s));
 
     /* Kernel A: Voronoi tessellation + gradients */
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+    prepare_power_chart(ctx,nbp,n_total,s);
+#endif
     voronoi_tessellate_kernel<<<gridSize, blockSize, 0, s>>>(
         ctx->d_parts.x, ctx->d_parts.y,
         ctx->d_parts.vx, ctx->d_parts.vy,
@@ -3997,7 +4296,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         ctx->d_polygons, ctx->d_face_count,
         nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max, OoA, av_mode,
         gradient_method, raw_geometry, limit_velocity, merge_small_faces,
-        thermal64, ctx->d_parts.E_inv_xy,ctx->d_parts.weight_W,ctx->d_parts.weight_volume64);
+        thermal64, ctx->d_parts.E_inv_xy,ctx->d_parts.weight_W,ctx->d_parts.weight_volume64 GFS_MATERIAL_CHART_INPUT);
     CUDA_CHECK(cudaGetLastError());
     if (tess_profile) CUDA_CHECK(cudaEventRecord(tess_events[1], s));
 
@@ -4061,9 +4360,18 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         CUDA_CHECK(cudaMemcpyFromSymbol(&weight_clamps,d_weight_geometry_clamp_hits,sizeof(weight_clamps)));
         geometry_errors+=weight_clamps;
         if (invalid_volume || invalid_fit || geometry_errors || (raw_geometry && h_halo_clipped)) {
-            fprintf(stderr,"[GPU_TESS_INVALID] volume=%llu velocity_fit=%llu geometry=%llu halo=%llu\n",
-                    invalid_volume,invalid_fit,geometry_errors,h_halo_clipped);
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+            if(raw_geometry&&h_halo_clipped&&!invalid_volume&&!invalid_fit&&!geometry_errors){
+                CUDA_CHECK(cudaMemcpyFromSymbol(h_gfs_search_shortfall,d_gfs_search_shortfall,sizeof(h_gfs_search_shortfall)));
+                h_gfs_search_retryable=1;
+            }
+#endif
+            fprintf(stderr,"[GPU_TESS_INVALID] volume=%llu velocity_fit=%llu geometry=%llu halo=%llu weight_clamps=%llu other_geometry=%llu\n",
+                    invalid_volume,invalid_fit,geometry_errors,h_halo_clipped,
+                    weight_clamps,geometry_errors-weight_clamps);
             if (h_geometry_trial) {
+                if (tess_profile)
+                    for (int k = 0; k < 6; k++) CUDA_CHECK(cudaEventDestroy(tess_events[k]));
                 h_geometry_failed=1; ctx->tess_faces_on_device=0; return;
             }
 #ifdef GFS_VARPRESS_W0
@@ -4085,6 +4393,8 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         if (total_faces > ctx->max_faces) {
             fprintf(stderr, "[GPU TESS] total_faces=%d > max_faces=%d; refusing truncated faces\n",total_faces,ctx->max_faces);
             if (h_geometry_trial) {
+                if (tess_profile)
+                    for (int k = 0; k < 6; k++) CUDA_CHECK(cudaEventDestroy(tess_events[k]));
                 h_geometry_failed=1; ctx->tess_faces_on_device=0; return;
             }
 #ifdef GFS_VARPRESS_W0
@@ -4103,7 +4413,7 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
         ctx->d_faces.neighbor_idx,
         ctx->d_faces.kp_idx, ctx->d_faces.km_idx,
         ctx->d_faces.is_ghost,
-        nbp, raw_geometry >= 2);
+        nbp, raw_geometry >= 2, ctx->d_parts, ctx->power_low_count?ctx->d_power_lowx:NULL, ctx->power_low_count?ctx->d_power_lowy:NULL);
     CUDA_CHECK(cudaGetLastError());
 
     /* Copy face_offset to FaceCSR (device already has it, just set pointer) */
@@ -4126,6 +4436,87 @@ void gpu_tessellate_and_build_faces(GPUContext *ctx, int nbp,
     ctx->tess_faces_on_device = 1;
 }
 
+#include "../gfs_material_cylinder_support.h"
+/* All vertices, not merely wall-labelled faces: an absent ghost can leave
+ * an interior-labelled edge across the solid. Reuse the actual FaceCSR. */
+__global__ static void material_cylinder_support_kernel(ParticleSoA p,FaceCSR f,
+ int n,double cx,double cy,double R,double maximum_weight,int*status){
+ int i=blockIdx.x*blockDim.x+threadIdx.x;if(i>=n)return;
+ int begin=f.face_offset[i],end=f.face_offset[i+1],flags=0;
+ if(begin<0||end<=begin||end>f.n_faces_total){status[i]=4;return;}
+#ifdef GFS_MATERIAL_FIXED_SOLID
+ double xmin=DBL_MAX,xmax=-DBL_MAX,ymin=DBL_MAX,ymax=-DBL_MAX,closex=0,closey=0,perim=0;int tagged=0;
+ for(int k=begin;k<end;k++){
+  double ax=p.x[i]+f.c1x[k],ay=p.y[i]+f.c1y[k],bx=p.x[i]+f.c2x[k],by=p.y[i]+f.c2y[k];
+  xmin=fmin(xmin,fmin(ax,bx));xmax=fmax(xmax,fmax(ax,bx));ymin=fmin(ymin,fmin(ay,by));ymax=fmax(ymax,fmax(ay,by));
+  closex+=f.c2y[k]-f.c1y[k];closey+=f.c1x[k]-f.c2x[k];perim+=hypot(f.c2x[k]-f.c1x[k],f.c2y[k]-f.c1y[k]);
+  tagged|=f.neighbor_idx[k]<=GFS_SOLID_TAG_BASE;
+ }
+ if(xmax<2.||xmin>3.||ymax<1.5||ymin>2.5){status[i]=tagged||!isfinite(perim)||hypot(closex,closey)>512*DBL_EPSILON*perim?4:0;return;}
+ double sx[GFS_FIXED_CYLINDER_N],sy[GFS_FIXED_CYLINDER_N];
+ fixed_solid_relative(p.x[i],p.y[i],sx,sy);
+ double nx=0,ny=0,perimeter=0;
+ for(int k=begin;k<end;k++){
+  double ax=f.c1x[k],ay=f.c1y[k],bx=f.c2x[k],by=f.c2y[k];
+  double ex=bx-ax,ey=by-ay,A=hypot(ex,ey);nx+=ey;ny-=ex;perimeter+=A;
+  if(!isfinite(A)){status[i]=4;return;}
+  int tag=f.neighbor_idx[k];
+  if(tag<=GFS_SOLID_TAG_BASE){
+   int j=GFS_SOLID_TAG_BASE-tag;if(j>=GFS_FIXED_CYLINDER_N){status[i]=4;return;}
+   int l=(j+1)%GFS_FIXED_CYLINDER_N;double dx=sx[l]-sx[j],dy=sy[l]-sy[j];
+   double tolerance=512*DBL_EPSILON*hypot(dx,dy)*(hypot(ax,ay)+hypot(bx,by)+hypot(sx[j],sy[j]));
+   if(fabs(gfs_solid_cross(dx,dy,ax-sx[j],ay-sy[j]))>tolerance||
+      fabs(gfs_solid_cross(dx,dy,bx-sx[j],by-sy[j]))>tolerance||ex*dx+ey*dy>0){status[i]=1;return;}
+  }else{
+   double l,h;
+   if(gfs_solid_interval(GFS_FIXED_CYLINDER_N,sx,sy,ax,ay,bx,by,&l,&h)){
+    double mid=.5*(l+h),mx=gfs_solid_lerp(ax,bx,mid),my=gfs_solid_lerp(ay,by,mid);
+    int strict=1;
+    for(int j=0;j<GFS_FIXED_CYLINDER_N;j++){
+     int v=(j+1)%GFS_FIXED_CYLINDER_N;double dx=sx[v]-sx[j],dy=sy[v]-sy[j];
+     double tol=512*DBL_EPSILON*hypot(dx,dy)*(hypot(mx,my)+hypot(sx[j],sy[j]));
+     if(gfs_solid_cross(dx,dy,mx-sx[j],my-sy[j])<=tol){strict=0;break;}
+    }
+    if(strict){status[i]=1;return;}
+   }
+  }
+ }
+ if(hypot(nx,ny)>512*DBL_EPSILON*perimeter){
+  flags|=4;printf("[FIXED_SOLID_CLOSURE] i=%d id=%lld x=%.17g y=%.17g nx=%.17g ny=%.17g perimeter=%.17g\n",i,p.indx[i],p.x[i],p.y[i],nx,ny,perimeter);
+  for(int k=begin;k<end;k++)printf("[FIXED_SOLID_EDGE] i=%d j=%d ax=%.17g ay=%.17g bx=%.17g by=%.17g\n",i,f.neighbor_idx[k],f.c1x[k],f.c1y[k],f.c2x[k],f.c2y[k]);
+ }
+ status[i]=flags;return;
+#else
+ double d[2]={p.x[i]-cx,p.y[i]-cy};
+ for(int k=begin;k<end;k++){
+  double a[2]={f.c1x[k],f.c1y[k]},b[2]={f.c2x[k],f.c2y[k]};
+  int sa=gfs_material_cylinder_vertex_support(d[0],d[1],R,a[0],a[1]);
+  int sb=gfs_material_cylinder_vertex_support(d[0],d[1],R,b[0],b[1]);
+  int ca=gfs_material_center_image_inactive(2,d,a,p.weight_W[i],maximum_weight);
+  int cb=gfs_material_center_image_inactive(2,d,b,p.weight_W[i],maximum_weight);
+  if(sa<0||sb<0||ca<0||cb<0){status[i]=4;return;}
+  if(!sa||!sb)flags|=1;
+  if(!ca||!cb)flags|=2;
+ }
+ status[i]=flags;
+#endif
+}
+extern "C" int gpu_material_cylinder_support_certificate(GPUContext*ctx,int n,
+ double cx,double cy,double R,double maximum_weight,int*status){
+ if(!ctx||n<1||!status||!isfinite(maximum_weight)||!ctx->tess_faces_on_device)return 0;
+ static int*device=NULL;static int capacity=0;
+ if(n>capacity){
+  if(device)CUDA_CHECK(cudaFree(device));
+  CUDA_CHECK(cudaMalloc((void**)&device,(size_t)n*sizeof(int)));capacity=n;
+ }
+ cudaStream_t stream=(cudaStream_t)ctx->stream;
+ material_cylinder_support_kernel<<<(n+255)/256,256,0,stream>>>(
+  ctx->d_parts,ctx->d_faces,n,cx,cy,R,maximum_weight,device);
+ CUDA_CHECK(cudaGetLastError());
+ CUDA_CHECK(cudaMemcpyAsync(status,device,(size_t)n*sizeof(int),cudaMemcpyDeviceToHost,stream));
+ CUDA_CHECK(cudaStreamSynchronize(stream));return 1;
+}
+
 /* ================================================================
  *  gpu_download_tess_results: device SoA → pinned host SoA
  *
@@ -4142,6 +4533,9 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
     double boxsize, double global_w2_max, double OoA, int av_mode,
     int gradient_method)
 {
+#ifdef GFS_MATERIAL_SEARCH_EXTENT
+    h_gfs_search_retryable=0;
+#endif
     ctx->tess_faces_on_device = 0;
     if (nbp <= 0) return 0;
     cudaStream_t s = (cudaStream_t)ctx->stream;
@@ -4168,6 +4562,9 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
         sizeof(zero), 0, cudaMemcpyHostToDevice, s));
     CUDA_CHECK(cudaMemcpyAsync(ctx->d_tess_den_input, ctx->d_parts.den,
         n_total * sizeof(float), cudaMemcpyDeviceToDevice, s));
+#ifdef GFS_MATERIAL_COMMON_GEOMETRY
+    prepare_power_chart(ctx,nbp,n_total,s);
+#endif
     voronoi_tessellate_kernel<<<gridSize, blockSize, 0, s>>>(
         ctx->d_parts.x, ctx->d_parts.y,
         ctx->d_parts.vx, ctx->d_parts.vy,
@@ -4186,7 +4583,7 @@ int gpu_tessellate_raw_volume(GPUContext *ctx, int nbp,
         ctx->d_polygons, ctx->d_face_count,
         nbp, n_total, mx, my, cellsize, xmin, ymin, boxsize, global_w2_max, OoA, av_mode,
         gradient_method, raw_geometry, 1, 0,
-        thermal64, ctx->d_parts.E_inv_xy,ctx->d_parts.weight_W,ctx->d_parts.weight_volume64);
+        thermal64, ctx->d_parts.E_inv_xy,ctx->d_parts.weight_W,ctx->d_parts.weight_volume64 GFS_MATERIAL_CHART_INPUT);
     CUDA_CHECK(cudaGetLastError());
     unsigned long long invalid = 0, clipped = 0, geometry_errors=0;
     CUDA_CHECK(cudaMemcpyFromSymbolAsync(&geometry_errors,d_gfs_tess_geometry_errors,sizeof(geometry_errors),0,cudaMemcpyDeviceToHost,s));
